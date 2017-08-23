@@ -1,5 +1,6 @@
 package com.tongmenhui.launchak47;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -29,18 +30,19 @@ public class LaunchActivity extends AppCompatActivity {
             }
         });
 
-        Button loginBtn = (Button)findViewById(R.id.LoginBtn);
-        Button registerBtn = (Button)findViewById(R.id.RegisterBtn);
+        Button loginEntryBtn = (Button)findViewById(R.id.LoginEntryBtn);
+        Button registerEntryBtn = (Button)findViewById(R.id.RegisterEntryBtn);
 
-        loginBtn.setOnClickListener(new View.OnClickListener(){
+        loginEntryBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                Toast.makeText(LaunchActivity.this, "login click", Toast.LENGTH_SHORT).show();
+                login();
             }
         });
-        registerBtn.setOnClickListener(new View.OnClickListener(){
+        registerEntryBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
+                register();
                 Toast.makeText(LaunchActivity.this, "register click", Toast.LENGTH_SHORT).show();
             }
         });
@@ -66,5 +68,14 @@ public class LaunchActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void login(){
+        Intent intent = new Intent(this,Login.class);
+        startActivity(intent);
+    }
+
+    private void register(){
+
     }
 }

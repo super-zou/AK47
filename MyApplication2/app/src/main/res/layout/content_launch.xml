@@ -14,7 +14,7 @@
     tools:showIn="@layout/activity_launch">
 
     <Button
-        android:id="@+id/RegisterBtn"
+        android:id="@+id/RegisterEntryBtn"
         android:text="@string/register"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -26,11 +26,11 @@
         android:textSize="24sp" />
 
     <Button
-        android:id="@+id/LoginBtn"
+        android:id="@+id/LoginEntryBtn"
         android:text="@string/login"
         android:layout_width="match_parent"
         android:layout_marginBottom="24dp"
-        android:layout_above="@+id/RegisterBtn"
+        android:layout_above="@+id/RegisterEntryBtn"
         android:background="@android:color/holo_green_dark"
         android:layout_height="wrap_content"
         android:textSize="24sp"
