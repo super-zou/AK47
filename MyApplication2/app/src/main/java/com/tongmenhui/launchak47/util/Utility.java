@@ -12,11 +12,13 @@ public class Utility {
 
     public static boolean handleLoginResponse(String response){
         if(!TextUtils.isEmpty(response)){
+            /*
             try {
 
             }catch (JSONException e){
                 e.printStackTrace();
             }
+            */
         }
         return false;
 
