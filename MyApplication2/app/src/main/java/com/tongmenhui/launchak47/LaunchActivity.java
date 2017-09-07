@@ -76,6 +76,8 @@ public class LaunchActivity extends AppCompatActivity {
     }
 
     private void register(){
+        Intent intent = new Intent(this, Register.class);
+        startActivity(intent);
 
     }
 }
