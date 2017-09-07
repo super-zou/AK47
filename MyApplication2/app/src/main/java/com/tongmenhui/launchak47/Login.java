@@ -17,16 +17,21 @@ import java.io.IOException;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.RequestBody;
 import okhttp3.Response;
+import com.tongmenhui.launchak47.util.Slog;
 
 import static java.security.AccessController.getContext;
 
 public class Login extends AppCompatActivity {
-
+    private static final String TAG = "Login";
     private EditText accountEdit;
     private EditText passwordEdit;
     private Button loginBtn;
     private ProgressDialog progressDialog;
+    //Login form info
+    private final String  domain = "http://www.tongmenhui.com";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,8 +46,17 @@ public class Login extends AppCompatActivity {
         loginBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                String account = accountEdit.getText().toString();
-                String password = passwordEdit.getText().toString();
+               int type = 0;
+               String account = accountEdit.getText().toString();
+               String password = passwordEdit.getText().toString();
+                Slog.d(TAG, "account: "+account+" password: "+password);
+                String accountCheckUrl = domain + "?q=account_manager/check_login_user";
+                RequestBody requestBody = new FormBody.Builder()
+                        .add("type", "0")
+                        .add("account", account)
+                        .add("password", password)
+                        .build();
+                toLogin(accountCheckUrl, requestBody);
 
             }
         });
@@ -51,12 +65,13 @@ public class Login extends AppCompatActivity {
 
     }
 
-    private void queryFromServer(String address, String account, String password){
+    private void toLogin(String address, RequestBody requestBody){
         showProgress();
-        HttpUtil.sendOkHttpRequest(address, account, password, new Callback(){
+        HttpUtil.sendOkHttpRequest(address, requestBody, new Callback(){
             @Override
             public void onResponse(Call call, Response response) throws IOException{
                 String responseText = response.body().string();
+                Slog.d(TAG, "response : "+responseText);
             }
 
             @Override
