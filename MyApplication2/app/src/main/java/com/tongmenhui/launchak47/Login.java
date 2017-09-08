@@ -38,6 +38,7 @@ public class Login extends AppCompatActivity {
     //Login form info
     private String account;
     private String password;
+    private String token;
     private static final String  domain = "http://www.tongmenhui.com";
     private static final String token_url = domain + "?q=rest_services/user/token";
     private static final String check_url = domain + "?q=account_manager/check_login_user";
@@ -122,16 +123,27 @@ public class Login extends AppCompatActivity {
     }
 
     private void access_token(final String user_name){
-        HttpUtil.sendOkHttpRequest(null, token_url, null, new Callback(){
+        RequestBody requestBody = new FormBody.Builder().build();
+        HttpUtil.sendOkHttpRequest(null, token_url, requestBody, new Callback(){
             int check_login_user = 0;
             //String username = user_name;
-            String token;
+
 
             @Override
             public void onResponse(Call call, Response response) throws IOException{
-                Slog.d(TAG, "response token: "+response.body().string());
-                token = response.body().string();
-                login_finally(token, user_name);
+                String responseText = response.body().string();
+                Slog.d(TAG, "response token: "+responseText);
+                if(!TextUtils.isEmpty(responseText)){
+                    try {
+                        JSONObject responseObject = new JSONObject(responseText);
+                        token = responseObject.getString("token");
+                        // Slog.d(TAG, "token : "+token);
+                        login_finally(token, user_name);
+                    }catch (JSONException e){
+                        e.printStackTrace();
+                    }
+                }
+
             }
 
             @Override
@@ -149,6 +161,7 @@ public class Login extends AppCompatActivity {
     }
 
     private void login_finally(String token, String user_name){
+        Slog.d(TAG, "login_finally username: "+user_name+" password: "+password+ " token: "+token);
         RequestBody requestBody = new FormBody.Builder()
                 .add("username", user_name)
                 .add("password", password)
