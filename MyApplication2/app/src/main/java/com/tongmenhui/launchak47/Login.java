@@ -177,16 +177,7 @@ public class Login extends AppCompatActivity {
                 Slog.d(TAG, "response : "+responseText);
                 if(!TextUtils.isEmpty(responseText)){
                     try {
-                        JSONObject check_response= new JSONObject(responseText);
-                        check_login_user = Integer.parseInt(check_response.getString("check_login_user"));
-                        user_name = check_response.getString("user_name");
-                        Slog.d(TAG, "check_login_user: "+check_response.getString("check_login_user"));
-                        Slog.d(TAG, "user_name: "+check_response.getString("user_name"));
-
-                        if(check_login_user != 0){
-                            goto_login(user_name);
-                        }
-
+                        JSONObject login_response= new JSONObject(responseText);
 
                     }catch (JSONException e){
                         e.printStackTrace();
