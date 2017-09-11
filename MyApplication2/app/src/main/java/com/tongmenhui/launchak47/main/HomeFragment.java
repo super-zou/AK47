@@ -1,5 +1,4 @@
-package com.example.janiszhang.fragmenttabhost;
-
+package com.tongmenhui.launchak47.main;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -9,14 +8,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.tongmenhui.launchak47.R;
+
 import java.util.Arrays;
 
 /**
- * Created by janiszhang on 2016/6/10.
+ * Created by super-zou on 17-9-11.
  */
 
-public class TestFragment1 extends android.support.v4.app.Fragment{
-
+public class HomeFragment extends android.support.v4.app.Fragment{
     private View viewContent;
     private TabLayout tab_essence;
     private ViewPager vp_essence;
@@ -24,7 +24,7 @@ public class TestFragment1 extends android.support.v4.app.Fragment{
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        viewContent = inflater.inflate(R.layout.fragment_test_1,container,false);
+        viewContent = inflater.inflate(R.layout.fragment_home,container,false);
         initConentView(viewContent);
         initData();
 
@@ -41,7 +41,7 @@ public class TestFragment1 extends android.support.v4.app.Fragment{
         String[] titles = getResources().getStringArray(R.array.home_video_tab);
 
         //创建一个viewpager的adapter
-        TestFragmentAdapter adapter = new TestFragmentAdapter(getFragmentManager(), Arrays.asList(titles));
+        FragmentAdapter adapter = new FragmentAdapter(getFragmentManager(), Arrays.asList(titles));
         this.vp_essence.setAdapter(adapter);
 
         //将TabLayout和ViewPager关联起来

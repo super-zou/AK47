@@ -1,21 +1,21 @@
-package com.example.janiszhang.fragmenttabhost;
+package com.tongmenhui.launchak47.main;
 
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import java.util.List;
 
 /**
- * Created by janiszhang on 2016/6/10.
+ * Created by super-zou on 17-9-11.
  */
-//继承FragmentStatePagerAdapter
-public class TestFragmentAdapter extends FragmentStatePagerAdapter {
 
+public class FragmentAdapter extends FragmentStatePagerAdapter{
     public static final String TAB_TAG = "@dream@";
 
     private List<String> mTitles;
 
-    public TestFragmentAdapter(FragmentManager fm, List<String> titles) {
+    public FragmentAdapter(FragmentManager fm, List<String> titles) {
         super(fm);
         mTitles = titles;
     }
@@ -40,4 +40,3 @@ public class TestFragmentAdapter extends FragmentStatePagerAdapter {
         return mTitles.get(position).split(TAB_TAG)[0];
     }
 }
-
