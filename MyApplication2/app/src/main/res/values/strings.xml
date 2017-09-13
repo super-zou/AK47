@@ -18,6 +18,12 @@
         <item>图片@dream@3</item>
         <item>段子@dream@4</item>
     </array>
+    <!--For meet tab-->
+    <array name="meet_tab_items">
+        <item>推荐@dream@0</item>
+        <item>动态@dream@1</item>
+        <item>发现@dream@2</item>
+    </array>
 
     <array name="newpost_video_tab">
         <item>美女@dream@0</item>
