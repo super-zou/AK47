@@ -5,11 +5,11 @@
     <string name="login_phone">手机号登录</string>
     <string name="register">注册</string>
     <string name="title_activity_login">Login</string>
-    <string name="app_name">FragmentTabHost</string>
+    <string name="app_name">Main</string>
 
     <string name="main_home_text">首页</string>
-    <string name="main_mine_text">收藏</string>
-    <string name="main_attention_text">关注</string>
+    <string name="main_meet_text">遇见</string>
+    <string name="main_archive_text">我</string>
 
     <array name="home_video_tab">
         <item>全部@dream@0</item>
@@ -17,8 +17,6 @@
         <item>声音@dream@2</item>
         <item>图片@dream@3</item>
         <item>段子@dream@4</item>
-        <item>广告@dream@5</item>
-        <item>剧情@dream@6</item>
     </array>
 
     <array name="newpost_video_tab">

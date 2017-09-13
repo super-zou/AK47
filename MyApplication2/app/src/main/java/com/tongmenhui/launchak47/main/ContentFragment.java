@@ -1,8 +1,9 @@
 package com.tongmenhui.launchak47.main;
 
-import android.app.Fragment;
+//import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +15,7 @@ import com.tongmenhui.launchak47.R;
  * Created by super-zou on 17-9-11.
  */
 
-public class ContentFragment extends Fragment{
+public class ContentFragment extends Fragment {
     private View viewContent;
     private int mType = 0;
     private String mTitle;

@@ -31,9 +31,8 @@ public class MainActivity extends AppCompatActivity {
         mTableItemList = new ArrayList<>();
         //添加tab
         mTableItemList.add(new TabItem(R.drawable.main_bottom_home_normal,R.drawable.main_bottom_home_press,R.string.main_home_text, HomeFragment.class));
-        mTableItemList.add(new TabItem(R.drawable.main_bottom_attention_normal,R.drawable.main_bottom_attention_press,R.string.main_attention_text, MeetFragment.class));
-        mTableItemList.add(new TabItem(R.drawable.main_bottom_mine_normal,R.drawable.main_bottom_mine_press,R.string.main_mine_text, ArchiveFragment.class));
-
+        mTableItemList.add(new TabItem(R.drawable.main_bottom_mine_normal,R.drawable.main_bottom_mine_press,R.string.main_meet_text, MeetFragment.class));
+        mTableItemList.add(new TabItem(R.drawable.main_bottom_attention_normal,R.drawable.main_bottom_attention_press,R.string.main_archive_text, ArchiveFragment.class));
     }
 
     //初始化选项卡视图
