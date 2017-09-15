@@ -3,6 +3,7 @@ package com.tongmenhui.launchak47.main;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.view.View;
 
 import java.util.List;
 
@@ -13,11 +14,11 @@ import java.util.List;
 public class FragmentAdapter extends FragmentStatePagerAdapter{
     public static final String TAB_TAG = "@dream@";
 
-    private List<String> mTitles;
+    private View view;
 
-    public FragmentAdapter(FragmentManager fm, List<String> titles) {
+    public FragmentAdapter(FragmentManager fm, View view) {
         super(fm);
-        mTitles = titles;
+        this.view = view;
     }
 
     @Override
