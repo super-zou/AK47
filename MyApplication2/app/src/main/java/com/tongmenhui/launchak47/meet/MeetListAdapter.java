@@ -1,9 +1,11 @@
 package com.tongmenhui.launchak47.meet;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.tongmenhui.launchak47.R;
 
@@ -16,8 +18,12 @@ import java.util.List;
 public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHolder>{
     private List<Meet> mMeetList;
     static class ViewHolder extends RecyclerView.ViewHolder{
+        TextView textView;
+
         public ViewHolder(View view){
+
             super(view);
+            textView = (TextView) view.findViewById(R.id.meet_item);
         }
     }
 
@@ -37,10 +43,13 @@ public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHo
     @Override
     public void onBindViewHolder(ViewHolder holder, int position){
         Meet meet = mMeetList.get(position);
+        Log.d("zouhaichao", "meet get name============="+meet.getName());
+        holder.textView.setText(meet.getName());
     }
 
     @Override
     public int getItemCount(){
+
         return mMeetList.size();
     }
 }

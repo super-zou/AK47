@@ -5,7 +5,13 @@ package com.tongmenhui.launchak47.meet;
  */
 
 public class Meet {
-    public void Meet(){
+    private String name;
 
+    public Meet(String name){
+        this.name = name;
+    }
+
+    public String getName(){
+        return name;
     }
 }

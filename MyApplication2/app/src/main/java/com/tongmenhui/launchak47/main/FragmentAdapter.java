@@ -13,12 +13,13 @@ import java.util.List;
 
 public class FragmentAdapter extends FragmentStatePagerAdapter{
     public static final String TAB_TAG = "@dream@";
-
+    private List<String> mTitles;
     private View view;
 
-    public FragmentAdapter(FragmentManager fm, View view) {
+    public FragmentAdapter(FragmentManager fm, List<String> titles) {
         super(fm);
-        this.view = view;
+       // this.view = view;
+        mTitles = titles;
     }
 
     @Override
