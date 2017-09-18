@@ -41,7 +41,7 @@ public class ContentFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        //布局文件中只有一个居中的TextView
+
         class_init();
         viewContent = inflater.inflate(R.layout.fragment_content,container,false);
         RecyclerView recyclerView = (RecyclerView)viewContent.findViewById(R.id.recyclerview);
