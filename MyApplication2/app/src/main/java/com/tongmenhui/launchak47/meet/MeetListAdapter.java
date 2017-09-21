@@ -23,7 +23,7 @@ public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHo
         public ViewHolder(View view){
 
             super(view);
-            textView = (TextView) view.findViewById(R.id.meet_item);
+            textView = (TextView) view.findViewById(R.id.name);
         }
     }
 
