@@ -178,6 +178,9 @@ public class Login extends AppCompatActivity {
                 if(!TextUtils.isEmpty(responseText)){
                     try {
                         JSONObject login_response= new JSONObject(responseText);
+                        String sessionId = login_response.getString("sessid");
+                        String session_name = login_response.getString("session_name");
+                        JSONObject user = login_response.getJSONObject("user");
 
                     }catch (JSONException e){
                         e.printStackTrace();

@@ -6,17 +6,34 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.tongmenhui.launchak47.Login;
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.meet.Meet;
 import com.tongmenhui.launchak47.meet.MeetListAdapter;
+import com.tongmenhui.launchak47.util.HttpUtil;
+import com.tongmenhui.launchak47.util.Slog;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * Created by super-zou on 17-9-11.
@@ -28,6 +45,8 @@ public class ContentFragment extends Fragment {
     private String mTitle;
     private List<Meet> meetList = new ArrayList<>();
 
+    private static final String  domain = "http://www.tongmenhui.com";
+    private static final String get_recommend_url = domain + "?q=meet/recommend";
 
     public void setType(int mType) {
         this.mType = mType;
@@ -42,7 +61,7 @@ public class ContentFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        class_init();
+        meet_member_init();
         viewContent = inflater.inflate(R.layout.fragment_content,container,false);
         RecyclerView recyclerView = (RecyclerView)viewContent.findViewById(R.id.recyclerview);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
@@ -52,7 +71,8 @@ public class ContentFragment extends Fragment {
         return viewContent;
     }
 
-    public void class_init(){
+    public void meet_member_init(){
+        get_meet_member_info();
         Meet meet1 = new Meet("lilei");
         meetList.add(meet1);
         Meet meet2 = new Meet("hanmeimei");
@@ -102,4 +122,42 @@ public class ContentFragment extends Fragment {
         Meet meet60 = new Meet("alice");
         meetList.add(meet60);
     }
+
+    public void get_meet_member_info(){
+        /*
+        RequestBody requestBody = new FormBody.Builder()
+                .build();
+
+        HttpUtil.sendOkHttpRequest(token, get_recommend_url, requestBody, new Callback(){
+            int check_login_user = 0;
+            String user_name;
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String responseText = response.body().string();
+                Slog.d(TAG, "response : "+responseText);
+                if(!TextUtils.isEmpty(responseText)){
+                    try {
+                        JSONObject login_response= new JSONObject(responseText);
+
+                    }catch (JSONException e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e){
+                runOnUiThread(new Runnable(){
+                    @Override
+                    public void run(){
+                        closeProgressDialog();
+                        Toast.makeText(Login.this, "登录失败", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+        */
+    }
+
 }
