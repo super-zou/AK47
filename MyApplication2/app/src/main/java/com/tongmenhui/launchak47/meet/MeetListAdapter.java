@@ -1,13 +1,16 @@
 package com.tongmenhui.launchak47.meet;
 
+import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tongmenhui.launchak47.R;
+import com.tongmenhui.launchak47.util.HttpUtil;
 
 import java.util.List;
 
@@ -16,18 +19,20 @@ import java.util.List;
  */
 
 public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHolder>{
-    private List<Meet> mMeetList;
+    private List<MeetRecommend> mMeetList;
     static class ViewHolder extends RecyclerView.ViewHolder{
-        TextView textView;
+        TextView realname;
+        ImageView headUri;
 
         public ViewHolder(View view){
 
             super(view);
-            textView = (TextView) view.findViewById(R.id.name);
+            realname = (TextView) view.findViewById(R.id.name);
+            headUri = (ImageView) view.findViewById(R.id.recommend_head_uri);
         }
     }
 
-    public MeetListAdapter(List<Meet> meetList){
+    public MeetListAdapter(List<MeetRecommend> meetList){
         mMeetList = meetList;
     }
 
@@ -42,9 +47,11 @@ public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position){
-        Meet meet = mMeetList.get(position);
-        Log.d("zouhaichao", "meet get name============="+meet.getName());
-        holder.textView.setText(meet.getName());
+        MeetRecommend meet = mMeetList.get(position);
+        Log.d("zouhaichao", "meet get name============="+meet.getRealnameName());
+        holder.realname.setText(meet.getRealnameName());
+        //Bitmap bitmap = HttpUtil.getHttpBitmap(meet.picture_uri);
+       // holder.headUri.setImageBitmap(bitmap);
     }
 
     @Override

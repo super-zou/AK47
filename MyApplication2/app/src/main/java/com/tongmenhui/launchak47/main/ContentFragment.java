@@ -16,11 +16,12 @@ import android.widget.Toast;
 
 import com.tongmenhui.launchak47.Login;
 import com.tongmenhui.launchak47.R;
-import com.tongmenhui.launchak47.meet.Meet;
+import com.tongmenhui.launchak47.meet.MeetRecommend;
 import com.tongmenhui.launchak47.meet.MeetListAdapter;
 import com.tongmenhui.launchak47.util.HttpUtil;
 import com.tongmenhui.launchak47.util.Slog;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -42,10 +43,11 @@ import static android.content.Context.MODE_PRIVATE;
  */
 
 public class ContentFragment extends Fragment {
+    private static final String TAG = "ContentFragment";
     private View viewContent;
     private int mType = 0;
     private String mTitle;
-    private List<Meet> meetList = new ArrayList<>();
+    private List<MeetRecommend> meetList = new ArrayList<>();
 
     private static final String  domain = "http://www.tongmenhui.com";
     private static final String get_recommend_url = domain + "?q=meet/recommend";
@@ -75,54 +77,56 @@ public class ContentFragment extends Fragment {
 
     public void meet_member_init(){
         get_meet_member_info();
-        Meet meet1 = new Meet("lilei");
+        /*
+        MeetRecommend meet1 = new MeetRecommend("lilei");
         meetList.add(meet1);
-        Meet meet2 = new Meet("hanmeimei");
+        MeetRecommend meet2 = new MeetRecommend("hanmeimei");
         meetList.add(meet2);
-        Meet meet3 = new Meet("lucy");
+        MeetRecommend meet3 = new MeetRecommend("lucy");
         meetList.add(meet3);
-        Meet meet4 = new Meet("tom");
+        MeetRecommend meet4 = new MeetRecommend("tom");
         meetList.add(meet4);
-        Meet meet5 = new Meet("jerry");
+        MeetRecommend meet5 = new MeetRecommend("jerry");
         meetList.add(meet5);
-        Meet meet6 = new Meet("alice");
+        MeetRecommend meet6 = new MeetRecommend("alice");
         meetList.add(meet6);
-        Meet meet7 = new Meet("lilei");
+        MeetRecommend meet7 = new MeetRecommend("lilei");
         meetList.add(meet7);
-        Meet meet8 = new Meet("hanmeimei");
+        MeetRecommend meet8 = new MeetRecommend("hanmeimei");
         meetList.add(meet8);
-        Meet meet9 = new Meet("lucy");
+        MeetRecommend meet9 = new MeetRecommend("lucy");
         meetList.add(meet9);
-        Meet meet10 = new Meet("tom");
+        MeetRecommend meet10 = new MeetRecommend("tom");
         meetList.add(meet10);
-        Meet meet11 = new Meet("jerry");
+        MeetRecommend meet11 = new MeetRecommend("jerry");
         meetList.add(meet11);
-        Meet meet12 = new Meet("alice");
+        MeetRecommend meet12 = new MeetRecommend("alice");
         meetList.add(meet12);
-        Meet meet13 = new Meet("lilei");
+        MeetRecommend meet13 = new MeetRecommend("lilei");
         meetList.add(meet13);
-        Meet meet21 = new Meet("hanmeimei");
+        MeetRecommend meet21 = new MeetRecommend("hanmeimei");
         meetList.add(meet21);
-        Meet meet31 = new Meet("lucy");
+        MeetRecommend meet31 = new MeetRecommend("lucy");
         meetList.add(meet31);
-        Meet meet41 = new Meet("tom");
+        MeetRecommend meet41 = new MeetRecommend("tom");
         meetList.add(meet41);
-        Meet meet51 = new Meet("jerry");
+        MeetRecommend meet51 = new MeetRecommend("jerry");
         meetList.add(meet51);
-        Meet meet61 = new Meet("alice");
+        MeetRecommend meet61 = new MeetRecommend("alice");
         meetList.add(meet61);
-        Meet meet19 = new Meet("lilei");
+        MeetRecommend meet19 = new MeetRecommend("lilei");
         meetList.add(meet19);
-        Meet meet26 = new Meet("hanmeimei");
+        MeetRecommend meet26 = new MeetRecommend("hanmeimei");
         meetList.add(meet26);
-        Meet meet39 = new Meet("lucy");
+        MeetRecommend meet39 = new MeetRecommend("lucy");
         meetList.add(meet39);
-        Meet meet40 = new Meet("tom");
+        MeetRecommend meet40 = new MeetRecommend("tom");
         meetList.add(meet40);
-        Meet meet52 = new Meet("jerry");
+        MeetRecommend meet52 = new MeetRecommend("jerry");
         meetList.add(meet52);
-        Meet meet60 = new Meet("alice");
+        MeetRecommend meet60 = new MeetRecommend("alice");
         meetList.add(meet60);
+        */
     }
 
     public void get_meet_member_info(){
@@ -133,14 +137,55 @@ public class ContentFragment extends Fragment {
 
         Slog.d(TAG, "=====in ContentFragment====session: "+session);
 
-        HttpUtil.getOkHttpRequestAsync(get_recommend_url, "", new Callback(){
+        HttpUtil.getOkHttpRequestAsync(get_recommend_url, session, new Callback(){
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
-                Slog.d(TAG, "response : "+responseText);
+                //Slog.d(TAG, "response : "+responseText);
                 if(!TextUtils.isEmpty(responseText)){
                     try {
-                        JSONObject login_response= new JSONObject(responseText);
+                        JSONObject recommend_response= new JSONObject(responseText);
+                        JSONArray recommendation = recommend_response.getJSONArray("recommendation");
+                        int length = recommendation.length();
+
+                        for (int i=0; i< length; i++){
+                            JSONObject recommender = recommendation.getJSONObject(i);
+                            String realname = recommender.getString("realname");
+
+                            Slog.d(TAG, "==============realname: "+realname);
+                            MeetRecommend meetRecommend = new MeetRecommend();
+                            meetRecommend.realname = recommender.getString("realname");
+                            meetRecommend.uid = recommender.getInt("uid");
+                            meetRecommend.picture_uri = recommender.getString("picture_uri");
+                            meetRecommend.birth_day = recommender.getInt("birth_day");
+                            meetRecommend.height = recommender.getInt("height");
+                            meetRecommend.university = recommender.getString("university");
+                            meetRecommend.degree = recommender.getString("degree");
+                            meetRecommend.job_title = recommender.getString("job_title");
+                            meetRecommend.lives = recommender.getString("lives");
+                            meetRecommend.situation = recommender.getInt("situation");
+
+                            //requirement
+                            meetRecommend.age_lower = recommender.getInt("age_lower");
+                            meetRecommend.age_upper = recommender.getInt("age_upper");
+                            meetRecommend.requirement_height = recommender.getInt("requirement_height");
+                            meetRecommend.requirement_degree = recommender.getInt("requirement_degree");
+                            meetRecommend.requirement_lives = recommender.getString("requirement_lives");
+                            meetRecommend.requirement_sex = recommender.getInt("requirement_sex");
+                            meetRecommend.illustration = recommender.getString("illustration");
+                            //meetRecommend.self = recommender.getInt("self");
+                            //meetRecommend.loved_count = recommender.getInt("loved_count");
+                            //meetRecommend.loved = recommender.getInt("loved");
+                            //meetRecommend.praised = recommender.getInt("praised");
+                            //meetRecommend.praised_count = recommender.getInt("praised_count");
+                            //meetRecommend.picture_chain = recommender.getString("picture_chain");
+
+                            //meetRecommend.requirement_set = recommender.getInt("requirement_set");
+                            meetList.add(meetRecommend);
+                        }
+
+                        int requirement_set = recommend_response.getInt("requirement_set");
+                        Slog.d(TAG, "========requirement_set: "+requirement_set);
 
                     }catch (JSONException e){
                         e.printStackTrace();
