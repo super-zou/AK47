@@ -1,6 +1,7 @@
 package com.tongmenhui.launchak47;
 
 import android.app.ProgressDialog;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -39,6 +40,7 @@ public class Login extends AppCompatActivity {
     private String account;
     private String password;
     private String token;
+
     private static final String  domain = "http://www.tongmenhui.com";
     private static final String token_url = domain + "?q=rest_services/user/token";
     private static final String check_url = domain + "?q=account_manager/check_login_user";
@@ -50,8 +52,10 @@ public class Login extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+
         accountEdit = (EditText)findViewById(R.id.account);
         passwordEdit = (EditText)findViewById(R.id.password);
+        login_auto();
         loginBtn = (Button)findViewById(R.id.login_button);
 
         loginBtn.setOnClickListener(new View.OnClickListener(){
@@ -60,6 +64,7 @@ public class Login extends AppCompatActivity {
                int type = 0;
                 account = accountEdit.getText().toString();
                 password = passwordEdit.getText().toString();
+
                 Slog.d(TAG, "account: "+account+" password: "+password);
                 RequestBody requestBody = new FormBody.Builder()
                         .add("type", "0")
@@ -68,12 +73,20 @@ public class Login extends AppCompatActivity {
                         .build();
                 showProgress();
                 goto_check(check_url, requestBody);
-
             }
         });
 
 
 
+    }
+
+    private boolean login_auto(){
+        SharedPreferences preferences = getSharedPreferences("account_info", MODE_PRIVATE);
+        if(preferences != null){
+            accountEdit.setText(preferences.getString("account", ""));
+            passwordEdit.setText(preferences.getString("password", ""));
+        }
+        return true;
     }
 
     private void goto_check(String address, RequestBody requestBody){
@@ -95,6 +108,12 @@ public class Login extends AppCompatActivity {
                         Slog.d(TAG, "user_name: "+check_response.getString("user_name"));
 
                         if(check_login_user != 0){
+                            SharedPreferences.Editor editor = getSharedPreferences("account_info", MODE_PRIVATE).edit();
+                            editor.putString("account", account);
+                            editor.putString("password", password);
+                            editor.putInt("type", 0);
+                            editor.apply();
+
                             goto_login(user_name);
                         }
 
@@ -181,6 +200,8 @@ public class Login extends AppCompatActivity {
                         String sessionId = login_response.getString("sessid");
                         String session_name = login_response.getString("session_name");
                         JSONObject user = login_response.getJSONObject("user");
+                        Slog.d(TAG, "sessionId: "+sessionId+"===session name: "+session_name);
+
 
                     }catch (JSONException e){
                         e.printStackTrace();
