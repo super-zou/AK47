@@ -1,5 +1,7 @@
 package com.tongmenhui.launchak47.util;
 
+import java.io.IOException;
+
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -30,6 +32,32 @@ public class HttpUtil {
         }
 
         client.newCall(request).enqueue(callback);
+    }
+
+    public static void getOkHttpRequestSync(String address, String session){
+        OkHttpClient client = new OkHttpClient();
+        Request request = null;
+
+        if(session != null){
+            request = new Request.Builder().addHeader("cookie", session).url(address).build();
+        }
+        try {
+            client.newCall(request).execute();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    public static void getOkHttpRequestAsync(String address, String session, okhttp3.Callback callback){
+        OkHttpClient client = new OkHttpClient();
+        Request request = null;
+
+        if(session != null){
+            request = new Request.Builder().addHeader("cookie", session).url(address).build();
+        }
+
+        client.newCall(request).enqueue(callback);
+
     }
 
 

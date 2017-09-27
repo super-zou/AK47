@@ -1,5 +1,6 @@
 package com.tongmenhui.launchak47.main;
 
+import android.content.SharedPreferences;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTabHost;
 import android.support.v7.app.AppCompatActivity;
@@ -11,17 +12,23 @@ import android.widget.TabHost;
 import android.widget.TextView;
 
 import com.tongmenhui.launchak47.R;
+import com.tongmenhui.launchak47.util.Slog;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG = "MainActivity";
     private List<TabItem> mTableItemList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        SharedPreferences preferences = getSharedPreferences("session", MODE_PRIVATE);
+        Slog.d(TAG, "=========================session id: "+preferences.getString("sessionId",""));
+        Slog.d(TAG, "=========================session: "+preferences.getString("session_name",""));
+        Slog.d(TAG, "=========================uid: "+preferences.getInt("uid", -1));
         initTabData();
         initTabHost();
     }

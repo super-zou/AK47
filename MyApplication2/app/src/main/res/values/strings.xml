@@ -5,7 +5,7 @@
     <string name="login_phone">手机号登录</string>
     <string name="register">注册</string>
     <string name="title_activity_login">Login</string>
-    <string name="app_name">Main</string>
+    <string name="app_name">同门汇</string>
 
     <string name="main_home_text">首页</string>
     <string name="main_meet_text">遇见</string>

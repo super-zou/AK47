@@ -1,6 +1,7 @@
 package com.tongmenhui.launchak47;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -13,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.tongmenhui.launchak47.main.MainActivity;
 import com.tongmenhui.launchak47.util.HttpUtil;
 
 import java.io.IOException;
@@ -201,6 +203,15 @@ public class Login extends AppCompatActivity {
                         String session_name = login_response.getString("session_name");
                         JSONObject user = login_response.getJSONObject("user");
                         Slog.d(TAG, "sessionId: "+sessionId+"===session name: "+session_name);
+
+                        SharedPreferences.Editor editor = getSharedPreferences("session", MODE_PRIVATE).edit();
+                        editor.putString("sessionId", sessionId);
+                        editor.putString("session_name", session_name);
+                        editor.putInt("uid", user.getInt("uid"));
+                        editor.apply();
+
+                        Intent intent = new Intent(Login.this, MainActivity.class);
+                        startActivity(intent);
 
 
                     }catch (JSONException e){

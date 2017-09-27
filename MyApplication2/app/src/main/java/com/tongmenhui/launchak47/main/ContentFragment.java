@@ -1,6 +1,7 @@
 package com.tongmenhui.launchak47.main;
 
 //import android.app.Fragment;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -34,6 +35,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static android.content.ContentValues.TAG;
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by super-zou on 17-9-11.
@@ -124,11 +126,35 @@ public class ContentFragment extends Fragment {
     }
 
     public void get_meet_member_info(){
-        /*
-        RequestBody requestBody = new FormBody.Builder()
-                .build();
 
-        HttpUtil.sendOkHttpRequest(token, get_recommend_url, requestBody, new Callback(){
+        RequestBody requestBody = new FormBody.Builder().build();
+        SharedPreferences preferences =  getActivity().getSharedPreferences("session", MODE_PRIVATE);
+        String session = preferences.getString("session_name", "");
+
+        Slog.d(TAG, "=====in ContentFragment====session: "+session);
+
+        HttpUtil.getOkHttpRequestAsync(get_recommend_url, "", new Callback(){
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String responseText = response.body().string();
+                Slog.d(TAG, "response : "+responseText);
+                if(!TextUtils.isEmpty(responseText)){
+                    try {
+                        JSONObject login_response= new JSONObject(responseText);
+
+                    }catch (JSONException e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e){
+
+            }
+        });
+
+        HttpUtil.sendOkHttpRequest(null, get_recommend_url, requestBody, new Callback(){
             int check_login_user = 0;
             String user_name;
 
@@ -148,16 +174,10 @@ public class ContentFragment extends Fragment {
 
             @Override
             public void onFailure(Call call, IOException e){
-                runOnUiThread(new Runnable(){
-                    @Override
-                    public void run(){
-                        closeProgressDialog();
-                        Toast.makeText(Login.this, "登录失败", Toast.LENGTH_SHORT).show();
-                    }
-                });
+
             }
         });
-        */
+
     }
 
 }
