@@ -45,7 +45,7 @@ public class HttpUtil {
         Request request = null;
 
         if(session != null){
-            request = new Request.Builder().addHeader("cookie", session).url(address).build();
+            request = new Request.Builder().url(address).build();
         }
         try {
             client.newCall(request).execute();

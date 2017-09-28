@@ -48,8 +48,8 @@ public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHo
     @Override
     public void onBindViewHolder(ViewHolder holder, int position){
         MeetRecommend meet = mMeetList.get(position);
-        Log.d("zouhaichao", "meet get name============="+meet.getRealnameName());
-        holder.realname.setText(meet.getRealnameName());
+        Log.d("zouhaichao", "meet get name============="+meet.getRealname());
+        holder.realname.setText(meet.getRealname());
         //Bitmap bitmap = HttpUtil.getHttpBitmap(meet.picture_uri);
        // holder.headUri.setImageBitmap(bitmap);
     }

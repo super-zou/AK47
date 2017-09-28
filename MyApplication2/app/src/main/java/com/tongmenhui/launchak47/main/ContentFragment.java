@@ -48,6 +48,7 @@ public class ContentFragment extends Fragment {
     private int mType = 0;
     private String mTitle;
     private List<MeetRecommend> meetList = new ArrayList<>();
+    MeetRecommend meetRecommend;
 
     private static final String  domain = "http://www.tongmenhui.com";
     private static final String get_recommend_url = domain + "?q=meet/recommend";
@@ -76,8 +77,8 @@ public class ContentFragment extends Fragment {
     }
 
     public void meet_member_init(){
-        get_meet_member_info();
-        /*
+       // get_meet_member_info();
+
         MeetRecommend meet1 = new MeetRecommend("lilei");
         meetList.add(meet1);
         MeetRecommend meet2 = new MeetRecommend("hanmeimei");
@@ -126,7 +127,7 @@ public class ContentFragment extends Fragment {
         meetList.add(meet52);
         MeetRecommend meet60 = new MeetRecommend("alice");
         meetList.add(meet60);
-        */
+
     }
 
     public void get_meet_member_info(){
@@ -135,7 +136,7 @@ public class ContentFragment extends Fragment {
         SharedPreferences preferences =  getActivity().getSharedPreferences("session", MODE_PRIVATE);
         String session = preferences.getString("session_name", "");
 
-        Slog.d(TAG, "=====in ContentFragment====session: "+session);
+        //Slog.d(TAG, "=====in ContentFragment====session: "+session);
 
         HttpUtil.getOkHttpRequestAsync(get_recommend_url, session, new Callback(){
             @Override
@@ -152,9 +153,11 @@ public class ContentFragment extends Fragment {
                             JSONObject recommender = recommendation.getJSONObject(i);
                             String realname = recommender.getString("realname");
 
-                            Slog.d(TAG, "==============realname: "+realname);
-                            MeetRecommend meetRecommend = new MeetRecommend();
-                            meetRecommend.realname = recommender.getString("realname");
+                           // Slog.d(TAG, "==============realname: "+realname);
+                            meetRecommend = new MeetRecommend(recommender.getString("realname"));
+                            //meetRecommend.realname = recommender.getString("realname");
+                            //meetRecommend.setRealname(recommender.getString("realname"));
+                            /*
                             meetRecommend.uid = recommender.getInt("uid");
                             meetRecommend.picture_uri = recommender.getString("picture_uri");
                             meetRecommend.birth_day = recommender.getInt("birth_day");
@@ -181,6 +184,7 @@ public class ContentFragment extends Fragment {
                             //meetRecommend.picture_chain = recommender.getString("picture_chain");
 
                             //meetRecommend.requirement_set = recommender.getInt("requirement_set");
+                            */
                             meetList.add(meetRecommend);
                         }
 

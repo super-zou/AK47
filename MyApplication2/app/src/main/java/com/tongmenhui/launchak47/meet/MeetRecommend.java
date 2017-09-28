@@ -39,15 +39,18 @@ public class MeetRecommend {
 
 
 
-    public MeetRecommend(){
-
+    public MeetRecommend(String realname){
+        this.realname = realname;
     }
 
     public void setSelfCondition(){
 
     }
+    public void setRealname(String realname){
+        this.realname = realname;
+    }
 
-    public String getRealnameName(){
+    public String getRealname(){
         return realname;
     }
 }
