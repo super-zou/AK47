@@ -1,6 +1,7 @@
 package com.tongmenhui.launchak47.meet;
 
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,7 +12,10 @@ import android.widget.TextView;
 
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.util.HttpUtil;
+import com.tongmenhui.launchak47.util.Slog;
 
+import java.io.InputStream;
+import java.net.URL;
 import java.util.List;
 
 /**
@@ -19,6 +23,8 @@ import java.util.List;
  */
 
 public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHolder>{
+    private static final String TAG = "MeetListAdapter";
+    private static final String  domain = "http://www.tongmenhui.com";
     private List<MeetRecommend> mMeetList;
     static class ViewHolder extends RecyclerView.ViewHolder{
         TextView realname;
@@ -48,10 +54,29 @@ public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHo
     @Override
     public void onBindViewHolder(ViewHolder holder, int position){
         MeetRecommend meet = mMeetList.get(position);
-        Log.d("zouhaichao", "meet get name============="+meet.getRealname());
+        Slog.d(TAG, "get name============="+meet.getRealname());
         holder.realname.setText(meet.getRealname());
-        //Bitmap bitmap = HttpUtil.getHttpBitmap(meet.picture_uri);
-       // holder.headUri.setImageBitmap(bitmap);
+
+        String picture_url = domain+"/"+meet.getPicture_uri();
+        Slog.d(TAG, "picture url==========="+picture_url);
+        //Drawable drawable = LoadImageFromWebOperations(picture_url);
+        Bitmap bitmap = HttpUtil.getHttpBitmap(picture_url);
+
+        holder.headUri.setImageBitmap(bitmap);
+       // holder.headUri.setImageDrawable(drawable);
+    }
+
+    private Drawable LoadImageFromWebOperations(String url)
+    {
+        try
+        {
+            InputStream is = (InputStream) new URL(url).getContent();
+            Drawable d = Drawable.createFromStream(is, "src name");
+            return d;
+        }catch (Exception e) {
+            System.out.println("Exc="+e);
+            return null;
+        }
     }
 
     @Override

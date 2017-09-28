@@ -74,13 +74,13 @@ public class HttpUtil {
             //获得连接
             HttpURLConnection conn=(HttpURLConnection)myFileURL.openConnection();
             //设置超时时间为6000毫秒，conn.setConnectionTiem(0);表示没有时间限制
-            conn.setConnectTimeout(6000);
+            conn.setConnectTimeout(0);
             //连接设置获得数据流
             conn.setDoInput(true);
             //不使用缓存
             conn.setUseCaches(false);
             //这句可有可无，没有影响
-            //conn.connect();
+            conn.connect();
             //得到数据流
             InputStream is = conn.getInputStream();
             //解析得到图片

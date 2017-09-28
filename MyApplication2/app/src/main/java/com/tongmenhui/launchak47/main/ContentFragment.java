@@ -49,6 +49,8 @@ public class ContentFragment extends Fragment {
     private String mTitle;
     private List<MeetRecommend> meetList = new ArrayList<>();
     MeetRecommend meetRecommend;
+    private String realname;
+    private int uid;
 
     private static final String  domain = "http://www.tongmenhui.com";
     private static final String get_recommend_url = domain + "?q=meet/recommend";
@@ -77,8 +79,8 @@ public class ContentFragment extends Fragment {
     }
 
     public void meet_member_init(){
-       // get_meet_member_info();
-
+        get_meet_member_info();
+        /*
         MeetRecommend meet1 = new MeetRecommend("lilei");
         meetList.add(meet1);
         MeetRecommend meet2 = new MeetRecommend("hanmeimei");
@@ -127,10 +129,12 @@ public class ContentFragment extends Fragment {
         meetList.add(meet52);
         MeetRecommend meet60 = new MeetRecommend("alice");
         meetList.add(meet60);
+        */
 
     }
 
     public void get_meet_member_info(){
+
 
         RequestBody requestBody = new FormBody.Builder().build();
         SharedPreferences preferences =  getActivity().getSharedPreferences("session", MODE_PRIVATE);
@@ -149,17 +153,21 @@ public class ContentFragment extends Fragment {
                         JSONArray recommendation = recommend_response.getJSONArray("recommendation");
                         int length = recommendation.length();
 
-                        for (int i=0; i< length; i++){
+                         for (int i=0; i< length; i++){
                             JSONObject recommender = recommendation.getJSONObject(i);
-                            String realname = recommender.getString("realname");
+                            realname = recommender.getString("realname");
+                             uid = recommender.getInt("uid");
 
                            // Slog.d(TAG, "==============realname: "+realname);
-                            meetRecommend = new MeetRecommend(recommender.getString("realname"));
+                            meetRecommend = new MeetRecommend(realname);
                             //meetRecommend.realname = recommender.getString("realname");
                             //meetRecommend.setRealname(recommender.getString("realname"));
-                            /*
-                            meetRecommend.uid = recommender.getInt("uid");
-                            meetRecommend.picture_uri = recommender.getString("picture_uri");
+
+                            meetRecommend.setUid(uid);
+                             meetRecommend.setPicture_uri(recommender.getString("picture_uri"));
+
+                            //meetRecommend.picture_uri = recommender.getString("picture_uri");
+                             /*
                             meetRecommend.birth_day = recommender.getInt("birth_day");
                             meetRecommend.height = recommender.getInt("height");
                             meetRecommend.university = recommender.getString("university");
@@ -184,9 +192,11 @@ public class ContentFragment extends Fragment {
                             //meetRecommend.picture_chain = recommender.getString("picture_chain");
 
                             //meetRecommend.requirement_set = recommender.getInt("requirement_set");
-                            */
+                             */
+
                             meetList.add(meetRecommend);
                         }
+
 
                         int requirement_set = recommend_response.getInt("requirement_set");
                         Slog.d(TAG, "========requirement_set: "+requirement_set);

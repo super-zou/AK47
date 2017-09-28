@@ -49,6 +49,19 @@ public class MeetRecommend {
     public void setRealname(String realname){
         this.realname = realname;
     }
+    public void setUid(int uid){
+        this.uid = uid;
+    }
+    public void setPicture_uri(String picture_uri){
+        this.picture_uri = picture_uri;
+    }
+
+    public int getUid(){
+        return uid;
+    }
+    public String getPicture_uri(){
+        return picture_uri;
+    }
 
     public String getRealname(){
         return realname;
