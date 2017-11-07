@@ -26,6 +26,7 @@ public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHo
     private static final String TAG = "MeetListAdapter";
     private static final String  domain = "http://www.tongmenhui.com";
     private List<MeetRecommend> mMeetList;
+    private String picture_url;
     static class ViewHolder extends RecyclerView.ViewHolder{
         TextView realname;
         ImageView headUri;
@@ -52,17 +53,24 @@ public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position){
+    public void onBindViewHolder(final ViewHolder holder, int position){
+
         MeetRecommend meet = mMeetList.get(position);
         Slog.d(TAG, "get name============="+meet.getRealname());
         holder.realname.setText(meet.getRealname());
 
-        String picture_url = domain+"/"+meet.getPicture_uri();
+        picture_url = domain+"/"+meet.getPicture_uri();
         Slog.d(TAG, "picture url==========="+picture_url);
         //Drawable drawable = LoadImageFromWebOperations(picture_url);
-        Bitmap bitmap = HttpUtil.getHttpBitmap(picture_url);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Bitmap bitmap = HttpUtil.getHttpBitmap(picture_url);
 
-        holder.headUri.setImageBitmap(bitmap);
+                holder.headUri.setImageBitmap(bitmap);
+            }
+        }).start();
+
        // holder.headUri.setImageDrawable(drawable);
     }
 

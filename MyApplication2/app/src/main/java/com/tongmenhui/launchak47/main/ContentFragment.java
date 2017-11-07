@@ -48,9 +48,12 @@ public class ContentFragment extends Fragment {
     private int mType = 0;
     private String mTitle;
     private List<MeetRecommend> meetList = new ArrayList<>();
-    MeetRecommend meetRecommend;
-    private String realname;
+    private MeetRecommend meetRecommend;
+   // private String realname;
     private int uid;
+    private static String responseText;
+    JSONObject recommend_response;
+    JSONArray recommendation;
 
     private static final String  domain = "http://www.tongmenhui.com";
     private static final String get_recommend_url = domain + "?q=meet/recommend";
@@ -80,7 +83,15 @@ public class ContentFragment extends Fragment {
 
     public void meet_member_init(){
         get_meet_member_info();
-        /*
+
+
+
+
+
+    }
+
+    public void test_data(){
+        Slog.d(TAG, "================test_data");
         MeetRecommend meet1 = new MeetRecommend("lilei");
         meetList.add(meet1);
         MeetRecommend meet2 = new MeetRecommend("hanmeimei");
@@ -129,7 +140,6 @@ public class ContentFragment extends Fragment {
         meetList.add(meet52);
         MeetRecommend meet60 = new MeetRecommend("alice");
         meetList.add(meet60);
-        */
 
     }
 
@@ -145,66 +155,22 @@ public class ContentFragment extends Fragment {
         HttpUtil.getOkHttpRequestAsync(get_recommend_url, session, new Callback(){
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                String responseText = response.body().string();
+                responseText = response.body().string();
                 //Slog.d(TAG, "response : "+responseText);
+                /*
                 if(!TextUtils.isEmpty(responseText)){
                     try {
-                        JSONObject recommend_response= new JSONObject(responseText);
-                        JSONArray recommendation = recommend_response.getJSONArray("recommendation");
-                        int length = recommendation.length();
-
-                         for (int i=0; i< length; i++){
-                            JSONObject recommender = recommendation.getJSONObject(i);
-                            realname = recommender.getString("realname");
-                             uid = recommender.getInt("uid");
-
-                           // Slog.d(TAG, "==============realname: "+realname);
-                            meetRecommend = new MeetRecommend(realname);
-                            //meetRecommend.realname = recommender.getString("realname");
-                            //meetRecommend.setRealname(recommender.getString("realname"));
-
-                            meetRecommend.setUid(uid);
-                             meetRecommend.setPicture_uri(recommender.getString("picture_uri"));
-
-                            //meetRecommend.picture_uri = recommender.getString("picture_uri");
-                             /*
-                            meetRecommend.birth_day = recommender.getInt("birth_day");
-                            meetRecommend.height = recommender.getInt("height");
-                            meetRecommend.university = recommender.getString("university");
-                            meetRecommend.degree = recommender.getString("degree");
-                            meetRecommend.job_title = recommender.getString("job_title");
-                            meetRecommend.lives = recommender.getString("lives");
-                            meetRecommend.situation = recommender.getInt("situation");
-
-                            //requirement
-                            meetRecommend.age_lower = recommender.getInt("age_lower");
-                            meetRecommend.age_upper = recommender.getInt("age_upper");
-                            meetRecommend.requirement_height = recommender.getInt("requirement_height");
-                            meetRecommend.requirement_degree = recommender.getInt("requirement_degree");
-                            meetRecommend.requirement_lives = recommender.getString("requirement_lives");
-                            meetRecommend.requirement_sex = recommender.getInt("requirement_sex");
-                            meetRecommend.illustration = recommender.getString("illustration");
-                            //meetRecommend.self = recommender.getInt("self");
-                            //meetRecommend.loved_count = recommender.getInt("loved_count");
-                            //meetRecommend.loved = recommender.getInt("loved");
-                            //meetRecommend.praised = recommender.getInt("praised");
-                            //meetRecommend.praised_count = recommender.getInt("praised_count");
-                            //meetRecommend.picture_chain = recommender.getString("picture_chain");
-
-                            //meetRecommend.requirement_set = recommender.getInt("requirement_set");
-                             */
-
-                            meetList.add(meetRecommend);
-                        }
-
-
+                        recommend_response= new JSONObject(responseText);
+                        recommendation = recommend_response.getJSONArray("recommendation");
                         int requirement_set = recommend_response.getInt("requirement_set");
                         Slog.d(TAG, "========requirement_set: "+requirement_set);
+                        //set_meet_member_info(recommendation);
+
 
                     }catch (JSONException e){
                         e.printStackTrace();
                     }
-                }
+                }*/
             }
 
             @Override
@@ -236,7 +202,76 @@ public class ContentFragment extends Fragment {
 
             }
         });
+       // Slog.d(TAG, "=============response : "+responseText);
+        if(!TextUtils.isEmpty(responseText)){
+            try {
+                recommend_response= new JSONObject(responseText);
+                recommendation = recommend_response.getJSONArray("recommendation");
+                int requirement_set = recommend_response.getInt("requirement_set");
+                Slog.d(TAG, "========requirement_set: "+requirement_set);
+                set_meet_member_info(recommendation);
 
+
+            }catch (JSONException e){
+                e.printStackTrace();
+            }
+        }
+
+        //set_meet_member_info(recommendation);
+        //test_data();
+
+    }
+
+    public void set_meet_member_info(JSONArray recommendation){
+        int length = recommendation.length();
+        Slog.d(TAG, "==========set_meet_member_info==========recommendation length: "+length);
+        try{
+            for (int i=0; i< length; i++){
+                JSONObject recommender = recommendation.getJSONObject(i);
+                String realname = recommender.getString("realname");
+                //  uid = recommender.getInt("uid");
+
+               // Slog.d(TAG, "==============realname: "+realname);
+                meetRecommend = new MeetRecommend(realname);
+                //meetRecommend.realname = recommender.getString("realname");
+                //meetRecommend.setRealname(recommender.getString("realname"));
+
+                meetRecommend.setUid(uid);
+                meetRecommend.setPicture_uri(recommender.getString("picture_uri"));
+
+                //meetRecommend.picture_uri = recommender.getString("picture_uri");
+                             /*
+                            meetRecommend.birth_day = recommender.getInt("birth_day");
+                            meetRecommend.height = recommender.getInt("height");
+                            meetRecommend.university = recommender.getString("university");
+                            meetRecommend.degree = recommender.getString("degree");
+                            meetRecommend.job_title = recommender.getString("job_title");
+                            meetRecommend.lives = recommender.getString("lives");
+                            meetRecommend.situation = recommender.getInt("situation");
+
+                            //requirement
+                            meetRecommend.age_lower = recommender.getInt("age_lower");
+                            meetRecommend.age_upper = recommender.getInt("age_upper");
+                            meetRecommend.requirement_height = recommender.getInt("requirement_height");
+                            meetRecommend.requirement_degree = recommender.getInt("requirement_degree");
+                            meetRecommend.requirement_lives = recommender.getString("requirement_lives");
+                            meetRecommend.requirement_sex = recommender.getInt("requirement_sex");
+                            meetRecommend.illustration = recommender.getString("illustration");
+                            //meetRecommend.self = recommender.getInt("self");
+                            //meetRecommend.loved_count = recommender.getInt("loved_count");
+                            //meetRecommend.loved = recommender.getInt("loved");
+                            //meetRecommend.praised = recommender.getInt("praised");
+                            //meetRecommend.praised_count = recommender.getInt("praised_count");
+                            //meetRecommend.picture_chain = recommender.getString("picture_chain");
+
+                            //meetRecommend.requirement_set = recommender.getInt("requirement_set");
+                             */
+
+                meetList.add(meetRecommend);
+            }
+        }catch (JSONException e){
+
+        }
     }
 
 }
