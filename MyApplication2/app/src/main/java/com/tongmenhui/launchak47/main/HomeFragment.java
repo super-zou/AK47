@@ -11,12 +11,13 @@ import android.view.ViewGroup;
 import com.tongmenhui.launchak47.R;
 
 import java.util.Arrays;
+import android.support.v4.app.Fragment;
 
 /**
  * Created by super-zou on 17-9-11.
  */
 
-public class HomeFragment extends android.support.v4.app.Fragment{
+public class HomeFragment extends Fragment{
     private View viewContent;
     private TabLayout tab_essence;
     private ViewPager vp_essence;
@@ -26,7 +27,7 @@ public class HomeFragment extends android.support.v4.app.Fragment{
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         viewContent = inflater.inflate(R.layout.fragment_home,container,false);
         initConentView(viewContent);
-        initData();
+        //initData();
 
         return viewContent;
     }
@@ -35,7 +36,7 @@ public class HomeFragment extends android.support.v4.app.Fragment{
         this.tab_essence = (TabLayout) viewContent.findViewById(R.id.tab_essence);
         this.vp_essence = (ViewPager) viewContent.findViewById(R.id.vp_essence);
     }
-
+    /*
     public void initData() {
         //获取标签数据
         String[] titles = getResources().getStringArray(R.array.home_video_tab);
@@ -47,4 +48,5 @@ public class HomeFragment extends android.support.v4.app.Fragment{
         //将TabLayout和ViewPager关联起来
         this.tab_essence.setupWithViewPager(this.vp_essence);
     }
+    */
 }

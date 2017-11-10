@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.support.v4.app.Fragment;
 
 import com.tongmenhui.launchak47.R;
 
@@ -12,7 +13,7 @@ import com.tongmenhui.launchak47.R;
  * Created by super-zou on 17-9-11.
  */
 
-public class ArchiveFragment extends android.support.v4.app.Fragment{
+public class ArchiveFragment extends Fragment{
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

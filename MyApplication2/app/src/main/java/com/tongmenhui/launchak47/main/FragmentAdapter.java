@@ -1,5 +1,6 @@
 package com.tongmenhui.launchak47.main;
 
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -13,22 +14,22 @@ import java.util.List;
 
 public class FragmentAdapter extends FragmentStatePagerAdapter{
     public static final String TAB_TAG = "@dream@";
-    private List<String> mTitles;
+    private List<TabLayout.Tab> mTitles;
     private View view;
 
-    public FragmentAdapter(FragmentManager fm, List<String> titles) {
+    public FragmentAdapter(FragmentManager fm, List<TabLayout.Tab> titles) {
         super(fm);
        // this.view = view;
         mTitles = titles;
     }
 
     @Override
-    public android.support.v4.app.Fragment getItem(int position) {
+    public Fragment getItem(int position) {
         //初始化Fragment数据
         ContentFragment fragment = new ContentFragment();
-        String[] title = mTitles.get(position).split(TAB_TAG);
-        fragment.setType(Integer.parseInt(title[1]));
-        fragment.setTitle(title[0]);
+        //String[] title = mTitles.get(position).getTitleString();
+       // fragment.setType(Integer.parseInt(title[1]));
+        fragment.setTitle(mTitles.get(position).toString());
         return fragment;
     }
 
@@ -39,6 +40,6 @@ public class FragmentAdapter extends FragmentStatePagerAdapter{
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return mTitles.get(position).split(TAB_TAG)[0];
+        return mTitles.get(position).getText();
     }
 }
