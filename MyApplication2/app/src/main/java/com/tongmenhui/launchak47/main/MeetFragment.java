@@ -10,7 +10,9 @@ import android.view.ViewGroup;
 import android.support.v4.app.Fragment;
 
 import com.tongmenhui.launchak47.R;
+import com.tongmenhui.launchak47.meet.MeetFragmentAdapter;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -19,35 +21,49 @@ import java.util.Arrays;
 
 public class MeetFragment extends Fragment{
     private View viewContent;
-    private TabLayout meet_tab_layout;
-    private ViewPager meet_view_pager;
+    private TabLayout mTabLayout;
+    private ViewPager mViewPager;
+    private MeetFragmentAdapter mFragmentAdapter;
+    private TabLayout.Tab recomend_tab;
+    private TabLayout.Tab dynamic_event_tab;
+    private TabLayout.Tab discovery_tab;
+
+    private ArrayList<String> mMeetTitleList = new ArrayList<String>(){
+        {
+           add("recomend");
+            add("dynamic_event");
+            add("discovery");
+        }
+    };
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         viewContent = inflater.inflate(R.layout.fragment_meet,container,false);
         initConentView(viewContent);
-        //initData();
+
 
         return viewContent;
     }
 
     public void initConentView(View viewContent) {
-        this.meet_tab_layout = (TabLayout) viewContent.findViewById(R.id.meet_tab_layout);
-        this.meet_view_pager = (ViewPager) viewContent.findViewById(R.id.meet_view_pager);
-    }
-
-    /*
-    public void initData() {
+        mTabLayout = (TabLayout) viewContent.findViewById(R.id.meet_tab_layout);
+        mViewPager = (ViewPager) viewContent.findViewById(R.id.meet_view_pager);
         //获取标签数据
-        String[] titles = getResources().getStringArray(R.array.meet_tab_items);
+        recomend_tab = mTabLayout.newTab().setText(mMeetTitleList.get(0));
+        dynamic_event_tab = mTabLayout.newTab().setText(mMeetTitleList.get(1));
+        discovery_tab = mTabLayout.newTab().setText(mMeetTitleList.get(2));
+        //添加tab
+        mTabLayout.addTab(recomend_tab);
+        mTabLayout.addTab(dynamic_event_tab);
+        mTabLayout.addTab(discovery_tab);
 
         //创建一个viewpager的adapter
-        FragmentAdapter adapter = new FragmentAdapter(getFragmentManager(), Arrays.asList(titles));
-        this.meet_view_pager.setAdapter(adapter);
+        mFragmentAdapter = new MeetFragmentAdapter(getFragmentManager(), mMeetTitleList);
+        mViewPager.setAdapter(mFragmentAdapter);
 
         //将TabLayout和ViewPager关联起来
-        this.meet_tab_layout.setupWithViewPager(this.meet_view_pager);
+        mTabLayout.setupWithViewPager(mViewPager);
     }
-    */
+
 }

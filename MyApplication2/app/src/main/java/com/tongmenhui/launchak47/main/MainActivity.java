@@ -29,6 +29,13 @@ public class MainActivity extends AppCompatActivity {
     private TabLayout.Tab home_tab;
     private TabLayout.Tab meet_tab;
     private TabLayout.Tab archive_tab;
+    private ArrayList<String> titleList = new ArrayList<String>(){
+        {
+            add("home");
+            add("meet");
+            add("archive");
+        }
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,16 +50,17 @@ public class MainActivity extends AppCompatActivity {
     //初始化Tab
     private void initTab() {
         mTabLayout = (TabLayout)findViewById(R.id.tabLayout);
-        home_tab = mTabLayout.getTabAt(0);
-        meet_tab = mTabLayout.getTabAt(1);
-        archive_tab = mTabLayout.getTabAt(2);
+        //mTabLayout.setTabMode(TabLayout.MODE_FIXED);
+        home_tab = mTabLayout.newTab().setText(titleList.get(0));
+        meet_tab = mTabLayout.newTab().setText(titleList.get(1));
+        archive_tab = mTabLayout.newTab().setText(titleList.get(2));
         //添加tab
-        mTableItemList.add(home_tab);
-        mTableItemList.add(meet_tab);
-        mTableItemList.add(archive_tab);
+        mTabLayout.addTab(home_tab, false);
+        mTabLayout.addTab(meet_tab, true);
+        mTabLayout.addTab(archive_tab);
 
         mViewPager = (ViewPager)findViewById(R.id.viewPager);
-        mFragmentAdapter = new FragmentAdapter(getSupportFragmentManager(), mTableItemList);
+        mFragmentAdapter = new FragmentAdapter(getSupportFragmentManager(), titleList);
         mViewPager.setAdapter(mFragmentAdapter);
 
         mTabLayout.setupWithViewPager(mViewPager);

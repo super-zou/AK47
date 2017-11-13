@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.view.View;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,10 +15,10 @@ import java.util.List;
 
 public class FragmentAdapter extends FragmentStatePagerAdapter{
     public static final String TAB_TAG = "@dream@";
-    private List<TabLayout.Tab> mTitles;
+    private ArrayList<String> mTitles;
     private View view;
 
-    public FragmentAdapter(FragmentManager fm, List<TabLayout.Tab> titles) {
+    public FragmentAdapter(FragmentManager fm, ArrayList<String> titles) {
         super(fm);
        // this.view = view;
         mTitles = titles;
@@ -26,10 +27,27 @@ public class FragmentAdapter extends FragmentStatePagerAdapter{
     @Override
     public Fragment getItem(int position) {
         //初始化Fragment数据
-        ContentFragment fragment = new ContentFragment();
-        //String[] title = mTitles.get(position).getTitleString();
-       // fragment.setType(Integer.parseInt(title[1]));
-        fragment.setTitle(mTitles.get(position).toString());
+        Fragment fragment;
+        switch (position){
+            case 0:
+                fragment = new HomeFragment();
+                break;
+            case 1:
+               // fragment = new ContentFragment();
+                //String[] title = mTitles.get(position).getTitleString();
+                // fragment.setType(Integer.parseInt(title[1]));
+                //fragment.setTitle(mTitles.get(position));
+                fragment = new MeetFragment();
+                break;
+            case 2:
+                fragment = new ArchiveFragment();
+                break;
+
+            default:
+                fragment = new HomeFragment();
+                break;
+
+        }
         return fragment;
     }
 
@@ -40,6 +58,6 @@ public class FragmentAdapter extends FragmentStatePagerAdapter{
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return mTitles.get(position).getText();
+        return mTitles.get(position);
     }
 }

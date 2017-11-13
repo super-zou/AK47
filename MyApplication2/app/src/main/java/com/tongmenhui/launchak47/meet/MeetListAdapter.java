@@ -62,6 +62,7 @@ public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHo
         picture_url = domain+"/"+meet.getPicture_uri();
         Slog.d(TAG, "picture url==========="+picture_url);
         //Drawable drawable = LoadImageFromWebOperations(picture_url);
+        /*
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -70,7 +71,7 @@ public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHo
                 holder.headUri.setImageBitmap(bitmap);
             }
         }).start();
-
+        */
        // holder.headUri.setImageDrawable(drawable);
     }
 
