@@ -11,7 +11,7 @@ public class MeetRecommend {
     //self condition
     public int uid = -1;
     public String realname;
-    public String picture_uri;
+    public String mPictureUri;
     public int birth_day;
     public int height;
     public String university;
@@ -52,15 +52,15 @@ public class MeetRecommend {
     public void setUid(int uid){
         this.uid = uid;
     }
-    public void setPicture_uri(String picture_uri){
-        this.picture_uri = picture_uri;
+    public void setPictureUri(String mPictureUri){
+        this.mPictureUri = mPictureUri;
     }
 
     public int getUid(){
         return uid;
     }
-    public String getPicture_uri(){
-        return picture_uri;
+    public String getPictureUri(){
+        return mPictureUri;
     }
 
     public String getRealname(){

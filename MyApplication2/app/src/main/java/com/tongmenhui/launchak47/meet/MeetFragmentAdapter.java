@@ -29,30 +29,7 @@ public class MeetFragmentAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        //初始化Fragment数据
         Fragment fragment = new ContentFragment();
-        /*
-        switch (position){
-            case 0:
-                fragment = new HomeFragment();
-                break;
-            case 1:
-                // fragment = new ContentFragment();
-                //String[] title = mTitles.get(position).getTitleString();
-                // fragment.setType(Integer.parseInt(title[1]));
-                //fragment.setTitle(mTitles.get(position));
-                fragment = new MeetFragment();
-                break;
-            case 2:
-                fragment = new ArchiveFragment();
-                break;
-
-            default:
-                fragment = new HomeFragment();
-                break;
-
-        }
-        */
         return fragment;
     }
 

@@ -1,7 +1,9 @@
 package com.tongmenhui.launchak47.meet;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tongmenhui.launchak47.R;
+import com.tongmenhui.launchak47.util.DownloadImage;
 import com.tongmenhui.launchak47.util.HttpUtil;
 import com.tongmenhui.launchak47.util.Slog;
 
@@ -59,7 +62,7 @@ public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHo
         Slog.d(TAG, "get name============="+meet.getRealname());
         holder.realname.setText(meet.getRealname());
 
-        picture_url = domain+"/"+meet.getPicture_uri();
+        picture_url = domain+"/"+meet.getPictureUri();
         Slog.d(TAG, "picture url==========="+picture_url);
         //Drawable drawable = LoadImageFromWebOperations(picture_url);
         /*
@@ -72,7 +75,8 @@ public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHo
             }
         }).start();
         */
-       // holder.headUri.setImageDrawable(drawable);
+        DownloadImage downloadImage = new DownloadImage(holder);
+       holder.headUri.setImageDrawable(drawable);
     }
 
     private Drawable LoadImageFromWebOperations(String url)
@@ -92,5 +96,33 @@ public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHo
     public int getItemCount(){
 
         return mMeetList.size();
+    }
+
+    private class DownloadImage extends AsyncTask<String, Object, Bitmap> {
+        private RecyclerView.ViewHolder mViewHolder;
+
+        public DownloadImage(RecyclerView.ViewHolder mViewHolder) {
+            this.mViewHolder = mViewHolder;
+        }
+
+        @Override
+        protected Bitmap doInBackground(String... params) {
+            String url = params[0];
+            Bitmap bitmap = null;
+            try {
+                //加载一个网络图片
+                InputStream is = new URL(url).openStream();
+                bitmap = BitmapFactory.decodeStream(is);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return bitmap;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap result) {
+            mViewHolder.headUri.setImageBitmap(result);
+            //imageView.setImageBitmap(result);
+        }
     }
 }

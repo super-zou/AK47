@@ -83,64 +83,6 @@ public class ContentFragment extends Fragment {
 
     public void meet_member_init(){
         get_meet_member_info();
-
-
-
-
-
-    }
-
-    public void test_data(){
-        Slog.d(TAG, "================test_data");
-        MeetRecommend meet1 = new MeetRecommend("lilei");
-        meetList.add(meet1);
-        MeetRecommend meet2 = new MeetRecommend("hanmeimei");
-        meetList.add(meet2);
-        MeetRecommend meet3 = new MeetRecommend("lucy");
-        meetList.add(meet3);
-        MeetRecommend meet4 = new MeetRecommend("tom");
-        meetList.add(meet4);
-        MeetRecommend meet5 = new MeetRecommend("jerry");
-        meetList.add(meet5);
-        MeetRecommend meet6 = new MeetRecommend("alice");
-        meetList.add(meet6);
-        MeetRecommend meet7 = new MeetRecommend("lilei");
-        meetList.add(meet7);
-        MeetRecommend meet8 = new MeetRecommend("hanmeimei");
-        meetList.add(meet8);
-        MeetRecommend meet9 = new MeetRecommend("lucy");
-        meetList.add(meet9);
-        MeetRecommend meet10 = new MeetRecommend("tom");
-        meetList.add(meet10);
-        MeetRecommend meet11 = new MeetRecommend("jerry");
-        meetList.add(meet11);
-        MeetRecommend meet12 = new MeetRecommend("alice");
-        meetList.add(meet12);
-        MeetRecommend meet13 = new MeetRecommend("lilei");
-        meetList.add(meet13);
-        MeetRecommend meet21 = new MeetRecommend("hanmeimei");
-        meetList.add(meet21);
-        MeetRecommend meet31 = new MeetRecommend("lucy");
-        meetList.add(meet31);
-        MeetRecommend meet41 = new MeetRecommend("tom");
-        meetList.add(meet41);
-        MeetRecommend meet51 = new MeetRecommend("jerry");
-        meetList.add(meet51);
-        MeetRecommend meet61 = new MeetRecommend("alice");
-        meetList.add(meet61);
-        MeetRecommend meet19 = new MeetRecommend("lilei");
-        meetList.add(meet19);
-        MeetRecommend meet26 = new MeetRecommend("hanmeimei");
-        meetList.add(meet26);
-        MeetRecommend meet39 = new MeetRecommend("lucy");
-        meetList.add(meet39);
-        MeetRecommend meet40 = new MeetRecommend("tom");
-        meetList.add(meet40);
-        MeetRecommend meet52 = new MeetRecommend("jerry");
-        meetList.add(meet52);
-        MeetRecommend meet60 = new MeetRecommend("alice");
-        meetList.add(meet60);
-
     }
 
     public void get_meet_member_info(){
@@ -157,20 +99,6 @@ public class ContentFragment extends Fragment {
             public void onResponse(Call call, Response response) throws IOException {
                 responseText = response.body().string();
                 //Slog.d(TAG, "response : "+responseText);
-                /*
-                if(!TextUtils.isEmpty(responseText)){
-                    try {
-                        recommend_response= new JSONObject(responseText);
-                        recommendation = recommend_response.getJSONArray("recommendation");
-                        int requirement_set = recommend_response.getInt("requirement_set");
-                        Slog.d(TAG, "========requirement_set: "+requirement_set);
-                        //set_meet_member_info(recommendation);
-
-
-                    }catch (JSONException e){
-                        e.printStackTrace();
-                    }
-                }*/
             }
 
             @Override
@@ -237,7 +165,7 @@ public class ContentFragment extends Fragment {
                 //meetRecommend.setRealname(recommender.getString("realname"));
 
                 meetRecommend.setUid(uid);
-                meetRecommend.setPicture_uri(recommender.getString("picture_uri"));
+                meetRecommend.setPictureUri(recommender.getString("picture_uri"));
 
                 //meetRecommend.picture_uri = recommender.getString("picture_uri");
                              /*
