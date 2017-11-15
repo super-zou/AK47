@@ -5,7 +5,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,8 +12,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tongmenhui.launchak47.R;
-import com.tongmenhui.launchak47.util.DownloadImage;
-import com.tongmenhui.launchak47.util.HttpUtil;
 import com.tongmenhui.launchak47.util.Slog;
 
 import java.io.InputStream;
@@ -32,6 +29,7 @@ public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHo
     private String picture_url;
     static class ViewHolder extends RecyclerView.ViewHolder{
         TextView realname;
+        TextView selfcondition;
         ImageView headUri;
 
         public ViewHolder(View view){
@@ -39,6 +37,8 @@ public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHo
             super(view);
             realname = (TextView) view.findViewById(R.id.name);
             headUri = (ImageView) view.findViewById(R.id.recommend_head_uri);
+            selfcondition = (TextView) view.findViewById(R.id.self_condition);
+
         }
     }
 
@@ -64,32 +64,11 @@ public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHo
 
         picture_url = domain+"/"+meet.getPictureUri();
         Slog.d(TAG, "picture url==========="+picture_url);
-        //Drawable drawable = LoadImageFromWebOperations(picture_url);
-        /*
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Bitmap bitmap = HttpUtil.getHttpBitmap(picture_url);
+        DownloadTask downloadTask = new DownloadTask(holder, picture_url);
+        downloadTask.execute();
 
-                holder.headUri.setImageBitmap(bitmap);
-            }
-        }).start();
-        */
-        DownloadImage downloadImage = new DownloadImage(holder);
-       holder.headUri.setImageDrawable(drawable);
-    }
+        holder.selfcondition.setText(meet.getSelfCondition());
 
-    private Drawable LoadImageFromWebOperations(String url)
-    {
-        try
-        {
-            InputStream is = (InputStream) new URL(url).getContent();
-            Drawable d = Drawable.createFromStream(is, "src name");
-            return d;
-        }catch (Exception e) {
-            System.out.println("Exc="+e);
-            return null;
-        }
     }
 
     @Override
@@ -98,20 +77,23 @@ public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHo
         return mMeetList.size();
     }
 
-    private class DownloadImage extends AsyncTask<String, Object, Bitmap> {
-        private RecyclerView.ViewHolder mViewHolder;
+    private class DownloadTask extends AsyncTask<String, Object, Bitmap> {
+        private ViewHolder mViewHolder;
+        private String picture_url;
 
-        public DownloadImage(RecyclerView.ViewHolder mViewHolder) {
+        public DownloadTask(ViewHolder mViewHolder, String picture_url) {
             this.mViewHolder = mViewHolder;
+            this.picture_url = picture_url;
         }
 
         @Override
         protected Bitmap doInBackground(String... params) {
-            String url = params[0];
+
+            //String url = params[0];
             Bitmap bitmap = null;
             try {
                 //加载一个网络图片
-                InputStream is = new URL(url).openStream();
+                InputStream is = new URL(picture_url).openStream();
                 bitmap = BitmapFactory.decodeStream(is);
             } catch (Exception e) {
                 e.printStackTrace();

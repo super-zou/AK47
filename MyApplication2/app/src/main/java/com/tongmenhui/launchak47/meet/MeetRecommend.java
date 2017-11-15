@@ -19,6 +19,7 @@ public class MeetRecommend {
     public String job_title;
     public String lives;
     public int situation;
+    private String self_condition;
 
     //requirement
     public int age_lower;
@@ -43,8 +44,17 @@ public class MeetRecommend {
         this.realname = realname;
     }
 
-    public void setSelfCondition(){
+    public void setSelfCondition(int situation){
+        self_condition = birth_day+"/"+height+"/"+degree;
+        if(situation ==0){//for student
+            self_condition += "/"+university+"/"+lives;
+        }else{//for worker
+            self_condition += "/"+job_title;
+        }
 
+    }
+    public String getSelfCondition(){
+        return self_condition;
     }
     public void setRealname(String realname){
         this.realname = realname;
