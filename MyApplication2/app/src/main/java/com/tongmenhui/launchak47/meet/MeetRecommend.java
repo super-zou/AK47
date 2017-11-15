@@ -11,7 +11,7 @@ public class MeetRecommend {
     //self condition
     public int uid = -1;
     public String realname;
-    public String mPictureUri;
+    public String pictureUri;
     public int birth_day;
     public int height;
     public String university;
@@ -36,14 +36,95 @@ public class MeetRecommend {
     public int praised_count;
     public String picture_chain;
 
-    //public int requirement_set = 0;
+    public int requirement_set = 0;
 
 
-
+    /*
     public MeetRecommend(String realname){
         this.realname = realname;
     }
+    */
 
+    public int getUid(){
+        return uid;
+    }
+    public void setUid(int uid){
+        this.uid = uid;
+    }
+
+    public int getCid(){
+        return cid;
+    }
+    public void setCid(int cid){
+        this.cid = cid;
+    }
+
+    public int getHeight(){
+        return height;
+    }
+    public void setHeight(int height){
+        this.height = height;
+    }
+    public void setUniversity(String university){
+        this.university = university;
+    }
+    public String getUniversity(){
+        return university;
+    }
+
+    public void setDegree(String degree){
+        this.degree = degree;
+    }
+    public String getDegree(){
+        return degree;
+    }
+
+    public void setJob_title(String job_title){
+        this.job_title = job_title;
+    }
+    public String getJob_title(){
+        return job_title;
+    }
+
+    public void setLives(String lives){
+        this.lives = lives;
+    }
+    public String getLives(){
+        return lives;
+    }
+
+    public void setSituation(int situation){
+        this.situation = situation;
+    }
+    public int getSituation(){
+        return situation;
+    }
+
+    public void setBirth_day(int birth_day){
+        this.birth_day = birth_day;
+    }
+    public int getBirth_day(){
+        return birth_day;
+    }
+
+    public String getRealname(){
+        return realname;
+    }
+    public void setRealname(String realname){
+        this.realname = realname;
+    }
+
+    public void setPictureUri(String pictureUri){
+        this.pictureUri = pictureUri;
+    }
+    public String getPictureUri(){
+        return pictureUri;
+    }
+
+
+    public String getSelfCondition(){
+        return self_condition;
+    }
     public void setSelfCondition(int situation){
         self_condition = birth_day+"/"+height+"/"+degree;
         if(situation ==0){//for student
@@ -53,27 +134,105 @@ public class MeetRecommend {
         }
 
     }
-    public String getSelfCondition(){
-        return self_condition;
+
+    public void setAge_lower(int age_lower){
+        this.age_lower = age_lower;
     }
-    public void setRealname(String realname){
-        this.realname = realname;
-    }
-    public void setUid(int uid){
-        this.uid = uid;
-    }
-    public void setPictureUri(String mPictureUri){
-        this.mPictureUri = mPictureUri;
+    public int getAge_lower(){
+        return age_lower;
     }
 
-    public int getUid(){
-        return uid;
+    public void setAge_upper(int age_upper){
+        this.age_upper = age_upper;
     }
-    public String getPictureUri(){
-        return mPictureUri;
+    public int getAge_upper(){
+        return age_upper;
     }
 
-    public String getRealname(){
-        return realname;
+    public void setRequirement_height(int requirement_height){
+        this.requirement_height = requirement_height;
     }
+    public int getRequirement_height(){
+        return requirement_height;
+    }
+
+    public void setRequirement_degree(int requirement_degree){
+        this.requirement_degree = requirement_degree;
+    }
+    public int getRequirement_degree(){
+        return requirement_degree;
+    }
+
+    public void setRequirement_lives(String requirement_lives){
+        this.requirement_lives = requirement_lives;
+    }
+    public String getRequirement_lives(){
+        return requirement_lives;
+    }
+
+    public void setRequirement_sex(int requirement_sex){
+        this.requirement_sex = requirement_sex;
+    }
+    public int getRequirement_sex(){
+        return requirement_sex;
+    }
+
+    public void setIllustration(String illustration){
+        this.illustration = illustration;
+    }
+    public String getIllustration(){
+        return illustration;
+    }
+
+    public void setSelf(int self){
+        this.self = self;
+    }
+    public int getSelf(){
+        return self;
+    }
+
+    public void setLoved(int loved){
+        this.loved = loved;
+    }
+    public int getLoved(){
+        return loved;
+    }
+
+    public void setLoved_count(int loved_count){
+        this.loved_count = loved_count;
+    }
+    public int getLoved_count(){
+        return loved_count;
+    }
+
+    public void setPraised(int praised){
+        this.praised = praised;
+    }
+    public int getPraised(){
+        return praised;
+    }
+
+    public void setPraised_count(int praised_count){
+        this.praised_count = praised_count;
+    }
+    public int getPraised_count(){
+        return praised_count;
+    }
+
+    public void setPicture_chain(String picture_chain){
+        this.picture_chain = picture_chain;
+    }
+    public String getPicture_chain(){
+        return picture_chain;
+    }
+
+    public void setRequirement_set(int requirement_set){
+        this.requirement_set = requirement_set;
+    }
+    public int getRequirement_set(){
+        return requirement_set;
+    }
+
+
+
 }

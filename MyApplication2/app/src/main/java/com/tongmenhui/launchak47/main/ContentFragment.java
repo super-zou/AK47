@@ -156,44 +156,36 @@ public class ContentFragment extends Fragment {
         try{
             for (int i=0; i< length; i++){
                 JSONObject recommender = recommendation.getJSONObject(i);
-                String realname = recommender.getString("realname");
-                //  uid = recommender.getInt("uid");
+                meetRecommend = new MeetRecommend();
 
-               // Slog.d(TAG, "==============realname: "+realname);
-                meetRecommend = new MeetRecommend(realname);
-                //meetRecommend.realname = recommender.getString("realname");
-                //meetRecommend.setRealname(recommender.getString("realname"));
-
-                meetRecommend.setUid(uid);
+                meetRecommend.setRealname(recommender.getString("realname"));
+                meetRecommend.setUid(recommender.getInt("uid"));
                 meetRecommend.setPictureUri(recommender.getString("picture_uri"));
+                meetRecommend.setBirth_day(recommender.getInt("birth_day"));
+                meetRecommend.setHeight(recommender.getInt("height"));
+                meetRecommend.setUniversity(recommender.getString("university"));
+                meetRecommend.setDegree(recommender.getString("degree"));
+                meetRecommend.setJob_title(recommender.getString("job_title"));
+                meetRecommend.setLives(recommender.getString("lives"));
+                meetRecommend.setSituation(recommender.getInt("situation"));
 
-                //meetRecommend.picture_uri = recommender.getString("picture_uri");
-                             /*
-                            meetRecommend.birth_day = recommender.getInt("birth_day");
-                            meetRecommend.height = recommender.getInt("height");
-                            meetRecommend.university = recommender.getString("university");
-                            meetRecommend.degree = recommender.getString("degree");
-                            meetRecommend.job_title = recommender.getString("job_title");
-                            meetRecommend.lives = recommender.getString("lives");
-                            meetRecommend.situation = recommender.getInt("situation");
+                //requirement
+                meetRecommend.setAge_lower(recommender.getInt("age_lower"));
+                meetRecommend.setAge_upper(recommender.getInt("age_upper"));
+                meetRecommend.setRequirement_height(recommender.getInt("requirement_height"));
+                meetRecommend.setRequirement_degree(recommender.getInt("requirement_degree"));
+                meetRecommend.setRequirement_lives(recommender.getString("requirement_lives"));
+                meetRecommend.setRequirement_sex(recommender.getInt("requirement_sex"));
+                meetRecommend.setIllustration(recommender.getString("illustration"));
 
-                            //requirement
-                            meetRecommend.age_lower = recommender.getInt("age_lower");
-                            meetRecommend.age_upper = recommender.getInt("age_upper");
-                            meetRecommend.requirement_height = recommender.getInt("requirement_height");
-                            meetRecommend.requirement_degree = recommender.getInt("requirement_degree");
-                            meetRecommend.requirement_lives = recommender.getString("requirement_lives");
-                            meetRecommend.requirement_sex = recommender.getInt("requirement_sex");
-                            meetRecommend.illustration = recommender.getString("illustration");
-                            //meetRecommend.self = recommender.getInt("self");
-                            //meetRecommend.loved_count = recommender.getInt("loved_count");
-                            //meetRecommend.loved = recommender.getInt("loved");
-                            //meetRecommend.praised = recommender.getInt("praised");
-                            //meetRecommend.praised_count = recommender.getInt("praised_count");
-                            //meetRecommend.picture_chain = recommender.getString("picture_chain");
+                meetRecommend.setSelf(recommender.getInt("self"));
+                meetRecommend.setLoved_count(recommender.getInt("loved_count"));
+                meetRecommend.setLoved(recommender.getInt("loved"));
+                meetRecommend.setPraised(recommender.getInt("praised"));
+                meetRecommend.setPraised_count(recommender.getInt("praised_count"));
+                meetRecommend.setPicture_chain(recommender.getString("picture_chain"));
+                meetRecommend.setRequirement_set(recommender.getInt("requirement_set"));
 
-                            //meetRecommend.requirement_set = recommender.getInt("requirement_set");
-                             */
 
                 meetList.add(meetRecommend);
             }
