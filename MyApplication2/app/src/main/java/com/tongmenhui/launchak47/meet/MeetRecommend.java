@@ -1,10 +1,16 @@
 package com.tongmenhui.launchak47.meet;
 
+import com.tongmenhui.launchak47.util.Slog;
+
+import java.util.Calendar;
+
 /**
  * Created by haichao.zou on 2017/9/15.
  */
 
 public class MeetRecommend {
+
+    private static final String TAG = "MeetRecommend";
 
     public int cid = -1;
 
@@ -12,7 +18,7 @@ public class MeetRecommend {
     public int uid = -1;
     public String realname;
     public String pictureUri;
-    public int birth_day;
+    public int birth_year;
     public int height;
     public String university;
     public String degree;
@@ -76,7 +82,25 @@ public class MeetRecommend {
         this.degree = degree;
     }
     public String getDegree(){
-        return degree;
+        String Degree;
+        switch (Integer.parseInt(degree)){
+            case 0:
+                Degree = "大专";
+                break;
+            case 1:
+                Degree = "本科";
+                break;
+            case 2:
+                Degree = "硕士";
+                break;
+            case 3:
+                Degree = "博士";
+                break;
+            default:
+                Degree = "硕士";
+                break;
+        }
+        return Degree;
     }
 
     public void setJob_title(String job_title){
@@ -100,11 +124,11 @@ public class MeetRecommend {
         return situation;
     }
 
-    public void setBirth_day(int birth_day){
-        this.birth_day = birth_day;
+    public void setBirth_year(int birth_year){
+        this.birth_year = birth_year;
     }
-    public int getBirth_day(){
-        return birth_day;
+    public int getBirth_year(){
+        return birth_year;
     }
 
     public String getRealname(){
@@ -121,18 +145,20 @@ public class MeetRecommend {
         return pictureUri;
     }
 
-
-    public String getSelfCondition(){
-        return self_condition;
+    public int getAge(){
+        Calendar calendar= Calendar.getInstance();
+        return calendar.get(calendar.YEAR) - birth_year;
     }
-    public void setSelfCondition(int situation){
-        self_condition = birth_day+"/"+height+"/"+degree;
+
+    public String getSelfCondition(int situation){
+
+        self_condition = getAge()+"岁/"+height+"CM/"+getDegree();
         if(situation ==0){//for student
             self_condition += "/"+university+"/"+lives;
         }else{//for worker
             self_condition += "/"+job_title;
         }
-
+        return self_condition;
     }
 
     public void setAge_lower(int age_lower){

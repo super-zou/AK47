@@ -161,7 +161,7 @@ public class ContentFragment extends Fragment {
                 meetRecommend.setRealname(recommender.getString("realname"));
                 meetRecommend.setUid(recommender.getInt("uid"));
                 meetRecommend.setPictureUri(recommender.getString("picture_uri"));
-                meetRecommend.setBirth_day(recommender.getInt("birth_day"));
+                meetRecommend.setBirth_year(recommender.getInt("birth_year"));
                 meetRecommend.setHeight(recommender.getInt("height"));
                 meetRecommend.setUniversity(recommender.getString("university"));
                 meetRecommend.setDegree(recommender.getString("degree"));
@@ -178,6 +178,7 @@ public class ContentFragment extends Fragment {
                 meetRecommend.setRequirement_sex(recommender.getInt("requirement_sex"));
                 meetRecommend.setIllustration(recommender.getString("illustration"));
 
+                /*
                 meetRecommend.setSelf(recommender.getInt("self"));
                 meetRecommend.setLoved_count(recommender.getInt("loved_count"));
                 meetRecommend.setLoved(recommender.getInt("loved"));
@@ -185,7 +186,7 @@ public class ContentFragment extends Fragment {
                 meetRecommend.setPraised_count(recommender.getInt("praised_count"));
                 meetRecommend.setPicture_chain(recommender.getString("picture_chain"));
                 meetRecommend.setRequirement_set(recommender.getInt("requirement_set"));
-
+                */
 
                 meetList.add(meetRecommend);
             }

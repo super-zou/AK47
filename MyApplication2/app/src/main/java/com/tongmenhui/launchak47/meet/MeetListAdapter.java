@@ -67,7 +67,7 @@ public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHo
         DownloadTask downloadTask = new DownloadTask(holder, picture_url);
         downloadTask.execute();
 
-        holder.selfcondition.setText(meet.getSelfCondition());
+        holder.selfcondition.setText(meet.getSelfCondition(meet.getSituation()));
 
     }
 
