@@ -30,6 +30,7 @@ public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHo
     static class ViewHolder extends RecyclerView.ViewHolder{
         TextView realname;
         TextView selfcondition;
+        TextView requirement;
         ImageView headUri;
 
         public ViewHolder(View view){
@@ -38,6 +39,7 @@ public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHo
             realname = (TextView) view.findViewById(R.id.name);
             headUri = (ImageView) view.findViewById(R.id.recommend_head_uri);
             selfcondition = (TextView) view.findViewById(R.id.self_condition);
+            requirement = (TextView) view.findViewById(R.id.partner_requirement);
 
         }
     }
@@ -68,6 +70,7 @@ public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHo
         downloadTask.execute();
 
         holder.selfcondition.setText(meet.getSelfCondition(meet.getSituation()));
+        holder.requirement.setText(meet.getRequirement());
 
     }
 

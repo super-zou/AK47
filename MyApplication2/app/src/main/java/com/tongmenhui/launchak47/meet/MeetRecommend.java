@@ -44,6 +44,9 @@ public class MeetRecommend {
 
     public int requirement_set = 0;
 
+    public static final String sex_male = "男生";
+    public static final String sex_female = "女生";
+
 
     /*
     public MeetRecommend(String realname){
@@ -150,16 +153,7 @@ public class MeetRecommend {
         return calendar.get(calendar.YEAR) - birth_year;
     }
 
-    public String getSelfCondition(int situation){
 
-        self_condition = getAge()+"岁/"+height+"CM/"+getDegree();
-        if(situation ==0){//for student
-            self_condition += "/"+university+"/"+lives;
-        }else{//for worker
-            self_condition += "/"+job_title;
-        }
-        return self_condition;
-    }
 
     public void setAge_lower(int age_lower){
         this.age_lower = age_lower;
@@ -199,8 +193,12 @@ public class MeetRecommend {
     public void setRequirement_sex(int requirement_sex){
         this.requirement_sex = requirement_sex;
     }
-    public int getRequirement_sex(){
-        return requirement_sex;
+    public String getRequirement_sex(){
+        if(requirement_set == 0){
+            return sex_male;
+        }else{
+            return sex_female;
+        }
     }
 
     public void setIllustration(String illustration){
@@ -208,13 +206,6 @@ public class MeetRecommend {
     }
     public String getIllustration(){
         return illustration;
-    }
-
-    public void setSelf(int self){
-        this.self = self;
-    }
-    public int getSelf(){
-        return self;
     }
 
     public void setLoved(int loved){
@@ -257,6 +248,26 @@ public class MeetRecommend {
     }
     public int getRequirement_set(){
         return requirement_set;
+    }
+
+    public String getSelfCondition(int situation){
+
+        self_condition = getAge()+"岁/"+height+"CM/"+getDegree();
+        if(situation ==0){//for student
+            self_condition += "/"+university;
+        }else{//for worker
+            self_condition += "/"+job_title;
+        }
+        self_condition += "/"+ lives;
+        return self_condition;
+    }
+
+    public String getRequirement(){
+        String requirement = "期待遇见："+ getAge_lower()+"~"+getAge_upper()+"岁,"
+                + getRequirement_height()+"CM以上,"+getRequirement_degree()+"以上,"
+                + "住在 "+getRequirement_lives()+"的"+getRequirement_sex();
+
+        return requirement;
     }
 
 
