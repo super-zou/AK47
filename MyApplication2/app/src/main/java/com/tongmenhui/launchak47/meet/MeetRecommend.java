@@ -86,6 +86,10 @@ public class MeetRecommend {
         this.degree = degree;
     }
     public String getDegree(){
+        return degree;
+    }
+
+    public String getDegreeName(String degree){
         String Degree;
         switch (Integer.parseInt(degree)){
             case 0:
@@ -260,19 +264,18 @@ public class MeetRecommend {
 
     public String getSelfCondition(int situation){
 
-        self_condition = getAge()+"岁/"+height+"CM/"+getDegree();
+        self_condition = getAge()+"岁/"+height+"CM/"+getDegreeName(getDegree());
         if(situation ==0){//for student
             self_condition += "/"+university;
         }else{//for worker
             self_condition += "/"+job_title;
         }
-        self_condition += "/"+ lives;
         return self_condition;
     }
 
     public String getRequirement(){
         String requirement = "期待遇见："+ getAge_lower()+"~"+getAge_upper()+"岁,"
-                + getRequirement_height()+"CM以上,"+getRequirement_degree()+"以上,"
+                + getRequirement_height()+"CM以上,"+getDegreeName(String.valueOf(getRequirement_degree()))+"以上,"
                 + "住在 "+getRequirement_lives()+"的"+getRequirement_sex();
 
         return requirement;

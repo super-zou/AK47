@@ -184,7 +184,7 @@ public class ContentFragment extends Fragment {
                 meetRecommend.setLoved_count(recommender.getInt("loved_count"));
                // meetRecommend.setLoved(recommender.getInt("loved"));
                // meetRecommend.setPraised(recommender.getInt("praised"));
-               // meetRecommend.setPraised_count(recommender.getInt("praised_count"));
+                meetRecommend.setPraised_count(recommender.getInt("praised_count"));
               //  meetRecommend.setPicture_chain(recommender.getString("picture_chain"));
                // meetRecommend.setRequirement_set(recommender.getInt("requirement_set"));
 

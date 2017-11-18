@@ -2,10 +2,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal" android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@color/colorWhite"
+    android:layout_marginBottom="3dp"
+    >
     <LinearLayout
-        android:layout_width="130dp"
-        android:layout_height="130dp"
+        android:layout_width="110dp"
+        android:layout_height="110dp"
         android:paddingTop="10dp">
         <ImageView
             android:id="@+id/recommend_head_uri"
@@ -15,32 +18,55 @@
 
     <LinearLayout
         android:orientation="vertical"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="-8dp"
+        android:layout_marginRight="8dp"
         android:paddingTop="10dp">
-        <TextView
-            android:id="@+id/name"
-            android:text="name"
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/holo_blue_dark"
+                android:textStyle="normal|bold"
+                android:textSize="15sp" />
+            <TextView
+                android:id="@+id/lives"
+                android:layout_marginLeft="16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp" />
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAlignment="viewStart" />
-        <TextView
-            android:id="@+id/self_condition"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-        <TextView
-            android:id="@+id/partner_requirement"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-        <TextView
-            android:id="@+id/illustration"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_marginTop="5dp">
+            <TextView
+                android:id="@+id/self_condition"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/partner_requirement"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/illustration"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/holo_blue_dark"
+                tools:alpha="0.5" />
+        </LinearLayout>
 
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:paddingBottom="5dp"
             android:id="@+id/behavior_statistics"
             >
             <TextView
@@ -48,50 +74,59 @@
                 android:text="@string/fa_eye"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:textColor="@android:color/holo_blue_dark"
                 android:gravity="center"
-                android:layout_weight="1"/>
+                />
             <TextView
                 android:id="@+id/eye_statistics"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:textColor="@android:color/holo_blue_dark"
                 android:gravity="center" />
             <TextView
                 android:id="@+id/loved_icon"
                 android:text="@string/fa_heart"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:layout_marginLeft="18dp"
                 android:gravity="center"
-                android:layout_weight="1.31"/>
+                android:textColor="@android:color/holo_red_dark" />
             <TextView
                 android:id="@+id/loved_statistics"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:gravity="center" />
+                android:gravity="center"
+                android:textColor="@android:color/holo_red_dark" />
             <TextView
                 android:id="@+id/thumbs_up_icon"
                 android:text="@string/fa_thumbs_up"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:textColor="@android:color/holo_blue_dark"
+                android:layout_marginLeft="18dp"
                 android:gravity="center"
-                android:layout_weight="1"/>
+                />
             <TextView
                 android:id="@+id/thumbs_up_statistics"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:textColor="@android:color/holo_blue_dark"
                 android:gravity="center" />
             <TextView
                 android:id="@+id/photos_icon"
                 android:text="@string/fa_photo"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:textColor="@android:color/holo_blue_dark"
+                android:layout_marginLeft="18dp"
                 android:gravity="center"
-                android:layout_weight="1"/>
+                />
             <TextView
                 android:id="@+id/photos_statistics"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:textColor="@android:color/holo_blue_dark"
                 android:gravity="center" />
-
         </LinearLayout>
     </LinearLayout>
 

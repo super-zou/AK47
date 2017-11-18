@@ -35,9 +35,11 @@ public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHo
 
     static class ViewHolder extends RecyclerView.ViewHolder{
         TextView realname;
+        TextView lives;
         TextView selfcondition;
         TextView requirement;
         ImageView headUri;
+        TextView illustration;
         TextView eyeView;
         TextView lovedView;
         TextView thumbsView;
@@ -47,10 +49,11 @@ public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHo
 
             super(view);
             realname = (TextView) view.findViewById(R.id.name);
+            lives = (TextView) view.findViewById(R.id.lives);
             headUri = (ImageView) view.findViewById(R.id.recommend_head_uri);
             selfcondition = (TextView) view.findViewById(R.id.self_condition);
             requirement = (TextView) view.findViewById(R.id.partner_requirement);
-
+            illustration = (TextView) view.findViewById(R.id.illustration);
             eyeView = (TextView)view.findViewById(R.id.eye_statistics);
             lovedView = (TextView)view.findViewById(R.id.loved_statistics);
             thumbsView = (TextView)view.findViewById(R.id.thumbs_up_statistics);
@@ -81,6 +84,7 @@ public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHo
         MeetRecommend meet = mMeetList.get(position);
         Slog.d(TAG, "get name============="+meet.getRealname());
         holder.realname.setText(meet.getRealname());
+        holder.lives.setText(meet.getLives());
 
         picture_url = domain+"/"+meet.getPictureUri();
         Slog.d(TAG, "picture url==========="+picture_url);
@@ -92,6 +96,8 @@ public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHo
 
         holder.eyeView.setText(String.valueOf(meet.getBrowse_count()));
         holder.lovedView.setText(String.valueOf(meet.getLoved_count()));
+        holder.thumbsView.setText(String.valueOf(meet.getPraised_count()));
+        holder.illustration.setText(meet.getIllustration());
 
 
     }
