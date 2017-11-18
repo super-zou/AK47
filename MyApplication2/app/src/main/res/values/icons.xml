@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="fa_eye">&#xf06e;</string>
+    <string name="fa_heart">&#xf004;</string>
+    <string name="fa_heart_o">&#xf08a;</string>
+    <string name="fa_thumbs_up">&#xf164;</string>
+    <string name="fa_thumbs_O_up">&#xf087;</string>
+    <string name="fa_photo">&#xf03e;</string>
+</resources>

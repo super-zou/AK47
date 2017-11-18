@@ -41,6 +41,7 @@ public class MeetRecommend {
     public int praised;
     public int praised_count;
     public String picture_chain;
+    public int browse_count;
 
     public int requirement_set = 0;
 
@@ -206,6 +207,13 @@ public class MeetRecommend {
     }
     public String getIllustration(){
         return illustration;
+    }
+
+    public void setBrowse_count(int browse_count){
+        this.browse_count = browse_count;
+    }
+    public int getBrowse_count(){
+        return browse_count;
     }
 
     public void setLoved(int loved){

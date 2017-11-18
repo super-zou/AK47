@@ -76,7 +76,7 @@ public class ContentFragment extends Fragment {
         RecyclerView recyclerView = (RecyclerView)viewContent.findViewById(R.id.recyclerview);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
-        MeetListAdapter meetListAdapter = new MeetListAdapter(meetList);
+        MeetListAdapter meetListAdapter = new MeetListAdapter(getContext(),meetList);
         recyclerView.setAdapter(meetListAdapter);
         return viewContent;
     }
@@ -178,15 +178,16 @@ public class ContentFragment extends Fragment {
                 meetRecommend.setRequirement_sex(recommender.getInt("requirement_sex"));
                 meetRecommend.setIllustration(recommender.getString("illustration"));
 
-                /*
-                meetRecommend.setSelf(recommender.getInt("self"));
+
+               // meetRecommend.setSelf(recommender.getInt("self"));
+                meetRecommend.setBrowse_count(recommender.getInt("browse_count"));
                 meetRecommend.setLoved_count(recommender.getInt("loved_count"));
-                meetRecommend.setLoved(recommender.getInt("loved"));
-                meetRecommend.setPraised(recommender.getInt("praised"));
-                meetRecommend.setPraised_count(recommender.getInt("praised_count"));
-                meetRecommend.setPicture_chain(recommender.getString("picture_chain"));
-                meetRecommend.setRequirement_set(recommender.getInt("requirement_set"));
-                */
+               // meetRecommend.setLoved(recommender.getInt("loved"));
+               // meetRecommend.setPraised(recommender.getInt("praised"));
+               // meetRecommend.setPraised_count(recommender.getInt("praised_count"));
+              //  meetRecommend.setPicture_chain(recommender.getString("picture_chain"));
+               // meetRecommend.setRequirement_set(recommender.getInt("requirement_set"));
+
 
                 meetList.add(meetRecommend);
             }

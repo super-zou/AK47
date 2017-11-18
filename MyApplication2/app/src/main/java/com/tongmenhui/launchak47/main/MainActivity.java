@@ -1,6 +1,7 @@
 package com.tongmenhui.launchak47.main;
 
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.support.v4.app.Fragment;
 //import android.support.v4.app.FragmentTabHost;
 import android.support.design.widget.TabLayout;
@@ -14,6 +15,7 @@ import android.widget.TabHost;
 import android.widget.TextView;
 
 import com.tongmenhui.launchak47.R;
+import com.tongmenhui.launchak47.util.FontManager;
 import com.tongmenhui.launchak47.util.Slog;
 
 import java.util.ArrayList;
@@ -45,6 +47,10 @@ public class MainActivity extends AppCompatActivity {
         Slog.d(TAG, "=========================session: "+preferences.getString("session_name",""));
         Slog.d(TAG, "=========================uid: "+preferences.getInt("uid", -1));
         initTab();
+        //Typeface iconFont = FontManager.getTypeface(getApplicationContext(), FontManager.FONTAWESOME);
+        //FontManager.markAsIconContainer(findViewById(R.id.behavior_statistics), iconFont);
+        Typeface font = Typeface.createFromAsset(getAssets(), "fonts/fontawesome.ttf");
+
     }
 
     //初始化Tab

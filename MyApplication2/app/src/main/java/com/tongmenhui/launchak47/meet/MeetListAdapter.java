@@ -1,7 +1,9 @@
 package com.tongmenhui.launchak47.meet;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
@@ -10,8 +12,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.content.res.AssetManager;
 
 import com.tongmenhui.launchak47.R;
+import com.tongmenhui.launchak47.util.FontManager;
 import com.tongmenhui.launchak47.util.Slog;
 
 import java.io.InputStream;
@@ -27,11 +31,17 @@ public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHo
     private static final String  domain = "http://www.tongmenhui.com";
     private List<MeetRecommend> mMeetList;
     private String picture_url;
+    private static Context mContext;
+
     static class ViewHolder extends RecyclerView.ViewHolder{
         TextView realname;
         TextView selfcondition;
         TextView requirement;
         ImageView headUri;
+        TextView eyeView;
+        TextView lovedView;
+        TextView thumbsView;
+        TextView photosView;
 
         public ViewHolder(View view){
 
@@ -41,10 +51,18 @@ public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHo
             selfcondition = (TextView) view.findViewById(R.id.self_condition);
             requirement = (TextView) view.findViewById(R.id.partner_requirement);
 
+            eyeView = (TextView)view.findViewById(R.id.eye_statistics);
+            lovedView = (TextView)view.findViewById(R.id.loved_statistics);
+            thumbsView = (TextView)view.findViewById(R.id.thumbs_up_statistics);
+            photosView = (TextView)view.findViewById(R.id.photos_statistics);
+            Typeface font = Typeface.createFromAsset(mContext.getAssets(), "fonts/fontawesome.ttf");
+            FontManager.markAsIconContainer(view.findViewById(R.id.behavior_statistics), font);
+
         }
     }
 
-    public MeetListAdapter(List<MeetRecommend> meetList){
+    public MeetListAdapter(Context context, List<MeetRecommend> meetList){
+        mContext = context;
         mMeetList = meetList;
     }
 
@@ -71,6 +89,10 @@ public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHo
 
         holder.selfcondition.setText(meet.getSelfCondition(meet.getSituation()));
         holder.requirement.setText(meet.getRequirement());
+
+        holder.eyeView.setText(String.valueOf(meet.getBrowse_count()));
+        holder.lovedView.setText(String.valueOf(meet.getLoved_count()));
+
 
     }
 
