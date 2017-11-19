@@ -42,8 +42,8 @@ import static android.content.Context.MODE_PRIVATE;
  * Created by super-zou on 17-9-11.
  */
 
-public class ContentFragment extends Fragment {
-    private static final String TAG = "ContentFragment";
+public class MeetRecommendFragment extends Fragment {
+    private static final String TAG = "MeetRecommendFragment";
     private View viewContent;
     private int mType = 0;
     private String mTitle;
@@ -92,7 +92,7 @@ public class ContentFragment extends Fragment {
         SharedPreferences preferences =  getActivity().getSharedPreferences("session", MODE_PRIVATE);
         String session = preferences.getString("session_name", "");
 
-        //Slog.d(TAG, "=====in ContentFragment====session: "+session);
+        //Slog.d(TAG, "=====in MeetRecommendFragment====session: "+session);
 
         HttpUtil.getOkHttpRequestAsync(get_recommend_url, session, new Callback(){
             @Override

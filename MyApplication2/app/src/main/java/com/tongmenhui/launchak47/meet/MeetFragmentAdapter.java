@@ -6,9 +6,10 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.view.View;
 
 import com.tongmenhui.launchak47.main.ArchiveFragment;
-import com.tongmenhui.launchak47.main.ContentFragment;
+import com.tongmenhui.launchak47.main.MeetRecommendFragment;
 import com.tongmenhui.launchak47.main.HomeFragment;
 import com.tongmenhui.launchak47.main.MeetFragment;
+import com.tongmenhui.launchak47.util.Slog;
 
 import java.util.ArrayList;
 
@@ -17,7 +18,7 @@ import java.util.ArrayList;
  */
 
 public class MeetFragmentAdapter extends FragmentStatePagerAdapter {
-    public static final String TAB_TAG = "MeetFragmentAdapter";
+    public static final String TAG = "MeetFragmentAdapter";
     private ArrayList<String> mTitles;
     private View view;
 
@@ -29,7 +30,21 @@ public class MeetFragmentAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        Fragment fragment = new ContentFragment();
+        Fragment fragment;
+        switch (position){
+            case 0:
+                fragment = new MeetRecommendFragment();
+                break;
+            case 1:
+                fragment = new MeetRecommendFragment();
+                break;
+            case 2:
+                fragment = new MeetRecommendFragment();
+                break;
+            default:
+                fragment = new MeetRecommendFragment();
+                break;
+        }
         return fragment;
     }
 
@@ -40,6 +55,7 @@ public class MeetFragmentAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
+
         return mTitles.get(position);
     }
 }

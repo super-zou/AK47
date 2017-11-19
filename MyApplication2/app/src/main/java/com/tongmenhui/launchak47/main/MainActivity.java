@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         initTab();
         //Typeface iconFont = FontManager.getTypeface(getApplicationContext(), FontManager.FONTAWESOME);
         //FontManager.markAsIconContainer(findViewById(R.id.behavior_statistics), iconFont);
-        Typeface font = Typeface.createFromAsset(getAssets(), "fonts/fontawesome.ttf");
+        //Typeface font = Typeface.createFromAsset(getAssets(), "fonts/fontawesome.ttf");
 
     }
 
@@ -60,10 +60,11 @@ public class MainActivity extends AppCompatActivity {
         home_tab = mTabLayout.newTab().setText(titleList.get(0));
         meet_tab = mTabLayout.newTab().setText(titleList.get(1));
         archive_tab = mTabLayout.newTab().setText(titleList.get(2));
+
         //添加tab
-        mTabLayout.addTab(home_tab, false);
-        mTabLayout.addTab(meet_tab, true);
-        mTabLayout.addTab(archive_tab);
+        mTabLayout.addTab(home_tab, 0);
+        mTabLayout.addTab(meet_tab, 1);
+        mTabLayout.addTab(archive_tab, 2);
 
         mViewPager = (ViewPager)findViewById(R.id.viewPager);
         mFragmentAdapter = new FragmentAdapter(getSupportFragmentManager(), titleList);

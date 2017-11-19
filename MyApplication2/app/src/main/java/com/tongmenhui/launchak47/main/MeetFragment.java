@@ -30,8 +30,8 @@ public class MeetFragment extends Fragment{
 
     private ArrayList<String> mMeetTitleList = new ArrayList<String>(){
         {
-           add("recomend");
-            add("dynamic_event");
+            add("recomend");
+            add("activity");
             add("discovery");
         }
     };
@@ -54,9 +54,9 @@ public class MeetFragment extends Fragment{
         dynamic_event_tab = mTabLayout.newTab().setText(mMeetTitleList.get(1));
         discovery_tab = mTabLayout.newTab().setText(mMeetTitleList.get(2));
         //添加tab
-        mTabLayout.addTab(recomend_tab);
-        mTabLayout.addTab(dynamic_event_tab);
-        mTabLayout.addTab(discovery_tab);
+        mTabLayout.addTab(recomend_tab, 0);
+        mTabLayout.addTab(dynamic_event_tab, 1);
+        mTabLayout.addTab(discovery_tab, 2);
 
         //创建一个viewpager的adapter
         mFragmentAdapter = new MeetFragmentAdapter(getFragmentManager(), mMeetTitleList);

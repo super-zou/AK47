@@ -6,6 +6,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.view.View;
 
+import com.tongmenhui.launchak47.util.Slog;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +16,7 @@ import java.util.List;
  */
 
 public class FragmentAdapter extends FragmentStatePagerAdapter{
-    public static final String TAB_TAG = "@dream@";
+    public static final String TAG = "FragmentAdapter";
     private ArrayList<String> mTitles;
     private View view;
 
@@ -27,6 +29,7 @@ public class FragmentAdapter extends FragmentStatePagerAdapter{
     @Override
     public Fragment getItem(int position) {
         //初始化Fragment数据
+        Slog.d(TAG, "===========position: "+position);
         Fragment fragment;
         switch (position){
             case 0:
