@@ -36,7 +36,7 @@ public class MeetFragmentAdapter extends FragmentStatePagerAdapter {
                 fragment = new MeetRecommendFragment();
                 break;
             case 1:
-                fragment = new MeetRecommendFragment();
+                fragment = new MeetActivityFragment();
                 break;
             case 2:
                 fragment = new MeetRecommendFragment();

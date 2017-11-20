@@ -11,10 +11,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.tongmenhui.launchak47.Login;
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.meet.MeetRecommend;
 import com.tongmenhui.launchak47.meet.MeetListAdapter;
@@ -35,7 +32,6 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static android.content.ContentValues.TAG;
 import static android.content.Context.MODE_PRIVATE;
 
 /**
@@ -72,7 +68,7 @@ public class MeetRecommendFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         meet_member_init();
-        viewContent = inflater.inflate(R.layout.fragment_content,container,false);
+        viewContent = inflater.inflate(R.layout.fragment_meet_item,container,false);
         RecyclerView recyclerView = (RecyclerView)viewContent.findViewById(R.id.recyclerview);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);

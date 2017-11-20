@@ -1,41 +1,31 @@
 package com.tongmenhui.launchak47.meet;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.content.res.AssetManager;
 
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.util.FontManager;
 import com.tongmenhui.launchak47.util.Slog;
 
-import java.io.InputStream;
-import java.net.URL;
 import java.util.List;
 
-import okhttp3.Response;
-
 /**
- * Created by haichao.zou on 2017/9/15.
+ * Created by haichao.zou on 2017/11/20.
  */
 
-public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHolder>{
-    private static final String TAG = "MeetListAdapter";
-    private static final String  domain = "http://www.tongmenhui.com";
-    private List<MeetRecommend> mMeetList;
-    private String picture_url;
-    private static Context mContext;
+public class MeetActivityListAdapter extends RecyclerView.Adapter<MeetActivityListAdapter.ViewHolder> {
 
-    public static class ViewHolder extends RecyclerView.ViewHolder{
+    private static final String TAG = "MeetActivityListAdapter";
+    private static Context mContext;
+    private List<MeetActivity> mMeetActivityList;
+
+    static class ViewHolder extends RecyclerView.ViewHolder{
         TextView realname;
         TextView lives;
         TextView selfcondition;
@@ -66,31 +56,31 @@ public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHo
         }
     }
 
-    public MeetListAdapter(Context context, List<MeetRecommend> meetList){
+    public MeetActivityListAdapter(Context context, List<MeetActivity> meetActivityList){
         mContext = context;
-        mMeetList = meetList;
+        mMeetActivityList = meetActivityList;
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
+    public MeetActivityListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.meet_item, parent, false);
-        ViewHolder holder = new ViewHolder(view);
+                .inflate(R.layout.meet_activity_item, parent, false);
+        MeetActivityListAdapter.ViewHolder holder = new MeetActivityListAdapter.ViewHolder(view);
 
         return holder;
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position){
+    public void onBindViewHolder(final MeetActivityListAdapter.ViewHolder holder, int position){
 
-        MeetRecommend meet = mMeetList.get(position);
+        MeetRecommend meet = mMeetActivityList.get(position);
         Slog.d(TAG, "get name============="+meet.getRealname());
         holder.realname.setText(meet.getRealname());
         holder.lives.setText(meet.getLives());
 
         picture_url = domain+"/"+meet.getPictureUri();
         Slog.d(TAG, "picture url==========="+picture_url);
-        DownloadTask downloadTask = new DownloadTask(holder, picture_url);
+        MeetListAdapter.DownloadTask downloadTask = new MeetListAdapter.DownloadTask(holder, picture_url);
         downloadTask.execute();
 
         holder.selfcondition.setText(meet.getSelfCondition(meet.getSituation()));
@@ -109,23 +99,4 @@ public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHo
 
         return mMeetList.size();
     }
-
-    public void onVolleyLoad(final ImageView imageView, String url){
-        ImageRequest imgRequest = new ImageRequest(url,
-                new Response.Listener<Bitmap>() {
-                    @Override
-                    public void onResponse(Bitmap response) {
-                        imageView.setImageBitmap(response);
-                    }
-                }, 0, 0, ImageView.ScaleType.FIT_XY, Bitmap.Config.ARGB_8888, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                mImageView.setBackgroundColor(Color.parseColor("#ff0000"));
-                error.printStackTrace();
-            }
-        });
-
-        Volley.newRequestQueue(this).add(imgRequest);
-    }
-
 }

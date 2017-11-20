@@ -2,6 +2,9 @@ package com.tongmenhui.launchak47.util;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
+
+import com.tongmenhui.launchak47.meet.MeetListAdapter;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -93,6 +96,38 @@ public class HttpUtil {
 
         return bitmap;
 
+    }
+
+    private class DownloadTask extends AsyncTask<String, Object, Bitmap> {
+        private MeetListAdapter.ViewHolder mViewHolder;
+        private String picture_url;
+
+        public DownloadTask(MeetListAdapter meetListAdapter, MeetListAdapter.ViewHolder mViewHolder, String picture_url) {
+            this.mViewHolder = mViewHolder;
+            this.picture_url = picture_url;
+        }
+
+        @Override
+        protected Bitmap doInBackground(String... params) {
+
+            //String url = params[0];
+            Bitmap bitmap = null;
+            try {
+                //加载一个网络图片
+                InputStream is = new URL(picture_url).openStream();
+                bitmap = BitmapFactory.decodeStream(is);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return bitmap;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap result) {
+           // mViewHolder.headUri.setImageBitmap(result);
+            //imageView.setImageBitmap(result);
+            onDownLoadPost(mViewHolder, result);
+        }
     }
 
 
