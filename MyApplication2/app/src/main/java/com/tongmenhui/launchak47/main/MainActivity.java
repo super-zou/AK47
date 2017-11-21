@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
     private List<TabLayout.Tab> mTableItemList;
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
-    private FragmentAdapter mFragmentAdapter;
+    private MainFragmentAdapter mMainFragmentAdapter;
     private TabLayout.Tab home_tab;
     private TabLayout.Tab meet_tab;
     private TabLayout.Tab archive_tab;
@@ -67,8 +67,8 @@ public class MainActivity extends AppCompatActivity {
         mTabLayout.addTab(archive_tab, 2);
 
         mViewPager = (ViewPager)findViewById(R.id.viewPager);
-        mFragmentAdapter = new FragmentAdapter(getSupportFragmentManager(), titleList);
-        mViewPager.setAdapter(mFragmentAdapter);
+        mMainFragmentAdapter = new MainFragmentAdapter(getSupportFragmentManager(), titleList);
+        mViewPager.setAdapter(mMainFragmentAdapter);
 
         mTabLayout.setupWithViewPager(mViewPager);
     }

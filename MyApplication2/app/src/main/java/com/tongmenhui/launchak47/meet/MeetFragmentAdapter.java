@@ -5,12 +5,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.view.View;
 
-import com.tongmenhui.launchak47.main.ArchiveFragment;
-import com.tongmenhui.launchak47.main.MeetRecommendFragment;
-import com.tongmenhui.launchak47.main.HomeFragment;
-import com.tongmenhui.launchak47.main.MeetFragment;
-import com.tongmenhui.launchak47.util.Slog;
-
 import java.util.ArrayList;
 
 /**

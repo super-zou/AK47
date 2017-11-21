@@ -15,12 +15,12 @@ import java.util.List;
  * Created by super-zou on 17-9-11.
  */
 
-public class FragmentAdapter extends FragmentStatePagerAdapter{
+public class MainFragmentAdapter extends FragmentStatePagerAdapter{
     public static final String TAG = "FragmentAdapter";
     private ArrayList<String> mTitles;
     private View view;
 
-    public FragmentAdapter(FragmentManager fm, ArrayList<String> titles) {
+    public MainFragmentAdapter(FragmentManager fm, ArrayList<String> titles) {
         super(fm);
        // this.view = view;
         mTitles = titles;
@@ -29,7 +29,7 @@ public class FragmentAdapter extends FragmentStatePagerAdapter{
     @Override
     public Fragment getItem(int position) {
         //初始化Fragment数据
-        Slog.d(TAG, "===========position: "+position);
+        //Slog.d(TAG, "===========position: "+position);
         Fragment fragment;
         switch (position){
             case 0:

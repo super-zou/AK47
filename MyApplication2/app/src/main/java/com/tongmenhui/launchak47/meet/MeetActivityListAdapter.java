@@ -77,11 +77,12 @@ public class MeetActivityListAdapter extends RecyclerView.Adapter<MeetActivityLi
         Slog.d(TAG, "get name============="+meet.getRealname());
         holder.realname.setText(meet.getRealname());
         holder.lives.setText(meet.getLives());
-
+        /*
         picture_url = domain+"/"+meet.getPictureUri();
         Slog.d(TAG, "picture url==========="+picture_url);
         MeetListAdapter.DownloadTask downloadTask = new MeetListAdapter.DownloadTask(holder, picture_url);
         downloadTask.execute();
+        */
 
         holder.selfcondition.setText(meet.getSelfCondition(meet.getSituation()));
         holder.requirement.setText(meet.getRequirement());
@@ -97,6 +98,7 @@ public class MeetActivityListAdapter extends RecyclerView.Adapter<MeetActivityLi
     @Override
     public int getItemCount(){
 
-        return mMeetList.size();
+       // return mMeetList.size();
+        return 1;
     }
 }

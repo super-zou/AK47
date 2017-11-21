@@ -14,8 +14,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.content.res.AssetManager;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.util.FontManager;
+import com.tongmenhui.launchak47.util.HttpUtil;
 import com.tongmenhui.launchak47.util.Slog;
 
 import java.io.InputStream;
@@ -34,6 +37,8 @@ public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHo
     private List<MeetRecommend> mMeetList;
     private String picture_url;
     private static Context mContext;
+
+    RequestQueue queue;
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
         TextView realname;
@@ -69,6 +74,7 @@ public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHo
     public MeetListAdapter(Context context, List<MeetRecommend> meetList){
         mContext = context;
         mMeetList = meetList;
+        queue = new Volley().newRequestQueue(context);
     }
 
     @Override
@@ -90,8 +96,10 @@ public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHo
 
         picture_url = domain+"/"+meet.getPictureUri();
         Slog.d(TAG, "picture url==========="+picture_url);
-        DownloadTask downloadTask = new DownloadTask(holder, picture_url);
-        downloadTask.execute();
+        //DownloadTask downloadTask = new DownloadTask(holder, picture_url);
+        //downloadTask.execute();
+
+        HttpUtil.loadByImageLoader(queue, holder.headUri, picture_url, 110, 110);
 
         holder.selfcondition.setText(meet.getSelfCondition(meet.getSituation()));
         holder.requirement.setText(meet.getRequirement());
@@ -108,24 +116,6 @@ public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHo
     public int getItemCount(){
 
         return mMeetList.size();
-    }
-
-    public void onVolleyLoad(final ImageView imageView, String url){
-        ImageRequest imgRequest = new ImageRequest(url,
-                new Response.Listener<Bitmap>() {
-                    @Override
-                    public void onResponse(Bitmap response) {
-                        imageView.setImageBitmap(response);
-                    }
-                }, 0, 0, ImageView.ScaleType.FIT_XY, Bitmap.Config.ARGB_8888, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                mImageView.setBackgroundColor(Color.parseColor("#ff0000"));
-                error.printStackTrace();
-            }
-        });
-
-        Volley.newRequestQueue(this).add(imgRequest);
     }
 
 }
