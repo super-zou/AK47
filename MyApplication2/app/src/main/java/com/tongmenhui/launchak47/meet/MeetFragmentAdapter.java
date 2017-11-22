@@ -33,10 +33,13 @@ public class MeetFragmentAdapter extends FragmentStatePagerAdapter {
                 return new MeetRecommendFragment();
             case 1:
                 return new MeetActivityFragment();
+
             case 2:
                 return new MeetRecommendFragment();
+
             default:
                 return new MeetRecommendFragment();
+
 
         }
     }

@@ -24,7 +24,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
-    private List<TabLayout.Tab> mTableItemList;
+    //private List<TabLayout.Tab> mTableItemList;
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
     private MainFragmentAdapter mMainFragmentAdapter;
@@ -43,9 +43,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         SharedPreferences preferences = getSharedPreferences("session", MODE_PRIVATE);
-        Slog.d(TAG, "=========================session id: "+preferences.getString("sessionId",""));
-        Slog.d(TAG, "=========================session: "+preferences.getString("session_name",""));
-        Slog.d(TAG, "=========================uid: "+preferences.getInt("uid", -1));
+       // Slog.d(TAG, "=========================session id: "+preferences.getString("sessionId",""));
+       // Slog.d(TAG, "=========================session: "+preferences.getString("session_name",""));
+       // Slog.d(TAG, "=========================uid: "+preferences.getInt("uid", -1));
         initTab();
         //Typeface iconFont = FontManager.getTypeface(getApplicationContext(), FontManager.FONTAWESOME);
         //FontManager.markAsIconContainer(findViewById(R.id.behavior_statistics), iconFont);
@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
 
     //初始化Tab
     private void initTab() {
+        Slog.d(TAG, "==================initTab");
         mTabLayout = (TabLayout)findViewById(R.id.tabLayout);
         //mTabLayout.setTabMode(TabLayout.MODE_FIXED);
         home_tab = mTabLayout.newTab().setText(titleList.get(0));
@@ -69,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
         mViewPager = (ViewPager)findViewById(R.id.viewPager);
         mMainFragmentAdapter = new MainFragmentAdapter(getSupportFragmentManager(), titleList);
         mViewPager.setAdapter(mMainFragmentAdapter);
+        mViewPager.setCurrentItem(0);
 
         mTabLayout.setupWithViewPager(mViewPager);
     }

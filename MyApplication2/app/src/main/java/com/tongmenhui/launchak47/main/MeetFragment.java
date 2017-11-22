@@ -10,7 +10,9 @@ import android.view.ViewGroup;
 import android.support.v4.app.Fragment;
 
 import com.tongmenhui.launchak47.R;
+import com.tongmenhui.launchak47.meet.MeetActivityFragment;
 import com.tongmenhui.launchak47.meet.MeetFragmentAdapter;
+import com.tongmenhui.launchak47.meet.MeetRecommendFragment;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,6 +30,10 @@ public class MeetFragment extends Fragment{
     private TabLayout.Tab dynamic_event_tab;
     private TabLayout.Tab discovery_tab;
 
+    private Fragment mRecommendFragment;
+    private Fragment mActivityFragment;
+    private Fragment mDiscoveryFragment;
+
     private ArrayList<String> mMeetTitleList = new ArrayList<String>(){
         {
             add("recomend");
@@ -35,6 +41,19 @@ public class MeetFragment extends Fragment{
             add("discovery");
         }
     };
+
+    private ArrayList<Fragment> mFragmentList = new ArrayList<Fragment>();
+
+    public MeetFragment() {
+    }
+
+    public static MeetFragment newInstance(String text){
+        Bundle bundle = new Bundle();
+        bundle.putString("text",text);
+        MeetFragment meetFragment = new MeetFragment();
+        meetFragment.setArguments(bundle);
+        return  meetFragment;
+    }
 
     @Nullable
     @Override
@@ -58,9 +77,22 @@ public class MeetFragment extends Fragment{
         mTabLayout.addTab(dynamic_event_tab, 1, false);
         mTabLayout.addTab(discovery_tab, 2, false);
 
+        mTabLayout.getTabAt(0).select();
+
+        /*
+        mRecommendFragment = new MeetRecommendFragment();
+        mActivityFragment = new MeetActivityFragment();
+        mDiscoveryFragment = new MeetRecommendFragment();
+        */
+
+        mFragmentList.add(mRecommendFragment);
+        mFragmentList.add(mActivityFragment);
+        mFragmentList.add(mDiscoveryFragment);
+
         //创建一个viewpager的adapter
-        mFragmentAdapter = new MeetFragmentAdapter(getFragmentManager(), mMeetTitleList);
+        mFragmentAdapter = new MeetFragmentAdapter(getChildFragmentManager(), mMeetTitleList);
         mViewPager.setAdapter(mFragmentAdapter);
+        mViewPager.setCurrentItem(0);
 
         //将TabLayout和ViewPager关联起来
         mTabLayout.setupWithViewPager(mViewPager);
