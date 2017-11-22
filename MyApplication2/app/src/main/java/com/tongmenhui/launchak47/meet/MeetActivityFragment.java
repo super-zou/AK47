@@ -56,7 +56,7 @@ public class MeetActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         meet_member_init();
-        viewContent = inflater.inflate(R.layout.fragment_meet_item,container,false);
+        viewContent = inflater.inflate(R.layout.fragment_meet_activity_item,container,false);
         RecyclerView recyclerView = (RecyclerView)viewContent.findViewById(R.id.recyclerview);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);

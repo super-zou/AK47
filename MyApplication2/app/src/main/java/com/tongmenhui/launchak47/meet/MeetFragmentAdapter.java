@@ -5,6 +5,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.view.View;
 
+import com.tongmenhui.launchak47.util.Slog;
+
 import java.util.ArrayList;
 
 /**
@@ -24,22 +26,19 @@ public class MeetFragmentAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        Fragment fragment;
+        //Fragment fragment;
+        Slog.d(TAG, "============title: "+mTitles.get(position));
         switch (position){
             case 0:
-                fragment = new MeetRecommendFragment();
-                break;
+                return new MeetRecommendFragment();
             case 1:
-                fragment = new MeetActivityFragment();
-                break;
+                return new MeetActivityFragment();
             case 2:
-                fragment = new MeetRecommendFragment();
-                break;
+                return new MeetRecommendFragment();
             default:
-                fragment = new MeetRecommendFragment();
-                break;
+                return new MeetRecommendFragment();
+
         }
-        return fragment;
     }
 
     @Override

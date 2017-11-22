@@ -62,12 +62,14 @@ public class MeetRecommendFragment extends Fragment {
         this.mTitle = mTitle;
     }
 
+    public MeetRecommendFragment(){
+
+    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        meet_member_init();
         viewContent = inflater.inflate(R.layout.fragment_meet_item,container,false);
         RecyclerView recyclerView = (RecyclerView)viewContent.findViewById(R.id.recyclerview);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
@@ -76,13 +78,16 @@ public class MeetRecommendFragment extends Fragment {
         recyclerView.setAdapter(meetListAdapter);
         return viewContent;
     }
-
-    public void meet_member_init(){
-        get_meet_member_info();
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        initConentView();
+    }
+    public void initConentView() {
+        meet_member_init();
     }
 
-    public void get_meet_member_info(){
-
+    public void meet_member_init(){
 
         RequestBody requestBody = new FormBody.Builder().build();
         SharedPreferences preferences =  getActivity().getSharedPreferences("session", MODE_PRIVATE);
