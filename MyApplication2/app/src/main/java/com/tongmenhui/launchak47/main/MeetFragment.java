@@ -59,11 +59,15 @@ public class MeetFragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         viewContent = inflater.inflate(R.layout.fragment_meet,container,false);
-        initConentView(viewContent);
-
-
+       // initConentView(viewContent);
         return viewContent;
     }
+    @Override
+    public void onResume(){
+        super.onResume();
+        initConentView(viewContent);
+    }
+
 
     public void initConentView(View viewContent) {
         mTabLayout = (TabLayout) viewContent.findViewById(R.id.meet_tab_layout);
@@ -77,22 +81,22 @@ public class MeetFragment extends Fragment{
         mTabLayout.addTab(dynamic_event_tab, 1, false);
         mTabLayout.addTab(discovery_tab, 2, false);
 
-        mTabLayout.getTabAt(0).select();
+        //mTabLayout.getTabAt(0).select();
 
-        /*
-        mRecommendFragment = new MeetRecommendFragment();
-        mActivityFragment = new MeetActivityFragment();
-        mDiscoveryFragment = new MeetRecommendFragment();
-        */
 
-        mFragmentList.add(mRecommendFragment);
-        mFragmentList.add(mActivityFragment);
-        mFragmentList.add(mDiscoveryFragment);
+        //mRecommendFragment = new MeetRecommendFragment();
+       // mActivityFragment = new MeetActivityFragment();
+       // mDiscoveryFragment = new MeetRecommendFragment();
+
+
+       // mFragmentList.add(mRecommendFragment);
+      //  mFragmentList.add(mActivityFragment);
+      //  mFragmentList.add(mDiscoveryFragment);
 
         //创建一个viewpager的adapter
         mFragmentAdapter = new MeetFragmentAdapter(getChildFragmentManager(), mMeetTitleList);
         mViewPager.setAdapter(mFragmentAdapter);
-        mViewPager.setCurrentItem(0);
+        //mViewPager.setCurrentItem(0);
 
         //将TabLayout和ViewPager关联起来
         mTabLayout.setupWithViewPager(mViewPager);

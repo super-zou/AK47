@@ -55,23 +55,29 @@ public class MeetActivityFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        meet_member_init();
+
         viewContent = inflater.inflate(R.layout.fragment_meet_activity_item,container,false);
         RecyclerView recyclerView = (RecyclerView)viewContent.findViewById(R.id.recyclerview);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
-        MeetListAdapter meetListAdapter = new MeetListAdapter(getContext(),meetList);
-        recyclerView.setAdapter(meetListAdapter);
+       // MeetListAdapter meetListAdapter = new MeetListAdapter(getContext(),meetList);
+       // recyclerView.setAdapter(meetListAdapter);
         return viewContent;
     }
 
-    public void meet_member_init(){
-        get_meet_member_info();
+    @Override
+    public void onResume(){
+        super.onResume();
+        Slog.d(TAG, "===========onResume=========");
+        Slog.d(TAG, "===========isVisible=========: "+isVisible());
+        if(isVisible()){
+            //meet_member_init();
+        }
     }
 
-    public void get_meet_member_info(){
+       public void meet_member_init(){
 
-
+        Slog.d(TAG, "===========meet_member_init=============");
         RequestBody requestBody = new FormBody.Builder().build();
         SharedPreferences preferences =  getActivity().getSharedPreferences("session", MODE_PRIVATE);
         String session = preferences.getString("session_name", "");
@@ -120,7 +126,7 @@ public class MeetActivityFragment extends Fragment {
                 recommend_response= new JSONObject(responseText);
                 recommendation = recommend_response.getJSONArray("recommendation");
                 int requirement_set = recommend_response.getInt("requirement_set");
-                Slog.d(TAG, "========requirement_set: "+requirement_set);
+                //Slog.d(TAG, "========requirement_set: "+requirement_set);
                 set_meet_member_info(recommendation);
 
 
@@ -133,7 +139,7 @@ public class MeetActivityFragment extends Fragment {
 
     public void set_meet_member_info(JSONArray recommendation){
         int length = recommendation.length();
-        Slog.d(TAG, "==========set_meet_member_info==========recommendation length: "+length);
+       // Slog.d(TAG, "==========set_meet_member_info==========recommendation length: "+length);
         try{
             for (int i=0; i< length; i++){
                 JSONObject recommender = recommendation.getJSONObject(i);

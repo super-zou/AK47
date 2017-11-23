@@ -30,15 +30,16 @@ public class HomeFragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         viewContent = inflater.inflate(R.layout.fragment_home,container,false);
-        initConentView(viewContent);
+
+       // initConentView(viewContent);
         //initData();
 
         return viewContent;
     }
 
     public void initConentView(View viewContent) {
-        this.tab_essence = (TabLayout) viewContent.findViewById(R.id.tab_essence);
-        this.vp_essence = (ViewPager) viewContent.findViewById(R.id.vp_essence);
+       // this.tab_essence = (TabLayout) viewContent.findViewById(R.id.tab_essence);
+       // this.vp_essence = (ViewPager) viewContent.findViewById(R.id.vp_essence);
     }
     /*
     public void initData() {

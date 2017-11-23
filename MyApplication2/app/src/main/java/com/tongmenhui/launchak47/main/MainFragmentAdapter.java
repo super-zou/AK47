@@ -16,7 +16,7 @@ import java.util.List;
  */
 
 public class MainFragmentAdapter extends FragmentStatePagerAdapter{
-    public static final String TAG = "FragmentAdapter";
+    public static final String TAG = "MainFragmentAdapter";
     private ArrayList<String> mTitles;
     private View view;
 

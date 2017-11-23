@@ -63,7 +63,7 @@ public class MeetRecommendFragment extends Fragment {
     }
 
     public MeetRecommendFragment(){
-
+        Slog.d(TAG, "================MeetRecommendFragment show==============");
     }
 
     @Nullable
