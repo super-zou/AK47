@@ -1,5 +1,6 @@
 package com.tongmenhui.launchak47.main;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -8,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.app.Fragment;
+import android.widget.Toast;
 
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.meet.MeetActivityFragment;
@@ -34,6 +36,7 @@ public class MeetFragment extends Fragment{
     private Fragment mActivityFragment;
     private Fragment mDiscoveryFragment;
 
+
     private ArrayList<String> mMeetTitleList = new ArrayList<String>(){
         {
             add("recomend");
@@ -45,8 +48,10 @@ public class MeetFragment extends Fragment{
     private ArrayList<Fragment> mFragmentList = new ArrayList<Fragment>();
 
     public MeetFragment() {
+
     }
 
+/*
     public static MeetFragment newInstance(String text){
         Bundle bundle = new Bundle();
         bundle.putString("text",text);
@@ -54,7 +59,7 @@ public class MeetFragment extends Fragment{
         meetFragment.setArguments(bundle);
         return  meetFragment;
     }
-
+*/
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -67,7 +72,6 @@ public class MeetFragment extends Fragment{
         super.onResume();
         initConentView(viewContent);
     }
-
 
     public void initConentView(View viewContent) {
         mTabLayout = (TabLayout) viewContent.findViewById(R.id.meet_tab_layout);
@@ -100,6 +104,29 @@ public class MeetFragment extends Fragment{
 
         //将TabLayout和ViewPager关联起来
         mTabLayout.setupWithViewPager(mViewPager);
+
+
+        mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+
+                Toast.makeText(getContext(), "选中的" + tab.getText(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+                Toast.makeText(getContext(), "未选中的" + tab.getText(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+                Toast.makeText(getContext(), "复选的" + tab.getText(), Toast.LENGTH_SHORT).show();
+
+            }
+        });
     }
+
 
 }

@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.util.FontManager;
@@ -74,6 +75,26 @@ public class MainActivity extends AppCompatActivity {
        // mViewPager.setOffscreenPageLimit(0);
 
         mTabLayout.setupWithViewPager(mViewPager);
+        mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+
+                Toast.makeText(getApplication(), "选中的" + tab.getText(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+                Toast.makeText(getApplication(), "未选中的" + tab.getText(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+                Toast.makeText(getApplication(), "复选的" + tab.getText(), Toast.LENGTH_SHORT).show();
+
+            }
+        });
     }
 
 }
