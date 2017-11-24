@@ -23,7 +23,7 @@ public class MeetActivityListAdapter extends RecyclerView.Adapter<MeetActivityLi
 
     private static final String TAG = "MeetActivityListAdapter";
     private static Context mContext;
-    private List<MeetActivity> mMeetActivityList;
+    private List<MeetActivities> mMeetActivityList;
 
     static class ViewHolder extends RecyclerView.ViewHolder{
         TextView realname;
@@ -56,7 +56,7 @@ public class MeetActivityListAdapter extends RecyclerView.Adapter<MeetActivityLi
         }
     }
 
-    public MeetActivityListAdapter(Context context, List<MeetActivity> meetActivityList){
+    public MeetActivityListAdapter(Context context, List<MeetActivities> meetActivityList){
         mContext = context;
         mMeetActivityList = meetActivityList;
     }

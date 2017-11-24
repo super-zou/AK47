@@ -1,5 +1,6 @@
 package com.tongmenhui.launchak47.main;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.support.v4.app.Fragment;
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private TabLayout.Tab home_tab;
     private TabLayout.Tab meet_tab;
     private TabLayout.Tab archive_tab;
+    private static final int MEET = 1;
     private ArrayList<String> titleList = new ArrayList<String>(){
         {
             add("home");
@@ -64,9 +66,10 @@ public class MainActivity extends AppCompatActivity {
         archive_tab = mTabLayout.newTab().setText(titleList.get(2));
 
         //添加tab
-        mTabLayout.addTab(home_tab, 0);
+        mTabLayout.addTab(home_tab, 0, true);
         mTabLayout.addTab(meet_tab, 1);
         mTabLayout.addTab(archive_tab, 2);
+
 
         mViewPager = (ViewPager)findViewById(R.id.viewPager);
         mMainFragmentAdapter = new MainFragmentAdapter(getSupportFragmentManager(), titleList);
@@ -79,19 +82,23 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
 
-                Toast.makeText(getApplication(), "选中的" + tab.getText(), Toast.LENGTH_SHORT).show();
+                if(MEET == tab.getPosition()){
+                    Toast.makeText(getApplication(),"meet selected!", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(MainActivity.this, MeetActivity.class);
+                    startActivity(intent);
+                }
             }
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
 
-                Toast.makeText(getApplication(), "未选中的" + tab.getText(), Toast.LENGTH_SHORT).show();
+               // Toast.makeText(getApplication(), "未选中的" + tab.getText(), Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
 
-                Toast.makeText(getApplication(), "复选的" + tab.getText(), Toast.LENGTH_SHORT).show();
+               // Toast.makeText(getApplication(), "复选的" + tab.getText(), Toast.LENGTH_SHORT).show();
 
             }
         });

@@ -37,6 +37,11 @@
             </intent-filter>
             -->
         </activity>
+        <activity android:name=".main.MeetActivity"
+            android:label="Meet"
+            android:theme="@style/AppTheme.NoActionBar">
+
+        </activity>
     </application>
 
 </manifest>
