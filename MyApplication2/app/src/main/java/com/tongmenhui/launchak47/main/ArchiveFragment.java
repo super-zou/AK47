@@ -15,10 +15,6 @@ import com.tongmenhui.launchak47.R;
 
 public class ArchiveFragment extends Fragment{
 
-    public ArchiveFragment(){
-
-    }
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

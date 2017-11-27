@@ -1,6 +1,5 @@
 package com.tongmenhui.launchak47.main;
 
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -9,7 +8,6 @@ import android.view.View;
 import com.tongmenhui.launchak47.util.Slog;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by super-zou on 17-9-11.
@@ -33,17 +31,19 @@ public class MainFragmentAdapter extends FragmentStatePagerAdapter{
         Fragment fragment;
         switch (position){
             case 0:
-                fragment = new HomeFragment();
+                fragment = new MeetFragment();
+
                 break;
             case 1:
-                fragment = new MeetFragment();
+                fragment = new ActivityFragment();
+
                 break;
             case 2:
                 fragment = new ArchiveFragment();
                 break;
 
             default:
-                fragment = new HomeFragment();
+                fragment = new MeetFragment();
                 break;
 
         }

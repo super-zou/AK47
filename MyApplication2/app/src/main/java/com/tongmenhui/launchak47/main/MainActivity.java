@@ -1,11 +1,7 @@
 package com.tongmenhui.launchak47.main;
 
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Typeface;
 import android.support.v4.app.Fragment;
 //import android.support.v4.app.FragmentTabHost;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentTabHost;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -18,8 +14,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.tongmenhui.launchak47.R;
-import com.tongmenhui.launchak47.util.FontManager;
-import com.tongmenhui.launchak47.util.Slog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,11 +22,21 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
     private List<TabItem> mTableItemList;
+    private ViewPager mViewPager;
+    private MainFragmentAdapter mFragmentAdapter;
+    private ArrayList<String> mTitleList = new ArrayList<String>(){
+        {
+            add("遇见");
+            add("活动");
+            add("我");
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mViewPager = (ViewPager)findViewById(R.id.viewpager);
        // SharedPreferences preferences = getSharedPreferences("session", MODE_PRIVATE);
        // Slog.d(TAG, "=========================session id: "+preferences.getString("sessionId",""));
        // Slog.d(TAG, "=========================session: "+preferences.getString("session_name",""));
@@ -45,9 +49,12 @@ public class MainActivity extends AppCompatActivity {
     private void initTabData() {
         mTableItemList = new ArrayList<>();
         //添加tab
-        mTableItemList.add(new TabItem(R.drawable.main_bottom_home_normal,R.drawable.main_bottom_home_press,R.string.home_text, HomeFragment.class));
         mTableItemList.add(new TabItem(R.drawable.main_bottom_attention_normal,R.drawable.main_bottom_attention_press,R.string.meet_text, MeetFragment.class));
+        mTableItemList.add(new TabItem(R.drawable.main_bottom_home_normal,R.drawable.main_bottom_home_press,R.string.activity_text, ActivityFragment.class));
         mTableItemList.add(new TabItem(R.drawable.main_bottom_mine_normal,R.drawable.main_bottom_mine_press,R.string.archive_text, ArchiveFragment.class));
+
+      //  mFragmentAdapter = new MainFragmentAdapter(getSupportFragmentManager(), mTitleList);
+       // mViewPager.setAdapter(mFragmentAdapter);
 
     }
 

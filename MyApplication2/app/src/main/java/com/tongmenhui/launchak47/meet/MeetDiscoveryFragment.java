@@ -43,12 +43,14 @@ public class MeetDiscoveryFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
 
-        viewContent = inflater.inflate(R.layout.meet_discovery_item,container,false);
+        viewContent = inflater.inflate(R.layout.fragment_archive,container,false);
+        /*
         RecyclerView recyclerView = (RecyclerView)viewContent.findViewById(R.id.recyclerview);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
         MeetListAdapter meetListAdapter = new MeetListAdapter(getContext(),meetList);
         recyclerView.setAdapter(meetListAdapter);
+        */
         return viewContent;
     }
 

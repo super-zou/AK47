@@ -2,6 +2,7 @@ package com.tongmenhui.launchak47.meet;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.view.View;
 
@@ -13,7 +14,7 @@ import java.util.ArrayList;
  * Created by haichao.zou on 2017/11/13.
  */
 
-public class MeetFragmentAdapter extends FragmentStatePagerAdapter {
+public class MeetFragmentAdapter extends FragmentPagerAdapter {
     public static final String TAG = "MeetFragmentAdapter";
     private ArrayList<String> mTitles;
     private View view;
