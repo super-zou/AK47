@@ -90,12 +90,12 @@ public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHo
     public void onBindViewHolder(final ViewHolder holder, int position){
 
         MeetRecommend meet = mMeetList.get(position);
-        Slog.d(TAG, "get name============="+meet.getRealname());
+       // Slog.d(TAG, "get name============="+meet.getRealname());
         holder.realname.setText(meet.getRealname());
         holder.lives.setText(meet.getLives());
 
         picture_url = domain+"/"+meet.getPictureUri();
-        Slog.d(TAG, "picture url==========="+picture_url);
+       // Slog.d(TAG, "picture url==========="+picture_url);
         //DownloadTask downloadTask = new DownloadTask(holder, picture_url);
         //downloadTask.execute();
 

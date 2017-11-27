@@ -19,39 +19,10 @@ import android.support.v4.app.Fragment;
 
 public class HomeFragment extends Fragment{
     private View viewContent;
-    private TabLayout tab_essence;
-    private ViewPager vp_essence;
-
-    public HomeFragment(){
-
-    }
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         viewContent = inflater.inflate(R.layout.fragment_home,container,false);
-
-       // initConentView(viewContent);
-        //initData();
-
         return viewContent;
     }
-
-    public void initConentView(View viewContent) {
-       // this.tab_essence = (TabLayout) viewContent.findViewById(R.id.tab_essence);
-       // this.vp_essence = (ViewPager) viewContent.findViewById(R.id.vp_essence);
-    }
-    /*
-    public void initData() {
-        //获取标签数据
-        String[] titles = getResources().getStringArray(R.array.home_video_tab);
-
-        //创建一个viewpager的adapter
-        FragmentAdapter adapter = new FragmentAdapter(getFragmentManager(), Arrays.asList(titles));
-        this.vp_essence.setAdapter(adapter);
-
-        //将TabLayout和ViewPager关联起来
-        this.tab_essence.setupWithViewPager(this.vp_essence);
-    }
-    */
 }

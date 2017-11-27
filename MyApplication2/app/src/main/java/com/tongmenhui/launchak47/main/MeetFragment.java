@@ -24,14 +24,60 @@ import java.util.Arrays;
  */
 
 public class MeetFragment extends Fragment{
+    private TabLayout mTabLayout;
+    private ViewPager mViewPager;
+    private MeetFragmentAdapter mFragmentAdapter;
+    private TabLayout.Tab recomend_tab;
+    private TabLayout.Tab dynamic_event_tab;
+    private TabLayout.Tab discovery_tab;
+
+    private ArrayList<String> mMeetTitleList = new ArrayList<String>(){
+        {
+            add("recomend");
+            add("activity");
+            add("discovery");
+        }
+    };
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View viewContent = inflater.inflate(R.layout.fragment_meet,container,false);
 
-        // initConentView(viewContent);
-        //initData();
-
+        initConentView(viewContent);
         return viewContent;
+    }
+
+    public void initConentView(View view){
+        mTabLayout = (TabLayout) view.findViewById(R.id.meet_tab_layout);
+        mViewPager = (ViewPager) view.findViewById(R.id.meet_view_pager);
+        //获取标签数据
+        recomend_tab = mTabLayout.newTab().setText(mMeetTitleList.get(0));
+        dynamic_event_tab = mTabLayout.newTab().setText(mMeetTitleList.get(1));
+        discovery_tab = mTabLayout.newTab().setText(mMeetTitleList.get(2));
+        //添加tab
+        mTabLayout.addTab(recomend_tab, 0, true);
+        mTabLayout.addTab(dynamic_event_tab, 1, false);
+        mTabLayout.addTab(discovery_tab, 2, false);
+
+        //mTabLayout.getTabAt(0).select();
+
+
+        //mRecommendFragment = new MeetRecommendFragment();
+        // mActivityFragment = new MeetActivityFragment();
+        // mDiscoveryFragment = new MeetRecommendFragment();
+
+
+        // mFragmentList.add(mRecommendFragment);
+        //  mFragmentList.add(mActivityFragment);
+        //  mFragmentList.add(mDiscoveryFragment);
+
+        //创建一个viewpager的adapter
+        mFragmentAdapter = new MeetFragmentAdapter(getFragmentManager(), mMeetTitleList);
+        mViewPager.setAdapter(mFragmentAdapter);
+        //mViewPager.setCurrentItem(0);
+
+        //将TabLayout和ViewPager关联起来
+        mTabLayout.setupWithViewPager(mViewPager);
     }
 }

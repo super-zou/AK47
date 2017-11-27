@@ -69,7 +69,8 @@ public class MeetRecommendFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
+        Slog.d(TAG, "=================onCreateView===================");
+        initConentView();
         viewContent = inflater.inflate(R.layout.fragment_meet_item,container,false);
         RecyclerView recyclerView = (RecyclerView)viewContent.findViewById(R.id.recyclerview);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
@@ -81,32 +82,18 @@ public class MeetRecommendFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        initConentView();
-    }
-    public void initConentView() {
-        meet_member_init();
+        Slog.d(TAG, "=================onViewCreated===================");
+       // initConentView();
     }
 
-    public void meet_member_init(){
+    public void initConentView(){
+        Slog.d(TAG, "===============initConentView==============");
 
         RequestBody requestBody = new FormBody.Builder().build();
         SharedPreferences preferences =  getActivity().getSharedPreferences("session", MODE_PRIVATE);
         String session = preferences.getString("session_name", "");
 
         //Slog.d(TAG, "=====in MeetRecommendFragment====session: "+session);
-
-        HttpUtil.getOkHttpRequestAsync(get_recommend_url, session, new Callback(){
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                responseText = response.body().string();
-                //Slog.d(TAG, "response : "+responseText);
-            }
-
-            @Override
-            public void onFailure(Call call, IOException e){
-
-            }
-        });
 
         HttpUtil.sendOkHttpRequest(null, get_recommend_url, requestBody, new Callback(){
             int check_login_user = 0;
@@ -116,14 +103,7 @@ public class MeetRecommendFragment extends Fragment {
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
                 Slog.d(TAG, "response : "+responseText);
-                if(!TextUtils.isEmpty(responseText)){
-                    try {
-                        JSONObject login_response= new JSONObject(responseText);
-
-                    }catch (JSONException e){
-                        e.printStackTrace();
-                    }
-                }
+                getResponseText(responseText);
             }
 
             @Override
@@ -131,13 +111,16 @@ public class MeetRecommendFragment extends Fragment {
 
             }
         });
-       // Slog.d(TAG, "=============response : "+responseText);
+
+       // getResponseText(responseText);
+
+    }
+
+    public void getResponseText(String responseText){
         if(!TextUtils.isEmpty(responseText)){
             try {
                 recommend_response= new JSONObject(responseText);
                 recommendation = recommend_response.getJSONArray("recommendation");
-                int requirement_set = recommend_response.getInt("requirement_set");
-                Slog.d(TAG, "========requirement_set: "+requirement_set);
                 set_meet_member_info(recommendation);
 
 
@@ -145,10 +128,6 @@ public class MeetRecommendFragment extends Fragment {
                 e.printStackTrace();
             }
         }
-
-        //set_meet_member_info(recommendation);
-        //test_data();
-
     }
 
     public void set_meet_member_info(JSONArray recommendation){

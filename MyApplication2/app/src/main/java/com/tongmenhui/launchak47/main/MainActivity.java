@@ -6,6 +6,7 @@ import android.graphics.Typeface;
 import android.support.v4.app.Fragment;
 //import android.support.v4.app.FragmentTabHost;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.FragmentTabHost;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -26,82 +27,152 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
-    //private List<TabLayout.Tab> mTableItemList;
-    private TabLayout mTabLayout;
-    private ViewPager mViewPager;
-    private MainFragmentAdapter mMainFragmentAdapter;
-    private TabLayout.Tab home_tab;
-    private TabLayout.Tab meet_tab;
-    private TabLayout.Tab archive_tab;
-    private static final int MEET = 1;
-    private ArrayList<String> titleList = new ArrayList<String>(){
-        {
-            add("home");
-            add("meet");
-            add("archive");
-        }
-    };
+    private List<TabItem> mTableItemList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        SharedPreferences preferences = getSharedPreferences("session", MODE_PRIVATE);
+       // SharedPreferences preferences = getSharedPreferences("session", MODE_PRIVATE);
        // Slog.d(TAG, "=========================session id: "+preferences.getString("sessionId",""));
        // Slog.d(TAG, "=========================session: "+preferences.getString("session_name",""));
        // Slog.d(TAG, "=========================uid: "+preferences.getInt("uid", -1));
-        initTab();
-        //Typeface iconFont = FontManager.getTypeface(getApplicationContext(), FontManager.FONTAWESOME);
-        //FontManager.markAsIconContainer(findViewById(R.id.behavior_statistics), iconFont);
-        //Typeface font = Typeface.createFromAsset(getAssets(), "fonts/fontawesome.ttf");
+        initTabData();
+        initTabHost();
+    }
+
+    //初始化Tab数据
+    private void initTabData() {
+        mTableItemList = new ArrayList<>();
+        //添加tab
+        mTableItemList.add(new TabItem(R.drawable.main_bottom_home_normal,R.drawable.main_bottom_home_press,R.string.home_text, HomeFragment.class));
+        mTableItemList.add(new TabItem(R.drawable.main_bottom_attention_normal,R.drawable.main_bottom_attention_press,R.string.meet_text, MeetFragment.class));
+        mTableItemList.add(new TabItem(R.drawable.main_bottom_mine_normal,R.drawable.main_bottom_mine_press,R.string.archive_text, ArchiveFragment.class));
 
     }
 
-    //初始化Tab
-    private void initTab() {
-        Slog.d(TAG, "==================initTab");
-        mTabLayout = (TabLayout)findViewById(R.id.tabLayout);
-        //mTabLayout.setTabMode(TabLayout.MODE_FIXED);
-        home_tab = mTabLayout.newTab().setText(titleList.get(0));
-        meet_tab = mTabLayout.newTab().setText(titleList.get(1));
-        archive_tab = mTabLayout.newTab().setText(titleList.get(2));
+    //初始化选项卡视图
+    private void initTabHost() {
+        //实例化FragmentTabHost对象
+        FragmentTabHost fragmentTabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
+        fragmentTabHost.setup(this,getSupportFragmentManager(),android.R.id.tabcontent);
 
-        //添加tab
-        mTabLayout.addTab(home_tab, 0, true);
-        mTabLayout.addTab(meet_tab, 1);
-        mTabLayout.addTab(archive_tab, 2);
+        //去掉分割线
+        fragmentTabHost.getTabWidget().setDividerDrawable(null);
 
+        for (int i = 0; i<mTableItemList.size(); i++) {
+            TabItem tabItem = mTableItemList.get(i);
+            //实例化一个TabSpec,设置tab的名称和视图
+            TabHost.TabSpec tabSpec = fragmentTabHost.newTabSpec(tabItem.getTitleString()).setIndicator(tabItem.getView());
+            fragmentTabHost.addTab(tabSpec,tabItem.getFragmentClass(),null);
 
-        mViewPager = (ViewPager)findViewById(R.id.viewPager);
-        mMainFragmentAdapter = new MainFragmentAdapter(getSupportFragmentManager(), titleList);
-        mViewPager.setAdapter(mMainFragmentAdapter);
-        mViewPager.setCurrentItem(0);
-       // mViewPager.setOffscreenPageLimit(0);
+            //给Tab按钮设置背景
+            fragmentTabHost.getTabWidget().getChildAt(i).setBackgroundColor(getResources().getColor(R.color.main_bottom_bg));
 
-        mTabLayout.setupWithViewPager(mViewPager);
-        mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            //默认选中第一个tab
+            if(i == 0) {
+                tabItem.setChecked(true);
+            }
+        }
+
+        fragmentTabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
             @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-
-                if(MEET == tab.getPosition()){
-                    Toast.makeText(getApplication(),"meet selected!", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(MainActivity.this, MeetActivity.class);
-                    startActivity(intent);
+            public void onTabChanged(String tabId) {
+                Toast.makeText(getApplication(), "tab: "+tabId, Toast.LENGTH_SHORT).show();
+                //重置Tab样式
+                for (int i = 0; i< mTableItemList.size(); i++) {
+                    TabItem tabitem = mTableItemList.get(i);
+                    if (tabId.equals(tabitem.getTitleString())) {
+                        tabitem.setChecked(true);
+                    }else {
+                        tabitem.setChecked(false);
+                    }
                 }
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-               // Toast.makeText(getApplication(), "未选中的" + tab.getText(), Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-               // Toast.makeText(getApplication(), "复选的" + tab.getText(), Toast.LENGTH_SHORT).show();
-
             }
         });
     }
 
+
+    class TabItem {
+        //正常情况下显示的图片
+        private int imageNormal;
+        //选中情况下显示的图片
+        private int imagePress;
+        //tab的名字
+        private int title;
+        private String titleString;
+
+        //tab对应的fragment
+        public Class<? extends Fragment> fragmentClass;
+
+        public View view;
+        public ImageView imageView;
+        public TextView textView;
+
+        public TabItem(int imageNormal, int imagePress, int title,Class<? extends Fragment> fragmentClass) {
+            this.imageNormal = imageNormal;
+            this.imagePress = imagePress;
+            this.title = title;
+            this.fragmentClass =fragmentClass;
+        }
+
+        public Class<? extends  Fragment> getFragmentClass() {
+            return fragmentClass;
+        }
+        public int getImageNormal() {
+            return imageNormal;
+        }
+
+        public int getImagePress() {
+            return imagePress;
+        }
+
+        public int getTitle() {
+            return  title;
+        }
+
+        public String getTitleString() {
+            if (title == 0) {
+                return "";
+            }
+            if(TextUtils.isEmpty(titleString)) {
+                titleString = getString(title);
+            }
+            return titleString;
+        }
+
+        public View getView() {
+            if(this.view == null) {
+                this.view = getLayoutInflater().inflate(R.layout.view_tab_indicator, null);
+                this.imageView = (ImageView) this.view.findViewById(R.id.tab_iv_image);
+                this.textView = (TextView) this.view.findViewById(R.id.tab_tv_text);
+                if(this.title == 0) {
+                    this.textView.setVisibility(View.GONE);
+                } else {
+                    this.textView.setVisibility(View.VISIBLE);
+                    this.textView.setText(getTitleString());
+                }
+                this.imageView.setImageResource(imageNormal);
+            }
+            return this.view;
+        }
+
+        //切换tab的方法
+        public void setChecked(boolean isChecked) {
+            if(imageView != null) {
+                if(isChecked) {
+                    imageView.setImageResource(imagePress);
+                }else {
+                    imageView.setImageResource(imageNormal);
+                }
+            }
+            if(textView != null && title != 0) {
+                if(isChecked) {
+                    textView.setTextColor(getResources().getColor(R.color.main_botton_text_select));
+                } else {
+                    textView.setTextColor(getResources().getColor(R.color.main_bottom_text_normal));
+                }
+            }
+        }
+    }
 }
