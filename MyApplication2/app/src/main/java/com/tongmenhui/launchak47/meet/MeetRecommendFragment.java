@@ -45,11 +45,14 @@ public class MeetRecommendFragment extends Fragment {
     private String mTitle;
     private List<MeetRecommend> meetList = new ArrayList<>();
     private MeetRecommend meetRecommend;
+    private RecyclerView recyclerView;
+    private MeetListAdapter meetListAdapter;
    // private String realname;
     private int uid;
     private static String responseText;
     JSONObject recommend_response;
     JSONArray recommendation;
+    private Boolean loaded = false;
 
     private static final String  domain = "http://www.tongmenhui.com";
     private static final String get_recommend_url = domain + "?q=meet/recommend";
@@ -64,6 +67,12 @@ public class MeetRecommendFragment extends Fragment {
 
     public MeetRecommendFragment(){
         Slog.d(TAG, "================MeetRecommendFragment show==============");
+
+    }
+    public void Oncreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+        Slog.d(TAG, "=================onCreate===================");
+
     }
 
     @Nullable
@@ -71,12 +80,14 @@ public class MeetRecommendFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Slog.d(TAG, "=================onCreateView===================");
         initConentView();
-        viewContent = inflater.inflate(R.layout.fragment_meet_item,container,false);
-        RecyclerView recyclerView = (RecyclerView)viewContent.findViewById(R.id.recyclerview);
+        viewContent = inflater.inflate(R.layout.fragment_meet_item, container, false);
+        recyclerView = (RecyclerView) viewContent.findViewById(R.id.recyclerview);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
-        MeetListAdapter meetListAdapter = new MeetListAdapter(getContext(),meetList);
+        meetListAdapter = new MeetListAdapter(getContext(), meetList);
         recyclerView.setAdapter(meetListAdapter);
+
+
         return viewContent;
     }
     @Override
@@ -90,8 +101,8 @@ public class MeetRecommendFragment extends Fragment {
         Slog.d(TAG, "===============initConentView==============");
 
         RequestBody requestBody = new FormBody.Builder().build();
-        SharedPreferences preferences =  getActivity().getSharedPreferences("session", MODE_PRIVATE);
-        String session = preferences.getString("session_name", "");
+       // SharedPreferences preferences =  getActivity().getSharedPreferences("session", MODE_PRIVATE);
+       // String session = preferences.getString("session_name", "");
 
         //Slog.d(TAG, "=====in MeetRecommendFragment====session: "+session);
 
@@ -102,7 +113,7 @@ public class MeetRecommendFragment extends Fragment {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
-                Slog.d(TAG, "response : "+responseText);
+                //Slog.d(TAG, "response : "+responseText);
                 getResponseText(responseText);
             }
 
@@ -117,13 +128,15 @@ public class MeetRecommendFragment extends Fragment {
     }
 
     public void getResponseText(String responseText){
+
+        Slog.d(TAG, "====================getResponseText====================");
+
         if(!TextUtils.isEmpty(responseText)){
             try {
                 recommend_response= new JSONObject(responseText);
                 recommendation = recommend_response.getJSONArray("recommendation");
                 set_meet_member_info(recommendation);
-
-
+                loaded = true;
             }catch (JSONException e){
                 e.printStackTrace();
             }
@@ -174,6 +187,7 @@ public class MeetRecommendFragment extends Fragment {
         }catch (JSONException e){
 
         }
+
     }
 
 }

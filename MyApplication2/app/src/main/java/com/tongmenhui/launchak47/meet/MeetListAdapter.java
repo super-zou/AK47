@@ -72,6 +72,7 @@ public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHo
     }
 
     public MeetListAdapter(Context context, List<MeetRecommend> meetList){
+        Slog.d(TAG, "==============MeetListAdapter init=================");
         mContext = context;
         mMeetList = meetList;
         queue = new Volley().newRequestQueue(context);
@@ -79,6 +80,7 @@ public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHo
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
+        Slog.d(TAG, "===========onCreateViewHolder==============");
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.meet_item, parent, false);
         ViewHolder holder = new ViewHolder(view);
@@ -89,6 +91,7 @@ public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHo
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position){
 
+        Slog.d(TAG, "===========onBindViewHolder==============");
         MeetRecommend meet = mMeetList.get(position);
        // Slog.d(TAG, "get name============="+meet.getRealname());
         holder.realname.setText(meet.getRealname());
