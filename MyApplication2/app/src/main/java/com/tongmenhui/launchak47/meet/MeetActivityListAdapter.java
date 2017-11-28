@@ -64,7 +64,7 @@ public class MeetActivityListAdapter extends RecyclerView.Adapter<MeetActivityLi
     @Override
     public MeetActivityListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.meet_activity_item, parent, false);
+                .inflate(R.layout.meet_activities_item, parent, false);
         MeetActivityListAdapter.ViewHolder holder = new MeetActivityListAdapter.ViewHolder(view);
 
         return holder;

@@ -1,7 +1,6 @@
 package com.tongmenhui.launchak47.meet;
 
 //import android.app.Fragment;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,8 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.tongmenhui.launchak47.R;
-import com.tongmenhui.launchak47.meet.MeetRecommend;
-import com.tongmenhui.launchak47.meet.MeetListAdapter;
 import com.tongmenhui.launchak47.util.HttpUtil;
 import com.tongmenhui.launchak47.util.Slog;
 
@@ -31,8 +28,6 @@ import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-
-import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by super-zou on 17-9-11.
@@ -80,7 +75,7 @@ public class MeetRecommendFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Slog.d(TAG, "=================onCreateView===================");
         initConentView();
-        viewContent = inflater.inflate(R.layout.fragment_meet_item, container, false);
+        viewContent = inflater.inflate(R.layout.meet_recommend, container, false);
         recyclerView = (RecyclerView) viewContent.findViewById(R.id.recyclerview);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
