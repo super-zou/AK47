@@ -64,9 +64,12 @@ public class MeetRecommendFragment extends Fragment {
         Slog.d(TAG, "================MeetRecommendFragment show==============");
 
     }
-    public void Oncreate(Bundle savedInstanceState){
+
+    @Override
+    public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         Slog.d(TAG, "=================onCreate===================");
+
 
     }
 
@@ -75,15 +78,18 @@ public class MeetRecommendFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Slog.d(TAG, "=================onCreateView===================");
         initConentView();
+        Slog.d(TAG, "=================onCreateView loaded==================="+loaded);
+
+        meetListAdapter = new MeetListAdapter(getContext());
         viewContent = inflater.inflate(R.layout.meet_recommend, container, false);
         recyclerView = (RecyclerView) viewContent.findViewById(R.id.recyclerview);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
-        meetListAdapter = new MeetListAdapter(getContext(), meetList);
+
+
         recyclerView.setAdapter(meetListAdapter);
-
-
         return viewContent;
+
     }
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -110,6 +116,13 @@ public class MeetRecommendFragment extends Fragment {
                 String responseText = response.body().string();
                 //Slog.d(TAG, "response : "+responseText);
                 getResponseText(responseText);
+                MeetRecommendFragment.this.getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        meetListAdapter.setData(meetList);
+                        meetListAdapter.notifyDataSetChanged();
+                    }
+                });
             }
 
             @Override

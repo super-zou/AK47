@@ -23,6 +23,7 @@ import com.tongmenhui.launchak47.util.Slog;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.Response;
@@ -71,11 +72,14 @@ public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHo
         }
     }
 
-    public MeetListAdapter(Context context, List<MeetRecommend> meetList){
+    public MeetListAdapter(Context context){
         Slog.d(TAG, "==============MeetListAdapter init=================");
         mContext = context;
+        mMeetList = new ArrayList<MeetRecommend>();
+    }
+    public void setData(List<MeetRecommend> meetList){
         mMeetList = meetList;
-        queue = new Volley().newRequestQueue(context);
+
     }
 
     @Override
@@ -101,6 +105,8 @@ public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHo
        // Slog.d(TAG, "picture url==========="+picture_url);
         //DownloadTask downloadTask = new DownloadTask(holder, picture_url);
         //downloadTask.execute();
+        queue = new Volley().newRequestQueue(mContext);
+
 
         HttpUtil.loadByImageLoader(queue, holder.headUri, picture_url, 110, 110);
 

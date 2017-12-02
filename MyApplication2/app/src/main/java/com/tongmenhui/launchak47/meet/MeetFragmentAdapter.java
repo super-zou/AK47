@@ -14,7 +14,7 @@ import java.util.ArrayList;
  * Created by haichao.zou on 2017/11/13.
  */
 
-public class MeetFragmentAdapter extends FragmentPagerAdapter {
+public class MeetFragmentAdapter extends FragmentStatePagerAdapter {
     public static final String TAG = "MeetFragmentAdapter";
     private ArrayList<String> mTitles;
     private View view;

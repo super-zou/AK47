@@ -73,11 +73,12 @@ public class MeetFragment extends Fragment{
         //  mFragmentList.add(mDiscoveryFragment);
 
         //创建一个viewpager的adapter
-        mFragmentAdapter = new MeetFragmentAdapter(getChildFragmentManager(), mMeetTitleList);
+        mFragmentAdapter = new MeetFragmentAdapter(getFragmentManager(), mMeetTitleList);
         mViewPager.setAdapter(mFragmentAdapter);
         //mViewPager.setCurrentItem(0);
 
         //将TabLayout和ViewPager关联起来
         mTabLayout.setupWithViewPager(mViewPager);
     }
+
 }
