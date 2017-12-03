@@ -70,7 +70,6 @@ public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHo
     }
     public void setData(List<MeetMemberInfo> meetList){
         mMeetList = meetList;
-
     }
 
     @Override

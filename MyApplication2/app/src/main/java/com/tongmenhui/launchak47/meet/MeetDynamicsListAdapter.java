@@ -9,10 +9,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.util.FontManager;
+import com.tongmenhui.launchak47.util.HttpUtil;
 import com.tongmenhui.launchak47.util.Slog;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,10 +26,14 @@ import java.util.List;
 public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsListAdapter.ViewHolder> {
 
     private static final String TAG = "MeetDynamicsListAdapter";
+    private static final String  domain = "http://www.tongmenhui.com";
+    private List<MeetDynamics> mMeetList;
+    private String picture_url;
     private static Context mContext;
-    private List<MeetDynamics> mMeetActivityList;
 
-    static class ViewHolder extends RecyclerView.ViewHolder{
+    RequestQueue queue;
+
+    public static class ViewHolder extends RecyclerView.ViewHolder{
         TextView realname;
         TextView lives;
         TextView selfcondition;
@@ -56,15 +64,20 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
         }
     }
 
-    public MeetDynamicsListAdapter(Context context, List<MeetDynamics> meetActivityList){
+    public MeetDynamicsListAdapter(Context context){
+        Slog.d(TAG, "==============MeetListAdapter init=================");
         mContext = context;
-        mMeetActivityList = meetActivityList;
+        mMeetList = new ArrayList<MeetDynamics>();
+    }
+    public void setData(List<MeetDynamics> meetList){
+        mMeetList = meetList;
     }
 
     @Override
     public MeetDynamicsListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
+        Slog.d(TAG, "===========onCreateViewHolder==============");
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.meet_dynamics_item, parent, false);
+                .inflate(R.layout.meet_item, parent, false);
         MeetDynamicsListAdapter.ViewHolder holder = new MeetDynamicsListAdapter.ViewHolder(view);
 
         return holder;
@@ -73,16 +86,20 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
     @Override
     public void onBindViewHolder(final MeetDynamicsListAdapter.ViewHolder holder, int position){
 
-        MeetMemberInfo meet = mMeetActivityList.get(position);
-        Slog.d(TAG, "get name============="+meet.getRealname());
+        Slog.d(TAG, "===========onBindViewHolder==============");
+        MeetDynamics meet = mMeetList.get(position);
+        // Slog.d(TAG, "get name============="+meet.getRealname());
         holder.realname.setText(meet.getRealname());
         holder.lives.setText(meet.getLives());
-        /*
+
         picture_url = domain+"/"+meet.getPictureUri();
-        Slog.d(TAG, "picture url==========="+picture_url);
-        MeetListAdapter.DownloadTask downloadTask = new MeetListAdapter.DownloadTask(holder, picture_url);
-        downloadTask.execute();
-        */
+        // Slog.d(TAG, "picture url==========="+picture_url);
+        //DownloadTask downloadTask = new DownloadTask(holder, picture_url);
+        //downloadTask.execute();
+        queue = new Volley().newRequestQueue(mContext);
+
+
+        HttpUtil.loadByImageLoader(queue, holder.headUri, picture_url, 110, 110);
 
         holder.selfcondition.setText(meet.getSelfCondition(meet.getSituation()));
         holder.requirement.setText(meet.getRequirement());
@@ -98,7 +115,6 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
     @Override
     public int getItemCount(){
 
-       // return mMeetList.size();
-        return 1;
+        return mMeetList.size();
     }
 }

@@ -52,19 +52,6 @@ public class MeetRecommendFragment extends Fragment {
     private static final String  domain = "http://www.tongmenhui.com";
     private static final String get_recommend_url = domain + "?q=meet/recommend";
 
-    public MeetRecommendFragment(){
-        Slog.d(TAG, "================MeetRecommendFragment show==============");
-
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState){
-        super.onCreate(savedInstanceState);
-        Slog.d(TAG, "=================onCreate===================");
-
-
-    }
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
