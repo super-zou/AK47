@@ -38,32 +38,19 @@ public class MeetDiscoveryFragment extends Fragment {
     private View viewContent;
     private int mType = 0;
     private String mTitle;
-    private List<MeetMemberInfo> meetList = new ArrayList<>();
+    private List<MeetMemberInfo> meetMemberList = new ArrayList<>();
     private MeetMemberInfo meetMemberInfo;
     private RecyclerView recyclerView;
     private MeetListAdapter meetListAdapter;
     // private String realname;
     private int uid;
     private static String responseText;
-    JSONObject recommend_response;
-    JSONArray recommendation;
+    JSONObject discovery_response;
+    JSONArray discovery;
     private Boolean loaded = false;
 
     private static final String  domain = "http://www.tongmenhui.com";
-    private static final String get_recommend_url = domain + "?q=meet/discovery";
-
-    public MeetDiscoveryFragment(){
-        Slog.d(TAG, "================MeetDiscoveryFragment show==============");
-
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState){
-        super.onCreate(savedInstanceState);
-        Slog.d(TAG, "=================onCreate===================");
-
-
-    }
+    private static final String get_discovery_url = domain + "?q=meet/recommend";
 
     @Nullable
     @Override
@@ -97,7 +84,7 @@ public class MeetDiscoveryFragment extends Fragment {
 
         //Slog.d(TAG, "=====in MeetRecommendFragment====session: "+session);
 
-        HttpUtil.sendOkHttpRequest(null, get_recommend_url, requestBody, new Callback(){
+        HttpUtil.sendOkHttpRequest(null, get_discovery_url, requestBody, new Callback(){
             int check_login_user = 0;
             String user_name;
 
@@ -109,7 +96,7 @@ public class MeetDiscoveryFragment extends Fragment {
                 MeetDiscoveryFragment.this.getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        meetListAdapter.setData(meetList);
+                        meetListAdapter.setData(meetMemberList);
                         meetListAdapter.notifyDataSetChanged();
                     }
                 });
@@ -131,9 +118,9 @@ public class MeetDiscoveryFragment extends Fragment {
 
         if(!TextUtils.isEmpty(responseText)){
             try {
-                recommend_response= new JSONObject(responseText);
-                recommendation = recommend_response.getJSONArray("recommendation");
-                set_meet_member_info(recommendation);
+                discovery_response= new JSONObject(responseText);
+                discovery = discovery_response.getJSONArray("recommendation");
+                set_meet_member_info(discovery);
                 loaded = true;
             }catch (JSONException e){
                 e.printStackTrace();
@@ -141,12 +128,12 @@ public class MeetDiscoveryFragment extends Fragment {
         }
     }
 
-    public void set_meet_member_info(JSONArray recommendation){
-        int length = recommendation.length();
+    public void set_meet_member_info(JSONArray discovery){
+        int length = discovery.length();
         Slog.d(TAG, "==========set_meet_member_info==========recommendation length: "+length);
         try{
             for (int i=0; i< length; i++){
-                JSONObject recommender = recommendation.getJSONObject(i);
+                JSONObject recommender = discovery.getJSONObject(i);
                 meetMemberInfo = new MeetMemberInfo();
 
                 meetMemberInfo.setRealname(recommender.getString("realname"));
@@ -180,7 +167,7 @@ public class MeetDiscoveryFragment extends Fragment {
                 // meetMemberInfo.setRequirement_set(recommender.getInt("requirement_set"));
 
 
-                meetList.add(meetMemberInfo);
+                meetMemberList.add(meetMemberInfo);
             }
         }catch (JSONException e){
 
