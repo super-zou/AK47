@@ -38,8 +38,8 @@ public class MeetRecommendFragment extends Fragment {
     private View viewContent;
     private int mType = 0;
     private String mTitle;
-    private List<MeetRecommend> meetList = new ArrayList<>();
-    private MeetRecommend meetRecommend;
+    private List<MeetMemberInfo> meetList = new ArrayList<>();
+    private MeetMemberInfo meetMemberInfo;
     private RecyclerView recyclerView;
     private MeetListAdapter meetListAdapter;
    // private String realname;
@@ -51,14 +51,6 @@ public class MeetRecommendFragment extends Fragment {
 
     private static final String  domain = "http://www.tongmenhui.com";
     private static final String get_recommend_url = domain + "?q=meet/recommend";
-
-    public void setType(int mType) {
-        this.mType = mType;
-    }
-
-    public void setTitle(String mTitle) {
-        this.mTitle = mTitle;
-    }
 
     public MeetRecommendFragment(){
         Slog.d(TAG, "================MeetRecommendFragment show==============");
@@ -78,8 +70,6 @@ public class MeetRecommendFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Slog.d(TAG, "=================onCreateView===================");
         initConentView();
-        Slog.d(TAG, "=================onCreateView loaded==================="+loaded);
-
         meetListAdapter = new MeetListAdapter(getContext());
         viewContent = inflater.inflate(R.layout.meet_recommend, container, false);
         recyclerView = (RecyclerView) viewContent.findViewById(R.id.recyclerview);
@@ -157,40 +147,40 @@ public class MeetRecommendFragment extends Fragment {
         try{
             for (int i=0; i< length; i++){
                 JSONObject recommender = recommendation.getJSONObject(i);
-                meetRecommend = new MeetRecommend();
+                meetMemberInfo = new MeetMemberInfo();
 
-                meetRecommend.setRealname(recommender.getString("realname"));
-                meetRecommend.setUid(recommender.getInt("uid"));
-                meetRecommend.setPictureUri(recommender.getString("picture_uri"));
-                meetRecommend.setBirth_year(recommender.getInt("birth_year"));
-                meetRecommend.setHeight(recommender.getInt("height"));
-                meetRecommend.setUniversity(recommender.getString("university"));
-                meetRecommend.setDegree(recommender.getString("degree"));
-                meetRecommend.setJob_title(recommender.getString("job_title"));
-                meetRecommend.setLives(recommender.getString("lives"));
-                meetRecommend.setSituation(recommender.getInt("situation"));
+                meetMemberInfo.setRealname(recommender.getString("realname"));
+                meetMemberInfo.setUid(recommender.getInt("uid"));
+                meetMemberInfo.setPictureUri(recommender.getString("picture_uri"));
+                meetMemberInfo.setBirth_year(recommender.getInt("birth_year"));
+                meetMemberInfo.setHeight(recommender.getInt("height"));
+                meetMemberInfo.setUniversity(recommender.getString("university"));
+                meetMemberInfo.setDegree(recommender.getString("degree"));
+                meetMemberInfo.setJob_title(recommender.getString("job_title"));
+                meetMemberInfo.setLives(recommender.getString("lives"));
+                meetMemberInfo.setSituation(recommender.getInt("situation"));
 
                 //requirement
-                meetRecommend.setAge_lower(recommender.getInt("age_lower"));
-                meetRecommend.setAge_upper(recommender.getInt("age_upper"));
-                meetRecommend.setRequirement_height(recommender.getInt("requirement_height"));
-                meetRecommend.setRequirement_degree(recommender.getInt("requirement_degree"));
-                meetRecommend.setRequirement_lives(recommender.getString("requirement_lives"));
-                meetRecommend.setRequirement_sex(recommender.getInt("requirement_sex"));
-                meetRecommend.setIllustration(recommender.getString("illustration"));
+                meetMemberInfo.setAge_lower(recommender.getInt("age_lower"));
+                meetMemberInfo.setAge_upper(recommender.getInt("age_upper"));
+                meetMemberInfo.setRequirement_height(recommender.getInt("requirement_height"));
+                meetMemberInfo.setRequirement_degree(recommender.getInt("requirement_degree"));
+                meetMemberInfo.setRequirement_lives(recommender.getString("requirement_lives"));
+                meetMemberInfo.setRequirement_sex(recommender.getInt("requirement_sex"));
+                meetMemberInfo.setIllustration(recommender.getString("illustration"));
 
 
-               // meetRecommend.setSelf(recommender.getInt("self"));
-                meetRecommend.setBrowse_count(recommender.getInt("browse_count"));
-                meetRecommend.setLoved_count(recommender.getInt("loved_count"));
-               // meetRecommend.setLoved(recommender.getInt("loved"));
-               // meetRecommend.setPraised(recommender.getInt("praised"));
-                meetRecommend.setPraised_count(recommender.getInt("praised_count"));
-              //  meetRecommend.setPicture_chain(recommender.getString("picture_chain"));
-               // meetRecommend.setRequirement_set(recommender.getInt("requirement_set"));
+               // meetMemberInfo.setSelf(recommender.getInt("self"));
+                meetMemberInfo.setBrowse_count(recommender.getInt("browse_count"));
+                meetMemberInfo.setLoved_count(recommender.getInt("loved_count"));
+               // meetMemberInfo.setLoved(recommender.getInt("loved"));
+               // meetMemberInfo.setPraised(recommender.getInt("praised"));
+                meetMemberInfo.setPraised_count(recommender.getInt("praised_count"));
+              //  meetMemberInfo.setPicture_chain(recommender.getString("picture_chain"));
+               // meetMemberInfo.setRequirement_set(recommender.getInt("requirement_set"));
 
 
-                meetList.add(meetRecommend);
+                meetList.add(meetMemberInfo);
             }
         }catch (JSONException e){
 

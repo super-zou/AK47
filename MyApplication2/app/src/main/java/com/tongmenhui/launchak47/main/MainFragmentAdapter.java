@@ -35,7 +35,7 @@ public class MainFragmentAdapter extends FragmentStatePagerAdapter{
 
                 break;
             case 1:
-                fragment = new ActivityFragment();
+                fragment = new ActivitiesFragment();
 
                 break;
             case 2:

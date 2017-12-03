@@ -14,7 +14,7 @@ import android.support.v4.app.Fragment;
  * Created by super-zou on 17-9-11.
  */
 
-public class ActivityFragment extends Fragment{
+public class ActivitiesFragment extends Fragment{
     private View viewContent;
     @Nullable
     @Override

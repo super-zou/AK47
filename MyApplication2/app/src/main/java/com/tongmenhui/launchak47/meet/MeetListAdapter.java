@@ -1,18 +1,13 @@
 package com.tongmenhui.launchak47.meet;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.content.res.AssetManager;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
@@ -21,12 +16,8 @@ import com.tongmenhui.launchak47.util.FontManager;
 import com.tongmenhui.launchak47.util.HttpUtil;
 import com.tongmenhui.launchak47.util.Slog;
 
-import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-
-import okhttp3.Response;
 
 /**
  * Created by haichao.zou on 2017/9/15.
@@ -35,7 +26,7 @@ import okhttp3.Response;
 public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHolder>{
     private static final String TAG = "MeetListAdapter";
     private static final String  domain = "http://www.tongmenhui.com";
-    private List<MeetRecommend> mMeetList;
+    private List<MeetMemberInfo> mMeetList;
     private String picture_url;
     private static Context mContext;
 
@@ -75,9 +66,9 @@ public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHo
     public MeetListAdapter(Context context){
         Slog.d(TAG, "==============MeetListAdapter init=================");
         mContext = context;
-        mMeetList = new ArrayList<MeetRecommend>();
+        mMeetList = new ArrayList<MeetMemberInfo>();
     }
-    public void setData(List<MeetRecommend> meetList){
+    public void setData(List<MeetMemberInfo> meetList){
         mMeetList = meetList;
 
     }
@@ -96,7 +87,7 @@ public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHo
     public void onBindViewHolder(final ViewHolder holder, int position){
 
         Slog.d(TAG, "===========onBindViewHolder==============");
-        MeetRecommend meet = mMeetList.get(position);
+        MeetMemberInfo meet = mMeetList.get(position);
        // Slog.d(TAG, "get name============="+meet.getRealname());
         holder.realname.setText(meet.getRealname());
         holder.lives.setText(meet.getLives());

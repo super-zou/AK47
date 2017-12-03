@@ -8,9 +8,9 @@ import java.util.Calendar;
  * Created by haichao.zou on 2017/9/15.
  */
 
-public class MeetRecommend {
+public class MeetMemberInfo {
 
-    private static final String TAG = "MeetRecommend";
+    private static final String TAG = "MeetMemberInfo";
 
     public int cid = -1;
 
@@ -50,7 +50,7 @@ public class MeetRecommend {
 
 
     /*
-    public MeetRecommend(String realname){
+    public MeetMemberInfo(String realname){
         this.realname = realname;
     }
     */

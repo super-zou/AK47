@@ -21,13 +21,13 @@ import java.util.List;
  * Created by haichao.zou on 2017/11/20.
  */
 
-public class MeetActivityFragment extends Fragment {
-    private static final String TAG = "MeetActivityFragment";
+public class MeetDynamicsFragment extends Fragment {
+    private static final String TAG = "MeetDynamicsFragment";
     private View viewContent;
     private int mType = 0;
     private String mTitle;
-    private List<MeetRecommend> meetList = new ArrayList<>();
-    private MeetRecommend meetRecommend;
+    private List<MeetMemberInfo> meetList = new ArrayList<>();
+    private MeetMemberInfo meetMemberInfo;
     // private String realname;
     private int uid;
     private static String responseText;
@@ -42,7 +42,7 @@ public class MeetActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
 
-        viewContent = inflater.inflate(R.layout.meet_activities,container,false);
+        viewContent = inflater.inflate(R.layout.meet_dynamics,container,false);
         RecyclerView recyclerView = (RecyclerView)viewContent.findViewById(R.id.recyclerview);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);

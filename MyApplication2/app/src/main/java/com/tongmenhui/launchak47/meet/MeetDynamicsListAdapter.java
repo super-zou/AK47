@@ -19,11 +19,11 @@ import java.util.List;
  * Created by haichao.zou on 2017/11/20.
  */
 
-public class MeetActivityListAdapter extends RecyclerView.Adapter<MeetActivityListAdapter.ViewHolder> {
+public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsListAdapter.ViewHolder> {
 
-    private static final String TAG = "MeetActivityListAdapter";
+    private static final String TAG = "MeetDynamicsListAdapter";
     private static Context mContext;
-    private List<MeetActivities> mMeetActivityList;
+    private List<MeetDynamics> mMeetActivityList;
 
     static class ViewHolder extends RecyclerView.ViewHolder{
         TextView realname;
@@ -56,24 +56,24 @@ public class MeetActivityListAdapter extends RecyclerView.Adapter<MeetActivityLi
         }
     }
 
-    public MeetActivityListAdapter(Context context, List<MeetActivities> meetActivityList){
+    public MeetDynamicsListAdapter(Context context, List<MeetDynamics> meetActivityList){
         mContext = context;
         mMeetActivityList = meetActivityList;
     }
 
     @Override
-    public MeetActivityListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
+    public MeetDynamicsListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.meet_activities_item, parent, false);
-        MeetActivityListAdapter.ViewHolder holder = new MeetActivityListAdapter.ViewHolder(view);
+                .inflate(R.layout.meet_dynamics_item, parent, false);
+        MeetDynamicsListAdapter.ViewHolder holder = new MeetDynamicsListAdapter.ViewHolder(view);
 
         return holder;
     }
 
     @Override
-    public void onBindViewHolder(final MeetActivityListAdapter.ViewHolder holder, int position){
+    public void onBindViewHolder(final MeetDynamicsListAdapter.ViewHolder holder, int position){
 
-        MeetRecommend meet = mMeetActivityList.get(position);
+        MeetMemberInfo meet = mMeetActivityList.get(position);
         Slog.d(TAG, "get name============="+meet.getRealname());
         holder.realname.setText(meet.getRealname());
         holder.lives.setText(meet.getLives());
