@@ -39,11 +39,11 @@ public class MeetDynamicsFragment extends Fragment {
     private MeetDynamics meetDynamics;
     private RecyclerView recyclerView;
     private MeetDynamicsListAdapter meetDynamicsListAdapter;
-    JSONObject recommend_response;
-    JSONArray recommendation;
+    JSONObject dynamics_response;
+    JSONArray dynamics;
 
     private static final String  domain = "http://www.tongmenhui.com";
-    private static final String get_recommend_url = domain + "?q=meet/activity/get";
+    private static final String dynamics_url = domain + "?q=meet/activity/get";
 
     @Nullable
     @Override
@@ -77,7 +77,7 @@ public class MeetDynamicsFragment extends Fragment {
 
         //Slog.d(TAG, "=====in MeetRecommendFragment====session: "+session);
 
-        HttpUtil.sendOkHttpRequest(null, get_recommend_url, requestBody, new Callback(){
+        HttpUtil.sendOkHttpRequest(null, dynamics_url, requestBody, new Callback(){
             int check_login_user = 0;
             String user_name;
 
@@ -111,9 +111,9 @@ public class MeetDynamicsFragment extends Fragment {
 
         if(!TextUtils.isEmpty(responseText)){
             try {
-                recommend_response= new JSONObject(responseText);
-                recommendation = recommend_response.getJSONArray("recommendation");
-                set_meet_member_info(recommendation);
+                dynamics_response= new JSONObject(responseText);
+                dynamics = dynamics_response.getJSONArray("activity");
+                set_meet_member_info(dynamics);
             }catch (JSONException e){
                 e.printStackTrace();
             }
@@ -125,39 +125,44 @@ public class MeetDynamicsFragment extends Fragment {
         Slog.d(TAG, "==========set_meet_member_info==========recommendation length: "+length);
         try{
             for (int i=0; i< length; i++){
-                JSONObject recommender = recommendation.getJSONObject(i);
+                JSONObject dynamics = recommendation.getJSONObject(i);
                 meetDynamics = new MeetDynamics();
 
-                meetDynamics.setRealname(recommender.getString("realname"));
-                meetDynamics.setUid(recommender.getInt("uid"));
-                meetDynamics.setPictureUri(recommender.getString("picture_uri"));
-                meetDynamics.setBirth_year(recommender.getInt("birth_year"));
-                meetDynamics.setHeight(recommender.getInt("height"));
-                meetDynamics.setUniversity(recommender.getString("university"));
-                meetDynamics.setDegree(recommender.getString("degree"));
-                meetDynamics.setJob_title(recommender.getString("job_title"));
-                meetDynamics.setLives(recommender.getString("lives"));
-                meetDynamics.setSituation(recommender.getInt("situation"));
+                meetDynamics.setRealname(dynamics.getString("realname"));
+                meetDynamics.setUid(dynamics.getInt("uid"));
+                meetDynamics.setPictureUri(dynamics.getString("picture_uri"));
+                meetDynamics.setBirth_year(dynamics.getInt("birth_year"));
+                meetDynamics.setHeight(dynamics.getInt("height"));
+                meetDynamics.setUniversity(dynamics.getString("university"));
+                meetDynamics.setDegree(dynamics.getString("degree"));
+                meetDynamics.setJob_title(dynamics.getString("job_title"));
+                meetDynamics.setLives(dynamics.getString("lives"));
+                meetDynamics.setSituation(dynamics.getInt("situation"));
 
                 //requirement
-                meetDynamics.setAge_lower(recommender.getInt("age_lower"));
-                meetDynamics.setAge_upper(recommender.getInt("age_upper"));
-                meetDynamics.setRequirement_height(recommender.getInt("requirement_height"));
-                meetDynamics.setRequirement_degree(recommender.getInt("requirement_degree"));
-                meetDynamics.setRequirement_lives(recommender.getString("requirement_lives"));
-                meetDynamics.setRequirement_sex(recommender.getInt("requirement_sex"));
-                meetDynamics.setIllustration(recommender.getString("illustration"));
+                meetDynamics.setAge_lower(dynamics.getInt("age_lower"));
+                meetDynamics.setAge_upper(dynamics.getInt("age_upper"));
+                meetDynamics.setRequirement_height(dynamics.getInt("requirement_height"));
+                meetDynamics.setRequirement_degree(dynamics.getInt("requirement_degree"));
+                meetDynamics.setRequirement_lives(dynamics.getString("requirement_lives"));
+                meetDynamics.setRequirement_sex(dynamics.getInt("requirement_sex"));
+                meetDynamics.setIllustration(dynamics.getString("illustration"));
 
+                //interact count
+                meetDynamics.setBrowse_count(dynamics.getInt("browse_count"));
+                meetDynamics.setLoved_count(dynamics.getInt("loved_count"));
+                meetDynamics.setPraised_count(dynamics.getInt("praised_count"));
 
-                // meetMemberInfo.setSelf(recommender.getInt("self"));
-                meetDynamics.setBrowse_count(recommender.getInt("browse_count"));
-                meetDynamics.setLoved_count(recommender.getInt("loved_count"));
-                // meetMemberInfo.setLoved(recommender.getInt("loved"));
-                // meetMemberInfo.setPraised(recommender.getInt("praised"));
-                meetDynamics.setPraised_count(recommender.getInt("praised_count"));
-                //  meetMemberInfo.setPicture_chain(recommender.getString("picture_chain"));
-                // meetMemberInfo.setRequirement_set(recommender.getInt("requirement_set"));
+                //dynamics content
+                String content = dynamics.getString("content");
+                if(content != null && content.length() != 0){
+                    meetDynamics.setContent(content);
+                }
 
+                String dynamics_pictures = dynamics.getString("activity_picture");
+                if(dynamics_pictures != null && dynamics_pictures.length() != 0){
+                    meetDynamics.setActivityPicture(dynamics_pictures);
+                }
 
                 meetList.add(meetDynamics);
             }

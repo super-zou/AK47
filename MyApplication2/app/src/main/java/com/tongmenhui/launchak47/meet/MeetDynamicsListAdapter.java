@@ -16,6 +16,7 @@ import com.tongmenhui.launchak47.util.FontManager;
 import com.tongmenhui.launchak47.util.HttpUtil;
 import com.tongmenhui.launchak47.util.Slog;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +31,8 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
     private List<MeetDynamics> mMeetList;
     private String picture_url;
     private static Context mContext;
+    ImageView picture;
+
 
     RequestQueue queue;
 
@@ -44,6 +47,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
         TextView lovedView;
         TextView thumbsView;
         TextView photosView;
+        TextView contentView;
 
         public ViewHolder(View view){
 
@@ -58,6 +62,8 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
             lovedView = (TextView)view.findViewById(R.id.loved_statistics);
             thumbsView = (TextView)view.findViewById(R.id.thumbs_up_statistics);
             photosView = (TextView)view.findViewById(R.id.photos_statistics);
+            contentView = (TextView)view.findViewById(R.id.dynamics_content);
+
             Typeface font = Typeface.createFromAsset(mContext.getAssets(), "fonts/fontawesome.ttf");
             FontManager.markAsIconContainer(view.findViewById(R.id.behavior_statistics), font);
 
@@ -69,6 +75,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
         mContext = context;
         mMeetList = new ArrayList<MeetDynamics>();
     }
+
     public void setData(List<MeetDynamics> meetList){
         mMeetList = meetList;
     }
@@ -77,7 +84,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
     public MeetDynamicsListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
         Slog.d(TAG, "===========onCreateViewHolder==============");
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.meet_item, parent, false);
+                .inflate(R.layout.meet_dynamics_item, parent, false);
         MeetDynamicsListAdapter.ViewHolder holder = new MeetDynamicsListAdapter.ViewHolder(view);
 
         return holder;
@@ -87,12 +94,12 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
     public void onBindViewHolder(final MeetDynamicsListAdapter.ViewHolder holder, int position){
 
         Slog.d(TAG, "===========onBindViewHolder==============");
-        MeetDynamics meet = mMeetList.get(position);
+        MeetDynamics meetDynamics = mMeetList.get(position);
         // Slog.d(TAG, "get name============="+meet.getRealname());
-        holder.realname.setText(meet.getRealname());
-        holder.lives.setText(meet.getLives());
+        holder.realname.setText(meetDynamics.getRealname());
+        holder.lives.setText(meetDynamics.getLives());
 
-        picture_url = domain+"/"+meet.getPictureUri();
+        picture_url = domain+"/"+meetDynamics.getPictureUri();
         // Slog.d(TAG, "picture url==========="+picture_url);
         //DownloadTask downloadTask = new DownloadTask(holder, picture_url);
         //downloadTask.execute();
@@ -101,13 +108,29 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
 
         HttpUtil.loadByImageLoader(queue, holder.headUri, picture_url, 110, 110);
 
-        holder.selfcondition.setText(meet.getSelfCondition(meet.getSituation()));
-        holder.requirement.setText(meet.getRequirement());
+        holder.selfcondition.setText(meetDynamics.getSelfCondition(meetDynamics.getSituation()));
+        holder.requirement.setText(meetDynamics.getRequirement());
 
-        holder.eyeView.setText(String.valueOf(meet.getBrowse_count()));
-        holder.lovedView.setText(String.valueOf(meet.getLoved_count()));
-        holder.thumbsView.setText(String.valueOf(meet.getPraised_count()));
-        holder.illustration.setText(meet.getIllustration());
+        holder.eyeView.setText(String.valueOf(meetDynamics.getBrowse_count()));
+        holder.lovedView.setText(String.valueOf(meetDynamics.getLoved_count()));
+        holder.thumbsView.setText(String.valueOf(meetDynamics.getPraised_count()));
+        holder.illustration.setText(meetDynamics.getIllustration());
+
+        holder.contentView.setText(meetDynamics.getContent());
+
+        String pictures = meetDynamics.getActivityPicture();
+        if(pictures != null && pictures.length() != 0){
+           String[] picture_array = pictures.split(";");
+            int length = picture_array.length;
+            if(length > 0){
+                for (int i = 0; i < length; i++)
+                Slog.d(TAG, picture_array[i]);
+                picture = new ImageView(mContext);
+                picture.setLayoutParams(new RecyclerView.LayoutParams(RecyclerView.LayoutParams.WRAP_CONTENT, RecyclerView.LayoutParams.WRAP_CONTENT));
+
+            }
+
+        }
 
 
     }
