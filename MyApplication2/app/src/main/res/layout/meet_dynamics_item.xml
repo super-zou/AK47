@@ -4,13 +4,14 @@
     android:layout_height="wrap_content">
 
     <include layout="@layout/meet_item" />
-
-    <LinearLayout
+    <TextView
+        android:id="@+id/dynamics_content"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <TextView
-            android:id="@+id/dynamics_content"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+        android:layout_height="wrap_content" />
+    <LinearLayout
+        android:id="@+id/dynamics_containers"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
     </LinearLayout>
 </LinearLayout>

@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
@@ -48,6 +49,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
         TextView thumbsView;
         TextView photosView;
         TextView contentView;
+        LinearLayout dynamicsContainer;
 
         public ViewHolder(View view){
 
@@ -63,6 +65,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
             thumbsView = (TextView)view.findViewById(R.id.thumbs_up_statistics);
             photosView = (TextView)view.findViewById(R.id.photos_statistics);
             contentView = (TextView)view.findViewById(R.id.dynamics_content);
+            dynamicsContainer = (LinearLayout) view.findViewById(R.id.dynamics_containers);
 
             Typeface font = Typeface.createFromAsset(mContext.getAssets(), "fonts/fontawesome.ttf");
             FontManager.markAsIconContainer(view.findViewById(R.id.behavior_statistics), font);
@@ -117,17 +120,21 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
         holder.illustration.setText(meetDynamics.getIllustration());
 
         holder.contentView.setText(meetDynamics.getContent());
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
         String pictures = meetDynamics.getActivityPicture();
         if(pictures != null && pictures.length() != 0){
-           String[] picture_array = pictures.split(";");
+           String[] picture_array = pictures.split(":");
             int length = picture_array.length;
             if(length > 0){
-                for (int i = 0; i < length; i++)
-                Slog.d(TAG, picture_array[i]);
-                picture = new ImageView(mContext);
-                picture.setLayoutParams(new RecyclerView.LayoutParams(RecyclerView.LayoutParams.WRAP_CONTENT, RecyclerView.LayoutParams.WRAP_CONTENT));
+                for (int i = 0; i < length; i++){
+                    Slog.d(TAG, picture_array[i]);
+                    picture = new ImageView(mContext);
+                    picture.setLayoutParams(lp);
+                    holder.dynamicsContainer.addView(picture);
+                    HttpUtil.loadByImageLoader(queue, picture, domain+"/"+picture_array[i], 110, 110);
 
+                }
             }
 
         }
