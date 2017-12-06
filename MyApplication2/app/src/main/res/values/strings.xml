@@ -11,32 +11,5 @@
     <string name="activity_text">活动</string>
     <string name="archive_text">我</string>
 
-    <array name="home_video_tab">
-        <item>全部@dream@0</item>
-        <item>视频@dream@1</item>
-        <item>声音@dream@2</item>
-        <item>图片@dream@3</item>
-        <item>段子@dream@4</item>
-    </array>
-    <!--For meet tab-->
-    <array name="meet_tab_items">
-        <item>推荐@dream@0</item>
-        <item>动态@dream@1</item>
-        <item>发现@dream@2</item>
-    </array>
-
-    <array name="newpost_video_tab">
-        <item>美女@dream@0</item>
-        <item>搞笑@dream@1</item>
-        <item>视频@dream@2</item>
-        <item>段子@dream@3</item>
-        <item>城市@dream@4</item>
-        <item>农村@dream@5</item>
-        <item>青春@dream@6</item>
-    </array>
-
-    <array name="attention_video_tab">
-        <item>订阅@dream@0</item>
-        <item>关注@dream@1</item>
-    </array>
+    <item type="id" name="tag_first"></item>
 </resources>

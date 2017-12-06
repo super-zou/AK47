@@ -92,6 +92,13 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
     }
 
     @Override
+    public void onViewRecycled(MeetDynamicsListAdapter.ViewHolder holder){
+        super.onViewRecycled(holder);
+        Object tag = holder.dynamicsContainer.getTag(R.id.tag_first);
+        queue.cancelAll(tag);
+    }
+
+    @Override
     public void onBindViewHolder(final MeetDynamicsListAdapter.ViewHolder holder, int position){
 
         Slog.d(TAG, "===========onBindViewHolder==============");
@@ -124,23 +131,24 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
         if(!"".equals(pictures)){
             holder.dynamicsContainer.removeAllViews();
 
-                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                String[] picture_array = pictures.split(":");
-                int length = picture_array.length;
-                if(length > 0){
-                    for (int i = 0; i < length; i++){
-                        Slog.d(TAG, "==========picture_array:"+picture_array[i]);
-                        if(picture_array[i] != null){
-                            ImageView picture = new ImageView(mContext);
-                            picture.setLayoutParams(lp);
-                            // picture.setTag(picture_array[i]);
-                            //picture.setBackgroundColor(Color.parseColor("#f34649"));
-                            holder.dynamicsContainer.addView(picture);
-
-                            HttpUtil.loadByImageLoader(queue, picture, domain+"/"+picture_array[i], 110, 110);
-                        }
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            String[] picture_array = pictures.split(":");
+            int length = picture_array.length;
+            if(length > 0){
+                for (int i = 0; i < length; i++){
+                    Slog.d(TAG, "==========picture_array:"+picture_array[i]);
+                    if(picture_array[i] != null){
+                        ImageView picture = new ImageView(mContext);
+                        picture.setLayoutParams(lp);
+                        //picture.setTag(1, picture_array[i]);
+                        // picture.setTag(picture_array[i]);
+                        //picture.setBackgroundColor(Color.parseColor("#f34649"));
+                        holder.dynamicsContainer.addView(picture);
+                        holder.dynamicsContainer.setTag(R.id.tag_first, queue);
+                        HttpUtil.loadByImageLoader(queue, picture, domain+"/"+picture_array[i], 110, 110);
                     }
                 }
+            }
 
         }else{
             Slog.d(TAG, "=========wowo null");
