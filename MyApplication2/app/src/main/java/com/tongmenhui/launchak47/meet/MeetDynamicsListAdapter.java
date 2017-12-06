@@ -33,7 +33,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
     private List<MeetDynamics> mMeetList;
     private String picture_url;
     private static Context mContext;
-    ImageView picture;
+
 
 
     RequestQueue queue;
@@ -124,20 +124,24 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
 
         String pictures = meetDynamics.getActivityPicture();
         if(pictures != null && pictures.length() != 0){
-            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            String[] picture_array = pictures.split(":");
-            int length = picture_array.length;
-            if(length > 0){
-                for (int i = 0; i < length; i++){
-                    Slog.d(TAG, picture_array[i]);
-                    picture = new ImageView(mContext);
-                    picture.setLayoutParams(lp);
-                    //picture.setBackgroundColor(Color.parseColor("#f34649"));
-                    holder.dynamicsContainer.addView(picture);
-                    HttpUtil.loadByImageLoader(queue, picture, domain+"/"+picture_array[i], 110, 110);
+            holder.dynamicsContainer.removeAllViews();
 
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                String[] picture_array = pictures.split(":");
+                int length = picture_array.length;
+                if(length > 0){
+                    for (int i = 0; i < length; i++){
+                        Slog.d(TAG, picture_array[i]);
+                        ImageView picture = new ImageView(mContext);
+                        picture.setLayoutParams(lp);
+                       // picture.setTag(picture_array[i]);
+                        //picture.setBackgroundColor(Color.parseColor("#f34649"));
+                        holder.dynamicsContainer.addView(picture);
+
+                        HttpUtil.loadByImageLoader(queue, picture, domain+"/"+picture_array[i], 110, 110);
+
+                    }
                 }
-            }
 
         }
 
