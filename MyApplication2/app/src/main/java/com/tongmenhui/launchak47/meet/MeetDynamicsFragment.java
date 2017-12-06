@@ -122,10 +122,11 @@ public class MeetDynamicsFragment extends Fragment {
 
     public void set_meet_member_info(JSONArray recommendation){
         int length = recommendation.length();
-        Slog.d(TAG, "==========set_meet_member_info==========recommendation length: "+length);
+        //Slog.d(TAG, "==========set_meet_member_info==========recommendation length: "+length);
         try{
             for (int i=0; i< length; i++){
                 JSONObject dynamics = recommendation.getJSONObject(i);
+                Slog.d(TAG, "==========recommendation.getJSONObject: "+dynamics);
                 meetDynamics = new MeetDynamics();
 
                 meetDynamics.setRealname(dynamics.getString("realname"));
@@ -158,11 +159,13 @@ public class MeetDynamicsFragment extends Fragment {
                 if(content != null && content.length() != 0){
                     meetDynamics.setContent(content);
                 }
-
-                String dynamics_pictures = dynamics.getString("activity_picture");
-                if(dynamics_pictures != null && dynamics_pictures.length() != 0){
-                    meetDynamics.setActivityPicture(dynamics_pictures);
+                if(!dynamics.isNull("activity_picture")){
+                    String dynamics_pictures = dynamics.getString("activity_picture");
+                    if(!"".equals(dynamics_pictures)){
+                        meetDynamics.setActivityPicture(dynamics_pictures);
+                    }
                 }
+
 
                 meetList.add(meetDynamics);
             }

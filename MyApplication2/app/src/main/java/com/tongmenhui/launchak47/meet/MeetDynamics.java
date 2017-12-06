@@ -9,7 +9,7 @@ public class MeetDynamics extends MeetMemberInfo {
     private long aid;
     private long created;
     private String content;
-    private String activity_picture;
+    private String activity_picture = "";
 
     public long getAid(){
         return aid;
@@ -30,9 +30,11 @@ public class MeetDynamics extends MeetMemberInfo {
         this.created = created;
     }
     public String getActivityPicture(){
-        return activity_picture;
+         return activity_picture;
     }
     public void setActivityPicture(String activity_picture){
-        this.activity_picture = activity_picture;
+        if(activity_picture != null && !activity_picture.equals("")){
+            this.activity_picture = activity_picture;
+        }
     }
 }
