@@ -33,7 +33,8 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
     private List<MeetDynamics> mMeetList;
     private String picture_url;
     private static Context mContext;
-    RequestQueue queue;
+    RequestQueue queueMemberInfo;
+    RequestQueue queueDynamics;
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
         TextView realname;
@@ -95,7 +96,10 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
     public void onViewRecycled(MeetDynamicsListAdapter.ViewHolder holder){
         super.onViewRecycled(holder);
         Object tag = holder.dynamicsContainer.getTag(R.id.tag_first);
-        queue.cancelAll(tag);
+        if(tag != null){
+            queueDynamics.cancelAll(tag);
+        }
+
     }
 
     @Override
@@ -111,10 +115,10 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
         // Slog.d(TAG, "picture url==========="+picture_url);
         //DownloadTask downloadTask = new DownloadTask(holder, picture_url);
         //downloadTask.execute();
-        queue = new Volley().newRequestQueue(mContext);
+        queueMemberInfo = new Volley().newRequestQueue(mContext);
 
 
-        HttpUtil.loadByImageLoader(queue, holder.headUri, picture_url, 110, 110);
+        HttpUtil.loadByImageLoader(queueMemberInfo, holder.headUri, picture_url, 110, 110);
 
         holder.selfcondition.setText(meetDynamics.getSelfCondition(meetDynamics.getSituation()));
         holder.requirement.setText(meetDynamics.getRequirement());
@@ -130,7 +134,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
         Slog.d(TAG, "=============pictures: "+pictures);
         if(!"".equals(pictures)){
             holder.dynamicsContainer.removeAllViews();
-
+            queueDynamics = new Volley().newRequestQueue(mContext);
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             String[] picture_array = pictures.split(":");
             int length = picture_array.length;
@@ -140,18 +144,19 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
                     if(picture_array[i] != null){
                         ImageView picture = new ImageView(mContext);
                         picture.setLayoutParams(lp);
-                        //picture.setTag(1, picture_array[i]);
-                        // picture.setTag(picture_array[i]);
-                        //picture.setBackgroundColor(Color.parseColor("#f34649"));
                         holder.dynamicsContainer.addView(picture);
-                        holder.dynamicsContainer.setTag(R.id.tag_first, queue);
-                        HttpUtil.loadByImageLoader(queue, picture, domain+"/"+picture_array[i], 110, 110);
+                        holder.dynamicsContainer.setTag(R.id.tag_first, queueDynamics);
+                        HttpUtil.loadByImageLoader(queueDynamics, picture, domain+"/"+picture_array[i], 110, 110);
                     }
                 }
             }
 
         }else{
-            Slog.d(TAG, "=========wowo null");
+            holder.dynamicsContainer.removeAllViews();
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            ImageView picture = new ImageView(mContext);
+            picture.setLayoutParams(lp);
+            holder.dynamicsContainer.addView(picture);
         }
 
 
