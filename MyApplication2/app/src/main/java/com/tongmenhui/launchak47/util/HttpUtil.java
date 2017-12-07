@@ -8,6 +8,7 @@ import android.widget.ImageView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.Volley;
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.meet.MeetListAdapter;
@@ -26,6 +27,7 @@ import okhttp3.RequestBody;
  */
 
 public class HttpUtil {
+    public static final String TAG = "HttpUtil";
     public static void sendOkHttpRequest(String header, String address, RequestBody requestBody, okhttp3.Callback callback){
         OkHttpClient client = new OkHttpClient();
         Request request = null;
@@ -139,15 +141,22 @@ public class HttpUtil {
     public static void loadByImageLoader(RequestQueue queue, ImageView imageView, String url, int width, int height){
         if(url != null){
             //创建ImageLoader对象，参数（加入请求队列，自定义缓存机制）
-            ImageLoader imageLoader =new ImageLoader(queue, new BitmapCache());
+            ImageLoader imageLoader =new ImageLoader(queue, BitmapCache.instance());
 
+            if(imageView instanceof NetworkImageView){
+                Slog.d(TAG, "================NetworkImageView  instance============");
+                ((NetworkImageView) imageView).setDefaultImageResId(R.drawable.main_bottom_attention_press);
+                ((NetworkImageView) imageView).setErrorImageResId(android.R.drawable.stat_notify_error);
+                ((NetworkImageView) imageView).setImageUrl(url, imageLoader);
+            }else{
+                //获取图片监听器 参数（要显示的ImageView控件，默认显示的图片，加载错误显示的图片）
+                ImageLoader.ImageListener listener = ImageLoader.getImageListener(imageView,
+                        R.drawable.main_bottom_attention_press,
+                        R.drawable.error);
 
-            //获取图片监听器 参数（要显示的ImageView控件，默认显示的图片，加载错误显示的图片）
-            ImageLoader.ImageListener listener = ImageLoader.getImageListener(imageView,
-                    R.drawable.main_bottom_attention_press,
-                    R.drawable.main_bottom_home_normal);
+                imageLoader.get(url,listener,width, height);
+            }
 
-            imageLoader.get(url,listener,width, height);
         }
 
     }

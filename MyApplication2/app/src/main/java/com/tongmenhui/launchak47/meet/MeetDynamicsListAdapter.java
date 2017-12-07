@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.Volley;
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.util.FontManager;
@@ -142,10 +143,12 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
                 for (int i = 0; i < length; i++){
                     Slog.d(TAG, "==========picture_array:"+picture_array[i]);
                     if(picture_array[i] != null){
-                        ImageView picture = new ImageView(mContext);
+                        //ImageView picture = new ImageView(mContext);
+                        NetworkImageView picture = new NetworkImageView(mContext);
                         picture.setLayoutParams(lp);
                         holder.dynamicsContainer.addView(picture);
                         holder.dynamicsContainer.setTag(R.id.tag_first, queueDynamics);
+                        //queueDynamics.setTag();
                         HttpUtil.loadByImageLoader(queueDynamics, picture, domain+"/"+picture_array[i], 110, 110);
                     }
                 }
