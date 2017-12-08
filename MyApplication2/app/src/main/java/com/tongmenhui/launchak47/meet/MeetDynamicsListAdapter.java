@@ -100,6 +100,10 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
         if(tag != null){
             queueDynamics.cancelAll(tag);
         }
+        Object tagMemberInfo = holder.headUri.getTag(R.id.tag_second);
+        if(tagMemberInfo != null){
+            queueMemberInfo.cancelAll(tagMemberInfo);
+        }
 
     }
 
@@ -118,7 +122,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
         //downloadTask.execute();
         queueMemberInfo = new Volley().newRequestQueue(mContext);
 
-
+        holder.headUri.setTag(R.id.tag_second, queueMemberInfo);
         HttpUtil.loadByImageLoader(queueMemberInfo, holder.headUri, picture_url, 110, 110);
 
         holder.selfcondition.setText(meetDynamics.getSelfCondition(meetDynamics.getSituation()));
