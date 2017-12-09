@@ -29,6 +29,8 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
+
 /**
  * Created by super-zou on 17-9-11.
  */
@@ -63,6 +65,18 @@ public class MeetRecommendFragment extends Fragment {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
 
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener(){
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState){
+                if(newState == SCROLL_STATE_IDLE){
+                    meetListAdapter.setScrolling(false);
+                    meetListAdapter.notifyDataSetChanged();
+                }else{
+                    meetListAdapter.setScrolling(true);
+                }
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+        });
 
         recyclerView.setAdapter(meetListAdapter);
         return viewContent;
@@ -81,8 +95,6 @@ public class MeetRecommendFragment extends Fragment {
         RequestBody requestBody = new FormBody.Builder().build();
        // SharedPreferences preferences =  getActivity().getSharedPreferences("session", MODE_PRIVATE);
        // String session = preferences.getString("session_name", "");
-
-        //Slog.d(TAG, "=====in MeetRecommendFragment====session: "+session);
 
         HttpUtil.sendOkHttpRequest(null, get_recommend_url, requestBody, new Callback(){
             int check_login_user = 0;

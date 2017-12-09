@@ -10,10 +10,11 @@
         android:layout_width="110dp"
         android:layout_height="110dp"
         android:paddingTop="10dp">
-        <ImageView
+        <com.android.volley.toolbox.NetworkImageView
             android:id="@+id/recommend_head_uri"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent" >
+        </com.android.volley.toolbox.NetworkImageView>
     </LinearLayout>
 
     <LinearLayout

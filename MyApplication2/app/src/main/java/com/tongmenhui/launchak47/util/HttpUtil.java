@@ -142,21 +142,21 @@ public class HttpUtil {
         if(url != null){
             //创建ImageLoader对象，参数（加入请求队列，自定义缓存机制）
             ImageLoader imageLoader =new ImageLoader(queue, BitmapCache.instance());
+            if(url.equals(imageView.getTag())){
+                if(imageView instanceof NetworkImageView){
+                    //Slog.d(TAG, "================NetworkImageView  instance============");
+                    ((NetworkImageView) imageView).setDefaultImageResId(R.drawable.main_bottom_attention_press);
+                    ((NetworkImageView) imageView).setErrorImageResId(android.R.drawable.stat_notify_error);
+                    ((NetworkImageView) imageView).setImageUrl(url, imageLoader);
+                }else{
+                    //获取图片监听器 参数（要显示的ImageView控件，默认显示的图片，加载错误显示的图片）
+                    ImageLoader.ImageListener listener = ImageLoader.getImageListener(imageView,
+                            R.drawable.main_bottom_attention_press,
+                            R.drawable.error);
 
-            if(imageView instanceof NetworkImageView){
-                Slog.d(TAG, "================NetworkImageView  instance============");
-                ((NetworkImageView) imageView).setDefaultImageResId(R.drawable.main_bottom_attention_press);
-                ((NetworkImageView) imageView).setErrorImageResId(android.R.drawable.stat_notify_error);
-                ((NetworkImageView) imageView).setImageUrl(url, imageLoader);
-            }else{
-                //获取图片监听器 参数（要显示的ImageView控件，默认显示的图片，加载错误显示的图片）
-                ImageLoader.ImageListener listener = ImageLoader.getImageListener(imageView,
-                        R.drawable.main_bottom_attention_press,
-                        R.drawable.error);
-
-                imageLoader.get(url,listener,width, height);
+                    imageLoader.get(url,listener,width, height);
+                }
             }
-
         }
 
     }

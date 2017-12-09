@@ -28,6 +28,8 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
+
 /**
  * Created by haichao.zou on 2017/11/23.
  */
@@ -62,7 +64,18 @@ public class MeetDiscoveryFragment extends Fragment {
         recyclerView = (RecyclerView) viewContent.findViewById(R.id.recyclerview);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
-
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener(){
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState){
+                if(newState == SCROLL_STATE_IDLE){
+                    meetListAdapter.setScrolling(false);
+                    meetListAdapter.notifyDataSetChanged();
+                }else{
+                    meetListAdapter.setScrolling(true);
+                }
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+        });
 
         recyclerView.setAdapter(meetListAdapter);
         return viewContent;

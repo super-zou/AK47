@@ -17,6 +17,7 @@ import com.android.volley.toolbox.Volley;
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.util.FontManager;
 import com.tongmenhui.launchak47.util.HttpUtil;
+import com.tongmenhui.launchak47.util.RequestQueueSingleton;
 import com.tongmenhui.launchak47.util.Slog;
 
 import java.lang.reflect.Array;
@@ -34,15 +35,21 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
     private List<MeetDynamics> mMeetList;
     private String picture_url;
     private static Context mContext;
+    private boolean isScrolling = false;
     RequestQueue queueMemberInfo;
     RequestQueue queueDynamics;
+    RequestQueueSingleton requestQueueSingleton;
+
+    public void setScrolling(boolean isScrolling){
+        this.isScrolling = isScrolling;
+    }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
         TextView realname;
         TextView lives;
         TextView selfcondition;
         TextView requirement;
-        ImageView headUri;
+        NetworkImageView headUri;
         TextView illustration;
         TextView eyeView;
         TextView lovedView;
@@ -56,7 +63,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
             super(view);
             realname = (TextView) view.findViewById(R.id.name);
             lives = (TextView) view.findViewById(R.id.lives);
-            headUri = (ImageView) view.findViewById(R.id.recommend_head_uri);
+            headUri = (NetworkImageView) view.findViewById(R.id.recommend_head_uri);
             selfcondition = (TextView) view.findViewById(R.id.self_condition);
             requirement = (TextView) view.findViewById(R.id.partner_requirement);
             illustration = (TextView) view.findViewById(R.id.illustration);
@@ -77,6 +84,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
         Slog.d(TAG, "==============MeetListAdapter init=================");
         mContext = context;
         mMeetList = new ArrayList<MeetDynamics>();
+        requestQueueSingleton = new RequestQueueSingleton();
     }
 
     public void setData(List<MeetDynamics> meetList){
@@ -96,15 +104,6 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
     @Override
     public void onViewRecycled(MeetDynamicsListAdapter.ViewHolder holder){
         super.onViewRecycled(holder);
-        Object tag = holder.dynamicsContainer.getTag(R.id.tag_first);
-        if(tag != null){
-            queueDynamics.cancelAll(tag);
-        }
-        Object tagMemberInfo = holder.headUri.getTag(R.id.tag_second);
-        if(tagMemberInfo != null){
-            queueMemberInfo.cancelAll(tagMemberInfo);
-        }
-
     }
 
     @Override
@@ -112,46 +111,48 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
 
         Slog.d(TAG, "===========onBindViewHolder==============");
         MeetDynamics meetDynamics = mMeetList.get(position);
-        // Slog.d(TAG, "get name============="+meet.getRealname());
+
         holder.realname.setText(meetDynamics.getRealname());
         holder.lives.setText(meetDynamics.getLives());
 
-        picture_url = domain+"/"+meetDynamics.getPictureUri();
-        // Slog.d(TAG, "picture url==========="+picture_url);
-        //DownloadTask downloadTask = new DownloadTask(holder, picture_url);
-        //downloadTask.execute();
-        queueMemberInfo = new Volley().newRequestQueue(mContext);
 
-        holder.headUri.setTag(R.id.tag_second, queueMemberInfo);
-        HttpUtil.loadByImageLoader(queueMemberInfo, holder.headUri, picture_url, 110, 110);
+        if(!"".equals(meetDynamics.getPictureUri()) && !isScrolling){
+            picture_url = domain+"/"+meetDynamics.getPictureUri();
+            //queueMemberInfo = new Volley().newRequestQueue(mContext);
+            queueMemberInfo = requestQueueSingleton.instance(mContext);
+            holder.headUri.setTag(picture_url);
+            HttpUtil.loadByImageLoader(queueMemberInfo, holder.headUri, picture_url, 110, 110);
+        }else{
+            holder.headUri.setImageDrawable(mContext.getDrawable(R.mipmap.ic_launcher));
+        }
 
         holder.selfcondition.setText(meetDynamics.getSelfCondition(meetDynamics.getSituation()));
         holder.requirement.setText(meetDynamics.getRequirement());
-
         holder.eyeView.setText(String.valueOf(meetDynamics.getBrowse_count()));
         holder.lovedView.setText(String.valueOf(meetDynamics.getLoved_count()));
         holder.thumbsView.setText(String.valueOf(meetDynamics.getPraised_count()));
         holder.illustration.setText(meetDynamics.getIllustration());
-
         holder.contentView.setText(meetDynamics.getContent());
 
         String pictures = meetDynamics.getActivityPicture();
-        Slog.d(TAG, "=============pictures: "+pictures);
         if(!"".equals(pictures)){
             holder.dynamicsContainer.removeAllViews();
-            queueDynamics = new Volley().newRequestQueue(mContext);
+            //queueDynamics = new Volley().newRequestQueue(mContext);
+            queueDynamics = requestQueueSingleton.instance(mContext);
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             String[] picture_array = pictures.split(":");
             int length = picture_array.length;
             if(length > 0){
                 for (int i = 0; i < length; i++){
-                    Slog.d(TAG, "==========picture_array:"+picture_array[i]);
+                    //Slog.d(TAG, "==========picture_array:"+picture_array[i]);
                     if(picture_array[i] != null){
                         //ImageView picture = new ImageView(mContext);
                         NetworkImageView picture = new NetworkImageView(mContext);
                         picture.setLayoutParams(lp);
                         holder.dynamicsContainer.addView(picture);
-                        holder.dynamicsContainer.setTag(R.id.tag_first, queueDynamics);
+                       // holder.dynamicsContainer.setTag(R.id.tag_first, queueDynamics);
+                        picture.setImageDrawable(mContext.getDrawable(R.mipmap.ic_launcher));
+                        picture.setTag(domain+"/"+picture_array[i]);
                         //queueDynamics.setTag();
                         HttpUtil.loadByImageLoader(queueDynamics, picture, domain+"/"+picture_array[i], 110, 110);
                     }

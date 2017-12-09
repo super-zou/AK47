@@ -10,10 +10,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.Volley;
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.util.FontManager;
 import com.tongmenhui.launchak47.util.HttpUtil;
+import com.tongmenhui.launchak47.util.RequestQueueSingleton;
 import com.tongmenhui.launchak47.util.Slog;
 
 import java.util.ArrayList;
@@ -29,15 +31,21 @@ public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHo
     private List<MeetMemberInfo> mMeetList;
     private String picture_url;
     private static Context mContext;
+    private boolean isScrolling = false;
 
     RequestQueue queue;
+
+    public void setScrolling(boolean isScrolling){
+        this.isScrolling = isScrolling;
+    }
+
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
         TextView realname;
         TextView lives;
         TextView selfcondition;
         TextView requirement;
-        ImageView headUri;
+        NetworkImageView headUri;
         TextView illustration;
         TextView eyeView;
         TextView lovedView;
@@ -49,7 +57,7 @@ public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHo
             super(view);
             realname = (TextView) view.findViewById(R.id.name);
             lives = (TextView) view.findViewById(R.id.lives);
-            headUri = (ImageView) view.findViewById(R.id.recommend_head_uri);
+            headUri = (NetworkImageView) view.findViewById(R.id.recommend_head_uri);
             selfcondition = (TextView) view.findViewById(R.id.self_condition);
             requirement = (TextView) view.findViewById(R.id.partner_requirement);
             illustration = (TextView) view.findViewById(R.id.illustration);
@@ -91,14 +99,16 @@ public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHo
         holder.realname.setText(meet.getRealname());
         holder.lives.setText(meet.getLives());
 
-        picture_url = domain+"/"+meet.getPictureUri();
-       // Slog.d(TAG, "picture url==========="+picture_url);
-        //DownloadTask downloadTask = new DownloadTask(holder, picture_url);
-        //downloadTask.execute();
-        queue = new Volley().newRequestQueue(mContext);
+        if(!"".equals(meet.getPictureUri()) && !isScrolling){
+            picture_url = domain+"/"+meet.getPictureUri();
+            queue = RequestQueueSingleton.instance(mContext);
 
+            holder.headUri.setTag(picture_url);
+            HttpUtil.loadByImageLoader(queue, holder.headUri, picture_url, 110, 110);
+        }else{
+            holder.headUri.setImageDrawable(mContext.getDrawable(R.mipmap.ic_launcher));
+        }
 
-        HttpUtil.loadByImageLoader(queue, holder.headUri, picture_url, 110, 110);
 
         holder.selfcondition.setText(meet.getSelfCondition(meet.getSituation()));
         holder.requirement.setText(meet.getRequirement());

@@ -17,7 +17,7 @@ public class MeetMemberInfo {
     //self condition
     public int uid = -1;
     public String realname;
-    public String pictureUri;
+    public String pictureUri = "";
     public int birth_year;
     public int height;
     public String university;
@@ -147,7 +147,9 @@ public class MeetMemberInfo {
     }
 
     public void setPictureUri(String pictureUri){
-        this.pictureUri = pictureUri;
+        if(!"".equals(pictureUri)){
+            this.pictureUri = pictureUri;
+        }
     }
     public String getPictureUri(){
         return pictureUri;

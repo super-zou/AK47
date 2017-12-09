@@ -11,6 +11,6 @@
     <string name="activity_text">活动</string>
     <string name="archive_text">我</string>
 
-    <item type="id" name="tag_first"></item>
-    <item type="id" name="tag_second"></item>
+    <item type="id" name="tag_first" />
+    <item type="id" name="tag_second" />
 </resources>
