@@ -146,7 +146,6 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
                 for (int i = 0; i < length; i++){
                     //Slog.d(TAG, "==========picture_array:"+picture_array[i]);
                     if(picture_array[i] != null){
-                        //ImageView picture = new ImageView(mContext);
                         NetworkImageView picture = new NetworkImageView(mContext);
                         picture.setLayoutParams(lp);
                         holder.dynamicsContainer.addView(picture);
