@@ -23,16 +23,28 @@ public class PictureAdapter extends BaseAdapter {
     private Context context;
     private RequestQueue requestQueue;
     private List<Picture> pictureList = new ArrayList<Picture>();
+    ;
 
-    public PictureAdapter(Context context, String[] picures_url, RequestQueue requestQueue){
+    public PictureAdapter(Context context){
         super();
         this.context = context;
-        this.requestQueue = requestQueue;
+    }
 
+    public void setPictureList(String[] picures_url){
         for (int i=0; i<picures_url.length;i++){
             Picture picture = new Picture(picures_url[i]);
             pictureList.add(picture);
         }
+    }
+    public List<Picture> getPictureList(){
+        return pictureList;
+    }
+
+    public void setRequestQueue(RequestQueue requestQueue){
+        this.requestQueue = requestQueue;
+    }
+    public RequestQueue getRequestQueue(){
+        return requestQueue;
     }
 
     @Override

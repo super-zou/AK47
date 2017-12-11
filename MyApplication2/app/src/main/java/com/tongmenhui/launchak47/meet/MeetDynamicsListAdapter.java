@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -17,6 +18,7 @@ import com.android.volley.toolbox.Volley;
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.util.FontManager;
 import com.tongmenhui.launchak47.util.HttpUtil;
+import com.tongmenhui.launchak47.util.PictureAdapter;
 import com.tongmenhui.launchak47.util.RequestQueueSingleton;
 import com.tongmenhui.launchak47.util.Slog;
 
@@ -40,6 +42,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
     RequestQueue queueDynamics;
     RequestQueueSingleton requestQueueSingleton;
 
+
     public void setScrolling(boolean isScrolling){
         this.isScrolling = isScrolling;
     }
@@ -57,6 +60,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
         TextView photosView;
         TextView contentView;
         LinearLayout dynamicsContainer;
+        GridView pictureGridView;
 
         public ViewHolder(View view){
 
@@ -73,6 +77,8 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
             photosView = (TextView)view.findViewById(R.id.photos_statistics);
             contentView = (TextView)view.findViewById(R.id.dynamics_content);
             dynamicsContainer = (LinearLayout) view.findViewById(R.id.dynamics_containers);
+            pictureGridView = (GridView)view.findViewById(R.id.dynamics_gridview);
+            pictureGridView.setAdapter(new PictureAdapter(mContext));
 
             Typeface font = Typeface.createFromAsset(mContext.getAssets(), "fonts/fontawesome.ttf");
             FontManager.markAsIconContainer(view.findViewById(R.id.behavior_statistics), font);
@@ -143,8 +149,8 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
             String[] picture_array = pictures.split(":");
             int length = picture_array.length;
             if(length > 0){
+                /*
                 for (int i = 0; i < length; i++){
-                    //Slog.d(TAG, "==========picture_array:"+picture_array[i]);
                     if(picture_array[i] != null){
                         NetworkImageView picture = new NetworkImageView(mContext);
                         picture.setLayoutParams(lp);
@@ -156,6 +162,8 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
                         HttpUtil.loadByImageLoader(queueDynamics, picture, domain+"/"+picture_array[i], 110, 110);
                     }
                 }
+                */
+
             }
 
         }else{

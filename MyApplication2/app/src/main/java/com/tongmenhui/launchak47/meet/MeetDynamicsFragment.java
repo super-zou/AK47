@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridView;
 
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.util.HttpUtil;
@@ -44,6 +45,7 @@ public class MeetDynamicsFragment extends Fragment {
     JSONObject dynamics_response;
     JSONArray dynamics;
 
+
     private static final String  domain = "http://www.tongmenhui.com";
     private static final String dynamics_url = domain + "?q=meet/activity/get";
 
@@ -73,6 +75,8 @@ public class MeetDynamicsFragment extends Fragment {
 
 
         recyclerView.setAdapter(meetDynamicsListAdapter);
+
+
         return viewContent;
 
     }
