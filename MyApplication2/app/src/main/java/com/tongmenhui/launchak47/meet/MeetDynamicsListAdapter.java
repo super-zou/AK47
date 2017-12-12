@@ -41,6 +41,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
     RequestQueue queueMemberInfo;
     RequestQueue queueDynamics;
     RequestQueueSingleton requestQueueSingleton;
+    PictureAdapter pictureAdapter;
 
 
     public void setScrolling(boolean isScrolling){
@@ -60,7 +61,9 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
         TextView photosView;
         TextView contentView;
         LinearLayout dynamicsContainer;
+
         GridView pictureGridView;
+
 
         public ViewHolder(View view){
 
@@ -77,8 +80,11 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
             photosView = (TextView)view.findViewById(R.id.photos_statistics);
             contentView = (TextView)view.findViewById(R.id.dynamics_content);
             dynamicsContainer = (LinearLayout) view.findViewById(R.id.dynamics_containers);
+
+
             pictureGridView = (GridView)view.findViewById(R.id.dynamics_gridview);
-            pictureGridView.setAdapter(new PictureAdapter(mContext));
+
+
 
             Typeface font = Typeface.createFromAsset(mContext.getAssets(), "fonts/fontawesome.ttf");
             FontManager.markAsIconContainer(view.findViewById(R.id.behavior_statistics), font);
@@ -87,10 +93,11 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
     }
 
     public MeetDynamicsListAdapter(Context context){
-        Slog.d(TAG, "==============MeetListAdapter init=================");
+        //Slog.d(TAG, "==============MeetListAdapter init=================");
         mContext = context;
         mMeetList = new ArrayList<MeetDynamics>();
         requestQueueSingleton = new RequestQueueSingleton();
+
     }
 
     public void setData(List<MeetDynamics> meetList){
@@ -99,9 +106,10 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
 
     @Override
     public MeetDynamicsListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
-        Slog.d(TAG, "===========onCreateViewHolder==============");
+       // Slog.d(TAG, "===========onCreateViewHolder==============");
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.meet_dynamics_item, parent, false);
+
         MeetDynamicsListAdapter.ViewHolder holder = new MeetDynamicsListAdapter.ViewHolder(view);
 
         return holder;
@@ -115,7 +123,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
     @Override
     public void onBindViewHolder(final MeetDynamicsListAdapter.ViewHolder holder, int position){
 
-        Slog.d(TAG, "===========onBindViewHolder==============");
+       // Slog.d(TAG, "===========onBindViewHolder==============");
         MeetDynamics meetDynamics = mMeetList.get(position);
 
         holder.realname.setText(meetDynamics.getRealname());
@@ -141,6 +149,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
         holder.contentView.setText(meetDynamics.getContent());
 
         String pictures = meetDynamics.getActivityPicture();
+
         if(!"".equals(pictures)){
             holder.dynamicsContainer.removeAllViews();
             //queueDynamics = new Volley().newRequestQueue(mContext);
@@ -149,6 +158,8 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
             String[] picture_array = pictures.split(":");
             int length = picture_array.length;
             if(length > 0){
+
+                //pictureAdapter.setGridView(pictureGridView);
                 /*
                 for (int i = 0; i < length; i++){
                     if(picture_array[i] != null){
@@ -165,6 +176,16 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
                 */
 
             }
+
+            pictureAdapter = new PictureAdapter(mContext);
+
+            holder.pictureGridView.setAdapter(pictureAdapter);
+
+            pictureAdapter.setRequestQueue(queueDynamics);
+            pictureAdapter.setPictureList(picture_array);
+
+            pictureAdapter.notifyDataSetChanged();
+
 
         }else{
             holder.dynamicsContainer.removeAllViews();

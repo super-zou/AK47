@@ -16,6 +16,9 @@
         <GridView
             android:id="@+id/dynamics_gridview"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"></GridView>
+            android:layout_height="wrap_content"
+            android:numColumns="3">
+
+        </GridView>
     </LinearLayout>
 </LinearLayout>
