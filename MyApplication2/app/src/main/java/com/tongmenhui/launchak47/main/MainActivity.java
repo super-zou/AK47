@@ -1,27 +1,15 @@
 package com.tongmenhui.launchak47.main;
 
-import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
 //import android.support.v4.app.FragmentTabHost;
-import android.support.v4.app.FragmentTabHost;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TabHost;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.tongmenhui.launchak47.R;
-import com.tongmenhui.launchak47.meet.MeetFragmentAdapter;
+import com.tongmenhui.launchak47.adapter.MainFragmentAdapter;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 

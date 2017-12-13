@@ -1,17 +1,13 @@
 package com.tongmenhui.launchak47.util;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.widget.ImageView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
-import com.android.volley.toolbox.Volley;
 import com.tongmenhui.launchak47.R;
-import com.tongmenhui.launchak47.meet.MeetListAdapter;
 
 import java.io.IOException;
 import java.io.InputStream;

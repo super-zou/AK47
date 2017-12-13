@@ -8,17 +8,10 @@
         android:id="@+id/dynamics_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-    <LinearLayout
-        android:id="@+id/dynamics_containers"
+    <GridLayout
+        android:id="@+id/dynamics_picture_grid"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-        <GridView
-            android:id="@+id/dynamics_gridview"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:numColumns="3">
-
-        </GridView>
-    </LinearLayout>
+    </GridLayout>
 </LinearLayout>

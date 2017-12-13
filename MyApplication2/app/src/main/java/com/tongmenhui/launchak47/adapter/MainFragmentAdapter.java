@@ -1,10 +1,13 @@
-package com.tongmenhui.launchak47.main;
+package com.tongmenhui.launchak47.adapter;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.view.View;
 
+import com.tongmenhui.launchak47.main.ActivitiesFragment;
+import com.tongmenhui.launchak47.main.ArchiveFragment;
+import com.tongmenhui.launchak47.main.MeetFragment;
 import com.tongmenhui.launchak47.util.Slog;
 
 import java.util.ArrayList;

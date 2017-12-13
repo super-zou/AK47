@@ -1,10 +1,13 @@
-package com.tongmenhui.launchak47.meet;
+package com.tongmenhui.launchak47.adapter;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.view.View;
 
+import com.tongmenhui.launchak47.meet.MeetDiscoveryFragment;
+import com.tongmenhui.launchak47.meet.MeetDynamicsFragment;
+import com.tongmenhui.launchak47.meet.MeetRecommendFragment;
 import com.tongmenhui.launchak47.util.Slog;
 
 import java.util.ArrayList;

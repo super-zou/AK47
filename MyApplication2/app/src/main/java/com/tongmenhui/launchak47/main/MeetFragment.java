@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.support.v4.app.Fragment;
 
 import com.tongmenhui.launchak47.R;
-import com.tongmenhui.launchak47.meet.MeetFragmentAdapter;
+import com.tongmenhui.launchak47.adapter.MeetFragmentAdapter;
 
 import java.util.ArrayList;
 
