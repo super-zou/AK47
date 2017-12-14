@@ -146,17 +146,19 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
             holder.dynamicsGrid.removeAllViews();
             //queueDynamics = new Volley().newRequestQueue(mContext);
             queueDynamics = requestQueueSingleton.instance(mContext);
-            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            //LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             String[] picture_array = pictures.split(":");
             int length = picture_array.length;
             if(length > 0){
-
-
-
+                if(length != 4){
+                    holder.dynamicsGrid.setColumnCount(3);
+                }else{
+                    holder.dynamicsGrid.setColumnCount(2);
+                }
                 for (int i = 0; i < length; i++){
                     if(picture_array[i] != null){
                         NetworkImageView picture = new NetworkImageView(mContext);
-                        picture.setLayoutParams(lp);
+                       //add picture.setLayoutParams(lp);
                         holder.dynamicsGrid.addView(picture);
                        // holder.dynamicsContainer.setTag(R.id.tag_first, queueDynamics);
                         picture.setImageDrawable(mContext.getDrawable(R.mipmap.ic_launcher));
