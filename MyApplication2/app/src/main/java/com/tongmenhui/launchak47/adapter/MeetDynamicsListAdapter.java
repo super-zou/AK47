@@ -2,6 +2,7 @@ package com.tongmenhui.launchak47.adapter;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,6 +38,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
     RequestQueue queueMemberInfo;
     RequestQueue queueDynamics;
     RequestQueueSingleton requestQueueSingleton;
+    GridLayout.LayoutParams lp;
 
 
 
@@ -146,7 +148,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
             holder.dynamicsGrid.removeAllViews();
             //queueDynamics = new Volley().newRequestQueue(mContext);
             queueDynamics = requestQueueSingleton.instance(mContext);
-            //LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
             String[] picture_array = pictures.split(":");
             int length = picture_array.length;
             if(length > 0){
@@ -155,11 +157,24 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
                 }else{
                     holder.dynamicsGrid.setColumnCount(2);
                 }
+                GridLayout.Spec rowSpec;
+                GridLayout.Spec columnSpec;
                 for (int i = 0; i < length; i++){
+
                     if(picture_array[i] != null){
+                        if(length != 4){
+                            rowSpec = GridLayout.spec(i/3, 1f);
+                            columnSpec = GridLayout.spec(i%3, 1f);
+                        }else{
+                            rowSpec = GridLayout.spec(i/2, 1f);
+                            columnSpec = GridLayout.spec(i%2, 1f);
+                        }
+                        lp = new GridLayout.LayoutParams(rowSpec, columnSpec);
+                        lp.width = 0;
+                        lp.height = 0;
                         NetworkImageView picture = new NetworkImageView(mContext);
-                       //add picture.setLayoutParams(lp);
-                        holder.dynamicsGrid.addView(picture);
+                       // picture.setLayoutParams(lp);
+                        holder.dynamicsGrid.addView(picture, lp);
                        // holder.dynamicsContainer.setTag(R.id.tag_first, queueDynamics);
                         picture.setImageDrawable(mContext.getDrawable(R.mipmap.ic_launcher));
                         picture.setTag(domain+"/"+picture_array[i]);
