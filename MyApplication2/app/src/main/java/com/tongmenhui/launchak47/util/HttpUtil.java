@@ -2,6 +2,7 @@ package com.tongmenhui.launchak47.util;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.android.volley.RequestQueue;
@@ -24,6 +25,7 @@ import okhttp3.RequestBody;
 
 public class HttpUtil {
     public static final String TAG = "HttpUtil";
+
     public static void sendOkHttpRequest(String header, String address, RequestBody requestBody, okhttp3.Callback callback){
         OkHttpClient client = new OkHttpClient();
         Request request = null;
@@ -135,6 +137,7 @@ public class HttpUtil {
     }
 */
     public static void loadByImageLoader(RequestQueue queue, ImageView imageView, String url, int width, int height){
+
         if(url != null){
             //创建ImageLoader对象，参数（加入请求队列，自定义缓存机制）
             ImageLoader imageLoader =new ImageLoader(queue, BitmapCache.instance());
@@ -143,6 +146,7 @@ public class HttpUtil {
                     //Slog.d(TAG, "================NetworkImageView  instance============");
                     ((NetworkImageView) imageView).setDefaultImageResId(R.drawable.main_bottom_attention_press);
                     ((NetworkImageView) imageView).setErrorImageResId(android.R.drawable.stat_notify_error);
+                    //imageView.setLayoutParams(layoutParams);
                     ((NetworkImageView) imageView).setImageUrl(url, imageLoader);
                 }else{
                     //获取图片监听器 参数（要显示的ImageView控件，默认显示的图片，加载错误显示的图片）

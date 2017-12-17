@@ -1,17 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:id="@+id/meet_dynamics_item">
 
     <include layout="@layout/meet_item" />
-    <TextView
-        android:id="@+id/dynamics_content"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-    <GridLayout
-        android:id="@+id/dynamics_picture_grid"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-    </GridLayout>
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="-5dp"
+        tools:background="@color/colorWhite"
+        android:background="@color/colorWhite">
+        <TextView
+            android:id="@+id/dynamics_content"
+            android:layout_width="match_parent"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_height="wrap_content" />
+        <GridLayout
+            android:id="@+id/dynamics_picture_grid"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="20dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+        </GridLayout>
+        <LinearLayout
+            android:id="@+id/dynamics_content_meta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="right">
+            <TextView
+                android:id="@+id/dynamic_time"
+                android:text="time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <TextView
+                android:id="@+id/dynamic_praise_icon"
+                android:text="@string/fa_thumbs_up"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textColor="@android:color/holo_blue_dark"
+                android:layout_marginLeft="18dp"
+                android:gravity="center"
+                />
+            <TextView
+                android:id="@+id/dynamic_praise"
+                android:text="praise"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <TextView
+                android:id="@+id/dynamic_comment_icon"
+                android:text="@string/fa_comment"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textColor="@android:color/holo_blue_dark"
+                android:layout_marginLeft="18dp"
+                android:gravity="center"
+                />
+            <TextView
+                android:id="@+id/dynamic_comment_count"
+                android:text="comment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/dynamics_comments"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+        </LinearLayout>
+    </LinearLayout>
+
 </LinearLayout>

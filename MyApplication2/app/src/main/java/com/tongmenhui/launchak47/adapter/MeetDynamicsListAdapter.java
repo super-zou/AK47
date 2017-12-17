@@ -3,13 +3,18 @@ package com.tongmenhui.launchak47.adapter;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.support.v7.widget.LinearLayoutCompat;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.GridLayout;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
@@ -39,7 +44,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
     RequestQueue queueDynamics;
     RequestQueueSingleton requestQueueSingleton;
     GridLayout.LayoutParams lp;
-
+    LinearLayout.LayoutParams itemLp;
 
 
     public void setScrolling(boolean isScrolling){
@@ -59,8 +64,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
         TextView photosView;
         TextView contentView;
         GridLayout dynamicsGrid;
-
-
+        LinearLayout commentList;
 
 
         public ViewHolder(View view){
@@ -78,10 +82,11 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
             photosView = (TextView)view.findViewById(R.id.photos_statistics);
             contentView = (TextView)view.findViewById(R.id.dynamics_content);
             dynamicsGrid = (GridLayout) view.findViewById(R.id.dynamics_picture_grid);
+            commentList = (LinearLayout) view.findViewById(R.id.dynamics_comments);
 
 
             Typeface font = Typeface.createFromAsset(mContext.getAssets(), "fonts/fontawesome.ttf");
-            FontManager.markAsIconContainer(view.findViewById(R.id.behavior_statistics), font);
+            FontManager.markAsIconContainer(view.findViewById(R.id.meet_dynamics_item), font);
 
         }
     }
@@ -103,7 +108,6 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
        // Slog.d(TAG, "===========onCreateViewHolder==============");
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.meet_dynamics_item, parent, false);
-
         MeetDynamicsListAdapter.ViewHolder holder = new MeetDynamicsListAdapter.ViewHolder(view);
 
         return holder;
@@ -144,9 +148,9 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
 
         String pictures = meetDynamics.getActivityPicture();
 
-        if(!"".equals(pictures)){
+
+        if(!"".equals(pictures) && !isScrolling){
             holder.dynamicsGrid.removeAllViews();
-            //queueDynamics = new Volley().newRequestQueue(mContext);
             queueDynamics = requestQueueSingleton.instance(mContext);
 
             String[] picture_array = pictures.split(":");
@@ -157,32 +161,34 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
                 }else{
                     holder.dynamicsGrid.setColumnCount(2);
                 }
-                GridLayout.Spec rowSpec;
-                GridLayout.Spec columnSpec;
+
                 for (int i = 0; i < length; i++){
 
                     if(picture_array[i] != null){
-                        if(length != 4){
-                            rowSpec = GridLayout.spec(i/3, 1f);
-                            columnSpec = GridLayout.spec(i%3, 1f);
-                        }else{
-                            rowSpec = GridLayout.spec(i/2, 1f);
-                            columnSpec = GridLayout.spec(i%2, 1f);
-                        }
-                        lp = new GridLayout.LayoutParams(rowSpec, columnSpec);
-                        lp.width = 0;
-                        lp.height = 0;
+                        LinearLayout linearLayout = new LinearLayout(mContext);
+                        LinearLayout.LayoutParams layoutParams=new LinearLayout.LayoutParams(200, 200);
+                        layoutParams.setMargins(4, 0, 0, 4);
+                        //将以上的属性赋给LinearLayout
+                        linearLayout.setLayoutParams(layoutParams);
+
                         NetworkImageView picture = new NetworkImageView(mContext);
-                       // picture.setLayoutParams(lp);
-                        holder.dynamicsGrid.addView(picture, lp);
-                       // holder.dynamicsContainer.setTag(R.id.tag_first, queueDynamics);
+
+                       // picture.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                       // itemLp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        //itemLp.width = 200;
+                        //itemLp.height = 200;
+                        //itemLp.setMargins(2,50,50,2);
+
+                        //picture.setLayoutParams(itemLp);
+                        //holder.dynamicsGrid.addView(picture, lp);
+                        linearLayout.addView(picture);
+                        holder.dynamicsGrid.addView(linearLayout);
+
                         picture.setImageDrawable(mContext.getDrawable(R.mipmap.ic_launcher));
                         picture.setTag(domain+"/"+picture_array[i]);
-                        //queueDynamics.setTag();
-                        HttpUtil.loadByImageLoader(queueDynamics, picture, domain+"/"+picture_array[i], 110, 110);
+                        HttpUtil.loadByImageLoader(queueDynamics, picture, domain+"/"+picture_array[i], 200, 200);
                     }
                 }
-
 
             }
 
@@ -193,14 +199,18 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
             picture.setLayoutParams(lp);
             holder.dynamicsGrid.addView(picture);
         }
-
+        setDynamicsCommentView(holder.commentList, meetDynamics.getAid());
 
     }
 
     @Override
     public int getItemCount(){
-
         return mMeetList.size();
+    }
+
+    public void setDynamicsCommentView(LinearLayout linearLayout, Long aid){
+
+
     }
 
 }

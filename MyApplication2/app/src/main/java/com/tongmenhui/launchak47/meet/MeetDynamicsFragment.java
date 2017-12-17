@@ -187,6 +187,8 @@ public class MeetDynamicsFragment extends Fragment {
                     }
                 }
 
+                meetDynamics.setAid(dynamics.getLong("aid"));
+
                 meetList.add(meetDynamics);
             }
         }catch (JSONException e){
