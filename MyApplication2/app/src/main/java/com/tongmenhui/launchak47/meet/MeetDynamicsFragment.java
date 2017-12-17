@@ -122,8 +122,6 @@ public class MeetDynamicsFragment extends Fragment {
             }
         });
 
-        // getResponseText(responseText);
-
     }
 
     public void getResponseText(String responseText){

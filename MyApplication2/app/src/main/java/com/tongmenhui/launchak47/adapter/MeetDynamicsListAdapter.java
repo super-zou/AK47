@@ -21,12 +21,21 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.NetworkImageView;
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.meet.MeetDynamics;
+import com.tongmenhui.launchak47.meet.MeetDynamicsFragment;
 import com.tongmenhui.launchak47.util.FontManager;
 import com.tongmenhui.launchak47.util.HttpUtil;
 import com.tongmenhui.launchak47.util.RequestQueueSingleton;
+import com.tongmenhui.launchak47.util.Slog;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * Created by haichao.zou on 2017/11/20.
@@ -208,9 +217,29 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
         return mMeetList.size();
     }
 
-    public void setDynamicsCommentView(LinearLayout linearLayout, Long aid){
+    public void setDynamicsCommentView(final LinearLayout linearLayout, Long aid){
+        String request_comment_url = "?q=meet/activity/interact/get";
+        RequestBody requestBody = new FormBody.Builder().add("aid",aid.toString()).build();
 
+        HttpUtil.sendOkHttpRequest(null, domain+request_comment_url, requestBody, new Callback(){
 
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String responseText = response.body().string();
+                getResponseText(linearLayout, responseText);
+
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e){
+
+            }
+        });
+
+    }
+
+    public void getResponseText(LinearLayout linearLayout, String responseText){
+        Slog.d(TAG, "==============get comment:=============="+responseText);
     }
 
 }
