@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.adapter.MeetDynamicsListAdapter;
@@ -124,6 +125,27 @@ public class MeetDynamicsFragment extends Fragment {
 
     }
 
+    public void getDynamicsComment(Long aid){
+        String request_comment_url = "?q=meet/activity/interact/get";
+        RequestBody requestBody = new FormBody.Builder().add("aid",aid.toString()).build();
+
+        HttpUtil.sendOkHttpRequest(null, domain+request_comment_url, requestBody, new Callback(){
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String responseText = response.body().string();
+                Slog.d(TAG, "######################comment: "+responseText);
+
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e){
+
+            }
+        });
+
+    }
+
     public void getResponseText(String responseText){
 
         Slog.d(TAG, "====================getResponseText====================");
@@ -186,6 +208,8 @@ public class MeetDynamicsFragment extends Fragment {
                 }
 
                 meetDynamics.setAid(dynamics.getLong("aid"));
+
+                getDynamicsComment(dynamics.getLong("aid"));
 
                 meetList.add(meetDynamics);
             }

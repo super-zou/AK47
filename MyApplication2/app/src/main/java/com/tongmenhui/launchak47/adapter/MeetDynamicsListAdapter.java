@@ -5,6 +5,7 @@ import android.graphics.Typeface;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,9 +28,14 @@ import com.tongmenhui.launchak47.util.HttpUtil;
 import com.tongmenhui.launchak47.util.RequestQueueSingleton;
 import com.tongmenhui.launchak47.util.Slog;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.Inflater;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -208,7 +214,12 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
             picture.setLayoutParams(lp);
             holder.dynamicsGrid.addView(picture);
         }
-        setDynamicsCommentView(holder.commentList, meetDynamics.getAid());
+
+    }
+
+    public void setDynamicsCommentView(LinearLayout linearLayout, JSONArray comment_array){
+        View viewComment = View.inflate(mContext, R.layout.dynamics_comment_item, null);
+        linearLayout.addView(viewComment);
 
     }
 
@@ -217,29 +228,8 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
         return mMeetList.size();
     }
 
-    public void setDynamicsCommentView(final LinearLayout linearLayout, Long aid){
-        String request_comment_url = "?q=meet/activity/interact/get";
-        RequestBody requestBody = new FormBody.Builder().add("aid",aid.toString()).build();
 
-        HttpUtil.sendOkHttpRequest(null, domain+request_comment_url, requestBody, new Callback(){
 
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                String responseText = response.body().string();
-                getResponseText(linearLayout, responseText);
 
-            }
-
-            @Override
-            public void onFailure(Call call, IOException e){
-
-            }
-        });
-
-    }
-
-    public void getResponseText(LinearLayout linearLayout, String responseText){
-        Slog.d(TAG, "==============get comment:=============="+responseText);
-    }
 
 }
