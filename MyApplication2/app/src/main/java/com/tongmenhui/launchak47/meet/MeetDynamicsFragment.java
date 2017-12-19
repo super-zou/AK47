@@ -1,6 +1,8 @@
 package com.tongmenhui.launchak47.meet;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -49,6 +51,8 @@ public class MeetDynamicsFragment extends Fragment {
     JSONObject commentResponse;
     JSONArray dynamics;
     JSONArray commentArray;
+    private Handler handler;
+    private static final int DONE = 1;
 
 
     private static final String  domain = "http://www.tongmenhui.com";
@@ -57,7 +61,7 @@ public class MeetDynamicsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Slog.d(TAG, "=================onCreateView===================");
+       // Slog.d(TAG, "=================onCreateView===================");
         initConentView();
         meetDynamicsListAdapter = new MeetDynamicsListAdapter(getContext());
         viewContent = inflater.inflate(R.layout.meet_dynamics, container, false);
@@ -88,12 +92,12 @@ public class MeetDynamicsFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Slog.d(TAG, "=================onViewCreated===================");
+       // Slog.d(TAG, "=================onViewCreated===================");
         // initConentView();
     }
 
     public void initConentView(){
-        Slog.d(TAG, "===============initConentView==============");
+        //Slog.d(TAG, "===============initConentView==============");
 
         RequestBody requestBody = new FormBody.Builder().build();
         // SharedPreferences preferences =  getActivity().getSharedPreferences("session", MODE_PRIVATE);
@@ -110,15 +114,17 @@ public class MeetDynamicsFragment extends Fragment {
                 String responseText = response.body().string();
                 //Slog.d(TAG, "response : "+responseText);
                 getResponseText(responseText);
+
+                /*
                 MeetDynamicsFragment.this.getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
 
                         meetDynamicsListAdapter.setData(meetList);
                         meetDynamicsListAdapter.notifyDataSetChanged();
-
                     }
                 });
+                */
             }
 
             @Override
@@ -126,12 +132,21 @@ public class MeetDynamicsFragment extends Fragment {
 
             }
         });
+        handler = new Handler(){
+            @Override
+            public void handleMessage(Message message){
+                if(message.what == DONE){
+                    meetDynamicsListAdapter.setData(meetList);
+                    meetDynamicsListAdapter.notifyDataSetChanged();
+                }
+            }
+        };
 
     }
 
     public void getResponseText(String responseText){
 
-        Slog.d(TAG, "====================getResponseText====================");
+        //Slog.d(TAG, "====================getResponseText====================");
 
         if(!TextUtils.isEmpty(responseText)){
             try {
@@ -212,7 +227,7 @@ public class MeetDynamicsFragment extends Fragment {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
-                Slog.d(TAG, "######################comment: "+responseText);
+                //Slog.d(TAG, "######################comment: "+responseText);
                 if(!TextUtils.isEmpty(responseText)){
                     try {
                         commentResponse= new JSONObject(responseText);
@@ -258,7 +273,8 @@ public class MeetDynamicsFragment extends Fragment {
 
             meetDynamics.addComment(dynamicsComment);
         }
-        Slog.d(TAG, "*********************dynamics comment size: "+meetDynamics.getComment().size());
+        handler.sendEmptyMessage(DONE);
+        //Slog.d(TAG, "*********************dynamics comment size: "+meetDynamics.getComment().size());
     }
 
 }

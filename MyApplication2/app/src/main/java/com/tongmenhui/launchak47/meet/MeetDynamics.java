@@ -15,7 +15,7 @@ public class MeetDynamics extends MeetMemberInfo {
     private long created;
     private String content;
     private String activity_picture = "";
-    private List<DynamicsComment> dynamicsCommentList = new ArrayList<>();
+    public List<DynamicsComment> dynamicsCommentList = new ArrayList<>();
 
 
     public long getAid(){

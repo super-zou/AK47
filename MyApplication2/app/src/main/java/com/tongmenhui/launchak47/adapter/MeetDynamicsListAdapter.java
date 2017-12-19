@@ -208,7 +208,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
             holder.dynamicsGrid.addView(picture);
         }
         holder.commentList.removeAllViews();
-        setDynamicsCommentView(holder.commentList, meetDynamics.getComment());
+        setDynamicsCommentView(holder.commentList, meetDynamics.dynamicsCommentList);
 
     }
 
