@@ -21,6 +21,7 @@ import android.widget.TextView;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.NetworkImageView;
 import com.tongmenhui.launchak47.R;
+import com.tongmenhui.launchak47.meet.DynamicsComment;
 import com.tongmenhui.launchak47.meet.MeetDynamics;
 import com.tongmenhui.launchak47.meet.MeetDynamicsFragment;
 import com.tongmenhui.launchak47.util.FontManager;
@@ -206,12 +207,20 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
             picture.setLayoutParams(lp);
             holder.dynamicsGrid.addView(picture);
         }
+        holder.commentList.removeAllViews();
+        setDynamicsCommentView(holder.commentList, meetDynamics.getComment());
 
     }
 
-    public void setDynamicsCommentView(LinearLayout linearLayout, JSONArray comment_array){
-        View viewComment = View.inflate(mContext, R.layout.dynamics_comment_item, null);
-        linearLayout.addView(viewComment);
+    public void setDynamicsCommentView(LinearLayout linearLayout, List<DynamicsComment> dynamicsCommentList){
+        Slog.d(TAG, "*************dynamicsCommentList size: "+dynamicsCommentList.size());
+        for (int i=0; i<dynamicsCommentList.size(); i++){
+            View viewComment = View.inflate(mContext, R.layout.dynamics_comment_item, null);
+            linearLayout.addView(viewComment);
+            TextView textView = (TextView) viewComment.findViewById(R.id.author_name);
+            textView.setText(dynamicsCommentList.get(i).getAuthorName());
+        }
+
 
     }
 

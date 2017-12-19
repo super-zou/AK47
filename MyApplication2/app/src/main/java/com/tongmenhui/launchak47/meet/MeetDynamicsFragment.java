@@ -257,9 +257,8 @@ public class MeetDynamicsFragment extends Fragment {
             }
 
             meetDynamics.addComment(dynamicsComment);
-
-
         }
+        Slog.d(TAG, "*********************dynamics comment size: "+meetDynamics.getComment().size());
     }
 
 }
