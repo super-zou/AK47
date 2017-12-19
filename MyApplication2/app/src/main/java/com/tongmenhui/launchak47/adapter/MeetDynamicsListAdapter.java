@@ -188,14 +188,6 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
 
                         NetworkImageView picture = new NetworkImageView(mContext);
 
-                       // picture.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                       // itemLp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                        //itemLp.width = 200;
-                        //itemLp.height = 200;
-                        //itemLp.setMargins(2,50,50,2);
-
-                        //picture.setLayoutParams(itemLp);
-                        //holder.dynamicsGrid.addView(picture, lp);
                         linearLayout.addView(picture);
                         holder.dynamicsGrid.addView(linearLayout);
 

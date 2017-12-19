@@ -1,5 +1,10 @@
 package com.tongmenhui.launchak47.meet;
 
+import android.widget.ArrayAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by haichao.zou on 2017/11/20.
  */
@@ -10,6 +15,8 @@ public class MeetDynamics extends MeetMemberInfo {
     private long created;
     private String content;
     private String activity_picture = "";
+    private List<DynamicsComment> dynamicsCommentList = new ArrayList<>();
+
 
     public long getAid(){
         return aid;
@@ -37,4 +44,11 @@ public class MeetDynamics extends MeetMemberInfo {
             this.activity_picture = activity_picture;
         }
     }
+    public void addComment(DynamicsComment dynamicsComment){
+        dynamicsCommentList.add(dynamicsComment);
+    }
+    public List<DynamicsComment> getComment(){
+        return dynamicsCommentList;
+    }
+
 }

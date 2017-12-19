@@ -40,11 +40,15 @@ public class MeetDynamicsFragment extends Fragment {
     private static final String TAG = "MeetDynamicsFragment";
     private View viewContent;
     private List<MeetDynamics> meetList = new ArrayList<>();
+
     private MeetDynamics meetDynamics;
     private RecyclerView recyclerView;
+    private DynamicsComment dynamicsComment;
     private MeetDynamicsListAdapter meetDynamicsListAdapter;
     JSONObject dynamics_response;
+    JSONObject commentResponse;
     JSONArray dynamics;
+    JSONArray commentArray;
 
 
     private static final String  domain = "http://www.tongmenhui.com";
@@ -125,27 +129,6 @@ public class MeetDynamicsFragment extends Fragment {
 
     }
 
-    public void getDynamicsComment(Long aid){
-        String request_comment_url = "?q=meet/activity/interact/get";
-        RequestBody requestBody = new FormBody.Builder().add("aid",aid.toString()).build();
-
-        HttpUtil.sendOkHttpRequest(null, domain+request_comment_url, requestBody, new Callback(){
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                String responseText = response.body().string();
-                Slog.d(TAG, "######################comment: "+responseText);
-
-            }
-
-            @Override
-            public void onFailure(Call call, IOException e){
-
-            }
-        });
-
-    }
-
     public void getResponseText(String responseText){
 
         Slog.d(TAG, "====================getResponseText====================");
@@ -154,7 +137,9 @@ public class MeetDynamicsFragment extends Fragment {
             try {
                 dynamics_response= new JSONObject(responseText);
                 dynamics = dynamics_response.getJSONArray("activity");
-                set_meet_member_info(dynamics);
+                if(dynamics.length() > 0){
+                    set_meet_member_info(dynamics);
+                }
             }catch (JSONException e){
                 e.printStackTrace();
             }
@@ -214,9 +199,67 @@ public class MeetDynamicsFragment extends Fragment {
                 meetList.add(meetDynamics);
             }
         }catch (JSONException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void getDynamicsComment(Long aid){
+        String request_comment_url = "?q=meet/activity/interact/get";
+        RequestBody requestBody = new FormBody.Builder().add("aid",aid.toString()).build();
+
+        HttpUtil.sendOkHttpRequest(null, domain+request_comment_url, requestBody, new Callback(){
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String responseText = response.body().string();
+                Slog.d(TAG, "######################comment: "+responseText);
+                if(!TextUtils.isEmpty(responseText)){
+                    try {
+                        commentResponse= new JSONObject(responseText);
+                        commentArray = commentResponse.getJSONArray("comment");
+                    }catch (JSONException e){
+                        e.printStackTrace();
+                    }
+                    if(commentArray.length() > 0){
+                        setDynamicsComment(commentArray);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e){
+
+            }
+        });
+
+    }
+    public void setDynamicsComment(JSONArray commentArray){
+        JSONObject comment;
+        for (int i=0; i<commentArray.length(); i++){
+            try {
+                comment = commentArray.getJSONObject(i);
+                dynamicsComment = new DynamicsComment();
+                dynamicsComment.setCid(comment.getInt("cid"));
+                dynamicsComment.setAid(comment.getInt("aid"));
+                dynamicsComment.setPictureUrl(comment.getString("picture_uri"));
+                if(!comment.isNull("author_uid")){
+                    dynamicsComment.setAuthorUid(comment.getLong("author_uid"));
+                }
+                if(!comment.isNull("author_name")){
+                    dynamicsComment.setAuthorName(comment.getString("author_name"));
+                }
+                dynamicsComment.setCommenterName(comment.getString("commenter_name"));
+                dynamicsComment.setCommenterUid(comment.getLong("commenter_uid"));
+                dynamicsComment.setContent(comment.getString("content"));
+
+            }catch (JSONException e){
+                e.printStackTrace();
+            }
+
+            meetDynamics.addComment(dynamicsComment);
+
 
         }
-
     }
 
 }
