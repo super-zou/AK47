@@ -5,7 +5,7 @@ package com.tongmenhui.launchak47.meet;
  */
 
 public class DynamicsComment {
-    private Byte mType;
+    private int mType;
     private int mAid;
     private int mCid;
     private String mPictureUrl;
@@ -15,10 +15,10 @@ public class DynamicsComment {
     private Long mCommenterUid;
     private String mContent;
 
-    public void setType(Byte type){
+    public void setType(int type){
         mType = type;
     }
-    public Byte getType(){
+    public int getType(){
         return mType;
     }
     public void setAid(int aid){

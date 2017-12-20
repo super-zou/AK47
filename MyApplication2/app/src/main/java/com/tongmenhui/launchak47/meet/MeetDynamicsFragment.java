@@ -209,7 +209,7 @@ public class MeetDynamicsFragment extends Fragment {
 
                 meetDynamics.setAid(dynamics.getLong("aid"));
 
-                getDynamicsComment(dynamics.getLong("aid"));
+                getDynamicsComment(meetDynamics, dynamics.getLong("aid"));
 
                 meetList.add(meetDynamics);
             }
@@ -218,7 +218,7 @@ public class MeetDynamicsFragment extends Fragment {
         }
     }
 
-    public void getDynamicsComment(Long aid){
+    public void getDynamicsComment(final MeetDynamics meetDynamics, Long aid){
         String request_comment_url = "?q=meet/activity/interact/get";
         RequestBody requestBody = new FormBody.Builder().add("aid",aid.toString()).build();
 
@@ -236,7 +236,7 @@ public class MeetDynamicsFragment extends Fragment {
                         e.printStackTrace();
                     }
                     if(commentArray.length() > 0){
-                        setDynamicsComment(commentArray);
+                        setDynamicsComment(meetDynamics, commentArray);
                     }
                 }
             }
@@ -248,12 +248,13 @@ public class MeetDynamicsFragment extends Fragment {
         });
 
     }
-    public void setDynamicsComment(JSONArray commentArray){
+    public void setDynamicsComment(MeetDynamics meetDynamics, JSONArray commentArray){
         JSONObject comment;
         for (int i=0; i<commentArray.length(); i++){
             try {
                 comment = commentArray.getJSONObject(i);
                 dynamicsComment = new DynamicsComment();
+                dynamicsComment.setType(comment.getInt("type"));
                 dynamicsComment.setCid(comment.getInt("cid"));
                 dynamicsComment.setAid(comment.getInt("aid"));
                 dynamicsComment.setPictureUrl(comment.getString("picture_uri"));

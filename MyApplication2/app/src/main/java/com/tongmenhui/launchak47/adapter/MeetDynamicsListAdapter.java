@@ -139,10 +139,8 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
 
        // Slog.d(TAG, "===========onBindViewHolder==============");
         MeetDynamics meetDynamics = mMeetList.get(position);
-
         holder.realname.setText(meetDynamics.getRealname());
         holder.lives.setText(meetDynamics.getLives());
-
 
         if(!"".equals(meetDynamics.getPictureUri()) && !isScrolling){
             picture_url = domain+"/"+meetDynamics.getPictureUri();
@@ -213,12 +211,37 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
     }
 
     public void setDynamicsCommentView(LinearLayout linearLayout, List<DynamicsComment> dynamicsCommentList){
-        Slog.d(TAG, "*************dynamicsCommentList size: "+dynamicsCommentList.size());
-        for (int i=0; i<dynamicsCommentList.size(); i++){
-            View viewComment = View.inflate(mContext, R.layout.dynamics_comment_item, null);
-            linearLayout.addView(viewComment);
-            TextView textView = (TextView) viewComment.findViewById(R.id.author_name);
-            textView.setText(dynamicsCommentList.get(i).getAuthorName());
+        //Slog.d(TAG, "*************dynamicsCommentList size: "+dynamicsCommentList.size());
+        if(dynamicsCommentList.size() != 0){
+            for (int i=0; i<dynamicsCommentList.size(); i++){
+                View viewComment = View.inflate(mContext, R.layout.dynamics_comment_item, null);
+                linearLayout.addView(viewComment);
+                if(dynamicsCommentList.get(i) != null){
+                    if(dynamicsCommentList.get(i).getType() == 0){//comment
+                        TextView author = (TextView)viewComment.findViewById(R.id.author_name);
+                        author.setText(dynamicsCommentList.get(i).getCommenterName());
+                        TextView content = (TextView)viewComment.findViewById(R.id.content);
+                        content.setText(dynamicsCommentList.get(i).getContent());
+                    }else{//reply
+                        TextView commenter = (TextView)viewComment.findViewById(R.id.commenter_name);
+                        commenter.setVisibility(View.VISIBLE);
+                        commenter.setText(dynamicsCommentList.get(i).getCommenterName());
+
+                        TextView replyFlag = (TextView)viewComment.findViewById(R.id.reply_flag);
+                        replyFlag.setVisibility(View.VISIBLE);
+
+                        TextView author = (TextView)viewComment.findViewById(R.id.author_name);
+                        author.setText(dynamicsCommentList.get(i).getAuthorName());
+                        TextView content = (TextView)viewComment.findViewById(R.id.content);
+                        content.setText(dynamicsCommentList.get(i).getContent());
+
+                    }
+                    //TextView textView = (TextView) viewComment.findViewById(R.id.author_name);
+                    //textView.setText(dynamicsCommentList.get(i).getAuthorName());
+                }
+
+
+            }
         }
 
 
@@ -228,9 +251,5 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
     public int getItemCount(){
         return mMeetList.size();
     }
-
-
-
-
 
 }
