@@ -2,7 +2,9 @@ package com.tongmenhui.launchak47.meet;
 
 import android.widget.ArrayAdapter;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -13,6 +15,8 @@ public class MeetDynamics extends MeetMemberInfo {
 
     private long aid;
     private long created;
+    private int praiseCount;
+    private int commentCount;
     private String content;
     private String activity_picture = "";
     public List<DynamicsComment> dynamicsCommentList = new ArrayList<>();
@@ -30,11 +34,25 @@ public class MeetDynamics extends MeetMemberInfo {
     public void setContent(String content){
         this.content = content;
     }
-    public long getCreated(){
-        return created;
+    public String getCreated(){
+        Date date = new Date(created*1000);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        return simpleDateFormat.format(date);
     }
     public void setCreated(long created){
         this.created = created;
+    }
+    public void setPraiseCount(int praiseCount){
+        this.praiseCount = praiseCount;
+    }
+    public int getPraiseCount(){
+        return praiseCount;
+    }
+    public void setCommentCount(int commentCount){
+        this.commentCount = commentCount;
+    }
+    public int getCommentCount(){
+        return commentCount;
     }
     public String getActivityPicture(){
          return activity_picture;

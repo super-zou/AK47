@@ -40,7 +40,6 @@
             android:gravity="right">
             <TextView
                 android:id="@+id/dynamic_time"
-                android:text="time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
             <TextView
@@ -54,7 +53,6 @@
                 />
             <TextView
                 android:id="@+id/dynamic_praise"
-                android:text="praise"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
             <TextView
@@ -68,7 +66,6 @@
                 />
             <TextView
                 android:id="@+id/dynamic_comment_count"
-                android:text="comment"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 

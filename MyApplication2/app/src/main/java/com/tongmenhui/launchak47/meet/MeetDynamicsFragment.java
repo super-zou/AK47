@@ -51,6 +51,7 @@ public class MeetDynamicsFragment extends Fragment {
     JSONObject commentResponse;
     JSONArray dynamics;
     JSONArray commentArray;
+    JSONArray praiseArray;
     private Handler handler;
     private static final int DONE = 1;
 
@@ -161,13 +162,13 @@ public class MeetDynamicsFragment extends Fragment {
         }
     }
 
-    public void set_meet_member_info(JSONArray recommendation){
-        int length = recommendation.length();
+    public void set_meet_member_info(JSONArray dynamicsArray){
+        int length = dynamicsArray.length();
         //Slog.d(TAG, "==========set_meet_member_info==========recommendation length: "+length);
         try{
             for (int i=0; i< length; i++){
-                JSONObject dynamics = recommendation.getJSONObject(i);
-                Slog.d(TAG, "==========recommendation.getJSONObject: "+dynamics);
+                JSONObject dynamics = dynamicsArray.getJSONObject(i);
+                Slog.d(TAG, "==========dynamicsArray.getJSONObject: "+dynamics);
                 meetDynamics = new MeetDynamics();
 
                 meetDynamics.setRealname(dynamics.getString("realname"));
@@ -196,6 +197,7 @@ public class MeetDynamicsFragment extends Fragment {
                 meetDynamics.setPraised_count(dynamics.getInt("praised_count"));
 
                 //dynamics content
+                meetDynamics.setCreated(dynamics.getLong("created"));
                 String content = dynamics.getString("content");
                 if(content != null && content.length() != 0){
                     meetDynamics.setContent(content);
@@ -232,11 +234,12 @@ public class MeetDynamicsFragment extends Fragment {
                     try {
                         commentResponse= new JSONObject(responseText);
                         commentArray = commentResponse.getJSONArray("comment");
+                        praiseArray = commentResponse.getJSONArray("praise");
                     }catch (JSONException e){
                         e.printStackTrace();
                     }
                     if(commentArray.length() > 0){
-                        setDynamicsComment(meetDynamics, commentArray);
+                        setDynamicsComment(meetDynamics, commentArray, praiseArray);
                     }
                 }
             }
@@ -248,8 +251,11 @@ public class MeetDynamicsFragment extends Fragment {
         });
 
     }
-    public void setDynamicsComment(MeetDynamics meetDynamics, JSONArray commentArray){
+    public void setDynamicsComment(MeetDynamics meetDynamics, JSONArray commentArray, JSONArray praiseArray){
         JSONObject comment;
+        JSONObject praise;
+        meetDynamics.setPraiseCount(praiseArray.length());
+        meetDynamics.setCommentCount(commentArray.length());
         for (int i=0; i<commentArray.length(); i++){
             try {
                 comment = commentArray.getJSONObject(i);

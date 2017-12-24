@@ -58,7 +58,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
     private boolean isScrolling = false;
     RequestQueue queueMemberInfo;
     RequestQueue queueDynamics;
-    RequestQueue queueComment;
+    //RequestQueue queueComment;
     RequestQueueSingleton requestQueueSingleton;
     GridLayout.LayoutParams lp;
     LinearLayout.LayoutParams itemLp;
@@ -80,6 +80,9 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
         TextView thumbsView;
         TextView photosView;
         TextView contentView;
+        TextView createdView;
+        TextView dynamicsPraiseCount;
+        TextView dynamicsCommentCount;
         GridLayout dynamicsGrid;
         LinearLayout commentList;
 
@@ -99,6 +102,10 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
             photosView = (TextView)view.findViewById(R.id.photos_statistics);
             contentView = (TextView)view.findViewById(R.id.dynamics_content);
             dynamicsGrid = (GridLayout) view.findViewById(R.id.dynamics_picture_grid);
+            createdView = (TextView) view.findViewById(R.id.dynamic_time);
+            dynamicsPraiseCount = (TextView) view.findViewById(R.id.dynamic_praise);
+            dynamicsCommentCount = (TextView) view.findViewById(R.id.dynamic_comment_count);
+
             commentList = (LinearLayout) view.findViewById(R.id.dynamics_comments);
 
 
@@ -206,6 +213,9 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
             picture.setLayoutParams(lp);
             holder.dynamicsGrid.addView(picture);
         }
+        holder.createdView.setText(meetDynamics.getCreated());
+        holder.dynamicsPraiseCount.setText(String.valueOf(meetDynamics.getPraiseCount()));
+        holder.dynamicsCommentCount.setText(String.valueOf(meetDynamics.getCommentCount()));
         holder.commentList.removeAllViews();
         setDynamicsCommentView(holder.commentList, meetDynamics.dynamicsCommentList);
     }
@@ -217,10 +227,11 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
                 View viewComment = View.inflate(mContext, R.layout.dynamics_comment_item, null);
                 linearLayout.addView(viewComment);
 
-                ImageView imageView = (ImageView)viewComment.findViewById(R.id.comment_picture);
-                imageView.setImageDrawable(mContext.getDrawable(R.mipmap.ic_launcher));
-                queueComment = requestQueueSingleton.instance(mContext);
+                NetworkImageView imageView = (NetworkImageView)viewComment.findViewById(R.id.comment_picture);
+                //imageView.setImageDrawable(mContext.getDrawable(R.mipmap.ic_launcher));
+                RequestQueue queueComment = requestQueueSingleton.instance(mContext);
                 Slog.d(TAG, "$$$$$$$$$$$$$$$$getUrl: "+dynamicsCommentList.get(i).getPictureUrl());
+                imageView.setTag(domain+"/"+dynamicsCommentList.get(i).getPictureUrl());
                 HttpUtil.loadByImageLoader(queueComment, imageView, domain+"/"+dynamicsCommentList.get(i).getPictureUrl(), 50, 50);
 
                 if(dynamicsCommentList.get(i) != null){
