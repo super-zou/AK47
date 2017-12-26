@@ -1,6 +1,7 @@
 package com.tongmenhui.launchak47.meet;
 
 //import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -10,9 +11,11 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.tongmenhui.launchak47.R;
-import com.tongmenhui.launchak47.adapter.MeetListAdapter;
+import com.tongmenhui.launchak47.adapter.MeetRecommendListAdapter;
 import com.tongmenhui.launchak47.util.HttpUtil;
 import com.tongmenhui.launchak47.util.Slog;
 
@@ -44,7 +47,7 @@ public class MeetRecommendFragment extends Fragment {
     private List<MeetMemberInfo> meetList = new ArrayList<>();
     private MeetMemberInfo meetMemberInfo;
     private RecyclerView recyclerView;
-    private MeetListAdapter meetListAdapter;
+    private MeetRecommendListAdapter meetRecommendListAdapter;
    // private String realname;
     private int uid;
     private static String responseText;
@@ -60,8 +63,16 @@ public class MeetRecommendFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Slog.d(TAG, "=================onCreateView===================");
         initConentView();
-        meetListAdapter = new MeetListAdapter(getContext());
+        meetRecommendListAdapter = new MeetRecommendListAdapter(getContext());
         viewContent = inflater.inflate(R.layout.meet_recommend, container, false);
+        TextView addMeetInfo = (TextView)viewContent.findViewById(R.id.meet_info_add);
+        addMeetInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), FillMeetInfo.class);
+                startActivity(intent);
+            }
+        });
         recyclerView = (RecyclerView) viewContent.findViewById(R.id.recyclerview);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
@@ -70,16 +81,16 @@ public class MeetRecommendFragment extends Fragment {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState){
                 if(newState == SCROLL_STATE_IDLE){
-                    meetListAdapter.setScrolling(false);
-                    meetListAdapter.notifyDataSetChanged();
+                    meetRecommendListAdapter.setScrolling(false);
+                    meetRecommendListAdapter.notifyDataSetChanged();
                 }else{
-                    meetListAdapter.setScrolling(true);
+                    meetRecommendListAdapter.setScrolling(true);
                 }
                 super.onScrollStateChanged(recyclerView, newState);
             }
         });
 
-        recyclerView.setAdapter(meetListAdapter);
+        recyclerView.setAdapter(meetRecommendListAdapter);
         return viewContent;
 
     }
@@ -109,8 +120,8 @@ public class MeetRecommendFragment extends Fragment {
                 MeetRecommendFragment.this.getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        meetListAdapter.setData(meetList);
-                        meetListAdapter.notifyDataSetChanged();
+                        meetRecommendListAdapter.setData(meetList);
+                        meetRecommendListAdapter.notifyDataSetChanged();
                     }
                 });
             }

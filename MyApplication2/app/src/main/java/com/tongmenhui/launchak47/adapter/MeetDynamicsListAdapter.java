@@ -116,7 +116,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
     }
 
     public MeetDynamicsListAdapter(Context context){
-        //Slog.d(TAG, "==============MeetListAdapter init=================");
+        //Slog.d(TAG, "==============MeetRecommendListAdapter init=================");
         mContext = context;
         mMeetList = new ArrayList<MeetDynamics>();
         requestQueueSingleton = new RequestQueueSingleton();

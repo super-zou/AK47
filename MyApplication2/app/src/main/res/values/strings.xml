@@ -11,6 +11,7 @@
     <string name="activity_text">活动</string>
     <string name="archive_text">我</string>
 
-    <item type="id" name="tag_first" />
-    <item type="id" name="tag_second" />
+    <item name="tag_first" type="id" />
+    <item name="tag_second" type="id" />
+    <string name="title_activity_fill_meet_info">FillMeetInfo</string>
 </resources>

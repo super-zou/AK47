@@ -24,8 +24,8 @@ import java.util.List;
  * Created by haichao.zou on 2017/9/15.
  */
 
-public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHolder>{
-    private static final String TAG = "MeetListAdapter";
+public class MeetRecommendListAdapter extends RecyclerView.Adapter<MeetRecommendListAdapter.ViewHolder>{
+    private static final String TAG = "MeetRecommendListAdapter";
     private static final String  domain = "http://www.tongmenhui.com";
     private List<MeetMemberInfo> mMeetList;
     private String picture_url;
@@ -40,6 +40,7 @@ public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHo
 
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
+        //TextView addMeetInfo;
         TextView realname;
         TextView lives;
         TextView selfcondition;
@@ -54,6 +55,7 @@ public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHo
         public ViewHolder(View view){
 
             super(view);
+            //addMeetInfo = (TextView)view.findViewById(R.id.meet_info_add);
             realname = (TextView) view.findViewById(R.id.name);
             lives = (TextView) view.findViewById(R.id.lives);
             headUri = (NetworkImageView) view.findViewById(R.id.recommend_head_uri);
@@ -64,14 +66,15 @@ public class MeetListAdapter extends RecyclerView.Adapter<MeetListAdapter.ViewHo
             lovedView = (TextView)view.findViewById(R.id.loved_statistics);
             thumbsView = (TextView)view.findViewById(R.id.thumbs_up_statistics);
             photosView = (TextView)view.findViewById(R.id.photos_statistics);
+
             Typeface font = Typeface.createFromAsset(mContext.getAssets(), "fonts/fontawesome.ttf");
             FontManager.markAsIconContainer(view.findViewById(R.id.behavior_statistics), font);
 
         }
     }
 
-    public MeetListAdapter(Context context){
-        Slog.d(TAG, "==============MeetListAdapter init=================");
+    public MeetRecommendListAdapter(Context context){
+        Slog.d(TAG, "==============MeetRecommendListAdapter init=================");
         mContext = context;
         mMeetList = new ArrayList<MeetMemberInfo>();
     }

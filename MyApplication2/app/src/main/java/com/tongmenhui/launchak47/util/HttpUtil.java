@@ -105,10 +105,10 @@ public class HttpUtil {
     }
 /*
     private class DownloadTask extends AsyncTask<String, Object, Bitmap> {
-        private MeetListAdapter.ViewHolder mViewHolder;
+        private MeetRecommendListAdapter.ViewHolder mViewHolder;
         private String picture_url;
 
-        public DownloadTask(MeetListAdapter meetListAdapter, MeetListAdapter.ViewHolder mViewHolder, String picture_url) {
+        public DownloadTask(MeetRecommendListAdapter meetListAdapter, MeetRecommendListAdapter.ViewHolder mViewHolder, String picture_url) {
             this.mViewHolder = mViewHolder;
             this.picture_url = picture_url;
         }

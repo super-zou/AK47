@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.tongmenhui.launchak47.R;
-import com.tongmenhui.launchak47.adapter.MeetListAdapter;
+import com.tongmenhui.launchak47.adapter.MeetRecommendListAdapter;
 import com.tongmenhui.launchak47.util.HttpUtil;
 import com.tongmenhui.launchak47.util.Slog;
 
@@ -44,7 +44,7 @@ public class MeetDiscoveryFragment extends Fragment {
     private List<MeetMemberInfo> meetMemberList = new ArrayList<>();
     private MeetMemberInfo meetMemberInfo;
     private RecyclerView recyclerView;
-    private MeetListAdapter meetListAdapter;
+    private MeetRecommendListAdapter meetListAdapter;
     // private String realname;
     private int uid;
     private static String responseText;
@@ -60,7 +60,7 @@ public class MeetDiscoveryFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Slog.d(TAG, "=================onCreateView===================");
         initConentView();
-        meetListAdapter = new MeetListAdapter(getContext());
+        meetListAdapter = new MeetRecommendListAdapter(getContext());
         viewContent = inflater.inflate(R.layout.meet_discovery, container, false);
         recyclerView = (RecyclerView) viewContent.findViewById(R.id.recyclerview);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
