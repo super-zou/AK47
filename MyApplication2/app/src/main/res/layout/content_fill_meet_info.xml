@@ -28,6 +28,12 @@
                 android:text="生日"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
+            <org.angmarch.views.NiceSpinner
+                android:id="@+id/nice_spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:entries="@array/years"/>
             <Spinner
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

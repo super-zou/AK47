@@ -9,6 +9,12 @@ import android.view.View;
 
 import com.tongmenhui.launchak47.R;
 
+import org.angmarch.views.NiceSpinner;
+
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+
 public class FillMeetInfo extends AppCompatActivity {
 
     @Override
@@ -18,7 +24,9 @@ public class FillMeetInfo extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
+        NiceSpinner niceSpinner = (NiceSpinner) findViewById(R.id.nice_spinner);
+        List<String> dataset = new LinkedList<>(Arrays.asList("One", "Two", "Three", "Four", "Five"));
+        niceSpinner.attachDataSource(dataset);
     }
 
 }
