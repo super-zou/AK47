@@ -85,14 +85,29 @@ public class FillMeetInfoActivity extends AppCompatActivity {
         List<String> cityList = new LinkedList<>(Arrays.asList(cities));
         niceSpinnerCity.attachDataSource(cityList);
 
-        Button nextButton = (Button) findViewById(R.id.next);
+        final Button preButton = (Button)findViewById(R.id.prev);
+        final Button nextButton = (Button) findViewById(R.id.next);
+        final Button doneButton = (Button)findViewById(R.id.done);
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 selfLayout.setVisibility(View.GONE);
                 requireLayout.setVisibility(View.VISIBLE);
                 createRequireView();
+                v.setVisibility(View.GONE);
+                preButton.setVisibility(View.VISIBLE);
+                doneButton.setVisibility(View.VISIBLE);
+            }
+        });
 
+        preButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selfLayout.setVisibility(View.VISIBLE);
+                requireLayout.setVisibility(View.INVISIBLE);
+                v.setVisibility(View.GONE);
+                nextButton.setVisibility(View.VISIBLE);
+                doneButton.setVisibility(View.GONE);
             }
         });
     }
