@@ -39,7 +39,7 @@
             -->
         </activity>
         <activity
-            android:name=".meet.FillMeetInfo"
+            android:name=".meet.FillMeetInfoActivity"
             android:label="@string/title_activity_fill_meet_info"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>

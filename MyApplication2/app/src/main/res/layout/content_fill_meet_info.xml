@@ -10,7 +10,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.tongmenhui.launchak47.meet.FillMeetInfo"
+    tools:context="com.tongmenhui.launchak47.meet.FillMeetInfoActivity"
     tools:showIn="@layout/activity_fill_meet_info"
     android:orientation="vertical">
     <FrameLayout
@@ -115,6 +115,7 @@
             </LinearLayout>
         </LinearLayout>
         <LinearLayout
+            android:orientation="vertical"
             android:id="@+id/requirement"
             android:visibility="gone"
             android:layout_width="match_parent"
@@ -123,6 +124,92 @@
                 android:text="征友要求"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
+            <!--age-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:text="年龄"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <org.angmarch.views.NiceSpinner
+                    android:id="@+id/nice_spinner_require_age_lower"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    android:entries="@array/ages"/>
+                <TextView
+                    android:text="～"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <org.angmarch.views.NiceSpinner
+                    android:id="@+id/nice_spinner_require_age_upper"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    android:entries="@array/ages"/>
+            </LinearLayout>
+            <!--height-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:text="身高"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <org.angmarch.views.NiceSpinner
+                    android:id="@+id/nice_spinner_require_height"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    android:entries="@array/heights"/>
+            </LinearLayout>
+            <!--degree-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:text="学历"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <org.angmarch.views.NiceSpinner
+                    android:id="@+id/nice_spinner_require_degree"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    android:entries="@array/degrees"/>
+            </LinearLayout>
+            <!--lives-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:text="居住地"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <org.angmarch.views.NiceSpinner
+                    android:id="@+id/nice_spinner_require_region"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    android:entries="@array/regions"/>
+                <org.angmarch.views.NiceSpinner
+                    android:id="@+id/nice_spinner_require_province"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    android:entries="@array/provinces"/>
+                <org.angmarch.views.NiceSpinner
+                    android:id="@+id/nice_spinner_require_city"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    android:entries="@array/cities"/>
+            </LinearLayout>
         </LinearLayout>
     </FrameLayout>
     <LinearLayout
@@ -130,11 +217,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <Button
+            android:id="@+id/prev"
             android:text="上一页"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <Button
+            android:id="@+id/next"
             android:text="继续"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <Button
+            android:id="@+id/done"
+            android:text="完成"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </LinearLayout>

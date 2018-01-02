@@ -12,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.adapter.MeetRecommendListAdapter;
@@ -69,7 +68,7 @@ public class MeetRecommendFragment extends Fragment {
         addMeetInfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getContext(), FillMeetInfo.class);
+                Intent intent = new Intent(getContext(), FillMeetInfoActivity.class);
                 startActivity(intent);
             }
         });
