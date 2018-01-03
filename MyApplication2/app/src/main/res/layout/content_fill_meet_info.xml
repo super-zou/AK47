@@ -256,6 +256,16 @@
                     android:layout_margin="4dp"
                     android:entries="@array/cities"/>
             </LinearLayout>
+            <EditText
+                android:hint="hahaha"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:enabled="true"
+                android:gravity="top"
+                android:minLines="2"
+                android:maxLines="5"
+                android:scrollbars="vertical"
+                android:background="@drawable/shape"/>
         </LinearLayout>
     </FrameLayout>
     <LinearLayout
