@@ -1,5 +1,6 @@
 package com.tongmenhui.launchak47.meet;
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -14,6 +15,7 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.tongmenhui.launchak47.R;
+import com.tongmenhui.launchak47.region.activity.RegionSelectionActivity;
 import com.tongmenhui.launchak47.util.Slog;
 
 import org.angmarch.views.NiceSpinner;
@@ -153,6 +155,14 @@ public class FillMeetInfoActivity extends AppCompatActivity {
 
         });
         */
+        Button selfRegionSelection = (Button)findViewById(R.id.self_region);
+        selfRegionSelection.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(FillMeetInfoActivity.this, RegionSelectionActivity.class);
+                startActivity(intent);
+            }
+        });
 
         final Button preButton = (Button)findViewById(R.id.prev);
         final Button nextButton = (Button) findViewById(R.id.next);
