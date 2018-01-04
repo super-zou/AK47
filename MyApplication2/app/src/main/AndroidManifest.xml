@@ -41,7 +41,9 @@
         <activity
             android:name=".meet.FillMeetInfoActivity"
             android:label="@string/title_activity_fill_meet_info"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".region.RegionSelectionActivity" />
+        <activity android:name=".region.BaseActivity"></activity>
     </application>
 
 </manifest>

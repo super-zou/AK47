@@ -35,15 +35,18 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
                 <RadioGroup
+                    android:id="@+id/self_sex"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
                     <RadioButton
                         android:text="男"
+                        android:id="@+id/self_sex_male"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent" />
                     <RadioButton
                         android:text="女"
+                        android:id="@+id/self_sex_female"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent" />
                 </RadioGroup>
@@ -117,24 +120,10 @@
                     android:text="居住地"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
-                <org.angmarch.views.NiceSpinner
-                    android:id="@+id/nice_spinner_region"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="4dp"
-                    android:entries="@array/regions"/>
-                <org.angmarch.views.NiceSpinner
-                    android:id="@+id/nice_spinner_province"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="4dp"
-                    android:entries="@array/provinces"/>
-                <org.angmarch.views.NiceSpinner
-                    android:id="@+id/nice_spinner_city"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="4dp"
-                    android:entries="@array/cities"/>
+                <Button
+                    android:text="选择地区"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
             </LinearLayout>
         </LinearLayout>
         <LinearLayout
@@ -157,15 +146,18 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
                 <RadioGroup
+                    android:id="@+id/require_sex"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
                     <RadioButton
                         android:text="男"
+                        android:id="@+id/require_sex_male"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent" />
                     <RadioButton
                         android:text="女"
+                        android:id="@+id/require_sex_female"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent" />
                 </RadioGroup>
@@ -237,24 +229,10 @@
                     android:text="居住地"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
-                <org.angmarch.views.NiceSpinner
-                    android:id="@+id/nice_spinner_require_region"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="4dp"
-                    android:entries="@array/regions"/>
-                <org.angmarch.views.NiceSpinner
-                    android:id="@+id/nice_spinner_require_province"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="4dp"
-                    android:entries="@array/provinces"/>
-                <org.angmarch.views.NiceSpinner
-                    android:id="@+id/nice_spinner_require_city"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="4dp"
-                    android:entries="@array/cities"/>
+                <Button
+                    android:text="选择地区"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
             </LinearLayout>
             <EditText
                 android:hint="hahaha"
