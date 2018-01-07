@@ -1,5 +1,6 @@
 package com.tongmenhui.launchak47.region.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -59,10 +60,13 @@ public class RegionSelectionActivity extends BaseActivity implements View.OnClic
     @Override
     public void onChanged(WheelView wheel, int oldValue, int newValue) {
         // TODO Auto-generated method stub
+        mCurrentDistrictName=mDistrictDatasMap.get(mCurrentCityName)[0];
         if (wheel == mViewProvince) {
             updateCities();
+            mCurrentDistrictName=mDistrictDatasMap.get(mCurrentCityName)[0];
         } else if (wheel == mViewCity) {
             updateAreas();
+            mCurrentDistrictName =mDistrictDatasMap.get(mCurrentCityName)[0];
         } else if (wheel == mViewDistrict) {
             mCurrentDistrictName = mDistrictDatasMap.get(mCurrentCityName)[newValue];
             mCurrentZipCode = mZipcodeDatasMap.get(mCurrentDistrictName);
@@ -104,6 +108,7 @@ public class RegionSelectionActivity extends BaseActivity implements View.OnClic
         switch (v.getId()) {
             case R.id.btn_confirm:
                 showSelectedResult();
+                returnSelectedResult();
                 break;
             default:
                 break;
@@ -113,5 +118,12 @@ public class RegionSelectionActivity extends BaseActivity implements View.OnClic
     private void showSelectedResult() {
         Toast.makeText(RegionSelectionActivity.this, "当前选中:"+mCurrentProviceName+","+mCurrentCityName+","
                 +mCurrentDistrictName+","+mCurrentZipCode, Toast.LENGTH_SHORT).show();
+    }
+    private void returnSelectedResult(){
+        Intent intent = new Intent();
+        String SelectedResult = mCurrentProviceName+","+mCurrentCityName+","+mCurrentDistrictName;
+        intent.putExtra("SelectedResult", SelectedResult);
+        setResult(2, intent);
+        finish();
     }
 }

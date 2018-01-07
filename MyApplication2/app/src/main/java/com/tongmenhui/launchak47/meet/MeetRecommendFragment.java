@@ -162,32 +162,32 @@ public class MeetRecommendFragment extends Fragment {
                 meetMemberInfo.setRealname(recommender.getString("realname"));
                 meetMemberInfo.setUid(recommender.getInt("uid"));
                 meetMemberInfo.setPictureUri(recommender.getString("picture_uri"));
-                meetMemberInfo.setBirth_year(recommender.getInt("birth_year"));
+                meetMemberInfo.setBirthYear(recommender.getInt("birth_year"));
                 meetMemberInfo.setHeight(recommender.getInt("height"));
                 meetMemberInfo.setUniversity(recommender.getString("university"));
                 meetMemberInfo.setDegree(recommender.getString("degree"));
-                meetMemberInfo.setJob_title(recommender.getString("job_title"));
+                meetMemberInfo.setJobTitle(recommender.getString("job_title"));
                 meetMemberInfo.setLives(recommender.getString("lives"));
                 meetMemberInfo.setSituation(recommender.getInt("situation"));
 
                 //requirement
-                meetMemberInfo.setAge_lower(recommender.getInt("age_lower"));
-                meetMemberInfo.setAge_upper(recommender.getInt("age_upper"));
-                meetMemberInfo.setRequirement_height(recommender.getInt("requirement_height"));
-                meetMemberInfo.setRequirement_degree(recommender.getInt("requirement_degree"));
-                meetMemberInfo.setRequirement_lives(recommender.getString("requirement_lives"));
-                meetMemberInfo.setRequirement_sex(recommender.getInt("requirement_sex"));
+                meetMemberInfo.setAgeLower(recommender.getInt("age_lower"));
+                meetMemberInfo.setAgeUpper(recommender.getInt("age_upper"));
+                meetMemberInfo.setRequirementHeight(recommender.getInt("requirement_height"));
+                meetMemberInfo.setRequirementDegree(recommender.getString("requirement_degree"));
+                meetMemberInfo.setRequirementLives(recommender.getString("requirement_lives"));
+                meetMemberInfo.setRequirementSex(recommender.getInt("requirement_sex"));
                 meetMemberInfo.setIllustration(recommender.getString("illustration"));
 
 
                // meetMemberInfo.setSelf(recommender.getInt("self"));
-                meetMemberInfo.setBrowse_count(recommender.getInt("browse_count"));
-                meetMemberInfo.setLoved_count(recommender.getInt("loved_count"));
+                meetMemberInfo.setBrowseCount(recommender.getInt("browse_count"));
+                meetMemberInfo.setLovedCount(recommender.getInt("loved_count"));
                // meetMemberInfo.setLoved(recommender.getInt("loved"));
                // meetMemberInfo.setPraised(recommender.getInt("praised"));
-                meetMemberInfo.setPraised_count(recommender.getInt("praised_count"));
-              //  meetMemberInfo.setPicture_chain(recommender.getString("picture_chain"));
-               // meetMemberInfo.setRequirement_set(recommender.getInt("requirement_set"));
+                meetMemberInfo.setPraisedCount(recommender.getInt("praised_count"));
+              //  meetMemberInfo.setPictureChain(recommender.getString("pictureChain"));
+               // meetMemberInfo.setRequirementSet(recommender.getInt("requirementSet"));
 
 
                 meetList.add(meetMemberInfo);

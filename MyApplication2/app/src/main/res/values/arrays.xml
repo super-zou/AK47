@@ -30,28 +30,17 @@
         <item>31</item>
     </string-array>
     <string-array name="heights">
-        <item>150</item><item>151</item><item>152</item><item>153</item><item>154</item><item>155</item><item>156</item><item>157</item><item>158</item><item>159</item>
+        <item>厘米</item><item>150</item><item>151</item><item>152</item><item>153</item><item>154</item><item>155</item><item>156</item><item>157</item><item>158</item><item>159</item>
         <item>160</item><item>161</item><item>162</item><item>163</item><item>164</item><item>165</item><item>166</item><item>167</item><item>168</item><item>169</item>
         <item>170</item><item>171</item><item>172</item><item>173</item><item>174</item><item>175</item><item>176</item><item>177</item><item>178</item><item>179</item>
         <item>180</item><item>181</item><item>182</item><item>183</item><item>184</item><item>185</item><item>186</item><item>187</item><item>188</item><item>189</item>
         <item>190</item><item>191</item><item>192</item><item>193</item><item>194</item><item>195</item><item>196</item><item>197</item><item>198</item><item>199</item>
     </string-array>
     <string-array name="degrees">
-        <item>博士</item><item>硕士</item><item>本科</item><item>其它</item>
-    </string-array>
-    <string-array name="regions">
-        <item>中国</item>
-    </string-array>
-    <string-array name="provinces">
-        <item>省(市)</item>
-        <item>陕西</item>
-    </string-array>
-    <string-array name="cities">
-        <item>市(县/区)</item>
-        <item>西安</item>
+        <item>学历</item><item>硕士</item><item>博士</item><item>本科</item><item>其它</item>
     </string-array>
     <string-array name="ages">
-        <item>18</item><item>19</item><item>20</item><item>21</item><item>22</item><item>23</item><item>24</item><item>25</item><item>26</item><item>27</item><item>28</item>
+        <item>岁</item><item>18</item><item>19</item><item>20</item><item>21</item><item>22</item><item>23</item><item>24</item><item>25</item><item>26</item><item>27</item><item>28</item>
         <item>29</item><item>30</item><item>31</item><item>32</item><item>33</item><item>34</item><item>35</item><item>36</item><item>37</item><item>38</item><item>39</item>
         <item>40</item><item>41</item><item>42</item><item>43</item><item>44</item><item>45</item><item>46</item><item>47</item><item>48</item><item>49</item><item>50</item>
     </string-array>

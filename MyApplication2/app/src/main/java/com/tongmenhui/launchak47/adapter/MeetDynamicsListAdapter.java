@@ -2,20 +2,13 @@ package com.tongmenhui.launchak47.adapter;
 
 import android.content.Context;
 import android.graphics.Typeface;
-import android.support.v7.widget.LinearLayoutCompat;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.GridLayout;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
@@ -23,26 +16,13 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.meet.DynamicsComment;
 import com.tongmenhui.launchak47.meet.MeetDynamics;
-import com.tongmenhui.launchak47.meet.MeetDynamicsFragment;
 import com.tongmenhui.launchak47.util.FontManager;
 import com.tongmenhui.launchak47.util.HttpUtil;
 import com.tongmenhui.launchak47.util.RequestQueueSingleton;
 import com.tongmenhui.launchak47.util.Slog;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.Inflater;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.FormBody;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 /**
  * Created by haichao.zou on 2017/11/20.
@@ -162,9 +142,9 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
 
         holder.selfcondition.setText(meetDynamics.getSelfCondition(meetDynamics.getSituation()));
         holder.requirement.setText(meetDynamics.getRequirement());
-        holder.eyeView.setText(String.valueOf(meetDynamics.getBrowse_count()));
-        holder.lovedView.setText(String.valueOf(meetDynamics.getLoved_count()));
-        holder.thumbsView.setText(String.valueOf(meetDynamics.getPraised_count()));
+        holder.eyeView.setText(String.valueOf(meetDynamics.getBrowseCount()));
+        holder.lovedView.setText(String.valueOf(meetDynamics.getLovedCount()));
+        holder.thumbsView.setText(String.valueOf(meetDynamics.getPraisedCount()));
         holder.illustration.setText(meetDynamics.getIllustration());
         holder.contentView.setText(meetDynamics.getContent());
 

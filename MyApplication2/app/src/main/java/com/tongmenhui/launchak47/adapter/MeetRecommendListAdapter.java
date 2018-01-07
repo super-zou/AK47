@@ -115,9 +115,9 @@ public class MeetRecommendListAdapter extends RecyclerView.Adapter<MeetRecommend
         holder.selfcondition.setText(meet.getSelfCondition(meet.getSituation()));
         holder.requirement.setText(meet.getRequirement());
 
-        holder.eyeView.setText(String.valueOf(meet.getBrowse_count()));
-        holder.lovedView.setText(String.valueOf(meet.getLoved_count()));
-        holder.thumbsView.setText(String.valueOf(meet.getPraised_count()));
+        holder.eyeView.setText(String.valueOf(meet.getBrowseCount()));
+        holder.lovedView.setText(String.valueOf(meet.getLovedCount()));
+        holder.thumbsView.setText(String.valueOf(meet.getPraisedCount()));
         holder.illustration.setText(meet.getIllustration());
 
 

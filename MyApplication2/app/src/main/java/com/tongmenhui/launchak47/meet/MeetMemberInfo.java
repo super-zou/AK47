@@ -1,7 +1,5 @@
 package com.tongmenhui.launchak47.meet;
 
-import com.tongmenhui.launchak47.util.Slog;
-
 import java.util.Calendar;
 
 /**
@@ -16,37 +14,40 @@ public class MeetMemberInfo {
 
     //self condition
     public int uid = -1;
+    private int selfSex = -1;
     public String realname;
     public String pictureUri = "";
-    public int birth_year;
+    public int birthYear;
+    public int birthMonth;
+    public int birthDay;
     public int height;
     public String university;
     public String degree;
-    public String job_title;
+    public String jobTitle;
     public String lives;
     public int situation;
-    private String self_condition;
+    private String selfCondition;
 
     //requirement
-    public int age_lower;
-    public int age_upper;
-    public int requirement_height;
-    public int requirement_degree;
-    public String requirement_lives;
-    public int requirement_sex;
+    public int ageLower;
+    public int ageUpper;
+    public int requirementHeight;
+    public String requirementDegree;
+    public String requirementLives;
+    public int requirementSex = 0;
     public String illustration;
     public int self;
-    public int loved_count;
+    public int lovedCount;
     public int loved;
     public int praised;
-    public int praised_count;
-    public String picture_chain;
-    public int browse_count;
+    public int praisedCount;
+    public String pictureChain;
+    public int browseCount;
 
-    public int requirement_set = 0;
+    public int requirementSet = -1;
 
-    public static final String sex_male = "男生";
-    public static final String sex_female = "女生";
+    public static final String SEX_MALE = "男生";
+    public static final String SEX_FEMALE = "女生";
 
 
     /*
@@ -67,6 +68,13 @@ public class MeetMemberInfo {
     }
     public void setCid(int cid){
         this.cid = cid;
+    }
+
+    public int getSelfSex(){
+        return selfSex;
+    }
+    public void setSelfSex(int selfSex){
+        this.selfSex = selfSex;
     }
 
     public int getHeight(){
@@ -111,11 +119,11 @@ public class MeetMemberInfo {
         return Degree;
     }
 
-    public void setJob_title(String job_title){
-        this.job_title = job_title;
+    public void setJobTitle(String jobTitle){
+        this.jobTitle = jobTitle;
     }
-    public String getJob_title(){
-        return job_title;
+    public String getJobTitle(){
+        return jobTitle;
     }
 
     public void setLives(String lives){
@@ -132,11 +140,25 @@ public class MeetMemberInfo {
         return situation;
     }
 
-    public void setBirth_year(int birth_year){
-        this.birth_year = birth_year;
+    public void setBirthYear(int birthYear){
+        this.birthYear = birthYear;
     }
-    public int getBirth_year(){
-        return birth_year;
+    public int getBirthYear(){
+        return birthYear;
+    }
+
+    public void setBirthMonth(int birthYear){
+        this.birthMonth = birthMonth;
+    }
+    public int getBirthMonth(){
+        return birthMonth;
+    }
+
+    public void setBirthDay(int birthYear){
+        this.birthDay = birthDay;
+    }
+    public int getBirthDay(){
+        return birthDay;
     }
 
     public String getRealname(){
@@ -157,54 +179,54 @@ public class MeetMemberInfo {
 
     public int getAge(){
         Calendar calendar= Calendar.getInstance();
-        return calendar.get(calendar.YEAR) - birth_year;
+        return calendar.get(calendar.YEAR) - birthYear;
     }
 
 
 
-    public void setAge_lower(int age_lower){
-        this.age_lower = age_lower;
+    public void setAgeLower(int ageLower){
+        this.ageLower = ageLower;
     }
-    public int getAge_lower(){
-        return age_lower;
-    }
-
-    public void setAge_upper(int age_upper){
-        this.age_upper = age_upper;
-    }
-    public int getAge_upper(){
-        return age_upper;
+    public int getAgeLower(){
+        return ageLower;
     }
 
-    public void setRequirement_height(int requirement_height){
-        this.requirement_height = requirement_height;
+    public void setAgeUpper(int ageUpper){
+        this.ageUpper = ageUpper;
     }
-    public int getRequirement_height(){
-        return requirement_height;
-    }
-
-    public void setRequirement_degree(int requirement_degree){
-        this.requirement_degree = requirement_degree;
-    }
-    public int getRequirement_degree(){
-        return requirement_degree;
+    public int getAgeUpper(){
+        return ageUpper;
     }
 
-    public void setRequirement_lives(String requirement_lives){
-        this.requirement_lives = requirement_lives;
+    public void setRequirementHeight(int requirementHeight){
+        this.requirementHeight = requirementHeight;
     }
-    public String getRequirement_lives(){
-        return requirement_lives;
+    public int getRequirementHeight(){
+        return requirementHeight;
     }
 
-    public void setRequirement_sex(int requirement_sex){
-        this.requirement_sex = requirement_sex;
+    public void setRequirementDegree(String requirementDegree){
+        this.requirementDegree = requirementDegree;
     }
-    public String getRequirement_sex(){
-        if(requirement_set == 0){
-            return sex_male;
+    public String getRequirementDegree(){
+        return requirementDegree;
+    }
+
+    public void setRequirementLives(String requirementLives){
+        this.requirementLives = requirementLives;
+    }
+    public String getRequirementLives(){
+        return requirementLives;
+    }
+
+    public void setRequirementSex(int requirementSex){
+        this.requirementSex = requirementSex;
+    }
+    public String getRequirementSex(){
+        if(requirementSet == 0){
+            return SEX_MALE;
         }else{
-            return sex_female;
+            return SEX_FEMALE;
         }
     }
 
@@ -215,11 +237,11 @@ public class MeetMemberInfo {
         return illustration;
     }
 
-    public void setBrowse_count(int browse_count){
-        this.browse_count = browse_count;
+    public void setBrowseCount(int browseCount){
+        this.browseCount = browseCount;
     }
-    public int getBrowse_count(){
-        return browse_count;
+    public int getBrowseCount(){
+        return browseCount;
     }
 
     public void setLoved(int loved){
@@ -229,11 +251,11 @@ public class MeetMemberInfo {
         return loved;
     }
 
-    public void setLoved_count(int loved_count){
-        this.loved_count = loved_count;
+    public void setLovedCount(int lovedCount){
+        this.lovedCount = lovedCount;
     }
-    public int getLoved_count(){
-        return loved_count;
+    public int getLovedCount(){
+        return lovedCount;
     }
 
     public void setPraised(int praised){
@@ -243,42 +265,42 @@ public class MeetMemberInfo {
         return praised;
     }
 
-    public void setPraised_count(int praised_count){
-        this.praised_count = praised_count;
+    public void setPraisedCount(int praisedCount){
+        this.praisedCount = praisedCount;
     }
-    public int getPraised_count(){
-        return praised_count;
-    }
-
-    public void setPicture_chain(String picture_chain){
-        this.picture_chain = picture_chain;
-    }
-    public String getPicture_chain(){
-        return picture_chain;
+    public int getPraisedCount(){
+        return praisedCount;
     }
 
-    public void setRequirement_set(int requirement_set){
-        this.requirement_set = requirement_set;
+    public void setPictureChain(String pictureChain){
+        this.pictureChain = pictureChain;
     }
-    public int getRequirement_set(){
-        return requirement_set;
+    public String getPictureChain(){
+        return pictureChain;
+    }
+
+    public void setRequirementSet(int requirementSet){
+        this.requirementSet = requirementSet;
+    }
+    public int getRequirementSet(){
+        return requirementSet;
     }
 
     public String getSelfCondition(int situation){
 
-        self_condition = getAge()+"岁/"+height+"CM/"+getDegreeName(getDegree());
+        selfCondition = getAge()+"岁/"+height+"CM/"+getDegreeName(getDegree());
         if(situation ==0){//for student
-            self_condition += "/"+university;
+            selfCondition += "/"+university;
         }else{//for worker
-            self_condition += "/"+job_title;
+            selfCondition += "/"+ jobTitle;
         }
-        return self_condition;
+        return selfCondition;
     }
 
     public String getRequirement(){
-        String requirement = "期待遇见："+ getAge_lower()+"~"+getAge_upper()+"岁,"
-                + getRequirement_height()+"CM以上,"+getDegreeName(String.valueOf(getRequirement_degree()))+"以上,"
-                + "住在 "+getRequirement_lives()+"的"+getRequirement_sex();
+        String requirement = "期待遇见："+ getAgeLower()+"~"+ getAgeUpper()+"岁,"
+                + getRequirementHeight()+"CM以上,"+getDegreeName(String.valueOf(getRequirementDegree()))+"以上,"
+                + "住在 "+ getRequirementLives()+"的"+ getRequirementSex();
 
         return requirement;
     }

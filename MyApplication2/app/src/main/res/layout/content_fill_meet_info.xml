@@ -232,10 +232,12 @@
                     android:layout_height="wrap_content" />
                 <Button
                     android:text="选择地区"
+                    android:id="@+id/require_region"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
             </LinearLayout>
             <EditText
+                android:id="@+id/illustration"
                 android:hint="hahaha"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

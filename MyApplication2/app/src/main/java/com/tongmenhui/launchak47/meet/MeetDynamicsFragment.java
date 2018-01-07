@@ -11,7 +11,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.adapter.MeetDynamicsListAdapter;
@@ -174,27 +173,27 @@ public class MeetDynamicsFragment extends Fragment {
                 meetDynamics.setRealname(dynamics.getString("realname"));
                 meetDynamics.setUid(dynamics.getInt("uid"));
                 meetDynamics.setPictureUri(dynamics.getString("picture_uri"));
-                meetDynamics.setBirth_year(dynamics.getInt("birth_year"));
+                meetDynamics.setBirthYear(dynamics.getInt("birth_year"));
                 meetDynamics.setHeight(dynamics.getInt("height"));
                 meetDynamics.setUniversity(dynamics.getString("university"));
                 meetDynamics.setDegree(dynamics.getString("degree"));
-                meetDynamics.setJob_title(dynamics.getString("job_title"));
+                meetDynamics.setJobTitle(dynamics.getString("job_title"));
                 meetDynamics.setLives(dynamics.getString("lives"));
                 meetDynamics.setSituation(dynamics.getInt("situation"));
 
                 //requirement
-                meetDynamics.setAge_lower(dynamics.getInt("age_lower"));
-                meetDynamics.setAge_upper(dynamics.getInt("age_upper"));
-                meetDynamics.setRequirement_height(dynamics.getInt("requirement_height"));
-                meetDynamics.setRequirement_degree(dynamics.getInt("requirement_degree"));
-                meetDynamics.setRequirement_lives(dynamics.getString("requirement_lives"));
-                meetDynamics.setRequirement_sex(dynamics.getInt("requirement_sex"));
+                meetDynamics.setAgeLower(dynamics.getInt("age_lower"));
+                meetDynamics.setAgeUpper(dynamics.getInt("age_upper"));
+                meetDynamics.setRequirementHeight(dynamics.getInt("requirement_height"));
+                meetDynamics.setRequirementDegree(dynamics.getString("requirement_degree"));
+                meetDynamics.setRequirementLives(dynamics.getString("requirement_lives"));
+                meetDynamics.setRequirementSex(dynamics.getInt("requirement_sex"));
                 meetDynamics.setIllustration(dynamics.getString("illustration"));
 
                 //interact count
-                meetDynamics.setBrowse_count(dynamics.getInt("browse_count"));
-                meetDynamics.setLoved_count(dynamics.getInt("loved_count"));
-                meetDynamics.setPraised_count(dynamics.getInt("praised_count"));
+                meetDynamics.setBrowseCount(dynamics.getInt("browse_count"));
+                meetDynamics.setLovedCount(dynamics.getInt("loved_count"));
+                meetDynamics.setPraisedCount(dynamics.getInt("praised_count"));
 
                 //dynamics content
                 meetDynamics.setCreated(dynamics.getLong("created"));
