@@ -147,14 +147,14 @@ public class MeetMemberInfo {
         return birthYear;
     }
 
-    public void setBirthMonth(int birthYear){
+    public void setBirthMonth(int birthMonth){
         this.birthMonth = birthMonth;
     }
     public int getBirthMonth(){
         return birthMonth;
     }
 
-    public void setBirthDay(int birthYear){
+    public void setBirthDay(int birthDay){
         this.birthDay = birthDay;
     }
     public int getBirthDay(){
