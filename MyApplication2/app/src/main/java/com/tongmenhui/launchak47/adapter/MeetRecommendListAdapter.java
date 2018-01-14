@@ -26,7 +26,7 @@ import java.util.List;
 
 public class MeetRecommendListAdapter extends RecyclerView.Adapter<MeetRecommendListAdapter.ViewHolder>{
     private static final String TAG = "MeetRecommendListAdapter";
-    private static final String  domain = "http://www.tongmenhui.com";
+    private static final String  domain = "http://112.126.83.127:88";
     private List<MeetMemberInfo> mMeetList;
     private String picture_url;
     private static Context mContext;

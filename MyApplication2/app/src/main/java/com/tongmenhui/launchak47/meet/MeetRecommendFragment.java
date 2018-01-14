@@ -54,7 +54,7 @@ public class MeetRecommendFragment extends Fragment {
     JSONArray recommendation;
     private Boolean loaded = false;
 
-    private static final String  domain = "http://www.tongmenhui.com";
+    private static final String  domain = "http://112.126.83.127:88";
     private static final String get_recommend_url = domain + "?q=meet/recommend";
 
     @Nullable

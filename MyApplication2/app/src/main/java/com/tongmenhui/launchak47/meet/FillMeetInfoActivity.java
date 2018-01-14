@@ -13,14 +13,26 @@ import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+//import com.google.gson.JsonSerializer;
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.region.activity.RegionSelectionActivity;
+import com.tongmenhui.launchak47.util.HttpUtil;
 
 import org.angmarch.views.NiceSpinner;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class FillMeetInfoActivity extends AppCompatActivity {
     Resources res;
@@ -33,6 +45,10 @@ public class FillMeetInfoActivity extends AppCompatActivity {
     private final static int SELFREQUEST = 1;
     private final static int REQUIREREQUEST = 2;
     MeetMemberInfo meetMemberInfo;
+    SelfCondition selfCondition;
+    PartnerRequirement partnerRequirement;
+    JSONObject selfConditionJson;
+    JSONObject partnerRequirementJson;
     boolean SELFSEXCHECKED = false;
     boolean BIRTHYEARSELECTED = false;
     boolean BIRTHMONTHSELECTED = false;
@@ -46,6 +62,7 @@ public class FillMeetInfoActivity extends AppCompatActivity {
     boolean REQUIREHEIGHTSELECTED = false;
     boolean REQUIREDEGREESELECTED = false;
     boolean REQUIRELIVESELECTED = false;
+    private static final String fillMeetInfoUrl = "http://112.126.83.127:88/?q=meet/look_friend";
 
 
 
@@ -65,6 +82,8 @@ public class FillMeetInfoActivity extends AppCompatActivity {
         ages = res.getStringArray(R.array.ages);
 
         meetMemberInfo = new MeetMemberInfo();
+        selfCondition = new SelfCondition();
+        partnerRequirement = new PartnerRequirement();
 
         final LinearLayout selfLayout = (LinearLayout)findViewById(R.id.self);
         final LinearLayout requireLayout = (LinearLayout)findViewById(R.id.requirement);
@@ -74,11 +93,13 @@ public class FillMeetInfoActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 if(checkedId == R.id.self_sex_male){
-                    Toast.makeText(FillMeetInfoActivity.this,"male", Toast.LENGTH_SHORT).show();
-                    meetMemberInfo.setSelfSex(0);
+                    //Toast.makeText(FillMeetInfoActivity.this,"male", Toast.LENGTH_SHORT).show();
+                    //meetMemberInfo.setSelfSex(0);
+                    selfCondition.setSelfSex(0);
                 }else{
-                    Toast.makeText(FillMeetInfoActivity.this,"female", Toast.LENGTH_SHORT).show();
-                    meetMemberInfo.setSelfSex(1);
+                    //Toast.makeText(FillMeetInfoActivity.this,"female", Toast.LENGTH_SHORT).show();
+                    //meetMemberInfo.setSelfSex(1);
+                    selfCondition.setSelfSex(1);
                 }
                 SELFSEXCHECKED = true;
             }
@@ -91,8 +112,8 @@ public class FillMeetInfoActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 //Slog.e("什么数据",String.valueOf(yearList.get(i)));
-                Toast.makeText(FillMeetInfoActivity.this, "年份"+String.valueOf(yearList.get(i)), Toast.LENGTH_SHORT).show();
-                meetMemberInfo.setBirthYear(Integer.parseInt(yearList.get(i)));
+                //Toast.makeText(FillMeetInfoActivity.this, "年份"+String.valueOf(yearList.get(i)), Toast.LENGTH_SHORT).show();
+                selfCondition.setBirthYear(Integer.parseInt(yearList.get(i)));
                 BIRTHYEARSELECTED = true;
             }
 
@@ -105,8 +126,8 @@ public class FillMeetInfoActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 //Slog.e("什么数据",String.valueOf(yearList.get(i)));
-                Toast.makeText(FillMeetInfoActivity.this, String.valueOf(monthList.get(i)), Toast.LENGTH_SHORT).show();
-                meetMemberInfo.setBirthMonth(Integer.parseInt(monthList.get(i)));
+                //Toast.makeText(FillMeetInfoActivity.this, String.valueOf(monthList.get(i)), Toast.LENGTH_SHORT).show();
+                selfCondition.setBirthMonth(Integer.parseInt(monthList.get(i)));
                 BIRTHMONTHSELECTED = true;
             }
 
@@ -119,8 +140,8 @@ public class FillMeetInfoActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 //Slog.e("什么数据",String.valueOf(yearList.get(i)));
-                Toast.makeText(FillMeetInfoActivity.this, String.valueOf(dayList.get(i)), Toast.LENGTH_SHORT).show();
-                meetMemberInfo.setBirthDay(Integer.parseInt(dayList.get(i)));
+                //Toast.makeText(FillMeetInfoActivity.this, String.valueOf(dayList.get(i)), Toast.LENGTH_SHORT).show();
+                selfCondition.setBirthDay(Integer.parseInt(dayList.get(i)));
                 BIRTHDAYSELECTED = true;
             }
 
@@ -133,8 +154,8 @@ public class FillMeetInfoActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 //Slog.e("什么数据",String.valueOf(yearList.get(i)));
-                Toast.makeText(FillMeetInfoActivity.this, String.valueOf(heightList.get(i)), Toast.LENGTH_SHORT).show();
-                meetMemberInfo.setHeight(Integer.parseInt(heightList.get(i)));
+                //Toast.makeText(FillMeetInfoActivity.this, String.valueOf(heightList.get(i)), Toast.LENGTH_SHORT).show();
+                selfCondition.setHeight(Integer.parseInt(heightList.get(i)));
                 HEIGHTSELECTED = true;
             }
 
@@ -147,8 +168,8 @@ public class FillMeetInfoActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 //Slog.e("什么数据",String.valueOf(yearList.get(i)));
-                Toast.makeText(FillMeetInfoActivity.this, String.valueOf(degreeList.get(i)), Toast.LENGTH_SHORT).show();
-                meetMemberInfo.setDegree(String.valueOf(degreeList.get(i)));
+                //Toast.makeText(FillMeetInfoActivity.this, String.valueOf(degreeList.get(i)), Toast.LENGTH_SHORT).show();
+                selfCondition.setDegree(String.valueOf(degreeList.get(i)));
                 DEGREESELECTED = true;
             }
 
@@ -171,10 +192,12 @@ public class FillMeetInfoActivity extends AppCompatActivity {
                 if(checkSelfInfo()){
                     selfLayout.setVisibility(View.GONE);
                     requireLayout.setVisibility(View.VISIBLE);
-                    createRequireView();
+                    createRequiredView();
                     v.setVisibility(View.GONE);
                     preButton.setVisibility(View.VISIBLE);
                     doneButton.setVisibility(View.VISIBLE);
+                    selfConditionJson = getSelfConditionJsonObject();
+
                 }
             }
         });
@@ -193,13 +216,68 @@ public class FillMeetInfoActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 EditText editText = (EditText)findViewById(R.id.illustration);
-                meetMemberInfo.setIllustration(editText.getText().toString());
+                partnerRequirement.setIllustration(editText.getText().toString());
+                partnerRequirementJson = getPartnerRequirementJsonObject();
                 if(checkRequiredInfo()){
+                    RequestBody requestBody = new FormBody.Builder()
+                                                          .add("self_condition", selfConditionJson.toString())
+                                                          .add("partner_requirement", partnerRequirementJson.toString())
+                                                          .build();
 
+                    HttpUtil.sendOkHttpRequest(null, fillMeetInfoUrl, requestBody, new Callback(){
+                        @Override
+                        public void onResponse(Call call, Response response) throws IOException {
+                            String responseText = response.body().string();
+                            //Slog.d(TAG, "response : "+responseText);
+                            //getResponseText(responseText);
+                            finish();
+                        }
+
+                        @Override
+                        public void onFailure(Call call, IOException e){
+
+                        }
+                    });
                 }
             }
         });
 
+    }
+
+    private JSONObject getSelfConditionJsonObject(){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("sex", selfCondition.getSelfSex());
+            jsonObject.put("birth_year", selfCondition.getBirthYear());
+            jsonObject.put("birth_month", selfCondition.getBirthMonth());
+            jsonObject.put("birth_day", selfCondition.getBirthDay());
+            jsonObject.put("height", selfCondition.getHeight());
+            jsonObject.put("degree", selfCondition.getDegreeIndex());
+            jsonObject.put("lives", selfCondition.getLives());
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+
+
+        return jsonObject;
+    }
+
+    private JSONObject getPartnerRequirementJsonObject(){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("sex", partnerRequirement.getRequirementSex());
+            jsonObject.put("age_lower", partnerRequirement.getAgeLower());
+            jsonObject.put("age_upper", partnerRequirement.getAgeUpper());
+            jsonObject.put("height", partnerRequirement.getRequirementHeight());
+            jsonObject.put("degree", partnerRequirement.getDegreeIndex());
+            jsonObject.put("lives", partnerRequirement.getRequirementLives());
+            jsonObject.put("illustration", partnerRequirement.getIllustration());
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+
+
+        return jsonObject;
     }
 
     private boolean checkSelfInfo(){
@@ -275,18 +353,18 @@ public class FillMeetInfoActivity extends AppCompatActivity {
 
         return true;
     }
-    private void createRequireView(){
+    private void createRequiredView(){
 
         RadioGroup require_sex = (RadioGroup)findViewById(R.id.require_sex);
         require_sex.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 if(checkedId == R.id.require_sex_male){
-                    Toast.makeText(FillMeetInfoActivity.this,"male", Toast.LENGTH_SHORT).show();
-                    meetMemberInfo.setRequirementSex(0);
+                    //Toast.makeText(FillMeetInfoActivity.this,"male", Toast.LENGTH_SHORT).show();
+                    partnerRequirement.setRequirementSex(0);
                 }else{
-                    Toast.makeText(FillMeetInfoActivity.this,"female", Toast.LENGTH_SHORT).show();
-                    meetMemberInfo.setRequirementSex(1);
+                    //Toast.makeText(FillMeetInfoActivity.this,"female", Toast.LENGTH_SHORT).show();
+                    partnerRequirement.setRequirementSex(1);
                 }
                 REQUIRESEXCHECKED = true;
             }
@@ -299,8 +377,8 @@ public class FillMeetInfoActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 //Slog.e("什么数据",String.valueOf(yearList.get(i)));
-                Toast.makeText(FillMeetInfoActivity.this, String.valueOf(ageList.get(i)), Toast.LENGTH_SHORT).show();
-                meetMemberInfo.setAgeLower(Integer.parseInt(ageList.get(i)));
+                //Toast.makeText(FillMeetInfoActivity.this, String.valueOf(ageList.get(i)), Toast.LENGTH_SHORT).show();
+                partnerRequirement.setAgeLower(Integer.parseInt(ageList.get(i)));
                 LOWERAGESELECTED = true;
             }
 
@@ -312,8 +390,8 @@ public class FillMeetInfoActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 //Slog.e("什么数据",String.valueOf(yearList.get(i)));
-                Toast.makeText(FillMeetInfoActivity.this, String.valueOf(ageList.get(i)), Toast.LENGTH_SHORT).show();
-                meetMemberInfo.setAgeUpper(Integer.parseInt(ageList.get(i)));
+                //Toast.makeText(FillMeetInfoActivity.this, String.valueOf(ageList.get(i)), Toast.LENGTH_SHORT).show();
+                partnerRequirement.setAgeUpper(Integer.parseInt(ageList.get(i)));
                 UPPERAGESELECTED = true;
             }
 
@@ -326,8 +404,8 @@ public class FillMeetInfoActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 //Slog.e("什么数据",String.valueOf(yearList.get(i)));
-                Toast.makeText(FillMeetInfoActivity.this, String.valueOf(heightList.get(i)), Toast.LENGTH_SHORT).show();
-                meetMemberInfo.setRequirementHeight(Integer.parseInt(heightList.get(i)));
+                //Toast.makeText(FillMeetInfoActivity.this, String.valueOf(heightList.get(i)), Toast.LENGTH_SHORT).show();
+                partnerRequirement.setRequirementHeight(Integer.parseInt(heightList.get(i)));
                 REQUIREHEIGHTSELECTED = true;
             }
 
@@ -340,8 +418,8 @@ public class FillMeetInfoActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 //Slog.e("什么数据",String.valueOf(yearList.get(i)));
-                Toast.makeText(FillMeetInfoActivity.this, String.valueOf(degreeList.get(i)), Toast.LENGTH_SHORT).show();
-                meetMemberInfo.setRequirementDegree(String.valueOf(degreeList.get(i)));
+                //Toast.makeText(FillMeetInfoActivity.this, String.valueOf(degreeList.get(i)), Toast.LENGTH_SHORT).show();
+                partnerRequirement.setRequirementDegree(String.valueOf(degreeList.get(i)));
                 REQUIREDEGREESELECTED = true;
             }
 
@@ -368,14 +446,14 @@ public class FillMeetInfoActivity extends AppCompatActivity {
                      //设置结果显示框的显示数值
                      Button button = (Button)findViewById(R.id.self_region);
                      button.setText(SelectedResult);
-                     meetMemberInfo.setLives(SelectedResult);
+                     selfCondition.setLives(SelectedResult);
                      SELFLIVESELECTED = true;
 
                  }else{
                      //设置结果显示框的显示数值
                      Button button = (Button)findViewById(R.id.require_region);
                      button.setText(SelectedResult);
-                     meetMemberInfo.setRequirementLives(SelectedResult);
+                     partnerRequirement.setRequirementLives(SelectedResult);
                      REQUIRELIVESELECTED = true;
                  }
          }

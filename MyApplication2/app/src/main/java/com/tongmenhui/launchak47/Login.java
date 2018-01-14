@@ -43,7 +43,7 @@ public class Login extends AppCompatActivity {
     private String password;
     private String token;
 
-    private static final String  domain = "http://www.tongmenhui.com";
+    private static final String  domain = "http://112.126.83.127:88";
     private static final String token_url = domain + "?q=rest_services/user/token";
     private static final String check_url = domain + "?q=account_manager/check_login_user";
     private static final String login_url = domain + "?q=rest_services/user/login";

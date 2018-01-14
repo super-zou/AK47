@@ -55,7 +55,7 @@ public class MeetDynamicsFragment extends Fragment {
     private static final int DONE = 1;
 
 
-    private static final String  domain = "http://www.tongmenhui.com";
+    private static final String  domain = "http://112.126.83.127:88/";
     private static final String dynamics_url = domain + "?q=meet/activity/get";
 
     @Nullable

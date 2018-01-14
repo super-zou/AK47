@@ -31,7 +31,7 @@ import java.util.List;
 public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsListAdapter.ViewHolder> {
 
     private static final String TAG = "MeetDynamicsListAdapter";
-    private static final String  domain = "http://www.tongmenhui.com";
+    private static final String  domain = "http://112.126.83.127:88";
     private List<MeetDynamics> mMeetList;
     private String picture_url;
     private static Context mContext;
@@ -210,7 +210,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
                 NetworkImageView imageView = (NetworkImageView)viewComment.findViewById(R.id.comment_picture);
                 //imageView.setImageDrawable(mContext.getDrawable(R.mipmap.ic_launcher));
                 RequestQueue queueComment = requestQueueSingleton.instance(mContext);
-                Slog.d(TAG, "$$$$$$$$$$$$$$$$getUrl: "+dynamicsCommentList.get(i).getPictureUrl());
+                //Slog.d(TAG, "$$$$$$$$$$$$$$$$getUrl: "+dynamicsCommentList.get(i).getPictureUrl());
                 imageView.setTag(domain+"/"+dynamicsCommentList.get(i).getPictureUrl());
                 HttpUtil.loadByImageLoader(queueComment, imageView, domain+"/"+dynamicsCommentList.get(i).getPictureUrl(), 50, 50);
 

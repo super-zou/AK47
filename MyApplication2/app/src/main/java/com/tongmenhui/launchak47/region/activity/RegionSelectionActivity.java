@@ -119,9 +119,10 @@ public class RegionSelectionActivity extends BaseActivity implements View.OnClic
         Toast.makeText(RegionSelectionActivity.this, "当前选中:"+mCurrentProviceName+","+mCurrentCityName+","
                 +mCurrentDistrictName+","+mCurrentZipCode, Toast.LENGTH_SHORT).show();
     }
+
     private void returnSelectedResult(){
         Intent intent = new Intent();
-        String SelectedResult = mCurrentProviceName+","+mCurrentCityName+","+mCurrentDistrictName;
+        String SelectedResult = mCurrentProviceName+"/"+mCurrentCityName+"/"+mCurrentDistrictName;
         intent.putExtra("SelectedResult", SelectedResult);
         setResult(2, intent);
         finish();

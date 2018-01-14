@@ -52,7 +52,7 @@ public class MeetDiscoveryFragment extends Fragment {
     JSONArray discovery;
     private Boolean loaded = false;
 
-    private static final String  domain = "http://www.tongmenhui.com";
+    private static final String  domain = "http://112.126.83.127:88/";
     private static final String get_discovery_url = domain + "?q=meet/recommend";
 
     @Nullable

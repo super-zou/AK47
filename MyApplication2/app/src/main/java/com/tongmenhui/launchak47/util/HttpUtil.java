@@ -1,5 +1,6 @@
 package com.tongmenhui.launchak47.util;
 
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.view.ViewGroup;
@@ -19,6 +20,8 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 
+import static android.content.Context.MODE_PRIVATE;
+
 /**
  * Created by haichao.zou on 2017/8/22.
  */
@@ -29,6 +32,8 @@ public class HttpUtil {
     public static void sendOkHttpRequest(String header, String address, RequestBody requestBody, okhttp3.Callback callback){
         OkHttpClient client = new OkHttpClient();
         Request request = null;
+
+        SharedPreferences.Editor editor = getSharedPreferences("session", MODE_PRIVATE).edit();
 
         if(requestBody != null){
             if(header != null){
@@ -103,39 +108,6 @@ public class HttpUtil {
         return bitmap;
 
     }
-/*
-    private class DownloadTask extends AsyncTask<String, Object, Bitmap> {
-        private MeetRecommendListAdapter.ViewHolder mViewHolder;
-        private String picture_url;
-
-        public DownloadTask(MeetRecommendListAdapter meetListAdapter, MeetRecommendListAdapter.ViewHolder mViewHolder, String picture_url) {
-            this.mViewHolder = mViewHolder;
-            this.picture_url = picture_url;
-        }
-
-        @Override
-        protected Bitmap doInBackground(String... params) {
-
-            //String url = params[0];
-            Bitmap bitmap = null;
-            try {
-                //加载一个网络图片
-                InputStream is = new URL(picture_url).openStream();
-                bitmap = BitmapFactory.decodeStream(is);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return bitmap;
-        }
-
-        @Override
-        protected void onPostExecute(Bitmap result) {
-           // mViewHolder.headUri.setImageBitmap(result);
-            //imageView.setImageBitmap(result);
-            onDownLoadPost(mViewHolder, result);
-        }
-    }
-*/
     public static void loadByImageLoader(RequestQueue queue, ImageView imageView, String url, int width, int height){
 
         if(url != null){
