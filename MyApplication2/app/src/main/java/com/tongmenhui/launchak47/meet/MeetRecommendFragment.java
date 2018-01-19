@@ -2,6 +2,7 @@ package com.tongmenhui.launchak47.meet;
 
 //import android.app.Fragment;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -32,6 +33,7 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static android.content.Context.MODE_PRIVATE;
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 
 /**
@@ -54,7 +56,7 @@ public class MeetRecommendFragment extends Fragment {
     JSONArray recommendation;
     private Boolean loaded = false;
 
-    private static final String  domain = "http://112.126.83.127:88";
+    private static final String  domain = "http://112.126.83.127:88/";
     private static final String get_recommend_url = domain + "?q=meet/recommend";
 
     @Nullable
@@ -104,10 +106,10 @@ public class MeetRecommendFragment extends Fragment {
         Slog.d(TAG, "===============initConentView==============");
 
         RequestBody requestBody = new FormBody.Builder().build();
-       // SharedPreferences preferences =  getActivity().getSharedPreferences("session", MODE_PRIVATE);
-       // String session = preferences.getString("session_name", "");
+        SharedPreferences preferences =  getActivity().getSharedPreferences("session", MODE_PRIVATE);
+        String session = preferences.getString("sessionId", "");
 
-        HttpUtil.sendOkHttpRequest(null, get_recommend_url, requestBody, new Callback(){
+        HttpUtil.sendOkHttpRequest(session, get_recommend_url, requestBody, new Callback(){
             int check_login_user = 0;
             String user_name;
 
@@ -137,7 +139,7 @@ public class MeetRecommendFragment extends Fragment {
 
     public void getResponseText(String responseText){
 
-        Slog.d(TAG, "====================getResponseText====================");
+        Slog.d(TAG, "====================getResponseText: "+responseText);
 
         if(!TextUtils.isEmpty(responseText)){
             try {

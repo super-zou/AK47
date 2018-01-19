@@ -1,5 +1,6 @@
 package com.tongmenhui.launchak47.meet;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -51,6 +52,7 @@ public class MeetDiscoveryFragment extends Fragment {
     JSONObject discovery_response;
     JSONArray discovery;
     private Boolean loaded = false;
+    private Context mContext;
 
     private static final String  domain = "http://112.126.83.127:88/";
     private static final String get_discovery_url = domain + "?q=meet/recommend";
@@ -59,6 +61,7 @@ public class MeetDiscoveryFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Slog.d(TAG, "=================onCreateView===================");
+        mContext = getActivity().getApplicationContext();
         initConentView();
         meetListAdapter = new MeetRecommendListAdapter(getContext());
         viewContent = inflater.inflate(R.layout.meet_discovery, container, false);
@@ -98,7 +101,7 @@ public class MeetDiscoveryFragment extends Fragment {
 
         //Slog.d(TAG, "=====in MeetRecommendFragment====session: "+session);
 
-        HttpUtil.sendOkHttpRequest(null, get_discovery_url, requestBody, new Callback(){
+        HttpUtil.sendOkHttpRequest(mContext, get_discovery_url, requestBody, new Callback(){
             int check_login_user = 0;
             String user_name;
 

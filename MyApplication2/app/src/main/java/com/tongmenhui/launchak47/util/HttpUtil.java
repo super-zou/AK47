@@ -1,5 +1,6 @@
 package com.tongmenhui.launchak47.util;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -29,22 +30,24 @@ import static android.content.Context.MODE_PRIVATE;
 public class HttpUtil {
     public static final String TAG = "HttpUtil";
 
-    public static void sendOkHttpRequest(String header, String address, RequestBody requestBody, okhttp3.Callback callback){
+    public static void sendOkHttpRequest(Context context, String address, RequestBody requestBody, okhttp3.Callback callback){
         OkHttpClient client = new OkHttpClient();
         Request request = null;
 
-        SharedPreferences.Editor editor = getSharedPreferences("session", MODE_PRIVATE).edit();
+        SharedPreferences preferences = context.getSharedPreferences("session", MODE_PRIVATE);
+        String cookie = preferences.getString("sessionName", "")+"="+preferences.getString("sessionId", "");
+
 
         if(requestBody != null){
-            if(header != null){
-                request = new Request.Builder().url(address).header("X-CSRF-Token", header).post(requestBody).build();
+            if(cookie != null){
+                request = new Request.Builder().url(address).addHeader("cookie", cookie).post(requestBody).build();
             }else{
                 request = new Request.Builder().url(address).post(requestBody).build();
             }
 
         }else{
-            if(header != null){
-                request = new Request.Builder().url(address).header("X-CSRF-Token", header).build();
+            if(cookie != null){
+                request = new Request.Builder().url(address).addHeader("cookie", cookie).build();
             }else{
                 request = new Request.Builder().url(address).build();
             }

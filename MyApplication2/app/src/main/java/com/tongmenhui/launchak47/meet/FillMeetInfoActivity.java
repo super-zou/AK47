@@ -1,6 +1,7 @@
 package com.tongmenhui.launchak47.meet;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -224,7 +225,7 @@ public class FillMeetInfoActivity extends AppCompatActivity {
                                                           .add("partner_requirement", partnerRequirementJson.toString())
                                                           .build();
 
-                    HttpUtil.sendOkHttpRequest(null, fillMeetInfoUrl, requestBody, new Callback(){
+                    HttpUtil.sendOkHttpRequest(FillMeetInfoActivity.this, fillMeetInfoUrl, requestBody, new Callback(){
                         @Override
                         public void onResponse(Call call, Response response) throws IOException {
                             String responseText = response.body().string();

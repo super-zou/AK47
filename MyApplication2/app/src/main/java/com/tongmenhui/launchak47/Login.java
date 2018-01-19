@@ -93,7 +93,7 @@ public class Login extends AppCompatActivity {
 
     private void goto_check(String address, RequestBody requestBody){
 
-        HttpUtil.sendOkHttpRequest(null, address, requestBody, new Callback(){
+        HttpUtil.sendOkHttpRequest(Login.this, address, requestBody, new Callback(){
             int check_login_user = 0;
             String user_name;
 
@@ -106,8 +106,8 @@ public class Login extends AppCompatActivity {
                         JSONObject check_response= new JSONObject(responseText);
                         check_login_user = Integer.parseInt(check_response.getString("check_login_user"));
                         user_name = check_response.getString("user_name");
-                        Slog.d(TAG, "check_login_user: "+check_response.getString("check_login_user"));
-                        Slog.d(TAG, "user_name: "+check_response.getString("user_name"));
+                        //Slog.d(TAG, "check_login_user: "+check_response.getString("check_login_user"));
+                        //Slog.d(TAG, "user_name: "+check_response.getString("user_name"));
 
                         if(check_login_user != 0){
                             SharedPreferences.Editor editor = getSharedPreferences("account_info", MODE_PRIVATE).edit();
@@ -145,7 +145,7 @@ public class Login extends AppCompatActivity {
 
     private void access_token(final String user_name){
         RequestBody requestBody = new FormBody.Builder().build();
-        HttpUtil.sendOkHttpRequest(null, token_url, requestBody, new Callback(){
+        HttpUtil.sendOkHttpRequest(Login.this, token_url, requestBody, new Callback(){
             int check_login_user = 0;
             //String username = user_name;
 
@@ -182,20 +182,21 @@ public class Login extends AppCompatActivity {
     }
 
     private void login_finally(String token, String user_name){
-        Slog.d(TAG, "login_finally username: "+user_name+" password: "+password+ " token: "+token);
+        //Slog.d(TAG, "login_finally username: "+user_name+" password: "+password+ " token: "+token);
         RequestBody requestBody = new FormBody.Builder()
                 .add("username", user_name)
                 .add("password", password)
                 .build();
 
-        HttpUtil.sendOkHttpRequest(token, login_url, requestBody, new Callback(){
+        HttpUtil.sendOkHttpRequest(Login.this, login_url, requestBody, new Callback(){
             int check_login_user = 0;
             String user_name;
 
             @Override
             public void onResponse(Call call, Response response) throws IOException{
+                Slog.d(TAG, "========header :"+response.headers());
                 String responseText = response.body().string();
-                Slog.d(TAG, "response : "+responseText);
+                Slog.d(TAG, "login response : "+responseText);
                 if(!TextUtils.isEmpty(responseText)){
                     try {
                         JSONObject login_response= new JSONObject(responseText);
@@ -206,7 +207,7 @@ public class Login extends AppCompatActivity {
 
                         SharedPreferences.Editor editor = getSharedPreferences("session", MODE_PRIVATE).edit();
                         editor.putString("sessionId", sessionId);
-                        editor.putString("session_name", session_name);
+                        editor.putString("sessionName", session_name);
                         editor.putInt("uid", user.getInt("uid"));
                         editor.apply();
 
