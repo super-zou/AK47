@@ -122,7 +122,7 @@ public class RegionSelectionActivity extends BaseActivity implements View.OnClic
 
     private void returnSelectedResult(){
         Intent intent = new Intent();
-        String SelectedResult = mCurrentProviceName+"/"+mCurrentCityName+"/"+mCurrentDistrictName;
+        String SelectedResult = mCurrentProviceName+"-"+mCurrentCityName+"-"+mCurrentDistrictName;
         intent.putExtra("SelectedResult", SelectedResult);
         setResult(2, intent);
         finish();

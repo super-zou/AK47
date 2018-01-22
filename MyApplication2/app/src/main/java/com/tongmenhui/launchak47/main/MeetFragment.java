@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
 
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.adapter.MeetFragmentAdapter;
+import com.tongmenhui.launchak47.util.BaseFragment;
 
 import java.util.ArrayList;
 
@@ -18,7 +19,7 @@ import java.util.ArrayList;
  * Created by super-zou on 17-9-11.
  */
 
-public class MeetFragment extends Fragment{
+public class MeetFragment extends BaseFragment {
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
     private MeetFragmentAdapter mFragmentAdapter;

@@ -64,6 +64,7 @@ public class FillMeetInfoActivity extends AppCompatActivity {
     boolean REQUIREDEGREESELECTED = false;
     boolean REQUIRELIVESELECTED = false;
     private static final String fillMeetInfoUrl = "http://112.126.83.127:88/?q=meet/look_friend";
+    public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
 
 
@@ -221,11 +222,13 @@ public class FillMeetInfoActivity extends AppCompatActivity {
                 partnerRequirementJson = getPartnerRequirementJsonObject();
                 if(checkRequiredInfo()){
                     RequestBody requestBody = new FormBody.Builder()
-                                                          .add("self_condition", selfConditionJson.toString())
-                                                          .add("partner_requirement", partnerRequirementJson.toString())
+                                                          //.add("self_condition", selfConditionJson.toString())
+                                                          //.add("partner_requirement", partnerRequirementJson.toString())
                                                           .build();
+                    RequestBody body = RequestBody.create(JSON, partnerRequirementJson.toString())
+                                                  .create(JSON, selfConditionJson.toString());
 
-                    HttpUtil.sendOkHttpRequest(FillMeetInfoActivity.this, fillMeetInfoUrl, requestBody, new Callback(){
+                    HttpUtil.sendOkHttpRequest(FillMeetInfoActivity.this, fillMeetInfoUrl, body, new Callback(){
                         @Override
                         public void onResponse(Call call, Response response) throws IOException {
                             String responseText = response.body().string();

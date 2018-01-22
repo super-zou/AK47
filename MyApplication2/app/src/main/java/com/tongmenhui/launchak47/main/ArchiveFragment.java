@@ -8,12 +8,13 @@ import android.view.ViewGroup;
 import android.support.v4.app.Fragment;
 
 import com.tongmenhui.launchak47.R;
+import com.tongmenhui.launchak47.util.BaseFragment;
 
 /**
  * Created by super-zou on 17-9-11.
  */
 
-public class ArchiveFragment extends Fragment{
+public class ArchiveFragment extends BaseFragment {
 
     @Nullable
     @Override

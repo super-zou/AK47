@@ -22,7 +22,7 @@ public class MeetMemberInfo {
     public int birthDay;
     public int height;
     public String university;
-    public String degree;
+    public String degree = "";
     public String jobTitle;
     public String lives;
     public int situation;
@@ -91,30 +91,34 @@ public class MeetMemberInfo {
     }
 
     public void setDegree(String degree){
-        this.degree = degree;
+        if(degree != null){
+            this.degree = degree;
+        }
     }
     public String getDegree(){
         return degree;
     }
 
     public String getDegreeName(String degree){
-        String Degree;
-        switch (Integer.parseInt(degree)){
-            case 0:
-                Degree = "大专";
-                break;
-            case 1:
-                Degree = "本科";
-                break;
-            case 2:
-                Degree = "硕士";
-                break;
-            case 3:
-                Degree = "博士";
-                break;
-            default:
-                Degree = "硕士";
-                break;
+        String Degree = "";
+        if(degree != "" && !degree.equals("null")){
+            switch (Integer.parseInt(degree)){
+                case 0:
+                    Degree = "大专";
+                    break;
+                case 1:
+                    Degree = "本科";
+                    break;
+                case 2:
+                    Degree = "硕士";
+                    break;
+                case 3:
+                    Degree = "博士";
+                    break;
+                default:
+                    Degree = "其它";
+                    break;
+            }
         }
         return Degree;
     }

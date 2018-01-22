@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.adapter.MeetDynamicsListAdapter;
+import com.tongmenhui.launchak47.util.BaseFragment;
 import com.tongmenhui.launchak47.util.HttpUtil;
 import com.tongmenhui.launchak47.util.Slog;
 
@@ -37,7 +38,7 @@ import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
  * Created by haichao.zou on 2017/11/20.
  */
 
-public class MeetDynamicsFragment extends Fragment {
+public class MeetDynamicsFragment extends BaseFragment {
     private static final String TAG = "MeetDynamicsFragment";
     private View viewContent;
     private List<MeetDynamics> meetList = new ArrayList<>();
@@ -105,7 +106,7 @@ public class MeetDynamicsFragment extends Fragment {
 
         //Slog.d(TAG, "=====in MeetRecommendFragment====session: "+session);
 
-        HttpUtil.sendOkHttpRequest(null, dynamics_url, requestBody, new Callback(){
+        HttpUtil.sendOkHttpRequest(getContext(), dynamics_url, requestBody, new Callback(){
             int check_login_user = 0;
             String user_name;
 
@@ -223,7 +224,7 @@ public class MeetDynamicsFragment extends Fragment {
         String request_comment_url = "?q=meet/activity/interact/get";
         RequestBody requestBody = new FormBody.Builder().add("aid",aid.toString()).build();
 
-        HttpUtil.sendOkHttpRequest(null, domain+request_comment_url, requestBody, new Callback(){
+        HttpUtil.sendOkHttpRequest(getContext(), domain+request_comment_url, requestBody, new Callback(){
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {

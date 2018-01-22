@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.adapter.MeetRecommendListAdapter;
+import com.tongmenhui.launchak47.util.BaseFragment;
 import com.tongmenhui.launchak47.util.HttpUtil;
 import com.tongmenhui.launchak47.util.Slog;
 
@@ -40,7 +41,8 @@ import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
  * Created by super-zou on 17-9-11.
  */
 
-public class MeetRecommendFragment extends Fragment {
+public class MeetRecommendFragment extends BaseFragment {
+
     private static final String TAG = "MeetRecommendFragment";
     private View viewContent;
     private int mType = 0;
@@ -109,7 +111,7 @@ public class MeetRecommendFragment extends Fragment {
         SharedPreferences preferences =  getActivity().getSharedPreferences("session", MODE_PRIVATE);
         String session = preferences.getString("sessionId", "");
 
-        HttpUtil.sendOkHttpRequest(session, get_recommend_url, requestBody, new Callback(){
+        HttpUtil.sendOkHttpRequest(getContext(), get_recommend_url, requestBody, new Callback(){
             int check_login_user = 0;
             String user_name;
 
@@ -167,6 +169,7 @@ public class MeetRecommendFragment extends Fragment {
                 meetMemberInfo.setBirthYear(recommender.getInt("birth_year"));
                 meetMemberInfo.setHeight(recommender.getInt("height"));
                 meetMemberInfo.setUniversity(recommender.getString("university"));
+
                 meetMemberInfo.setDegree(recommender.getString("degree"));
                 meetMemberInfo.setJobTitle(recommender.getString("job_title"));
                 meetMemberInfo.setLives(recommender.getString("lives"));

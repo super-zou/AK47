@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.tongmenhui.launchak47.R;
+import com.tongmenhui.launchak47.util.BaseFragment;
 
 import android.support.v4.app.Fragment;
 
@@ -14,7 +15,7 @@ import android.support.v4.app.Fragment;
  * Created by super-zou on 17-9-11.
  */
 
-public class ActivitiesFragment extends Fragment{
+public class ActivitiesFragment extends BaseFragment {
     private View viewContent;
     @Nullable
     @Override

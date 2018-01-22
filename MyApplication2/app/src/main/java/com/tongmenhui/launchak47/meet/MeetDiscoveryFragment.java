@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.adapter.MeetRecommendListAdapter;
+import com.tongmenhui.launchak47.util.BaseFragment;
 import com.tongmenhui.launchak47.util.HttpUtil;
 import com.tongmenhui.launchak47.util.Slog;
 
@@ -36,7 +37,7 @@ import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
  * Created by haichao.zou on 2017/11/23.
  */
 
-public class MeetDiscoveryFragment extends Fragment {
+public class MeetDiscoveryFragment extends BaseFragment {
 
     private static final String TAG = "MeetDynamicsFragment";
     private View viewContent;
