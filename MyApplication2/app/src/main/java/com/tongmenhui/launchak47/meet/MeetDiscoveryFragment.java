@@ -2,6 +2,8 @@ package com.tongmenhui.launchak47.meet;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -39,7 +41,7 @@ import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 
 public class MeetDiscoveryFragment extends BaseFragment {
 
-    private static final String TAG = "MeetDynamicsFragment";
+    private static final String TAG = "MeetDiscoveryFragment";
     private View viewContent;
     private int mType = 0;
     private String mTitle;
@@ -54,9 +56,11 @@ public class MeetDiscoveryFragment extends BaseFragment {
     JSONArray discovery;
     private Boolean loaded = false;
     private Context mContext;
+    private Handler handler;
+    private static final int DONE = 1;
 
     private static final String  domain = "http://112.126.83.127:88/";
-    private static final String get_discovery_url = domain + "?q=meet/recommend";
+    private static final String get_discovery_url = domain + "?q=meet/discovery/get";
 
     @Nullable
     @Override
@@ -97,27 +101,15 @@ public class MeetDiscoveryFragment extends BaseFragment {
         Slog.d(TAG, "===============initConentView==============");
 
         RequestBody requestBody = new FormBody.Builder().build();
-        // SharedPreferences preferences =  getActivity().getSharedPreferences("session", MODE_PRIVATE);
-        // String session = preferences.getString("session_name", "");
-
-        //Slog.d(TAG, "=====in MeetRecommendFragment====session: "+session);
-
-        HttpUtil.sendOkHttpRequest(mContext, get_discovery_url, requestBody, new Callback(){
+        HttpUtil.sendOkHttpRequest(getContext(), get_discovery_url, requestBody, new Callback(){
             int check_login_user = 0;
             String user_name;
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
-                //Slog.d(TAG, "response : "+responseText);
+                Slog.d(TAG, "response : "+responseText);
                 getResponseText(responseText);
-                MeetDiscoveryFragment.this.getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        meetListAdapter.setData(meetMemberList);
-                        meetListAdapter.notifyDataSetChanged();
-                    }
-                });
             }
 
             @Override
@@ -126,8 +118,15 @@ public class MeetDiscoveryFragment extends BaseFragment {
             }
         });
 
-        // getResponseText(responseText);
-
+        handler = new Handler(){
+            @Override
+            public void handleMessage(Message message){
+                if(message.what == DONE){
+                    meetListAdapter.setData(meetMemberList);
+                    meetListAdapter.notifyDataSetChanged();
+                }
+            }
+        };
     }
 
     public void getResponseText(String responseText){
@@ -137,7 +136,7 @@ public class MeetDiscoveryFragment extends BaseFragment {
         if(!TextUtils.isEmpty(responseText)){
             try {
                 discovery_response= new JSONObject(responseText);
-                discovery = discovery_response.getJSONArray("recommendation");
+                discovery = discovery_response.getJSONArray("discovery");
                 set_meet_member_info(discovery);
                 loaded = true;
             }catch (JSONException e){
@@ -148,7 +147,7 @@ public class MeetDiscoveryFragment extends BaseFragment {
 
     public void set_meet_member_info(JSONArray discovery){
         int length = discovery.length();
-        Slog.d(TAG, "==========set_meet_member_info==========recommendation length: "+length);
+        Slog.d(TAG, "==========set_meet_member_info==========discovery length: "+length);
         try{
             for (int i=0; i< length; i++){
                 JSONObject recommender = discovery.getJSONObject(i);
@@ -183,10 +182,11 @@ public class MeetDiscoveryFragment extends BaseFragment {
                 meetMemberInfo.setPraisedCount(recommender.getInt("praised_count"));
                 //  meetMemberInfo.setPictureChain(recommender.getString("pictureChain"));
                 // meetMemberInfo.setRequirementSet(recommender.getInt("requirementSet"));
-
-
                 meetMemberList.add(meetMemberInfo);
             }
+
+            handler.sendEmptyMessage(DONE);
+
         }catch (JSONException e){
 
         }

@@ -15,18 +15,23 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 //import com.google.gson.JsonSerializer;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.region.activity.RegionSelectionActivity;
 import com.tongmenhui.launchak47.util.HttpUtil;
 
 import org.angmarch.views.NiceSpinner;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -48,8 +53,6 @@ public class FillMeetInfoActivity extends AppCompatActivity {
     MeetMemberInfo meetMemberInfo;
     SelfCondition selfCondition;
     PartnerRequirement partnerRequirement;
-    JSONObject selfConditionJson;
-    JSONObject partnerRequirementJson;
     boolean SELFSEXCHECKED = false;
     boolean BIRTHYEARSELECTED = false;
     boolean BIRTHMONTHSELECTED = false;
@@ -63,6 +66,8 @@ public class FillMeetInfoActivity extends AppCompatActivity {
     boolean REQUIREHEIGHTSELECTED = false;
     boolean REQUIREDEGREESELECTED = false;
     boolean REQUIRELIVESELECTED = false;
+    String selfConditionJson;
+    String partnerRequirementJson;
     private static final String fillMeetInfoUrl = "http://112.126.83.127:88/?q=meet/look_friend";
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
@@ -198,7 +203,7 @@ public class FillMeetInfoActivity extends AppCompatActivity {
                     v.setVisibility(View.GONE);
                     preButton.setVisibility(View.VISIBLE);
                     doneButton.setVisibility(View.VISIBLE);
-                    selfConditionJson = getSelfConditionJsonObject();
+                    selfConditionJson = getSelfConditionJsonObject().toString();
 
                 }
             }
@@ -214,21 +219,21 @@ public class FillMeetInfoActivity extends AppCompatActivity {
                 doneButton.setVisibility(View.GONE);
             }
         });
+
         doneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 EditText editText = (EditText)findViewById(R.id.illustration);
                 partnerRequirement.setIllustration(editText.getText().toString());
-                partnerRequirementJson = getPartnerRequirementJsonObject();
+                partnerRequirementJson = getPartnerRequirementJsonObject().toString();
+                ObjectMapper mapper = new ObjectMapper();
                 if(checkRequiredInfo()){
                     RequestBody requestBody = new FormBody.Builder()
-                                                          //.add("self_condition", selfConditionJson.toString())
-                                                          //.add("partner_requirement", partnerRequirementJson.toString())
+                                                          .add("self_condition", selfConditionJson)
+                                                          .add("partner_requirement", partnerRequirementJson)
                                                           .build();
-                    RequestBody body = RequestBody.create(JSON, partnerRequirementJson.toString())
-                                                  .create(JSON, selfConditionJson.toString());
 
-                    HttpUtil.sendOkHttpRequest(FillMeetInfoActivity.this, fillMeetInfoUrl, body, new Callback(){
+                    HttpUtil.sendOkHttpRequest(FillMeetInfoActivity.this, fillMeetInfoUrl, requestBody, new Callback(){
                         @Override
                         public void onResponse(Call call, Response response) throws IOException {
                             String responseText = response.body().string();
@@ -250,7 +255,16 @@ public class FillMeetInfoActivity extends AppCompatActivity {
 
     private JSONObject getSelfConditionJsonObject(){
         JSONObject jsonObject = new JSONObject();
+        JSONArray jsonArray = new JSONArray();
         try {
+            jsonObject.put("sex", selfCondition.getSelfSex());
+            jsonObject.put("birth_year", selfCondition.getBirthYear());
+            jsonObject.put("birth_month", selfCondition.getBirthMonth());
+            jsonObject.put("birth_day", selfCondition.getBirthDay());
+            jsonObject.put("height", selfCondition.getHeight());
+            jsonObject.put("degree", selfCondition.getDegreeIndex());
+            jsonObject.put("lives", selfCondition.getLives());
+
             jsonObject.put("sex", selfCondition.getSelfSex());
             jsonObject.put("birth_year", selfCondition.getBirthYear());
             jsonObject.put("birth_month", selfCondition.getBirthMonth());

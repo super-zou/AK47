@@ -58,6 +58,7 @@ public class MeetDynamicsFragment extends BaseFragment {
 
     private static final String  domain = "http://112.126.83.127:88/";
     private static final String dynamics_url = domain + "?q=meet/activity/get";
+    String request_comment_url = "?q=meet/activity/interact/get";
 
     @Nullable
     @Override
@@ -101,11 +102,6 @@ public class MeetDynamicsFragment extends BaseFragment {
         //Slog.d(TAG, "===============initConentView==============");
 
         RequestBody requestBody = new FormBody.Builder().build();
-        // SharedPreferences preferences =  getActivity().getSharedPreferences("session", MODE_PRIVATE);
-        // String session = preferences.getString("session_name", "");
-
-        //Slog.d(TAG, "=====in MeetRecommendFragment====session: "+session);
-
         HttpUtil.sendOkHttpRequest(getContext(), dynamics_url, requestBody, new Callback(){
             int check_login_user = 0;
             String user_name;
@@ -115,17 +111,6 @@ public class MeetDynamicsFragment extends BaseFragment {
                 String responseText = response.body().string();
                 //Slog.d(TAG, "response : "+responseText);
                 getResponseText(responseText);
-
-                /*
-                MeetDynamicsFragment.this.getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        meetDynamicsListAdapter.setData(meetList);
-                        meetDynamicsListAdapter.notifyDataSetChanged();
-                    }
-                });
-                */
             }
 
             @Override
@@ -221,7 +206,7 @@ public class MeetDynamicsFragment extends BaseFragment {
     }
 
     public void getDynamicsComment(final MeetDynamics meetDynamics, Long aid){
-        String request_comment_url = "?q=meet/activity/interact/get";
+
         RequestBody requestBody = new FormBody.Builder().add("aid",aid.toString()).build();
 
         HttpUtil.sendOkHttpRequest(getContext(), domain+request_comment_url, requestBody, new Callback(){

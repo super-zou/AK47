@@ -4,6 +4,8 @@ package com.tongmenhui.launchak47.meet;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -57,6 +59,8 @@ public class MeetRecommendFragment extends BaseFragment {
     JSONObject recommend_response;
     JSONArray recommendation;
     private Boolean loaded = false;
+    private Handler handler;
+    private static final int DONE = 1;
 
     private static final String  domain = "http://112.126.83.127:88/";
     private static final String get_recommend_url = domain + "?q=meet/recommend";
@@ -108,9 +112,6 @@ public class MeetRecommendFragment extends BaseFragment {
         Slog.d(TAG, "===============initConentView==============");
 
         RequestBody requestBody = new FormBody.Builder().build();
-        SharedPreferences preferences =  getActivity().getSharedPreferences("session", MODE_PRIVATE);
-        String session = preferences.getString("sessionId", "");
-
         HttpUtil.sendOkHttpRequest(getContext(), get_recommend_url, requestBody, new Callback(){
             int check_login_user = 0;
             String user_name;
@@ -120,13 +121,6 @@ public class MeetRecommendFragment extends BaseFragment {
                 String responseText = response.body().string();
                 //Slog.d(TAG, "response : "+responseText);
                 getResponseText(responseText);
-                MeetRecommendFragment.this.getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        meetRecommendListAdapter.setData(meetList);
-                        meetRecommendListAdapter.notifyDataSetChanged();
-                    }
-                });
             }
 
             @Override
@@ -134,6 +128,16 @@ public class MeetRecommendFragment extends BaseFragment {
 
             }
         });
+
+        handler = new Handler(){
+            @Override
+            public void handleMessage(Message message){
+                if(message.what == DONE){
+                    meetRecommendListAdapter.setData(meetList);
+                    meetRecommendListAdapter.notifyDataSetChanged();
+                }
+            }
+        };
 
        // getResponseText(responseText);
 
@@ -197,6 +201,8 @@ public class MeetRecommendFragment extends BaseFragment {
 
                 meetList.add(meetMemberInfo);
             }
+
+            handler.sendEmptyMessage(DONE);
         }catch (JSONException e){
 
         }
