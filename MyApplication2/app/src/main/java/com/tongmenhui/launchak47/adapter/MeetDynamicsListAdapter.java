@@ -201,7 +201,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
     }
 
     public void setDynamicsCommentView(LinearLayout linearLayout, List<DynamicsComment> dynamicsCommentList){
-        //Slog.d(TAG, "*************dynamicsCommentList size: "+dynamicsCommentList.size());
+        //Slog.d(TAG, "*************dynamicsCommentList : "+dynamicsCommentList);
         if(dynamicsCommentList.size() != 0){
             for (int i=0; i<dynamicsCommentList.size(); i++){
                 View viewComment = View.inflate(mContext, R.layout.dynamics_comment_item, null);
@@ -217,6 +217,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
                 if(dynamicsCommentList.get(i) != null){
                     if(dynamicsCommentList.get(i).getType() == 0){//comment
                         TextView author = (TextView)viewComment.findViewById(R.id.author_name);
+                        Slog.d(TAG, "$$$$$$$$$$$$$$$$$$$$$comment author: "+dynamicsCommentList.get(i).getCommenterName());
                         author.setText(dynamicsCommentList.get(i).getCommenterName());
 
                     }else{//reply
@@ -230,6 +231,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
                         TextView author = (TextView)viewComment.findViewById(R.id.author_name);
                         author.setText(dynamicsCommentList.get(i).getAuthorName());
                     }
+                    Slog.d(TAG, "====================comment content: "+dynamicsCommentList.get(i).getContent());
                     TextView content = (TextView)viewComment.findViewById(R.id.content);
                     content.setText(dynamicsCommentList.get(i).getContent());
                 }

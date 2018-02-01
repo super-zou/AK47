@@ -241,6 +241,7 @@ public class MeetDynamicsFragment extends BaseFragment {
         JSONObject praise;
         meetDynamics.setPraiseCount(praiseArray.length());
         meetDynamics.setCommentCount(commentArray.length());
+        Slog.d(TAG, "==========comment:  "+commentArray);
         for (int i=0; i<commentArray.length(); i++){
             try {
                 comment = commentArray.getJSONObject(i);
