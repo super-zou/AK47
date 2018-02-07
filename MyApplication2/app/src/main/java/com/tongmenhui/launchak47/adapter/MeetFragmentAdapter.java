@@ -1,16 +1,21 @@
 package com.tongmenhui.launchak47.adapter;
 
+import android.graphics.Typeface;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.view.View;
 
+import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.meet.MeetDiscoveryFragment;
 import com.tongmenhui.launchak47.meet.MeetDynamicsFragment;
 import com.tongmenhui.launchak47.meet.MeetRecommendFragment;
+import com.tongmenhui.launchak47.util.FontManager;
 import com.tongmenhui.launchak47.util.Slog;
 
 import java.util.ArrayList;
+
+import static com.tongmenhui.launchak47.util.MyApplication.getContext;
 
 /**
  * Created by haichao.zou on 2017/11/13.

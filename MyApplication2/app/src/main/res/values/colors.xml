@@ -4,7 +4,7 @@
     <color name="colorPrimaryDark">#5a66b3</color>
     <color name="colorAccent">#FF4081</color>
     <color name="colorWhite">#ffffff</color>
-    <color name="main_bottom_text_normal">#ff847d7b</color>
+    <color name="main_bottom_text_normal">#847d7b</color>
     <color name="main_botton_text_select">#ff333333</color>
     <color name="main_bottom_bg">#11000000</color>
     <color name="essence_tab_bg">#12000000</color>

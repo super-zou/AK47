@@ -7,19 +7,36 @@
     android:clickable="true"
     android:orientation="vertical"
     tools:background="@android:color/holo_blue_dark">
-
-    <android.support.design.widget.TabLayout
-        android:id="@+id/meet_tab_layout"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="36dp"
-        android:background="@color/colorPrimary"
-        app:tabIndicatorColor="@color/colorPrimaryDark"
-        app:tabIndicatorHeight="0dp"
-        app:tabTextColor="@color/colorWhite"
-        app:tabSelectedTextColor="@color/colorPrimaryDark"
-        app:tabMode="fixed"
-        app:tabBackground="@android:color/holo_blue_dark"
-        app:tabTextAppearance="@style/MyTabLayoutTextAppearance"/>
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        tools:background="@android:color/holo_blue_dark">
+        <android.support.design.widget.TabLayout
+            android:id="@+id/meet_tab_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:layout_weight="8"
+            android:background="@color/colorPrimary"
+            app:tabIndicatorColor="@color/colorPrimaryDark"
+            app:tabIndicatorHeight="0dp"
+            app:tabTextColor="@color/colorWhite"
+            app:tabSelectedTextColor="@color/colorPrimaryDark"
+            app:tabMode="fixed"
+            app:tabBackground="@android:color/holo_blue_dark"
+            app:tabTextAppearance="@style/MyTabLayoutTextAppearance"
+            tools:tabBackground="@android:color/darker_gray" />
+        <TextView
+            android:id="@+id/activity_create"
+            android:text="@string/fa_camera_retro"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:background="@android:color/holo_blue_dark"
+            android:textColor="@color/colorWhite" />
+    </LinearLayout>
+
 
     <android.support.v4.view.ViewPager
         android:id="@+id/meet_view_pager"

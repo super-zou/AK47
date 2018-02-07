@@ -1,16 +1,21 @@
 package com.tongmenhui.launchak47.adapter;
 
+import android.graphics.Typeface;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.view.View;
 
+import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.main.ActivitiesFragment;
 import com.tongmenhui.launchak47.main.ArchiveFragment;
 import com.tongmenhui.launchak47.main.MeetFragment;
+import com.tongmenhui.launchak47.util.FontManager;
 import com.tongmenhui.launchak47.util.Slog;
 
 import java.util.ArrayList;
+
+import static com.tongmenhui.launchak47.util.MyApplication.getContext;
 
 /**
  * Created by super-zou on 17-9-11.
@@ -25,6 +30,7 @@ public class MainFragmentAdapter extends FragmentStatePagerAdapter{
         super(fm);
        // this.view = view;
         mTitles = titles;
+
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.tongmenhui.launchak47.main;
 
+import android.content.DialogInterface;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -8,12 +10,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.app.Fragment;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.adapter.MeetFragmentAdapter;
 import com.tongmenhui.launchak47.util.BaseFragment;
+import com.tongmenhui.launchak47.util.FontManager;
+import com.tongmenhui.launchak47.util.ItemsDialogFragment;
 
 import java.util.ArrayList;
+
+import static com.tongmenhui.launchak47.util.MyApplication.getContext;
 
 /**
  * Created by super-zou on 17-9-11.
@@ -56,18 +64,6 @@ public class MeetFragment extends BaseFragment {
         mTabLayout.addTab(dynamics_tab, 1, false);
         mTabLayout.addTab(discovery_tab, 2, false);
 
-        //mTabLayout.getTabAt(0).select();
-
-
-        //mRecommendFragment = new MeetRecommendFragment();
-        // mActivityFragment = new MeetDynamicsFragment();
-        // mDiscoveryFragment = new MeetRecommendFragment();
-
-
-        // mFragmentList.add(mRecommendFragment);
-        //  mFragmentList.add(mActivityFragment);
-        //  mFragmentList.add(mDiscoveryFragment);
-
         //创建一个viewpager的adapter
         mFragmentAdapter = new MeetFragmentAdapter(getFragmentManager(), mMeetTitleList);
         mViewPager.setAdapter(mFragmentAdapter);
@@ -76,6 +72,28 @@ public class MeetFragment extends BaseFragment {
 
         //将TabLayout和ViewPager关联起来
         mTabLayout.setupWithViewPager(mViewPager);
+
+        Typeface font = Typeface.createFromAsset(getContext().getAssets(), "fonts/fontawesome.ttf");
+        FontManager.markAsIconContainer(view.findViewById(R.id.activity_create), font);
+
+        TextView ActivityCreate = (TextView) view.findViewById(R.id.activity_create);
+        ActivityCreate.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                showItemsDialogFragment(v);
+            }
+        });
+    }
+
+    public void showItemsDialogFragment(View view) {
+        ItemsDialogFragment itemsDialogFragment = new ItemsDialogFragment();
+        String[] items = {"Hi", "Hello", "叶"};
+        itemsDialogFragment.show("Hi,你好", items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(getContext(), "点击了第 " + (which + 1) + " 个选项", Toast.LENGTH_SHORT).show();
+            }
+        }, getFragmentManager());
     }
 
 }
