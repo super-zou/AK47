@@ -87,8 +87,8 @@ public class MeetFragment extends BaseFragment {
 
     public void showItemsDialogFragment(View view) {
         ItemsDialogFragment itemsDialogFragment = new ItemsDialogFragment();
-        String[] items = {"Hi", "Hello", "叶"};
-        itemsDialogFragment.show("Hi,你好", items, new DialogInterface.OnClickListener() {
+        String[] items = {"拍摄", "从相册选择"};
+        itemsDialogFragment.show("", items, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Toast.makeText(getContext(), "点击了第 " + (which + 1) + " 个选项", Toast.LENGTH_SHORT).show();
