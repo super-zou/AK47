@@ -47,7 +47,6 @@ public class MeetFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View viewContent = inflater.inflate(R.layout.fragment_meet,container,false);
-
         initConentView(viewContent);
         return viewContent;
     }
@@ -91,7 +90,7 @@ public class MeetFragment extends BaseFragment {
         itemsDialogFragment.show("", items, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Toast.makeText(getContext(), "点击了第 " + (which + 1) + " 个选项", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "你点击了第 " + (which + 1) + " 个选项", Toast.LENGTH_SHORT).show();
             }
         }, getFragmentManager());
     }
