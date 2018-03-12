@@ -1,6 +1,7 @@
 package com.tongmenhui.launchak47.main;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -79,7 +80,9 @@ public class MeetFragment extends BaseFragment {
         ActivityCreate.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                showItemsDialogFragment(v);
+                //showItemsDialogFragment(v);
+                Intent intent = new Intent(getContext(), AddDynamicsActivity.class);
+                startActivity(intent);
             }
         });
     }

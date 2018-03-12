@@ -43,3 +43,6 @@ dependencies {
     compile 'com.fasterxml.jackson.core:jackson-databind:2.5.3'
     implementation 'com.github.LuckSiege.PictureSelector:picture_library:v2.1.9'
 }
+dependencies {
+    implementation 'com.android.support.constraint:constraint-layout:+'
+}
