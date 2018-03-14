@@ -14,4 +14,5 @@
     <item name="tag_first" type="id" />
     <item name="tag_second" type="id" />
     <string name="title_activity_fill_meet_info">FillMeetInfo</string>
+    <string name="dynamics_input_hint">说点啥呢?</string>
 </resources>

@@ -38,7 +38,7 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="5dp"
             android:gravity="center"
-            android:text=""
+            android:text="发布"
             android:textColor="@color/white"
             android:textSize="15sp" />
     </RelativeLayout>
@@ -50,5 +50,11 @@
         android:layout_marginLeft="5dp"
         android:layout_marginTop="5dp"
         android:overScrollMode="never" />
+    <EditText
+        android:id="@+id/dynamics_input"
+        android:layout_marginTop="20dp"
+        android:hint="@string/dynamics_input_hint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 </LinearLayout>
