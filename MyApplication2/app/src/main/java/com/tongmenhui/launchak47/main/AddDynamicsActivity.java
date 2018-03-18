@@ -9,6 +9,9 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.luck.picture.lib.PictureSelector;
@@ -19,20 +22,43 @@ import com.luck.picture.lib.permissions.RxPermissions;
 import com.luck.picture.lib.tools.PictureFileUtils;
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.adapter.GridImageAdapter;
+import com.tongmenhui.launchak47.util.Slog;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class AddDynamicsActivity extends AppCompatActivity {
 
+    private static final String TAG = "AddDynamicsActivity";
     private int maxSelectNum = 9;
     private int themeId;
+    private TextView publishBtn;
+    private EditText editText;
     private RecyclerView recyclerView;
     private GridImageAdapter adapter;
     private List<LocalMedia> selectList = new ArrayList<>();
+    //private String[] activity_picture_array;
+    private List<File> selectFileList = new ArrayList<>();
+    private Map<String, String> dynamicsText;
+    private String user_activity;
+
+    private static final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/png");
+    private static final String  domain = "http://112.126.83.127:88/";
+    private static final String reqUrl = domain + "?q=meet/dynamic/add";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,8 +68,10 @@ public class AddDynamicsActivity extends AppCompatActivity {
         if(actionBar != null){
             actionBar.hide();
         }
+        editText = findViewById(R.id.dynamics_input);
+        publishBtn = findViewById(R.id.dynamic_publish);
         themeId = R.style.picture_default_style;
-        recyclerView = (RecyclerView) findViewById(R.id.recycler);
+        recyclerView = findViewById(R.id.recycler);
         FullyGridLayoutManager manager = new FullyGridLayoutManager(AddDynamicsActivity.this, 4, GridLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(manager);
         adapter = new GridImageAdapter(AddDynamicsActivity.this, onAddPicClickListener);
@@ -101,6 +129,68 @@ public class AddDynamicsActivity extends AppCompatActivity {
             public void onComplete() {
             }
         });
+
+        publishBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String dynamics_input = editText.getText().toString();
+                Toast.makeText(AddDynamicsActivity.this, editText.getText().toString(), Toast.LENGTH_SHORT).show();
+                if(dynamics_input.length() > 0){
+                    //user_activity = dynamics_input;
+                    dynamicsText.put("text", dynamics_input);
+                    uploadPictures(reqUrl, dynamicsText, "picture", selectFileList);
+                }
+            }
+        });
+    }
+
+    private void uploadPictures(String reqUrl, Map<String, String> params, String picKey, List<File> files){
+        OkHttpClient mOkHttpClent = new OkHttpClient();
+        if(files != null && files.size() > 0){
+            MultipartBody.Builder multipartBodyBuilder = new MultipartBody.Builder();
+            multipartBodyBuilder.setType(MultipartBody.FORM);
+            //遍历map中所有参数到builder
+            if (params != null){
+                for (String key : params.keySet()) {
+                    multipartBodyBuilder.addFormDataPart(key, params.get(key));
+                }
+            }
+            //遍历paths中所有图片绝对路径到builder，并约定key如“upload”作为后台接受多张图片的key
+            for (File file : files) {
+               multipartBodyBuilder.addFormDataPart(picKey, file.getName(), RequestBody.create(MEDIA_TYPE_PNG, file));
+            }
+
+            //构建请求体
+            RequestBody requestBody = multipartBodyBuilder.build();
+            Request.Builder RequestBuilder = new Request.Builder();
+            RequestBuilder.url(reqUrl);// 添加URL地址
+            RequestBuilder.post(requestBody);
+            Request request = RequestBuilder.build();
+            mOkHttpClent.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    Log.e(TAG, "onFailure: "+e );
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(AddDynamicsActivity.this, "失败", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    Log.e(TAG, "成功"+response);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(AddDynamicsActivity.this, "成功", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            });
+
+        }
     }
 
     private GridImageAdapter.onAddPicClickListener onAddPicClickListener = new GridImageAdapter.onAddPicClickListener() {
@@ -207,8 +297,14 @@ public class AddDynamicsActivity extends AppCompatActivity {
                     // 2.media.getCutPath();为裁剪后path，需判断media.isCut();是否为true
                     // 3.media.getCompressPath();为压缩后path，需判断media.isCompressed();是否为true
                     // 如果裁剪并压缩了，已取压缩路径为准，因为是先裁剪后压缩的
+                    Slog.d(TAG, "Selected pictures: "+selectList.size());
+                    activity_picture_array = new String[selectList.size()];
                     for (LocalMedia media : selectList) {
                         Log.i("图片-----》", media.getPath());
+                        Log.d("压缩图片------->>", media.getCompressPath());
+                        Slog.d(TAG, "===========num: "+media.getNum());
+                        //activity_picture_array[media.getNum() - 1] = media.getCompressPath();
+                        selectFileList.add(new File(media.getCompressPath()));
                     }
                     adapter.setList(selectList);
                     adapter.notifyDataSetChanged();
