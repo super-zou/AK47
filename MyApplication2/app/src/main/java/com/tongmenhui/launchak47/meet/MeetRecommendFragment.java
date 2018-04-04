@@ -204,7 +204,7 @@ public class MeetRecommendFragment extends BaseFragment {
 
             handler.sendEmptyMessage(DONE);
         }catch (JSONException e){
-
+            e.printStackTrace();
         }
 
     }

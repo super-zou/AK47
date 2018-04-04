@@ -1,15 +1,19 @@
 package com.tongmenhui.launchak47.adapter;
 
 import android.graphics.Typeface;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.PagerAdapter;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.meet.MeetDiscoveryFragment;
 import com.tongmenhui.launchak47.meet.MeetDynamicsFragment;
 import com.tongmenhui.launchak47.meet.MeetRecommendFragment;
+import com.tongmenhui.launchak47.util.BaseFragment;
 import com.tongmenhui.launchak47.util.FontManager;
 import com.tongmenhui.launchak47.util.Slog;
 
@@ -61,4 +65,18 @@ public class MeetFragmentAdapter extends FragmentPagerAdapter {
 
         return mTitles.get(position);
     }
+
+    @Override
+    public int getItemPosition(Object object) {
+        return PagerAdapter.POSITION_NONE;
+    }
+
+    @Override @NonNull
+    public Object instantiateItem(ViewGroup container, int position) {
+        BaseFragment f = (BaseFragment) super.instantiateItem(container, position);
+        //String title = mList.get(position);
+        //f.setTitle(title);
+        return f;
+    }
+
 }

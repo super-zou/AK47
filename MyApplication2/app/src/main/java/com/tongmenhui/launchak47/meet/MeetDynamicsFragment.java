@@ -56,14 +56,14 @@ public class MeetDynamicsFragment extends BaseFragment {
     private static final int DONE = 1;
 
 
-    private static final String  domain = "http://112.126.83.127:88/";
+    private static final String domain = "http://112.126.83.127:88/";
     private static final String dynamics_url = domain + "?q=meet/activity/get";
     String request_comment_url = "?q=meet/activity/interact/get";
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-       // Slog.d(TAG, "=================onCreateView===================");
+        // Slog.d(TAG, "=================onCreateView===================");
         initConentView();
         meetDynamicsListAdapter = new MeetDynamicsListAdapter(getContext());
         viewContent = inflater.inflate(R.layout.meet_dynamics, container, false);
@@ -71,13 +71,13 @@ public class MeetDynamicsFragment extends BaseFragment {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
 
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener(){
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState){
-                if(newState == SCROLL_STATE_IDLE){
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                if (newState == SCROLL_STATE_IDLE) {
                     meetDynamicsListAdapter.setScrolling(false);
                     meetDynamicsListAdapter.notifyDataSetChanged();
-                }else{
+                } else {
                     meetDynamicsListAdapter.setScrolling(true);
                 }
                 super.onScrollStateChanged(recyclerView, newState);
@@ -91,18 +91,19 @@ public class MeetDynamicsFragment extends BaseFragment {
         return viewContent;
 
     }
+
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-       // Slog.d(TAG, "=================onViewCreated===================");
+        // Slog.d(TAG, "=================onViewCreated===================");
         // initConentView();
     }
 
-    public void initConentView(){
+    public void initConentView() {
         //Slog.d(TAG, "===============initConentView==============");
 
         RequestBody requestBody = new FormBody.Builder().build();
-        HttpUtil.sendOkHttpRequest(getContext(), dynamics_url, requestBody, new Callback(){
+        HttpUtil.sendOkHttpRequest(getContext(), dynamics_url, requestBody, new Callback() {
             int check_login_user = 0;
             String user_name;
 
@@ -114,14 +115,14 @@ public class MeetDynamicsFragment extends BaseFragment {
             }
 
             @Override
-            public void onFailure(Call call, IOException e){
+            public void onFailure(Call call, IOException e) {
 
             }
         });
-        handler = new Handler(){
+        handler = new Handler() {
             @Override
-            public void handleMessage(Message message){
-                if(message.what == DONE){
+            public void handleMessage(Message message) {
+                if (message.what == DONE) {
                     meetDynamicsListAdapter.setData(meetList);
                     meetDynamicsListAdapter.notifyDataSetChanged();
                 }
@@ -130,30 +131,30 @@ public class MeetDynamicsFragment extends BaseFragment {
 
     }
 
-    public void getResponseText(String responseText){
+    public void getResponseText(String responseText) {
 
         //Slog.d(TAG, "====================getResponseText====================");
 
-        if(!TextUtils.isEmpty(responseText)){
+        if (!TextUtils.isEmpty(responseText)) {
             try {
-                dynamics_response= new JSONObject(responseText);
+                dynamics_response = new JSONObject(responseText);
                 dynamics = dynamics_response.getJSONArray("activity");
-                if(dynamics.length() > 0){
+                if (dynamics.length() > 0) {
                     set_meet_member_info(dynamics);
                 }
-            }catch (JSONException e){
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    public void set_meet_member_info(JSONArray dynamicsArray){
+    public void set_meet_member_info(JSONArray dynamicsArray) {
         int length = dynamicsArray.length();
         //Slog.d(TAG, "==========set_meet_member_info==========recommendation length: "+length);
-        try{
-            for (int i=0; i< length; i++){
+        try {
+            for (int i = 0; i < length; i++) {
                 JSONObject dynamics = dynamicsArray.getJSONObject(i);
-                Slog.d(TAG, "==========dynamicsArray.getJSONObject: "+dynamics);
+                Slog.d(TAG, "==========dynamicsArray.getJSONObject: " + dynamics);
                 meetDynamics = new MeetDynamics();
 
                 meetDynamics.setRealname(dynamics.getString("realname"));
@@ -184,12 +185,12 @@ public class MeetDynamicsFragment extends BaseFragment {
                 //dynamics content
                 meetDynamics.setCreated(dynamics.getLong("created"));
                 String content = dynamics.getString("content");
-                if(content != null && content.length() != 0){
+                if (content != null && content.length() != 0) {
                     meetDynamics.setContent(content);
                 }
-                if(!dynamics.isNull("activity_picture")){
+                if (!dynamics.isNull("activity_picture")) {
                     String dynamics_pictures = dynamics.getString("activity_picture");
-                    if(!"".equals(dynamics_pictures)){
+                    if (!"".equals(dynamics_pictures)) {
                         meetDynamics.setActivityPicture(dynamics_pictures);
                     }
                 }
@@ -200,74 +201,73 @@ public class MeetDynamicsFragment extends BaseFragment {
 
                 meetList.add(meetDynamics);
             }
-        }catch (JSONException e){
+        } catch (JSONException e) {
             e.printStackTrace();
         }
+        handler.sendEmptyMessage(DONE);
+
     }
 
-    public void getDynamicsComment(final MeetDynamics meetDynamics, Long aid){
+    public void getDynamicsComment(final MeetDynamics meetDynamics, Long aid) {
 
-        RequestBody requestBody = new FormBody.Builder().add("aid",aid.toString()).build();
+        RequestBody requestBody = new FormBody.Builder().add("aid", aid.toString()).build();
 
-        HttpUtil.sendOkHttpRequest(getContext(), domain+request_comment_url, requestBody, new Callback(){
+        HttpUtil.sendOkHttpRequest(getContext(), domain + request_comment_url, requestBody, new Callback() {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
                 //Slog.d(TAG, "######################comment: "+responseText);
-                if(!TextUtils.isEmpty(responseText)){
+                if (!TextUtils.isEmpty(responseText)) {
                     try {
-                        commentResponse= new JSONObject(responseText);
+                        commentResponse = new JSONObject(responseText);
                         commentArray = commentResponse.getJSONArray("comment");
                         praiseArray = commentResponse.getJSONArray("praise");
-                    }catch (JSONException e){
+                    } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    if(commentArray.length() > 0){
+                    if (commentArray.length() > 0) {
                         setDynamicsComment(meetDynamics, commentArray, praiseArray);
                     }
                 }
             }
 
             @Override
-            public void onFailure(Call call, IOException e){
+            public void onFailure(Call call, IOException e) {
 
             }
         });
 
     }
-    public void setDynamicsComment(MeetDynamics meetDynamics, JSONArray commentArray, JSONArray praiseArray){
+
+    public void setDynamicsComment(MeetDynamics meetDynamics, JSONArray commentArray, JSONArray praiseArray) {
         JSONObject comment;
         JSONObject praise;
         meetDynamics.setPraiseCount(praiseArray.length());
         meetDynamics.setCommentCount(commentArray.length());
-        Slog.d(TAG, "==========comment:  "+commentArray);
-        for (int i=0; i<commentArray.length(); i++){
-            try {
+        Slog.d(TAG, "==========comment:  " + commentArray);
+        try {
+            for (int i = 0; i < commentArray.length(); i++) {
                 comment = commentArray.getJSONObject(i);
                 dynamicsComment = new DynamicsComment();
                 dynamicsComment.setType(comment.getInt("type"));
                 dynamicsComment.setCid(comment.getInt("cid"));
                 dynamicsComment.setAid(comment.getInt("aid"));
                 dynamicsComment.setPictureUrl(comment.getString("picture_uri"));
-                if(!comment.isNull("author_uid")){
+                if (!comment.isNull("author_uid")) {
                     dynamicsComment.setAuthorUid(comment.getLong("author_uid"));
                 }
-                if(!comment.isNull("author_name")){
+                if (!comment.isNull("author_name")) {
                     dynamicsComment.setAuthorName(comment.getString("author_name"));
                 }
                 dynamicsComment.setCommenterName(comment.getString("commenter_name"));
                 dynamicsComment.setCommenterUid(comment.getLong("commenter_uid"));
                 dynamicsComment.setContent(comment.getString("content"));
-
-            }catch (JSONException e){
-                e.printStackTrace();
+                meetDynamics.addComment(dynamicsComment);
             }
-
-            meetDynamics.addComment(dynamicsComment);
+        }catch (JSONException e) {
+            e.printStackTrace();
         }
-        handler.sendEmptyMessage(DONE);
         //Slog.d(TAG, "*********************dynamics comment size: "+meetDynamics.getComment().size());
     }
-
 }

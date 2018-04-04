@@ -29,15 +29,17 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class HttpUtil {
     public static final String TAG = "HttpUtil";
+    private static String Cookie;
+    public static String getCookie(Context context){
+        SharedPreferences preferences = context.getSharedPreferences("session", MODE_PRIVATE);
+        Cookie = preferences.getString("sessionName", "")+"="+preferences.getString("sessionId", "");
 
+        return Cookie;
+    }
     public static void sendOkHttpRequest(Context context, String address, RequestBody requestBody, okhttp3.Callback callback){
         OkHttpClient client = new OkHttpClient();
         Request request = null;
-
-        SharedPreferences preferences = context.getSharedPreferences("session", MODE_PRIVATE);
-        String cookie = preferences.getString("sessionName", "")+"="+preferences.getString("sessionId", "");
-
-
+        String cookie = getCookie(context);
         if(requestBody != null){
             if(cookie != null){
                 request = new Request.Builder().url(address).addHeader("cookie", cookie).post(requestBody).build();

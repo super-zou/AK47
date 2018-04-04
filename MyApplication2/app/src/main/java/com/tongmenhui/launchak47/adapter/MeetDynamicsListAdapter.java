@@ -40,9 +40,6 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
     RequestQueue queueDynamics;
     //RequestQueue queueComment;
     RequestQueueSingleton requestQueueSingleton;
-    GridLayout.LayoutParams lp;
-    LinearLayout.LayoutParams itemLp;
-
 
     public void setScrolling(boolean isScrolling){
         this.isScrolling = isScrolling;

@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,11 +23,13 @@ import com.luck.picture.lib.permissions.RxPermissions;
 import com.luck.picture.lib.tools.PictureFileUtils;
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.adapter.GridImageAdapter;
+import com.tongmenhui.launchak47.util.HttpUtil;
 import com.tongmenhui.launchak47.util.Slog;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -47,16 +50,17 @@ public class AddDynamicsActivity extends AppCompatActivity {
     private int maxSelectNum = 9;
     private int themeId;
     private TextView publishBtn;
+    private ImageView backLeft;
     private EditText editText;
     private RecyclerView recyclerView;
     private GridImageAdapter adapter;
     private List<LocalMedia> selectList = new ArrayList<>();
     //private String[] activity_picture_array;
     private List<File> selectFileList = new ArrayList<>();
-    private Map<String, String> dynamicsText;
+    private Map<String, String> dynamicsText = new HashMap<>();
     private String user_activity;
 
-    private static final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/png");
+    private static final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/jpeg");
     private static final String  domain = "http://112.126.83.127:88/";
     private static final String reqUrl = domain + "?q=meet/dynamic/add";
 
@@ -70,6 +74,7 @@ public class AddDynamicsActivity extends AppCompatActivity {
         }
         editText = findViewById(R.id.dynamics_input);
         publishBtn = findViewById(R.id.dynamic_publish);
+        backLeft = findViewById(R.id.left_back);
         themeId = R.style.picture_default_style;
         recyclerView = findViewById(R.id.recycler);
         FullyGridLayoutManager manager = new FullyGridLayoutManager(AddDynamicsActivity.this, 4, GridLayoutManager.VERTICAL, false);
@@ -139,9 +144,17 @@ public class AddDynamicsActivity extends AppCompatActivity {
                     //user_activity = dynamics_input;
                     dynamicsText.put("text", dynamics_input);
                     uploadPictures(reqUrl, dynamicsText, "picture", selectFileList);
+                    finish();
                 }
             }
         });
+        backLeft.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
     }
 
     private void uploadPictures(String reqUrl, Map<String, String> params, String picKey, List<File> files){
@@ -156,14 +169,17 @@ public class AddDynamicsActivity extends AppCompatActivity {
                 }
             }
             //遍历paths中所有图片绝对路径到builder，并约定key如“upload”作为后台接受多张图片的key
+            int i = 0;
             for (File file : files) {
-               multipartBodyBuilder.addFormDataPart(picKey, file.getName(), RequestBody.create(MEDIA_TYPE_PNG, file));
+                Slog.d(TAG, "file name: "+file.getName());
+               multipartBodyBuilder.addFormDataPart(picKey+i, file.getName(), RequestBody.create(MEDIA_TYPE_PNG, file));
+               i++;
             }
-
             //构建请求体
+            String cookie = HttpUtil.getCookie(AddDynamicsActivity.this);
             RequestBody requestBody = multipartBodyBuilder.build();
             Request.Builder RequestBuilder = new Request.Builder();
-            RequestBuilder.url(reqUrl);// 添加URL地址
+            RequestBuilder.url(reqUrl).addHeader("cookie", cookie);// 添加URL地址
             RequestBuilder.post(requestBody);
             Request request = RequestBuilder.build();
             mOkHttpClent.newCall(request).enqueue(new Callback() {
@@ -298,7 +314,7 @@ public class AddDynamicsActivity extends AppCompatActivity {
                     // 3.media.getCompressPath();为压缩后path，需判断media.isCompressed();是否为true
                     // 如果裁剪并压缩了，已取压缩路径为准，因为是先裁剪后压缩的
                     Slog.d(TAG, "Selected pictures: "+selectList.size());
-                    activity_picture_array = new String[selectList.size()];
+                    //activity_picture_array = new String[selectList.size()];
                     for (LocalMedia media : selectList) {
                         Log.i("图片-----》", media.getPath());
                         Log.d("压缩图片------->>", media.getCompressPath());
