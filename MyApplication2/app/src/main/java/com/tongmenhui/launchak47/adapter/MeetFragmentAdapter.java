@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +26,7 @@ import static com.tongmenhui.launchak47.util.MyApplication.getContext;
  * Created by haichao.zou on 2017/11/13.
  */
 
-public class MeetFragmentAdapter extends FragmentPagerAdapter {
+public class MeetFragmentAdapter extends FragmentStatePagerAdapter {
     public static final String TAG = "MeetFragmentAdapter";
     private ArrayList<String> mTitles;
     private View view;
@@ -50,8 +51,6 @@ public class MeetFragmentAdapter extends FragmentPagerAdapter {
 
             default:
                 return new MeetRecommendFragment();
-
-
         }
     }
 
@@ -73,10 +72,23 @@ public class MeetFragmentAdapter extends FragmentPagerAdapter {
 
     @Override @NonNull
     public Object instantiateItem(ViewGroup container, int position) {
-        BaseFragment f = (BaseFragment) super.instantiateItem(container, position);
-        //String title = mList.get(position);
-        //f.setTitle(title);
-        return f;
+        BaseFragment baseFragment;
+        switch (position){
+            case 0:
+                baseFragment = (MeetRecommendFragment) super.instantiateItem(container, position);
+                break;
+            case 1:
+                baseFragment = (MeetDynamicsFragment) super.instantiateItem(container, position);
+                break;
+
+            case 2:
+                baseFragment = (MeetDiscoveryFragment) super.instantiateItem(container, position);
+                break;
+            default:
+                baseFragment = (MeetRecommendFragment) super.instantiateItem(container, position);
+                break;
+        }
+        return baseFragment;
     }
 
 }

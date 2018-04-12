@@ -23,4 +23,19 @@ public class ActivitiesFragment extends BaseFragment {
         viewContent = inflater.inflate(R.layout.fragment_activity,container,false);
         return viewContent;
     }
+
+    @Override
+    protected void initView(View view){
+
+    }
+
+    @Override
+    protected void initData(){
+
+    }
+
+    @Override
+    protected int getLayoutId(){
+        return 0;
+    }
 }

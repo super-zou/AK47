@@ -23,6 +23,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,7 +47,7 @@ public class MeetDynamicsFragment extends BaseFragment {
     private MeetDynamics meetDynamics;
     private RecyclerView recyclerView;
     private DynamicsComment dynamicsComment;
-    private MeetDynamicsListAdapter meetDynamicsListAdapter;
+    private MeetDynamicsListAdapter meetDynamicsListAdapter = new MeetDynamicsListAdapter(getContext());
     JSONObject dynamics_response;
     JSONObject commentResponse;
     JSONArray dynamics;
@@ -55,19 +56,27 @@ public class MeetDynamicsFragment extends BaseFragment {
     private Handler handler;
     private static final int DONE = 1;
 
-
     private static final String domain = "http://112.126.83.127:88/";
     private static final String dynamics_url = domain + "?q=meet/activity/get";
     String request_comment_url = "?q=meet/activity/interact/get";
 
-    @Nullable
+    /*
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        // Slog.d(TAG, "=================onCreateView===================");
-        initConentView();
-        meetDynamicsListAdapter = new MeetDynamicsListAdapter(getContext());
-        viewContent = inflater.inflate(R.layout.meet_dynamics, container, false);
-        recyclerView = (RecyclerView) viewContent.findViewById(R.id.recyclerview);
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        // Slog.d(TAG, "=================onViewCreated===================");
+    }
+    */
+
+    @Override
+    protected int getLayoutId(){
+        int layoutId = R.layout.meet_dynamics;
+        return layoutId;
+    }
+
+    @Override
+    protected void initView(View convertView){
+        recyclerView = convertView.findViewById(R.id.recyclerview);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
 
@@ -84,23 +93,14 @@ public class MeetDynamicsFragment extends BaseFragment {
             }
         });
 
-
         recyclerView.setAdapter(meetDynamicsListAdapter);
 
-
-        return viewContent;
-
     }
+
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        // Slog.d(TAG, "=================onViewCreated===================");
-        // initConentView();
-    }
-
-    public void initConentView() {
-        //Slog.d(TAG, "===============initConentView==============");
+    protected void initData(){
+        Slog.d(TAG, "===============initData==============");
 
         RequestBody requestBody = new FormBody.Builder().build();
         HttpUtil.sendOkHttpRequest(getContext(), dynamics_url, requestBody, new Callback() {
@@ -119,16 +119,8 @@ public class MeetDynamicsFragment extends BaseFragment {
 
             }
         });
-        handler = new Handler() {
-            @Override
-            public void handleMessage(Message message) {
-                if (message.what == DONE) {
-                    meetDynamicsListAdapter.setData(meetList);
-                    meetDynamicsListAdapter.notifyDataSetChanged();
-                }
-            }
-        };
 
+        handler = new MyHandler(this);
     }
 
     public void getResponseText(String responseText) {
@@ -150,7 +142,7 @@ public class MeetDynamicsFragment extends BaseFragment {
 
     public void set_meet_member_info(JSONArray dynamicsArray) {
         int length = dynamicsArray.length();
-        //Slog.d(TAG, "==========set_meet_member_info==========recommendation length: "+length);
+        //Slog.d(TAG, "==========set_meet_member_info==========dynamics length: "+length);
         try {
             for (int i = 0; i < length; i++) {
                 JSONObject dynamics = dynamicsArray.getJSONObject(i);
@@ -270,4 +262,37 @@ public class MeetDynamicsFragment extends BaseFragment {
         }
         //Slog.d(TAG, "*********************dynamics comment size: "+meetDynamics.getComment().size());
     }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+       // initConentView();
+       // initData();
+    }
+
+    static class MyHandler extends Handler {
+        WeakReference<MeetDynamicsFragment> meetDynamicsFragmentWeakReference;
+
+        MyHandler(MeetDynamicsFragment meetDynamicsFragment) {
+            meetDynamicsFragmentWeakReference = new WeakReference<MeetDynamicsFragment>(meetDynamicsFragment);
+        }
+
+        @Override
+        public void handleMessage(Message message) {
+            MeetDynamicsFragment mMeetDynamicsFragment = meetDynamicsFragmentWeakReference.get();
+            if(mMeetDynamicsFragment != null){
+                mMeetDynamicsFragment.handleMessage(message);
+            }
+        }
+    }
+
+    public void handleMessage(Message message){
+        switch (message.what){
+            case DONE:
+                meetDynamicsListAdapter.setData(meetList);
+                meetDynamicsListAdapter.notifyDataSetChanged();
+                break;
+        }
+    }
+
 }

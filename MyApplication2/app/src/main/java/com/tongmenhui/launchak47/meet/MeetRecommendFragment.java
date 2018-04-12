@@ -65,6 +65,21 @@ public class MeetRecommendFragment extends BaseFragment {
     private static final String  domain = "http://112.126.83.127:88/";
     private static final String get_recommend_url = domain + "?q=meet/recommend";
 
+    @Override
+    protected void initView(View view){
+
+    }
+
+    @Override
+    protected void initData(){
+
+    }
+
+    @Override
+    protected int getLayoutId(){
+        return 0;
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

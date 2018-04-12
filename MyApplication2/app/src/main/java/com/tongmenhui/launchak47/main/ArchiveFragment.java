@@ -21,4 +21,19 @@ public class ArchiveFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_archive, container, false);
     }
+
+    @Override
+    protected void initView(View view){
+
+    }
+
+    @Override
+    protected void initData(){
+
+    }
+
+    @Override
+    protected int getLayoutId(){
+        return 0;
+    }
 }

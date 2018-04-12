@@ -44,6 +44,21 @@ public class MeetFragment extends BaseFragment {
         }
     };
 
+    @Override
+    protected void initView(View view){
+
+    }
+
+    @Override
+    protected void initData(){
+
+    }
+
+    @Override
+    protected int getLayoutId(){
+       return 0;
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -68,7 +83,7 @@ public class MeetFragment extends BaseFragment {
         mFragmentAdapter = new MeetFragmentAdapter(getFragmentManager(), mMeetTitleList);
         mViewPager.setAdapter(mFragmentAdapter);
         //mViewPager.setCurrentItem(0);
-        mViewPager.setOffscreenPageLimit(2);
+        mViewPager.setOffscreenPageLimit(3);
 
         //将TabLayout和ViewPager关联起来
         mTabLayout.setupWithViewPager(mViewPager);
@@ -80,22 +95,9 @@ public class MeetFragment extends BaseFragment {
         ActivityCreate.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                //showItemsDialogFragment(v);
                 Intent intent = new Intent(getContext(), AddDynamicsActivity.class);
                 startActivity(intent);
             }
         });
     }
-
-    public void showItemsDialogFragment(View view) {
-        ItemsDialogFragment itemsDialogFragment = new ItemsDialogFragment();
-        String[] items = {"拍摄", "从相册选择"};
-        itemsDialogFragment.show("", items, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Toast.makeText(getContext(), "你点击了第 " + (which + 1) + " 个选项", Toast.LENGTH_SHORT).show();
-            }
-        }, getFragmentManager());
-    }
-
 }
