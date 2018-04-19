@@ -36,7 +36,7 @@ public class MainFragmentAdapter extends FragmentStatePagerAdapter{
     @Override
     public Fragment getItem(int position) {
         //初始化Fragment数据
-        Slog.d(TAG, "===========main position: "+position);
+       // Slog.d(TAG, "===========main position: "+position);
         Fragment fragment;
         switch (position){
             case 0:

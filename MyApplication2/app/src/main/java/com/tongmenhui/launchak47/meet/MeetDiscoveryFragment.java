@@ -41,6 +41,7 @@ import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 
 public class MeetDiscoveryFragment extends BaseFragment {
 
+    private static final boolean debug = false;
     private static final String TAG = "MeetDiscoveryFragment";
     private View viewContent;
     private int mType = 0;
@@ -68,7 +69,7 @@ public class MeetDiscoveryFragment extends BaseFragment {
     }
 
     @Override
-    protected void initData(){
+    protected void loadData(boolean firstInit){
 
     }
 
@@ -80,7 +81,7 @@ public class MeetDiscoveryFragment extends BaseFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Slog.d(TAG, "=================onCreateView===================");
+        if(debug) Slog.d(TAG, "=================onCreateView===================");
         mContext = getActivity().getApplicationContext();
         initConentView();
         meetListAdapter = new MeetRecommendListAdapter(getContext());
@@ -108,12 +109,12 @@ public class MeetDiscoveryFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Slog.d(TAG, "=================onViewCreated===================");
+        if(debug) Slog.d(TAG, "=================onViewCreated===================");
         // initConentView();
     }
 
     public void initConentView(){
-        Slog.d(TAG, "===============initConentView==============");
+        if(debug) Slog.d(TAG, "===============initConentView==============");
 
         RequestBody requestBody = new FormBody.Builder().build();
         HttpUtil.sendOkHttpRequest(getContext(), get_discovery_url, requestBody, new Callback(){
@@ -123,7 +124,7 @@ public class MeetDiscoveryFragment extends BaseFragment {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
-                Slog.d(TAG, "response : "+responseText);
+                if(debug) Slog.d(TAG, "response : "+responseText);
                 getResponseText(responseText);
             }
 
@@ -146,7 +147,7 @@ public class MeetDiscoveryFragment extends BaseFragment {
 
     public void getResponseText(String responseText){
 
-        Slog.d(TAG, "====================getResponseText====================");
+        if(debug) Slog.d(TAG, "====================getResponseText====================");
 
         if(!TextUtils.isEmpty(responseText)){
             try {
@@ -162,7 +163,7 @@ public class MeetDiscoveryFragment extends BaseFragment {
 
     public void set_meet_member_info(JSONArray discovery){
         int length = discovery.length();
-        Slog.d(TAG, "==========set_meet_member_info==========discovery length: "+length);
+        if(debug) Slog.d(TAG, "==========set_meet_member_info==========discovery length: "+length);
         try{
             for (int i=0; i< length; i++){
                 JSONObject recommender = discovery.getJSONObject(i);

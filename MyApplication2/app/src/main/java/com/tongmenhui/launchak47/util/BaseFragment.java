@@ -27,12 +27,12 @@ public abstract class BaseFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Slog.d(TAG, "   " + this.getClass().getSimpleName());
+        Slog.d(TAG, "   " + this.getClass().getSimpleName()+"====onCreateView========================================");
         convertView = inflater.inflate(getLayoutId(), container, false);
         mViews = new SparseArray<>();
         initView(convertView);
-        isInitView = true;
-        lazyLoadData();
+        //isInitView = true;
+        //lazyLoadData();
         return convertView;
     }
 
@@ -70,22 +70,32 @@ public abstract class BaseFragment extends Fragment {
 
     protected abstract void initView(View view);
 
-    protected abstract void initData();
+    /*
+    ** If first load data, init set true.
+     */
+    protected abstract void loadData(boolean init);
 
     private void lazyLoadData() {
         if (isFirstLoad) {
-            Slog.d(TAG, "第一次加载 " + " isInitView  " + isInitView + "  isVisible  " + isVisible + "   " + this.getClass().getSimpleName());
+            Slog.d(TAG, "第一次加载 " + "  isVisible  " + isVisible + "   " + this.getClass().getSimpleName());
         } else {
-            Slog.d(TAG, "不是第一次加载" + " isInitView  " + isInitView + "  isVisible  " + isVisible + "   " + this.getClass().getSimpleName());
+            Slog.d(TAG, "不是第一次加载" + "  isVisible  " + isVisible + "   " + this.getClass().getSimpleName());
         }
-        if ( !isVisible || !isInitView) {
-            Slog.d(TAG, "不加载" + "   " + this.getClass().getSimpleName());
+
+        if (isVisible) {
+            if(isFirstLoad){
+                Slog.d(TAG, "========完成数据第一次加载");
+                loadData(true);
+                isFirstLoad = false;
+            }else {
+                Slog.d(TAG, "========完成数据更新");
+                loadData(false);
+            }
+        }else{
+            Slog.d(TAG, "=======不加载" + "   " + this.getClass().getSimpleName());
             return;
         }
 
-        Slog.d(TAG, "完成数据第一次加载");
-        initData();
-        isFirstLoad = false;
     }
 
     /**

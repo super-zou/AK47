@@ -243,4 +243,8 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
         return mMeetList.size();
     }
 
+    public void addData(int position, MeetDynamics meetDynamics){
+        mMeetList.add(position, meetDynamics);
+        notifyItemInserted(position);
+    }
 }

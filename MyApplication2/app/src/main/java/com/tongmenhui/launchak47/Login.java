@@ -148,8 +148,6 @@ public class Login extends AppCompatActivity {
         HttpUtil.sendOkHttpRequest(Login.this, token_url, requestBody, new Callback(){
             int check_login_user = 0;
             //String username = user_name;
-
-
             @Override
             public void onResponse(Call call, Response response) throws IOException{
                 String responseText = response.body().string();

@@ -50,7 +50,7 @@ public class MeetFragment extends BaseFragment {
     }
 
     @Override
-    protected void initData(){
+    protected void loadData(boolean firstInit){
 
     }
 

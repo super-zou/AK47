@@ -40,7 +40,7 @@ public class MeetFragmentAdapter extends FragmentStatePagerAdapter {
     @Override
     public Fragment getItem(int position) {
         //Fragment fragment;
-        Slog.d(TAG, "============title: "+mTitles.get(position));
+        //Slog.d(TAG, "============title: "+mTitles.get(position));
         switch (position){
             case 0:
                 return new MeetRecommendFragment();

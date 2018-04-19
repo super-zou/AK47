@@ -30,7 +30,7 @@ public class ActivitiesFragment extends BaseFragment {
     }
 
     @Override
-    protected void initData(){
+    protected void loadData(boolean firstInit){
 
     }
 

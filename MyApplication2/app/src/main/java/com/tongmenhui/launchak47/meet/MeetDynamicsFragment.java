@@ -40,6 +40,8 @@ import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
  */
 
 public class MeetDynamicsFragment extends BaseFragment {
+
+    private static final boolean debug = true;
     private static final String TAG = "MeetDynamicsFragment";
     private View viewContent;
     private List<MeetDynamics> meetList = new ArrayList<>();
@@ -55,9 +57,11 @@ public class MeetDynamicsFragment extends BaseFragment {
     JSONArray praiseArray;
     private Handler handler;
     private static final int DONE = 1;
+    private static final int UPDATE = 2;
 
     private static final String domain = "http://112.126.83.127:88/";
     private static final String dynamics_url = domain + "?q=meet/activity/get";
+    private static final String getDynamics_update_url = domain + "?q=meet/activity/update";
     String request_comment_url = "?q=meet/activity/interact/get";
 
     /*
@@ -99,19 +103,40 @@ public class MeetDynamicsFragment extends BaseFragment {
 
 
     @Override
-    protected void initData(){
-        Slog.d(TAG, "===============initData==============");
+    protected void loadData(boolean firstInit){
+        if(debug) Slog.d(TAG, "===============initData==============");
+        handler = new MyHandler(this);
+        loadDynamicsData(firstInit);
+    }
 
-        RequestBody requestBody = new FormBody.Builder().build();
-        HttpUtil.sendOkHttpRequest(getContext(), dynamics_url, requestBody, new Callback() {
+    public void loadDynamicsData(final boolean init){
+        if(debug) Slog.d(TAG, "==================== loadDynamicsData init: "+init);
+        String requstUrl = "";
+        RequestBody requestBody = null;
+        FormBody.Builder builder = new FormBody.Builder();
+        if(!init){//false is update
+            long timeStampSec = System.currentTimeMillis()/1000;
+            String timeStamp = String.format("%010d", timeStampSec);
+            if(debug) Slog.d(TAG, "==============timestamp: "+timeStamp);
+            builder.add("times_tamp", timeStamp);
+            requstUrl = getDynamics_update_url;
+            requestBody = new FormBody.Builder().add("time_stamp", timeStamp).build();
+        }else{
+            requstUrl = dynamics_url;
+            requestBody = new FormBody.Builder().build();
+        }
+
+        HttpUtil.sendOkHttpRequest(getContext(), requstUrl, requestBody, new Callback() {
             int check_login_user = 0;
             String user_name;
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                String responseText = response.body().string();
-                //Slog.d(TAG, "response : "+responseText);
-                getResponseText(responseText);
+                if(response.body() != null){
+                    String responseText = response.body().string();
+                    Slog.d(TAG, "==========response : "+responseText);
+                    getResponseText(responseText, init);
+                }
             }
 
             @Override
@@ -119,11 +144,9 @@ public class MeetDynamicsFragment extends BaseFragment {
 
             }
         });
-
-        handler = new MyHandler(this);
     }
 
-    public void getResponseText(String responseText) {
+    public void getResponseText(String responseText, boolean init) {
 
         //Slog.d(TAG, "====================getResponseText====================");
 
@@ -132,7 +155,7 @@ public class MeetDynamicsFragment extends BaseFragment {
                 dynamics_response = new JSONObject(responseText);
                 dynamics = dynamics_response.getJSONArray("activity");
                 if (dynamics.length() > 0) {
-                    set_meet_member_info(dynamics);
+                    set_meet_member_info(dynamics, init);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -140,13 +163,13 @@ public class MeetDynamicsFragment extends BaseFragment {
         }
     }
 
-    public void set_meet_member_info(JSONArray dynamicsArray) {
+    public void set_meet_member_info(JSONArray dynamicsArray, boolean init) {
         int length = dynamicsArray.length();
         //Slog.d(TAG, "==========set_meet_member_info==========dynamics length: "+length);
         try {
             for (int i = 0; i < length; i++) {
                 JSONObject dynamics = dynamicsArray.getJSONObject(i);
-                Slog.d(TAG, "==========dynamicsArray.getJSONObject: " + dynamics);
+                //Slog.d(TAG, "==========dynamicsArray.getJSONObject: " + dynamics);
                 meetDynamics = new MeetDynamics();
 
                 meetDynamics.setRealname(dynamics.getString("realname"));
@@ -192,6 +215,11 @@ public class MeetDynamicsFragment extends BaseFragment {
                 getDynamicsComment(meetDynamics, dynamics.getLong("aid"));
 
                 meetList.add(meetDynamics);
+
+                if(!init){//not the first init
+                    handler.sendEmptyMessage(UPDATE);
+                }
+
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -237,7 +265,7 @@ public class MeetDynamicsFragment extends BaseFragment {
         JSONObject praise;
         meetDynamics.setPraiseCount(praiseArray.length());
         meetDynamics.setCommentCount(commentArray.length());
-        Slog.d(TAG, "==========comment:  " + commentArray);
+        //Slog.d(TAG, "==========comment:  " + commentArray);
         try {
             for (int i = 0; i < commentArray.length(); i++) {
                 comment = commentArray.getJSONObject(i);
@@ -268,6 +296,9 @@ public class MeetDynamicsFragment extends BaseFragment {
         super.onResume();
        // initConentView();
        // initData();
+        Slog.d(TAG, "=============onResume");
+       // loadDynamicsData(false);
+
     }
 
     static class MyHandler extends Handler {
@@ -291,6 +322,9 @@ public class MeetDynamicsFragment extends BaseFragment {
             case DONE:
                 meetDynamicsListAdapter.setData(meetList);
                 meetDynamicsListAdapter.notifyDataSetChanged();
+                break;
+            case UPDATE:
+                meetDynamicsListAdapter.addData(0, meetDynamics);
                 break;
         }
     }

@@ -44,7 +44,7 @@ import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
  */
 
 public class MeetRecommendFragment extends BaseFragment {
-
+    private static final boolean debug = false;
     private static final String TAG = "MeetRecommendFragment";
     private View viewContent;
     private int mType = 0;
@@ -71,7 +71,7 @@ public class MeetRecommendFragment extends BaseFragment {
     }
 
     @Override
-    protected void initData(){
+    protected void loadData(boolean firstInit){
 
     }
 
@@ -83,8 +83,8 @@ public class MeetRecommendFragment extends BaseFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Slog.d(TAG, "=================onCreateView===================");
-        initConentView();
+        if(debug) Slog.d(TAG, "=================onCreateView===================");
+        initContentView();
         meetRecommendListAdapter = new MeetRecommendListAdapter(getContext());
         viewContent = inflater.inflate(R.layout.meet_recommend, container, false);
         TextView addMeetInfo = (TextView)viewContent.findViewById(R.id.meet_info_add);
@@ -119,12 +119,12 @@ public class MeetRecommendFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Slog.d(TAG, "=================onViewCreated===================");
+        if(debug) Slog.d(TAG, "=================onViewCreated===================");
        // initConentView();
     }
 
-    public void initConentView(){
-        Slog.d(TAG, "===============initConentView==============");
+    public void initContentView(){
+        if(debug) Slog.d(TAG, "===============initConentView==============");
 
         RequestBody requestBody = new FormBody.Builder().build();
         HttpUtil.sendOkHttpRequest(getContext(), get_recommend_url, requestBody, new Callback(){
@@ -160,7 +160,7 @@ public class MeetRecommendFragment extends BaseFragment {
 
     public void getResponseText(String responseText){
 
-        Slog.d(TAG, "====================getResponseText: "+responseText);
+        if(debug) Slog.d(TAG, "====================getResponseText: "+responseText);
 
         if(!TextUtils.isEmpty(responseText)){
             try {
@@ -176,7 +176,7 @@ public class MeetRecommendFragment extends BaseFragment {
 
     public void set_meet_member_info(JSONArray recommendation){
         int length = recommendation.length();
-        Slog.d(TAG, "==========set_meet_member_info==========recommendation length: "+length);
+        if(debug) Slog.d(TAG, "==========set_meet_member_info==========recommendation length: "+length);
         try{
             for (int i=0; i< length; i++){
                 JSONObject recommender = recommendation.getJSONObject(i);

@@ -28,7 +28,7 @@ public class ArchiveFragment extends BaseFragment {
     }
 
     @Override
-    protected void initData(){
+    protected void loadData(boolean firstInit){
 
     }
 
