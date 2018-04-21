@@ -1,5 +1,6 @@
 package com.tongmenhui.launchak47.meet;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -33,6 +34,7 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static android.content.Context.MODE_PRIVATE;
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 
 /**
@@ -113,15 +115,24 @@ public class MeetDynamicsFragment extends BaseFragment {
         if(debug) Slog.d(TAG, "==================== loadDynamicsData init: "+init);
         String requstUrl = "";
         RequestBody requestBody = null;
-        FormBody.Builder builder = new FormBody.Builder();
-        if(!init){//false is update
-            long timeStampSec = System.currentTimeMillis()/1000;
-            String timeStamp = String.format("%010d", timeStampSec);
+        long timeStampSec = System.currentTimeMillis()/1000;
+        String timeStamp = String.format("%010d", timeStampSec);
+        SharedPreferences.Editor editor = getContext().getSharedPreferences("access_record", MODE_PRIVATE).edit();
+
+        if(init != true){//init is false, should update
+            SharedPreferences preferences = getContext().getSharedPreferences("access_record", MODE_PRIVATE);
+            String last = preferences.getString("last", "");
             if(debug) Slog.d(TAG, "==============timestamp: "+timeStamp);
-            builder.add("times_tamp", timeStamp);
+
             requstUrl = getDynamics_update_url;
-            requestBody = new FormBody.Builder().add("time_stamp", timeStamp).build();
+            requestBody = new FormBody.Builder().add("last", last).add("current", timeStamp).build();
+
+            editor.putString("last", timeStamp);
+            editor.apply();
         }else{
+            editor.putString("last", timeStamp);
+            editor.apply();
+
             requstUrl = dynamics_url;
             requestBody = new FormBody.Builder().build();
         }
@@ -135,7 +146,9 @@ public class MeetDynamicsFragment extends BaseFragment {
                 if(response.body() != null){
                     String responseText = response.body().string();
                     Slog.d(TAG, "==========response : "+responseText);
-                    getResponseText(responseText, init);
+                    if(responseText != null){
+                        getResponseText(responseText, init);
+                    }
                 }
             }
 
@@ -153,13 +166,28 @@ public class MeetDynamicsFragment extends BaseFragment {
         if (!TextUtils.isEmpty(responseText)) {
             try {
                 dynamics_response = new JSONObject(responseText);
-                dynamics = dynamics_response.getJSONArray("activity");
-                if (dynamics.length() > 0) {
-                    set_meet_member_info(dynamics, init);
+                if(init != true){
+                   boolean update =  dynamics_response.getBoolean("update");
+                   if(update == true){
+                       dynamics = dynamics_response.getJSONArray("activity");
+                       if (dynamics.length() > 0) {
+                           set_meet_member_info(dynamics, init);
+                       }
+                   }
+                }else{
+                    dynamics = dynamics_response.getJSONArray("activity");
+                    if (dynamics.length() > 0) {
+                        set_meet_member_info(dynamics, init);
+                    }else{
+                        if(debug) Slog.d(TAG, "=============response content empty==============");
+                    }
                 }
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+        }else{
+            if(debug) Slog.d(TAG, "=============response empty==============");
         }
     }
 
