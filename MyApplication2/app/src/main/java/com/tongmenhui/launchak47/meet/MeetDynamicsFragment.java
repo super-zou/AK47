@@ -122,7 +122,7 @@ public class MeetDynamicsFragment extends BaseFragment {
         if(init != true){//init is false, should update
             SharedPreferences preferences = getContext().getSharedPreferences("access_record", MODE_PRIVATE);
             String last = preferences.getString("last", "");
-            if(debug) Slog.d(TAG, "==============timestamp: "+timeStamp);
+            if(debug) Slog.d(TAG, "=======last:"+last+"=======current: "+timeStamp);
 
             requstUrl = getDynamics_update_url;
             requestBody = new FormBody.Builder().add("last", last).add("current", timeStamp).build();
@@ -145,7 +145,8 @@ public class MeetDynamicsFragment extends BaseFragment {
             public void onResponse(Call call, Response response) throws IOException {
                 if(response.body() != null){
                     String responseText = response.body().string();
-                    Slog.d(TAG, "==========response : "+responseText);
+                    Slog.d(TAG, "==========response : "+response.body());
+                    Slog.d(TAG, "==========response text : "+responseText);
                     if(responseText != null){
                         getResponseText(responseText, init);
                     }
@@ -166,7 +167,7 @@ public class MeetDynamicsFragment extends BaseFragment {
         if (!TextUtils.isEmpty(responseText)) {
             try {
                 dynamics_response = new JSONObject(responseText);
-                if(init != true){
+                if(init != true){//update
                    boolean update =  dynamics_response.getBoolean("update");
                    if(update == true){
                        dynamics = dynamics_response.getJSONArray("activity");
@@ -174,7 +175,7 @@ public class MeetDynamicsFragment extends BaseFragment {
                            set_meet_member_info(dynamics, init);
                        }
                    }
-                }else{
+                }else{//init
                     dynamics = dynamics_response.getJSONArray("activity");
                     if (dynamics.length() > 0) {
                         set_meet_member_info(dynamics, init);
@@ -352,7 +353,9 @@ public class MeetDynamicsFragment extends BaseFragment {
                 meetDynamicsListAdapter.notifyDataSetChanged();
                 break;
             case UPDATE:
-                meetDynamicsListAdapter.addData(0, meetDynamics);
+                for (int i=0; i<meetList.size(); i++){
+                    meetDynamicsListAdapter.addData(i, meetList.get(i));
+                }
                 break;
         }
     }
