@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.adapter.MeetDynamicsListAdapter;
 import com.tongmenhui.launchak47.util.BaseFragment;
@@ -49,7 +50,8 @@ public class MeetDynamicsFragment extends BaseFragment {
     private List<MeetDynamics> meetList = new ArrayList<>();
 
     private MeetDynamics meetDynamics;
-    private RecyclerView recyclerView;
+    //private RecyclerView recyclerView;
+    private UltimateRecyclerView recyclerView;
     private DynamicsComment dynamicsComment;
     private MeetDynamicsListAdapter meetDynamicsListAdapter = new MeetDynamicsListAdapter(getContext());
     JSONObject dynamics_response;
@@ -244,16 +246,17 @@ public class MeetDynamicsFragment extends BaseFragment {
                 getDynamicsComment(meetDynamics, dynamics.getLong("aid"));
 
                 meetList.add(meetDynamics);
-
-                if(!init){//not the first init
-                    handler.sendEmptyMessage(UPDATE);
-                }
-
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        handler.sendEmptyMessage(DONE);
+        if(init){
+            handler.sendEmptyMessage(DONE);
+        }else{
+            Slog.d(TAG, "===========init: "+init);
+            handler.sendEmptyMessage(UPDATE);
+        }
+
 
     }
 
@@ -353,9 +356,13 @@ public class MeetDynamicsFragment extends BaseFragment {
                 meetDynamicsListAdapter.notifyDataSetChanged();
                 break;
             case UPDATE:
+                meetDynamicsListAdapter.setData(meetList);
+                meetDynamicsListAdapter.notifyDataSetChanged();
+                /*
                 for (int i=0; i<meetList.size(); i++){
                     meetDynamicsListAdapter.addData(i, meetList.get(i));
                 }
+                */
                 break;
         }
     }
