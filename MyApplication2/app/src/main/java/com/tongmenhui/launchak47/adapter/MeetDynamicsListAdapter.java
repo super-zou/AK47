@@ -10,14 +10,9 @@ import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.NetworkImageView;
-import com.marshalchen.ultimaterecyclerview.SwipeableUltimateViewAdapter;
-import com.marshalchen.ultimaterecyclerview.URLogs;
-import com.marshalchen.ultimaterecyclerview.UltimateRecyclerviewViewHolder;
-import com.marshalchen.ultimaterecyclerview.swipe.SwipeLayout;
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.meet.DynamicsComment;
 import com.tongmenhui.launchak47.meet.MeetDynamics;
@@ -33,7 +28,7 @@ import java.util.List;
  * Created by haichao.zou on 2017/11/20.
  */
 
-public class MeetDynamicsListAdapter extends SwipeableUltimateViewAdapter<MeetDynamicsListAdapter.ViewHolder> {
+public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsListAdapter.ViewHolder> {
 
     private static final String TAG = "MeetDynamicsListAdapter";
     private static final String  domain = "http://112.126.83.127:88";
@@ -50,67 +45,7 @@ public class MeetDynamicsListAdapter extends SwipeableUltimateViewAdapter<MeetDy
         this.isScrolling = isScrolling;
     }
 
-    public MeetDynamicsListAdapter(Context context){
-        //Slog.d(TAG, "==============MeetRecommendListAdapter init=================");
-        mContext = context;
-        mMeetList = new ArrayList<MeetDynamics>();
-        requestQueueSingleton = new RequestQueueSingleton();
-
-    }
-
-    /*
-    @Override
-    protected void withBindHolder(UltimateRecyclerviewViewHolder holder, String data, int position) {
-        super.withBindHolder(holder, data, position);
-       // ((ViewHolder) holder).textView.setText(data);
-    }
-    */
-
-    /**
-     * the layout id for the normal data
-     *
-     * @return the ID
-     */
-    @Override
-    protected int getNormalLayoutResId() {
-        return ViewHolder.layout;
-    }
-
-    /**
-     * this is the Normal View Holder initiation
-     *
-     * @param view view
-     * @return holder
-     */
-    @Override
-    protected UltimateRecyclerviewViewHolder newViewHolder(final View view) {
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                URLogs.d("click");
-            }
-        });
-        final ViewHolder viewHolder = new ViewHolder(view);
-        viewHolder.swipeLayout.setOnDoubleClickListener(new SwipeLayout.DoubleClickListener() {
-            @Override
-            public void onDoubleClick(SwipeLayout layout, boolean surface) {
-                Toast.makeText(view.getContext(), "DoubleClick", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-/*
-        viewHolder.deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                removeAt(viewHolder.getPosition());
-                Toast.makeText(view.getContext(), "Deleted " + viewHolder.getPosition(), Toast.LENGTH_SHORT).show();
-            }
-        });
-*/
-        return viewHolder;
-    }
-
-    public static class ViewHolder extends UltimateRecyclerviewViewHolder{
+    public static class ViewHolder extends RecyclerView.ViewHolder{
         TextView realname;
         TextView lives;
         TextView selfcondition;
@@ -155,6 +90,14 @@ public class MeetDynamicsListAdapter extends SwipeableUltimateViewAdapter<MeetDy
             FontManager.markAsIconContainer(view.findViewById(R.id.meet_dynamics_item), font);
 
         }
+    }
+
+    public MeetDynamicsListAdapter(Context context){
+        //Slog.d(TAG, "==============MeetRecommendListAdapter init=================");
+        mContext = context;
+        mMeetList = new ArrayList<MeetDynamics>();
+        requestQueueSingleton = new RequestQueueSingleton();
+
     }
 
     public void setData(List<MeetDynamics> meetList){
