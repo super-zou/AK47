@@ -15,4 +15,10 @@
     <item name="tag_second" type="id" />
     <string name="title_activity_fill_meet_info">FillMeetInfo</string>
     <string name="dynamics_input_hint">说点啥呢?</string>
+    <!--added by xuchunping 2018.7.21-->
+    <string name="register_account_check_error">请输入正确的手机号码或邮箱</string>
+    <string name="register_account_hint">请输入手机号码或邮箱</string>
+    <string name="register_verify_code_hint">请输入验证码</string>
+    <string name="register_password_hint">请输入密码</string>
+    <string name="register_password_confirm_hint">请输入重复密码</string>
 </resources>
