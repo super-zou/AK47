@@ -13,6 +13,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.jcodecraeer.xrecyclerview.ProgressStyle;
+import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.adapter.MeetDynamicsListAdapter;
 import com.tongmenhui.launchak47.util.BaseFragment;
@@ -36,6 +38,7 @@ import okhttp3.Response;
 
 import static android.content.Context.MODE_PRIVATE;
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
+import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
 /**
  * Created by haichao.zou on 2017/11/20.
@@ -49,7 +52,11 @@ public class MeetDynamicsFragment extends BaseFragment {
     private List<MeetDynamics> meetList = new ArrayList<>();
 
     private MeetDynamics meetDynamics;
-    private RecyclerView recyclerView;
+    //+Begin add by xuchunping for use XRecyclerView support loadmore
+//    private RecyclerView recyclerView;
+    private static final int PAGE_SIZE = 6;//每页获取6条
+    private XRecyclerView recyclerView;
+    //-End add by xuchunping for use XRecyclerView support loadmore
     private DynamicsComment dynamicsComment;
     private MeetDynamicsListAdapter meetDynamicsListAdapter = new MeetDynamicsListAdapter(getContext());
     JSONObject dynamics_response;
@@ -61,10 +68,9 @@ public class MeetDynamicsFragment extends BaseFragment {
     private static final int DONE = 1;
     private static final int UPDATE = 2;
 
-    private static final String domain = "http://112.126.83.127:88/";
-    private static final String dynamics_url = domain + "?q=meet/activity/get";
-    private static final String getDynamics_update_url = domain + "?q=meet/activity/update";
-    String request_comment_url = "?q=meet/activity/interact/get";
+    private static final String dynamics_url = HttpUtil.DOMAIN + "?q=meet/activity/get";
+    private static final String getDynamics_update_url = HttpUtil.DOMAIN + "?q=meet/activity/update";
+    String request_comment_url = HttpUtil.DOMAIN + "?q=meet/activity/interact/get";
 
     /*
     @Override
@@ -82,7 +88,7 @@ public class MeetDynamicsFragment extends BaseFragment {
 
     @Override
     protected void initView(View convertView){
-        recyclerView = convertView.findViewById(R.id.recyclerview);
+        recyclerView = (XRecyclerView) convertView.findViewById(R.id.recyclerview);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
 
@@ -99,6 +105,54 @@ public class MeetDynamicsFragment extends BaseFragment {
             }
         });
 
+        //+Begin added by xuchunping
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(linearLayoutManager);
+
+        recyclerView.setRefreshProgressStyle(BallSpinFadeLoader);
+        recyclerView.setLoadingMoreProgressStyle(ProgressStyle.BallRotate);
+//        mRecyclerView.setArrowImageView(R.drawable.);
+
+        recyclerView
+                .getDefaultRefreshHeaderView()
+                .setRefreshTimeVisible(true);
+
+        recyclerView.getDefaultFootView().setLoadingHint("上拉查看更多");
+        recyclerView.getDefaultFootView().setNoMoreHint("全部加载完成");
+        //recyclerView.setArrowImageView(R.drawable.iconfont_downgrey);//TODO 可设置下拉刷新图标
+        final int itemLimit = 5;
+
+        // When the item number of the screen number is list.size-2,we call the onLoadMore
+        recyclerView.setLimitNumberToCallLoadMore(4);
+        recyclerView.setRefreshProgressStyle(ProgressStyle.BallBeat);
+        recyclerView.setLoadingMoreProgressStyle(ProgressStyle.SquareSpin);
+
+        recyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
+            @Override
+            public void onRefresh() {
+                new Handler().postDelayed(new Runnable(){
+                    public void run() {
+                        meetDynamicsListAdapter.notifyDataSetChanged();
+                        if(recyclerView != null)
+                            recyclerView.refreshComplete();
+                    }
+                }, 2000);            //refresh data here
+            }
+
+            @Override
+            public void onLoadMore() {
+                new Handler().postDelayed(new Runnable(){
+                    public void run() {
+                        //TODO test
+                        if(recyclerView != null) {
+                            recyclerView.loadMoreComplete();
+                            meetDynamicsListAdapter.notifyDataSetChanged();
+                        }
+                    }
+                }, 2000);
+            }
+        });
+        //-End added by xuchunping
         recyclerView.setAdapter(meetDynamicsListAdapter);
 
     }
@@ -261,7 +315,7 @@ public class MeetDynamicsFragment extends BaseFragment {
 
         RequestBody requestBody = new FormBody.Builder().add("aid", aid.toString()).build();
 
-        HttpUtil.sendOkHttpRequest(getContext(), domain + request_comment_url, requestBody, new Callback() {
+        HttpUtil.sendOkHttpRequest(getContext(), request_comment_url, requestBody, new Callback() {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {

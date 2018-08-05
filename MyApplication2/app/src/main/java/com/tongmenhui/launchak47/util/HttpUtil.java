@@ -30,7 +30,7 @@ import static android.content.Context.MODE_PRIVATE;
 public class HttpUtil {
     public static final String TAG = "HttpUtil";
     /*+Begin: added by xuchunping 2018.7.19*/
-    public static final String  DOMAIN = "http://112.126.83.127:88";
+    public static final String  DOMAIN = "http://112.126.83.127:88/";
     /*-End: added by xuchunping 2018.7.19*/
     private static String Cookie;
     public static String getCookie(Context context){

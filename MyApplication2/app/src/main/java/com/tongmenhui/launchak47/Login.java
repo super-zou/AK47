@@ -209,6 +209,8 @@ public class Login extends AppCompatActivity {
                         editor.putInt("uid", user.getInt("uid"));
                         editor.apply();
 
+                        closeProgressDialog();
+                        Login.this.finish();
                         Intent intent = new Intent(Login.this, MainActivity.class);
                         startActivity(intent);
 

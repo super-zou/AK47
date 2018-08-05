@@ -11,15 +11,19 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.jcodecraeer.xrecyclerview.ProgressStyle;
+import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.adapter.MeetRecommendListAdapter;
 import com.tongmenhui.launchak47.util.BaseFragment;
 import com.tongmenhui.launchak47.util.HttpUtil;
+import com.tongmenhui.launchak47.util.ParseUtils;
 import com.tongmenhui.launchak47.util.Slog;
 
 import org.json.JSONArray;
@@ -38,6 +42,7 @@ import okhttp3.Response;
 
 import static android.content.Context.MODE_PRIVATE;
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
+import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
 /**
  * Created by super-zou on 17-9-11.
@@ -51,7 +56,11 @@ public class MeetRecommendFragment extends BaseFragment {
     private String mTitle;
     private List<MeetMemberInfo> meetList = new ArrayList<>();
     private MeetMemberInfo meetMemberInfo;
-    private RecyclerView recyclerView;
+    //+Begin add by xuchunping for use XRecyclerView support loadmore
+    //private RecyclerView recyclerView;
+    private static final int PAGE_SIZE = 6;//每页获取6条
+    private XRecyclerView recyclerView;
+    //-End add by xuchunping for use XRecyclerView support loadmore
     private MeetRecommendListAdapter meetRecommendListAdapter;
    // private String realname;
     private int uid;
@@ -62,8 +71,7 @@ public class MeetRecommendFragment extends BaseFragment {
     private Handler handler;
     private static final int DONE = 1;
 
-    private static final String  domain = "http://112.126.83.127:88/";
-    private static final String get_recommend_url = domain + "?q=meet/recommend";
+    private static final String get_recommend_url = HttpUtil.DOMAIN + "?q=meet/recommend";
 
     @Override
     protected void initView(View view){
@@ -95,7 +103,7 @@ public class MeetRecommendFragment extends BaseFragment {
                 startActivity(intent);
             }
         });
-        recyclerView = (RecyclerView) viewContent.findViewById(R.id.recyclerview);
+        recyclerView = (XRecyclerView) viewContent.findViewById(R.id.recyclerview);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
 
@@ -112,6 +120,56 @@ public class MeetRecommendFragment extends BaseFragment {
             }
         });
 
+        //+Begin added by xuchunping
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(linearLayoutManager);
+
+        recyclerView.setRefreshProgressStyle(BallSpinFadeLoader);
+        recyclerView.setLoadingMoreProgressStyle(ProgressStyle.BallRotate);
+//        mRecyclerView.setArrowImageView(R.drawable.);
+
+        recyclerView
+                .getDefaultRefreshHeaderView()
+                .setRefreshTimeVisible(true);
+
+        recyclerView.getDefaultFootView().setLoadingHint("上拉查看更多");
+        recyclerView.getDefaultFootView().setNoMoreHint("全部加载完成");
+        //recyclerView.setArrowImageView(R.drawable.iconfont_downgrey);//TODO 可设置下拉刷新图标
+        final int itemLimit = 5;
+
+        // When the item number of the screen number is list.size-2,we call the onLoadMore
+        recyclerView.setLimitNumberToCallLoadMore(4);
+        recyclerView.setRefreshProgressStyle(ProgressStyle.BallBeat);
+        recyclerView.setLoadingMoreProgressStyle(ProgressStyle.SquareSpin);
+
+        recyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
+            @Override
+            public void onRefresh() {
+                initContentView();
+                new Handler().postDelayed(new Runnable(){
+                    public void run() {
+                        meetRecommendListAdapter.notifyDataSetChanged();
+                        if(recyclerView != null)
+                            recyclerView.refreshComplete();
+                    }
+                }, 2000);            //refresh data here
+            }
+
+            @Override
+            public void onLoadMore() {
+                    new Handler().postDelayed(new Runnable(){
+                        public void run() {
+                            //TODO test
+                            if(recyclerView != null) {
+                                recyclerView.loadMoreComplete();
+                                meetRecommendListAdapter.notifyDataSetChanged();
+                            }
+                        }
+                    }, 2000);
+            }
+        });
+        //-End added by xuchunping
+
         recyclerView.setAdapter(meetRecommendListAdapter);
         return viewContent;
 
@@ -126,7 +184,12 @@ public class MeetRecommendFragment extends BaseFragment {
     public void initContentView(){
         if(debug) Slog.d(TAG, "===============initConentView==============");
 
-        RequestBody requestBody = new FormBody.Builder().build();
+        int page = meetList.size() / PAGE_SIZE + 1;
+        RequestBody requestBody = new FormBody.Builder()
+                .add("step", String.valueOf(PAGE_SIZE))
+                .add("page", String.valueOf(page))
+                .build();
+        Log.d(TAG, "initContentView requestBody:"+requestBody.toString()+" page:"+page);
         HttpUtil.sendOkHttpRequest(getContext(), get_recommend_url, requestBody, new Callback(){
             int check_login_user = 0;
             String user_name;
@@ -135,12 +198,13 @@ public class MeetRecommendFragment extends BaseFragment {
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
                 //Slog.d(TAG, "response : "+responseText);
+                Log.d(TAG, "onResponse responseText:"+responseText);
                 getResponseText(responseText);
             }
 
             @Override
             public void onFailure(Call call, IOException e){
-
+                Log.e(TAG, "onFailure e:"+e);
             }
         });
 
@@ -161,67 +225,17 @@ public class MeetRecommendFragment extends BaseFragment {
     public void getResponseText(String responseText){
 
         if(debug) Slog.d(TAG, "====================getResponseText: "+responseText);
-
-        if(!TextUtils.isEmpty(responseText)){
-            try {
-                recommend_response= new JSONObject(responseText);
-                recommendation = recommend_response.getJSONArray("recommendation");
-                set_meet_member_info(recommendation);
-                loaded = true;
-            }catch (JSONException e){
-                e.printStackTrace();
+        //+Begin added by xuchunping
+        List<MeetMemberInfo> tempList = ParseUtils.getMeetList(responseText);
+        if (null != tempList) {
+            meetList.addAll(tempList);
+            Log.d(TAG, "getResponseText list.size:"+tempList.size());
+            if (tempList.size() < PAGE_SIZE) {
+                //数据全部加载完成，没有更多数据了
+                recyclerView.setLoadingMoreEnabled(false);//禁用上拉刷新
             }
         }
+        handler.sendEmptyMessage(DONE);
+        //-End added by xuchunping
     }
-
-    public void set_meet_member_info(JSONArray recommendation){
-        int length = recommendation.length();
-        if(debug) Slog.d(TAG, "==========set_meet_member_info==========recommendation length: "+length);
-        try{
-            for (int i=0; i< length; i++){
-                JSONObject recommender = recommendation.getJSONObject(i);
-                meetMemberInfo = new MeetMemberInfo();
-
-                meetMemberInfo.setRealname(recommender.getString("realname"));
-                meetMemberInfo.setUid(recommender.getInt("uid"));
-                meetMemberInfo.setPictureUri(recommender.getString("picture_uri"));
-                meetMemberInfo.setBirthYear(recommender.getInt("birth_year"));
-                meetMemberInfo.setHeight(recommender.getInt("height"));
-                meetMemberInfo.setUniversity(recommender.getString("university"));
-
-                meetMemberInfo.setDegree(recommender.getString("degree"));
-                meetMemberInfo.setJobTitle(recommender.getString("job_title"));
-                meetMemberInfo.setLives(recommender.getString("lives"));
-                meetMemberInfo.setSituation(recommender.getInt("situation"));
-
-                //requirement
-                meetMemberInfo.setAgeLower(recommender.getInt("age_lower"));
-                meetMemberInfo.setAgeUpper(recommender.getInt("age_upper"));
-                meetMemberInfo.setRequirementHeight(recommender.getInt("requirement_height"));
-                meetMemberInfo.setRequirementDegree(recommender.getString("requirement_degree"));
-                meetMemberInfo.setRequirementLives(recommender.getString("requirement_lives"));
-                meetMemberInfo.setRequirementSex(recommender.getInt("requirement_sex"));
-                meetMemberInfo.setIllustration(recommender.getString("illustration"));
-
-
-               // meetMemberInfo.setSelf(recommender.getInt("self"));
-                meetMemberInfo.setBrowseCount(recommender.getInt("browse_count"));
-                meetMemberInfo.setLovedCount(recommender.getInt("loved_count"));
-               // meetMemberInfo.setLoved(recommender.getInt("loved"));
-               // meetMemberInfo.setPraised(recommender.getInt("praised"));
-                meetMemberInfo.setPraisedCount(recommender.getInt("praised_count"));
-              //  meetMemberInfo.setPictureChain(recommender.getString("pictureChain"));
-               // meetMemberInfo.setRequirementSet(recommender.getInt("requirementSet"));
-
-
-                meetList.add(meetMemberInfo);
-            }
-
-            handler.sendEmptyMessage(DONE);
-        }catch (JSONException e){
-            e.printStackTrace();
-        }
-
-    }
-
 }

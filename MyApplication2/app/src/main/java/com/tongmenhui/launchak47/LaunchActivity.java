@@ -6,11 +6,14 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.Toast;
+
+import com.tongmenhui.launchak47.util.SharedPreferencesUtils;
 
 public class LaunchActivity extends AppCompatActivity {
 
@@ -46,6 +49,13 @@ public class LaunchActivity extends AppCompatActivity {
                 Toast.makeText(LaunchActivity.this, "register click", Toast.LENGTH_SHORT).show();
             }
         });
+        //+Begin added by xuchunping 2018.8.1
+        String account = SharedPreferencesUtils.getAccount(this);
+        if (!TextUtils.isEmpty(account)) {
+            login();
+            finish();
+        }
+        //-End added by xuchunping 2018.8.1
     }
 
     @Override

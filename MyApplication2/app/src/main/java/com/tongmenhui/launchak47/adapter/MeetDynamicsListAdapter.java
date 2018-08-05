@@ -114,10 +114,11 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
         return holder;
     }
 
-    @Override
+    //TODO 此处有异常，先屏蔽 by xuchunping 2018.8.5
+    /*@Override
     public void onViewRecycled(MeetDynamicsListAdapter.ViewHolder holder){
         super.onViewRecycled(holder);
-    }
+    }*/
 
     @Override
     public void onBindViewHolder(final MeetDynamicsListAdapter.ViewHolder holder, int position){

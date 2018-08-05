@@ -13,6 +13,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.jcodecraeer.xrecyclerview.ProgressStyle;
+import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.adapter.MeetRecommendListAdapter;
 import com.tongmenhui.launchak47.util.BaseFragment;
@@ -34,6 +36,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
+import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
 /**
  * Created by haichao.zou on 2017/11/23.
@@ -48,7 +51,11 @@ public class MeetDiscoveryFragment extends BaseFragment {
     private String mTitle;
     private List<MeetMemberInfo> meetMemberList = new ArrayList<>();
     private MeetMemberInfo meetMemberInfo;
-    private RecyclerView recyclerView;
+    //+Begin add by xuchunping for use XRecyclerView support loadmore
+    //private RecyclerView recyclerView;
+    private static final int PAGE_SIZE = 6;//每页获取6条
+    private XRecyclerView recyclerView;
+    //-End add by xuchunping for use XRecyclerView support loadmore
     private MeetRecommendListAdapter meetListAdapter;
     // private String realname;
     private int uid;
@@ -61,7 +68,7 @@ public class MeetDiscoveryFragment extends BaseFragment {
     private static final int DONE = 1;
 
     private static final String  domain = "http://112.126.83.127:88/";
-    private static final String get_discovery_url = domain + "?q=meet/discovery/get";
+    private static final String get_discovery_url = HttpUtil.DOMAIN + "?q=meet/discovery/get";
 
     @Override
     protected void initView(View view){
@@ -86,7 +93,7 @@ public class MeetDiscoveryFragment extends BaseFragment {
         initConentView();
         meetListAdapter = new MeetRecommendListAdapter(getContext());
         viewContent = inflater.inflate(R.layout.meet_discovery, container, false);
-        recyclerView = (RecyclerView) viewContent.findViewById(R.id.recyclerview);
+        recyclerView = (XRecyclerView) viewContent.findViewById(R.id.recyclerview);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener(){
@@ -102,6 +109,54 @@ public class MeetDiscoveryFragment extends BaseFragment {
             }
         });
 
+        //+Begin added by xuchunping
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(linearLayoutManager);
+
+        recyclerView.setRefreshProgressStyle(BallSpinFadeLoader);
+        recyclerView.setLoadingMoreProgressStyle(ProgressStyle.BallRotate);
+//        mRecyclerView.setArrowImageView(R.drawable.);
+
+        recyclerView
+                .getDefaultRefreshHeaderView()
+                .setRefreshTimeVisible(true);
+
+        recyclerView.getDefaultFootView().setLoadingHint("上拉查看更多");
+        recyclerView.getDefaultFootView().setNoMoreHint("全部加载完成");
+        //recyclerView.setArrowImageView(R.drawable.iconfont_downgrey);//TODO 可设置下拉刷新图标
+        final int itemLimit = 5;
+
+        // When the item number of the screen number is list.size-2,we call the onLoadMore
+        recyclerView.setLimitNumberToCallLoadMore(4);
+        recyclerView.setRefreshProgressStyle(ProgressStyle.BallBeat);
+        recyclerView.setLoadingMoreProgressStyle(ProgressStyle.SquareSpin);
+
+        recyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
+            @Override
+            public void onRefresh() {
+                new Handler().postDelayed(new Runnable(){
+                    public void run() {
+                        meetListAdapter.notifyDataSetChanged();
+                        if(recyclerView != null)
+                            recyclerView.refreshComplete();
+                    }
+                }, 2000);            //refresh data here
+            }
+
+            @Override
+            public void onLoadMore() {
+                new Handler().postDelayed(new Runnable(){
+                    public void run() {
+                        //TODO test
+                        if(recyclerView != null) {
+                            recyclerView.loadMoreComplete();
+                            meetListAdapter.notifyDataSetChanged();
+                        }
+                    }
+                }, 2000);
+            }
+        });
+        //-End added by xuchunping
         recyclerView.setAdapter(meetListAdapter);
         return viewContent;
 
