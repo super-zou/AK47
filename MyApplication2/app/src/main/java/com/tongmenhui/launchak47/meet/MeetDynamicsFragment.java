@@ -54,7 +54,7 @@ public class MeetDynamicsFragment extends BaseFragment {
     private MeetDynamics meetDynamics;
     //+Begin add by xuchunping for use XRecyclerView support loadmore
 //    private RecyclerView recyclerView;
-    private static final int PAGE_SIZE = 6;//每页获取6条
+    private static final int PAGE_SIZE = 6;
     private XRecyclerView recyclerView;
     //-End add by xuchunping for use XRecyclerView support loadmore
     private DynamicsComment dynamicsComment;
@@ -117,9 +117,8 @@ public class MeetDynamicsFragment extends BaseFragment {
                 .getDefaultRefreshHeaderView()
                 .setRefreshTimeVisible(true);
 
-        recyclerView.getDefaultFootView().setLoadingHint("上拉查看更多");
-        recyclerView.getDefaultFootView().setNoMoreHint("全部加载完成");
-        //recyclerView.setArrowImageView(R.drawable.iconfont_downgrey);//TODO 可设置下拉刷新图标
+        recyclerView.getDefaultFootView().setLoadingHint(getString(R.string.loading_pull_up_tip));
+        recyclerView.getDefaultFootView().setNoMoreHint(getString(R.string.loading_no_more));
         final int itemLimit = 5;
 
         // When the item number of the screen number is list.size-2,we call the onLoadMore

@@ -58,8 +58,9 @@ public class MeetRecommendFragment extends BaseFragment {
     private MeetMemberInfo meetMemberInfo;
     //+Begin add by xuchunping for use XRecyclerView support loadmore
     //private RecyclerView recyclerView;
-    private static final int PAGE_SIZE = 6;//每页获取6条
+    private static final int PAGE_SIZE = 6;//page size
     private XRecyclerView recyclerView;
+    private int mTempSize;
     //-End add by xuchunping for use XRecyclerView support loadmore
     private MeetRecommendListAdapter meetRecommendListAdapter;
    // private String realname;
@@ -132,19 +133,22 @@ public class MeetRecommendFragment extends BaseFragment {
                 .getDefaultRefreshHeaderView()
                 .setRefreshTimeVisible(true);
 
-        recyclerView.getDefaultFootView().setLoadingHint("上拉查看更多");
-        recyclerView.getDefaultFootView().setNoMoreHint("全部加载完成");
-        //recyclerView.setArrowImageView(R.drawable.iconfont_downgrey);//TODO 可设置下拉刷新图标
+        recyclerView.getDefaultFootView().setLoadingHint(getString(R.string.loading_pull_up_tip));
+        recyclerView.getDefaultFootView().setNoMoreHint(getString(R.string.loading_no_more));
+        //recyclerView.setArrowImageView(R.drawable.iconfont_downgrey);//TODO set pull down icon
         final int itemLimit = 5;
 
         // When the item number of the screen number is list.size-2,we call the onLoadMore
-        recyclerView.setLimitNumberToCallLoadMore(4);
+//        recyclerView.setLimitNumberToCallLoadMore(2);
         recyclerView.setRefreshProgressStyle(ProgressStyle.BallBeat);
         recyclerView.setLoadingMoreProgressStyle(ProgressStyle.SquareSpin);
 
         recyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
             @Override
             public void onRefresh() {
+                if (meetList.size() != 0) {
+                    return;
+                }
                 initContentView();
                 new Handler().postDelayed(new Runnable(){
                     public void run() {
@@ -159,11 +163,7 @@ public class MeetRecommendFragment extends BaseFragment {
             public void onLoadMore() {
                     new Handler().postDelayed(new Runnable(){
                         public void run() {
-                            //TODO test
-                            if(recyclerView != null) {
-                                recyclerView.loadMoreComplete();
-                                meetRecommendListAdapter.notifyDataSetChanged();
-                            }
+                            initContentView();
                         }
                     }, 2000);
             }
@@ -214,6 +214,13 @@ public class MeetRecommendFragment extends BaseFragment {
                 if(message.what == DONE){
                     meetRecommendListAdapter.setData(meetList);
                     meetRecommendListAdapter.notifyDataSetChanged();
+                    recyclerView.refreshComplete();
+
+                    if (mTempSize < PAGE_SIZE) {
+                        //loading finished
+                        recyclerView.setNoMore(true);
+                        recyclerView.setLoadingMoreEnabled(false);
+                    }
                 }
             }
         };
@@ -227,13 +234,11 @@ public class MeetRecommendFragment extends BaseFragment {
         if(debug) Slog.d(TAG, "====================getResponseText: "+responseText);
         //+Begin added by xuchunping
         List<MeetMemberInfo> tempList = ParseUtils.getMeetList(responseText);
+        mTempSize = 0;
         if (null != tempList) {
+            mTempSize = tempList.size();
             meetList.addAll(tempList);
             Log.d(TAG, "getResponseText list.size:"+tempList.size());
-            if (tempList.size() < PAGE_SIZE) {
-                //数据全部加载完成，没有更多数据了
-                recyclerView.setLoadingMoreEnabled(false);//禁用上拉刷新
-            }
         }
         handler.sendEmptyMessage(DONE);
         //-End added by xuchunping
