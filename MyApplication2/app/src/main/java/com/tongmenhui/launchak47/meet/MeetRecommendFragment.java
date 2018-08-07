@@ -146,26 +146,15 @@ public class MeetRecommendFragment extends BaseFragment {
         recyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
             @Override
             public void onRefresh() {
-                if (meetList.size() != 0) {
-                    return;
+                recyclerView.refreshComplete();
+                if (meetList.size() == 0) {
+                    initContentView();
                 }
-                initContentView();
-                new Handler().postDelayed(new Runnable(){
-                    public void run() {
-                        meetRecommendListAdapter.notifyDataSetChanged();
-                        if(recyclerView != null)
-                            recyclerView.refreshComplete();
-                    }
-                }, 2000);            //refresh data here
             }
 
             @Override
             public void onLoadMore() {
-                    new Handler().postDelayed(new Runnable(){
-                        public void run() {
-                            initContentView();
-                        }
-                    }, 2000);
+                initContentView();
             }
         });
         //-End added by xuchunping

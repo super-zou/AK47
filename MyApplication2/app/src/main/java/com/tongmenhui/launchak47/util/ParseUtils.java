@@ -77,4 +77,63 @@ public class ParseUtils {
         return list;
     }
 
+
+    public static List<MeetMemberInfo> getMeetDiscoveryList(String responseText){
+        List<MeetMemberInfo> list = null;
+        Log.d(TAG, "getMeetDiscoveryList responseText:"+responseText);
+        if (TextUtils.isEmpty(responseText)){
+            return null;
+        }
+        try{
+            JSONObject recommend_response = new JSONObject(responseText);
+            if (null == recommend_response) {
+                return null;
+            }
+            JSONArray discovery = recommend_response.getJSONArray("discovery");
+            if (null == discovery) {
+                return null;
+            }
+            list = new ArrayList<MeetMemberInfo>();
+            int length = discovery.length();
+            MeetMemberInfo meetMemberInfo = null;
+            for (int i=0; i< length; i++){
+                JSONObject recommender = discovery.getJSONObject(i);
+                meetMemberInfo = new MeetMemberInfo();
+
+                meetMemberInfo.setRealname(recommender.getString("realname"));
+                meetMemberInfo.setUid(recommender.getInt("uid"));
+                meetMemberInfo.setPictureUri(recommender.getString("picture_uri"));
+                meetMemberInfo.setBirthYear(recommender.getInt("birth_year"));
+                meetMemberInfo.setHeight(recommender.getInt("height"));
+                meetMemberInfo.setUniversity(recommender.getString("university"));
+                meetMemberInfo.setDegree(recommender.getString("degree"));
+                meetMemberInfo.setJobTitle(recommender.getString("job_title"));
+                meetMemberInfo.setLives(recommender.getString("lives"));
+                meetMemberInfo.setSituation(recommender.getInt("situation"));
+
+                //requirement
+                meetMemberInfo.setAgeLower(recommender.getInt("age_lower"));
+                meetMemberInfo.setAgeUpper(recommender.getInt("age_upper"));
+                meetMemberInfo.setRequirementHeight(recommender.getInt("requirement_height"));
+                meetMemberInfo.setRequirementDegree(recommender.getString("requirement_degree"));
+                meetMemberInfo.setRequirementLives(recommender.getString("requirement_lives"));
+                meetMemberInfo.setRequirementSex(recommender.getInt("requirement_sex"));
+                meetMemberInfo.setIllustration(recommender.getString("illustration"));
+
+
+                // meetMemberInfo.setSelf(recommender.getInt("self"));
+                meetMemberInfo.setBrowseCount(recommender.getInt("browse_count"));
+                meetMemberInfo.setLovedCount(recommender.getInt("loved_count"));
+                // meetMemberInfo.setLoved(recommender.getInt("loved"));
+                // meetMemberInfo.setPraised(recommender.getInt("praised"));
+                meetMemberInfo.setPraisedCount(recommender.getInt("praised_count"));
+                //  meetMemberInfo.setPictureChain(recommender.getString("pictureChain"));
+                // meetMemberInfo.setRequirementSet(recommender.getInt("requirementSet"));
+                list.add(meetMemberInfo);
+            }
+        }catch (JSONException e){
+
+        }
+        return list;
+    }
 }

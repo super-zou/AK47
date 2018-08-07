@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.adapter.MeetRecommendListAdapter;
 import com.tongmenhui.launchak47.util.BaseFragment;
 import com.tongmenhui.launchak47.util.HttpUtil;
+import com.tongmenhui.launchak47.util.ParseUtils;
 import com.tongmenhui.launchak47.util.Slog;
 
 import org.json.JSONArray;
@@ -55,6 +57,7 @@ public class MeetDiscoveryFragment extends BaseFragment {
     //private RecyclerView recyclerView;
     private static final int PAGE_SIZE = 6;
     private XRecyclerView recyclerView;
+    private int mTempSize;
     //-End add by xuchunping for use XRecyclerView support loadmore
     private MeetRecommendListAdapter meetListAdapter;
     // private String realname;
@@ -90,7 +93,7 @@ public class MeetDiscoveryFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         if(debug) Slog.d(TAG, "=================onCreateView===================");
         mContext = getActivity().getApplicationContext();
-        initConentView();
+        initContentView();
         meetListAdapter = new MeetRecommendListAdapter(getContext());
         viewContent = inflater.inflate(R.layout.meet_discovery, container, false);
         recyclerView = (XRecyclerView) viewContent.findViewById(R.id.recyclerview);
@@ -133,26 +136,15 @@ public class MeetDiscoveryFragment extends BaseFragment {
         recyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
             @Override
             public void onRefresh() {
-                new Handler().postDelayed(new Runnable(){
-                    public void run() {
-                        meetListAdapter.notifyDataSetChanged();
-                        if(recyclerView != null)
-                            recyclerView.refreshComplete();
-                    }
-                }, 2000);            //refresh data here
+                recyclerView.refreshComplete();
+                if (meetMemberList.size() == 0) {
+                    initContentView();
+                }
             }
 
             @Override
             public void onLoadMore() {
-                new Handler().postDelayed(new Runnable(){
-                    public void run() {
-                        //TODO test
-                        if(recyclerView != null) {
-                            recyclerView.loadMoreComplete();
-                            meetListAdapter.notifyDataSetChanged();
-                        }
-                    }
-                }, 2000);
+                initContentView();
             }
         });
         //-End added by xuchunping
@@ -167,10 +159,15 @@ public class MeetDiscoveryFragment extends BaseFragment {
         // initConentView();
     }
 
-    public void initConentView(){
+    public void initContentView(){
         if(debug) Slog.d(TAG, "===============initConentView==============");
 
-        RequestBody requestBody = new FormBody.Builder().build();
+        int page = meetMemberList.size() / PAGE_SIZE + 1;
+        RequestBody requestBody = new FormBody.Builder()
+                .add("step", String.valueOf(PAGE_SIZE))
+                .add("page", String.valueOf(page))
+                .build();
+        Log.d(TAG, "initContentView requestBody:"+requestBody.toString()+" page:"+page);
         HttpUtil.sendOkHttpRequest(getContext(), get_discovery_url, requestBody, new Callback(){
             int check_login_user = 0;
             String user_name;
@@ -184,7 +181,6 @@ public class MeetDiscoveryFragment extends BaseFragment {
 
             @Override
             public void onFailure(Call call, IOException e){
-
             }
         });
 
@@ -194,73 +190,29 @@ public class MeetDiscoveryFragment extends BaseFragment {
                 if(message.what == DONE){
                     meetListAdapter.setData(meetMemberList);
                     meetListAdapter.notifyDataSetChanged();
+                    recyclerView.refreshComplete();
+
+                    if (mTempSize < PAGE_SIZE) {
+                        //loading finished
+                        recyclerView.setNoMore(true);
+                        recyclerView.setLoadingMoreEnabled(false);
+                    }
                 }
             }
         };
     }
 
     public void getResponseText(String responseText){
-
         if(debug) Slog.d(TAG, "====================getResponseText====================");
-
-        if(!TextUtils.isEmpty(responseText)){
-            try {
-                discovery_response= new JSONObject(responseText);
-                discovery = discovery_response.getJSONArray("discovery");
-                set_meet_member_info(discovery);
-                loaded = true;
-            }catch (JSONException e){
-                e.printStackTrace();
-            }
+        //+Begin added by xuchunping
+        List<MeetMemberInfo> tempList = ParseUtils.getMeetDiscoveryList(responseText);
+        mTempSize = 0;
+        if (null != tempList) {
+            mTempSize = tempList.size();
+            meetMemberList.addAll(tempList);
+            Log.d(TAG, "getResponseText list.size:"+tempList.size());
         }
+        handler.sendEmptyMessage(DONE);
+        //-End added by xuchunping
     }
-
-    public void set_meet_member_info(JSONArray discovery){
-        int length = discovery.length();
-        if(debug) Slog.d(TAG, "==========set_meet_member_info==========discovery length: "+length);
-        try{
-            for (int i=0; i< length; i++){
-                JSONObject recommender = discovery.getJSONObject(i);
-                meetMemberInfo = new MeetMemberInfo();
-
-                meetMemberInfo.setRealname(recommender.getString("realname"));
-                meetMemberInfo.setUid(recommender.getInt("uid"));
-                meetMemberInfo.setPictureUri(recommender.getString("picture_uri"));
-                meetMemberInfo.setBirthYear(recommender.getInt("birth_year"));
-                meetMemberInfo.setHeight(recommender.getInt("height"));
-                meetMemberInfo.setUniversity(recommender.getString("university"));
-                meetMemberInfo.setDegree(recommender.getString("degree"));
-                meetMemberInfo.setJobTitle(recommender.getString("job_title"));
-                meetMemberInfo.setLives(recommender.getString("lives"));
-                meetMemberInfo.setSituation(recommender.getInt("situation"));
-
-                //requirement
-                meetMemberInfo.setAgeLower(recommender.getInt("age_lower"));
-                meetMemberInfo.setAgeUpper(recommender.getInt("age_upper"));
-                meetMemberInfo.setRequirementHeight(recommender.getInt("requirement_height"));
-                meetMemberInfo.setRequirementDegree(recommender.getString("requirement_degree"));
-                meetMemberInfo.setRequirementLives(recommender.getString("requirement_lives"));
-                meetMemberInfo.setRequirementSex(recommender.getInt("requirement_sex"));
-                meetMemberInfo.setIllustration(recommender.getString("illustration"));
-
-
-                // meetMemberInfo.setSelf(recommender.getInt("self"));
-                meetMemberInfo.setBrowseCount(recommender.getInt("browse_count"));
-                meetMemberInfo.setLovedCount(recommender.getInt("loved_count"));
-                // meetMemberInfo.setLoved(recommender.getInt("loved"));
-                // meetMemberInfo.setPraised(recommender.getInt("praised"));
-                meetMemberInfo.setPraisedCount(recommender.getInt("praised_count"));
-                //  meetMemberInfo.setPictureChain(recommender.getString("pictureChain"));
-                // meetMemberInfo.setRequirementSet(recommender.getInt("requirementSet"));
-                meetMemberList.add(meetMemberInfo);
-            }
-
-            handler.sendEmptyMessage(DONE);
-
-        }catch (JSONException e){
-
-        }
-
-    }
-
 }
