@@ -53,7 +53,7 @@ public class MeetDynamicsFragment extends BaseFragment {
 
     private MeetDynamics meetDynamics;
     //+Begin add by xuchunping for use XRecyclerView support loadmore
-//    private RecyclerView recyclerView;
+    //private RecyclerView recyclerView;
     private static final int PAGE_SIZE = 6;
     private XRecyclerView recyclerView;
     //-End add by xuchunping for use XRecyclerView support loadmore
@@ -67,6 +67,12 @@ public class MeetDynamicsFragment extends BaseFragment {
     private Handler handler;
     private static final int DONE = 1;
     private static final int UPDATE = 2;
+
+    String requstUrl = "";
+    RequestBody requestBody = null;
+    long timeStampSec = System.currentTimeMillis()/1000;
+    String timeStamp = String.format("%010d", timeStampSec);
+    SharedPreferences.Editor editor = getContext().getSharedPreferences("access_record", MODE_PRIVATE).edit();
 
     private static final String dynamics_url = HttpUtil.DOMAIN + "?q=meet/activity/get";
     private static final String getDynamics_update_url = HttpUtil.DOMAIN + "?q=meet/activity/update";
@@ -111,7 +117,7 @@ public class MeetDynamicsFragment extends BaseFragment {
 
         recyclerView.setRefreshProgressStyle(BallSpinFadeLoader);
         recyclerView.setLoadingMoreProgressStyle(ProgressStyle.BallRotate);
-//        mRecyclerView.setArrowImageView(R.drawable.);
+        //mRecyclerView.setArrowImageView(R.drawable.);
 
         recyclerView
                 .getDefaultRefreshHeaderView()
@@ -158,42 +164,16 @@ public class MeetDynamicsFragment extends BaseFragment {
 
 
     @Override
-    protected void loadData(boolean firstInit){
+    protected void loadData(){
         if(debug) Slog.d(TAG, "===============initData==============");
         handler = new MyHandler(this);
-        loadDynamicsData(firstInit);
-    }
 
-    public void loadDynamicsData(final boolean init){
-        if(debug) Slog.d(TAG, "==================== loadDynamicsData init: "+init);
-        String requstUrl = "";
-        RequestBody requestBody = null;
-        long timeStampSec = System.currentTimeMillis()/1000;
-        String timeStamp = String.format("%010d", timeStampSec);
-        SharedPreferences.Editor editor = getContext().getSharedPreferences("access_record", MODE_PRIVATE).edit();
-
-        if(init != true){//init is false, should update
-            SharedPreferences preferences = getContext().getSharedPreferences("access_record", MODE_PRIVATE);
-            String last = preferences.getString("last", "");
-            if(debug) Slog.d(TAG, "=======last:"+last+"=======current: "+timeStamp);
-
-            requstUrl = getDynamics_update_url;
-            requestBody = new FormBody.Builder().add("last", last).add("current", timeStamp).build();
-
-            editor.putString("last", timeStamp);
-            editor.apply();
-        }else{
-            editor.putString("last", timeStamp);
-            editor.apply();
-
-            requstUrl = dynamics_url;
-            requestBody = new FormBody.Builder().build();
-        }
+        editor.putString("last", timeStamp);
+        editor.apply();
+        requstUrl = dynamics_url;
+        requestBody = new FormBody.Builder().build();
 
         HttpUtil.sendOkHttpRequest(getContext(), requstUrl, requestBody, new Callback() {
-            int check_login_user = 0;
-            String user_name;
-
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if(response.body() != null){
@@ -201,7 +181,7 @@ public class MeetDynamicsFragment extends BaseFragment {
                     Slog.d(TAG, "==========response : "+response.body());
                     Slog.d(TAG, "==========response text : "+responseText);
                     if(responseText != null){
-                        getResponseText(responseText, init);
+                        getResponseText(responseText);
                     }
                 }
             }
@@ -213,30 +193,52 @@ public class MeetDynamicsFragment extends BaseFragment {
         });
     }
 
-    public void getResponseText(String responseText, boolean init) {
+    public void updateData(){
+        handler = new MyHandler(this);
+
+        SharedPreferences preferences = getContext().getSharedPreferences("access_record", MODE_PRIVATE);
+        String last = preferences.getString("last", "");
+        if(debug) Slog.d(TAG, "=======last:"+last+"=======current: "+timeStamp);
+
+        requstUrl = getDynamics_update_url;
+        requestBody = new FormBody.Builder().add("last", last).add("current", timeStamp).build();
+
+        editor.putString("last", timeStamp);
+        editor.apply();
+
+        HttpUtil.sendOkHttpRequest(getContext(), requstUrl, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if(response.body() != null){
+                    String responseText = response.body().string();
+                    Slog.d(TAG, "==========response : "+response.body());
+                    Slog.d(TAG, "==========response text : "+responseText);
+                    if(responseText != null){
+                        getResponseText(responseText);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+        });
+    }
+
+    public void getResponseText(String responseText) {
 
         //Slog.d(TAG, "====================getResponseText====================");
 
         if (!TextUtils.isEmpty(responseText)) {
             try {
                 dynamics_response = new JSONObject(responseText);
-                if(init != true){//update
-                   boolean update =  dynamics_response.getBoolean("update");
-                   if(update == true){
-                       dynamics = dynamics_response.getJSONArray("activity");
-                       if (dynamics.length() > 0) {
-                           set_meet_member_info(dynamics, init);
-                       }
-                   }
-                }else{//init
-                    dynamics = dynamics_response.getJSONArray("activity");
-                    if (dynamics.length() > 0) {
-                        set_meet_member_info(dynamics, init);
-                    }else{
-                        if(debug) Slog.d(TAG, "=============response content empty==============");
-                    }
+                dynamics = dynamics_response.getJSONArray("activity");
+                if (dynamics.length() > 0) {
+                    set_meet_member_info(dynamics);
+                }else{
+                    if(debug) Slog.d(TAG, "=============response content empty==============");
                 }
-
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -245,7 +247,7 @@ public class MeetDynamicsFragment extends BaseFragment {
         }
     }
 
-    public void set_meet_member_info(JSONArray dynamicsArray, boolean init) {
+    public void set_meet_member_info(JSONArray dynamicsArray) {
         int length = dynamicsArray.length();
         //Slog.d(TAG, "==========set_meet_member_info==========dynamics length: "+length);
         try {
@@ -257,7 +259,7 @@ public class MeetDynamicsFragment extends BaseFragment {
                 meetDynamics.setRealname(dynamics.getString("realname"));
                 meetDynamics.setUid(dynamics.getInt("uid"));
                 meetDynamics.setPictureUri(dynamics.getString("picture_uri"));
-                meetDynamics.setBirthYear(dynamics.getInt("birth_year"));
+                //meetDynamics.setBirthYear(dynamics.getInt("birth_year"));
                 meetDynamics.setHeight(dynamics.getInt("height"));
                 meetDynamics.setUniversity(dynamics.getString("university"));
                 meetDynamics.setDegree(dynamics.getString("degree"));
@@ -297,10 +299,6 @@ public class MeetDynamicsFragment extends BaseFragment {
                 getDynamicsComment(meetDynamics, dynamics.getLong("aid"));
 
                 meetList.add(meetDynamics);
-
-                if(!init){//not the first init
-                    handler.sendEmptyMessage(UPDATE);
-                }
 
             }
         } catch (JSONException e) {
@@ -404,11 +402,6 @@ public class MeetDynamicsFragment extends BaseFragment {
             case DONE:
                 meetDynamicsListAdapter.setData(meetList);
                 meetDynamicsListAdapter.notifyDataSetChanged();
-                break;
-            case UPDATE:
-                for (int i=0; i<meetList.size(); i++){
-                    meetDynamicsListAdapter.addData(i, meetList.get(i));
-                }
                 break;
         }
     }

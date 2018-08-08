@@ -73,7 +73,7 @@ public abstract class BaseFragment extends Fragment {
     /*
     ** If first load data, init set true.
      */
-    protected abstract void loadData(boolean init);
+    protected abstract void loadData();
 
     private void lazyLoadData() {
         if (isFirstLoad) {
@@ -82,14 +82,11 @@ public abstract class BaseFragment extends Fragment {
             Slog.d(TAG, "不是第一次加载" + "  isVisible  " + isVisible + "   " + this.getClass().getSimpleName());
         }
 
-        if (isVisible) {
-            if(isFirstLoad){
+        if (isVisible) {//only visible
+            if(isFirstLoad){//only first load
                 Slog.d(TAG, "========完成数据第一次加载");
-                loadData(true);
+                loadData();
                 isFirstLoad = false;
-            }else {
-                Slog.d(TAG, "========完成数据更新");
-                loadData(false);
             }
         }else{
             Slog.d(TAG, "=======不加载" + "   " + this.getClass().getSimpleName());

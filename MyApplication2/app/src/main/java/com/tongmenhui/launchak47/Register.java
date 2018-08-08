@@ -81,7 +81,7 @@ public class Register extends BaseAppCompatActivity {
                 }
                 Slog.d(TAG, "number: " + account);
                 RequestBody requestBody = new FormBody.Builder()
-                        .add("type", isEmail ? "0" : "1")//0” œ‰
+                        .add("type", isEmail ? "0" : "1")//0 for mail
                         .add("account", account)
                         .build();
                 checkRigister(REGISTER_CHECK_URL, requestBody);
@@ -129,7 +129,7 @@ public class Register extends BaseAppCompatActivity {
                         Slog.d(TAG, "checkRigister user_name: "+user_name);
 
                         if (!exist) {
-                            //TODO ’À∫≈Œ¥◊¢≤·
+                            //TODO unregister
                             register();
                         }
                     } catch (JSONException e){
@@ -143,7 +143,7 @@ public class Register extends BaseAppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        toast("◊¢≤· ß∞‹");
+                        toast("Register failed");
                     }
                 });
             }
@@ -168,7 +168,7 @@ public class Register extends BaseAppCompatActivity {
             Slog.e(TAG, "register JSONException:"+e.toString());
         }
         RequestBody requestBody = new FormBody.Builder()
-                .add("user_info", obj.toString())//0” œ‰
+                .add("user_info", obj.toString())//0 for mail
                 .add("account", account)
                 .add("type", isEmail ? "0" : "1")
                 .build();
@@ -189,7 +189,7 @@ public class Register extends BaseAppCompatActivity {
                         Slog.d(TAG, "register user_name: "+user_name);
 
                         if (exist) {
-                            //TODO ’À∫≈Œ¥◊¢≤·
+                            //TODO unregistered
                         }
                     } catch (JSONException e){
                         Slog.e(TAG, "onResponse e:"+e.toString());
@@ -202,7 +202,7 @@ public class Register extends BaseAppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        toast("◊¢≤· ß∞‹£°");
+                        toast("Register failed£°");
                     }
                 });
             }

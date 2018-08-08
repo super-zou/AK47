@@ -79,7 +79,7 @@ public class MeetDiscoveryFragment extends BaseFragment {
     }
 
     @Override
-    protected void loadData(boolean firstInit){
+    protected void loadData(){
 
     }
 
