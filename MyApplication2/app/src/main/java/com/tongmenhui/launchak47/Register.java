@@ -201,9 +201,7 @@ public class Register extends BaseAppCompatActivity {
             public void onFailure(Call call, IOException e) {
                 runOnUiThread(new Runnable() {
                     @Override
-                    public void run() {
-                        toast("Register failed£¡");
-                    }
+                    public void run() {}
                 });
             }
         });

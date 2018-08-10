@@ -259,10 +259,25 @@ public class MeetDynamicsFragment extends BaseFragment {
                 meetDynamics.setRealname(dynamics.getString("realname"));
                 meetDynamics.setUid(dynamics.getInt("uid"));
                 meetDynamics.setPictureUri(dynamics.getString("picture_uri"));
-                //meetDynamics.setBirthYear(dynamics.getInt("birth_year"));
-                meetDynamics.setHeight(dynamics.getInt("height"));
-                meetDynamics.setUniversity(dynamics.getString("university"));
-                meetDynamics.setDegree(dynamics.getString("degree"));
+                if(dynamics.has("birth_year")){
+                    meetDynamics.setBirthYear(dynamics.getInt("birth_year"));
+                }
+
+                if(dynamics.has("height")){
+                    meetDynamics.setHeight(dynamics.getInt("height"));
+                }
+                if(dynamics.has("birth_year")){
+                    meetDynamics.setHeight(dynamics.getInt("height"));
+                }
+                if(dynamics.has("degree")){
+                    meetDynamics.setDegree(dynamics.getString("degree"));
+                }
+                if(dynamics.has("university")){
+                    meetDynamics.setUniversity(dynamics.getString("university"));
+                }
+
+
+
                 meetDynamics.setJobTitle(dynamics.getString("job_title"));
                 meetDynamics.setLives(dynamics.getString("lives"));
                 meetDynamics.setSituation(dynamics.getInt("situation"));
