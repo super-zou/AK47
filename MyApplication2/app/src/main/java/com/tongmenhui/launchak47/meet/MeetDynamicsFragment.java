@@ -178,7 +178,7 @@ public class MeetDynamicsFragment extends BaseFragment {
             public void onResponse(Call call, Response response) throws IOException {
                 if(response.body() != null){
                     String responseText = response.body().string();
-                    Slog.d(TAG, "==========response : "+response.body());
+                    //Slog.d(TAG, "==========response : "+response.body());
                     Slog.d(TAG, "==========response text : "+responseText);
                     if(responseText != null){
                         getResponseText(responseText);
@@ -198,10 +198,10 @@ public class MeetDynamicsFragment extends BaseFragment {
 
         SharedPreferences preferences = getContext().getSharedPreferences("access_record", MODE_PRIVATE);
         String last = preferences.getString("last", "");
-        if(debug) Slog.d(TAG, "=======last:"+last+"=======current: "+timeStamp);
+        if(debug) Slog.d(TAG, "=======last:"+last);
 
         requstUrl = getDynamics_update_url;
-        requestBody = new FormBody.Builder().add("last", last).add("current", timeStamp).build();
+        requestBody = new FormBody.Builder().add("last", last).build();
 
         editor.putString("last", timeStamp);
         editor.apply();
@@ -249,7 +249,7 @@ public class MeetDynamicsFragment extends BaseFragment {
 
     public void set_meet_member_info(JSONArray dynamicsArray) {
         int length = dynamicsArray.length();
-        //Slog.d(TAG, "==========set_meet_member_info==========dynamics length: "+length);
+        Slog.d(TAG, "==========set_meet_member_info==========dynamics length: "+length);
         try {
             for (int i = 0; i < length; i++) {
                 JSONObject dynamics = dynamicsArray.getJSONObject(i);
@@ -259,38 +259,51 @@ public class MeetDynamicsFragment extends BaseFragment {
                 meetDynamics.setRealname(dynamics.getString("realname"));
                 meetDynamics.setUid(dynamics.getInt("uid"));
                 meetDynamics.setPictureUri(dynamics.getString("picture_uri"));
-                if(dynamics.has("birth_year")){
+
+                if(!dynamics.isNull("birth_year")){
                     meetDynamics.setBirthYear(dynamics.getInt("birth_year"));
                 }
-
-                if(dynamics.has("height")){
+                if(!dynamics.isNull("height")){
                     meetDynamics.setHeight(dynamics.getInt("height"));
                 }
-                if(dynamics.has("birth_year")){
-                    meetDynamics.setHeight(dynamics.getInt("height"));
-                }
-                if(dynamics.has("degree")){
+                if(!dynamics.isNull("degree")){
                     meetDynamics.setDegree(dynamics.getString("degree"));
                 }
-                if(dynamics.has("university")){
+                if(!dynamics.isNull("university")){
                     meetDynamics.setUniversity(dynamics.getString("university"));
                 }
-
-
-
-                meetDynamics.setJobTitle(dynamics.getString("job_title"));
-                meetDynamics.setLives(dynamics.getString("lives"));
-                meetDynamics.setSituation(dynamics.getInt("situation"));
+                if(!dynamics.isNull("job_title")){
+                    meetDynamics.setJobTitle(dynamics.getString("job_title"));
+                }
+                if(!dynamics.isNull("lives")){
+                    meetDynamics.setLives(dynamics.getString("lives"));
+                }
+                if(!dynamics.isNull("situation")){
+                    meetDynamics.setSituation(dynamics.getInt("situation"));
+                }
 
                 //requirement
-                meetDynamics.setAgeLower(dynamics.getInt("age_lower"));
-                meetDynamics.setAgeUpper(dynamics.getInt("age_upper"));
-                meetDynamics.setRequirementHeight(dynamics.getInt("requirement_height"));
-                meetDynamics.setRequirementDegree(dynamics.getString("requirement_degree"));
-                meetDynamics.setRequirementLives(dynamics.getString("requirement_lives"));
-                meetDynamics.setRequirementSex(dynamics.getInt("requirement_sex"));
-                meetDynamics.setIllustration(dynamics.getString("illustration"));
-
+                if(!dynamics.isNull("age_lower")){
+                    meetDynamics.setAgeLower(dynamics.getInt("age_lower"));
+                }
+                if(!dynamics.isNull("age_upper")){
+                    meetDynamics.setAgeUpper(dynamics.getInt("age_upper"));
+                }
+                if(!dynamics.isNull("requirement_height")){
+                    meetDynamics.setRequirementHeight(dynamics.getInt("requirement_height"));
+                }
+                if(!dynamics.isNull("requirement_degree")){
+                    meetDynamics.setRequirementDegree(dynamics.getString("requirement_degree"));
+                }
+                if(!dynamics.isNull("requirement_lives")){
+                    meetDynamics.setRequirementLives(dynamics.getString("requirement_lives"));
+                }
+                if(!dynamics.isNull("requirement_sex")){
+                    meetDynamics.setRequirementSex(dynamics.getInt("requirement_sex"));
+                }
+                if(!dynamics.isNull("illustration")){
+                    meetDynamics.setIllustration(dynamics.getString("illustration"));
+                }
                 //interact count
                 meetDynamics.setBrowseCount(dynamics.getInt("browse_count"));
                 meetDynamics.setLovedCount(dynamics.getInt("loved_count"));

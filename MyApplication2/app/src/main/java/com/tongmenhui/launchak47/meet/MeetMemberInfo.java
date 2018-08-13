@@ -15,36 +15,36 @@ public class MeetMemberInfo {
     //self condition
     public int uid = -1;
     private int selfSex = -1;
-    public String realname;
+    public String realname = "";
     public String pictureUri = "";
-    public int birthYear;
-    public int birthMonth;
-    public int birthDay;
-    public int height;
-    public String university;
+    public int birthYear = 0;
+    public int birthMonth = 0;
+    public int birthDay = 0;
+    public int height = 0;
+    public String university = "";
     public String degree = "";
-    public String jobTitle;
-    public String lives;
-    public int situation;
-    private String selfCondition;
+    public String jobTitle = "";
+    public String lives = "";
+    public int situation = 0;
+    private String selfCondition = "";
 
     //requirement
-    public int ageLower;
-    public int ageUpper;
-    public int requirementHeight;
-    public String requirementDegree;
-    public String requirementLives;
+    public int ageLower = 0;
+    public int ageUpper = 0;
+    public int requirementHeight = 0;
+    public String requirementDegree = "";
+    public String requirementLives = "";
     public int requirementSex = 0;
-    public String illustration;
+    public String illustration = "";
     public int self;
-    public int lovedCount;
-    public int loved;
-    public int praised;
-    public int praisedCount;
-    public String pictureChain;
-    public int browseCount;
+    public int lovedCount = 0;
+    public int loved = 0;
+    public int praised = 0;
+    public int praisedCount = 0;
+    public String pictureChain = "";
+    public int browseCount = 0;
 
-    public int requirementSet = -1;
+    public int requirementSet = 0;
 
     public static final String SEX_MALE = "男生";
     public static final String SEX_FEMALE = "女生";
@@ -182,11 +182,13 @@ public class MeetMemberInfo {
     }
 
     public int getAge(){
-        Calendar calendar= Calendar.getInstance();
-        return calendar.get(calendar.YEAR) - birthYear;
+        if(birthYear != 0){
+            Calendar calendar= Calendar.getInstance();
+            return calendar.get(calendar.YEAR) - birthYear;
+        }
+
+        return 0;
     }
-
-
 
     public void setAgeLower(int ageLower){
         this.ageLower = ageLower;
@@ -291,24 +293,61 @@ public class MeetMemberInfo {
     }
 
     public String getSelfCondition(int situation){
+        selfCondition = "";
+        if(getAge() != 0){
+            selfCondition = getAge()+"岁/";
+        }
+        if(height != 0){
+            selfCondition += height+"CM/";
+        }
+        if(!"".equals(getDegreeName(getDegree()))){
+            selfCondition += getDegreeName(getDegree());
+        }
+        //selfCondition = getAge()+"岁/"+height+"CM/"+getDegreeName(getDegree());
+        if(situation == 0){//for student
+            if(!"".equals(university)){
+                selfCondition += university;
+            }
 
-        selfCondition = getAge()+"岁/"+height+"CM/"+getDegreeName(getDegree());
-        if(situation ==0){//for student
-            selfCondition += "/"+university;
         }else{//for worker
-            selfCondition += "/"+ jobTitle;
+            if(!"".equals(jobTitle)){
+                selfCondition += jobTitle;
+            }
         }
         return selfCondition;
     }
 
     public String getRequirement(){
+
+        String requirement = "期待遇见";
+        if(getAgeLower() != 0 && getAgeUpper() != 0){
+            requirement += getAgeLower()+"~"+ getAgeUpper()+"岁,";
+        }else{// meet requirement not set, should return ""
+            return "";
+        }
+
+        if(getRequirementHeight() != 0){
+            requirement += getRequirementHeight()+"CM以上,";
+        }
+
+        if(!"".equals(getDegreeName(String.valueOf(getRequirementDegree())))){
+            requirement += getDegreeName(String.valueOf(getRequirementDegree()))+"以上,";
+        }
+
+        if(!"".equals(getRequirementLives())){
+            requirement +=  "住在 "+ getRequirementLives();
+        }
+
+        if(!"".equals(getRequirementSex())){
+            requirement += "的"+ getRequirementSex();
+        }
+        /*
         String requirement = "期待遇见："+ getAgeLower()+"~"+ getAgeUpper()+"岁,"
                 + getRequirementHeight()+"CM以上,"+getDegreeName(String.valueOf(getRequirementDegree()))+"以上,"
                 + "住在 "+ getRequirementLives()+"的"+ getRequirementSex();
+        */
 
         return requirement;
     }
-
-
 
 }
