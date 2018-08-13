@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,6 +56,7 @@ public class MeetDynamicsFragment extends BaseFragment {
     //+Begin add by xuchunping for use XRecyclerView support loadmore
     //private RecyclerView recyclerView;
     private static final int PAGE_SIZE = 6;
+    private int mTempSize;
     private XRecyclerView recyclerView;
     //-End add by xuchunping for use XRecyclerView support loadmore
     private DynamicsComment dynamicsComment;
@@ -135,26 +137,12 @@ public class MeetDynamicsFragment extends BaseFragment {
         recyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
             @Override
             public void onRefresh() {
-                new Handler().postDelayed(new Runnable(){
-                    public void run() {
-                        meetDynamicsListAdapter.notifyDataSetChanged();
-                        if(recyclerView != null)
-                            recyclerView.refreshComplete();
-                    }
-                }, 2000);            //refresh data here
+                updateData();
             }
 
             @Override
             public void onLoadMore() {
-                new Handler().postDelayed(new Runnable(){
-                    public void run() {
-                        //TODO test
-                        if(recyclerView != null) {
-                            recyclerView.loadMoreComplete();
-                            meetDynamicsListAdapter.notifyDataSetChanged();
-                        }
-                    }
-                }, 2000);
+                loadData();
             }
         });
         //-End added by xuchunping
@@ -171,8 +159,12 @@ public class MeetDynamicsFragment extends BaseFragment {
         editor.putString("last", timeStamp);
         editor.apply();
         requstUrl = dynamics_url;
-        requestBody = new FormBody.Builder().build();
-
+        int page = meetList.size() / PAGE_SIZE + 1;
+        requestBody = new FormBody.Builder()
+                .add("step", String.valueOf(PAGE_SIZE))
+                .add("page", String.valueOf(page))
+                .build();
+        Log.d(TAG, "loadData requestBody:"+requestBody.toString()+" page:"+page);
         HttpUtil.sendOkHttpRequest(getContext(), requstUrl, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
@@ -181,7 +173,14 @@ public class MeetDynamicsFragment extends BaseFragment {
                     //Slog.d(TAG, "==========response : "+response.body());
                     Slog.d(TAG, "==========response text : "+responseText);
                     if(responseText != null){
-                        getResponseText(responseText);
+                        List<MeetDynamics> tempList = getResponseText(responseText);
+                        mTempSize = 0;
+                        if (null != tempList) {
+                            mTempSize = tempList.size();
+                            meetList.addAll(tempList);
+                            Log.d(TAG, "getResponseText list.size:"+tempList.size());
+                        }
+                        handler.sendEmptyMessage(DONE);
                     }
                 }
             }
@@ -201,11 +200,15 @@ public class MeetDynamicsFragment extends BaseFragment {
         if(debug) Slog.d(TAG, "=======last:"+last);
 
         requstUrl = getDynamics_update_url;
-        requestBody = new FormBody.Builder().add("last", last).build();
+        int page = meetList.size() / PAGE_SIZE + 1;
+        requestBody = new FormBody.Builder().add("last", last)
+                .add("step", String.valueOf(PAGE_SIZE))
+                .add("page", String.valueOf(page))
+                .build();
 
         editor.putString("last", timeStamp);
         editor.apply();
-
+        Log.d(TAG, "updateData requestBody:"+requestBody.toString()+" page="+page);
         HttpUtil.sendOkHttpRequest(getContext(), requstUrl, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
@@ -214,7 +217,15 @@ public class MeetDynamicsFragment extends BaseFragment {
                     Slog.d(TAG, "==========response : "+response.body());
                     Slog.d(TAG, "==========response text : "+responseText);
                     if(responseText != null){
-                        getResponseText(responseText);
+                        List<MeetDynamics> tempList = getResponseText(responseText);
+                        if (null != tempList) {
+                            mTempSize = 0;
+                            meetList.clear();
+                            mTempSize = tempList.size();
+                            meetList.addAll(tempList);
+                            Log.d(TAG, "getResponseText list.size:"+tempList.size());
+                        }
+                        handler.sendEmptyMessage(UPDATE);
                     }
                 }
             }
@@ -226,7 +237,7 @@ public class MeetDynamicsFragment extends BaseFragment {
         });
     }
 
-    public void getResponseText(String responseText) {
+    public List<MeetDynamics> getResponseText(String responseText) {
 
         //Slog.d(TAG, "====================getResponseText====================");
 
@@ -235,7 +246,7 @@ public class MeetDynamicsFragment extends BaseFragment {
                 dynamics_response = new JSONObject(responseText);
                 dynamics = dynamics_response.getJSONArray("activity");
                 if (dynamics.length() > 0) {
-                    set_meet_member_info(dynamics);
+                    return set_meet_member_info(dynamics);
                 }else{
                     if(debug) Slog.d(TAG, "=============response content empty==============");
                 }
@@ -245,9 +256,11 @@ public class MeetDynamicsFragment extends BaseFragment {
         }else{
             if(debug) Slog.d(TAG, "=============response empty==============");
         }
+        return null;
     }
 
-    public void set_meet_member_info(JSONArray dynamicsArray) {
+    public List<MeetDynamics> set_meet_member_info(JSONArray dynamicsArray) {
+        List<MeetDynamics> tempList = new ArrayList<MeetDynamics>();
         int length = dynamicsArray.length();
         Slog.d(TAG, "==========set_meet_member_info==========dynamics length: "+length);
         try {
@@ -326,13 +339,13 @@ public class MeetDynamicsFragment extends BaseFragment {
 
                 getDynamicsComment(meetDynamics, dynamics.getLong("aid"));
 
-                meetList.add(meetDynamics);
+                tempList.add(meetDynamics);
 
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        handler.sendEmptyMessage(DONE);
+        return tempList;
 
     }
 
@@ -430,6 +443,18 @@ public class MeetDynamicsFragment extends BaseFragment {
             case DONE:
                 meetDynamicsListAdapter.setData(meetList);
                 meetDynamicsListAdapter.notifyDataSetChanged();
+                recyclerView.refreshComplete();
+
+                if (mTempSize < PAGE_SIZE) {
+                    //loading finished
+                    recyclerView.setNoMore(true);
+                    recyclerView.setLoadingMoreEnabled(false);
+                }
+                break;
+            case UPDATE:
+                meetDynamicsListAdapter.setData(meetList);
+                meetDynamicsListAdapter.notifyDataSetChanged();
+                recyclerView.refreshComplete();
                 break;
         }
     }
