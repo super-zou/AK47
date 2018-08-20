@@ -323,7 +323,9 @@ public class MeetDynamicsFragment extends BaseFragment {
                 meetDynamics.setPraisedCount(dynamics.getInt("praised_count"));
 
                 //dynamics content
-                meetDynamics.setCreated(dynamics.getLong("created"));
+                if(!dynamics.isNull("created")){
+                    meetDynamics.setCreated(dynamics.getLong("created"));
+                }
                 String content = dynamics.getString("content");
                 if (content != null && content.length() != 0) {
                     meetDynamics.setContent(content);

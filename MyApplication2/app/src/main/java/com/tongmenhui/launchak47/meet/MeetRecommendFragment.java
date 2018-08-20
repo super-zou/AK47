@@ -218,6 +218,8 @@ public class MeetRecommendFragment extends BaseFragment {
 
     }
 
+
+
     public void getResponseText(String responseText){
 
         if(debug) Slog.d(TAG, "====================getResponseText: "+responseText);
