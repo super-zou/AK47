@@ -159,7 +159,7 @@ public class MeetDynamicsFragment extends BaseFragment {
         editor.putString("last", timeStamp);
         editor.apply();
         requstUrl = dynamics_url;
-        int page = meetList.size() / PAGE_SIZE + 1;
+        int page = meetList.size() / PAGE_SIZE;
         requestBody = new FormBody.Builder()
                 .add("step", String.valueOf(PAGE_SIZE))
                 .add("page", String.valueOf(page))
@@ -200,7 +200,7 @@ public class MeetDynamicsFragment extends BaseFragment {
         if(debug) Slog.d(TAG, "=======last:"+last);
 
         requstUrl = getDynamics_update_url;
-        int page = meetList.size() / PAGE_SIZE + 1;
+        int page = 0;//meetList.size() / PAGE_SIZE + 1;
         requestBody = new FormBody.Builder().add("last", last)
                 .add("step", String.valueOf(PAGE_SIZE))
                 .add("page", String.valueOf(page))

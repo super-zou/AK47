@@ -173,7 +173,7 @@ public class MeetRecommendFragment extends BaseFragment {
     public void initContentView(){
         if(debug) Slog.d(TAG, "===============initConentView==============");
 
-        int page = meetList.size() / PAGE_SIZE + 1;
+        int page = meetList.size() / PAGE_SIZE ;
         RequestBody requestBody = new FormBody.Builder()
                 .add("step", String.valueOf(PAGE_SIZE))
                 .add("page", String.valueOf(page))

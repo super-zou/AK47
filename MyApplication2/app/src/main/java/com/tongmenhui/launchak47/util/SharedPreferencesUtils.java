@@ -8,6 +8,8 @@ public class SharedPreferencesUtils {
     private static final String SHARED_NAME = "account_info";
     private static final String ACCOUNT = "account";
     private static final String ACCOUNT_TYPE = "type";
+    private static final String LAST_RECOMMNED = "last_recommend";
+    private static final String LAST_DYNAMICS = "last_dynamics";
 
     private static SharedPreferences getSharePreferences(Context context){
         return context.getSharedPreferences(SHARED_NAME,  Context.MODE_PRIVATE);
@@ -27,5 +29,21 @@ public class SharedPreferencesUtils {
 
     public static void setAccountType(Context context, int type) {
         getSharePreferences(context).edit().putInt(ACCOUNT_TYPE, type).commit();
+    }
+
+    public static String getRecommendLast(Context context){
+        return getSharePreferences(context).getString(LAST_RECOMMNED, "");
+    }
+
+    public static void setRecommendLast(Context context, String last) {
+        getSharePreferences(context).edit().putString(LAST_RECOMMNED, last).commit();
+    }
+
+    public static String getDynamicsLast(Context context){
+        return getSharePreferences(context).getString(LAST_DYNAMICS, "");
+    }
+
+    public static void setDynamicsLast(Context context, String last) {
+        getSharePreferences(context).edit().putString(LAST_DYNAMICS, last).commit();
     }
 }
