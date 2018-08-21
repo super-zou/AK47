@@ -20,6 +20,7 @@ import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.adapter.MeetDynamicsListAdapter;
 import com.tongmenhui.launchak47.util.BaseFragment;
 import com.tongmenhui.launchak47.util.HttpUtil;
+import com.tongmenhui.launchak47.util.SharedPreferencesUtils;
 import com.tongmenhui.launchak47.util.Slog;
 
 import org.json.JSONArray;
@@ -72,9 +73,6 @@ public class MeetDynamicsFragment extends BaseFragment {
 
     String requstUrl = "";
     RequestBody requestBody = null;
-    long timeStampSec = System.currentTimeMillis()/1000;
-    String timeStamp = String.format("%010d", timeStampSec);
-    SharedPreferences.Editor editor = getContext().getSharedPreferences("access_record", MODE_PRIVATE).edit();
 
     private static final String dynamics_url = HttpUtil.DOMAIN + "?q=meet/activity/get";
     private static final String getDynamics_update_url = HttpUtil.DOMAIN + "?q=meet/activity/update";
@@ -156,8 +154,6 @@ public class MeetDynamicsFragment extends BaseFragment {
         if(debug) Slog.d(TAG, "===============initData==============");
         handler = new MyHandler(this);
 
-        editor.putString("last", timeStamp);
-        editor.apply();
         requstUrl = dynamics_url;
         int page = meetList.size() / PAGE_SIZE;
         requestBody = new FormBody.Builder()
@@ -192,11 +188,10 @@ public class MeetDynamicsFragment extends BaseFragment {
         });
     }
 
-    public void updateData(){
+    private void updateData(){
         handler = new MyHandler(this);
 
-        SharedPreferences preferences = getContext().getSharedPreferences("access_record", MODE_PRIVATE);
-        String last = preferences.getString("last", "");
+        String last = SharedPreferencesUtils.getDynamicsLast(getContext());
         if(debug) Slog.d(TAG, "=======last:"+last);
 
         requstUrl = getDynamics_update_url;
@@ -206,8 +201,6 @@ public class MeetDynamicsFragment extends BaseFragment {
                 .add("page", String.valueOf(page))
                 .build();
 
-        editor.putString("last", timeStamp);
-        editor.apply();
         Log.d(TAG, "updateData requestBody:"+requestBody.toString()+" page="+page);
         HttpUtil.sendOkHttpRequest(getContext(), requstUrl, requestBody, new Callback() {
             @Override
@@ -454,6 +447,9 @@ public class MeetDynamicsFragment extends BaseFragment {
                 }
                 break;
             case UPDATE:
+                //save last update timemills
+                SharedPreferencesUtils.setDynamicsLast(getContext(), String.valueOf(System.currentTimeMillis()/1000));
+
                 meetDynamicsListAdapter.setData(meetList);
                 meetDynamicsListAdapter.notifyDataSetChanged();
                 recyclerView.refreshComplete();

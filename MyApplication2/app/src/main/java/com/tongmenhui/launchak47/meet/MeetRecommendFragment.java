@@ -24,6 +24,7 @@ import com.tongmenhui.launchak47.adapter.MeetRecommendListAdapter;
 import com.tongmenhui.launchak47.util.BaseFragment;
 import com.tongmenhui.launchak47.util.HttpUtil;
 import com.tongmenhui.launchak47.util.ParseUtils;
+import com.tongmenhui.launchak47.util.SharedPreferencesUtils;
 import com.tongmenhui.launchak47.util.Slog;
 
 import org.json.JSONArray;
@@ -71,6 +72,7 @@ public class MeetRecommendFragment extends BaseFragment {
     private Boolean loaded = false;
     private Handler handler;
     private static final int DONE = 1;
+    private static final int UPDATE = 2;
 
     private static final String get_recommend_url = HttpUtil.DOMAIN + "?q=meet/recommend";
 
@@ -146,10 +148,7 @@ public class MeetRecommendFragment extends BaseFragment {
         recyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
             @Override
             public void onRefresh() {
-                recyclerView.refreshComplete();
-                if (meetList.size() == 0) {
-                    initContentView();
-                }
+                updateData();
             }
 
             @Override
@@ -211,14 +210,20 @@ public class MeetRecommendFragment extends BaseFragment {
                         recyclerView.setLoadingMoreEnabled(false);
                     }
                 }
+                else if (message.what == UPDATE) {
+                    //save last update timemills
+                    SharedPreferencesUtils.setRecommendLast(getContext(), String.valueOf(System.currentTimeMillis()/1000));
+
+                    meetRecommendListAdapter.setData(meetList);
+                    meetRecommendListAdapter.notifyDataSetChanged();
+                    recyclerView.refreshComplete();
+                }
             }
         };
 
        // getResponseText(responseText);
 
     }
-
-
 
     public void getResponseText(String responseText){
 
@@ -234,4 +239,44 @@ public class MeetRecommendFragment extends BaseFragment {
         handler.sendEmptyMessage(DONE);
         //-End added by xuchunping
     }
+
+    private void updateData(){
+        String last = SharedPreferencesUtils.getRecommendLast(getContext());
+        if(debug) Slog.d(TAG, "=======last:"+last);
+        Log.d(TAG, "=======last:"+last);
+
+        int page = 0;
+        RequestBody requestBody = new FormBody.Builder().add("last", last)
+                .add("step", String.valueOf(PAGE_SIZE))
+                .add("page", String.valueOf(0))
+                .build();
+
+        Log.d(TAG, "updateData requestBody:"+requestBody.toString());
+        HttpUtil.sendOkHttpRequest(getContext(), get_recommend_url, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if(response.body() != null){
+                    String responseText = response.body().string();
+                    Slog.d(TAG, "==========response text : "+responseText);
+                    if(responseText != null){
+                        List<MeetMemberInfo> tempList = ParseUtils.getMeetList(responseText);
+                        if (null != tempList && tempList.size() != 0) {
+                            mTempSize = 0;
+                            meetList.clear();
+                            mTempSize = tempList.size();
+                            meetList.addAll(tempList);
+                            Log.d(TAG, "getResponseText list.size:"+tempList.size());
+                        }
+                        handler.sendEmptyMessage(UPDATE);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+        });
+    }
+
 }

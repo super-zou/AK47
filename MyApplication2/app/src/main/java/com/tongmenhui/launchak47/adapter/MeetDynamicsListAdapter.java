@@ -2,7 +2,11 @@ package com.tongmenhui.launchak47.adapter;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,8 +25,19 @@ import com.tongmenhui.launchak47.util.HttpUtil;
 import com.tongmenhui.launchak47.util.RequestQueueSingleton;
 import com.tongmenhui.launchak47.util.Slog;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * Created by haichao.zou on 2017/11/20.
@@ -32,6 +47,14 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
 
     private static final String TAG = "MeetDynamicsListAdapter";
     private static final String  domain = "http://112.126.83.127:88";
+    //+ added by xuchunping
+    private static final String  EYE_URL = HttpUtil.DOMAIN + "";
+    private static final String  LOVED_URL = HttpUtil.DOMAIN + "?q=meet/love/add";
+    private static final String  THUMBS_URL = HttpUtil.DOMAIN + "?q=meet/activity/interact/praise/add";
+
+    private static final int UPDATE_LOVE_COUNT = 0;
+    private static final int UPDATE_THUMBS_COUNT = 1;
+    //- added by xuchunping
     private List<MeetDynamics> mMeetList;
     private String picture_url;
     private static Context mContext;
@@ -124,7 +147,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
     public void onBindViewHolder(final MeetDynamicsListAdapter.ViewHolder holder, int position){
 
        // Slog.d(TAG, "===========onBindViewHolder==============");
-        MeetDynamics meetDynamics = mMeetList.get(position);
+        final MeetDynamics meetDynamics = mMeetList.get(position);
         holder.realname.setText(meetDynamics.getRealname());
         holder.lives.setText(meetDynamics.getLives());
 
@@ -196,6 +219,20 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
         holder.dynamicsCommentCount.setText(String.valueOf(meetDynamics.getCommentCount()));
         holder.commentList.removeAllViews();
         setDynamicsCommentView(holder.commentList, meetDynamics.dynamicsCommentList);
+
+        //added by xuchunping
+        holder.lovedView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                love(meetDynamics);
+            }
+        });
+        holder.thumbsView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                thumbsUp(meetDynamics);
+            }
+        });
     }
 
     public void setDynamicsCommentView(LinearLayout linearLayout, List<DynamicsComment> dynamicsCommentList){
@@ -248,4 +285,88 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
         mMeetList.add(position, meetDynamics);
         notifyItemInserted(position);
     }
+
+    //+added by xuchunping
+    private static Handler mHandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case UPDATE_LOVE_COUNT:
+                    //TODO
+                    break;
+                case UPDATE_THUMBS_COUNT:
+                    //TODO
+                    break;
+            }
+            super.handleMessage(msg);
+        }
+    };
+
+    private static void sendMessage(int what, Object obj){
+        Message msg = mHandler.obtainMessage();
+        msg.what = what;
+        msg.obj = obj;
+        msg.sendToTarget();
+    }
+
+    private static void sendMessage(int what){
+        sendMessage(what, null);
+    }
+
+    private void thumbsUp(MeetDynamics meetDynamics){
+        RequestBody requestBody = new FormBody.Builder().add("aid", String.valueOf(meetDynamics.getAid())).build();
+        HttpUtil.sendOkHttpRequest(mContext, THUMBS_URL, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String responseText = response.body().string();
+                Log.d(TAG,"thumbsUp responseText"+responseText);
+                if (!TextUtils.isEmpty(responseText)) {
+                    try {
+                        JSONObject commentResponse = new JSONObject(responseText);
+                        boolean status = commentResponse.optBoolean("status");
+                        Log.d(TAG,"thumbsUp status"+status);
+                        if (status) {
+                            //TODO update thumbscount
+                            sendMessage(UPDATE_THUMBS_COUNT);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+            }
+        });
+    }
+
+    private void love(MeetDynamics meetDynamics){
+        RequestBody requestBody = new FormBody.Builder().add("aid", String.valueOf(meetDynamics.getAid())).build();
+        HttpUtil.sendOkHttpRequest(mContext, LOVED_URL, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String responseText = response.body().string();
+                Log.d(TAG,"love responseText"+responseText);
+                if (!TextUtils.isEmpty(responseText)) {
+                    try {
+                        JSONObject commentResponse = new JSONObject(responseText);
+                        boolean status = commentResponse.optBoolean("status");
+                        Log.d(TAG,"love status"+status);
+                        if (status) {
+                            //TODO update loveCount
+                            sendMessage(UPDATE_LOVE_COUNT);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+            }
+        });
+    }
+    //-added by xuchunping
 }
