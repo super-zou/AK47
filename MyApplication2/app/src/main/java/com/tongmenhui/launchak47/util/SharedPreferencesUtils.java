@@ -10,6 +10,7 @@ public class SharedPreferencesUtils {
     private static final String ACCOUNT_TYPE = "type";
     private static final String LAST_RECOMMNED = "last_recommend";
     private static final String LAST_DYNAMICS = "last_dynamics";
+    private static final String LAST_DISCOVERY = "last_discovery";
 
     private static SharedPreferences getSharePreferences(Context context){
         return context.getSharedPreferences(SHARED_NAME,  Context.MODE_PRIVATE);
@@ -45,5 +46,13 @@ public class SharedPreferencesUtils {
 
     public static void setDynamicsLast(Context context, String last) {
         getSharePreferences(context).edit().putString(LAST_DYNAMICS, last).commit();
+    }
+
+    public static String getDiscoveryLast(Context context){
+        return getSharePreferences(context).getString(LAST_DISCOVERY, "");
+    }
+
+    public static void setDiscoveryLast(Context context, String last) {
+        getSharePreferences(context).edit().putString(LAST_DISCOVERY, last).commit();
     }
 }

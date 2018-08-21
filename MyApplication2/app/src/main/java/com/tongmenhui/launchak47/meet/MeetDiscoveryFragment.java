@@ -21,6 +21,7 @@ import com.tongmenhui.launchak47.adapter.MeetRecommendListAdapter;
 import com.tongmenhui.launchak47.util.BaseFragment;
 import com.tongmenhui.launchak47.util.HttpUtil;
 import com.tongmenhui.launchak47.util.ParseUtils;
+import com.tongmenhui.launchak47.util.SharedPreferencesUtils;
 import com.tongmenhui.launchak47.util.Slog;
 
 import org.json.JSONArray;
@@ -69,6 +70,7 @@ public class MeetDiscoveryFragment extends BaseFragment {
     private Context mContext;
     private Handler handler;
     private static final int DONE = 1;
+    private static final int UPDATE = 2;
 
     private static final String  domain = "http://112.126.83.127:88/";
     private static final String get_discovery_url = HttpUtil.DOMAIN + "?q=meet/discovery/get";
@@ -136,10 +138,7 @@ public class MeetDiscoveryFragment extends BaseFragment {
         recyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
             @Override
             public void onRefresh() {
-                recyclerView.refreshComplete();
-                if (meetMemberList.size() == 0) {
-                    initContentView();
-                }
+                updateData();
             }
 
             @Override
@@ -162,7 +161,7 @@ public class MeetDiscoveryFragment extends BaseFragment {
     public void initContentView(){
         if(debug) Slog.d(TAG, "===============initConentView==============");
 
-        int page = meetMemberList.size() / PAGE_SIZE + 1;
+        int page = meetMemberList.size() / PAGE_SIZE;
         RequestBody requestBody = new FormBody.Builder()
                 .add("step", String.valueOf(PAGE_SIZE))
                 .add("page", String.valueOf(page))
@@ -197,6 +196,13 @@ public class MeetDiscoveryFragment extends BaseFragment {
                         recyclerView.setNoMore(true);
                         recyclerView.setLoadingMoreEnabled(false);
                     }
+                } else if (message.what == UPDATE) {
+                    //save last update timemills
+                    SharedPreferencesUtils.setDiscoveryLast(getContext(), String.valueOf(System.currentTimeMillis()/1000));
+
+                    meetListAdapter.setData(meetMemberList);
+                    meetListAdapter.notifyDataSetChanged();
+                    recyclerView.refreshComplete();
                 }
             }
         };
@@ -213,6 +219,40 @@ public class MeetDiscoveryFragment extends BaseFragment {
             Log.d(TAG, "getResponseText list.size:"+tempList.size());
         }
         handler.sendEmptyMessage(DONE);
-        //-End added by xuchunping
     }
+
+    private void updateData(){
+        String last = SharedPreferencesUtils.getDiscoveryLast(getContext());
+        RequestBody requestBody = new FormBody.Builder().add("last", last)
+                .add("step", String.valueOf(PAGE_SIZE))
+                .add("page", String.valueOf(0))
+                .build();
+        Log.d(TAG, "updateData requestBody:"+requestBody.toString()+" last:"+last);
+        HttpUtil.sendOkHttpRequest(getContext(), get_discovery_url, requestBody, new Callback(){
+            int check_login_user = 0;
+            String user_name;
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String responseText = response.body().string();
+                if(debug) Slog.d(TAG, "response : "+responseText);
+                Log.d(TAG, "response : "+responseText);
+                if(responseText != null){
+                    List<MeetMemberInfo> tempList = ParseUtils.getMeetDiscoveryList(responseText);
+                    if (null != tempList && tempList.size() != 0) {
+                        mTempSize = tempList.size();
+                        meetMemberList.clear();
+                        meetMemberList.addAll(tempList);
+                        Log.d(TAG, "getResponseText list.size:"+tempList.size());
+                    }
+                    handler.sendEmptyMessage(UPDATE);
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e){
+            }
+        });
+    }
+    //-End added by xuchunping
 }

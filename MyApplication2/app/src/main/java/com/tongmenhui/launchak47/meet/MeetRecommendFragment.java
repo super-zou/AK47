@@ -261,9 +261,8 @@ public class MeetRecommendFragment extends BaseFragment {
                     if(responseText != null){
                         List<MeetMemberInfo> tempList = ParseUtils.getMeetList(responseText);
                         if (null != tempList && tempList.size() != 0) {
-                            mTempSize = 0;
-                            meetList.clear();
                             mTempSize = tempList.size();
+                            meetList.clear();
                             meetList.addAll(tempList);
                             Log.d(TAG, "getResponseText list.size:"+tempList.size());
                         }
