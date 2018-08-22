@@ -70,6 +70,7 @@ public class MeetDynamicsFragment extends BaseFragment {
     private Handler handler;
     private static final int DONE = 1;
     private static final int UPDATE = 2;
+    private static final int UPDATE_COMMENT = 3;
 
     String requstUrl = "";
     RequestBody requestBody = null;
@@ -201,7 +202,7 @@ public class MeetDynamicsFragment extends BaseFragment {
                 .add("page", String.valueOf(page))
                 .build();
 
-        Log.d(TAG, "updateData requestBody:"+requestBody.toString()+" page="+page);
+        //Log.d(TAG, "updateData requestBody:"+requestBody.toString()+" page="+page);
         HttpUtil.sendOkHttpRequest(getContext(), requstUrl, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
@@ -332,20 +333,20 @@ public class MeetDynamicsFragment extends BaseFragment {
 
                 meetDynamics.setAid(dynamics.getLong("aid"));
 
-                getDynamicsComment(meetDynamics, dynamics.getLong("aid"));
+                getDynamicsComment(dynamics.getLong("aid"));
 
                 tempList.add(meetDynamics);
 
             }
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.d(TAG, "set_meet_member_info e=================="+e.toString());
         }
         return tempList;
 
     }
 
-    public void getDynamicsComment(final MeetDynamics meetDynamics, Long aid) {
-
+    public void getDynamicsComment(final Long aid) {
+        Log.d(TAG, "getDynamicsComment: aid:"+aid);
         RequestBody requestBody = new FormBody.Builder().add("aid", aid.toString()).build();
 
         HttpUtil.sendOkHttpRequest(getContext(), request_comment_url, requestBody, new Callback() {
@@ -354,6 +355,7 @@ public class MeetDynamicsFragment extends BaseFragment {
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
                 //Slog.d(TAG, "######################comment: "+responseText);
+                Log.d(TAG, "getDynamicsComment: "+responseText);
                 if (!TextUtils.isEmpty(responseText)) {
                     try {
                         commentResponse = new JSONObject(responseText);
@@ -362,9 +364,15 @@ public class MeetDynamicsFragment extends BaseFragment {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                    MeetDynamics meetDynamics = getMeetDynamicsById(aid);
                     if (commentArray.length() > 0) {
                         setDynamicsComment(meetDynamics, commentArray, praiseArray);
                     }
+                    if (null != praiseArray) {
+                        meetDynamics.setPraiseCount(praiseArray.length());
+                        Log.d(TAG, "getDynamicsComment +++++++++++++++ praiseArray.length(): "+praiseArray.length());
+                    }
+                    handler.sendEmptyMessage(UPDATE_COMMENT);
                 }
             }
 
@@ -454,7 +462,18 @@ public class MeetDynamicsFragment extends BaseFragment {
                 meetDynamicsListAdapter.notifyDataSetChanged();
                 recyclerView.refreshComplete();
                 break;
+            case UPDATE_COMMENT:
+                meetDynamicsListAdapter.notifyDataSetChanged();
+                break;
         }
     }
 
+    private MeetDynamics getMeetDynamicsById(long aId) {
+        for(int i = 0;i < meetList.size();i++) {
+            if (aId == meetList.get(i).getAid()) {
+                return meetList.get(i);
+            }
+        }
+        return null;
+    }
 }
