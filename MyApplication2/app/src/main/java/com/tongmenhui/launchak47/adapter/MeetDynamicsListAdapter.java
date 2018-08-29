@@ -255,7 +255,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
             @Override
             public void onClick(View view) {
                 //TODO change UI to show parised or no
-                if (1 == meetDynamics.getPraised()) {
+                if (1 == meetDynamics.getPraisedDynamics()) {
                     Toast.makeText(mContext, "You have praised it!", Toast.LENGTH_SHORT).show();
                     return;
                 }
