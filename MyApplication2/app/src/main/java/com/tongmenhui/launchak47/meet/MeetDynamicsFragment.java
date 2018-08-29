@@ -315,6 +315,8 @@ public class MeetDynamicsFragment extends BaseFragment {
                 meetDynamics.setBrowseCount(dynamics.getInt("browse_count"));
                 meetDynamics.setLovedCount(dynamics.getInt("loved_count"));
                 meetDynamics.setPraisedCount(dynamics.getInt("praised_count"));
+                meetDynamics.setLoved(dynamics.optInt("loved"));
+                meetDynamics.setPraised(dynamics.optInt("praised"));
 
                 //dynamics content
                 if(!dynamics.isNull("created")){
@@ -365,11 +367,14 @@ public class MeetDynamicsFragment extends BaseFragment {
                         e.printStackTrace();
                     }
                     MeetDynamics meetDynamics = getMeetDynamicsById(aid);
+                    meetDynamics.setPraisedDynamics(commentResponse.optInt("praised"));
                     if (commentArray.length() > 0) {
                         setDynamicsComment(meetDynamics, commentArray, praiseArray);
                     }
                     if (null != praiseArray) {
-                        meetDynamics.setPraiseCount(praiseArray.length());
+
+
+                        meetDynamics.setPraisedDynamicsCount(praiseArray.length());
                         Log.d(TAG, "getDynamicsComment +++++++++++++++ praiseArray.length(): "+praiseArray.length());
                     }
                     handler.sendEmptyMessage(UPDATE_COMMENT);
@@ -387,7 +392,7 @@ public class MeetDynamicsFragment extends BaseFragment {
     public void setDynamicsComment(MeetDynamics meetDynamics, JSONArray commentArray, JSONArray praiseArray) {
         JSONObject comment;
         JSONObject praise;
-        meetDynamics.setPraiseCount(praiseArray.length());
+        //meetDynamics.setPraiseCount(praiseArray.length());
         meetDynamics.setCommentCount(commentArray.length());
         //Slog.d(TAG, "==========comment:  " + commentArray);
         try {
@@ -463,6 +468,7 @@ public class MeetDynamicsFragment extends BaseFragment {
                 recyclerView.refreshComplete();
                 break;
             case UPDATE_COMMENT:
+                meetDynamicsListAdapter.setData(meetList);
                 meetDynamicsListAdapter.notifyDataSetChanged();
                 break;
         }

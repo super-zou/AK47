@@ -14,6 +14,7 @@ import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.NetworkImageView;
@@ -50,10 +51,11 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
     //+ added by xuchunping
     private static final String  EYE_URL = HttpUtil.DOMAIN + "";
     private static final String  LOVED_URL = HttpUtil.DOMAIN + "?q=meet/love/add";
-    private static final String  THUMBS_URL = HttpUtil.DOMAIN + "?q=meet/activity/interact/praise/add";
+    private static final String  PRAISED_URL = HttpUtil.DOMAIN + "?q=meet/praise/add";
+    private static final String  PRAISED_DYNAMICS_URL = HttpUtil.DOMAIN + "?q=meet/activity/interact/praise/add";
 
     private static final int UPDATE_LOVE_COUNT = 0;
-    private static final int UPDATE_THUMBS_COUNT = 1;
+    private static final int UPDATE_PRAISED_COUNT = 1;
     //- added by xuchunping
     private List<MeetDynamics> mMeetList;
     private String picture_url;
@@ -77,10 +79,13 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
         TextView illustration;
         TextView eyeView;
         TextView lovedView;
+        TextView lovedIcon;
         TextView thumbsView;
+        TextView thumbsUpIcon;
         TextView photosView;
         TextView contentView;
         TextView createdView;
+        TextView dynamicsPraiseIcon;
         TextView dynamicsPraiseCount;
         TextView dynamicsCommentCount;
         GridLayout dynamicsGrid;
@@ -98,11 +103,14 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
             illustration = (TextView) view.findViewById(R.id.illustration);
             eyeView = (TextView)view.findViewById(R.id.eye_statistics);
             lovedView = (TextView)view.findViewById(R.id.loved_statistics);
+            lovedIcon = (TextView)view.findViewById(R.id.loved_icon);
             thumbsView = (TextView)view.findViewById(R.id.thumbs_up_statistics);
+            thumbsUpIcon = (TextView)view.findViewById(R.id.thumbs_up_icon);
             photosView = (TextView)view.findViewById(R.id.photos_statistics);
             contentView = (TextView)view.findViewById(R.id.dynamics_content);
             dynamicsGrid = (GridLayout) view.findViewById(R.id.dynamics_picture_grid);
             createdView = (TextView) view.findViewById(R.id.dynamic_time);
+            dynamicsPraiseIcon = (TextView) view.findViewById(R.id.dynamic_praise_icon);
             dynamicsPraiseCount = (TextView) view.findViewById(R.id.dynamic_praise);
             dynamicsCommentCount = (TextView) view.findViewById(R.id.dynamic_comment_count);
 
@@ -215,22 +223,43 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
             holder.dynamicsGrid.addView(picture);
         }
         holder.createdView.setText(meetDynamics.getCreated());
-        holder.dynamicsPraiseCount.setText(String.valueOf(meetDynamics.getPraiseCount()));
+        holder.dynamicsPraiseCount.setText(String.valueOf(meetDynamics.getPraisedDynamicsCount()));
         holder.dynamicsCommentCount.setText(String.valueOf(meetDynamics.getCommentCount()));
         holder.commentList.removeAllViews();
         setDynamicsCommentView(holder.commentList, meetDynamics.dynamicsCommentList);
 
         //added by xuchunping
-        holder.lovedView.setOnClickListener(new View.OnClickListener() {
+        holder.lovedIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //TODO change UI to show loved or no
+                if (1 == meetDynamics.getLoved()){
+                    Toast.makeText(mContext, "You have loved it!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 love(meetDynamics);
             }
         });
-        holder.thumbsView.setOnClickListener(new View.OnClickListener() {
+        holder.thumbsUpIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                thumbsUp(meetDynamics);
+                //TODO change UI to show parised or no
+                if (1 == meetDynamics.getPraised()) {
+                    Toast.makeText(mContext, "You have praised it!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                praiseArchives(meetDynamics);
+            }
+        });
+        holder.dynamicsPraiseIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //TODO change UI to show parised or no
+                if (1 == meetDynamics.getPraised()) {
+                    Toast.makeText(mContext, "You have praised it!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                praiseDynamics(meetDynamics);
             }
         });
     }
@@ -287,47 +316,49 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
     }
 
     //+added by xuchunping
-    private static Handler mHandler = new Handler(){
+    private Handler mHandler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what){
                 case UPDATE_LOVE_COUNT:
-                    //TODO
+                    notifyDataSetChanged();
                     break;
-                case UPDATE_THUMBS_COUNT:
-                    //TODO
+                case UPDATE_PRAISED_COUNT:
+                    notifyDataSetChanged();
                     break;
             }
             super.handleMessage(msg);
         }
     };
 
-    private static void sendMessage(int what, Object obj){
+    private void sendMessage(int what, Object obj){
         Message msg = mHandler.obtainMessage();
         msg.what = what;
         msg.obj = obj;
         msg.sendToTarget();
     }
 
-    private static void sendMessage(int what){
+    private void sendMessage(int what){
         sendMessage(what, null);
     }
 
-    private void thumbsUp(MeetDynamics meetDynamics){
-        RequestBody requestBody = new FormBody.Builder().add("aid", String.valueOf(meetDynamics.getAid())).build();
-        HttpUtil.sendOkHttpRequest(mContext, THUMBS_URL, requestBody, new Callback() {
+    private void praiseArchives(final MeetDynamics meetDynamics){
+        RequestBody requestBody = new FormBody.Builder().build();
+        HttpUtil.sendOkHttpRequest(mContext, PRAISED_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
-                Log.d(TAG,"thumbsUp responseText"+responseText);
+                Log.d(TAG,"praiseArchives responseText:"+responseText);
                 if (!TextUtils.isEmpty(responseText)) {
                     try {
                         JSONObject commentResponse = new JSONObject(responseText);
-                        boolean status = commentResponse.optBoolean("status");
-                        Log.d(TAG,"thumbsUp status"+status);
-                        if (status) {
-                            //TODO update thumbscount
-                            sendMessage(UPDATE_THUMBS_COUNT);
+                        int status = commentResponse.optInt("status");
+                        Log.d(TAG,"praiseArchives status:"+status);
+                        if (1 == status) {
+                            MeetDynamics tempInfo = getMeetDynamicsById(meetDynamics.getAid());
+                            tempInfo.setPraised(1);
+                            tempInfo.setPraisedCount(meetDynamics.getPraisedCount() + 1);
+                            sendMessage(UPDATE_PRAISED_COUNT);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -341,8 +372,38 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
         });
     }
 
-    private void love(MeetDynamics meetDynamics){
+    private void praiseDynamics(final MeetDynamics meetDynamics){
         RequestBody requestBody = new FormBody.Builder().add("aid", String.valueOf(meetDynamics.getAid())).build();
+        HttpUtil.sendOkHttpRequest(mContext, PRAISED_DYNAMICS_URL, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String responseText = response.body().string();
+                Log.d(TAG,"praiseDynamics responseText:"+responseText);
+                if (!TextUtils.isEmpty(responseText)) {
+                    try {
+                        JSONObject commentResponse = new JSONObject(responseText);
+                        int status = commentResponse.optInt("status");
+                        Log.d(TAG,"praiseDynamics status:"+status);
+                        if (1 == status) {
+                            MeetDynamics tempInfo = getMeetDynamicsById(meetDynamics.getAid());
+                            tempInfo.setPraisedDynamics(1);
+                            tempInfo.setPraisedDynamicsCount(meetDynamics.getPraisedDynamicsCount() + 1);
+                            sendMessage(UPDATE_PRAISED_COUNT);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+            }
+        });
+    }
+
+    private void love(final MeetDynamics meetDynamics){
+        RequestBody requestBody = new FormBody.Builder().build();
         HttpUtil.sendOkHttpRequest(mContext, LOVED_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
@@ -351,10 +412,12 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
                 if (!TextUtils.isEmpty(responseText)) {
                     try {
                         JSONObject commentResponse = new JSONObject(responseText);
-                        boolean status = commentResponse.optBoolean("status");
+                        int status = commentResponse.optInt("status");
                         Log.d(TAG,"love status"+status);
-                        if (status) {
-                            //TODO update loveCount
+                        if (1 == status) {
+                            MeetDynamics tempInfo = getMeetDynamicsById(meetDynamics.getAid());
+                            tempInfo.setLoved(1);
+                            tempInfo.setLovedCount(meetDynamics.getLovedCount() + 1);
                             sendMessage(UPDATE_LOVE_COUNT);
                         }
                     } catch (JSONException e) {
@@ -367,6 +430,18 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
             public void onFailure(Call call, IOException e) {
             }
         });
+    }
+
+    private MeetDynamics getMeetDynamicsById(long aId) {
+        if (null == mMeetList){
+            return null;
+        }
+        for(int i = 0;i < mMeetList.size();i++) {
+            if (aId == mMeetList.get(i).getAid()) {
+                return mMeetList.get(i);
+            }
+        }
+        return null;
     }
     //-added by xuchunping
 }

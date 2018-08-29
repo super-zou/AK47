@@ -15,7 +15,8 @@ public class MeetDynamics extends MeetMemberInfo {
 
     private long aid;
     private long created;
-    private int praiseCount;
+    private int praisedDynamicsCount;
+    private int praisedDynamics;
     private int commentCount;
     private String content;
     private String activity_picture = "";
@@ -42,11 +43,11 @@ public class MeetDynamics extends MeetMemberInfo {
     public void setCreated(long created){
         this.created = created;
     }
-    public void setPraiseCount(int praiseCount){
-        this.praiseCount = praiseCount;
+    public void setPraisedDynamicsCount(int praiseCount){
+        this.praisedDynamicsCount = praiseCount;
     }
-    public int getPraiseCount(){
-        return praiseCount;
+    public int getPraisedDynamicsCount(){
+        return praisedDynamicsCount;
     }
     public void setCommentCount(int commentCount){
         this.commentCount = commentCount;
@@ -69,4 +70,11 @@ public class MeetDynamics extends MeetMemberInfo {
         return dynamicsCommentList;
     }
 
+    public void setPraisedDynamics(int praised){
+        this.praisedDynamics = praised;
+    }
+
+    public int getPraisedDynamics(){
+        return praisedDynamics;
+    }
 }
