@@ -1,12 +1,13 @@
 package com.tongmenhui.launchak47.meet;
 
+import java.io.Serializable;
 import java.util.Calendar;
 
 /**
  * Created by haichao.zou on 2017/9/15.
  */
 
-public class MeetMemberInfo {
+public class MeetMemberInfo implements Serializable{
 
     private static final String TAG = "MeetMemberInfo";
 

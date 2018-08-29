@@ -1,6 +1,7 @@
 package com.tongmenhui.launchak47.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.NetworkImageView;
 import com.tongmenhui.launchak47.R;
+import com.tongmenhui.launchak47.main.ArchivesActivity;
 import com.tongmenhui.launchak47.meet.MeetMemberInfo;
 import com.tongmenhui.launchak47.util.FontManager;
 import com.tongmenhui.launchak47.util.HttpUtil;
@@ -96,7 +98,7 @@ public class MeetRecommendListAdapter extends RecyclerView.Adapter<MeetRecommend
     public void onBindViewHolder(final ViewHolder holder, int position){
 
         Slog.d(TAG, "===========onBindViewHolder==============");
-        MeetMemberInfo meet = mMeetList.get(position);
+        final MeetMemberInfo meet = mMeetList.get(position);
        // Slog.d(TAG, "get name============="+meet.getRealname());
         holder.realname.setText(meet.getRealname());
         holder.lives.setText(meet.getLives());
@@ -120,7 +122,22 @@ public class MeetRecommendListAdapter extends RecyclerView.Adapter<MeetRecommend
         holder.thumbsView.setText(String.valueOf(meet.getPraisedCount()));
         holder.illustration.setText(meet.getIllustration());
 
-
+        //+Begin by xuchunping
+        holder.headUri.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mContext.startActivity(new Intent(mContext, ArchivesActivity.class));
+            }
+        });
+        holder.photosView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(mContext, ArchivesActivity.class);
+                intent.putExtra("meet", meet);
+                mContext.startActivity(intent);
+            }
+        });
+        //-End by xuchunping
     }
 
     @Override
