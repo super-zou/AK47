@@ -238,8 +238,9 @@ public class MeetDynamicsFragment extends BaseFragment {
         if (!TextUtils.isEmpty(responseText)) {
             try {
                 dynamics_response = new JSONObject(responseText);
-                dynamics = dynamics_response.getJSONArray("activity");
-                if (dynamics.length() > 0) {
+                //dynamics = dynamics_response.getJSONArray("activity");
+                dynamics = dynamics_response.optJSONArray("activity");
+                if (dynamics != null && dynamics.length() > 0) {
                     return set_meet_member_info(dynamics);
                 }else{
                     if(debug) Slog.d(TAG, "=============response content empty==============");
