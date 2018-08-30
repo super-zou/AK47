@@ -343,7 +343,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
     }
 
     private void praiseArchives(final MeetDynamics meetDynamics){
-        RequestBody requestBody = new FormBody.Builder().build();
+        RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(meetDynamics.getUid())).build();
         HttpUtil.sendOkHttpRequest(mContext, PRAISED_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
@@ -355,9 +355,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
                         int status = commentResponse.optInt("status");
                         Log.d(TAG,"praiseArchives status:"+status);
                         if (1 == status) {
-                            MeetDynamics tempInfo = getMeetDynamicsById(meetDynamics.getAid());
-                            tempInfo.setPraised(1);
-                            tempInfo.setPraisedCount(meetDynamics.getPraisedCount() + 1);
+                            updatePraisedByUid(meetDynamics.getUid(), 1);
                             sendMessage(UPDATE_PRAISED_COUNT);
                         }
                     } catch (JSONException e) {
@@ -403,7 +401,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
     }
 
     private void love(final MeetDynamics meetDynamics){
-        RequestBody requestBody = new FormBody.Builder().build();
+        RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(meetDynamics.getUid())).build();
         HttpUtil.sendOkHttpRequest(mContext, LOVED_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
@@ -415,9 +413,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
                         int status = commentResponse.optInt("status");
                         Log.d(TAG,"love status"+status);
                         if (1 == status) {
-                            MeetDynamics tempInfo = getMeetDynamicsById(meetDynamics.getAid());
-                            tempInfo.setLoved(1);
-                            tempInfo.setLovedCount(meetDynamics.getLovedCount() + 1);
+                            updateLovedByUid(meetDynamics.getUid(), 1);
                             sendMessage(UPDATE_LOVE_COUNT);
                         }
                     } catch (JSONException e) {
@@ -442,6 +438,34 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
             }
         }
         return null;
+    }
+
+    private void updateLovedByUid(int uid, int loved) {
+        if (null == mMeetList){
+            return;
+        }
+        MeetDynamics meet = null;
+        for(int i = 0;i < mMeetList.size();i++) {
+            if (uid == mMeetList.get(i).getUid()) {
+                meet = mMeetList.get(i);
+                meet.setLoved(loved);
+                meet.setLovedCount(meet.getLovedCount() + 1);
+            }
+        }
+    }
+
+    private void updatePraisedByUid(int uid, int praised) {
+        if (null == mMeetList){
+            return;
+        }
+        MeetDynamics meet = null;
+        for(int i = 0;i < mMeetList.size();i++) {
+            if (uid == mMeetList.get(i).getUid()) {
+                meet = mMeetList.get(i);
+                meet.setPraised(praised);
+                meet.setPraisedCount(meet.getPraisedCount() + 1);
+            }
+        }
     }
     //-added by xuchunping
 }
