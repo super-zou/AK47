@@ -32,12 +32,18 @@
 
     </RelativeLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler"
+        <com.jcodecraeer.xrecyclerview.XRecyclerView
+            android:id="@+id/recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    <TextView
+        android:id="@+id/empty_text"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp"
-        android:overScrollMode="never" />
+        android:layout_height="match_parent"
+        android:text="@string/dynamics_empty"
+        android:gravity="center"
+        android:visibility="gone"
+        android:background="@android:color/white"/>
 
 </LinearLayout>

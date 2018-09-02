@@ -1,16 +1,60 @@
 package com.tongmenhui.launchak47.main;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.ActionBar;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.jcodecraeer.xrecyclerview.ProgressStyle;
+import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.tongmenhui.launchak47.R;
+import com.tongmenhui.launchak47.adapter.ArchivesListAdapter;
+import com.tongmenhui.launchak47.meet.DynamicsComment;
+import com.tongmenhui.launchak47.meet.MeetDynamics;
 import com.tongmenhui.launchak47.meet.MeetMemberInfo;
+import com.tongmenhui.launchak47.util.HttpUtil;
+import com.tongmenhui.launchak47.util.Slog;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
+import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
+import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
 public class ArchivesActivity extends BaseAppCompatActivity {
     private static final String TAG = "ArchivesActivity";
+
+    private static final String DYNAMICS_URL = HttpUtil.DOMAIN + "?q=meet/activity/get";
+    private static final String COMMENT_URL = HttpUtil.DOMAIN + "?q=meet/activity/interact/get";
+    private List<MeetDynamics> mMeetList = new ArrayList<>();
+    private Handler handler;
+    private static final int DONE = 1;
+    private static final int UPDATE = 2;
+    private static final int UPDATE_COMMENT = 3;
+    private static final int PAGE_SIZE = 6;
+    private int mTempSize;
+    private XRecyclerView mXRecyclerView;
+    private ArchivesListAdapter mArchivesListAdapter;
+    private TextView mEmptyView;
 
     private ImageView backLeft;
     private MeetMemberInfo mMeetMember;
@@ -31,6 +75,309 @@ public class ArchivesActivity extends BaseAppCompatActivity {
             }
         });
         mMeetMember = (MeetMemberInfo) getIntent().getSerializableExtra("meet");
-        Log.d(TAG, "onCreate mMeetMember:"+mMeetMember+" "+getIntent().getStringExtra("test"));
+
+        mArchivesListAdapter = new ArchivesListAdapter(this);
+        mXRecyclerView = (XRecyclerView) findViewById(R.id.recyclerview);
+        mEmptyView = (TextView) findViewById(R.id.empty_text);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        mXRecyclerView.setLayoutManager(linearLayoutManager);
+        mXRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                mArchivesListAdapter.notifyDataSetChanged();
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+        });
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        mXRecyclerView.setLayoutManager(linearLayoutManager);
+
+        mXRecyclerView.setRefreshProgressStyle(BallSpinFadeLoader);
+        mXRecyclerView.setLoadingMoreProgressStyle(ProgressStyle.BallRotate);
+        //mRecyclerView.setArrowImageView(R.drawable.);
+
+        mXRecyclerView.getDefaultRefreshHeaderView().setRefreshTimeVisible(true);
+        mXRecyclerView.setPullRefreshEnabled(false);
+
+        mXRecyclerView.getDefaultFootView().setLoadingHint(getString(R.string.loading_pull_up_tip));
+        mXRecyclerView.getDefaultFootView().setNoMoreHint(getString(R.string.loading_no_more));
+        final int itemLimit = 5;
+
+        // When the item number of the screen number is list.size-2,we call the onLoadMore
+        mXRecyclerView.setLimitNumberToCallLoadMore(4);
+        mXRecyclerView.setRefreshProgressStyle(ProgressStyle.BallBeat);
+        mXRecyclerView.setLoadingMoreProgressStyle(ProgressStyle.SquareSpin);
+
+        mXRecyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
+            @Override
+            public void onRefresh() {
+//                updateData();
+            }
+
+            @Override
+            public void onLoadMore() {
+                loadData(mMeetMember.getUid());
+            }
+        });
+        mXRecyclerView.setAdapter(mArchivesListAdapter);
+
+        loadData(mMeetMember.getUid());
     }
+
+    private void loadData(int uid){
+        handler = new ArchivesActivity.MyHandler(this);
+
+        int page = mMeetList.size() / PAGE_SIZE;
+        FormBody requestBody = new FormBody.Builder()
+                .add("uid", String.valueOf(uid))
+                .add("step", String.valueOf(PAGE_SIZE))
+                .add("page", String.valueOf(page))
+                .build();
+        Log.d(TAG, "loadData requestBody:"+requestBody.toString()+" page:"+page+" uid:"+uid);
+        HttpUtil.sendOkHttpRequest(this, DYNAMICS_URL, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if(response.body() != null){
+                    String responseText = response.body().string();
+                    Slog.d(TAG, "==========response text : "+responseText);
+                    if(responseText != null){
+                        List<MeetDynamics> tempList = parseDynamics(responseText);
+                        mTempSize = 0;
+                        if (null != tempList) {
+                            mTempSize = tempList.size();
+                            mMeetList.addAll(tempList);
+                            Log.d(TAG, "getResponseText list.size:"+tempList.size());
+                        }
+                        handler.sendEmptyMessage(DONE);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+        });
+    }
+
+    private List<MeetDynamics> parseDynamics(String responseText){
+        List<MeetDynamics> tempList = new ArrayList<MeetDynamics>();
+        if (!TextUtils.isEmpty(responseText)) {
+            try {
+                JSONObject dynamics_response = new JSONObject(responseText);
+                JSONArray dynamicsArray = dynamics_response.getJSONArray("activity");
+                if (dynamicsArray.length() < 0) {
+                    return null;
+                }
+
+                int length = dynamicsArray.length();
+                MeetDynamics meetDynamics = null;
+                for (int i = 0; i < length; i++) {
+                    JSONObject dynamics = dynamicsArray.getJSONObject(i);
+                    meetDynamics = new MeetDynamics();
+
+                    meetDynamics.setRealname(dynamics.optString("realname"));
+                    meetDynamics.setUid(dynamics.optInt("uid"));
+                    meetDynamics.setPictureUri(dynamics.optString("picture_uri"));
+
+                    if(!dynamics.isNull("birth_year")){
+                        meetDynamics.setBirthYear(dynamics.optInt("birth_year"));
+                    }
+                    if(!dynamics.isNull("height")){
+                        meetDynamics.setHeight(dynamics.optInt("height"));
+                    }
+                    if(!dynamics.isNull("degree")){
+                        meetDynamics.setDegree(dynamics.optString("degree"));
+                    }
+                    if(!dynamics.isNull("university")){
+                        meetDynamics.setUniversity(dynamics.optString("university"));
+                    }
+                    if(!dynamics.isNull("job_title")){
+                        meetDynamics.setJobTitle(dynamics.optString("job_title"));
+                    }
+                    if(!dynamics.isNull("lives")){
+                        meetDynamics.setLives(dynamics.optString("lives"));
+                    }
+                    if(!dynamics.isNull("situation")){
+                        meetDynamics.setSituation(dynamics.optInt("situation"));
+                    }
+
+                    //requirement
+                    if(!dynamics.isNull("age_lower")){
+                        meetDynamics.setAgeLower(dynamics.optInt("age_lower"));
+                    }
+                    if(!dynamics.isNull("age_upper")){
+                        meetDynamics.setAgeUpper(dynamics.optInt("age_upper"));
+                    }
+                    if(!dynamics.isNull("requirement_height")){
+                        meetDynamics.setRequirementHeight(dynamics.optInt("requirement_height"));
+                    }
+                    if(!dynamics.isNull("requirement_degree")){
+                        meetDynamics.setRequirementDegree(dynamics.optString("requirement_degree"));
+                    }
+                    if(!dynamics.isNull("requirement_lives")){
+                        meetDynamics.setRequirementLives(dynamics.optString("requirement_lives"));
+                    }
+                    if(!dynamics.isNull("requirement_sex")){
+                        meetDynamics.setRequirementSex(dynamics.optInt("requirement_sex"));
+                    }
+                    if(!dynamics.isNull("illustration")){
+                        meetDynamics.setIllustration(dynamics.optString("illustration"));
+                    }
+                    //interact count
+                    meetDynamics.setBrowseCount(dynamics.optInt("browse_count"));
+                    meetDynamics.setLovedCount(dynamics.optInt("loved_count"));
+                    meetDynamics.setPraisedCount(dynamics.optInt("praised_count"));
+                    meetDynamics.setLoved(dynamics.optInt("loved"));
+                    meetDynamics.setPraised(dynamics.optInt("praised"));
+
+                    //dynamics content
+                    if(!dynamics.isNull("created")){
+                        meetDynamics.setCreated(dynamics.optLong("created"));
+                    }
+                    String content = dynamics.optString("content");
+                    if (content != null && content.length() != 0) {
+                        meetDynamics.setContent(content);
+                    }
+                    if (!dynamics.isNull("activity_picture")) {
+                        String dynamics_pictures = dynamics.optString("activity_picture");
+                        if (!"".equals(dynamics_pictures)) {
+                            meetDynamics.setActivityPicture(dynamics_pictures);
+                        }
+                    }
+
+                    meetDynamics.setAid(dynamics.optLong("aid"));
+                    getDynamicsComment(dynamics.optLong("aid"));
+                    tempList.add(meetDynamics);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return tempList;
+    }
+
+    static class MyHandler extends Handler {
+        WeakReference<ArchivesActivity> meetDynamicsFragmentWeakReference;
+
+        MyHandler(ArchivesActivity archivesActivity) {
+            meetDynamicsFragmentWeakReference = new WeakReference<ArchivesActivity>(archivesActivity);
+        }
+
+        @Override
+        public void handleMessage(Message message) {
+            ArchivesActivity archivesActivity = meetDynamicsFragmentWeakReference.get();
+            if(archivesActivity != null){
+                archivesActivity.handleMessage(message);
+            }
+        }
+    }
+
+    public void handleMessage(Message message){
+        switch (message.what){
+            case DONE:
+                mArchivesListAdapter.setData(mMeetList);
+                mArchivesListAdapter.notifyDataSetChanged();
+                mXRecyclerView.refreshComplete();
+
+                if (mTempSize < PAGE_SIZE) {
+                    //loading finished
+                    mXRecyclerView.setNoMore(true);
+                    mXRecyclerView.setLoadingMoreEnabled(false);
+                }
+                if (mMeetList.size() > 0) {
+                    mEmptyView.setVisibility(View.GONE);
+                    mXRecyclerView.setVisibility(View.VISIBLE);
+                } else {
+                    mEmptyView.setVisibility(View.VISIBLE);
+                    mXRecyclerView.setVisibility(View.GONE);
+                }
+                break;
+            case UPDATE:
+                break;
+            case UPDATE_COMMENT:
+                mArchivesListAdapter.setData(mMeetList);
+                mArchivesListAdapter.notifyDataSetChanged();
+                break;
+        }
+    }
+
+    private void getDynamicsComment(final Long aid) {
+        Log.d(TAG, "getDynamicsComment: aid:"+aid);
+        RequestBody requestBody = new FormBody.Builder().add("aid", aid.toString()).build();
+        HttpUtil.sendOkHttpRequest(this, COMMENT_URL, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String responseText = response.body().string();
+                Log.d(TAG, "getDynamicsComment: "+responseText);
+                JSONObject commentResponse = null;
+                JSONArray commentArray = null;
+                JSONArray praiseArray = null;
+                if (!TextUtils.isEmpty(responseText)) {
+                    try {
+                        commentResponse = new JSONObject(responseText);
+                        commentArray = commentResponse.getJSONArray("comment");
+                        praiseArray = commentResponse.getJSONArray("praise");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    MeetDynamics meetDynamics = getMeetDynamicsById(aid);
+                    meetDynamics.setPraisedDynamics(commentResponse.optInt("praised"));
+                    if (commentArray.length() > 0) {
+                        setDynamicsComment(meetDynamics, commentArray, praiseArray);
+                    }
+                    if (null != praiseArray) {
+
+
+                        meetDynamics.setPraisedDynamicsCount(praiseArray.length());
+                    }
+                    handler.sendEmptyMessage(UPDATE_COMMENT);
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.e(TAG, "onFailure e:"+e);
+            }
+        });
+
+    }
+
+    private void setDynamicsComment(MeetDynamics meetDynamics, JSONArray commentArray, JSONArray praiseArray) {
+        JSONObject comment;
+        JSONObject praise;
+        meetDynamics.setCommentCount(commentArray.length());
+        DynamicsComment dynamicsComment = null;
+        try {
+            for (int i = 0; i < commentArray.length(); i++) {
+                comment = commentArray.getJSONObject(i);
+                dynamicsComment = new DynamicsComment();
+                dynamicsComment.setType(comment.optInt("type"));
+                dynamicsComment.setCid(comment.optInt("cid"));
+                dynamicsComment.setAid(comment.optInt("aid"));
+                dynamicsComment.setPictureUrl(comment.optString("picture_uri"));
+                if (!comment.isNull("author_uid")) {
+                    dynamicsComment.setAuthorUid(comment.optLong("author_uid"));
+                }
+                if (!comment.isNull("author_name")) {
+                    dynamicsComment.setAuthorName(comment.optString("author_name"));
+                }
+                dynamicsComment.setCommenterName(comment.optString("commenter_name"));
+                dynamicsComment.setCommenterUid(comment.optLong("commenter_uid"));
+                dynamicsComment.setContent(comment.optString("content"));
+                meetDynamics.addComment(dynamicsComment);
+            }
+        }catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private MeetDynamics getMeetDynamicsById(long aId) {
+        for(int i = 0;i < mMeetList.size();i++) {
+            if (aId == mMeetList.get(i).getAid()) {
+                return mMeetList.get(i);
+            }
+        }
+        return null;
+    }
+
 }

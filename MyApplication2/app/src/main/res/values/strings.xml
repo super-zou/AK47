@@ -23,4 +23,5 @@
     <string name="register_password_confirm_hint">请输入重复密码</string>
     <string name="loading_pull_up_tip">上拉查看更多</string>
     <string name="loading_no_more">全部加载完成</string>
+    <string name="dynamics_empty">未发布动态</string>
 </resources>

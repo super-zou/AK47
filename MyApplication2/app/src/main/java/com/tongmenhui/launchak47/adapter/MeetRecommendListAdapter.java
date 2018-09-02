@@ -173,7 +173,10 @@ public class MeetRecommendListAdapter extends RecyclerView.Adapter<MeetRecommend
         holder.headUri.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mContext.startActivity(new Intent(mContext, ArchivesActivity.class));
+                Intent intent = new Intent(mContext, ArchivesActivity.class);
+                Log.d(TAG, "meet:"+meet+" uid:"+meet.getUid());
+                intent.putExtra("meet", meet);
+                mContext.startActivity(intent);
             }
         });
         holder.photosView.setOnClickListener(new View.OnClickListener() {
