@@ -1,5 +1,7 @@
 package com.tongmenhui.launchak47.main;
 
+import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -8,10 +10,15 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.NetworkImageView;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.tongmenhui.launchak47.R;
@@ -19,7 +26,9 @@ import com.tongmenhui.launchak47.adapter.ArchivesListAdapter;
 import com.tongmenhui.launchak47.meet.DynamicsComment;
 import com.tongmenhui.launchak47.meet.MeetDynamics;
 import com.tongmenhui.launchak47.meet.MeetMemberInfo;
+import com.tongmenhui.launchak47.util.FontManager;
 import com.tongmenhui.launchak47.util.HttpUtil;
+import com.tongmenhui.launchak47.util.RequestQueueSingleton;
 import com.tongmenhui.launchak47.util.Slog;
 
 import org.json.JSONArray;
@@ -37,7 +46,6 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
 public class ArchivesActivity extends BaseAppCompatActivity {
@@ -98,6 +106,13 @@ public class ArchivesActivity extends BaseAppCompatActivity {
         mXRecyclerView.getDefaultRefreshHeaderView().setRefreshTimeVisible(true);
         mXRecyclerView.setPullRefreshEnabled(false);
 
+        mXRecyclerView
+                .getDefaultRefreshHeaderView()
+                .setRefreshTimeVisible(true);
+        View header = LayoutInflater.from(this).inflate(R.layout.meet_item, (ViewGroup)findViewById(android.R.id.content),false);
+        updateHeader(header);
+        mXRecyclerView.addHeaderView(header);
+
         mXRecyclerView.getDefaultFootView().setLoadingHint(getString(R.string.loading_pull_up_tip));
         mXRecyclerView.getDefaultFootView().setNoMoreHint(getString(R.string.loading_no_more));
         final int itemLimit = 5;
@@ -121,6 +136,85 @@ public class ArchivesActivity extends BaseAppCompatActivity {
         mXRecyclerView.setAdapter(mArchivesListAdapter);
 
         loadData(mMeetMember.getUid());
+    }
+
+    private void updateHeader(View view){
+        TextView realname = (TextView) view.findViewById(R.id.name);
+        TextView lives = (TextView) view.findViewById(R.id.lives);
+        NetworkImageView headUri = (NetworkImageView) view.findViewById(R.id.recommend_head_uri);
+        TextView selfcondition = (TextView) view.findViewById(R.id.self_condition);
+        TextView requirement = (TextView) view.findViewById(R.id.partner_requirement);
+        TextView illustration = (TextView) view.findViewById(R.id.illustration);
+        TextView eyeView = (TextView)view.findViewById(R.id.eye_statistics);
+        TextView lovedView = (TextView)view.findViewById(R.id.loved_statistics);
+        TextView lovedIcon = (TextView)view.findViewById(R.id.loved_icon);
+        TextView thumbsView = (TextView)view.findViewById(R.id.thumbs_up_statistics);
+        TextView thumbsIcon = (TextView)view.findViewById(R.id.thumbs_up_icon);
+        TextView photosView = (TextView)view.findViewById(R.id.photos_statistics);
+
+        Typeface font = Typeface.createFromAsset(getAssets(), "fonts/fontawesome.ttf");
+        FontManager.markAsIconContainer(view.findViewById(R.id.meet_dynamics_item), font);
+
+        realname.setText(mMeetMember.getRealname());
+        lives.setText(mMeetMember.getLives());
+
+        if(!"".equals(mMeetMember.getPictureUri())){
+            String picture_url = HttpUtil.DOMAIN + "/"+mMeetMember.getPictureUri();
+            RequestQueue queue = RequestQueueSingleton.instance(this);
+
+            headUri.setTag(picture_url);
+            HttpUtil.loadByImageLoader(queue, headUri, picture_url, 110, 110);
+        }else{
+            headUri.setImageDrawable(getDrawable(R.mipmap.ic_launcher));
+        }
+
+
+        selfcondition.setText(mMeetMember.getSelfCondition(mMeetMember.getSituation()));
+        requirement.setText(mMeetMember.getRequirement());
+
+        eyeView.setText(String.valueOf(mMeetMember.getBrowseCount()));
+        lovedView.setText(String.valueOf(mMeetMember.getLovedCount()));
+        thumbsView.setText(String.valueOf(mMeetMember.getPraisedCount()));
+        illustration.setText(mMeetMember.getIllustration());
+
+//        lovedIcon.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if (1 == meet.getLoved()){
+//                    Toast.makeText(mContext, "You have loved it!", Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
+//                love(meet);
+//            }
+//        });
+//        thumbsIcon.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                //TODO change UI to show parised or no
+//                if (1 == meet.getPraised()) {
+//                    Toast.makeText(mContext, "You have praised it!", Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
+//                praiseArchives(meet);
+//            }
+//        });
+//        headUri.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent intent = new Intent(mContext, ArchivesActivity.class);
+//                Log.d(TAG, "meet:"+meet+" uid:"+meet.getUid());
+//                intent.putExtra("meet", meet);
+//                mContext.startActivity(intent);
+//            }
+//        });
+//        photosView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent intent = new Intent(mContext, ArchivesActivity.class);
+//                intent.putExtra("meet", meet);
+//                mContext.startActivity(intent);
+//            }
+//        });
     }
 
     private void loadData(int uid){
@@ -284,13 +378,13 @@ public class ArchivesActivity extends BaseAppCompatActivity {
                     mXRecyclerView.setNoMore(true);
                     mXRecyclerView.setLoadingMoreEnabled(false);
                 }
-                if (mMeetList.size() > 0) {
+                /*if (mMeetList.size() > 0) {
                     mEmptyView.setVisibility(View.GONE);
                     mXRecyclerView.setVisibility(View.VISIBLE);
                 } else {
                     mEmptyView.setVisibility(View.VISIBLE);
                     mXRecyclerView.setVisibility(View.GONE);
-                }
+                }*/
                 break;
             case UPDATE:
                 break;
