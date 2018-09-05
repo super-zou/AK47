@@ -10,6 +10,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -88,8 +90,12 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
         TextView dynamicsPraiseIcon;
         TextView dynamicsPraiseCount;
         TextView dynamicsCommentCount;
+        TextView dynamicsCommentIcon;
         GridLayout dynamicsGrid;
         LinearLayout commentList;
+        LinearLayout commentInputMeta;
+        EditText commentInput;
+        Button sendCommentBtn;
 
 
         public ViewHolder(View view){
@@ -113,8 +119,12 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
             dynamicsPraiseIcon = (TextView) view.findViewById(R.id.dynamic_praise_icon);
             dynamicsPraiseCount = (TextView) view.findViewById(R.id.dynamic_praise);
             dynamicsCommentCount = (TextView) view.findViewById(R.id.dynamic_comment_count);
+            dynamicsCommentIcon = (TextView) view.findViewById(R.id.dynamic_comment_icon);
 
             commentList = (LinearLayout) view.findViewById(R.id.dynamics_comments);
+            commentInputMeta = (LinearLayout) view.findViewById(R.id.comment_input_meta);
+            commentInput = view.findViewById(R.id.comment_input);
+            sendCommentBtn = view.findViewById(R.id.comment_send);
 
 
             Typeface font = Typeface.createFromAsset(mContext.getAssets(), "fonts/fontawesome.ttf");
@@ -260,6 +270,14 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
                     return;
                 }
                 praiseDynamics(meetDynamics);
+            }
+        });
+        holder.dynamicsCommentIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(holder.commentInputMeta.getVisibility() == View.GONE){
+                    holder.commentInputMeta.setVisibility(View.VISIBLE);
+                }
             }
         });
     }

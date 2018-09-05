@@ -176,6 +176,7 @@ public class MeetRecommendListAdapter extends RecyclerView.Adapter<MeetRecommend
                 Intent intent = new Intent(mContext, ArchivesActivity.class);
                 Log.d(TAG, "meet:"+meet+" uid:"+meet.getUid());
                 intent.putExtra("meet", meet);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
                 mContext.startActivity(intent);
             }
         });
@@ -184,6 +185,7 @@ public class MeetRecommendListAdapter extends RecyclerView.Adapter<MeetRecommend
             public void onClick(View view) {
                 Intent intent = new Intent(mContext, ArchivesActivity.class);
                 intent.putExtra("meet", meet);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
                 mContext.startActivity(intent);
             }
         });

@@ -105,7 +105,7 @@ public class ArchivesListAdapter  extends RecyclerView.Adapter<ArchivesListAdapt
                         LinearLayout linearLayout = new LinearLayout(mContext);
                         LinearLayout.LayoutParams layoutParams=new LinearLayout.LayoutParams(200, 200);
                         layoutParams.setMargins(4, 0, 0, 4);
-                        //将以上的属性赋给LinearLayout
+                        //LinearLayout
                         linearLayout.setLayoutParams(layoutParams);
 
                         NetworkImageView picture = new NetworkImageView(mContext);
