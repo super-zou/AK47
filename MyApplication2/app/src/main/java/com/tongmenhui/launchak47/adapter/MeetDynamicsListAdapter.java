@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridLayout;
@@ -275,11 +276,21 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
         holder.dynamicsCommentIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                int visibility = holder.commentInputMeta.getVisibility();
+                //Toast.makeText(mContext, "the visibility: "+visibility, Toast.LENGTH_SHORT).show();
                 if(holder.commentInputMeta.getVisibility() == View.GONE){
                     holder.commentInputMeta.setVisibility(View.VISIBLE);
+                    holder.commentInput.setFocusable(true);
+                    holder.commentInput.setFocusableInTouchMode(true);
+                    holder.commentInput.requestFocus();
+                    InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.showSoftInput(holder.commentInput,0);
+
                 }
             }
         });
+
+        sendDynamicsComment(holder);
     }
 
     public void setDynamicsCommentView(LinearLayout linearLayout, List<DynamicsComment> dynamicsCommentList){
@@ -486,4 +497,18 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
         }
     }
     //-added by xuchunping
+    /*
+     *Send the dynamics' comment, by zouhaichao 2018/9/7
+     */
+    private void sendDynamicsComment(final MeetDynamicsListAdapter.ViewHolder holder){
+        holder.sendCommentBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!TextUtils.isEmpty(holder.commentInput.getText())){
+                    Toast.makeText(mContext, "comment input: "+holder.commentInput.getText(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
 }
