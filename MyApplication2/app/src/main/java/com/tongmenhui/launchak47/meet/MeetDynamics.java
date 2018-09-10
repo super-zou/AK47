@@ -2,6 +2,8 @@ package com.tongmenhui.launchak47.meet;
 
 import android.widget.ArrayAdapter;
 
+import com.tongmenhui.launchak47.util.CommentDialogFragment;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -77,4 +79,6 @@ public class MeetDynamics extends MeetMemberInfo {
     public int getPraisedDynamics(){
         return praisedDynamics;
     }
+
+
 }

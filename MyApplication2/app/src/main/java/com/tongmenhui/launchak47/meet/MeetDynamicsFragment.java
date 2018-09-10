@@ -1,11 +1,16 @@
 package com.tongmenhui.launchak47.meet;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -19,6 +24,8 @@ import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.adapter.MeetDynamicsListAdapter;
 import com.tongmenhui.launchak47.util.BaseFragment;
+import com.tongmenhui.launchak47.util.CommentDialogFragment;
+import com.tongmenhui.launchak47.util.CommentDialogFragmentInterface;
 import com.tongmenhui.launchak47.util.HttpUtil;
 import com.tongmenhui.launchak47.util.SharedPreferencesUtils;
 import com.tongmenhui.launchak47.util.Slog;
@@ -46,7 +53,7 @@ import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
  * Created by haichao.zou on 2017/11/20.
  */
 
-public class MeetDynamicsFragment extends BaseFragment {
+public class MeetDynamicsFragment extends BaseFragment implements CommentDialogFragmentInterface{
 
     private static final boolean debug = true;
     private static final String TAG = "MeetDynamicsFragment";
@@ -145,10 +152,32 @@ public class MeetDynamicsFragment extends BaseFragment {
             }
         });
         //-End added by xuchunping
-        recyclerView.setAdapter(meetDynamicsListAdapter);
 
+        //callback from meetDynamicsListAdapter, when comment icon touched, will show comment input dialog
+        meetDynamicsListAdapter.setOnCommentClickListener(new CommentDialogFragmentInterface() {
+            @Override
+            public void onCommentClick() {
+                getCommentInputDialogFragment();
+            }
+        });
+
+        recyclerView.setAdapter(meetDynamicsListAdapter);
     }
 
+    @Override
+    public void onCommentClick(){
+
+    }
+    /*
+    @Override
+    public String getCommentText(){
+       return "";
+    }
+    @Override
+    public void setCommentText(String commentText){
+
+    }
+    */
 
     @Override
     protected void loadData(){
@@ -483,4 +512,10 @@ public class MeetDynamicsFragment extends BaseFragment {
         }
         return null;
     }
+
+    public void getCommentInputDialogFragment(){
+        CommentDialogFragment commentDialogFragment = new CommentDialogFragment();
+        commentDialogFragment.show(getFragmentManager(), "CommentDialogFragment");
+    }
+
 }

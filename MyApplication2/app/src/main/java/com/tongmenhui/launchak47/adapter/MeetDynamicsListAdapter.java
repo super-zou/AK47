@@ -1,9 +1,11 @@
 package com.tongmenhui.launchak47.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
@@ -24,6 +26,9 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.meet.DynamicsComment;
 import com.tongmenhui.launchak47.meet.MeetDynamics;
+import com.tongmenhui.launchak47.meet.MeetDynamicsFragment;
+import com.tongmenhui.launchak47.util.CommentDialogFragment;
+import com.tongmenhui.launchak47.util.CommentDialogFragmentInterface;
 import com.tongmenhui.launchak47.util.FontManager;
 import com.tongmenhui.launchak47.util.HttpUtil;
 import com.tongmenhui.launchak47.util.RequestQueueSingleton;
@@ -68,6 +73,9 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
     RequestQueue queueDynamics;
     //RequestQueue queueComment;
     RequestQueueSingleton requestQueueSingleton;
+    static MeetDynamicsFragment meetDynamicsFragment = new MeetDynamicsFragment();
+    private LocalBroadcastManager localBroadcastManager;
+    CommentDialogFragmentInterface commentDialogFragmentListener;
 
     public void setScrolling(boolean isScrolling){
         this.isScrolling = isScrolling;
@@ -94,10 +102,6 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
         TextView dynamicsCommentIcon;
         GridLayout dynamicsGrid;
         LinearLayout commentList;
-        LinearLayout commentInputMeta;
-        EditText commentInput;
-        Button sendCommentBtn;
-
 
         public ViewHolder(View view){
 
@@ -123,11 +127,6 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
             dynamicsCommentIcon = (TextView) view.findViewById(R.id.dynamic_comment_icon);
 
             commentList = (LinearLayout) view.findViewById(R.id.dynamics_comments);
-            commentInputMeta = (LinearLayout) view.findViewById(R.id.comment_input_meta);
-            commentInput = view.findViewById(R.id.comment_input);
-            sendCommentBtn = view.findViewById(R.id.comment_send);
-
-
             Typeface font = Typeface.createFromAsset(mContext.getAssets(), "fonts/fontawesome.ttf");
             FontManager.markAsIconContainer(view.findViewById(R.id.meet_dynamics_item), font);
 
@@ -139,6 +138,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
         mContext = context;
         mMeetList = new ArrayList<MeetDynamics>();
         requestQueueSingleton = new RequestQueueSingleton();
+
 
     }
 
@@ -273,24 +273,18 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
                 praiseDynamics(meetDynamics);
             }
         });
+
+        //when comment icon touched should show comment input dialog
         holder.dynamicsCommentIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int visibility = holder.commentInputMeta.getVisibility();
-                //Toast.makeText(mContext, "the visibility: "+visibility, Toast.LENGTH_SHORT).show();
-                if(holder.commentInputMeta.getVisibility() == View.GONE){
-                    holder.commentInputMeta.setVisibility(View.VISIBLE);
-                    holder.commentInput.setFocusable(true);
-                    holder.commentInput.setFocusableInTouchMode(true);
-                    holder.commentInput.requestFocus();
-                    InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.showSoftInput(holder.commentInput,0);
-
-                }
+                //show the comment input dialog fragment
+                commentDialogFragmentListener.onCommentClick();
             }
         });
 
-        sendDynamicsComment(holder);
+
+        //sendDynamicsComment(holder);
     }
 
     public void setDynamicsCommentView(LinearLayout linearLayout, List<DynamicsComment> dynamicsCommentList){
@@ -330,8 +324,6 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
                 }
             }
         }
-
-
     }
 
     @Override
@@ -501,14 +493,12 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
      *Send the dynamics' comment, by zouhaichao 2018/9/7
      */
     private void sendDynamicsComment(final MeetDynamicsListAdapter.ViewHolder holder){
-        holder.sendCommentBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!TextUtils.isEmpty(holder.commentInput.getText())){
-                    Toast.makeText(mContext, "comment input: "+holder.commentInput.getText(), Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+    }
+
+    public void setOnCommentClickListener (CommentDialogFragmentInterface commentDialogFragmentListener) {
+        this.commentDialogFragmentListener = commentDialogFragmentListener;
     }
 
 }
+
+
