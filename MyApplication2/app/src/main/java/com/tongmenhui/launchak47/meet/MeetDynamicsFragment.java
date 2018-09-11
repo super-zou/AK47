@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
@@ -53,14 +54,17 @@ import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
  * Created by haichao.zou on 2017/11/20.
  */
 
-public class MeetDynamicsFragment extends BaseFragment implements CommentDialogFragmentInterface{
+public class MeetDynamicsFragment extends BaseFragment{
 
     private static final boolean debug = true;
     private static final String TAG = "MeetDynamicsFragment";
     private View viewContent;
     private List<MeetDynamics> meetList = new ArrayList<>();
 
-    private MeetDynamics meetDynamics;
+    private MeetDynamics meetDynamics, mMeetDynamicsComment;
+    private String replyName;
+    private int commentType;//0 for comment, 1 for reply
+    private long replyUid;//reply user ID
     //+Begin add by xuchunping for use XRecyclerView support loadmore
     //private RecyclerView recyclerView;
     private static final int PAGE_SIZE = 6;
@@ -78,6 +82,7 @@ public class MeetDynamicsFragment extends BaseFragment implements CommentDialogF
     private static final int DONE = 1;
     private static final int UPDATE = 2;
     private static final int UPDATE_COMMENT = 3;
+    public static final int REQUEST_CODE = 1;
 
     String requstUrl = "";
     RequestBody requestBody = null;
@@ -85,6 +90,7 @@ public class MeetDynamicsFragment extends BaseFragment implements CommentDialogF
     private static final String dynamics_url = HttpUtil.DOMAIN + "?q=meet/activity/get";
     private static final String getDynamics_update_url = HttpUtil.DOMAIN + "?q=meet/activity/update";
     String request_comment_url = HttpUtil.DOMAIN + "?q=meet/activity/interact/get";
+    String request_comment_add = HttpUtil.DOMAIN + "?q=meet/activity/interact/comment/add";
 
     /*
     @Override
@@ -156,7 +162,18 @@ public class MeetDynamicsFragment extends BaseFragment implements CommentDialogF
         //callback from meetDynamicsListAdapter, when comment icon touched, will show comment input dialog
         meetDynamicsListAdapter.setOnCommentClickListener(new CommentDialogFragmentInterface() {
             @Override
-            public void onCommentClick() {
+            public void onCommentClick(MeetDynamics meetDynamicsComment, int type, String name, long uid) {
+                mMeetDynamicsComment = meetDynamicsComment;
+                commentType = type;
+                if(commentType == 1){
+                    if(!"".equals(name)){
+                        replyName = name;
+                    }
+                    if(uid > 0){
+                        replyUid = uid;
+                    }
+                }
+
                 getCommentInputDialogFragment();
             }
         });
@@ -164,10 +181,6 @@ public class MeetDynamicsFragment extends BaseFragment implements CommentDialogF
         recyclerView.setAdapter(meetDynamicsListAdapter);
     }
 
-    @Override
-    public void onCommentClick(){
-
-    }
     /*
     @Override
     public String getCommentText(){
@@ -378,7 +391,7 @@ public class MeetDynamicsFragment extends BaseFragment implements CommentDialogF
     }
 
     public void getDynamicsComment(final Long aid) {
-        Log.d(TAG, "getDynamicsComment: aid:"+aid);
+        //Log.d(TAG, "getDynamicsComment: aid:"+aid);
         RequestBody requestBody = new FormBody.Builder().add("aid", aid.toString()).build();
 
         HttpUtil.sendOkHttpRequest(getContext(), request_comment_url, requestBody, new Callback() {
@@ -515,7 +528,47 @@ public class MeetDynamicsFragment extends BaseFragment implements CommentDialogF
 
     public void getCommentInputDialogFragment(){
         CommentDialogFragment commentDialogFragment = new CommentDialogFragment();
+        commentDialogFragment.setTargetFragment(MeetDynamicsFragment.this, REQUEST_CODE);
         commentDialogFragment.show(getFragmentManager(), "CommentDialogFragment");
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == REQUEST_CODE){
+            String commentText = data.getStringExtra("comment_text");
+            Long aid = mMeetDynamicsComment.getAid();
+            Toast.makeText(getContext(), "onActivityResult: "+commentText+" aid: "+aid.toString(), Toast.LENGTH_LONG).show();
+            FormBody.Builder builder = new FormBody.Builder().add("aid", aid.toString()).add("type", String.valueOf(commentType));
+            if(commentType == 1){
+                builder.add("name", replyName).add("uid", String.valueOf(replyUid));
+            }
+
+            RequestBody requestBody = builder.build();
+
+            HttpUtil.sendOkHttpRequest(getContext(), request_comment_add, requestBody, new Callback() {
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    String responseText = response.body().string();
+                    Slog.d(TAG, "######################comment: "+responseText);
+                    if (!TextUtils.isEmpty(responseText)) {
+                        try {
+                            commentResponse = new JSONObject(responseText);
+                            commentArray = commentResponse.getJSONArray("comment");
+                            praiseArray = commentResponse.getJSONArray("praise");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(Call call, IOException e) {
+
+                }
+            });
+        }
     }
 
 }

@@ -1,8 +1,10 @@
 package com.tongmenhui.launchak47.util;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
@@ -19,6 +21,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.tongmenhui.launchak47.R;
+import com.tongmenhui.launchak47.meet.MeetDynamicsFragment;
 
 /**
  * Created by super-zou on 18-9-9.
@@ -113,8 +116,10 @@ public class CommentDialogFragment extends DialogFragment implements View.OnClic
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.comment_send:
-                Toast.makeText(getActivity(), commentEditText.getText().toString(), Toast.LENGTH_LONG).show();
-
+                //Toast.makeText(getActivity(), commentEditText.getText().toString(), Toast.LENGTH_LONG).show();
+                Intent intent= new Intent();
+                intent.putExtra("comment_text", commentEditText.getText().toString());
+                getTargetFragment().onActivityResult(MeetDynamicsFragment.REQUEST_CODE, Activity.RESULT_OK, intent);
                 commentEditText.setText("");
                 dismiss();
                 break;

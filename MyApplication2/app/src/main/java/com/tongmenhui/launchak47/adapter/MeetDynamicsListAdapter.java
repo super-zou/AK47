@@ -74,7 +74,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
     //RequestQueue queueComment;
     RequestQueueSingleton requestQueueSingleton;
     static MeetDynamicsFragment meetDynamicsFragment = new MeetDynamicsFragment();
-    private LocalBroadcastManager localBroadcastManager;
+    //private LocalBroadcastManager localBroadcastManager;
     CommentDialogFragmentInterface commentDialogFragmentListener;
 
     public void setScrolling(boolean isScrolling){
@@ -279,7 +279,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
             @Override
             public void onClick(View v) {
                 //show the comment input dialog fragment
-                commentDialogFragmentListener.onCommentClick();
+                commentDialogFragmentListener.onCommentClick(meetDynamics, 0, "", -1);
             }
         });
 
