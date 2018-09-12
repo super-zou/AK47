@@ -76,6 +76,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
     static MeetDynamicsFragment meetDynamicsFragment = new MeetDynamicsFragment();
     //private LocalBroadcastManager localBroadcastManager;
     CommentDialogFragmentInterface commentDialogFragmentListener;
+    private MeetDynamicsListAdapter.ViewHolder viewHolder;
 
     public void setScrolling(boolean isScrolling){
         this.isScrolling = isScrolling;
@@ -279,7 +280,9 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
             @Override
             public void onClick(View v) {
                 //show the comment input dialog fragment
+                viewHolder = holder;
                 commentDialogFragmentListener.onCommentClick(meetDynamics, 0, "", -1);
+
             }
         });
 
@@ -492,7 +495,10 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
     /*
      *Send the dynamics' comment, by zouhaichao 2018/9/7
      */
-    private void sendDynamicsComment(final MeetDynamicsListAdapter.ViewHolder holder){
+    public int getDynamicsItemPosition(){
+        int position = viewHolder.getAdapterPosition();
+        Toast.makeText(mContext, "position: "+position, Toast.LENGTH_SHORT).show();
+        return position;
     }
 
     public void setOnCommentClickListener (CommentDialogFragmentInterface commentDialogFragmentListener) {

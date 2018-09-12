@@ -82,7 +82,10 @@ public class MeetDynamicsFragment extends BaseFragment{
     private static final int DONE = 1;
     private static final int UPDATE = 2;
     private static final int UPDATE_COMMENT = 3;
+    private static final int ADD_COMMENT = 4;
     public static final int REQUEST_CODE = 1;
+
+    public int dynamicsItemPosition = -1;
 
     String requstUrl = "";
     RequestBody requestBody = null;
@@ -514,6 +517,12 @@ public class MeetDynamicsFragment extends BaseFragment{
                 meetDynamicsListAdapter.setData(meetList);
                 meetDynamicsListAdapter.notifyDataSetChanged();
                 break;
+            case ADD_COMMENT:
+                Slog.d(TAG, "========position: "+meetDynamicsListAdapter.getDynamicsItemPosition());
+                meetDynamicsListAdapter.notifyItemChanged(meetDynamicsListAdapter.getDynamicsItemPosition());
+                break;
+            default:
+                break;
         }
     }
 
@@ -540,7 +549,9 @@ public class MeetDynamicsFragment extends BaseFragment{
             String commentText = data.getStringExtra("comment_text");
             Long aid = mMeetDynamicsComment.getAid();
             Toast.makeText(getContext(), "onActivityResult: "+commentText+" aid: "+aid.toString(), Toast.LENGTH_LONG).show();
-            FormBody.Builder builder = new FormBody.Builder().add("aid", aid.toString()).add("type", String.valueOf(commentType));
+            FormBody.Builder builder = new FormBody.Builder().add("aid", aid.toString())
+                                                             .add("type", String.valueOf(commentType))
+                                                             .add("content", commentText);
             if(commentType == 1){
                 builder.add("name", replyName).add("uid", String.valueOf(replyUid));
             }
@@ -552,15 +563,19 @@ public class MeetDynamicsFragment extends BaseFragment{
                 public void onResponse(Call call, Response response) throws IOException {
                     String responseText = response.body().string();
                     Slog.d(TAG, "######################comment: "+responseText);
+                    /*
                     if (!TextUtils.isEmpty(responseText)) {
                         try {
                             commentResponse = new JSONObject(responseText);
                             commentArray = commentResponse.getJSONArray("comment");
-                            praiseArray = commentResponse.getJSONArray("praise");
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
+                    */
+
+                    handler.sendEmptyMessage(ADD_COMMENT);
+
                 }
 
                 @Override
@@ -570,5 +585,7 @@ public class MeetDynamicsFragment extends BaseFragment{
             });
         }
     }
+
+
 
 }
