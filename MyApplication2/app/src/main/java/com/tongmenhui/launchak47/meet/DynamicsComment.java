@@ -14,6 +14,7 @@ public class DynamicsComment {
     private String mCommenterName;
     private Long mCommenterUid;
     private String mContent;
+    private int mTimeStamp;
 
     public void setType(int type){
         mType = type;
@@ -69,6 +70,13 @@ public class DynamicsComment {
     }
     public String getContent(){
         return mContent;
+    }
+
+    public void setTimeStamp(int timeStamp){
+        mTimeStamp = timeStamp;
+    }
+    public int getTimeStamp(){
+        return mTimeStamp;
     }
 
 }

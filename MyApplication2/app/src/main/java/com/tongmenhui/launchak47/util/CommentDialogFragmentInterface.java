@@ -1,6 +1,7 @@
 package com.tongmenhui.launchak47.util;
 
 
+import com.tongmenhui.launchak47.meet.DynamicsComment;
 import com.tongmenhui.launchak47.meet.MeetDynamics;
 
 /**
@@ -8,7 +9,7 @@ import com.tongmenhui.launchak47.meet.MeetDynamics;
  */
 
 public interface CommentDialogFragmentInterface {
-    public void onCommentClick(MeetDynamics meetDynamics, int type, String name, long uid);
+    public void onCommentClick(MeetDynamics meetDynamics, DynamicsComment dynamicsComment);
     //public String getCommentText();
     //public void setCommentText(String commentText);
 }

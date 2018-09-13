@@ -1,23 +1,13 @@
 package com.tongmenhui.launchak47.meet;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
@@ -46,7 +36,6 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static android.content.Context.MODE_PRIVATE;
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
@@ -61,7 +50,8 @@ public class MeetDynamicsFragment extends BaseFragment{
     private View viewContent;
     private List<MeetDynamics> meetList = new ArrayList<>();
 
-    private MeetDynamics meetDynamics, mMeetDynamicsComment;
+    private MeetDynamics meetDynamics, mMeetDynamics;
+    private DynamicsComment mDynamicsComment;
     private String replyName;
     private int commentType;//0 for comment, 1 for reply
     private long replyUid;//reply user ID
@@ -165,18 +155,9 @@ public class MeetDynamicsFragment extends BaseFragment{
         //callback from meetDynamicsListAdapter, when comment icon touched, will show comment input dialog
         meetDynamicsListAdapter.setOnCommentClickListener(new CommentDialogFragmentInterface() {
             @Override
-            public void onCommentClick(MeetDynamics meetDynamicsComment, int type, String name, long uid) {
-                mMeetDynamicsComment = meetDynamicsComment;
-                commentType = type;
-                if(commentType == 1){
-                    if(!"".equals(name)){
-                        replyName = name;
-                    }
-                    if(uid > 0){
-                        replyUid = uid;
-                    }
-                }
-
+            public void onCommentClick(MeetDynamics meetDynamics, DynamicsComment dynamicsComment) {
+                mMeetDynamics = meetDynamics;
+                mDynamicsComment = dynamicsComment;
                 getCommentInputDialogFragment();
             }
         });
@@ -519,6 +500,7 @@ public class MeetDynamicsFragment extends BaseFragment{
                 break;
             case ADD_COMMENT:
                 Slog.d(TAG, "========position: "+meetDynamicsListAdapter.getDynamicsItemPosition());
+                meetDynamicsListAdapter.addDynamicsComment(mDynamicsComment);
                 meetDynamicsListAdapter.notifyItemChanged(meetDynamicsListAdapter.getDynamicsItemPosition());
                 break;
             default:
@@ -547,13 +529,15 @@ public class MeetDynamicsFragment extends BaseFragment{
 
         if(requestCode == REQUEST_CODE){
             String commentText = data.getStringExtra("comment_text");
-            Long aid = mMeetDynamicsComment.getAid();
+            Long aid = mMeetDynamics.getAid();
             Toast.makeText(getContext(), "onActivityResult: "+commentText+" aid: "+aid.toString(), Toast.LENGTH_LONG).show();
+            //mDynamicsComment.setContent(commentText);
             FormBody.Builder builder = new FormBody.Builder().add("aid", aid.toString())
-                                                             .add("type", String.valueOf(commentType))
+                                                             .add("type", String.valueOf(mDynamicsComment.getType()))
                                                              .add("content", commentText);
-            if(commentType == 1){
-                builder.add("name", replyName).add("uid", String.valueOf(replyUid));
+
+            if(mDynamicsComment.getType() == 1){
+                builder.add("name", mDynamicsComment.getAuthorName()).add("uid", String.valueOf(mDynamicsComment.getAuthorUid()));
             }
 
             RequestBody requestBody = builder.build();
@@ -563,16 +547,21 @@ public class MeetDynamicsFragment extends BaseFragment{
                 public void onResponse(Call call, Response response) throws IOException {
                     String responseText = response.body().string();
                     Slog.d(TAG, "######################comment: "+responseText);
-                    /*
+
                     if (!TextUtils.isEmpty(responseText)) {
                         try {
-                            commentResponse = new JSONObject(responseText);
-                            commentArray = commentResponse.getJSONArray("comment");
+                            JSONObject commentResponseObj = new JSONObject(responseText);
+                            //commentArray = commentResponse.getJSONArray("comment");
+                            mDynamicsComment.setPictureUrl(commentResponseObj.getString("picture_uri"));
+                            mDynamicsComment.setContent(commentResponseObj.getString("content"));
+                            mDynamicsComment.setAuthorName(commentResponseObj.getString("author_name"));
+                            mDynamicsComment.setAuthorUid(commentResponseObj.getLong("author_uid"));
+                            mDynamicsComment.setTimeStamp(commentResponseObj.getInt("timestamp"));
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
-                    */
+
 
                     handler.sendEmptyMessage(ADD_COMMENT);
 
