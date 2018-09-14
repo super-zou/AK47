@@ -333,9 +333,10 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
         }
     }
 
-    public void addDynamicsComment(DynamicsComment dynamicsComment){
+    public void addDynamicsComment(MeetDynamics meetDynamics, DynamicsComment dynamicsComment){
         View viewComment = View.inflate(mContext, R.layout.dynamics_comment_item, null);
         viewHolder.commentList.addView(viewComment);
+        meetDynamics.dynamicsCommentList.add(dynamicsComment);
 
         NetworkImageView imageView = (NetworkImageView)viewComment.findViewById(R.id.comment_picture);
         //imageView.setImageDrawable(mContext.getDrawable(R.mipmap.ic_launcher));
@@ -390,6 +391,9 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
                     break;
                 case UPDATE_COMMENT:
                     //notifyDataSetChanged();
+                    break;
+                default:
+                    break;
             }
             super.handleMessage(msg);
         }

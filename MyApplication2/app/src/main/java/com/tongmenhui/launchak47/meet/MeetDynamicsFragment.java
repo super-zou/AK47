@@ -500,8 +500,10 @@ public class MeetDynamicsFragment extends BaseFragment{
                 break;
             case ADD_COMMENT:
                 Slog.d(TAG, "========position: "+meetDynamicsListAdapter.getDynamicsItemPosition());
-                meetDynamicsListAdapter.addDynamicsComment(mDynamicsComment);
+                meetDynamicsListAdapter.addDynamicsComment(meetDynamics, mDynamicsComment);
                 meetDynamicsListAdapter.notifyItemChanged(meetDynamicsListAdapter.getDynamicsItemPosition());
+                //meetDynamicsListAdapter.setData(meetList);
+                meetDynamicsListAdapter.notifyDataSetChanged();
                 break;
             default:
                 break;
@@ -551,12 +553,14 @@ public class MeetDynamicsFragment extends BaseFragment{
                     if (!TextUtils.isEmpty(responseText)) {
                         try {
                             JSONObject commentResponseObj = new JSONObject(responseText);
-                            //commentArray = commentResponse.getJSONArray("comment");
-                            mDynamicsComment.setPictureUrl(commentResponseObj.getString("picture_uri"));
-                            mDynamicsComment.setContent(commentResponseObj.getString("content"));
-                            mDynamicsComment.setAuthorName(commentResponseObj.getString("author_name"));
-                            mDynamicsComment.setAuthorUid(commentResponseObj.getLong("author_uid"));
-                            mDynamicsComment.setTimeStamp(commentResponseObj.getInt("timestamp"));
+
+                            //JSONArray commentResponseArray = commentResponseObj.getJSONArray("comment");
+                            JSONObject comment = commentResponseObj.getJSONObject("comment");
+                            mDynamicsComment.setPictureUrl(comment.getString("picture_uri"));
+                            mDynamicsComment.setContent(comment.getString("content"));
+                            mDynamicsComment.setCommenterName(comment.getString("commenter_name"));
+                            mDynamicsComment.setCommenterUid(comment.getLong("commenter_uid"));
+                            mDynamicsComment.setTimeStamp(comment.getInt("created"));
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
