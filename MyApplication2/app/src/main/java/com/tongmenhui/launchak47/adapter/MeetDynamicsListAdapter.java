@@ -78,7 +78,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
     static MeetDynamicsFragment meetDynamicsFragment = new MeetDynamicsFragment();
     //private LocalBroadcastManager localBroadcastManager;
     CommentDialogFragmentInterface commentDialogFragmentListener;
-    private MeetDynamicsListAdapter.ViewHolder viewHolder;
+    private MeetDynamicsListAdapter.ViewHolder mViewHolder;
 
     public void setScrolling(boolean isScrolling){
         this.isScrolling = isScrolling;
@@ -282,7 +282,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
             @Override
             public void onClick(View v) {
                 //show the comment input dialog fragment
-                viewHolder = holder;
+                mViewHolder = holder;
                 DynamicsComment dynamicsComment = new DynamicsComment();//need singleton
                 dynamicsComment.setType(0);
                 commentDialogFragmentListener.onCommentClick(meetDynamics, dynamicsComment);
@@ -333,17 +333,17 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
         }
     }
 
-    public void addDynamicsComment(MeetDynamics meetDynamics, DynamicsComment dynamicsComment){
+    public void addDynamicsComment(DynamicsComment dynamicsComment){
         View viewComment = View.inflate(mContext, R.layout.dynamics_comment_item, null);
-        viewHolder.commentList.addView(viewComment);
-        meetDynamics.dynamicsCommentList.add(dynamicsComment);
+        mViewHolder.commentList.addView(viewComment);
+        //meetDynamics.dynamicsCommentList.addView(viewComment);
 
-        NetworkImageView imageView = (NetworkImageView)viewComment.findViewById(R.id.comment_picture);
+        //NetworkImageView imageView = (NetworkImageView)viewComment.findViewById(R.id.comment_picture);
         //imageView.setImageDrawable(mContext.getDrawable(R.mipmap.ic_launcher));
-        RequestQueue queueComment = requestQueueSingleton.instance(mContext);
+        //RequestQueue queueComment = requestQueueSingleton.instance(mContext);
         //Slog.d(TAG, "$$$$$$$$$$$$$$$$getUrl: "+dynamicsCommentList.get(i).getPictureUrl());
-        imageView.setTag(domain+"/"+dynamicsComment.getPictureUrl());
-        HttpUtil.loadByImageLoader(queueComment, imageView, domain+"/"+dynamicsComment.getPictureUrl(), 50, 50);
+        //imageView.setTag(domain+"/"+dynamicsComment.getPictureUrl());
+       // HttpUtil.loadByImageLoader(queueComment, imageView, domain+"/"+dynamicsComment.getPictureUrl(), 50, 50);
 
         if(dynamicsComment != null){
             if(dynamicsComment.getType() == 0){//comment
@@ -366,6 +366,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
             TextView content = (TextView)viewComment.findViewById(R.id.content);
             content.setText(dynamicsComment.getContent());
         }
+        Slog.d(TAG, "hahahah");
     }
 
     @Override
@@ -540,7 +541,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
      *Send the dynamics' comment, by zouhaichao 2018/9/7
      */
     public int getDynamicsItemPosition(){
-        int position = viewHolder.getAdapterPosition();
+        int position = mViewHolder.getAdapterPosition();
         Toast.makeText(mContext, "position: "+position, Toast.LENGTH_SHORT).show();
         return position;
     }

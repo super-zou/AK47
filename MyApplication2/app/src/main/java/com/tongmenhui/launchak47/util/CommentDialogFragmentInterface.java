@@ -1,6 +1,7 @@
 package com.tongmenhui.launchak47.util;
 
 
+import com.tongmenhui.launchak47.adapter.MeetDynamicsListAdapter;
 import com.tongmenhui.launchak47.meet.DynamicsComment;
 import com.tongmenhui.launchak47.meet.MeetDynamics;
 

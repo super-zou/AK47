@@ -52,9 +52,7 @@ public class MeetDynamicsFragment extends BaseFragment{
 
     private MeetDynamics meetDynamics, mMeetDynamics;
     private DynamicsComment mDynamicsComment;
-    private String replyName;
-    private int commentType;//0 for comment, 1 for reply
-    private long replyUid;//reply user ID
+    //private MeetDynamicsListAdapter.ViewHolder viewHolder;
     //+Begin add by xuchunping for use XRecyclerView support loadmore
     //private RecyclerView recyclerView;
     private static final int PAGE_SIZE = 6;
@@ -156,6 +154,7 @@ public class MeetDynamicsFragment extends BaseFragment{
         meetDynamicsListAdapter.setOnCommentClickListener(new CommentDialogFragmentInterface() {
             @Override
             public void onCommentClick(MeetDynamics meetDynamics, DynamicsComment dynamicsComment) {
+                //viewHolder = dynamicsViewHolder;
                 mMeetDynamics = meetDynamics;
                 mDynamicsComment = dynamicsComment;
                 getCommentInputDialogFragment();
@@ -500,10 +499,10 @@ public class MeetDynamicsFragment extends BaseFragment{
                 break;
             case ADD_COMMENT:
                 Slog.d(TAG, "========position: "+meetDynamicsListAdapter.getDynamicsItemPosition());
-                meetDynamicsListAdapter.addDynamicsComment(meetDynamics, mDynamicsComment);
+                meetDynamicsListAdapter.addDynamicsComment(mDynamicsComment);
                 meetDynamicsListAdapter.notifyItemChanged(meetDynamicsListAdapter.getDynamicsItemPosition());
                 //meetDynamicsListAdapter.setData(meetList);
-                meetDynamicsListAdapter.notifyDataSetChanged();
+                //meetDynamicsListAdapter.notifyDataSetChanged();
                 break;
             default:
                 break;
@@ -565,10 +564,7 @@ public class MeetDynamicsFragment extends BaseFragment{
                             e.printStackTrace();
                         }
                     }
-
-
                     handler.sendEmptyMessage(ADD_COMMENT);
-
                 }
 
                 @Override
