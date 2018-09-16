@@ -68,7 +68,7 @@ public class MeetDynamics extends MeetMemberInfo {
     public void addComment(DynamicsComment dynamicsComment){
         dynamicsCommentList.add(dynamicsComment);
     }
-    public List<DynamicsComment> getComment(){
+    public List<DynamicsComment> getComments(){
         return dynamicsCommentList;
     }
 

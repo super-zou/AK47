@@ -5,14 +5,12 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridLayout;
@@ -27,7 +25,6 @@ import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.meet.DynamicsComment;
 import com.tongmenhui.launchak47.meet.MeetDynamics;
 import com.tongmenhui.launchak47.meet.MeetDynamicsFragment;
-import com.tongmenhui.launchak47.util.CommentDialogFragment;
 import com.tongmenhui.launchak47.util.CommentDialogFragmentInterface;
 import com.tongmenhui.launchak47.util.FontManager;
 import com.tongmenhui.launchak47.util.HttpUtil;
@@ -65,18 +62,17 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
     private static final int UPDATE_LOVE_COUNT = 0;
     private static final int UPDATE_PRAISED_COUNT = 1;
     private static final int UPDATE_COMMENT = 2;
+
+    private static final int TYPE_COMMENT = 0;
+    private static final int TYPE_REPLY = 1;
     //- added by xuchunping
     private List<MeetDynamics> mMeetList;
-    //private DynamicsComment dynamicsComment;
     private String picture_url;
     private static Context mContext;
     private boolean isScrolling = false;
     RequestQueue queueMemberInfo;
     RequestQueue queueDynamics;
-    //RequestQueue queueComment;
     RequestQueueSingleton requestQueueSingleton;
-    static MeetDynamicsFragment meetDynamicsFragment = new MeetDynamicsFragment();
-    //private LocalBroadcastManager localBroadcastManager;
     CommentDialogFragmentInterface commentDialogFragmentListener;
     private MeetDynamicsListAdapter.ViewHolder mViewHolder;
 
@@ -168,7 +164,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
     @Override
     public void onBindViewHolder(final MeetDynamicsListAdapter.ViewHolder holder, int position){
 
-       // Slog.d(TAG, "===========onBindViewHolder==============");
+        Slog.d(TAG, "===========onBindViewHolder==============");
         final MeetDynamics meetDynamics = mMeetList.get(position);
         holder.realname.setText(meetDynamics.getRealname());
         holder.lives.setText(meetDynamics.getLives());
@@ -238,9 +234,9 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
         }
         holder.createdView.setText(meetDynamics.getCreated());
         holder.dynamicsPraiseCount.setText(String.valueOf(meetDynamics.getPraisedDynamicsCount()));
-        holder.dynamicsCommentCount.setText(String.valueOf(meetDynamics.getCommentCount()));
+        //holder.dynamicsCommentCount.setText(String.valueOf(meetDynamics.getCommentCount()));
         holder.commentList.removeAllViews();
-        setDynamicsCommentView(holder.commentList, meetDynamics.dynamicsCommentList);
+        setDynamicsCommentView(holder, meetDynamics.getComments());
 
         //added by xuchunping
         holder.lovedIcon.setOnClickListener(new View.OnClickListener() {
@@ -277,7 +273,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
             }
         });
 
-        //when comment icon touched should show comment input dialog
+        //when comment icon touched should show comment input dialog fragment
         holder.dynamicsCommentIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -286,20 +282,45 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
                 DynamicsComment dynamicsComment = new DynamicsComment();//need singleton
                 dynamicsComment.setType(0);
                 commentDialogFragmentListener.onCommentClick(meetDynamics, dynamicsComment);
-
             }
         });
 
+        /*+Begin when comment item touched, should show comment input dialog fragment*/
+        ViewGroup vp = holder.commentList;
+        int count = vp.getChildCount();
+        for (int i = 0; i < count; i++){
+            View view = vp.getChildAt(i);
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mViewHolder = holder;
+                    int tag = (int)v.getTag();
 
-        //sendDynamicsComment(holder);
+                    TextView author_name;
+                    if(tag == TYPE_COMMENT){
+                        author_name = v.findViewById(R.id.author_name);
+                    }else{//TYPE_REPLY
+                        author_name = v.findViewById(R.id.commenter_name);
+                    }
+
+                    DynamicsComment dynamicsComment = new DynamicsComment();//need singleton
+                    dynamicsComment.setType(TYPE_REPLY);
+                    //Slog.d(TAG, "==========tag: "+tag+"  author_name: "+author_name.getText());
+                    dynamicsComment.setAuthorName(author_name.getText().toString());
+                    dynamicsComment.setAuthorUid((Long)author_name.getTag());
+                    commentDialogFragmentListener.onCommentClick(meetDynamics, dynamicsComment);
+                }
+            });
+        }
+        /**/
     }
 
-    public void setDynamicsCommentView(LinearLayout commentListView, List<DynamicsComment> dynamicsCommentList){
-        //Slog.d(TAG, "*************dynamicsCommentList : "+dynamicsCommentList);
+    public void setDynamicsCommentView(final ViewHolder viewHolder, List<DynamicsComment> dynamicsCommentList){
+        //Slog.d(TAG, "*************setDynamicsCommentView : "+dynamicsCommentList);
         if(dynamicsCommentList.size() != 0){
             for (int i=0; i<dynamicsCommentList.size(); i++){
-                View viewComment = View.inflate(mContext, R.layout.dynamics_comment_item, null);
-                commentListView.addView(viewComment);
+                final View viewComment = View.inflate(mContext, R.layout.dynamics_comment_item, null);
+                viewHolder.commentList.addView(viewComment);
 
                 NetworkImageView imageView = (NetworkImageView)viewComment.findViewById(R.id.comment_picture);
                 //imageView.setImageDrawable(mContext.getDrawable(R.mipmap.ic_launcher));
@@ -309,64 +330,32 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
                 HttpUtil.loadByImageLoader(queueComment, imageView, domain+"/"+dynamicsCommentList.get(i).getPictureUrl(), 50, 50);
 
                 if(dynamicsCommentList.get(i) != null){
+                    viewComment.setTag(dynamicsCommentList.get(i).getType());
                     if(dynamicsCommentList.get(i).getType() == 0){//comment
                         TextView author = (TextView)viewComment.findViewById(R.id.author_name);
-                        Slog.d(TAG, "$$$$$$$$$$$$$$$$$$$$$comment author: "+dynamicsCommentList.get(i).getCommenterName());
+                        //Slog.d(TAG, "$$$$$$$$$$$$$$$$$$$$$comment author: "+dynamicsCommentList.get(i).getCommenterName());
                         author.setText(dynamicsCommentList.get(i).getCommenterName());
+                        author.setTag(dynamicsCommentList.get(i).getCommenterUid());
 
                     }else{//reply
                         TextView commenter = (TextView)viewComment.findViewById(R.id.commenter_name);
                         commenter.setVisibility(View.VISIBLE);
                         commenter.setText(dynamicsCommentList.get(i).getCommenterName());
+                        commenter.setTag(dynamicsCommentList.get(i).getCommenterUid());
 
                         TextView replyFlag = (TextView)viewComment.findViewById(R.id.reply_flag);
                         replyFlag.setVisibility(View.VISIBLE);
 
                         TextView author = (TextView)viewComment.findViewById(R.id.author_name);
                         author.setText(dynamicsCommentList.get(i).getAuthorName());
+                        author.setTag(dynamicsCommentList.get(i).getAuthorUid());
                     }
-                    Slog.d(TAG, "====================comment content: "+dynamicsCommentList.get(i).getContent());
+                    //Slog.d(TAG, "====================comment content: "+dynamicsCommentList.get(i).getContent());
                     TextView content = (TextView)viewComment.findViewById(R.id.content);
                     content.setText(dynamicsCommentList.get(i).getContent());
                 }
             }
         }
-    }
-
-    public void addDynamicsComment(DynamicsComment dynamicsComment){
-        View viewComment = View.inflate(mContext, R.layout.dynamics_comment_item, null);
-        mViewHolder.commentList.addView(viewComment);
-        //meetDynamics.dynamicsCommentList.addView(viewComment);
-
-        //NetworkImageView imageView = (NetworkImageView)viewComment.findViewById(R.id.comment_picture);
-        //imageView.setImageDrawable(mContext.getDrawable(R.mipmap.ic_launcher));
-        //RequestQueue queueComment = requestQueueSingleton.instance(mContext);
-        //Slog.d(TAG, "$$$$$$$$$$$$$$$$getUrl: "+dynamicsCommentList.get(i).getPictureUrl());
-        //imageView.setTag(domain+"/"+dynamicsComment.getPictureUrl());
-       // HttpUtil.loadByImageLoader(queueComment, imageView, domain+"/"+dynamicsComment.getPictureUrl(), 50, 50);
-
-        if(dynamicsComment != null){
-            if(dynamicsComment.getType() == 0){//comment
-                TextView author = (TextView)viewComment.findViewById(R.id.author_name);
-                Slog.d(TAG, "$$$$$$$$$$$$$$$$$$$$$comment author: "+dynamicsComment.getCommenterName());
-                author.setText(dynamicsComment.getCommenterName());
-
-            }else{//reply
-                TextView commenter = (TextView)viewComment.findViewById(R.id.commenter_name);
-                commenter.setVisibility(View.VISIBLE);
-                commenter.setText(dynamicsComment.getCommenterName());
-
-                TextView replyFlag = (TextView)viewComment.findViewById(R.id.reply_flag);
-                replyFlag.setVisibility(View.VISIBLE);
-
-                TextView author = (TextView)viewComment.findViewById(R.id.author_name);
-                author.setText(dynamicsComment.getAuthorName());
-            }
-            Slog.d(TAG, "====================comment content: "+dynamicsComment.getContent());
-            TextView content = (TextView)viewComment.findViewById(R.id.content);
-            content.setText(dynamicsComment.getContent());
-        }
-        Slog.d(TAG, "hahahah");
     }
 
     @Override
@@ -417,12 +406,12 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
-                Log.d(TAG,"praiseArchives responseText:"+responseText);
+                //Log.d(TAG,"praiseArchives responseText:"+responseText);
                 if (!TextUtils.isEmpty(responseText)) {
                     try {
                         JSONObject commentResponse = new JSONObject(responseText);
                         int status = commentResponse.optInt("status");
-                        Log.d(TAG,"praiseArchives status:"+status);
+                        //Log.d(TAG,"praiseArchives status:"+status);
                         if (1 == status) {
                             updatePraisedByUid(meetDynamics.getUid(), 1);
                             sendMessage(UPDATE_PRAISED_COUNT);
@@ -537,15 +526,18 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
         }
     }
     //-added by xuchunping
+
     /*
      *Send the dynamics' comment, by zouhaichao 2018/9/7
      */
     public int getDynamicsItemPosition(){
+        //int position = getViewHolder().getAdapterPosition();
         int position = mViewHolder.getAdapterPosition();
-        Toast.makeText(mContext, "position: "+position, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(mContext, "position: "+position, Toast.LENGTH_SHORT).show();
+        Slog.d(TAG, "========getDynamicsItemPosition: "+position);
         return position;
     }
-
+    //register the commentDialogFragmentListener callback, add by zouhaichao 2018/9/16
     public void setOnCommentClickListener (CommentDialogFragmentInterface commentDialogFragmentListener) {
         this.commentDialogFragmentListener = commentDialogFragmentListener;
     }

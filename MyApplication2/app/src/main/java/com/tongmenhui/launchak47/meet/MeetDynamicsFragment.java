@@ -50,7 +50,7 @@ public class MeetDynamicsFragment extends BaseFragment{
     private View viewContent;
     private List<MeetDynamics> meetList = new ArrayList<>();
 
-    private MeetDynamics meetDynamics, mMeetDynamics;
+    private MeetDynamics mMeetDynamics;
     private DynamicsComment mDynamicsComment;
     //private MeetDynamicsListAdapter.ViewHolder viewHolder;
     //+Begin add by xuchunping for use XRecyclerView support loadmore
@@ -72,8 +72,6 @@ public class MeetDynamicsFragment extends BaseFragment{
     private static final int UPDATE_COMMENT = 3;
     private static final int ADD_COMMENT = 4;
     public static final int REQUEST_CODE = 1;
-
-    public int dynamicsItemPosition = -1;
 
     String requstUrl = "";
     RequestBody requestBody = null;
@@ -163,17 +161,6 @@ public class MeetDynamicsFragment extends BaseFragment{
 
         recyclerView.setAdapter(meetDynamicsListAdapter);
     }
-
-    /*
-    @Override
-    public String getCommentText(){
-       return "";
-    }
-    @Override
-    public void setCommentText(String commentText){
-
-    }
-    */
 
     @Override
     protected void loadData(){
@@ -287,7 +274,7 @@ public class MeetDynamicsFragment extends BaseFragment{
             for (int i = 0; i < length; i++) {
                 JSONObject dynamics = dynamicsArray.getJSONObject(i);
                 //Slog.d(TAG, "==========dynamicsArray.getJSONObject: " + dynamics);
-                meetDynamics = new MeetDynamics();
+                MeetDynamics meetDynamics = new MeetDynamics();
 
                 meetDynamics.setRealname(dynamics.getString("realname"));
                 meetDynamics.setUid(dynamics.getInt("uid"));
@@ -449,11 +436,7 @@ public class MeetDynamicsFragment extends BaseFragment{
     @Override
     public void onResume(){
         super.onResume();
-       // initConentView();
-       // initData();
         Slog.d(TAG, "=============onResume");
-       // loadDynamicsData(false);
-
     }
 
     static class MyHandler extends Handler {
@@ -498,11 +481,7 @@ public class MeetDynamicsFragment extends BaseFragment{
                 meetDynamicsListAdapter.notifyDataSetChanged();
                 break;
             case ADD_COMMENT:
-                Slog.d(TAG, "========position: "+meetDynamicsListAdapter.getDynamicsItemPosition());
-                meetDynamicsListAdapter.addDynamicsComment(mDynamicsComment);
                 meetDynamicsListAdapter.notifyItemChanged(meetDynamicsListAdapter.getDynamicsItemPosition());
-                //meetDynamicsListAdapter.setData(meetList);
-                //meetDynamicsListAdapter.notifyDataSetChanged();
                 break;
             default:
                 break;
@@ -529,7 +508,7 @@ public class MeetDynamicsFragment extends BaseFragment{
         super.onActivityResult(requestCode, resultCode, data);
 
         if(requestCode == REQUEST_CODE){
-            String commentText = data.getStringExtra("comment_text");
+            final String commentText = data.getStringExtra("comment_text");
             Long aid = mMeetDynamics.getAid();
             Toast.makeText(getContext(), "onActivityResult: "+commentText+" aid: "+aid.toString(), Toast.LENGTH_LONG).show();
             //mDynamicsComment.setContent(commentText);
@@ -552,14 +531,17 @@ public class MeetDynamicsFragment extends BaseFragment{
                     if (!TextUtils.isEmpty(responseText)) {
                         try {
                             JSONObject commentResponseObj = new JSONObject(responseText);
-
-                            //JSONArray commentResponseArray = commentResponseObj.getJSONArray("comment");
                             JSONObject comment = commentResponseObj.getJSONObject("comment");
                             mDynamicsComment.setPictureUrl(comment.getString("picture_uri"));
                             mDynamicsComment.setContent(comment.getString("content"));
                             mDynamicsComment.setCommenterName(comment.getString("commenter_name"));
                             mDynamicsComment.setCommenterUid(comment.getLong("commenter_uid"));
+                            if(mDynamicsComment.getType() == 1){
+                                mDynamicsComment.setAuthorName(comment.getString("author_name"));
+                                mDynamicsComment.setAuthorUid(comment.getLong("author_uid"));
+                            }
                             mDynamicsComment.setTimeStamp(comment.getInt("created"));
+                            mMeetDynamics.addComment(mDynamicsComment);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
