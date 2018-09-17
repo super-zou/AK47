@@ -1,8 +1,12 @@
 package com.tongmenhui.launchak47.meet;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -14,6 +18,7 @@ import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.adapter.MeetDynamicsListAdapter;
+import com.tongmenhui.launchak47.main.AddDynamicsActivity;
 import com.tongmenhui.launchak47.util.BaseFragment;
 import com.tongmenhui.launchak47.util.CommentDialogFragment;
 import com.tongmenhui.launchak47.util.CommentDialogFragmentInterface;
@@ -38,6 +43,7 @@ import okhttp3.Response;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
+import static com.tongmenhui.launchak47.util.RequestQueueSingleton.mContext;
 
 /**
  * Created by haichao.zou on 2017/11/20.
@@ -76,6 +82,8 @@ public class MeetDynamicsFragment extends BaseFragment{
     String requstUrl = "";
     RequestBody requestBody = null;
 
+    private DynamicsAddBroadcastReceiver mReceiver = new DynamicsAddBroadcastReceiver();
+
     private static final String dynamics_url = HttpUtil.DOMAIN + "?q=meet/activity/get";
     private static final String getDynamics_update_url = HttpUtil.DOMAIN + "?q=meet/activity/update";
     String request_comment_url = HttpUtil.DOMAIN + "?q=meet/activity/interact/get";
@@ -95,8 +103,10 @@ public class MeetDynamicsFragment extends BaseFragment{
         return layoutId;
     }
 
+
     @Override
     protected void initView(View convertView){
+
         recyclerView = (XRecyclerView) convertView.findViewById(R.id.recyclerview);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
@@ -160,6 +170,8 @@ public class MeetDynamicsFragment extends BaseFragment{
         });
 
         recyclerView.setAdapter(meetDynamicsListAdapter);
+
+        registerLoginBroadcast();
     }
 
     @Override
@@ -439,6 +451,12 @@ public class MeetDynamicsFragment extends BaseFragment{
         Slog.d(TAG, "=============onResume");
     }
 
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        unRegisterLoginBroadcast();
+    }
+
     static class MyHandler extends Handler {
         WeakReference<MeetDynamicsFragment> meetDynamicsFragmentWeakReference;
 
@@ -557,6 +575,22 @@ public class MeetDynamicsFragment extends BaseFragment{
         }
     }
 
+    private class DynamicsAddBroadcastReceiver extends BroadcastReceiver{
+        @Override
+        public void onReceive(Context context, Intent intent){
+            Slog.d(TAG, "==========DYNAMICS_ADD_BROADCAST");
+            updateData();
+        }
+    }
 
+    //register local broadcast to receive DYNAMICS_ADD_BROADCAST
+    private void registerLoginBroadcast(){
+        IntentFilter intentFilter = new IntentFilter(AddDynamicsActivity.DYNAMICS_ADD_BROADCAST);
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver,intentFilter);
+    }
+    //unregister local broadcast
+    private void unRegisterLoginBroadcast(){
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
+    }
 
 }

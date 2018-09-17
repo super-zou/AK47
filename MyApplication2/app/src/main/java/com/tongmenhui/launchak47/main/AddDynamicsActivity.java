@@ -2,6 +2,7 @@ package com.tongmenhui.launchak47.main;
 
 import android.Manifest;
 import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -60,6 +61,7 @@ public class AddDynamicsActivity extends AppCompatActivity {
     private Map<String, String> dynamicsText = new HashMap<>();
     private String user_activity;
 
+    public static final String DYNAMICS_ADD_BROADCAST = "com.tongmenhui.action.DYNAMICS_ADD";
     private static final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/jpeg");
     private static final String  domain = "http://112.126.83.127:88/";
     private static final String reqUrl = domain + "?q=meet/dynamic/add";
@@ -139,7 +141,7 @@ public class AddDynamicsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String dynamics_input = editText.getText().toString();
-                Toast.makeText(AddDynamicsActivity.this, editText.getText().toString(), Toast.LENGTH_SHORT).show();
+               // Toast.makeText(AddDynamicsActivity.this, editText.getText().toString(), Toast.LENGTH_SHORT).show();
                 if(dynamics_input.length() > 0){
                     //user_activity = dynamics_input;
                     dynamicsText.put("text", dynamics_input);
@@ -201,6 +203,7 @@ public class AddDynamicsActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             Toast.makeText(AddDynamicsActivity.this, "成功", Toast.LENGTH_SHORT).show();
+                            sendBroadcast();//send broadcast to meetdynamicsfragment notify  meet dynamics to update
                         }
                     });
                 }
@@ -327,5 +330,9 @@ public class AddDynamicsActivity extends AppCompatActivity {
                     break;
             }
         }
+    }
+
+    private void sendBroadcast(){
+        LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(DYNAMICS_ADD_BROADCAST));
     }
 }
