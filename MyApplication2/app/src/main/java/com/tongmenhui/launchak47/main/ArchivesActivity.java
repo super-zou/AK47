@@ -1,6 +1,5 @@
 package com.tongmenhui.launchak47.main;
 
-import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.NetworkImageView;
@@ -109,9 +107,12 @@ public class ArchivesActivity extends BaseAppCompatActivity {
         mXRecyclerView
                 .getDefaultRefreshHeaderView()
                 .setRefreshTimeVisible(true);
-        View header = LayoutInflater.from(this).inflate(R.layout.meet_item, (ViewGroup)findViewById(android.R.id.content),false);
-        updateHeader(header);
-        mXRecyclerView.addHeaderView(header);
+        View headerProfile = LayoutInflater.from(this).inflate(R.layout.meet_item, (ViewGroup)findViewById(android.R.id.content),false);
+        mXRecyclerView.addHeaderView(headerProfile);
+        updateHeader(headerProfile);
+
+        View headerEvaluation = LayoutInflater.from(this).inflate(R.layout.friends_relatives_reference, (ViewGroup)findViewById(android.R.id.content),false);
+        mXRecyclerView.addHeaderView(headerEvaluation);
 
         mXRecyclerView.getDefaultFootView().setLoadingHint(getString(R.string.loading_pull_up_tip));
         mXRecyclerView.getDefaultFootView().setNoMoreHint(getString(R.string.loading_no_more));
@@ -135,6 +136,10 @@ public class ArchivesActivity extends BaseAppCompatActivity {
         });
         mXRecyclerView.setAdapter(mArchivesListAdapter);
 
+        //+Begin add for friends and relatives' reference view
+        RecyclerView referenceRecyclerView = findViewById(R.id.reference_list);
+        referenceRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
         loadData(mMeetMember.getUid());
     }
 
@@ -145,7 +150,7 @@ public class ArchivesActivity extends BaseAppCompatActivity {
         TextView selfcondition = (TextView) view.findViewById(R.id.self_condition);
         TextView requirement = (TextView) view.findViewById(R.id.partner_requirement);
         TextView illustration = (TextView) view.findViewById(R.id.illustration);
-        TextView eyeView = (TextView)view.findViewById(R.id.eye_statistics);
+        TextView eyeView = (TextView) view.findViewById(R.id.eye_statistics);
         TextView lovedView = (TextView)view.findViewById(R.id.loved_statistics);
         TextView lovedIcon = (TextView)view.findViewById(R.id.loved_icon);
         TextView thumbsView = (TextView)view.findViewById(R.id.thumbs_up_statistics);

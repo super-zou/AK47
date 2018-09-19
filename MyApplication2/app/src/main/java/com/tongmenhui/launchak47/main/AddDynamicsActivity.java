@@ -161,55 +161,56 @@ public class AddDynamicsActivity extends AppCompatActivity {
 
     private void uploadPictures(String reqUrl, Map<String, String> params, String picKey, List<File> files){
         OkHttpClient mOkHttpClent = new OkHttpClient();
-        if(files != null && files.size() > 0){
-            MultipartBody.Builder multipartBodyBuilder = new MultipartBody.Builder();
-            multipartBodyBuilder.setType(MultipartBody.FORM);
-            //遍历map中所有参数到builder
-            if (params != null){
-                for (String key : params.keySet()) {
-                    multipartBodyBuilder.addFormDataPart(key, params.get(key));
-                }
+
+        MultipartBody.Builder multipartBodyBuilder = new MultipartBody.Builder();
+        multipartBodyBuilder.setType(MultipartBody.FORM);
+        //遍历map中所有参数到builder
+        if (params != null){
+            for (String key : params.keySet()) {
+                multipartBodyBuilder.addFormDataPart(key, params.get(key));
             }
+        }
+        if(files != null && files.size() > 0){
             //遍历paths中所有图片绝对路径到builder，并约定key如“upload”作为后台接受多张图片的key
             int i = 0;
             for (File file : files) {
                 Slog.d(TAG, "file name: "+file.getName());
-               multipartBodyBuilder.addFormDataPart(picKey+i, file.getName(), RequestBody.create(MEDIA_TYPE_PNG, file));
-               i++;
+                multipartBodyBuilder.addFormDataPart(picKey+i, file.getName(), RequestBody.create(MEDIA_TYPE_PNG, file));
+                i++;
             }
-            //构建请求体
-            String cookie = HttpUtil.getCookie(AddDynamicsActivity.this);
-            RequestBody requestBody = multipartBodyBuilder.build();
-            Request.Builder RequestBuilder = new Request.Builder();
-            RequestBuilder.url(reqUrl).addHeader("cookie", cookie);// 添加URL地址
-            RequestBuilder.post(requestBody);
-            Request request = RequestBuilder.build();
-            mOkHttpClent.newCall(request).enqueue(new Callback() {
-                @Override
-                public void onFailure(Call call, IOException e) {
-                    Log.e(TAG, "onFailure: "+e );
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(AddDynamicsActivity.this, "失败", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
-
-                @Override
-                public void onResponse(Call call, Response response) throws IOException {
-                    Log.e(TAG, "成功"+response);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(AddDynamicsActivity.this, "成功", Toast.LENGTH_SHORT).show();
-                            sendBroadcast();//send broadcast to meetdynamicsfragment notify  meet dynamics to update
-                        }
-                    });
-                }
-            });
-
         }
+
+        //构建请求体
+        String cookie = HttpUtil.getCookie(AddDynamicsActivity.this);
+        RequestBody requestBody = multipartBodyBuilder.build();
+        Request.Builder RequestBuilder = new Request.Builder();
+        RequestBuilder.url(reqUrl).addHeader("cookie", cookie);// 添加URL地址
+        RequestBuilder.post(requestBody);
+        Request request = RequestBuilder.build();
+        mOkHttpClent.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.e(TAG, "onFailure: "+e );
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(AddDynamicsActivity.this, "失败", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Log.e(TAG, "成功"+response);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(AddDynamicsActivity.this, "成功", Toast.LENGTH_SHORT).show();
+                        sendBroadcast();//send broadcast to meetdynamicsfragment notify  meet dynamics to update
+                    }
+                });
+            }
+        });
     }
 
     private GridImageAdapter.onAddPicClickListener onAddPicClickListener = new GridImageAdapter.onAddPicClickListener() {

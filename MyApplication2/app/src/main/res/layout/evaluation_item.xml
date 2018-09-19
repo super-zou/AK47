@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <com.android.volley.toolbox.NetworkImageView
+        android:id="@+id/recommend_head_uri"
+        android:layout_width="50dp"
+        android:layout_height="50dp" >
+    </com.android.volley.toolbox.NetworkImageView>
+
+    <TextView
+        android:id="@+id/reference_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/reference_info"
+        android:text="name" />
+
+    <TextView
+        android:id="@+id/reference_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/reference_content"
+        android:layout_below="@+id/reference_name"
+        android:text="推荐人信息" />
+
+    <TextView
+        android:id="@+id/reference_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/recommend_head_uri"
+        android:layout_marginStart="22dp"
+        android:layout_toEndOf="@+id/recommend_head_uri"
+        android:text="推荐内容" />
+
+    <TextView
+        android:id="@+id/thumbs_up_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/comment_icon"
+        android:layout_alignBottom="@+id/comment_icon"
+        android:layout_marginEnd="38dp"
+        android:layout_toStartOf="@+id/comment_icon"
+        android:gravity="center"
+        android:paddingLeft="18dp"
+        android:text="@string/fa_thumbs_up"
+        android:textColor="@android:color/holo_blue_dark" />
+
+    <TextView
+        android:id="@+id/comment_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/reference_content"
+        android:layout_marginEnd="32dp"
+        android:gravity="center"
+        android:paddingLeft="18dp"
+        android:text="@string/fa_comment"
+        android:textColor="@android:color/holo_blue_dark" />
+
+</RelativeLayout>
