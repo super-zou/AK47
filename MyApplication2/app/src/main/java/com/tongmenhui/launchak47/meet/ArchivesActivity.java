@@ -1,4 +1,4 @@
-package com.tongmenhui.launchak47.main;
+package com.tongmenhui.launchak47.meet;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -21,9 +21,7 @@ import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.adapter.ArchivesListAdapter;
-import com.tongmenhui.launchak47.meet.DynamicsComment;
-import com.tongmenhui.launchak47.meet.MeetDynamics;
-import com.tongmenhui.launchak47.meet.MeetMemberInfo;
+import com.tongmenhui.launchak47.main.BaseAppCompatActivity;
 import com.tongmenhui.launchak47.util.FontManager;
 import com.tongmenhui.launchak47.util.HttpUtil;
 import com.tongmenhui.launchak47.util.RequestQueueSingleton;
@@ -134,11 +132,13 @@ public class ArchivesActivity extends BaseAppCompatActivity {
                 loadData(mMeetMember.getUid());
             }
         });
+        RecyclerView referenceRecyclerView = headerEvaluation.findViewById(R.id.reference_list);
+        referenceRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
         mXRecyclerView.setAdapter(mArchivesListAdapter);
 
         //+Begin add for friends and relatives' reference view
-        RecyclerView referenceRecyclerView = findViewById(R.id.reference_list);
-        referenceRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
 
         loadData(mMeetMember.getUid());
     }

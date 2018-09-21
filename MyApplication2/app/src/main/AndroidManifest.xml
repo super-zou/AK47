@@ -49,7 +49,7 @@
         <activity android:name=".region.activity.RegionSelectionActivity" />
         <activity android:name=".region.activity.BaseActivity" />
         <activity android:name=".main.AddDynamicsActivity" />
-        <activity android:name=".main.ArchivesActivity"/>
+        <activity android:name=".meet.ArchivesActivity"/>
     </application>
 
 </manifest>
