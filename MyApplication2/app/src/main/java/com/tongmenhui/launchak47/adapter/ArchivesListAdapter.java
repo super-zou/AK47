@@ -180,7 +180,7 @@ public class ArchivesListAdapter  extends RecyclerView.Adapter<ArchivesListAdapt
                         TextView author = (TextView) viewComment.findViewById(R.id.author_name);
                         author.setText(dynamicsCommentList.get(i).getAuthorName());
                     }
-                    Slog.d(TAG, "====================comment content: " + dynamicsCommentList.get(i).getContent());
+                    //Slog.d(TAG, "====================comment content: " + dynamicsCommentList.get(i).getContent());
                     TextView content = (TextView) viewComment.findViewById(R.id.content);
                     content.setText(dynamicsCommentList.get(i).getContent());
                 }
@@ -235,7 +235,7 @@ public class ArchivesListAdapter  extends RecyclerView.Adapter<ArchivesListAdapt
 
 
             Typeface font = Typeface.createFromAsset(mContext.getAssets(), "fonts/fontawesome.ttf");
-            FontManager.markAsIconContainer(view.findViewById(R.id.meet_dynamics_item), font);
+            FontManager.markAsIconContainer(view.findViewById(R.id.behavior_statistics), font);
         }
     }
 
@@ -250,7 +250,7 @@ public class ArchivesListAdapter  extends RecyclerView.Adapter<ArchivesListAdapt
                     try {
                         JSONObject commentResponse = new JSONObject(responseText);
                         int status = commentResponse.optInt("status");
-                        Log.d(TAG,"praiseDynamics status:"+status);
+                        //Log.d(TAG,"praiseDynamics status:"+status);
                         if (1 == status) {
                             MeetDynamics tempInfo = getMeetDynamicsById(meetDynamics.getAid());
                             tempInfo.setPraisedDynamics(1);

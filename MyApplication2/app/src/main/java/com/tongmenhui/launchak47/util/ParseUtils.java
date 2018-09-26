@@ -4,6 +4,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.tongmenhui.launchak47.meet.MeetMemberInfo;
+import com.tongmenhui.launchak47.meet.MeetReferenceInfo;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -135,5 +136,14 @@ public class ParseUtils {
 
         }
         return list;
+    }
+
+    public static List<MeetReferenceInfo> getMeetReferenceList(String responseText){
+        List<MeetReferenceInfo> meetReferenceInfoList = null;
+        if(!TextUtils.isEmpty(responseText)){
+
+        }
+
+        return meetReferenceInfoList;
     }
 }

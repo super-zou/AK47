@@ -21,9 +21,11 @@ import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.adapter.ArchivesListAdapter;
+import com.tongmenhui.launchak47.adapter.MeetReferenceAdapter;
 import com.tongmenhui.launchak47.main.BaseAppCompatActivity;
 import com.tongmenhui.launchak47.util.FontManager;
 import com.tongmenhui.launchak47.util.HttpUtil;
+import com.tongmenhui.launchak47.util.ParseUtils;
 import com.tongmenhui.launchak47.util.RequestQueueSingleton;
 import com.tongmenhui.launchak47.util.Slog;
 
@@ -49,15 +51,19 @@ public class ArchivesActivity extends BaseAppCompatActivity {
 
     private static final String DYNAMICS_URL = HttpUtil.DOMAIN + "?q=meet/activity/get";
     private static final String COMMENT_URL = HttpUtil.DOMAIN + "?q=meet/activity/interact/get";
+    private static final String LOAD_REFERENCE_URL = HttpUtil.DOMAIN + "?q=meet/reference/load";
     private List<MeetDynamics> mMeetList = new ArrayList<>();
+    private List<MeetReferenceInfo> mReferenceList = new ArrayList<>();
     private Handler handler;
     private static final int DONE = 1;
     private static final int UPDATE = 2;
     private static final int UPDATE_COMMENT = 3;
+    private static final int LOAD_REFERENCE_DONE = 4;
     private static final int PAGE_SIZE = 6;
     private int mTempSize;
     private XRecyclerView mXRecyclerView;
     private ArchivesListAdapter mArchivesListAdapter;
+    MeetReferenceAdapter mMeetReferenceAdapter;
     private TextView mEmptyView;
 
     private ImageView backLeft;
@@ -111,6 +117,7 @@ public class ArchivesActivity extends BaseAppCompatActivity {
 
         View headerEvaluation = LayoutInflater.from(this).inflate(R.layout.friends_relatives_reference, (ViewGroup)findViewById(android.R.id.content),false);
         mXRecyclerView.addHeaderView(headerEvaluation);
+        updateEvaluationHeader(headerEvaluation);
 
         mXRecyclerView.getDefaultFootView().setLoadingHint(getString(R.string.loading_pull_up_tip));
         mXRecyclerView.getDefaultFootView().setNoMoreHint(getString(R.string.loading_no_more));
@@ -141,6 +148,9 @@ public class ArchivesActivity extends BaseAppCompatActivity {
 
 
         loadData(mMeetMember.getUid());
+
+        Typeface font = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/fontawesome.ttf");
+        FontManager.markAsIconContainer(findViewById(R.id.meet_archive), font);
     }
 
     private void updateHeader(View view){
@@ -220,6 +230,40 @@ public class ArchivesActivity extends BaseAppCompatActivity {
 //                mContext.startActivity(intent);
 //            }
 //        });
+    }
+
+    private void updateEvaluationHeader(View headerEvaluation){
+
+        RecyclerView recyclerView = headerEvaluation.findViewById(R.id.reference_list);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mMeetReferenceAdapter = new MeetReferenceAdapter(this);
+        recyclerView.setAdapter(mMeetReferenceAdapter);
+        loadReferences();
+    }
+
+    private void loadReferences(){
+        RequestBody requestBody = new FormBody.Builder().build();
+        HttpUtil.sendOkHttpRequest(this, LOAD_REFERENCE_URL, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if(response.body() != null){
+                    String responseText = response.body().string();
+                    Slog.d(TAG, "==========loadReferences response text : "+responseText);
+                    if(responseText != null){
+                        List<MeetReferenceInfo> meetReferenceInfoList = ParseUtils.getMeetReferenceList(responseText);
+                        if(meetReferenceInfoList != null && meetReferenceInfoList.size() > 0){
+                            mReferenceList.addAll(meetReferenceInfoList);
+                        }
+                        handler.sendEmptyMessage(LOAD_REFERENCE_DONE);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+        });
     }
 
     private void loadData(int uid){
@@ -397,6 +441,12 @@ public class ArchivesActivity extends BaseAppCompatActivity {
                 mArchivesListAdapter.setData(mMeetList);
                 mArchivesListAdapter.notifyDataSetChanged();
                 break;
+            case LOAD_REFERENCE_DONE:
+                mMeetReferenceAdapter.setReferenceList(mReferenceList);
+                mMeetReferenceAdapter.notifyDataSetChanged();
+                break;
+            default:
+                break;
         }
     }
 
@@ -407,7 +457,7 @@ public class ArchivesActivity extends BaseAppCompatActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
-                Log.d(TAG, "getDynamicsComment: "+responseText);
+                //Log.d(TAG, "getDynamicsComment: "+responseText);
                 JSONObject commentResponse = null;
                 JSONArray commentArray = null;
                 JSONArray praiseArray = null;
