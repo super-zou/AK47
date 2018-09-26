@@ -130,7 +130,7 @@ public class MeetRecommendListAdapter extends RecyclerView.Adapter<MeetRecommend
         holder.lives.setText(meet.getLives());
 
         if(!"".equals(meet.getPictureUri()) && !isScrolling){
-            picture_url = domain+"/"+meet.getPictureUri();
+            picture_url = HttpUtil.DOMAIN+meet.getPictureUri();
             queue = RequestQueueSingleton.instance(mContext);
 
             holder.headUri.setTag(picture_url);

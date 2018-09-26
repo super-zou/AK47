@@ -139,9 +139,41 @@ public class ParseUtils {
     }
 
     public static List<MeetReferenceInfo> getMeetReferenceList(String responseText){
-        List<MeetReferenceInfo> meetReferenceInfoList = null;
+        List<MeetReferenceInfo> meetReferenceInfoList = new ArrayList<MeetReferenceInfo>();
         if(!TextUtils.isEmpty(responseText)){
+            try {
+                JSONObject referenceObj = new JSONObject(responseText);
+                if(referenceObj != null){
+                    JSONArray referenceArray = referenceObj.optJSONArray("reference");
+                    MeetReferenceInfo meetReferenceInfo = null;
+                    if(referenceArray != null && referenceArray.length() > 0){
+                        for (int i=0; i<referenceArray.length(); i++){
+                            meetReferenceInfo = new MeetReferenceInfo();
 
+                            JSONObject reference = referenceArray.getJSONObject(i);
+                            meetReferenceInfo.setRefereeName(reference.getString("realname"));
+                            String profile = "";
+                            if(reference.getInt("situation") == 0){
+                                profile = reference.getString("university")+"."
+                                                 +reference.getString("degree")+"."
+                                                 +reference.getString("major");
+                            }else{
+                                profile = reference.getString("job_title")+"."+reference.getString("company");
+                            }
+                            meetReferenceInfo.setRefereeProfile(profile);
+                            meetReferenceInfo.setReferenceContent(reference.getString("content"));
+                            meetReferenceInfo.setCreated(reference.getLong("created"));
+                            meetReferenceInfo.setHeadUri(reference.getString("picture_uri"));
+
+                            meetReferenceInfoList.add(meetReferenceInfo);
+                        }
+
+                    }
+
+                }
+            }catch (JSONException e){
+                e.printStackTrace();
+            }
         }
 
         return meetReferenceInfoList;

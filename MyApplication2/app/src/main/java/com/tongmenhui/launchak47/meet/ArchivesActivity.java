@@ -65,6 +65,7 @@ public class ArchivesActivity extends BaseAppCompatActivity {
     private ArchivesListAdapter mArchivesListAdapter;
     MeetReferenceAdapter mMeetReferenceAdapter;
     private TextView mEmptyView;
+    View mHeaderEvaluation;
 
     private ImageView backLeft;
     private MeetMemberInfo mMeetMember;
@@ -115,9 +116,8 @@ public class ArchivesActivity extends BaseAppCompatActivity {
         mXRecyclerView.addHeaderView(headerProfile);
         updateHeader(headerProfile);
 
-        View headerEvaluation = LayoutInflater.from(this).inflate(R.layout.friends_relatives_reference, (ViewGroup)findViewById(android.R.id.content),false);
-        mXRecyclerView.addHeaderView(headerEvaluation);
-        updateEvaluationHeader(headerEvaluation);
+        mHeaderEvaluation = LayoutInflater.from(this).inflate(R.layout.friends_relatives_reference, (ViewGroup)findViewById(android.R.id.content),false);
+        mXRecyclerView.addHeaderView(mHeaderEvaluation);
 
         mXRecyclerView.getDefaultFootView().setLoadingHint(getString(R.string.loading_pull_up_tip));
         mXRecyclerView.getDefaultFootView().setNoMoreHint(getString(R.string.loading_no_more));
@@ -139,7 +139,7 @@ public class ArchivesActivity extends BaseAppCompatActivity {
                 loadData(mMeetMember.getUid());
             }
         });
-        RecyclerView referenceRecyclerView = headerEvaluation.findViewById(R.id.reference_list);
+        RecyclerView referenceRecyclerView = mHeaderEvaluation.findViewById(R.id.reference_list);
         referenceRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         mXRecyclerView.setAdapter(mArchivesListAdapter);
@@ -233,9 +233,9 @@ public class ArchivesActivity extends BaseAppCompatActivity {
 //        });
     }
 
-    private void updateEvaluationHeader(View headerEvaluation){
+    private void updateEvaluationHeader(){
 
-        RecyclerView recyclerView = headerEvaluation.findViewById(R.id.reference_list);
+        RecyclerView recyclerView = mHeaderEvaluation.findViewById(R.id.reference_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         mMeetReferenceAdapter = new MeetReferenceAdapter(this);
         recyclerView.setAdapter(mMeetReferenceAdapter);
@@ -243,7 +243,7 @@ public class ArchivesActivity extends BaseAppCompatActivity {
     }
 
     private void loadReferences(int uid){
-        RequestBody requestBody = new FormBody.Builder().build();
+        RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
         HttpUtil.sendOkHttpRequest(this, LOAD_REFERENCE_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
@@ -443,6 +443,7 @@ public class ArchivesActivity extends BaseAppCompatActivity {
                 mArchivesListAdapter.notifyDataSetChanged();
                 break;
             case LOAD_REFERENCE_DONE:
+                updateEvaluationHeader();
                 mMeetReferenceAdapter.setReferenceList(mReferenceList);
                 mMeetReferenceAdapter.notifyDataSetChanged();
                 break;

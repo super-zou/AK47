@@ -11,11 +11,14 @@ import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.NetworkImageView;
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.meet.MeetMemberInfo;
 import com.tongmenhui.launchak47.meet.MeetReferenceInfo;
 import com.tongmenhui.launchak47.util.FontManager;
+import com.tongmenhui.launchak47.util.HttpUtil;
+import com.tongmenhui.launchak47.util.RequestQueueSingleton;
 import com.tongmenhui.launchak47.util.Slog;
 
 import java.util.ArrayList;
@@ -30,6 +33,7 @@ public class MeetReferenceAdapter extends RecyclerView.Adapter<MeetReferenceAdap
     private static final String TAG = "MeetReferenceAdapter";
     private static Context mContext;
     private List<MeetReferenceInfo> mReferenceList;
+    RequestQueue queue;
 
     public MeetReferenceAdapter(Context context){
         Slog.d(TAG, "==============MeetReferenceAdapter init=================");
@@ -42,9 +46,9 @@ public class MeetReferenceAdapter extends RecyclerView.Adapter<MeetReferenceAdap
     }
 
     public class ReferenceViewHolder extends RecyclerView.ViewHolder{
-        TextView realname;
-        TextView referee_profile;
-        NetworkImageView referee_head_uri;
+        TextView realName;
+        TextView refereeProfile;
+        NetworkImageView refereeHeadUri;
         TextView illustration;
         TextView eyeView;
         TextView lovedView;
@@ -57,9 +61,9 @@ public class MeetReferenceAdapter extends RecyclerView.Adapter<MeetReferenceAdap
 
         public ReferenceViewHolder(View view){
             super(view);
-            realname = view.findViewById(R.id.referee_name);
-            referee_head_uri = view.findViewById(R.id.referee_head_uri);
-            referee_profile = view.findViewById(R.id.referee_profile);
+            realName = view.findViewById(R.id.referee_name);
+            refereeHeadUri = view.findViewById(R.id.referee_head_uri);
+            refereeProfile = view.findViewById(R.id.referee_profile);
             thumbsUpIcon = view.findViewById(R.id.thumbs_up_icon);
             commentIcon = view.findViewById(R.id.comment_icon);
             createdView = view.findViewById(R.id.dynamic_time);
@@ -82,7 +86,17 @@ public class MeetReferenceAdapter extends RecyclerView.Adapter<MeetReferenceAdap
     @Override
     public void onBindViewHolder(@NonNull MeetReferenceAdapter.ReferenceViewHolder holder, int position) {
         final MeetReferenceInfo referenceInfo = mReferenceList.get(position);
-        holder.realname.setText(referenceInfo.getRefereeName());
+        holder.realName.setText(referenceInfo.getRefereeName());
+        holder.refereeProfile.setText(referenceInfo.getRefereeProfile());
+        holder.referenceContent.setText(referenceInfo.getReferenceContent());
+        //holder.createdView.setText(referenceInfo.getCreated().toString());
+
+        queue = RequestQueueSingleton.instance(mContext);
+        if(referenceInfo.getHeadUri() != null && !"".equals(referenceInfo.getHeadUri())){
+            HttpUtil.loadByImageLoader(queue, holder.refereeHeadUri, HttpUtil.DOMAIN+referenceInfo.getHeadUri(), 60, 60);
+        }else{
+            holder.refereeHeadUri.setImageDrawable(mContext.getDrawable(R.mipmap.ic_launcher));
+        }
 
     }
 
