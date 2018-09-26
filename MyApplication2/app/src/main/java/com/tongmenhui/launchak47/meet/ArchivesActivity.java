@@ -148,6 +148,7 @@ public class ArchivesActivity extends BaseAppCompatActivity {
 
 
         loadData(mMeetMember.getUid());
+        loadReferences(mMeetMember.getUid());
 
         Typeface font = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/fontawesome.ttf");
         FontManager.markAsIconContainer(findViewById(R.id.meet_archive), font);
@@ -238,10 +239,10 @@ public class ArchivesActivity extends BaseAppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         mMeetReferenceAdapter = new MeetReferenceAdapter(this);
         recyclerView.setAdapter(mMeetReferenceAdapter);
-        loadReferences();
+        
     }
 
-    private void loadReferences(){
+    private void loadReferences(int uid){
         RequestBody requestBody = new FormBody.Builder().build();
         HttpUtil.sendOkHttpRequest(this, LOAD_REFERENCE_URL, requestBody, new Callback() {
             @Override
