@@ -8,6 +8,46 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp">
+        <TextView
+            android:text="yaoqing"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView2" />
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignStart="@+id/textView4"
+            android:text="邀请好友推荐" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="80dp"
+            android:layout_marginTop="20dp"
+            android:layout_alignParentTop="true"
+            android:text="只有被好友推荐后才能被平台推荐"
+            android:id="@+id/textView4" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:textSize="20dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:text="+" />
+    </RelativeLayout>
+
+
+
+
     <TextView
         android:text="亲友推荐"
         android:layout_width="match_parent"

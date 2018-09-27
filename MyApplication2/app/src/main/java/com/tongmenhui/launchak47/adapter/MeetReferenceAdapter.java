@@ -91,9 +91,10 @@ public class MeetReferenceAdapter extends RecyclerView.Adapter<MeetReferenceAdap
         holder.referenceContent.setText(referenceInfo.getReferenceContent());
         //holder.createdView.setText(referenceInfo.getCreated().toString());
 
-        queue = RequestQueueSingleton.instance(mContext);
         if(referenceInfo.getHeadUri() != null && !"".equals(referenceInfo.getHeadUri())){
-            HttpUtil.loadByImageLoader(queue, holder.refereeHeadUri, HttpUtil.DOMAIN+referenceInfo.getHeadUri(), 60, 60);
+            queue = RequestQueueSingleton.instance(mContext);
+            holder.refereeHeadUri.setTag(HttpUtil.DOMAIN+referenceInfo.getHeadUri());
+            HttpUtil.loadByImageLoader(queue, holder.refereeHeadUri, HttpUtil.DOMAIN+referenceInfo.getHeadUri(), 50, 50);
         }else{
             holder.refereeHeadUri.setImageDrawable(mContext.getDrawable(R.mipmap.ic_launcher));
         }

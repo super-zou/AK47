@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/evaluation_item">
+
     <com.android.volley.toolbox.NetworkImageView
         android:id="@+id/referee_head_uri"
         android:layout_width="50dp"
