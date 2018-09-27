@@ -28,6 +28,8 @@ import com.tongmenhui.launchak47.util.HttpUtil;
 import com.tongmenhui.launchak47.util.ParseUtils;
 import com.tongmenhui.launchak47.util.RequestQueueSingleton;
 import com.tongmenhui.launchak47.util.Slog;
+import com.tongmenhui.launchak47.util.InvitationDialogFragment;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -60,6 +62,7 @@ public class ArchivesActivity extends BaseAppCompatActivity {
     private static final int UPDATE_COMMENT = 3;
     private static final int LOAD_REFERENCE_DONE = 4;
     private static final int PAGE_SIZE = 6;
+     private static final int REQUEST_CODE = 1;
     private int mTempSize;
     private XRecyclerView mXRecyclerView;
     private ArchivesListAdapter mArchivesListAdapter;
@@ -149,6 +152,17 @@ public class ArchivesActivity extends BaseAppCompatActivity {
 
         loadData(mMeetMember.getUid());
         loadReferences(mMeetMember.getUid());
+        
+        View inviteReference = mHeaderEvaluation.findViewById(R.id.invite_reference);
+        inviteReference.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               // Toast.makeText(getApplicationContext(), "hahaha", Toast.LENGTH_SHORT).show();
+                InvitationDialogFragment invitationDialogFragment = new InvitationDialogFragment();
+               // invitationDialogFragment.setTargetFragment(getApplicationContext(), REQUEST_CODE);
+                invitationDialogFragment.show(getSupportFragmentManager(), "InvitationDialogFragment");
+            }
+        });
 
         Typeface font = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/fontawesome.ttf");
         FontManager.markAsIconContainer(findViewById(R.id.meet_archive), font);
