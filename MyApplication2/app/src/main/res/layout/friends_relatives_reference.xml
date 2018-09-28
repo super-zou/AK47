@@ -45,10 +45,6 @@
             android:layout_alignParentTop="true"
             android:text="+" />
     </RelativeLayout>
-
-
-
-
     <TextView
         android:text="亲友推荐"
         android:layout_width="match_parent"

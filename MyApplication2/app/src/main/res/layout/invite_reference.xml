@@ -7,23 +7,25 @@
     android:layout_height="match_parent">
 
     <Button
+        android:text="邀请"
         android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:text="邀请"
+        android:layout_marginEnd="8dp"
         app:layout_constraintBottom_toBottomOf="@+id/multiAutoCompleteTextView"
-        tools:layout_editor_absoluteX="278dp" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <MultiAutoCompleteTextView
         android:id="@+id/multiAutoCompleteTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="输入好友姓名"
+        android:hint="搜索会员，多个搜索词以逗号分隔"
+        android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/button"
         app:layout_constraintHorizontal_bias="0.93"
