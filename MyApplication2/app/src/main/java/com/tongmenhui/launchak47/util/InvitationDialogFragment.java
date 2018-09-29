@@ -36,7 +36,7 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
         Window window = mDialog.getWindow();
         WindowManager.LayoutParams layoutParams = window.getAttributes();
         //layoutParams.alpha = 0.9f;
-        layoutParams.gravity = Gravity.CENTER;
+        layoutParams.gravity = Gravity.TOP;
         layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
         layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
         window.setAttributes(layoutParams);
@@ -44,13 +44,13 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
         multiAutoCompleteTextView = mDialog.findViewById(R.id.multiAutoCompleteTextView);
         adapter = new ArrayAdapter<String>(mContext, android.R.layout.simple_dropdown_item_1line);
 
-        adapter.add("1");
-        adapter.add("124");
-        adapter.add("1234");
-        adapter.add("134");
-        adapter.add("2345");
-        adapter.add("2356");
-        adapter.add("2567");
+        adapter.add("刘");
+        adapter.add("刘易阳");
+        adapter.add("刘一方");
+        adapter.add("刘一图");
+        adapter.add("刘一一");
+        adapter.add("刘一一一");
+        adapter.add("王");
 
         multiAutoCompleteTextView.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
         multiAutoCompleteTextView.setAdapter(adapter);
