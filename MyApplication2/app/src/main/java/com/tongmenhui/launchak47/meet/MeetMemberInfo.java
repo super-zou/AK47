@@ -28,6 +28,11 @@ public class MeetMemberInfo implements Serializable{
     public String lives = "";
     public int situation = 0;
     private String selfCondition = "";
+    
+        private String major;
+    private String company;
+
+    private String profile = "";
 
     //requirement
     public int ageLower = 0;
@@ -284,6 +289,21 @@ public class MeetMemberInfo implements Serializable{
     }
     public String getPictureChain(){
         return pictureChain;
+    }
+    
+        public String getMajor(){
+        return major;
+    }
+    public void setMajor(String major){
+        this.major = major;
+    }
+
+    public String getCompany(){
+        return company;
+    }
+
+    public void setCompany(String company){
+        this.company = company;
     }
 
     public void setRequirementSet(int requirementSet){
