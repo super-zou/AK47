@@ -33,7 +33,7 @@ dependencies {
     compile 'com.google.code.gson:gson:2.8.1'
     compile 'com.android.support:recyclerview-v7:27.0.2'
     compile 'com.android.support:gridlayout-v7:27.0.2'
-    compile project(':volley')
+    implementation 'com.mcxiaoke.volley:library:1.0.19'
     testCompile 'junit:junit:4.12'
 
 }
