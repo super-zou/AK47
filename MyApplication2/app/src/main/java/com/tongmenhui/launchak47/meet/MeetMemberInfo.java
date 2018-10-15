@@ -29,7 +29,7 @@ public class MeetMemberInfo implements Serializable{
     public int situation = 0;
     private String selfCondition = "";
     
-        private String major;
+    private String major;
     private String company;
 
     private String profile = "";
@@ -311,6 +311,13 @@ public class MeetMemberInfo implements Serializable{
     }
     public int getRequirementSet(){
         return requirementSet;
+    }
+
+    public void setProfile(String profile){
+        this.profile = profile;
+    }
+    public String getProfile(){
+        return profile;
     }
 
     public String getSelfCondition(int situation){

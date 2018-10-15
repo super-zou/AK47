@@ -33,7 +33,7 @@
             android:layout_marginLeft="80dp"
             android:layout_marginTop="20dp"
             android:layout_alignParentTop="true"
-            android:text="只有被好友推荐后才能被平台推荐"
+            android:text="只有经过好友推荐后才能在平台展示"
             android:id="@+id/textView4" />
 
         <TextView

@@ -112,7 +112,7 @@ public class MeetRecommendListAdapter extends RecyclerView.Adapter<MeetRecommend
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
-        Slog.d(TAG, "===========onCreateViewHolder==============");
+        //Slog.d(TAG, "===========onCreateViewHolder==============");
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.meet_item, parent, false);
         ViewHolder holder = new ViewHolder(view);
@@ -123,7 +123,7 @@ public class MeetRecommendListAdapter extends RecyclerView.Adapter<MeetRecommend
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position){
 
-        Slog.d(TAG, "===========onBindViewHolder==============");
+       // Slog.d(TAG, "===========onBindViewHolder==============");
         final MeetMemberInfo meet = mMeetList.get(position);
        // Slog.d(TAG, "get name============="+meet.getRealname());
         holder.realname.setText(meet.getRealname());

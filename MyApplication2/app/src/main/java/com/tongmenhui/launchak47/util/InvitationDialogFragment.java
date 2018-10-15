@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
@@ -18,6 +19,7 @@ import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.SearchView;
+import android.widget.TextView;
 
 import com.tongmenhui.launchak47.R;
 
@@ -48,9 +50,10 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
     private List<MeetMemberInfo> mMemberInfoList = new ArrayList<>();
     private Context mContext;
     private SearchView mSearchView;
-    private static final int QUERY_USER_DONE = 0;
+    private static final int CLEAR_SEARCH_RESULTS = 0;
+    private static final int QUERY_USER_DONE = 1;
     private static final int PAGE_SIZE = 20;
-    private static final String QUERY_USER_URL = HttpUtil.DOMAIN + "?q=personal_archive/query";
+    private static final String SEARCH_USER_URL = HttpUtil.DOMAIN + "?q=personal_archive/search_name";
 
     private Handler handler = new MyHandler(this);
 
@@ -75,11 +78,16 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
         layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT;
         window.setAttributes(layoutParams);
 
-        multiAutoCompleteTextView = mDialog.findViewById(R.id.multiAutoCompleteTextView);
-        adapter = new ArrayAdapter<String>(mContext, android.R.layout.simple_dropdown_item_1line);
+        //multiAutoCompleteTextView = mDialog.findViewById(R.id.multiAutoCompleteTextView);
+        //adapter = new ArrayAdapter<String>(mContext, android.R.layout.simple_dropdown_item_1line);
+        //adapter = new SearchUserListAdapter(mContext);
 
         mSearchView = mDialog.findViewById(R.id.searchUserView);
         searchResultsView = mDialog.findViewById(R.id.searchResultsView);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        searchResultsView.setLayoutManager(linearLayoutManager);
+
         //adapter = new ArrayAdapter<String>(mContext, android.R.layout.simple_dropdown_item_1line);
         adapter = new SearchUserListAdapter(mContext);
         searchResultsView.setAdapter(adapter);
@@ -98,7 +106,12 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
             public boolean onQueryTextChange(String newText) {
                 if(newText.length() > 1){
                     Slog.d(TAG, "===========search text:"+newText);
+                    mMemberInfoList.clear();
                     searchUserResults(newText, true);
+                }else {
+                    if(mMemberInfoList.size() > 0){
+                        clearSearchResults();
+                    }
                 }
                 return false;
             }
@@ -107,14 +120,14 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
         return mDialog;
     }
     
-        public void searchUserResults(String word, boolean autocomplete){
+    public void searchUserResults(String word, boolean autocomplete){
         int page = mMemberInfoList.size() / PAGE_SIZE;
         FormBody requestBody = new FormBody.Builder()
                                             .add("name", word)
                                             .add("step", String.valueOf(PAGE_SIZE))
                                             .add("page", String.valueOf(page))
                                             .build();
-        HttpUtil.sendOkHttpRequest(mContext, QUERY_USER_URL, requestBody, new Callback() {
+        HttpUtil.sendOkHttpRequest(mContext, SEARCH_USER_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if(response.body() != null){
@@ -125,8 +138,9 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
                         if (null != memberInfos) {
                             mMemberInfoList.addAll(memberInfos);
                             Slog.d(TAG, "getResponseText list.size:"+memberInfos.size());
+                            handler.sendEmptyMessage(QUERY_USER_DONE);
                         }
-                        handler.sendEmptyMessage(QUERY_USER_DONE);
+
                     }
                 }
             }
@@ -138,7 +152,7 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
         });
     }
     
-        private List<MeetMemberInfo> parseSearchUser(String response){
+    private List<MeetMemberInfo> parseSearchUser(String response){
         List<MeetMemberInfo> memberInfoList = new ArrayList<MeetMemberInfo>();
         if(!TextUtils.isEmpty(response)){
            try{
@@ -148,6 +162,7 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
                    for (int i=0; i<memberInfoArray.length(); i++){
                        MeetMemberInfo memberInfo = new MeetMemberInfo();
                        JSONObject member = memberInfoArray.getJSONObject(i);
+                       memberInfo.setUid(member.getInt("uid"));
                        memberInfo.setRealname(member.getString("realname"));
                        String profile = "";
                        if(member.getInt("situation") == 0){
@@ -169,6 +184,11 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
             }
         return memberInfoList;
     }
+
+    private void clearSearchResults(){
+        mMemberInfoList.clear();
+        handler.sendEmptyMessage(CLEAR_SEARCH_RESULTS);
+    }
     
     static class MyHandler extends Handler {
         WeakReference<InvitationDialogFragment> invitationDialogFragmentWeakReference;
@@ -186,12 +206,16 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
         }
     }
     
-        public void handleMessage(Message message){
+    public void handleMessage(Message message){
         switch (message.what){
             case QUERY_USER_DONE:
+                Slog.d(TAG, "=======handle message: "+QUERY_USER_DONE);
                 adapter.setData(mMemberInfoList);
                 adapter.notifyDataSetChanged();
                 break;
+            case CLEAR_SEARCH_RESULTS:
+                adapter.setData(mMemberInfoList);
+                adapter.notifyDataSetChanged();
             default:
                 break;
         }
