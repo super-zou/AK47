@@ -7,6 +7,25 @@
         android:text="魅力值"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+    <com.willy.ratingbar.ScaleRatingBar
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/simpleRatingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srb_numStars="5"
+        app:srb_minimumStars="1"
+        app:srb_rating="1"
+        app:srb_starWidth="30dp"
+        app:srb_starHeight="30dp"
+        app:srb_starPadding="6dp"
+        app:srb_stepSize="0.5"
+        app:srb_isIndicator="false"
+        app:srb_clickable="true"
+        app:srb_scrollable="true"
+        app:srb_clearRatingEnabled="true"
+        app:srb_drawableEmpty="@drawable/empty_rating_bar"
+        app:srb_drawableFilled="@drawable/filled">
+    </com.willy.ratingbar.ScaleRatingBar>
 
     <RelativeLayout
         android:id="@+id/invite_reference"
