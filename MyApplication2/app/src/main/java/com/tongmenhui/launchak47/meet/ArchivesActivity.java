@@ -163,6 +163,15 @@ public class ArchivesActivity extends BaseAppCompatActivity {
                 invitationDialogFragment.show(getSupportFragmentManager(), "InvitationDialogFragment");
             }
         });
+        
+        ScaleRatingBar scaleRatingBar = mHeaderEvaluation.findViewById(R.id.charm_rating_bar);
+        scaleRatingBar.setOnRatingChangeListener(new BaseRatingBar.OnRatingChangeListener() {
+
+            @Override
+            public void onRatingChange(BaseRatingBar ratingBar, float rating) {
+                Log.e(TAG, "onRatingChange float: " + rating);
+            }
+        });
 
         Typeface font = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/fontawesome.ttf");
         FontManager.markAsIconContainer(findViewById(R.id.meet_archive), font);
