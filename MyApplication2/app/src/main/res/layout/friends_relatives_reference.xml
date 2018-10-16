@@ -3,30 +3,187 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
-    <TextView
-        android:text="魅力值"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="168dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="15dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/chram_synthesized_results"
+            android:layout_alignStart="@+id/charm_synthesized_rating"
+            android:layout_marginStart="3dp"
+            android:layout_marginBottom="6dp"
+            android:text="魅力值" />
+        <com.willy.ratingbar.ScaleRatingBar xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/charm_synthesized_rating"
+            android:layout_width="wrap_content"
+            android:layout_height="23dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="31dp"
+            android:layout_marginTop="29dp"
+            app:srb_clearRatingEnabled="false"
+            app:srb_clickable="false"
+            app:srb_drawableEmpty="@drawable/empty_rating_bar"
+            app:srb_drawableFilled="@drawable/filled"
+            app:srb_isIndicator="false"
+            app:srb_minimumStars="0"
+            app:srb_numStars="5"
+            app:srb_rating="0"
+            app:srb_scrollable="true"
+            app:srb_starHeight="18dp"
+            app:srb_starPadding="3dp"
+            app:srb_starWidth="18dp"
+            app:srb_stepSize="0.5">
+        </com.willy.ratingbar.ScaleRatingBar>
+        <TextView
+            android:id="@+id/chram_synthesized_results"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/charm_synthesized_rating"
+            android:layout_alignBottom="@+id/charm_synthesized_rating"
+            android:layout_marginStart="35dp"
+            android:layout_marginTop="-3dp"
+            android:layout_marginBottom="4dp"
+            android:layout_toEndOf="@+id/charm_synthesized_rating"
+            android:text="几星" />
+        <TextView
+            android:id="@+id/rating_member_count"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:layout_alignTop="@+id/chram_synthesized_results"
+            android:layout_alignBottom="@+id/chram_synthesized_results"
+            android:layout_marginStart="37dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="0dp"
+            android:layout_toEndOf="@+id/chram_synthesized_results"
+            android:text="多少人评价" />
+        
+         <TextView
+            android:id="@+id/rating_member_details"
+            android:layout_width="20dp"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/rating_member_count"
+            android:layout_alignBottom="@+id/rating_member_count"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="-2dp"
+            android:layout_toEndOf="@+id/rating_member_count"
+            android:text=">" />
+        
     <com.willy.ratingbar.ScaleRatingBar
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/simpleRatingBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srb_numStars="5"
-        app:srb_minimumStars="1"
-        app:srb_rating="1"
-        app:srb_starWidth="30dp"
-        app:srb_starHeight="30dp"
-        app:srb_starPadding="6dp"
-        app:srb_stepSize="0.5"
-        app:srb_isIndicator="false"
-        app:srb_clickable="true"
-        app:srb_scrollable="true"
-        app:srb_clearRatingEnabled="true"
-        app:srb_drawableEmpty="@drawable/empty_rating_bar"
-        app:srb_drawableFilled="@drawable/filled">
+            android:id="@+id/charm_rating_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="57dp"
+            android:layout_marginBottom="57dp"
+            app:srb_clearRatingEnabled="true"
+            app:srb_clickable="true"
+            app:srb_drawableEmpty="@drawable/empty_rating_bar"
+            app:srb_drawableFilled="@drawable/filled"
+            app:srb_isIndicator="false"
+            app:srb_minimumStars="0"
+            app:srb_numStars="5"
+            app:srb_rating="0"
+            app:srb_scrollable="true"
+            app:srb_starHeight="30dp"
+            app:srb_starPadding="6dp"
+            app:srb_starWidth="30dp"
+            app:srb_stepSize="0.5">
     </com.willy.ratingbar.ScaleRatingBar>
-
+    <TextView
+            android:id="@+id/charm_rating"
+            android:layout_width="43dp"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/charm_rating_bar"
+            android:layout_alignBottom="@+id/charm_rating_bar"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="37dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="42dp"
+            android:layout_marginBottom="9dp"
+            android:layout_toEndOf="@+id/charm_rating_bar"
+            android:text="得分" />
+     <TextView
+            android:layout_width="181dp"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/charm_rating_bar"
+            android:layout_alignEnd="@+id/charm_rating_bar"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="43dp"
+            android:layout_marginEnd="-15dp"
+            android:layout_marginBottom="27dp"
+            android:text="您认为该用户魅力如何？" />
+    </RelativeLayout>
+        <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="*">
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary">
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorWhite"
+                android:layout_marginRight="1dp"
+                android:text="标签1"/>
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorWhite"
+                android:layout_marginRight="1dp"
+                android:text="标签2"/>
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorWhite"
+                android:text="标签3"/>
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorWhite"
+                android:text="标签4"/>
+        </TableRow>
+            <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary">
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorWhite"
+                android:layout_marginRight="1dp"
+                android:text="标签5"/>
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorWhite"
+                android:layout_marginRight="1dp"
+                android:text="标签6"/>
+                                    <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorWhite"
+                android:text="标签7"/>
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorWhite"
+                android:text="标签8"/>
+        </TableRow>
+        <EditText
+            android:hint="输入自定义标签"/>
+    </TableLayout>
+    
     <RelativeLayout
         android:id="@+id/invite_reference"
         android:layout_width="wrap_content"
