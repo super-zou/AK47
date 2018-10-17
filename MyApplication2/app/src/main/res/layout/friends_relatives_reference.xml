@@ -15,7 +15,7 @@
             android:layout_alignStart="@+id/charm_synthesized_rating"
             android:layout_marginStart="3dp"
             android:layout_marginBottom="6dp"
-            android:text="魅力值" />
+            android:text="性格魅力" />
         <com.willy.ratingbar.ScaleRatingBar xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/charm_synthesized_rating"
             android:layout_width="wrap_content"
@@ -100,17 +100,17 @@
     </com.willy.ratingbar.ScaleRatingBar>
     <TextView
             android:id="@+id/charm_rating"
-            android:layout_width="43dp"
+            android:layout_width="53dp"
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/charm_rating_bar"
             android:layout_alignBottom="@+id/charm_rating_bar"
             android:layout_alignParentEnd="true"
-            android:layout_marginStart="37dp"
+            android:layout_marginStart="22dp"
             android:layout_marginTop="15dp"
             android:layout_marginEnd="42dp"
             android:layout_marginBottom="9dp"
             android:layout_toEndOf="@+id/charm_rating_bar"
-            android:text="得分" />
+            android:text="" />
      <TextView
             android:layout_width="181dp"
             android:layout_height="wrap_content"
@@ -123,65 +123,120 @@
             android:text="您认为该用户魅力如何？" />
     </RelativeLayout>
         <TableLayout
+        android:visibility="gone"
+        android:id="@+id/features_table"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:stretchColumns="*">
+        <TextView android:text="此用户还有哪些特质？" />
+       <TableRow
+            android:visibility="gone"
+            android:id="@+id/male_feature_row1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="标签1" />
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="标签2" />
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="标签3" />
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="标签4" />
+        </TableRow>
+        <TableRow
+            android:visibility="gone"
+            android:id="@+id/male_feature_row2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="标签5" />
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="标签6" />
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="标签7" />
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="标签8" />
+        </TableRow>
+                    <TableRow
+            android:visibility="gone"
+            android:id="@+id/female_feature_row1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="标签1" />
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="标签2" />
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="标签3" />
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="标签4" />
+        </TableRow>
+                    <TableRow
+            android:visibility="gone"
+            android:id="@+id/female_feature_row2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="标签5" />
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="标签6" />
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="标签7" />
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="标签8" />
+        </TableRow>
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorPrimary">
-            <Button
-                android:layout_width="match_parent"
+            android:stretchColumns="*">
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="94dp"
                 android:layout_height="wrap_content"
-                android:background="@color/colorWhite"
-                android:layout_marginRight="1dp"
-                android:text="标签1"/>
+                android:layout_span="3">
+                <android.support.design.widget.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="自定义" />
+            </android.support.design.widget.TextInputLayout>
             <Button
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@color/colorWhite"
-                android:layout_marginRight="1dp"
-                android:text="标签2"/>
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/colorWhite"
-                android:text="标签3"/>
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/colorWhite"
-                android:text="标签4"/>
+                android:text="保存" />
         </TableRow>
-            <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/colorPrimary">
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/colorWhite"
-                android:layout_marginRight="1dp"
-                android:text="标签5"/>
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/colorWhite"
-                android:layout_marginRight="1dp"
-                android:text="标签6"/>
-                                    <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/colorWhite"
-                android:text="标签7"/>
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/colorWhite"
-                android:text="标签8"/>
-        </TableRow>
-        <EditText
-            android:hint="输入自定义标签"/>
     </TableLayout>
     
     <RelativeLayout
@@ -191,35 +246,35 @@
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp">
         <TextView
-            android:text="yaoqing"
+            android:id="@+id/textView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/textView2" />
+            android:text="yaoqing" />
 
         <TextView
             android:id="@+id/textView3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
             android:layout_alignStart="@+id/textView4"
+            android:layout_alignParentTop="true"
             android:text="邀请好友推荐" />
         <TextView
+            android:id="@+id/textView4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
             android:layout_marginLeft="80dp"
             android:layout_marginTop="20dp"
-            android:layout_alignParentTop="true"
-            android:text="只有经过好友推荐后才能在平台展示"
-            android:id="@+id/textView4" />
+            android:text="只有经过好友推荐后才能在平台展示" />
 
-        <TextView
+       <TextView
             android:id="@+id/textView"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:textSize="20dp"
-            android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true"
-            android:text="+" />
+            android:layout_alignParentEnd="true"
+            android:text="+"
+            android:textSize="20dp" />
     </RelativeLayout>
     <TextView
         android:text="亲友推荐"
@@ -233,7 +288,7 @@
     </android.support.v7.widget.RecyclerView>
 
     <TextView
-        android:text="好友印象"
+        android:text="个性标签"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <ListView
@@ -241,5 +296,9 @@
         android:layout_height="wrap_content">
 
     </ListView>
+    <TextView
+        android:text="兴趣爱好"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 </LinearLayout>
