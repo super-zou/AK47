@@ -29,6 +29,8 @@ import com.tongmenhui.launchak47.util.ParseUtils;
 import com.tongmenhui.launchak47.util.RequestQueueSingleton;
 import com.tongmenhui.launchak47.util.Slog;
 import com.tongmenhui.launchak47.util.InvitationDialogFragment;
+import com.willy.ratingbar.BaseRatingBar;
+import com.willy.ratingbar.ScaleRatingBar;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -165,11 +167,27 @@ public class ArchivesActivity extends BaseAppCompatActivity {
         });
         
         ScaleRatingBar scaleRatingBar = mHeaderEvaluation.findViewById(R.id.charm_rating_bar);
+                final TextView charmRating = mHeaderEvaluation.findViewById(R.id.charm_rating);
+        final TableLayout featureTableLayout = mHeaderEvaluation.findViewById(R.id.features_table);
         scaleRatingBar.setOnRatingChangeListener(new BaseRatingBar.OnRatingChangeListener() {
 
             @Override
             public void onRatingChange(BaseRatingBar ratingBar, float rating) {
                 Log.e(TAG, "onRatingChange float: " + rating);
+                charmRating.setText(String.valueOf(rating));
+                featureTableLayout.setVisibility(View.VISIBLE);
+                if(mMeetMember.getSex() == 0){//display male features
+                    TableRow tableRow1 = mHeaderEvaluation.findViewById(R.id.male_feature_row1);
+                    TableRow tableRow2 = mHeaderEvaluation.findViewById(R.id.male_feature_row2);
+                    tableRow1.setVisibility(View.VISIBLE);
+                    tableRow2.setVisibility(View.VISIBLE);
+
+                }else{//display female features
+                    TableRow tableRow1 = mHeaderEvaluation.findViewById(R.id.female_feature_row1);
+                    TableRow tableRow2 = mHeaderEvaluation.findViewById(R.id.female_feature_row2);
+                    tableRow1.setVisibility(View.VISIBLE);
+                    tableRow2.setVisibility(View.VISIBLE);
+                }
             }
         });
 
@@ -344,6 +362,7 @@ public class ArchivesActivity extends BaseAppCompatActivity {
 
                     meetDynamics.setRealname(dynamics.optString("realname"));
                     meetDynamics.setUid(dynamics.optInt("uid"));
+                    meetDynamics.setSex(dynamics.optInt("sex"));
                     meetDynamics.setPictureUri(dynamics.optString("picture_uri"));
 
                     if(!dynamics.isNull("birth_year")){
