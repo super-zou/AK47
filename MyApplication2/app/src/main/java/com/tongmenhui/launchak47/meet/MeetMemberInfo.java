@@ -12,6 +12,7 @@ public class MeetMemberInfo implements Serializable{
     private static final String TAG = "MeetMemberInfo";
 
     public int cid = -1;
+    private int sex = 0;
 
     //self condition
     public int uid = -1;
@@ -75,7 +76,12 @@ public class MeetMemberInfo implements Serializable{
     public void setCid(int cid){
         this.cid = cid;
     }
-
+    public int getSex(){
+        return sex;
+    }
+    public void setSex(int sex){
+        this.sex = sex;
+    }
     public int getSelfSex(){
         return selfSex;
     }
