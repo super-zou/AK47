@@ -129,7 +129,7 @@
         android:layout_height="wrap_content"
         android:stretchColumns="*">
         <TextView android:text="此用户还有哪些特质？" />
-       <TableRow
+        <TableRow
             android:visibility="gone"
             android:id="@+id/male_feature_row1"
             android:layout_width="match_parent"
@@ -174,7 +174,7 @@
                 android:layout_height="wrap_content"
                 android:text="标签8" />
         </TableRow>
-                    <TableRow
+        <TableRow
             android:visibility="gone"
             android:id="@+id/female_feature_row1"
             android:layout_width="match_parent"
@@ -182,21 +182,21 @@
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="标签1" />
+                android:text="标签11" />
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="标签2" />
+                android:text="标签12" />
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="标签3" />
+                android:text="标签13" />
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="标签4" />
+                android:text="标签14" />
         </TableRow>
-                    <TableRow
+        <TableRow
             android:visibility="gone"
             android:id="@+id/female_feature_row2"
             android:layout_width="match_parent"

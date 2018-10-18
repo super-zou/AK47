@@ -40,6 +40,7 @@ public class ParseUtils {
 
                 meetMemberInfo.setRealname(recommender.getString("realname"));
                 meetMemberInfo.setUid(recommender.getInt("uid"));
+                meetMemberInfo.setSex(recommender.optInt("sex"));
                 meetMemberInfo.setPictureUri(recommender.getString("picture_uri"));
                 meetMemberInfo.setBirthYear(recommender.getInt("birth_year"));
                 meetMemberInfo.setHeight(recommender.getInt("height"));

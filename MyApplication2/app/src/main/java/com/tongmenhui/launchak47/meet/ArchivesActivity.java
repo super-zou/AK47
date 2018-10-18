@@ -13,6 +13,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
@@ -176,6 +178,7 @@ public class ArchivesActivity extends BaseAppCompatActivity {
                 Log.e(TAG, "onRatingChange float: " + rating);
                 charmRating.setText(String.valueOf(rating));
                 featureTableLayout.setVisibility(View.VISIBLE);
+                Slog.d(TAG, "sex: "+mMeetMember.getSex());
                 if(mMeetMember.getSex() == 0){//display male features
                     TableRow tableRow1 = mHeaderEvaluation.findViewById(R.id.male_feature_row1);
                     TableRow tableRow2 = mHeaderEvaluation.findViewById(R.id.male_feature_row2);
