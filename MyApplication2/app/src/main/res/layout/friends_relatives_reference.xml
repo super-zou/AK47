@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="168dp"
         android:layout_marginTop="10dp"
-        android:layout_marginBottom="15dp">
+        android:layout_marginBottom="15dp"
+        android:background="@color/colorWhite">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -44,9 +47,9 @@
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/charm_synthesized_rating"
             android:layout_alignBottom="@+id/charm_synthesized_rating"
-            android:layout_marginStart="35dp"
-            android:layout_marginTop="-3dp"
-            android:layout_marginBottom="4dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="1dp"
             android:layout_toEndOf="@+id/charm_synthesized_rating"
             android:text="几星" />
         <TextView
@@ -55,7 +58,7 @@
             android:layout_height="20dp"
             android:layout_alignTop="@+id/chram_synthesized_results"
             android:layout_alignBottom="@+id/chram_synthesized_results"
-            android:layout_marginStart="37dp"
+            android:layout_marginStart="38dp"
             android:layout_marginTop="2dp"
             android:layout_marginBottom="0dp"
             android:layout_toEndOf="@+id/chram_synthesized_results"
@@ -68,10 +71,10 @@
             android:layout_alignTop="@+id/rating_member_count"
             android:layout_alignBottom="@+id/rating_member_count"
             android:layout_alignParentEnd="true"
-            android:layout_marginStart="40dp"
-            android:layout_marginTop="2dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="-2dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="-1dp"
+            android:layout_marginEnd="34dp"
+            android:layout_marginBottom="1dp"
             android:layout_toEndOf="@+id/rating_member_count"
             android:text=">" />
         
@@ -117,134 +120,202 @@
             android:layout_alignStart="@+id/charm_rating_bar"
             android:layout_alignEnd="@+id/charm_rating_bar"
             android:layout_alignParentBottom="true"
-            android:layout_marginStart="43dp"
-            android:layout_marginEnd="-15dp"
-            android:layout_marginBottom="27dp"
+            android:layout_marginStart="54dp"
+            android:layout_marginEnd="-26dp"
+            android:layout_marginBottom="37dp"
             android:text="您认为该用户魅力如何？" />
     </RelativeLayout>
-        <TableLayout
-        android:visibility="gone"
-        android:id="@+id/features_table"
+        <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:stretchColumns="*">
-        <TextView android:text="此用户还有哪些特质？" />
-        <TableRow
-            android:visibility="gone"
-            android:id="@+id/male_feature_row1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="标签1" />
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="标签2" />
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="标签3" />
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="标签4" />
-        </TableRow>
-        <TableRow
-            android:visibility="gone"
-            android:id="@+id/male_feature_row2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="标签5" />
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="标签6" />
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="标签7" />
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="标签8" />
-        </TableRow>
-        <TableRow
-            android:visibility="gone"
-            android:id="@+id/female_feature_row1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="标签11" />
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="标签12" />
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="标签13" />
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="标签14" />
-        </TableRow>
-        <TableRow
-            android:visibility="gone"
-            android:id="@+id/female_feature_row2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="标签5" />
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="标签6" />
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="标签7" />
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="标签8" />
-        </TableRow>
-        <TableRow
-            android:layout_width="match_parent"
+        android:text="该用户还有哪些特质" />
+    
+            <com.nex3z.flowlayout.FlowLayout
+        android:id="@+id/male_features"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        app:flChildSpacing="8dp"
+        app:flChildSpacingForLastRow="align"
+        app:flRowSpacing="8dp">
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:stretchColumns="*">
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="94dp"
-                android:layout_height="wrap_content"
-                android:layout_span="3">
-                <android.support.design.widget.TextInputEditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="自定义" />
-            </android.support.design.widget.TextInputLayout>
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="保存" />
-        </TableRow>
-    </TableLayout>
+            android:background="@drawable/label_bg"
+            android:gravity="center"
+            android:padding="8dp"
+            android:layout_margin="8dp"
+            android:text="英俊潇洒" />
+                        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/label_bg"
+            android:gravity="center"
+            android:padding="8dp"
+            android:layout_margin="8dp"
+            android:text="成熟" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/label_bg"
+            android:gravity="center"
+            android:padding="8dp"
+            android:layout_margin="8dp"
+            android:text="博学多才" />
+                        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/label_bg"
+            android:gravity="center"
+            android:padding="8dp"
+            android:layout_margin="8dp"
+            android:text="热情开朗" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/label_bg"
+            android:gravity="center"
+            android:padding="8dp"
+            android:layout_margin="8dp"
+            android:text="诚实正直" />
+                        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/label_bg"
+            android:gravity="center"
+            android:padding="8dp"
+            android:layout_margin="8dp"
+            android:text="幽默" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/label_bg"
+            android:gravity="center"
+            android:padding="8dp"
+            android:layout_margin="8dp"
+            android:text="体贴" />
+                        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/label_bg"
+            android:gravity="center"
+            android:padding="8dp"
+            android:layout_margin="8dp"
+            android:text="谦虚好学" />
+    </com.nex3z.flowlayout.FlowLayout>
+    
+        <com.nex3z.flowlayout.FlowLayout
+        android:id="@+id/female_features"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        app:flChildSpacing="8dp"
+        app:flChildSpacingForLastRow="align"
+        app:flRowSpacing="8dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/label_bg"
+            android:gravity="center"
+            android:padding="8dp"
+            android:layout_margin="8dp"
+            android:text="温柔体贴" />
+                    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/label_bg"
+            android:gravity="center"
+            android:padding="8dp"
+            android:layout_margin="8dp"
+            android:text="可爱" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/label_bg"
+            android:gravity="center"
+            android:padding="8dp"
+            android:layout_margin="8dp"
+            android:text="善良贤惠" />
+                    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/label_bg"
+            android:gravity="center"
+            android:padding="8dp"
+            android:layout_margin="8dp"
+            android:text="热情开朗" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/label_bg"
+            android:gravity="center"
+            android:padding="8dp"
+            android:layout_margin="8dp"
+            android:text="文静" />
+                    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/label_bg"
+            android:gravity="center"
+            android:padding="8dp"
+            android:layout_margin="8dp"
+            android:text="端庄秀丽" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/label_bg"
+            android:gravity="center"
+            android:padding="8dp"
+            android:layout_margin="8dp"
+            android:text="小巧玲珑" />
+                    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/label_bg"
+            android:gravity="center"
+            android:padding="8dp"
+            android:layout_margin="8dp"
+            android:text="窈窕淑女" />
+    </com.nex3z.flowlayout.FlowLayout>
+        <android.support.constraint.ConstraintLayout
+        android:id="@+id/diy_feature"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/textInputEditText"
+            android:layout_width="271dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:hint="自定义"/>
+                    <Button
+            android:text="保存"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/textInputEditText"
+            app:layout_constraintStart_toEndOf="@+id/textInputEditText"
+            app:layout_constraintTop_toTopOf="@+id/textInputEditText"
+            app:layout_constraintVertical_bias="1.0" />
+    </android.support.constraint.ConstraintLayout>
     
     <RelativeLayout
         android:id="@+id/invite_reference"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp">
+        android:layout_marginBottom="10dp"
+                    android:background="@color/colorWhite">
         <TextView
             android:id="@+id/textView2"
             android:layout_width="wrap_content"
@@ -284,7 +355,8 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/reference_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@color/colorWhite">
     </android.support.v7.widget.RecyclerView>
 
     <TextView
