@@ -49,5 +49,6 @@ dependencies {//for third party
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.5.3'
     implementation 'com.github.LuckSiege.PictureSelector:picture_library:v2.1.9'
     implementation 'com.github.ome450901:SimpleRatingBar:1.4.2'
+    implementation 'com.nex3z:flow-layout:1.2.4'
 }
 
