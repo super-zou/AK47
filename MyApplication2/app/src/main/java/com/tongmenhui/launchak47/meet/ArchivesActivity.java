@@ -16,6 +16,8 @@ import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.support.constraint.ConstraintLayout;
+import com.nex3z.flowlayout.FlowLayout;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.NetworkImageView;
@@ -170,29 +172,49 @@ public class ArchivesActivity extends BaseAppCompatActivity {
         
         ScaleRatingBar scaleRatingBar = mHeaderEvaluation.findViewById(R.id.charm_rating_bar);
                 final TextView charmRating = mHeaderEvaluation.findViewById(R.id.charm_rating);
-        final TableLayout featureTableLayout = mHeaderEvaluation.findViewById(R.id.features_table);
+        final FlowLayout maleFeatures = mHeaderEvaluation.findViewById(R.id.male_features);
+        final FlowLayout femaleFeatures = mHeaderEvaluation.findViewById(R.id.female_features);
+        final ConstraintLayout diyFeature = mHeaderEvaluation.findViewById(R.id.diy_feature);
         scaleRatingBar.setOnRatingChangeListener(new BaseRatingBar.OnRatingChangeListener() {
 
             @Override
             public void onRatingChange(BaseRatingBar ratingBar, float rating) {
                 Log.e(TAG, "onRatingChange float: " + rating);
                 charmRating.setText(String.valueOf(rating));
-                featureTableLayout.setVisibility(View.VISIBLE);
                 Slog.d(TAG, "sex: "+mMeetMember.getSex());
                 if(mMeetMember.getSex() == 0){//display male features
-                    TableRow tableRow1 = mHeaderEvaluation.findViewById(R.id.male_feature_row1);
-                    TableRow tableRow2 = mHeaderEvaluation.findViewById(R.id.male_feature_row2);
-                    tableRow1.setVisibility(View.VISIBLE);
-                    tableRow2.setVisibility(View.VISIBLE);
-
+                    maleFeatures.setVisibility(View.VISIBLE);
                 }else{//display female features
-                    TableRow tableRow1 = mHeaderEvaluation.findViewById(R.id.female_feature_row1);
-                    TableRow tableRow2 = mHeaderEvaluation.findViewById(R.id.female_feature_row2);
-                    tableRow1.setVisibility(View.VISIBLE);
-                    tableRow2.setVisibility(View.VISIBLE);
+                    femaleFeatures.setVisibility(View.VISIBLE);
                 }
+                diyFeature.setVisibility(View.VISIBLE);
             }
         });
+        for (int i=0; i<maleFeatures.getChildCount(); i++){
+            final TextView feature = (TextView) maleFeatures.getChildAt(i);
+            feature.setBackground(getDrawable(R.drawable.feature_selected));
+            feature.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Slog.d(TAG, "===========get text: "+feature.getText());
+                }
+            });
+        }
+
+        for (int i=0; i<femaleFeatures.getChildCount(); i++){
+            final TextView feature = (TextView) femaleFeatures.getChildAt(i);
+            feature.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(feature.getBackground() == getResources().getDrawable(R.drawable.label_bg)){
+                        feature.setBackground(getResources().getDrawable(R.drawable.label_selected_bg));
+                    }else{
+                        feature.setBackground(getResources().getDrawable(R.drawable.label_bg));
+                    }
+                    Slog.d(TAG, "===========get text: "+feature.getText());
+                }
+            });
+        }
 
         Typeface font = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/fontawesome.ttf");
         FontManager.markAsIconContainer(findViewById(R.id.meet_archive), font);
