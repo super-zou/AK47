@@ -4,6 +4,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -171,7 +173,7 @@ public class ArchivesActivity extends BaseAppCompatActivity {
         });
         
         ScaleRatingBar scaleRatingBar = mHeaderEvaluation.findViewById(R.id.charm_rating_bar);
-                final TextView charmRating = mHeaderEvaluation.findViewById(R.id.charm_rating);
+        final TextView charmRating = mHeaderEvaluation.findViewById(R.id.charm_rating);
         final FlowLayout maleFeatures = mHeaderEvaluation.findViewById(R.id.male_features);
         final FlowLayout femaleFeatures = mHeaderEvaluation.findViewById(R.id.female_features);
         final ConstraintLayout diyFeature = mHeaderEvaluation.findViewById(R.id.diy_feature);
@@ -189,14 +191,23 @@ public class ArchivesActivity extends BaseAppCompatActivity {
                 }
                 diyFeature.setVisibility(View.VISIBLE);
             }
+
         });
+
         for (int i=0; i<maleFeatures.getChildCount(); i++){
             final TextView feature = (TextView) maleFeatures.getChildAt(i);
-            feature.setBackground(getDrawable(R.drawable.feature_selected));
+            //feature.setBackground(getDrawable(R.drawable.label_bg));
             feature.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Slog.d(TAG, "===========get text: "+feature.getText());
+                    Slog.d(TAG, "===========get text: "+feature.getText()+" tag: "+feature.getTag());
+                    if(null != feature.getTag() && feature.getTag().equals("selected")){
+                        feature.setBackground(getDrawable(R.drawable.label_bg));
+                        feature.setTag(null);
+                    }else{
+                        feature.setBackground(getDrawable(R.drawable.label_selected_bg));
+                        feature.setTag("selected");
+                    }
                 }
             });
         }
@@ -206,15 +217,30 @@ public class ArchivesActivity extends BaseAppCompatActivity {
             feature.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(feature.getBackground() == getResources().getDrawable(R.drawable.label_bg)){
-                        feature.setBackground(getResources().getDrawable(R.drawable.label_selected_bg));
+                    Slog.d(TAG, "===========get text: "+feature.getText()+" tag: "+feature.getTag());
+                    if(null != feature.getTag() && feature.getTag().equals("selected")){
+                        feature.setBackground(getDrawable(R.drawable.label_bg));
+                        feature.setTag(null);
                     }else{
-                        feature.setBackground(getResources().getDrawable(R.drawable.label_bg));
+                        feature.setBackground(getDrawable(R.drawable.label_selected_bg));
+                        feature.setTag("selected");
                     }
-                    Slog.d(TAG, "===========get text: "+feature.getText());
                 }
             });
         }
+
+        Button addFeature = mHeaderEvaluation.findViewById(R.id.add_feature);
+        Button saveFeatures = mHeaderEvaluation.findViewById(R.id.save_features);
+        final TextInputEditText feature_input = mHeaderEvaluation.findViewById(R.id.feature_input);
+        addFeature.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!"".equals(feature_input.getText())){
+                    TextView textView = new TextView(getApplicationContext());
+
+                }
+            }
+        });
 
         Typeface font = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/fontawesome.ttf");
         FontManager.markAsIconContainer(findViewById(R.id.meet_archive), font);

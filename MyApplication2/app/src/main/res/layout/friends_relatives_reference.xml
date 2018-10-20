@@ -125,34 +125,38 @@
             android:layout_marginBottom="37dp"
             android:text="您认为该用户魅力如何？" />
     </RelativeLayout>
-        <TextView
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="该用户还有哪些特质" />
     
-            <com.nex3z.flowlayout.FlowLayout
+    <com.nex3z.flowlayout.FlowLayout
         android:id="@+id/male_features"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        app:flChildSpacing="8dp"
+        app:flChildSpacing="5dp"
         app:flChildSpacingForLastRow="align"
-        app:flRowSpacing="8dp">
+        app:flRowSpacing="5dp">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/label_bg"
             android:gravity="center"
             android:padding="8dp"
-            android:layout_margin="8dp"
+            android:layout_margin="6dp"
+            android:clickable="true"
             android:text="英俊潇洒" />
-                        <TextView
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/label_bg"
             android:gravity="center"
             android:padding="8dp"
-            android:layout_margin="8dp"
+            android:layout_margin="6dp"
+            android:clickable="true"
             android:text="成熟" />
 
         <TextView
@@ -161,15 +165,16 @@
             android:background="@drawable/label_bg"
             android:gravity="center"
             android:padding="8dp"
-            android:layout_margin="8dp"
+            android:layout_margin="6dp"
             android:text="博学多才" />
-                        <TextView
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/label_bg"
             android:gravity="center"
             android:padding="8dp"
-            android:layout_margin="8dp"
+            android:layout_margin="6dp"
             android:text="热情开朗" />
 
         <TextView
@@ -178,15 +183,16 @@
             android:background="@drawable/label_bg"
             android:gravity="center"
             android:padding="8dp"
-            android:layout_margin="8dp"
+            android:layout_margin="6dp"
             android:text="诚实正直" />
-                        <TextView
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/label_bg"
             android:gravity="center"
             android:padding="8dp"
-            android:layout_margin="8dp"
+            android:layout_margin="6dp"
             android:text="幽默" />
 
         <TextView
@@ -195,41 +201,43 @@
             android:background="@drawable/label_bg"
             android:gravity="center"
             android:padding="8dp"
-            android:layout_margin="8dp"
+            android:layout_margin="6dp"
             android:text="体贴" />
-                        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/label_bg"
-            android:gravity="center"
-            android:padding="8dp"
-            android:layout_margin="8dp"
-            android:text="谦虚好学" />
-    </com.nex3z.flowlayout.FlowLayout>
-    
-        <com.nex3z.flowlayout.FlowLayout
-        android:id="@+id/female_features"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        app:flChildSpacing="8dp"
-        app:flChildSpacingForLastRow="align"
-        app:flRowSpacing="8dp">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/label_bg"
             android:gravity="center"
             android:padding="8dp"
-            android:layout_margin="8dp"
-            android:text="温柔体贴" />
-                    <TextView
+            android:layout_margin="6dp"
+            android:text="谦虚好学" />
+    </com.nex3z.flowlayout.FlowLayout>
+    
+    <com.nex3z.flowlayout.FlowLayout
+        android:id="@+id/female_features"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        app:flChildSpacing="5dp"
+        app:flChildSpacingForLastRow="align"
+        app:flRowSpacing="5dp">
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/label_bg"
             android:gravity="center"
             android:padding="8dp"
-            android:layout_margin="8dp"
+            android:layout_margin="6dp"
+            android:text="温柔体贴" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/label_bg"
+            android:gravity="center"
+            android:padding="8dp"
+            android:layout_margin="6dp"
             android:text="可爱" />
 
         <TextView
@@ -238,15 +246,15 @@
             android:background="@drawable/label_bg"
             android:gravity="center"
             android:padding="8dp"
-            android:layout_margin="8dp"
+            android:layout_margin="6dp"
             android:text="善良贤惠" />
-                    <TextView
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/label_bg"
             android:gravity="center"
             android:padding="8dp"
-            android:layout_margin="8dp"
+            android:layout_margin="6dp"
             android:text="热情开朗" />
 
         <TextView
@@ -255,15 +263,15 @@
             android:background="@drawable/label_bg"
             android:gravity="center"
             android:padding="8dp"
-            android:layout_margin="8dp"
+            android:layout_margin="6dp"
             android:text="文静" />
-                    <TextView
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/label_bg"
             android:gravity="center"
             android:padding="8dp"
-            android:layout_margin="8dp"
+            android:layout_margin="6dp"
             android:text="端庄秀丽" />
 
         <TextView
@@ -272,41 +280,61 @@
             android:background="@drawable/label_bg"
             android:gravity="center"
             android:padding="8dp"
-            android:layout_margin="8dp"
+            android:layout_margin="6dp"
             android:text="小巧玲珑" />
-                    <TextView
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/label_bg"
             android:gravity="center"
             android:padding="8dp"
-            android:layout_margin="8dp"
+            android:layout_margin="6dp"
             android:text="窈窕淑女" />
     </com.nex3z.flowlayout.FlowLayout>
-        <android.support.constraint.ConstraintLayout
+
+    <android.support.constraint.ConstraintLayout
         android:id="@+id/diy_feature"
         android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <android.support.design.widget.TextInputEditText
-            android:id="@+id/textInputEditText"
+            android:id="@+id/feature_input"
             android:layout_width="271dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:hint="自定义"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:hint="自定义"/>
-                    <Button
-            android:text="保存"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/add_feature"
+            android:layout_width="72dp"
+            android:layout_height="41dp"
+            android:layout_marginStart="4dp"
+            android:background="#3799f4"
+            android:text="+添加"
+            android:textColor="@color/colorWhite"
+            app:layout_constraintBottom_toBottomOf="@+id/feature_input"
+            app:layout_constraintStart_toEndOf="@+id/feature_input"
+            app:layout_constraintTop_toTopOf="@+id/feature_input"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <Button
+            android:id="@+id/save_features"
+            android:layout_width="366dp"
+            android:layout_height="38dp"
             android:layout_marginStart="8dp"
-            app:layout_constraintBottom_toBottomOf="@+id/textInputEditText"
-            app:layout_constraintStart_toEndOf="@+id/textInputEditText"
-            app:layout_constraintTop_toTopOf="@+id/textInputEditText"
-            app:layout_constraintVertical_bias="1.0" />
+            android:layout_marginTop="60dp"
+            android:layout_marginEnd="8dp"
+            android:background="#3799f4"
+            android:text="保存"
+            android:textColor="@color/line_color"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
     </android.support.constraint.ConstraintLayout>
     
     <RelativeLayout
@@ -315,7 +343,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
-                    android:background="@color/colorWhite">
+        android:background="@color/colorWhite">
         <TextView
             android:id="@+id/textView2"
             android:layout_width="wrap_content"
