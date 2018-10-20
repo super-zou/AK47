@@ -136,16 +136,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        app:flChildSpacing="5dp"
+        app:flChildSpacing="8dp"
         app:flChildSpacingForLastRow="align"
-        app:flRowSpacing="5dp">
+        app:flRowSpacing="8dp">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/label_bg"
             android:gravity="center"
             android:padding="8dp"
-            android:layout_margin="6dp"
             android:clickable="true"
             android:text="英俊潇洒" />
 
@@ -165,7 +164,6 @@
             android:background="@drawable/label_bg"
             android:gravity="center"
             android:padding="8dp"
-            android:layout_margin="6dp"
             android:text="博学多才" />
 
         <TextView
@@ -174,7 +172,6 @@
             android:background="@drawable/label_bg"
             android:gravity="center"
             android:padding="8dp"
-            android:layout_margin="6dp"
             android:text="热情开朗" />
 
         <TextView
@@ -183,7 +180,6 @@
             android:background="@drawable/label_bg"
             android:gravity="center"
             android:padding="8dp"
-            android:layout_margin="6dp"
             android:text="诚实正直" />
 
         <TextView
@@ -192,7 +188,6 @@
             android:background="@drawable/label_bg"
             android:gravity="center"
             android:padding="8dp"
-            android:layout_margin="6dp"
             android:text="幽默" />
 
         <TextView
@@ -201,7 +196,6 @@
             android:background="@drawable/label_bg"
             android:gravity="center"
             android:padding="8dp"
-            android:layout_margin="6dp"
             android:text="体贴" />
 
         <TextView
@@ -210,7 +204,6 @@
             android:background="@drawable/label_bg"
             android:gravity="center"
             android:padding="8dp"
-            android:layout_margin="6dp"
             android:text="谦虚好学" />
     </com.nex3z.flowlayout.FlowLayout>
     
@@ -220,16 +213,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        app:flChildSpacing="5dp"
+        app:flChildSpacing="8dp"
         app:flChildSpacingForLastRow="align"
-        app:flRowSpacing="5dp">
+        app:flRowSpacing="8dp">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/label_bg"
             android:gravity="center"
             android:padding="8dp"
-            android:layout_margin="6dp"
             android:text="温柔体贴" />
         <TextView
             android:layout_width="wrap_content"
@@ -237,7 +229,6 @@
             android:background="@drawable/label_bg"
             android:gravity="center"
             android:padding="8dp"
-            android:layout_margin="6dp"
             android:text="可爱" />
 
         <TextView
@@ -246,7 +237,6 @@
             android:background="@drawable/label_bg"
             android:gravity="center"
             android:padding="8dp"
-            android:layout_margin="6dp"
             android:text="善良贤惠" />
         <TextView
             android:layout_width="wrap_content"
@@ -254,7 +244,6 @@
             android:background="@drawable/label_bg"
             android:gravity="center"
             android:padding="8dp"
-            android:layout_margin="6dp"
             android:text="热情开朗" />
 
         <TextView
@@ -263,7 +252,6 @@
             android:background="@drawable/label_bg"
             android:gravity="center"
             android:padding="8dp"
-            android:layout_margin="6dp"
             android:text="文静" />
         <TextView
             android:layout_width="wrap_content"
@@ -271,7 +259,6 @@
             android:background="@drawable/label_bg"
             android:gravity="center"
             android:padding="8dp"
-            android:layout_margin="6dp"
             android:text="端庄秀丽" />
 
         <TextView
@@ -280,7 +267,6 @@
             android:background="@drawable/label_bg"
             android:gravity="center"
             android:padding="8dp"
-            android:layout_margin="6dp"
             android:text="小巧玲珑" />
         <TextView
             android:layout_width="wrap_content"
@@ -288,7 +274,6 @@
             android:background="@drawable/label_bg"
             android:gravity="center"
             android:padding="8dp"
-            android:layout_margin="6dp"
             android:text="窈窕淑女" />
     </com.nex3z.flowlayout.FlowLayout>
 
@@ -298,26 +283,29 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <android.support.design.widget.TextInputEditText
+        <android.support.v7.widget.AppCompatEditText
             android:id="@+id/feature_input"
-            android:layout_width="271dp"
-            android:layout_height="wrap_content"
+            android:layout_width="272dp"
+            android:layout_height="46dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
             android:hint="自定义"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
 
         <Button
             android:id="@+id/add_feature"
             android:layout_width="72dp"
             android:layout_height="41dp"
-            android:layout_marginStart="4dp"
+            android:layout_marginEnd="16dp"
             android:background="#3799f4"
             android:text="+添加"
             android:textColor="@color/colorWhite"
             app:layout_constraintBottom_toBottomOf="@+id/feature_input"
-            app:layout_constraintStart_toEndOf="@+id/feature_input"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/feature_input"
             app:layout_constraintVertical_bias="0.0" />
 
@@ -326,7 +314,7 @@
             android:layout_width="366dp"
             android:layout_height="38dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="60dp"
+            android:layout_marginTop="52dp"
             android:layout_marginEnd="8dp"
             android:background="#3799f4"
             android:text="保存"
