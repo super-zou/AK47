@@ -20,6 +20,10 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.support.constraint.ConstraintLayout;
 import com.nex3z.flowlayout.FlowLayout;
+import android.util.TypedValue;
+import android.view.Gravity;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.NetworkImageView;
@@ -231,19 +235,34 @@ public class ArchivesActivity extends BaseAppCompatActivity {
 
         Button addFeature = mHeaderEvaluation.findViewById(R.id.add_feature);
         Button saveFeatures = mHeaderEvaluation.findViewById(R.id.save_features);
-        final TextInputEditText feature_input = mHeaderEvaluation.findViewById(R.id.feature_input);
+        final TextInputEditText featureInput = mHeaderEvaluation.findViewById(R.id.feature_input);
         addFeature.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!"".equals(feature_input.getText())){
-                    TextView textView = new TextView(getApplicationContext());
-
+                if(!"".equals(featureInput.getText())){
+                    TextView diyTextView = new TextView(getApplicationContext());
+                    //FlowLayout.LayoutParams layoutParams = new FlowLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    diyTextView.setPadding((int) dpToPx(8), (int) dpToPx(8), (int) dpToPx(8), (int) dpToPx(8));
+                    diyTextView.setText(featureInput.getText());
+                    diyTextView.setGravity(Gravity.CENTER);
+                    diyTextView.setBackground(getDrawable(R.drawable.label_selected_bg));
+                    //diyTextView.setLayoutParams(layoutParams);
+                    if(mMeetMember.getSex() == 0){
+                        maleFeatures.addView(diyTextView);
+                    }else {
+                        femaleFeatures.addView(diyTextView);
+                    }
+                    featureInput.setText("");
                 }
             }
         });
 
         Typeface font = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/fontawesome.ttf");
         FontManager.markAsIconContainer(findViewById(R.id.meet_archive), font);
+    }
+    
+    private float dpToPx(float dp) {
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, getResources().getDisplayMetrics());
     }
 
     private void updateHeader(View view){
