@@ -165,6 +165,8 @@ public class ArchivesActivity extends BaseAppCompatActivity {
         loadData(mMeetMember.getUid());
         loadReferences(mMeetMember.getUid());
         
+        characterImpression();
+        
         View inviteReference = mHeaderEvaluation.findViewById(R.id.invite_reference);
         inviteReference.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -176,11 +178,23 @@ public class ArchivesActivity extends BaseAppCompatActivity {
             }
         });
         
+        Typeface font = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/fontawesome.ttf");
+        FontManager.markAsIconContainer(findViewById(R.id.meet_archive), font);
+    }
+    
+    private float dpToPx(float dp) {
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, getResources().getDisplayMetrics());
+    }
+    
+    private void  characterImpression(){
+        float mRating;
+        final List<String> selectedFeatures = new ArrayList<>();
         ScaleRatingBar scaleRatingBar = mHeaderEvaluation.findViewById(R.id.charm_rating_bar);
         final TextView charmRating = mHeaderEvaluation.findViewById(R.id.charm_rating);
         final FlowLayout maleFeatures = mHeaderEvaluation.findViewById(R.id.male_features);
         final FlowLayout femaleFeatures = mHeaderEvaluation.findViewById(R.id.female_features);
-        final ConstraintLayout diyFeature = mHeaderEvaluation.findViewById(R.id.diy_feature);
+        final FlowLayout diyFeatures  = mHeaderEvaluation.findViewById(R.id.diy_features);
+        final LinearLayout featureImpression = mHeaderEvaluation.findViewById(R.id.feature_impression);
         scaleRatingBar.setOnRatingChangeListener(new BaseRatingBar.OnRatingChangeListener() {
 
             @Override
@@ -193,12 +207,11 @@ public class ArchivesActivity extends BaseAppCompatActivity {
                 }else{//display female features
                     femaleFeatures.setVisibility(View.VISIBLE);
                 }
-                diyFeature.setVisibility(View.VISIBLE);
+                featureImpression.setVisibility(View.VISIBLE);
             }
 
         });
-
-        for (int i=0; i<maleFeatures.getChildCount(); i++){
+                for (int i=0; i<maleFeatures.getChildCount(); i++){
             final TextView feature = (TextView) maleFeatures.getChildAt(i);
             //feature.setBackground(getDrawable(R.drawable.label_bg));
             feature.setOnClickListener(new View.OnClickListener() {
@@ -208,15 +221,16 @@ public class ArchivesActivity extends BaseAppCompatActivity {
                     if(null != feature.getTag() && feature.getTag().equals("selected")){
                         feature.setBackground(getDrawable(R.drawable.label_bg));
                         feature.setTag(null);
+                        selectedFeatures.remove(feature.getText().toString());
                     }else{
                         feature.setBackground(getDrawable(R.drawable.label_selected_bg));
                         feature.setTag("selected");
+                        selectedFeatures.add(feature.getText().toString());
                     }
                 }
             });
         }
-
-        for (int i=0; i<femaleFeatures.getChildCount(); i++){
+                for (int i=0; i<femaleFeatures.getChildCount(); i++){
             final TextView feature = (TextView) femaleFeatures.getChildAt(i);
             feature.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -225,18 +239,18 @@ public class ArchivesActivity extends BaseAppCompatActivity {
                     if(null != feature.getTag() && feature.getTag().equals("selected")){
                         feature.setBackground(getDrawable(R.drawable.label_bg));
                         feature.setTag(null);
+                        selectedFeatures.remove(feature.getText().toString());
                     }else{
                         feature.setBackground(getDrawable(R.drawable.label_selected_bg));
                         feature.setTag("selected");
+                        selectedFeatures.add(feature.getText().toString());
                     }
                 }
             });
-        }
-
-        Button addFeature = mHeaderEvaluation.findViewById(R.id.add_feature);
+          Button addDiyFeature = mHeaderEvaluation.findViewById(R.id.add_feature);
         Button saveFeatures = mHeaderEvaluation.findViewById(R.id.save_features);
-        final TextInputEditText featureInput = mHeaderEvaluation.findViewById(R.id.feature_input);
-        addFeature.setOnClickListener(new View.OnClickListener() {
+        final EditText featureInput = mHeaderEvaluation.findViewById(R.id.feature_input);
+                addDiyFeature.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(!"".equals(featureInput.getText())){
@@ -246,25 +260,33 @@ public class ArchivesActivity extends BaseAppCompatActivity {
                     diyTextView.setText(featureInput.getText());
                     diyTextView.setGravity(Gravity.CENTER);
                     diyTextView.setBackground(getDrawable(R.drawable.label_selected_bg));
-                    //diyTextView.setLayoutParams(layoutParams);
-                    if(mMeetMember.getSex() == 0){
-                        maleFeatures.addView(diyTextView);
-                    }else {
-                        femaleFeatures.addView(diyTextView);
-                    }
+                    diyFeatures.addView(diyTextView);
+                    diyFeatures.setVisibility(View.VISIBLE);
+                    selectedFeatures.add(featureInput.getText().toString());
                     featureInput.setText("");
                 }
             }
         });
-
-        Typeface font = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/fontawesome.ttf");
-        FontManager.markAsIconContainer(findViewById(R.id.meet_archive), font);
+                    
+        saveFeatures.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String features = "";
+                Slog.d(TAG, "selected features size: "+selectedFeatures.size());
+                if(selectedFeatures.size() > 0){
+                    for (String feature:selectedFeatures){
+                        features += feature + "#";
+                    }
+                    Slog.d(TAG, "selected features: "+features);
+                    uploadToServer(features, charmRating.getText().toString(), mMeetMember.getUid());
+                }
+            }
+        });
     }
-    
-    private float dpToPx(float dp) {
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, getResources().getDisplayMetrics());
+        
+    private void uploadToServer(String features, String rating, int uid){
+        Slog.d(TAG, "==============uploadToServer features: "+features+" rating: "+rating+" uid: "+uid);
     }
-
     private void updateHeader(View view){
         TextView realname = (TextView) view.findViewById(R.id.name);
         TextView lives = (TextView) view.findViewById(R.id.lives);
