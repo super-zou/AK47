@@ -125,6 +125,12 @@
             android:layout_marginBottom="37dp"
             android:text="您认为该用户魅力如何？" />
     </RelativeLayout>
+    <LinearLayout
+        android:id="@+id/feature_impression"
+        android:visibility="gone"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -136,6 +142,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
         app:flChildSpacing="8dp"
         app:flChildSpacingForLastRow="align"
         app:flRowSpacing="8dp">
@@ -154,7 +162,6 @@
             android:background="@drawable/label_bg"
             android:gravity="center"
             android:padding="8dp"
-            android:layout_margin="6dp"
             android:clickable="true"
             android:text="成熟" />
 
@@ -213,6 +220,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
         app:flChildSpacing="8dp"
         app:flChildSpacingForLastRow="align"
         app:flRowSpacing="8dp">
@@ -277,54 +286,58 @@
             android:text="窈窕淑女" />
     </com.nex3z.flowlayout.FlowLayout>
 
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/diy_feature"
-        android:visibility="gone"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <android.support.v7.widget.AppCompatEditText
-            android:id="@+id/feature_input"
-            android:layout_width="272dp"
-            android:layout_height="46dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:hint="自定义"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
-
-        <Button
-            android:id="@+id/add_feature"
-            android:layout_width="72dp"
-            android:layout_height="41dp"
-            android:layout_marginEnd="16dp"
-            android:background="#3799f4"
-            android:text="+添加"
-            android:textColor="@color/colorWhite"
-            app:layout_constraintBottom_toBottomOf="@+id/feature_input"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/feature_input"
-            app:layout_constraintVertical_bias="0.0" />
-
-        <Button
-            android:id="@+id/save_features"
-            android:layout_width="366dp"
-            android:layout_height="38dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="52dp"
-            android:layout_marginEnd="8dp"
-            android:background="#3799f4"
-            android:text="保存"
-            android:textColor="@color/line_color"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-    </android.support.constraint.ConstraintLayout>
-    
+    <LinearLayout
+            android:id="@+id/add_diy_feature"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:orientation="horizontal">
+            <android.support.v7.widget.AppCompatEditText
+                android:id="@+id/feature_input"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="10"
+                android:focusedByDefault="false"
+                android:hint="自定义" />
+            <Button
+                android:id="@+id/add_feature"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:layout_weight="1"
+                android:background="#3799f4"
+                android:text="+添加"
+                android:textColor="@color/colorWhite" />
+    </LinearLayout>
+    <LinearLayout
+            android:id="@+id/save_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <com.nex3z.flowlayout.FlowLayout
+                android:id="@+id/diy_features"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                app:flChildSpacing="8dp"
+                app:flChildSpacingForLastRow="align"
+                app:flRowSpacing="8dp">
+            </com.nex3z.flowlayout.FlowLayout>
+            <Button
+                android:id="@+id/save_features"
+                android:layout_width="match_parent"
+                android:layout_height="36dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:background="#3799f4"
+                android:text="保存"
+                android:textColor="@color/line_color" />
+        </LinearLayout>
+    </LinearLayout>
     <RelativeLayout
         android:id="@+id/invite_reference"
         android:layout_width="wrap_content"
@@ -336,7 +349,7 @@
             android:id="@+id/textView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="yaoqing" />
+            android:text="邀请" />
 
         <TextView
             android:id="@+id/textView3"
