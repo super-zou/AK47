@@ -164,7 +164,8 @@ public class ArchivesActivity extends BaseAppCompatActivity {
 
 
         loadData(mMeetMember.getUid());
-        loadReferences(mMeetMember.getUid());
+
+        loadImpressionAndReferences(mMeetMember.getUid());
 
         ScaleRatingBar scaleRatingBar = mHeaderEvaluation.findViewById(R.id.charm_rating_bar);
         scaleRatingBar.setOnRatingChangeListener(new BaseRatingBar.OnRatingChangeListener() {
@@ -287,7 +288,7 @@ public class ArchivesActivity extends BaseAppCompatActivity {
         
     }
 
-    private void loadReferences(int uid){
+    private void loadImpressionAndReferences(int uid){
         RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
         HttpUtil.sendOkHttpRequest(this, LOAD_REFERENCE_URL, requestBody, new Callback() {
             @Override
