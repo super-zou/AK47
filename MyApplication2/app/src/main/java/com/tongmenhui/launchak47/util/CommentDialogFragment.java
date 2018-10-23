@@ -46,7 +46,8 @@ public class CommentDialogFragment extends DialogFragment implements View.OnClic
         mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         mDialog.setContentView(R.layout.comment_input_dialog);
         mDialog.setCanceledOnTouchOutside(true);
-
+        getDialog().getWindow().setDimAmount(0.8f);
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         Window window = mDialog.getWindow();
         WindowManager.LayoutParams layoutParams = window.getAttributes();
         layoutParams.gravity = Gravity.BOTTOM;
