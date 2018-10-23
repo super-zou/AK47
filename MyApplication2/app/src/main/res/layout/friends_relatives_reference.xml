@@ -78,9 +78,56 @@
             android:layout_toEndOf="@+id/rating_member_count"
             android:text=">" />
         
+            <LinearLayout
+            android:id="@+id/charm_rating_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:orientation="horizontal"
+            android:layout_gravity="center_horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/fa_heart_o"
+                android:textSize="30dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/fa_heart_o"
+                android:textSize="30dp" />
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/fa_heart_o"
+                android:textSize="30dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/fa_heart_o"
+                android:textSize="30dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/fa_heart_o"
+                android:textSize="30dp" />
+
+            <TextView
+                android:id="@+id/charm_rating"
+                android:layout_width="53dp"
+                android:layout_height="wrap_content"
+                android:text="111" />
+        </LinearLayout>
+        
+        
     <com.willy.ratingbar.ScaleRatingBar
         xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/charm_rating_bar"
+            android:id="@+id/charm_rating_bar1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
@@ -101,19 +148,6 @@
             app:srb_starWidth="30dp"
             app:srb_stepSize="0.5">
     </com.willy.ratingbar.ScaleRatingBar>
-    <TextView
-            android:id="@+id/charm_rating"
-            android:layout_width="53dp"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/charm_rating_bar"
-            android:layout_alignBottom="@+id/charm_rating_bar"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="22dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginEnd="42dp"
-            android:layout_marginBottom="9dp"
-            android:layout_toEndOf="@+id/charm_rating_bar"
-            android:text="" />
      <TextView
             android:layout_width="181dp"
             android:layout_height="wrap_content"
