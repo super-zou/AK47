@@ -235,7 +235,7 @@ public class ArchivesListAdapter  extends RecyclerView.Adapter<ArchivesListAdapt
 
 
             Typeface font = Typeface.createFromAsset(mContext.getAssets(), "fonts/fontawesome.ttf");
-            FontManager.markAsIconContainer(view.findViewById(R.id.behavior_statistics), font);
+            FontManager.markAsIconContainer(view.findViewById(R.id.meet_dynamics_item), font);
         }
     }
 
