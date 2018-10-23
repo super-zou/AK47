@@ -16,6 +16,11 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import android.graphics.Color;
+import android.graphics.drawable.ClipDrawable;
+import android.graphics.drawable.ColorDrawable;
+import android.view.LayoutInflater;
+
 import com.nex3z.flowlayout.FlowLayout;
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.util.HttpUtil;
@@ -37,6 +42,8 @@ public class RatingAndImpressionDialogFragment extends DialogFragment {
     private static final String TAG = "RatingAndImpressionDialogFragment";
     private Context mContext;
     private Dialog mDialog;
+        private View  view;
+    private LayoutInflater inflater;
     private static final String SET_IMPRESSION_URL = HttpUtil.DOMAIN + "?q=meet/impression/set";
 
     @Override
@@ -54,9 +61,11 @@ public class RatingAndImpressionDialogFragment extends DialogFragment {
             uid = bundle.getInt("uid");
             sex = bundle.getInt("sex");
         }
-        mDialog = new Dialog(getActivity(), android.R.style.Theme_Light_NoTitleBar_Fullscreen);
+        inflater = LayoutInflater.from(mContext);
+        mDialog = new Dialog(mContext, android.R.style.Theme_Light_NoTitleBar_Fullscreen);
+        view = inflater.inflate(R.layout.rating_impression_dialog, null);
         mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        mDialog.setContentView(R.layout.rating_impression_dialog);
+        mDialog.setContentView(view);
         mDialog.setCanceledOnTouchOutside(true);
         Window window = mDialog.getWindow();
         WindowManager.LayoutParams layoutParams = window.getAttributes();
@@ -73,11 +82,11 @@ public class RatingAndImpressionDialogFragment extends DialogFragment {
 
     private void  characterImpression(final int uid, final int sex) {
         final List<String> selectedFeatures = new ArrayList<>();
-        ScaleRatingBar scaleRatingBar = mDialog.findViewById(R.id.charm_rating_bar);
-        final TextView charmRating = mDialog.findViewById(R.id.charm_rating);
-        final FlowLayout maleFeatures = mDialog.findViewById(R.id.male_features);
-        final FlowLayout femaleFeatures = mDialog.findViewById(R.id.female_features);
-        final FlowLayout diyFeatures = mDialog.findViewById(R.id.diy_features);
+        ScaleRatingBar scaleRatingBar = view.findViewById(R.id.charm_rating_bar);
+        final TextView charmRating = view.findViewById(R.id.charm_rating);
+        final FlowLayout maleFeatures = view.findViewById(R.id.male_features);
+        final FlowLayout femaleFeatures = view.findViewById(R.id.female_features);
+        final FlowLayout diyFeatures = view.findViewById(R.id.diy_features);
 
         if (sex == 0) {//display male features
             maleFeatures.setVisibility(View.VISIBLE);
@@ -133,9 +142,9 @@ public class RatingAndImpressionDialogFragment extends DialogFragment {
             });
         }
 
-        Button addDiyFeature = mDialog.findViewById(R.id.add_feature);
-        Button saveFeatures = mDialog.findViewById(R.id.save_features);
-        final EditText featureInput = mDialog.findViewById(R.id.feature_input);
+        Button addDiyFeature = view.findViewById(R.id.add_feature);
+        Button saveFeatures = view.findViewById(R.id.save_features);
+        final EditText featureInput = view.findViewById(R.id.feature_input);
         addDiyFeature.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -164,8 +173,13 @@ public class RatingAndImpressionDialogFragment extends DialogFragment {
                         features += feature + "#";
                     }
                     Slog.d(TAG, "selected features: " + features);
-                    uploadToServer(features, Float.parseFloat(charmRating.getText().toString()), uid);
                 }
+                float rating = 0;
+                if(charmRating.getText().toString() != null && !"".equals(charmRating.getText().toString())){
+                    rating = Float.parseFloat(charmRating.getText().toString());
+                }
+                dismiss();
+                uploadToServer(features, rating, uid);
             }
         });
     }
