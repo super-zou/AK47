@@ -4,7 +4,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
 
     <com.willy.ratingbar.ScaleRatingBar xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/charm_rating_bar"
@@ -252,7 +254,7 @@
 
     <android.support.v7.widget.AppCompatEditText
         android:id="@+id/feature_input"
-        android:layout_width="295dp"
+        android:layout_width="247dp"
         android:layout_height="40dp"
         android:layout_marginStart="8dp"
         android:focusedByDefault="false"
@@ -271,10 +273,12 @@
         android:background="#3799f4"
         android:text="+添加"
         android:textColor="@color/colorWhite"
+            app:layout_constraintHorizontal_bias="0.849"
         app:layout_constraintBottom_toBottomOf="@+id/feature_input"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/feature_input"
-        app:layout_constraintTop_toTopOf="@+id/feature_input" />
+        app:layout_constraintTop_toTopOf="@+id/feature_input"
+            app:layout_constraintVertical_bias="0.0"/>
 
     <com.nex3z.flowlayout.FlowLayout
         android:id="@+id/diy_features"
@@ -310,9 +314,9 @@
         android:textColor="@color/line_color"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/diy_features"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.019" />
 
 </android.support.constraint.ConstraintLayout>
