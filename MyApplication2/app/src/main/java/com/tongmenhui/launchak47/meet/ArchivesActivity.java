@@ -1,5 +1,7 @@
 package com.tongmenhui.launchak47.meet;
 
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -82,6 +84,7 @@ public class ArchivesActivity extends BaseAppCompatActivity {
     MeetReferenceAdapter mMeetReferenceAdapter;
     private TextView mEmptyView;
     View mHeaderEvaluation;
+      private RatingAndImpressionDialogFragment ratingAndImpressionDialogFragment;
 
     private ImageView backLeft;
     private MeetMemberInfo mMeetMember;
@@ -172,12 +175,22 @@ public class ArchivesActivity extends BaseAppCompatActivity {
 
             @Override
             public void onRatingChange(BaseRatingBar ratingBar, float rating) {
-                RatingAndImpressionDialogFragment ratingAndImpressionDialogFragment = new RatingAndImpressionDialogFragment();
+                ratingBar.setRating(0);
+
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                Fragment prev = getSupportFragmentManager().findFragmentByTag("RatingAndImpressionDialogFragment");
+                if (prev != null) {
+                    ft.remove(prev);
+                }
+                ft.addToBackStack(null);
+                if(ratingAndImpressionDialogFragment == null){
+                    ratingAndImpressionDialogFragment = new RatingAndImpressionDialogFragment();
                 Bundle bundle = new Bundle();
                 bundle.putInt("uid", mMeetMember.getUid());
                 bundle.putInt("sex", mMeetMember.getSex());
                 ratingAndImpressionDialogFragment.setArguments(bundle);
-                ratingAndImpressionDialogFragment.show(getSupportFragmentManager(), "RatingAndImpressionDialogFragment");
+                 ratingAndImpressionDialogFragment.show(ft, "RatingAndImpressionDialogFragment");
+                }
             }
 
         });
@@ -193,8 +206,7 @@ public class ArchivesActivity extends BaseAppCompatActivity {
             }
         });
         
-        Typeface font = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/fontawesome.ttf");
-        FontManager.markAsIconContainer(findViewById(R.id.meet_archive), font);
+
     }
     
 
@@ -215,7 +227,7 @@ public class ArchivesActivity extends BaseAppCompatActivity {
         TextView photosView = (TextView)view.findViewById(R.id.photos_statistics);
 
         Typeface font = Typeface.createFromAsset(getAssets(), "fonts/fontawesome.ttf");
-        FontManager.markAsIconContainer(view.findViewById(R.id.meet_dynamics_item), font);
+        FontManager.markAsIconContainer(view.findViewById(R.id.meet_item_id), font);
 
         realname.setText(mMeetMember.getRealname());
         lives.setText(mMeetMember.getLives());
@@ -285,6 +297,8 @@ public class ArchivesActivity extends BaseAppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         mMeetReferenceAdapter = new MeetReferenceAdapter(this);
         recyclerView.setAdapter(mMeetReferenceAdapter);
+        Typeface font = Typeface.createFromAsset(getAssets(), "fonts/fontawesome.ttf");
+        FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.meet_item_id), font);
         
     }
 
