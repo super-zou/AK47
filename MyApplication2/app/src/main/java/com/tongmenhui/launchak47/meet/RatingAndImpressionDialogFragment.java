@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+
 import android.graphics.Color;
 import android.graphics.drawable.ClipDrawable;
 import android.graphics.drawable.ColorDrawable;
@@ -43,13 +44,26 @@ public class RatingAndImpressionDialogFragment extends DialogFragment {
     private Context mContext;
     private Dialog mDialog;
         private View  view;
+    private boolean mEvaluated = false;
+    private RatingAndImpressionDialogFragmentListener ratingAndImpressionDialogFragmentListener;
     private LayoutInflater inflater;
     private static final String SET_IMPRESSION_URL = HttpUtil.DOMAIN + "?q=meet/impression/set";
 
+        //When the dialog destried  the function will be called to transmit data to ArchivesActivity
+    public interface RatingAndImpressionDialogFragmentListener{
+        //evaluated set true if user rating or set impression, or else set false
+        void onBackFromRatingAndImpressionDialogFragment(boolean evaluated);
+    }
+    
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         mContext = context;
+                try {
+            ratingAndImpressionDialogFragmentListener = (RatingAndImpressionDialogFragmentListener)context;
+        }catch (ClassCastException e){
+            throw new ClassCastException(context.toString() + "must implement ratingAndImpressionDialogFragmentListener");
+        }
     }
 
     @Override
@@ -175,10 +189,12 @@ public class RatingAndImpressionDialogFragment extends DialogFragment {
                         features += feature + "#";
                     }
                     Slog.d(TAG, "selected features: " + features);
+                    mEvaluated = true;
                 }
                 float rating = 0;
                 if(charmRating.getText().toString() != null && !"".equals(charmRating.getText().toString())){
                     rating = Float.parseFloat(charmRating.getText().toString());
+                    mEvaluated = true;
                 }
                 dismiss();
                 uploadToServer(features, rating, uid);
@@ -218,7 +234,18 @@ public class RatingAndImpressionDialogFragment extends DialogFragment {
         });
 
     }
-
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        //KeyboardUtils.hideSoftInput(getContext());
+        if(mDialog != null){
+            mDialog.dismiss();
+            mDialog = null;
+        }
+        if(ratingAndImpressionDialogFragmentListener != null){//callback from ArchivesActivity class
+            ratingAndImpressionDialogFragmentListener.onBackFromRatingAndImpressionDialogFragment(mEvaluated);
+        }
+    }
 
     @Override
     public void onDismiss(DialogInterface dialogInterface){
