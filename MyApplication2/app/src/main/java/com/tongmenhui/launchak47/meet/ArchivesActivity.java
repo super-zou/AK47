@@ -62,7 +62,7 @@ import okhttp3.Response;
 
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
-public class ArchivesActivity extends BaseAppCompatActivity {
+public class ArchivesActivity extends BaseAppCompatActivity implements RatingAndImpressionDialogFragment.RatingAndImpressionDialogFragmentListener{
     private static final String TAG = "ArchivesActivity";
 
     private static final String DYNAMICS_URL = HttpUtil.DOMAIN + "?q=meet/activity/get";
@@ -104,6 +104,7 @@ public class ArchivesActivity extends BaseAppCompatActivity {
                 finish();
             }
         });
+        Typeface font = Typeface.createFromAsset(getAssets(), "fonts/fontawesome.ttf");
         mMeetMember = (MeetMemberInfo) getIntent().getSerializableExtra("meet");
 
         mArchivesListAdapter = new ArchivesListAdapter(this);
@@ -133,10 +134,15 @@ public class ArchivesActivity extends BaseAppCompatActivity {
                 .setRefreshTimeVisible(true);
         View headerProfile = LayoutInflater.from(this).inflate(R.layout.meet_item, (ViewGroup)findViewById(android.R.id.content),false);
         mXRecyclerView.addHeaderView(headerProfile);
+        FontManager.markAsIconContainer(headerProfile.findViewById(R.id.meet_item_id), font);
         updateHeader(headerProfile);
+        
 
         mHeaderEvaluation = LayoutInflater.from(this).inflate(R.layout.friends_relatives_reference, (ViewGroup)findViewById(android.R.id.content),false);
         mXRecyclerView.addHeaderView(mHeaderEvaluation);
+        
+         FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.charm_rating_bar), font);
+        FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.charm_synthesized_rating), font);
 
         mXRecyclerView.getDefaultFootView().setLoadingHint(getString(R.string.loading_pull_up_tip));
         mXRecyclerView.getDefaultFootView().setNoMoreHint(getString(R.string.loading_no_more));
@@ -170,29 +176,27 @@ public class ArchivesActivity extends BaseAppCompatActivity {
 
         loadImpressionAndReferences(mMeetMember.getUid());
 
-        ScaleRatingBar scaleRatingBar = mHeaderEvaluation.findViewById(R.id.charm_rating_bar);
-        scaleRatingBar.setOnRatingChangeListener(new BaseRatingBar.OnRatingChangeListener() {
+        LinearLayout scaleRatingBar = mHeaderEvaluation.findViewById(R.id.charm_rating_bar);
 
+        scaleRatingBar.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onRatingChange(BaseRatingBar ratingBar, float rating) {
-                ratingBar.setRating(0);
-
+            public void onClick(View view) {
                 FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                 Fragment prev = getSupportFragmentManager().findFragmentByTag("RatingAndImpressionDialogFragment");
                 if (prev != null) {
                     ft.remove(prev);
                 }
-                ft.addToBackStack(null);
-                if(ratingAndImpressionDialogFragment == null){
+                                ft.addToBackStack(null);
+                if(ratingAndImpressionDialogFragment == null) {
                     ratingAndImpressionDialogFragment = new RatingAndImpressionDialogFragment();
+                }
                 Bundle bundle = new Bundle();
                 bundle.putInt("uid", mMeetMember.getUid());
                 bundle.putInt("sex", mMeetMember.getSex());
                 ratingAndImpressionDialogFragment.setArguments(bundle);
-                 ratingAndImpressionDialogFragment.show(ft, "RatingAndImpressionDialogFragment");
-                }
+                //ratingAndImpressionDialogFragment.show(ft, "RatingAndImpressionDialogFragment");
+                ratingAndImpressionDialogFragment.show(ft, "RatingAndImpressionDialogFragment");
             }
-
         });
 
         View inviteReference = mHeaderEvaluation.findViewById(R.id.invite_reference);
@@ -209,7 +213,12 @@ public class ArchivesActivity extends BaseAppCompatActivity {
 
     }
     
-
+    private void setEvaluatedMode(){
+        LinearLayout charmRatingBar = mHeaderEvaluation.findViewById(R.id.charm_rating_bar);
+        TextView notice = mHeaderEvaluation.findViewById(R.id.notice);
+        charmRatingBar.setVisibility(View.GONE);
+        notice.setVisibility(View.GONE);
+    }
     
 
     private void updateHeader(View view){
@@ -225,9 +234,6 @@ public class ArchivesActivity extends BaseAppCompatActivity {
         TextView thumbsView = (TextView)view.findViewById(R.id.thumbs_up_statistics);
         TextView thumbsIcon = (TextView)view.findViewById(R.id.thumbs_up_icon);
         TextView photosView = (TextView)view.findViewById(R.id.photos_statistics);
-
-        Typeface font = Typeface.createFromAsset(getAssets(), "fonts/fontawesome.ttf");
-        FontManager.markAsIconContainer(view.findViewById(R.id.meet_item_id), font);
 
         realname.setText(mMeetMember.getRealname());
         lives.setText(mMeetMember.getLives());
@@ -590,6 +596,13 @@ public class ArchivesActivity extends BaseAppCompatActivity {
             }
         }
         return null;
+    }
+    
+        @Override
+    public void onBackFromRatingAndImpressionDialogFragment(boolean evaluated){
+        if(evaluated){
+            setEvaluatedMode();
+        }
     }
 
 }
