@@ -36,7 +36,7 @@
             app:srb_starHeight="18dp"
             app:srb_starPadding="3dp"
             app:srb_starWidth="18dp"
-            app:srb_stepSize="0.5">
+            app:srb_stepSize="0.1">
             <TextView
                 android:id="@+id/chram_synthesized_results"
                 android:layout_width="wrap_content"
@@ -53,9 +53,9 @@
                 android:id="@+id/rating_member_details"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
+                android:layout_margin="10dp"
                 android:text="@string/chevron_right"
-                android:textSize="20dp" />
+                android:textSize="18dp" />
         </com.willy.ratingbar.ScaleRatingBar>
        
             <LinearLayout
@@ -64,7 +64,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:layout_marginStart="0dp"
-            android:layout_marginTop="64dp"
+            android:layout_marginTop="80dp"
             android:layout_marginEnd="0dp"
             android:layout_marginBottom="10dp"
             android:orientation="horizontal">
@@ -75,34 +75,34 @@
                 android:layout_marginRight="5dp"
                 android:text="@string/fa_star_o"
                 android:background="@color/colorWhite"
-                android:textSize="30dp" />
+                android:textSize="32dp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="5dp"
                 android:text="@string/fa_star_o"
-                android:textSize="30dp" />
+                android:textSize="32dp" />
 
                     <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="5dp"
                 android:text="@string/fa_star_o"
-                android:textSize="30dp" />
+                android:textSize="32dp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="5dp"
                 android:text="@string/fa_star_o"
-                android:textSize="30dp" />
+                android:textSize="32dp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/fa_star_o"
-                android:textSize="30dp" />
+                android:textSize="32dp" />
         </LinearLayout>
         
         <TextView
@@ -111,6 +111,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/charm_rating_bar"
             android:gravity="center_horizontal"
+            android:layout_marginBottom="10dp"
             android:text="您认为该用户魅力如何" />
     </RelativeLayout>
     <RelativeLayout
