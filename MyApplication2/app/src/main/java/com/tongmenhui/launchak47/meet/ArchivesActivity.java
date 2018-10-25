@@ -26,7 +26,7 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-
+import java.math.BigDecimal;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.NetworkImageView;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
@@ -75,7 +75,8 @@ public class ArchivesActivity extends BaseAppCompatActivity implements RatingAnd
     private static final int DONE = 1;
     private static final int UPDATE = 2;
     private static final int UPDATE_COMMENT = 3;
-    private static final int LOAD_REFERENCE_DONE = 4;
+    private static final int LOAD_RATING_DONE = 4;
+    private static final int LOAD_REFERENCE_DONE = 5;
     private static final int PAGE_SIZE = 6;
      private static final int REQUEST_CODE = 1;
     private int mTempSize;
@@ -84,6 +85,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements RatingAnd
     MeetReferenceAdapter mMeetReferenceAdapter;
     private TextView mEmptyView;
     View mHeaderEvaluation;
+    private JSONObject impressionObj;
       private RatingAndImpressionDialogFragment ratingAndImpressionDialogFragment;
 
     private ImageView backLeft;
@@ -161,7 +163,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements RatingAnd
 
             @Override
             public void onLoadMore() {
-                loadData(mMeetMember.getUid());
+                loadDynamicsData(mMeetMember.getUid());
             }
         });
         RecyclerView referenceRecyclerView = mHeaderEvaluation.findViewById(R.id.reference_list);
@@ -172,7 +174,9 @@ public class ArchivesActivity extends BaseAppCompatActivity implements RatingAnd
         //+Begin add for friends and relatives' reference view
 
 
-        loadData(mMeetMember.getUid());
+        loadDynamicsData(mMeetMember.getUid());
+        
+        loadRatingData(mMeetMember.getUid());
 
         loadImpressionAndReferences(mMeetMember.getUid());
 
@@ -307,6 +311,60 @@ public class ArchivesActivity extends BaseAppCompatActivity implements RatingAnd
         FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.meet_item_id), font);
         
     }
+    
+        private void setRatingBarView(){
+        JSONArray impressionArray = impressionObj.optJSONArray("impression");
+        //MeetReferenceInfo meetReferenceInfo = null;
+        if(impressionArray != null && impressionArray.length() > 0){
+            TextView ratingMemberCount = mHeaderEvaluation.findViewById(R.id.rating_member_count);
+            ratingMemberCount.setText(impressionArray.length()+"人评价");
+            float ratingCount = 0;
+            for (int i=0; i<impressionArray.length(); i++){
+                JSONObject impression = impressionArray.optJSONObject(i);
+                if(impressionObj.optInt("current_visitor_id") == impression.optInt("evaluator_uid")){
+                    setEvaluatedMode();
+                }
+                ratingCount += impression.optDouble("rating");
+            }
+                        float ratingAverage = ratingCount/impressionArray.length();
+            float ratingAverageRoundUp = 0;
+            BigDecimal  b = new BigDecimal(ratingAverage);
+            ratingAverageRoundUp = b.setScale(1, BigDecimal.ROUND_HALF_UP).floatValue();
+            TextView ratingAverageTV = mHeaderEvaluation.findViewById(R.id.chram_synthesized_results);
+            ratingAverageTV.setText(ratingAverageRoundUp+"分");
+
+            ScaleRatingBar scaleRatingBarCount = mHeaderEvaluation.findViewById(R.id.charm_synthesized_rating);
+            scaleRatingBarCount.setRating(ratingAverageRoundUp);
+
+        }
+    }
+    
+   private void loadRatingData(int uid){
+        RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
+        HttpUtil.sendOkHttpRequest(this, GET_IMPRESSION_URL, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if(response.body() != null){
+                    String responseText = response.body().string();
+                    Slog.d(TAG, "==========get impression response text : "+responseText);
+                                        if(responseText != null){
+                        if(!TextUtils.isEmpty(responseText)){
+                            try {
+                                impressionObj = new JSONObject(responseText);
+                                if(impressionObj != null){
+                                    handler.sendEmptyMessage(LOAD_RATING_DONE);
+                                }
+                            }catch (JSONException e){
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+            }
+            @Override
+            public void onFailure(Call call, IOException e) {}
+        });
+    }
 
     private void loadImpressionAndReferences(int uid){
         RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
@@ -333,7 +391,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements RatingAnd
         });
     }
 
-    private void loadData(int uid){
+    private void loadDynamicsData(int uid){
         handler = new ArchivesActivity.MyHandler(this);
 
         int page = mMeetList.size() / PAGE_SIZE;
@@ -513,6 +571,9 @@ public class ArchivesActivity extends BaseAppCompatActivity implements RatingAnd
                 updateEvaluationHeader();
                 mMeetReferenceAdapter.setReferenceList(mReferenceList);
                 mMeetReferenceAdapter.notifyDataSetChanged();
+                break;
+            case LOAD_RATING_DONE:
+                setRatingBarView();
                 break;
             default:
                 break;
