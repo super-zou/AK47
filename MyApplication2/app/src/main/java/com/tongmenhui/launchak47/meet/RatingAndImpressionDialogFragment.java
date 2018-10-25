@@ -160,6 +160,7 @@ public class RatingAndImpressionDialogFragment extends DialogFragment {
 
         Button addDiyFeature = view.findViewById(R.id.add_feature);
         Button saveFeatures = view.findViewById(R.id.save_features);
+        final TextView errorNotice = view.findViewById(R.id.error_notice);
         final EditText featureInput = view.findViewById(R.id.feature_input);
         addDiyFeature.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -195,6 +196,9 @@ public class RatingAndImpressionDialogFragment extends DialogFragment {
                 if(charmRating.getText().toString() != null && !"".equals(charmRating.getText().toString())){
                     rating = Float.parseFloat(charmRating.getText().toString());
                     mEvaluated = true;
+                }else {
+                    errorNotice.setVisibility(View.VISIBLE);
+                    return;
                 }
                 dismiss();
                 uploadToServer(features, rating, uid);
