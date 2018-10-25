@@ -69,6 +69,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements RatingAnd
     private static final String COMMENT_URL = HttpUtil.DOMAIN + "?q=meet/activity/interact/get";
     private static final String LOAD_REFERENCE_URL = HttpUtil.DOMAIN + "?q=meet/reference/load";
     private static final String GET_IMPRESSION_URL = HttpUtil.DOMAIN + "?q=meet/impression/get";
+    private static final String GET_IMPRESSION_DETAIL_URL = HttpUtil.DOMAIN + "?q=meet/impression/get_detail";
     private List<MeetDynamics> mMeetList = new ArrayList<>();
     private List<MeetReferenceInfo> mReferenceList = new ArrayList<>();
     private Handler handler;
@@ -312,7 +313,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements RatingAnd
         
     }
     
-        private void setRatingBarView(){
+    private void setRatingBarView(){
         JSONArray impressionArray = impressionObj.optJSONArray("impression");
         //MeetReferenceInfo meetReferenceInfo = null;
         if(impressionArray != null && impressionArray.length() > 0){
@@ -321,7 +322,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements RatingAnd
             float ratingCount = 0;
             for (int i=0; i<impressionArray.length(); i++){
                 JSONObject impression = impressionArray.optJSONObject(i);
-                if(impressionObj.optInt("current_visitor_id") == impression.optInt("evaluator_uid")){
+                if(impressionObj.optInt("visitor_uid") == impression.optInt("evaluator_uid")){
                     setEvaluatedMode();
                 }
                 ratingCount += impression.optDouble("rating");

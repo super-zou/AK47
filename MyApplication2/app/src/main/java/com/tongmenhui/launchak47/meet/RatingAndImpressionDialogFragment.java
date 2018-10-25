@@ -87,7 +87,7 @@ public class RatingAndImpressionDialogFragment extends DialogFragment {
         layoutParams.gravity = Gravity.TOP;
         layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
         layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT;
-        getDialog().getWindow().setDimAmount(0.8f);
+        window.setDimAmount(0.8f);
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         window.setAttributes(layoutParams);
 
