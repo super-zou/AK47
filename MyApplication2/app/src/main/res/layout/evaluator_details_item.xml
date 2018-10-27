@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.android.volley.toolbox.NetworkImageView
+        android:id="@+id/evaluator_picture"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.025"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"></com.android.volley.toolbox.NetworkImageView>
+        
+      <TextView
+        android:id="@+id/evaluator_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="8dp"
+        android:text="name"
+        app:layout_constraintStart_toEndOf="@+id/evaluator_picture"
+        app:layout_constraintTop_toTopOf="parent" />
+    
+        <com.willy.ratingbar.ScaleRatingBar xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/charm_rating"
+        android:layout_width="256dp"
+        android:layout_height="27dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.294"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.049"
+        app:srb_clearRatingEnabled="false"
+        app:srb_clickable="false"
+        app:srb_drawableEmpty="@drawable/empty_rating_bar"
+        app:srb_drawableFilled="@drawable/filled"
+        app:srb_isIndicator="false"
+        app:srb_minimumStars="0"
+        app:srb_numStars="5"
+        app:srb_rating="0"
+        app:srb_scrollable="false"
+        app:srb_starHeight="18dp"
+        app:srb_starPadding="3dp"
+        app:srb_starWidth="18dp"
+        app:srb_stepSize="0.5">
+        
+        <TextView
+            android:id="@+id/rating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:text="jixing" />
+    </com.willy.ratingbar.ScaleRatingBar>
+    
+    <com.nex3z.flowlayout.FlowLayout
+        android:id="@+id/features"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:visibility="visible"
+        app:flChildSpacing="8dp"
+        app:flChildSpacingForLastRow="align"
+        app:flRowSpacing="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.309"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.13">
+
+    </com.nex3z.flowlayout.FlowLayout>
+</android.support.constraint.ConstraintLayout>
