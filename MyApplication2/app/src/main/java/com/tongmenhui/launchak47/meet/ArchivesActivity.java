@@ -1,5 +1,6 @@
 package com.tongmenhui.launchak47.meet;
 
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.graphics.Typeface;
@@ -62,7 +63,7 @@ import okhttp3.Response;
 
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
-public class ArchivesActivity extends BaseAppCompatActivity implements RatingAndImpressionDialogFragment.RatingAndImpressionDialogFragmentListener{
+public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateDialogFragment.EvaluateDialogFragmentListener{
     private static final String TAG = "ArchivesActivity";
 
     private static final String DYNAMICS_URL = HttpUtil.DOMAIN + "?q=meet/activity/get";
@@ -87,7 +88,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements RatingAnd
     private TextView mEmptyView;
     View mHeaderEvaluation;
     private JSONObject impressionObj;
-      private RatingAndImpressionDialogFragment ratingAndImpressionDialogFragment;
+    private EvaluateDialogFragment evaluateDialogFragment;
 
     private ImageView backLeft;
     private MeetMemberInfo mMeetMember;
@@ -132,9 +133,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements RatingAnd
         mXRecyclerView.getDefaultRefreshHeaderView().setRefreshTimeVisible(true);
         mXRecyclerView.setPullRefreshEnabled(false);
 
-        mXRecyclerView
-                .getDefaultRefreshHeaderView()
-                .setRefreshTimeVisible(true);
+        mXRecyclerView.getDefaultRefreshHeaderView().setRefreshTimeVisible(true);
         View headerProfile = LayoutInflater.from(this).inflate(R.layout.meet_item, (ViewGroup)findViewById(android.R.id.content),false);
         mXRecyclerView.addHeaderView(headerProfile);
         FontManager.markAsIconContainer(headerProfile.findViewById(R.id.meet_item_id), font);
@@ -145,7 +144,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements RatingAnd
         mXRecyclerView.addHeaderView(mHeaderEvaluation);
         
          FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.charm_rating_bar), font);
-        FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.charm_synthesized_rating), font);
+        FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.rating_member_details), font);
 
         mXRecyclerView.getDefaultFootView().setLoadingHint(getString(R.string.loading_pull_up_tip));
         mXRecyclerView.getDefaultFootView().setNoMoreHint(getString(R.string.loading_no_more));
@@ -187,20 +186,32 @@ public class ArchivesActivity extends BaseAppCompatActivity implements RatingAnd
             @Override
             public void onClick(View view) {
                 FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                Fragment prev = getSupportFragmentManager().findFragmentByTag("RatingAndImpressionDialogFragment");
+                Fragment prev = getSupportFragmentManager().findFragmentByTag("EvaluateDialogFragment");
                 if (prev != null) {
                     ft.remove(prev);
                 }
                                 ft.addToBackStack(null);
-                if(ratingAndImpressionDialogFragment == null) {
-                    ratingAndImpressionDialogFragment = new RatingAndImpressionDialogFragment();
+                if(evaluateDialogFragment == null) {
+                    evaluateDialogFragment = new EvaluateDialogFragment();
                 }
                 Bundle bundle = new Bundle();
                 bundle.putInt("uid", mMeetMember.getUid());
                 bundle.putInt("sex", mMeetMember.getSex());
-                ratingAndImpressionDialogFragment.setArguments(bundle);
-                //ratingAndImpressionDialogFragment.show(ft, "RatingAndImpressionDialogFragment");
-                ratingAndImpressionDialogFragment.show(ft, "RatingAndImpressionDialogFragment");
+                evaluateDialogFragment.setArguments(bundle);
+                //ratingAndImpressionDialogFragment.show(ft, "EvaluateDialogFragment");
+                evaluateDialogFragment.show(ft, "EvaluateDialogFragment");
+            }
+        });
+        
+        TextView evaluatorDetails = mHeaderEvaluation.findViewById(R.id.rating_member_details);
+        evaluatorDetails.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Slog.d(TAG, "==============start EvaluatorDetailsActivity");
+                Intent intent = new Intent(ArchivesActivity.this, EvaluatorDetailsActivity.class);
+                intent.putExtra("uid", mMeetMember.getUid());
+                //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                startActivity(intent);
             }
         });
 
