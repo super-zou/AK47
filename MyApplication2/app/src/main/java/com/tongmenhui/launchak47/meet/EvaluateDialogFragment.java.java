@@ -39,18 +39,18 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class RatingAndImpressionDialogFragment extends DialogFragment {
-    private static final String TAG = "RatingAndImpressionDialogFragment";
+public class EvaluateDialogFragment extends DialogFragment {
+    private static final String TAG = "EvaluateDialogFragment";
     private Context mContext;
     private Dialog mDialog;
         private View  view;
     private boolean mEvaluated = false;
-    private RatingAndImpressionDialogFragmentListener ratingAndImpressionDialogFragmentListener;
+    private EvaluateDialogFragmentListener evaluateDialogFragmentListener;
     private LayoutInflater inflater;
     private static final String SET_IMPRESSION_URL = HttpUtil.DOMAIN + "?q=meet/impression/set";
 
         //When the dialog destried  the function will be called to transmit data to ArchivesActivity
-    public interface RatingAndImpressionDialogFragmentListener{
+    public interface EvaluateDialogFragmentListener{
         //evaluated set true if user rating or set impression, or else set false
         void onBackFromRatingAndImpressionDialogFragment(boolean evaluated);
     }
@@ -59,10 +59,10 @@ public class RatingAndImpressionDialogFragment extends DialogFragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         mContext = context;
-                try {
-            ratingAndImpressionDialogFragmentListener = (RatingAndImpressionDialogFragmentListener)context;
+        try {
+            evaluateDialogFragmentListener = (EvaluateDialogFragmentListener)context;
         }catch (ClassCastException e){
-            throw new ClassCastException(context.toString() + "must implement ratingAndImpressionDialogFragmentListener");
+            throw new ClassCastException(context.toString() + "must implement evaluateDialogFragmentListener");
         }
     }
 
@@ -77,7 +77,7 @@ public class RatingAndImpressionDialogFragment extends DialogFragment {
         }
         inflater = LayoutInflater.from(mContext);
         mDialog = new Dialog(mContext, android.R.style.Theme_Light_NoTitleBar_Fullscreen);
-        view = inflater.inflate(R.layout.rating_impression_dialog, null);
+        view = inflater.inflate(R.layout.evaluation_dialog, null);
         mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         mDialog.setContentView(view);
         mDialog.setCanceledOnTouchOutside(true);
@@ -246,8 +246,8 @@ public class RatingAndImpressionDialogFragment extends DialogFragment {
             mDialog.dismiss();
             mDialog = null;
         }
-        if(ratingAndImpressionDialogFragmentListener != null){//callback from ArchivesActivity class
-            ratingAndImpressionDialogFragmentListener.onBackFromRatingAndImpressionDialogFragment(mEvaluated);
+        if(evaluateDialogFragmentListener != null){//callback from ArchivesActivity class
+            evaluateDialogFragmentListener.onBackFromRatingAndImpressionDialogFragment(mEvaluated);
         }
     }
 
