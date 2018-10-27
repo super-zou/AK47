@@ -323,6 +323,12 @@ public class MeetMemberInfo implements Serializable{
         this.profile = profile;
     }
     public String getProfile(){
+        String profile;
+        if(getSituation() == 0){//student
+            profile = getUniversity()+"."+getMajor()+"."+getDegree();
+        }else {
+            profile = getJobTitle()+"."+getCompany()+"."+getLives();
+        }
         return profile;
     }
 
