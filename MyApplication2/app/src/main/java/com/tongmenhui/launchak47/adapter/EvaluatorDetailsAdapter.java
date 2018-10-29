@@ -17,6 +17,7 @@ import com.tongmenhui.launchak47.meet.EvaluatorDetailsActivity;
 import com.tongmenhui.launchak47.util.HttpUtil;
 import com.tongmenhui.launchak47.util.RequestQueueSingleton;
 import com.willy.ratingbar.ScaleRatingBar;
+import com.tongmenhui.launchak47.util.Slog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,14 +50,16 @@ public class EvaluatorDetailsAdapter extends RecyclerView.Adapter<EvaluatorDetai
         @Override
     public void onBindViewHolder(@NonNull EvaluatorDetailsAdapter.ViewHolder holder, int position) {
         final EvaluatorDetailsActivity.EvaluatorDetails evaluatorDetails = mEvaluatorDetailsList.get(position);
-
+        holder.headUri.setTag(HttpUtil.DOMAIN+"/"+evaluatorDetails.getPictureUri());
         queueEvaluator = requestQueueSingleton.instance(context);
         HttpUtil.loadByImageLoader(queueEvaluator, holder.headUri, HttpUtil.DOMAIN+"/"+evaluatorDetails.getPictureUri(), 50, 50);
 
         holder.name.setText(evaluatorDetails.getName());
         holder.scaleRatingBar.setRating((float) evaluatorDetails.getRating());
-        if(evaluatorDetails.getImpression() != null && !"".equals(evaluatorDetails.getImpression())){
-            String[] featureArray = evaluatorDetails.getImpression().split("#");
+        holder.rating.setText(evaluatorDetails.getRating()+"分");
+        Slog.d(TAG, "=====================getImpression: "+evaluatorDetails.getFeatures());
+        if(evaluatorDetails.getFeatures() != null && !"".equals(evaluatorDetails.getFeatures())){
+            String[] featureArray = evaluatorDetails.getFeatures().split("#");
             for (int i=0; i<featureArray.length; i++){
                 TextView diyTextView = new TextView(context);
                 diyTextView.setPadding((int) dpToPx(8), (int) dpToPx(8), (int) dpToPx(8), (int) dpToPx(8));
@@ -78,12 +81,14 @@ public class EvaluatorDetailsAdapter extends RecyclerView.Adapter<EvaluatorDetai
         TextView name;
         ScaleRatingBar scaleRatingBar;
         FlowLayout features;
+        TextView rating;
 
         public ViewHolder(View view){
             super(view);
             headUri = view.findViewById(R.id.evaluator_picture);
             name = view.findViewById(R.id.evaluator_name);
             scaleRatingBar = view.findViewById(R.id.charm_rating);
+            rating = view.findViewById(R.id.rating);
             features = view.findViewById(R.id.features);
         }
     }
