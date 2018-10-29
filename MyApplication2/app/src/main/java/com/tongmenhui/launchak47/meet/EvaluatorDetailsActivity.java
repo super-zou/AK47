@@ -17,6 +17,8 @@ import com.tongmenhui.launchak47.main.BaseAppCompatActivity;
 import com.tongmenhui.launchak47.util.HttpUtil;
 import com.tongmenhui.launchak47.util.Slog;
 
+import android.widget.LinearLayout;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -36,6 +38,7 @@ import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
 public class EvaluatorDetailsActivity extends BaseAppCompatActivity {
     private static final String TAG = "EvaluatorDetailsActivity";
+    private static final int PAGE_SIZE = 12;
     //private XRecyclerView mXRecyclerView;
     //private JSONObject impressionObj;
     private Handler handler;
@@ -49,7 +52,7 @@ public class EvaluatorDetailsActivity extends BaseAppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.evaluator_details);
-        int uid =  (int)getIntent().getIntExtra("uid", -1);
+        final int uid =  (int)getIntent().getIntExtra("uid", -1);
         handler = new EvaluatorDetailsActivity.MyHandler(this);
         mEvaluatorDetailsList = new ArrayList<>();
 
@@ -64,7 +67,8 @@ public class EvaluatorDetailsActivity extends BaseAppCompatActivity {
                 super.onScrollStateChanged(recyclerView, newState);
             }
         });
-                mEvaluatorDetailsListRV.setLayoutManager(linearLayoutManager);
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        mEvaluatorDetailsListRV.setLayoutManager(linearLayoutManager);
         mEvaluatorDetailsListRV.setRefreshProgressStyle(BallSpinFadeLoader);
         mEvaluatorDetailsListRV.setLoadingMoreProgressStyle(ProgressStyle.BallRotate);
         mEvaluatorDetailsListRV.getDefaultRefreshHeaderView().setRefreshTimeVisible(true);
@@ -89,6 +93,7 @@ public class EvaluatorDetailsActivity extends BaseAppCompatActivity {
             @Override
             public void onLoadMore() {
                 //loadDynamicsData(mMeetMember.getUid());
+                getEvaluatorDetails(uid);
             }
         });
         
@@ -98,6 +103,7 @@ public class EvaluatorDetailsActivity extends BaseAppCompatActivity {
     }
     
         private void getEvaluatorDetails(int uid){
+            int page = mEvaluatorDetailsList.size() / PAGE_SIZE;
         RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
         HttpUtil.sendOkHttpRequest(this, GET_IMPRESSION_DETAIL_URL, requestBody, new Callback() {
             @Override
@@ -130,14 +136,14 @@ public class EvaluatorDetailsActivity extends BaseAppCompatActivity {
             e.printStackTrace();
         }
         
-                JSONArray impressionArray = evaluatorDetailsObjWraper.optJSONArray("impression");
-        EvaluatorDetails evaluatorDetails = new EvaluatorDetails();
+        JSONArray impressionArray = evaluatorDetailsObjWraper.optJSONArray("impression");
         if(impressionArray != null && impressionArray.length() > 0){
             for (int i=0; i<impressionArray.length(); i++){
+                EvaluatorDetails evaluatorDetails = new EvaluatorDetails();
                 JSONObject evaluatorDetailsObj = impressionArray.optJSONObject(i);
                 evaluatorDetails.setEvaluatorUid(evaluatorDetailsObj.optInt("evaluator_uid"));
                 evaluatorDetails.setRating(evaluatorDetailsObj.optDouble("rating"));
-                evaluatorDetails.setImpression(evaluatorDetailsObj.optString("impression"));
+                evaluatorDetails.setFeatures(evaluatorDetailsObj.optString("features"));v
                 evaluatorDetails.setName(evaluatorDetailsObj.optString("name"));
                 evaluatorDetails.setPictureUri(evaluatorDetailsObj.optString("picture_uri"));
                 
@@ -146,7 +152,7 @@ public class EvaluatorDetailsActivity extends BaseAppCompatActivity {
 
             mEvaluatorDetailsAdapter.setData(mEvaluatorDetailsList);
             mEvaluatorDetailsAdapter.notifyDataSetChanged();
-           // mEvaluatorDetailsListRV.refreshComplete();
+            mEvaluatorDetailsListRV.refreshComplete();
         }
 
     }
@@ -186,8 +192,7 @@ public class EvaluatorDetailsActivity extends BaseAppCompatActivity {
         private int evaluatorUid;
         private int visitorUid;
         private double rating;
-        private String impression;
-        private MeetMemberInfo meetMemberInfo;
+        private String features;
 
         public int getUid(){
             return uid;
@@ -212,12 +217,12 @@ public class EvaluatorDetailsActivity extends BaseAppCompatActivity {
             this.rating = rating;
         }
 
-        public String getImpression() {
-            return impression;
+        public String getFeatures() {
+            return features;
         }
 
-        public void setImpression(String impression) {
-            this.impression = impression;
+        public void setFeatures(String features) {
+            this.features = features;
         }
 
         public void setName(String name) {
