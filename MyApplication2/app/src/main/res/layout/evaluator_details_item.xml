@@ -4,7 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:layout_marginTop="8dp">
 
     <com.android.volley.toolbox.NetworkImageView
         android:id="@+id/evaluator_picture"
@@ -22,16 +23,19 @@
         android:id="@+id/evaluator_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="28dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="name"
-        app:layout_constraintStart_toEndOf="@+id/evaluator_picture"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.222"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
     
         <com.willy.ratingbar.ScaleRatingBar xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/charm_rating"
-        android:layout_width="256dp"
-        android:layout_height="27dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
@@ -39,10 +43,10 @@
         android:gravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.294"
+        app:layout_constraintHorizontal_bias="0.308"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.049"
+        app:layout_constraintTop_toBottomOf="@+id/evaluator_name"
+        app:layout_constraintVertical_bias="0.0"
         app:srb_clearRatingEnabled="false"
         app:srb_clickable="false"
         app:srb_drawableEmpty="@drawable/empty_rating_bar"
@@ -61,8 +65,7 @@
             android:id="@+id/rating"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:text="jixing" />
+            android:layout_marginLeft="8dp"/>
     </com.willy.ratingbar.ScaleRatingBar>
     
     <com.nex3z.flowlayout.FlowLayout
