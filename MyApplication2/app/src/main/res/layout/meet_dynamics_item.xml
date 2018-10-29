@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/meet_dynamics_item">
+    android:id="@+id/meet_dynamics_item"
+    android:layout_marginBottom="1dp">
 
     <include layout="@layout/meet_item" />
     <LinearLayout

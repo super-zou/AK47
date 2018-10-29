@@ -97,14 +97,18 @@ public class EvaluatorDetailsActivity extends BaseAppCompatActivity {
             }
         });
         
-                mEvaluatorDetailsListRV.setAdapter(mEvaluatorDetailsAdapter);
+        mEvaluatorDetailsListRV.setAdapter(mEvaluatorDetailsAdapter);
 
         getEvaluatorDetails(uid);
     }
     
-        private void getEvaluatorDetails(int uid){
-            int page = mEvaluatorDetailsList.size() / PAGE_SIZE;
-        RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
+    private void getEvaluatorDetails(int uid){
+        int page = mEvaluatorDetailsList.size() / PAGE_SIZE;
+        RequestBody requestBody = new FormBody.Builder()
+                .add("uid", String.valueOf(uid))
+                .add("step", String.valueOf(PAGE_SIZE))
+                .add("page", String.valueOf(page))
+                .build();
         HttpUtil.sendOkHttpRequest(this, GET_IMPRESSION_DETAIL_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
@@ -143,11 +147,10 @@ public class EvaluatorDetailsActivity extends BaseAppCompatActivity {
                 JSONObject evaluatorDetailsObj = impressionArray.optJSONObject(i);
                 evaluatorDetails.setEvaluatorUid(evaluatorDetailsObj.optInt("evaluator_uid"));
                 evaluatorDetails.setRating(evaluatorDetailsObj.optDouble("rating"));
-                evaluatorDetails.setFeatures(evaluatorDetailsObj.optString("features"));v
+                evaluatorDetails.setFeatures(evaluatorDetailsObj.optString("features"));
                 evaluatorDetails.setName(evaluatorDetailsObj.optString("name"));
                 evaluatorDetails.setPictureUri(evaluatorDetailsObj.optString("picture_uri"));
-                
-                                mEvaluatorDetailsList.add(evaluatorDetails);
+                mEvaluatorDetailsList.add(evaluatorDetails);
             }
 
             mEvaluatorDetailsAdapter.setData(mEvaluatorDetailsList);
