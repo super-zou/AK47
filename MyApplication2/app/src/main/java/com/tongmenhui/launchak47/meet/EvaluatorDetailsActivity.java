@@ -58,8 +58,7 @@ public class EvaluatorDetailsActivity extends BaseAppCompatActivity {
 
         mEvaluatorDetailsAdapter = new EvaluatorDetailsAdapter(this);
         mEvaluatorDetailsListRV = findViewById(R.id.evaluator_details_list);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-
+       
         mEvaluatorDetailsListRV.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -67,20 +66,19 @@ public class EvaluatorDetailsActivity extends BaseAppCompatActivity {
                 super.onScrollStateChanged(recyclerView, newState);
             }
         });
+        
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mEvaluatorDetailsListRV.setLayoutManager(linearLayoutManager);
         mEvaluatorDetailsListRV.setRefreshProgressStyle(BallSpinFadeLoader);
         mEvaluatorDetailsListRV.setLoadingMoreProgressStyle(ProgressStyle.BallRotate);
         mEvaluatorDetailsListRV.getDefaultRefreshHeaderView().setRefreshTimeVisible(true);
         mEvaluatorDetailsListRV.setPullRefreshEnabled(false);
-        mEvaluatorDetailsListRV.getDefaultRefreshHeaderView().setRefreshTimeVisible(true);
-
         mEvaluatorDetailsListRV.getDefaultFootView().setLoadingHint(getString(R.string.loading_pull_up_tip));
         mEvaluatorDetailsListRV.getDefaultFootView().setNoMoreHint(getString(R.string.loading_no_more));
-        final int itemLimit = 5;
-        
-                // When the item number of the screen number is list.size-2,we call the onLoadMore
-        mEvaluatorDetailsListRV.setLimitNumberToCallLoadMore(4);
+  
+        // When the item number of the screen number is list.size-2,we call the onLoadMore
+        mEvaluatorDetailsListRV.setLimitNumberToCallLoadMore(18);
         mEvaluatorDetailsListRV.setRefreshProgressStyle(ProgressStyle.BallBeat);
         mEvaluatorDetailsListRV.setLoadingMoreProgressStyle(ProgressStyle.SquareSpin);
 
