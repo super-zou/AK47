@@ -1,6 +1,7 @@
 package com.tongmenhui.launchak47.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
@@ -18,6 +19,7 @@ import com.tongmenhui.launchak47.util.HttpUtil;
 import com.tongmenhui.launchak47.util.RequestQueueSingleton;
 import com.willy.ratingbar.ScaleRatingBar;
 import com.tongmenhui.launchak47.util.Slog;
+import com.tongmenhui.launchak47.meet.ArchivesActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +57,7 @@ public class EvaluatorDetailsAdapter extends RecyclerView.Adapter<EvaluatorDetai
         HttpUtil.loadByImageLoader(queueEvaluator, holder.headUri, HttpUtil.DOMAIN+"/"+evaluatorDetails.getPictureUri(), 50, 50);
 
         holder.name.setText(evaluatorDetails.getName());
+        holder.uid.setText(String.valueOf(evaluatorDetails.getEvaluatorUid()));
         holder.scaleRatingBar.setRating((float) evaluatorDetails.getRating());
         holder.rating.setText(evaluatorDetails.getRating()+"分");
         Slog.d(TAG, "=====================getImpression: "+evaluatorDetails.getFeatures());
@@ -70,6 +73,17 @@ public class EvaluatorDetailsAdapter extends RecyclerView.Adapter<EvaluatorDetai
                 holder.features.addView(diyTextView);
             }
         }
+        holder.headUri.setOnClickListener(new View.OnClickListener() {
+            final int uid = Integer.parseInt(holder.uid.getText().toString());
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context, ArchivesActivity.class);
+                // Log.d(TAG, "meet:"+meet+" uid:"+meet.getUid());
+                intent.putExtra("uid", uid);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                context.startActivity(intent);
+            }
+        });
     }
     
         @Override
@@ -80,6 +94,7 @@ public class EvaluatorDetailsAdapter extends RecyclerView.Adapter<EvaluatorDetai
         public static class ViewHolder extends RecyclerView.ViewHolder{
         NetworkImageView headUri;
         TextView name;
+        TextView uid;
         ScaleRatingBar scaleRatingBar;
         FlowLayout features;
         TextView rating;
@@ -88,6 +103,7 @@ public class EvaluatorDetailsAdapter extends RecyclerView.Adapter<EvaluatorDetai
             super(view);
             headUri = view.findViewById(R.id.evaluator_picture);
             name = view.findViewById(R.id.evaluator_name);
+            uid = view.findViewById(R.id.uid);
             scaleRatingBar = view.findViewById(R.id.charm_rating);
             rating = view.findViewById(R.id.rating);
             features = view.findViewById(R.id.features);
