@@ -120,6 +120,40 @@
             android:layout_marginBottom="10dp"
             android:text="您认为该用户魅力如何" />
     </RelativeLayout>
+        <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:text="好友印象"/>
+        <TableRow>
+            <Button
+                android:text="feature1"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="3"/>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_gravity="center">
+                <TextView
+                    android:text="touxiang"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:text="touxiang"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:text="等"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+            <Button
+                android:text=">"/>
+        </TableRow>
+    </TableLayout>
     <RelativeLayout
         android:id="@+id/invite_reference"
         android:layout_width="wrap_content"
