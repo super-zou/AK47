@@ -1,5 +1,6 @@
 package com.tongmenhui.launchak47.util;
 
+import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -10,12 +11,22 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 /*added by xuchunping 2018.8.2 for Json data parse*/
 public class ParseUtils {
+
     private static final String TAG = "ParseUtils";
+    private static final String GET_MEET_ARCHIVE_URL = HttpUtil.DOMAIN + "?q=meet/get_archive";
+
     public static List<MeetMemberInfo> getMeetList(String responseText){
         List<MeetMemberInfo> list = null;
         Log.d(TAG, "getMeetList responseText:"+responseText);
@@ -85,6 +96,7 @@ public class ParseUtils {
 
         return meetMemberInfo;
     }
+
     public static List<MeetMemberInfo> getMeetDiscoveryList(String responseText){
         List<MeetMemberInfo> list = null;
         Log.d(TAG, "getMeetDiscoveryList responseText:"+responseText);
@@ -104,38 +116,9 @@ public class ParseUtils {
             int length = discovery.length();
             MeetMemberInfo meetMemberInfo = null;
             for (int i=0; i< length; i++){
-                JSONObject recommender = discovery.getJSONObject(i);
-                meetMemberInfo = new MeetMemberInfo();
+                JSONObject discoveryObj = discovery.getJSONObject(i);
+                meetMemberInfo = setMeetMemberInfo(discoveryObj);;
 
-                meetMemberInfo.setRealname(recommender.getString("realname"));
-                meetMemberInfo.setUid(recommender.getInt("uid"));
-                meetMemberInfo.setPictureUri(recommender.getString("picture_uri"));
-                meetMemberInfo.setBirthYear(recommender.getInt("birth_year"));
-                meetMemberInfo.setHeight(recommender.getInt("height"));
-                meetMemberInfo.setUniversity(recommender.getString("university"));
-                meetMemberInfo.setDegree(recommender.getString("degree"));
-                meetMemberInfo.setJobTitle(recommender.getString("job_title"));
-                meetMemberInfo.setLives(recommender.getString("lives"));
-                meetMemberInfo.setSituation(recommender.getInt("situation"));
-
-                //requirement
-                meetMemberInfo.setAgeLower(recommender.getInt("age_lower"));
-                meetMemberInfo.setAgeUpper(recommender.getInt("age_upper"));
-                meetMemberInfo.setRequirementHeight(recommender.getInt("requirement_height"));
-                meetMemberInfo.setRequirementDegree(recommender.getString("requirement_degree"));
-                meetMemberInfo.setRequirementLives(recommender.getString("requirement_lives"));
-                meetMemberInfo.setRequirementSex(recommender.getInt("requirement_sex"));
-                meetMemberInfo.setIllustration(recommender.getString("illustration"));
-
-
-                // meetMemberInfo.setSelf(recommender.getInt("self"));
-                meetMemberInfo.setBrowseCount(recommender.getInt("browse_count"));
-                meetMemberInfo.setLovedCount(recommender.getInt("loved_count"));
-                // meetMemberInfo.setLoved(recommender.getInt("loved"));
-                // meetMemberInfo.setPraised(recommender.getInt("praised"));
-                meetMemberInfo.setPraisedCount(recommender.getInt("praised_count"));
-                //  meetMemberInfo.setPictureChain(recommender.getString("pictureChain"));
-                // meetMemberInfo.setRequirementSet(recommender.getInt("requirementSet"));
                 list.add(meetMemberInfo);
             }
         }catch (JSONException e){
@@ -183,5 +166,30 @@ public class ParseUtils {
         }
 
         return meetReferenceInfoList;
+    }
+
+    public static void getMeetArchive(Context context, int uid){
+        RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
+        HttpUtil.sendOkHttpRequest(context, GET_MEET_ARCHIVE_URL, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if(response.body() != null){
+                    String responseText = response.body().string();
+                    Slog.d(TAG, "==========get archive response text : "+responseText);
+                    if(responseText != null){
+                        if(!TextUtils.isEmpty(responseText)){
+                            try {
+                                JSONObject jsonObject = new JSONObject(responseText);
+                                setMeetMemberInfo(jsonObject);
+                            }catch (JSONException e){
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+            }
+            @Override
+            public void onFailure(Call call, IOException e) {}
+        });
     }
 }

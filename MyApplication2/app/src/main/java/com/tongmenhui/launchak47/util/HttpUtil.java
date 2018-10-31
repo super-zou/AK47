@@ -62,13 +62,26 @@ public class HttpUtil {
         client.newCall(request).enqueue(callback);
     }
 
-    public static void getOkHttpRequestSync(String address, String session){
+    public static void getOkHttpRequestSync(Context context, String address, RequestBody requestBody, okhttp3.Callback callback){
         OkHttpClient client = new OkHttpClient();
         Request request = null;
+        String cookie = getCookie(context);
+        if(requestBody != null){
+            if(cookie != null){
+                request = new Request.Builder().url(address).addHeader("cookie", cookie).post(requestBody).build();
+            }else{
+                request = new Request.Builder().url(address).post(requestBody).build();
+            }
 
-        if(session != null){
-            request = new Request.Builder().url(address).build();
+        }else{
+            if(cookie != null){
+                request = new Request.Builder().url(address).addHeader("cookie", cookie).build();
+            }else{
+                request = new Request.Builder().url(address).build();
+            }
+
         }
+
         try {
             client.newCall(request).execute();
         }catch (IOException e){

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -15,17 +16,32 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.nex3z.flowlayout.FlowLayout;
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.meet.EvaluatorDetailsActivity;
+import com.tongmenhui.launchak47.meet.MeetMemberInfo;
 import com.tongmenhui.launchak47.util.HttpUtil;
+import com.tongmenhui.launchak47.util.ParseUtils;
 import com.tongmenhui.launchak47.util.RequestQueueSingleton;
 import com.willy.ratingbar.ScaleRatingBar;
 import com.tongmenhui.launchak47.util.Slog;
 import com.tongmenhui.launchak47.meet.ArchivesActivity;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
+import static com.tongmenhui.launchak47.util.ParseUtils.setMeetMemberInfo;
+
 public class EvaluatorDetailsAdapter extends RecyclerView.Adapter<EvaluatorDetailsAdapter.ViewHolder>{
     private static final String TAG = "EvaluatorDetailsAdapter";
+    private static final String GET_MEET_ARCHIVE_URL = HttpUtil.DOMAIN + "?q=meet/get_archive";
     private Context context;
     RequestQueue queueEvaluator;
     RequestQueueSingleton requestQueueSingleton;
@@ -50,7 +66,7 @@ public class EvaluatorDetailsAdapter extends RecyclerView.Adapter<EvaluatorDetai
     }
     
         @Override
-    public void onBindViewHolder(@NonNull EvaluatorDetailsAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final EvaluatorDetailsAdapter.ViewHolder holder, int position) {
         final EvaluatorDetailsActivity.EvaluatorDetails evaluatorDetails = mEvaluatorDetailsList.get(position);
         holder.headUri.setTag(HttpUtil.DOMAIN+"/"+evaluatorDetails.getPictureUri());
         queueEvaluator = requestQueueSingleton.instance(context);
@@ -74,15 +90,41 @@ public class EvaluatorDetailsAdapter extends RecyclerView.Adapter<EvaluatorDetai
             }
         }
         holder.headUri.setOnClickListener(new View.OnClickListener() {
-            final int uid = Integer.parseInt(holder.uid.getText().toString());
+            int uid = Integer.parseInt(holder.uid.getText().toString());
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(context, ArchivesActivity.class);
-                // Log.d(TAG, "meet:"+meet+" uid:"+meet.getUid());
-                intent.putExtra("uid", uid);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-                context.startActivity(intent);
+                getMeetArchive(context, uid);
             }
+        });
+    }
+
+    public static void getMeetArchive(final Context context, int uid){
+        RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
+        HttpUtil.sendOkHttpRequest(context, GET_MEET_ARCHIVE_URL, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if(response.body() != null){
+                    String responseText = response.body().string();
+                    Slog.d(TAG, "==========get archive response text : "+responseText);
+                    if(responseText != null){
+                        if(!TextUtils.isEmpty(responseText)){
+                            try {
+                                JSONObject jsonObject = new JSONObject(responseText);
+                                MeetMemberInfo meetMemberInfo = setMeetMemberInfo(jsonObject);
+                                Intent intent = new Intent(context, ArchivesActivity.class);
+                                // Log.d(TAG, "meet:"+meet+" uid:"+meet.getUid());
+                                intent.putExtra("meet", meetMemberInfo);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                                context.startActivity(intent);
+                            }catch (JSONException e){
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+            }
+            @Override
+            public void onFailure(Call call, IOException e) {}
         });
     }
     
