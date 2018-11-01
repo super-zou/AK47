@@ -121,21 +121,32 @@
             android:text="您认为该用户魅力如何" />
     </RelativeLayout>
         <TableLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:stretchColumns="*">
         <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
             android:text="好友印象"/>
-        <TableRow>
+        <TableRow
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content">
             <Button
-                android:text="feature1"/>
-            <TextView
-                android:layout_width="wrap_content"
+                android:text="feature"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:background="@drawable/label_selected_bg"/>
+             <TextView
+                 android:layout_marginLeft="5dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="3"/>
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
+                android:gravity="left"
+                android:layout_span="8"
                 android:layout_gravity="center">
                 <TextView
                     android:text="touxiang"
@@ -150,7 +161,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </LinearLayout>
-            <Button
+            <TextView
                 android:text=">"/>
         </TableRow>
     </TableLayout>
