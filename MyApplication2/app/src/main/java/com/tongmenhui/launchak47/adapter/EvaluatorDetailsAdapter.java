@@ -109,7 +109,7 @@ public class EvaluatorDetailsAdapter extends RecyclerView.Adapter<EvaluatorDetai
                     if(responseText != null){
                         if(!TextUtils.isEmpty(responseText)){
                             try {
-                                JSONObject jsonObject = new JSONObject(responseText);
+                                JSONObject jsonObject = new JSONObject(responseText).optJSONObject("archive");
                                 MeetMemberInfo meetMemberInfo = setMeetMemberInfo(jsonObject);
                                 Intent intent = new Intent(context, ArchivesActivity.class);
                                 // Log.d(TAG, "meet:"+meet+" uid:"+meet.getUid());
