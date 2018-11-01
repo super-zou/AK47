@@ -70,7 +70,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
     private static final String COMMENT_URL = HttpUtil.DOMAIN + "?q=meet/activity/interact/get";
     private static final String LOAD_REFERENCE_URL = HttpUtil.DOMAIN + "?q=meet/reference/load";
     private static final String GET_IMPRESSION_URL = HttpUtil.DOMAIN + "?q=meet/impression/get";
-    private static final String GET_IMPRESSION_DETAIL_URL = HttpUtil.DOMAIN + "?q=meet/impression/get_detail";
+    private static final String GET_IMPRESSION_STATISTICS_URL = HttpUtil.DOMAIN + "?q=meet/impression/statistics";
     private List<MeetDynamics> mMeetList = new ArrayList<>();
     private List<MeetReferenceInfo> mReferenceList = new ArrayList<>();
     private Handler handler;
@@ -78,7 +78,8 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
     private static final int UPDATE = 2;
     private static final int UPDATE_COMMENT = 3;
     private static final int LOAD_RATING_DONE = 4;
-    private static final int LOAD_REFERENCE_DONE = 5;
+        private static final int LOAD_IMPRESSION_DONE = 5;
+    private static final int LOAD_REFERENCE_DONE = 6;
     private static final int PAGE_SIZE = 6;
      private static final int REQUEST_CODE = 1;
     private int mTempSize;
@@ -100,85 +101,18 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
         if(actionBar != null){
             actionBar.hide();
         }
-
-        backLeft = findViewById(R.id.left_back);
-        backLeft.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-        Typeface font = Typeface.createFromAsset(getAssets(), "fonts/fontawesome.ttf");
         mMeetMember = (MeetMemberInfo) getIntent().getSerializableExtra("meet");
+        final int uid = mMeetMember.getUid();
 
-        mArchivesListAdapter = new ArchivesListAdapter(this);
-        mXRecyclerView = (XRecyclerView) findViewById(R.id.recyclerview);
-        mEmptyView = (TextView) findViewById(R.id.empty_text);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        mXRecyclerView.setLayoutManager(linearLayoutManager);
-        mXRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                mArchivesListAdapter.notifyDataSetChanged();
-                super.onScrollStateChanged(recyclerView, newState);
-            }
-        });
-        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        mXRecyclerView.setLayoutManager(linearLayoutManager);
+        initView();
 
-        mXRecyclerView.setRefreshProgressStyle(BallSpinFadeLoader);
-        mXRecyclerView.setLoadingMoreProgressStyle(ProgressStyle.BallRotate);
-        //mRecyclerView.setArrowImageView(R.drawable.);
+        loadRatingAndImpression(uid);
 
-        mXRecyclerView.getDefaultRefreshHeaderView().setRefreshTimeVisible(true);
-        mXRecyclerView.setPullRefreshEnabled(false);
+        loadImpressionStatistics(uid);
 
-        mXRecyclerView.getDefaultRefreshHeaderView().setRefreshTimeVisible(true);
-        View headerProfile = LayoutInflater.from(this).inflate(R.layout.meet_item, (ViewGroup)findViewById(android.R.id.content),false);
-        mXRecyclerView.addHeaderView(headerProfile);
-        FontManager.markAsIconContainer(headerProfile.findViewById(R.id.meet_item_id), font);
-        updateHeader(headerProfile);
-        
+        loadReferences(uid);
 
-        mHeaderEvaluation = LayoutInflater.from(this).inflate(R.layout.friends_relatives_reference, (ViewGroup)findViewById(android.R.id.content),false);
-        mXRecyclerView.addHeaderView(mHeaderEvaluation);
-        
-         FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.charm_rating_bar), font);
-        FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.rating_member_details), font);
-
-        mXRecyclerView.getDefaultFootView().setLoadingHint(getString(R.string.loading_pull_up_tip));
-        mXRecyclerView.getDefaultFootView().setNoMoreHint(getString(R.string.loading_no_more));
-        final int itemLimit = 5;
-
-        // When the item number of the screen number is list.size-2,we call the onLoadMore
-        mXRecyclerView.setLimitNumberToCallLoadMore(4);
-        mXRecyclerView.setRefreshProgressStyle(ProgressStyle.BallBeat);
-        mXRecyclerView.setLoadingMoreProgressStyle(ProgressStyle.SquareSpin);
-
-        mXRecyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
-            @Override
-            public void onRefresh() {
-//                updateData();
-            }
-
-            @Override
-            public void onLoadMore() {
-                loadDynamicsData(mMeetMember.getUid());
-            }
-        });
-        RecyclerView referenceRecyclerView = mHeaderEvaluation.findViewById(R.id.reference_list);
-        referenceRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        mXRecyclerView.setAdapter(mArchivesListAdapter);
-
-        //+Begin add for friends and relatives' reference view
-
-
-        loadDynamicsData(mMeetMember.getUid());
-        
-        loadRatingData(mMeetMember.getUid());
-
-        loadImpressionAndReferences(mMeetMember.getUid());
+        loadDynamicsData(uid);  
 
         LinearLayout scaleRatingBar = mHeaderEvaluation.findViewById(R.id.charm_rating_bar);
 
@@ -229,6 +163,74 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
 
     }
     
+        private void initView(){
+        backLeft = findViewById(R.id.left_back);
+        backLeft.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        Typeface font = Typeface.createFromAsset(getAssets(), "fonts/fontawesome.ttf");
+                    mArchivesListAdapter = new ArchivesListAdapter(this);
+        mXRecyclerView = (XRecyclerView) findViewById(R.id.recyclerview);
+        mEmptyView = (TextView) findViewById(R.id.empty_text);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        mXRecyclerView.setLayoutManager(linearLayoutManager);
+        mXRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                mArchivesListAdapter.notifyDataSetChanged();
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+        });
+            
+                    linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        mXRecyclerView.setLayoutManager(linearLayoutManager);
+
+        mXRecyclerView.setRefreshProgressStyle(BallSpinFadeLoader);
+        mXRecyclerView.setLoadingMoreProgressStyle(ProgressStyle.BallRotate);
+        //mRecyclerView.setArrowImageView(R.drawable.);
+
+        mXRecyclerView.getDefaultRefreshHeaderView().setRefreshTimeVisible(true);
+        mXRecyclerView.setPullRefreshEnabled(false);
+            
+                    mXRecyclerView.getDefaultRefreshHeaderView().setRefreshTimeVisible(true);
+        View headerProfile = LayoutInflater.from(this).inflate(R.layout.meet_item, (ViewGroup)findViewById(android.R.id.content),false);
+        mXRecyclerView.addHeaderView(headerProfile);
+        FontManager.markAsIconContainer(headerProfile.findViewById(R.id.meet_item_id), font);
+        updateHeader(headerProfile);
+
+
+        mHeaderEvaluation = LayoutInflater.from(this).inflate(R.layout.friends_relatives_reference, (ViewGroup)findViewById(android.R.id.content),false);
+        mXRecyclerView.addHeaderView(mHeaderEvaluation);
+                    FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.charm_rating_bar), font);
+        FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.rating_member_details), font);
+
+        mXRecyclerView.getDefaultFootView().setLoadingHint(getString(R.string.loading_pull_up_tip));
+        mXRecyclerView.getDefaultFootView().setNoMoreHint(getString(R.string.loading_no_more));
+        final int itemLimit = 5;
+                    // When the item number of the screen number is list.size-2,we call the onLoadMore
+        mXRecyclerView.setLimitNumberToCallLoadMore(4);
+        mXRecyclerView.setRefreshProgressStyle(ProgressStyle.BallBeat);
+        mXRecyclerView.setLoadingMoreProgressStyle(ProgressStyle.SquareSpin);
+                    mXRecyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
+            @Override
+            public void onRefresh() {
+//                updateData();
+            }
+
+            @Override
+            public void onLoadMore() {
+                loadDynamicsData(mMeetMember.getUid());
+            }
+        });
+        RecyclerView referenceRecyclerView = mHeaderEvaluation.findViewById(R.id.reference_list);
+        referenceRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        mXRecyclerView.setAdapter(mArchivesListAdapter);
+    }
+    
     private void setEvaluatedMode(){
         LinearLayout charmRatingBar = mHeaderEvaluation.findViewById(R.id.charm_rating_bar);
         TextView notice = mHeaderEvaluation.findViewById(R.id.notice);
@@ -273,44 +275,6 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
         thumbsView.setText(String.valueOf(mMeetMember.getPraisedCount()));
         illustration.setText(mMeetMember.getIllustration());
 
-//        lovedIcon.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                if (1 == meet.getLoved()){
-//                    Toast.makeText(mContext, "You have loved it!", Toast.LENGTH_SHORT).show();
-//                    return;
-//                }
-//                love(meet);
-//            }
-//        });
-//        thumbsIcon.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                //TODO change UI to show parised or no
-//                if (1 == meet.getPraised()) {
-//                    Toast.makeText(mContext, "You have praised it!", Toast.LENGTH_SHORT).show();
-//                    return;
-//                }
-//                praiseArchives(meet);
-//            }
-//        });
-//        headUri.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent intent = new Intent(mContext, ArchivesActivity.class);
-//                Log.d(TAG, "meet:"+meet+" uid:"+meet.getUid());
-//                intent.putExtra("meet", meet);
-//                mContext.startActivity(intent);
-//            }
-//        });
-//        photosView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent intent = new Intent(mContext, ArchivesActivity.class);
-//                intent.putExtra("meet", meet);
-//                mContext.startActivity(intent);
-//            }
-//        });
     }
 
     private void updateEvaluationHeader(){
@@ -351,7 +315,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
         }
     }
     
-   private void loadRatingData(int uid){
+   private void loadRatingAndImpression(int uid){
         RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
         HttpUtil.sendOkHttpRequest(this, GET_IMPRESSION_URL, requestBody, new Callback() {
             @Override
@@ -377,8 +341,31 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
             public void onFailure(Call call, IOException e) {}
         });
     }
+    
+        private void loadImpressionStatistics(int uid){
+        RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
+        HttpUtil.sendOkHttpRequest(this, GET_IMPRESSION_STATISTICS_URL, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if(response.body() != null){
+                    String responseText = response.body().string();
+                    Slog.d(TAG, "==========loadReferences response text : "+responseText);
+                    if(responseText != null){
 
-    private void loadImpressionAndReferences(int uid){
+                        handler.sendEmptyMessage(LOAD_IMPRESSION_DONE);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+        });
+    }
+    
+
+    private void loadReferences(int uid){
         RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
         HttpUtil.sendOkHttpRequest(this, LOAD_REFERENCE_URL, requestBody, new Callback() {
             @Override
