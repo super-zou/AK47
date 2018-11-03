@@ -34,6 +34,7 @@ import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.adapter.ArchivesListAdapter;
+import com.tongmenhui.launchak47.adapter.MeetImpressionStatisticsAdapter;
 import com.tongmenhui.launchak47.adapter.MeetReferenceAdapter;
 import com.tongmenhui.launchak47.main.BaseAppCompatActivity;
 import com.tongmenhui.launchak47.util.FontManager;
@@ -72,6 +73,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
     private static final String GET_IMPRESSION_URL = HttpUtil.DOMAIN + "?q=meet/impression/get";
     private static final String GET_IMPRESSION_STATISTICS_URL = HttpUtil.DOMAIN + "?q=meet/impression/statistics";
     private List<MeetDynamics> mMeetList = new ArrayList<>();
+    private List<MeetMemberInfo> mImpressionList = new ArrayList<>();
     private List<MeetReferenceInfo> mReferenceList = new ArrayList<>();
     private Handler handler;
     private static final int DONE = 1;
@@ -85,7 +87,8 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
     private int mTempSize;
     private XRecyclerView mXRecyclerView;
     private ArchivesListAdapter mArchivesListAdapter;
-    MeetReferenceAdapter mMeetReferenceAdapter;
+    private MeetReferenceAdapter mMeetReferenceAdapter;
+    private MeetImpressionStatisticsAdapter mMeetImpressionStatisticsAdapter;
     private TextView mEmptyView;
     View mHeaderEvaluation;
     private JSONObject impressionObj;
@@ -302,7 +305,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
                 }
                 ratingCount += impression.optDouble("rating");
             }
-                        float ratingAverage = ratingCount/impressionArray.length();
+            float ratingAverage = ratingCount/impressionArray.length();
             float ratingAverageRoundUp = 0;
             BigDecimal  b = new BigDecimal(ratingAverage);
             ratingAverageRoundUp = b.setScale(1, BigDecimal.ROUND_HALF_UP).floatValue();
@@ -342,17 +345,24 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
         });
     }
     
-        private void loadImpressionStatistics(int uid){
+    private void loadImpressionStatistics(final int uid){
         RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
         HttpUtil.sendOkHttpRequest(this, GET_IMPRESSION_STATISTICS_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if(response.body() != null){
                     String responseText = response.body().string();
-                    Slog.d(TAG, "==========loadReferences response text : "+responseText);
-                    if(responseText != null){
+                    Slog.d(TAG, "==========loadImpressionStatistics response text : "+responseText);
 
-                        handler.sendEmptyMessage(LOAD_IMPRESSION_DONE);
+                    if(responseText != null){
+                        if(!TextUtils.isEmpty(responseText)){
+                            Message msg = handler.obtainMessage();
+                            Bundle bundle = new Bundle();
+                            bundle.putString("response", responseText);
+                            msg.setData(bundle);
+                            msg.what = LOAD_IMPRESSION_DONE;
+                            handler.sendMessage(msg);
+                        }
                     }
                 }
             }
@@ -524,61 +534,6 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
         return tempList;
     }
 
-    static class MyHandler extends Handler {
-        WeakReference<ArchivesActivity> meetDynamicsFragmentWeakReference;
-
-        MyHandler(ArchivesActivity archivesActivity) {
-            meetDynamicsFragmentWeakReference = new WeakReference<ArchivesActivity>(archivesActivity);
-        }
-
-        @Override
-        public void handleMessage(Message message) {
-            ArchivesActivity archivesActivity = meetDynamicsFragmentWeakReference.get();
-            if(archivesActivity != null){
-                archivesActivity.handleMessage(message);
-            }
-        }
-    }
-
-    public void handleMessage(Message message){
-        switch (message.what){
-            case DONE:
-                mArchivesListAdapter.setData(mMeetList);
-                mArchivesListAdapter.notifyDataSetChanged();
-                mXRecyclerView.refreshComplete();
-
-                if (mTempSize < PAGE_SIZE) {
-                    //loading finished
-                    mXRecyclerView.setNoMore(true);
-                    mXRecyclerView.setLoadingMoreEnabled(false);
-                }
-                /*if (mMeetList.size() > 0) {
-                    mEmptyView.setVisibility(View.GONE);
-                    mXRecyclerView.setVisibility(View.VISIBLE);
-                } else {
-                    mEmptyView.setVisibility(View.VISIBLE);
-                    mXRecyclerView.setVisibility(View.GONE);
-                }*/
-                break;
-            case UPDATE:
-                break;
-            case UPDATE_COMMENT:
-                mArchivesListAdapter.setData(mMeetList);
-                mArchivesListAdapter.notifyDataSetChanged();
-                break;
-            case LOAD_REFERENCE_DONE:
-                updateEvaluationHeader();
-                mMeetReferenceAdapter.setReferenceList(mReferenceList);
-                mMeetReferenceAdapter.notifyDataSetChanged();
-                break;
-            case LOAD_RATING_DONE:
-                setRatingBarView();
-                break;
-            default:
-                break;
-        }
-    }
-
     private void getDynamicsComment(final Long aid) {
         Log.d(TAG, "getDynamicsComment: aid:"+aid);
         RequestBody requestBody = new FormBody.Builder().add("aid", aid.toString()).build();
@@ -662,6 +617,91 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
     public void onBackFromRatingAndImpressionDialogFragment(boolean evaluated){
         if(evaluated){
             setEvaluatedMode();
+        }
+    }
+
+    private void setImpressionView(String response){
+        RecyclerView impressionStatisticsWrap = mHeaderEvaluation.findViewById(R.id.impression_statistics_list);
+        impressionStatisticsWrap.setLayoutManager(new LinearLayoutManager(this));
+        mMeetImpressionStatisticsAdapter = new MeetImpressionStatisticsAdapter(this);
+        impressionStatisticsWrap.setAdapter(mMeetImpressionStatisticsAdapter);
+
+
+
+
+
+    }
+
+    private void parseImpressionStatistics(String response){
+        JSONObject responseObj = null;
+        try{
+            responseObj = new JSONObject(response);
+        } catch (JSONException e){
+            e.printStackTrace();
+        }
+        if(responseObj != null){
+            JSONObject impressionStatistics = responseObj.optJSONObject("features_statistics");
+
+        }
+    }
+
+    static class MyHandler extends Handler {
+        WeakReference<ArchivesActivity> meetDynamicsFragmentWeakReference;
+
+        MyHandler(ArchivesActivity archivesActivity) {
+            meetDynamicsFragmentWeakReference = new WeakReference<ArchivesActivity>(archivesActivity);
+        }
+
+        @Override
+        public void handleMessage(Message message) {
+            ArchivesActivity archivesActivity = meetDynamicsFragmentWeakReference.get();
+            if(archivesActivity != null){
+                archivesActivity.handleMessage(message);
+            }
+        }
+    }
+
+    public void handleMessage(Message message){
+        switch (message.what){
+            case DONE:
+                mArchivesListAdapter.setData(mMeetList);
+                mArchivesListAdapter.notifyDataSetChanged();
+                mXRecyclerView.refreshComplete();
+
+                if (mTempSize < PAGE_SIZE) {
+                    //loading finished
+                    mXRecyclerView.setNoMore(true);
+                    mXRecyclerView.setLoadingMoreEnabled(false);
+                }
+                /*if (mMeetList.size() > 0) {
+                    mEmptyView.setVisibility(View.GONE);
+                    mXRecyclerView.setVisibility(View.VISIBLE);
+                } else {
+                    mEmptyView.setVisibility(View.VISIBLE);
+                    mXRecyclerView.setVisibility(View.GONE);
+                }*/
+                break;
+            case UPDATE:
+                break;
+            case UPDATE_COMMENT:
+                mArchivesListAdapter.setData(mMeetList);
+                mArchivesListAdapter.notifyDataSetChanged();
+                break;
+            case LOAD_REFERENCE_DONE:
+                updateEvaluationHeader();
+                mMeetReferenceAdapter.setReferenceList(mReferenceList);
+                mMeetReferenceAdapter.notifyDataSetChanged();
+                break;
+            case LOAD_RATING_DONE:
+                setRatingBarView();
+                break;
+            case LOAD_IMPRESSION_DONE:
+                Bundle bundle = message.getData();
+                String response = bundle.getString("response");
+                setImpressionView(response);
+                break;
+            default:
+                break;
         }
     }
 

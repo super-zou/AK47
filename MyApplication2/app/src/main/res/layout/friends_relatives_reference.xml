@@ -120,51 +120,17 @@
             android:layout_marginBottom="10dp"
             android:text="您认为该用户魅力如何" />
     </RelativeLayout>
-        <TableLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:stretchColumns="*">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/impression_statistics_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:text="好友印象"/>
-        <TableRow
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content">
-            <Button
-                android:text="feature"
-                android:layout_height="wrap_content"
-                android:layout_width="match_parent"
-                android:background="@drawable/label_selected_bg"/>
-             <TextView
-                 android:layout_marginLeft="5dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="3"/>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="left"
-                android:layout_span="8"
-                android:layout_gravity="center">
-                <TextView
-                    android:text="touxiang"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-                <TextView
-                    android:text="touxiang"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-                <TextView
-                    android:text="等"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
-            <TextView
-                android:text=">"/>
-        </TableRow>
-    </TableLayout>
+    </android.support.v7.widget.RecyclerView>
     <RelativeLayout
         android:id="@+id/invite_reference"
         android:layout_width="wrap_content"

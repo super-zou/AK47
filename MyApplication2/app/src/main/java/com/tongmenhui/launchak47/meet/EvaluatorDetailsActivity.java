@@ -157,7 +157,7 @@ public class EvaluatorDetailsActivity extends BaseAppCompatActivity {
         }
 
     }
-        static class MyHandler extends Handler {
+    static class MyHandler extends Handler {
         WeakReference<EvaluatorDetailsActivity> evaluatorDetailsActivityWeakReference;
 
         MyHandler(EvaluatorDetailsActivity evaluatorDetailsActivity) {
@@ -173,12 +173,12 @@ public class EvaluatorDetailsActivity extends BaseAppCompatActivity {
         }
     }
     
-        public void handleMessage(Message message){
+    public void handleMessage(Message message){
         switch (message.what){
             case LOAD_EVALUATOR_DONE:
                 Bundle bundle = message.getData();
                 String response = bundle.getString("response");
-                Slog.d(TAG, "==========================get response: "+response);
+                //Slog.d(TAG, "==========================get response: "+response);
                 setEvaluatorDetails(response);
                 break;
             default:
@@ -186,7 +186,7 @@ public class EvaluatorDetailsActivity extends BaseAppCompatActivity {
         }
     }
     
-        public class EvaluatorDetails{
+    public class EvaluatorDetails{
         private int uid;
         private String name;
         private String pictureUri;
@@ -198,7 +198,7 @@ public class EvaluatorDetailsActivity extends BaseAppCompatActivity {
         public int getUid(){
             return uid;
         }
-                public void setUid(int uid){
+        public void setUid(int uid){
             this.uid = uid;
         }
 
@@ -214,7 +214,7 @@ public class EvaluatorDetailsActivity extends BaseAppCompatActivity {
             return rating;
         }
         
-                public void setRating(double rating) {
+        public void setRating(double rating) {
             this.rating = rating;
         }
 
@@ -230,7 +230,7 @@ public class EvaluatorDetailsActivity extends BaseAppCompatActivity {
             this.name = name;
         }
         
-         public String getName() {
+        public String getName() {
             return name;
         }
 
