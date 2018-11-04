@@ -54,6 +54,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import okhttp3.Call;
@@ -66,12 +67,14 @@ import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
 public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateDialogFragment.EvaluateDialogFragmentListener{
     private static final String TAG = "ArchivesActivity";
-
+    private static final boolean isDebug = false;
     private static final String DYNAMICS_URL = HttpUtil.DOMAIN + "?q=meet/activity/get";
     private static final String COMMENT_URL = HttpUtil.DOMAIN + "?q=meet/activity/interact/get";
     private static final String LOAD_REFERENCE_URL = HttpUtil.DOMAIN + "?q=meet/reference/load";
     private static final String GET_IMPRESSION_URL = HttpUtil.DOMAIN + "?q=meet/impression/get";
     private static final String GET_IMPRESSION_STATISTICS_URL = HttpUtil.DOMAIN + "?q=meet/impression/statistics";
+    private static final String GET_IMPRESSION_USERS_URL = HttpUtil.DOMAIN + "?q=meet/impression/users";
+
     private List<MeetDynamics> mMeetList = new ArrayList<>();
     private List<MeetMemberInfo> mImpressionList = new ArrayList<>();
     private List<MeetReferenceInfo> mReferenceList = new ArrayList<>();
@@ -80,7 +83,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
     private static final int UPDATE = 2;
     private static final int UPDATE_COMMENT = 3;
     private static final int LOAD_RATING_DONE = 4;
-        private static final int LOAD_IMPRESSION_DONE = 5;
+    private static final int LOAD_IMPRESSION_DONE = 5;
     private static final int LOAD_REFERENCE_DONE = 6;
     private static final int PAGE_SIZE = 6;
      private static final int REQUEST_CODE = 1;
@@ -92,6 +95,9 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
     private TextView mEmptyView;
     View mHeaderEvaluation;
     private JSONObject impressionObj;
+    public String impression;
+    public int impressionCount;
+    public List<MeetMemberInfo> meetMemberList;
     private EvaluateDialogFragment evaluateDialogFragment;
 
     private ImageView backLeft;
@@ -127,7 +133,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
                 if (prev != null) {
                     ft.remove(prev);
                 }
-                                ft.addToBackStack(null);
+                ft.addToBackStack(null);
                 if(evaluateDialogFragment == null) {
                     evaluateDialogFragment = new EvaluateDialogFragment();
                 }
@@ -144,7 +150,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
         evaluatorDetails.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Slog.d(TAG, "==============start EvaluatorDetailsActivity");
+                if(isDebug) Slog.d(TAG, "==============start EvaluatorDetailsActivity");
                 Intent intent = new Intent(ArchivesActivity.this, EvaluatorDetailsActivity.class);
                 intent.putExtra("uid", mMeetMember.getUid());
                 //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
@@ -166,7 +172,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
 
     }
     
-        private void initView(){
+    private void initView(){
         backLeft = findViewById(R.id.left_back);
         backLeft.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -175,7 +181,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
             }
         });
         Typeface font = Typeface.createFromAsset(getAssets(), "fonts/fontawesome.ttf");
-                    mArchivesListAdapter = new ArchivesListAdapter(this);
+        mArchivesListAdapter = new ArchivesListAdapter(this);
         mXRecyclerView = (XRecyclerView) findViewById(R.id.recyclerview);
         mEmptyView = (TextView) findViewById(R.id.empty_text);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -188,7 +194,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
             }
         });
             
-                    linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mXRecyclerView.setLayoutManager(linearLayoutManager);
 
         mXRecyclerView.setRefreshProgressStyle(BallSpinFadeLoader);
@@ -198,7 +204,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
         mXRecyclerView.getDefaultRefreshHeaderView().setRefreshTimeVisible(true);
         mXRecyclerView.setPullRefreshEnabled(false);
             
-                    mXRecyclerView.getDefaultRefreshHeaderView().setRefreshTimeVisible(true);
+        mXRecyclerView.getDefaultRefreshHeaderView().setRefreshTimeVisible(true);
         View headerProfile = LayoutInflater.from(this).inflate(R.layout.meet_item, (ViewGroup)findViewById(android.R.id.content),false);
         mXRecyclerView.addHeaderView(headerProfile);
         FontManager.markAsIconContainer(headerProfile.findViewById(R.id.meet_item_id), font);
@@ -207,17 +213,17 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
 
         mHeaderEvaluation = LayoutInflater.from(this).inflate(R.layout.friends_relatives_reference, (ViewGroup)findViewById(android.R.id.content),false);
         mXRecyclerView.addHeaderView(mHeaderEvaluation);
-                    FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.charm_rating_bar), font);
+        FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.charm_rating_bar), font);
         FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.rating_member_details), font);
 
         mXRecyclerView.getDefaultFootView().setLoadingHint(getString(R.string.loading_pull_up_tip));
         mXRecyclerView.getDefaultFootView().setNoMoreHint(getString(R.string.loading_no_more));
         final int itemLimit = 5;
-                    // When the item number of the screen number is list.size-2,we call the onLoadMore
+        // When the item number of the screen number is list.size-2,we call the onLoadMore
         mXRecyclerView.setLimitNumberToCallLoadMore(4);
         mXRecyclerView.setRefreshProgressStyle(ProgressStyle.BallBeat);
         mXRecyclerView.setLoadingMoreProgressStyle(ProgressStyle.SquareSpin);
-                    mXRecyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
+        mXRecyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
             @Override
             public void onRefresh() {
 //                updateData();
@@ -325,8 +331,8 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
             public void onResponse(Call call, Response response) throws IOException {
                 if(response.body() != null){
                     String responseText = response.body().string();
-                    Slog.d(TAG, "==========get impression response text : "+responseText);
-                                        if(responseText != null){
+                   if(isDebug) Slog.d(TAG, "==========get impression response text : "+responseText);
+                    if(responseText != null){
                         if(!TextUtils.isEmpty(responseText)){
                             try {
                                 impressionObj = new JSONObject(responseText);
@@ -356,6 +362,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
 
                     if(responseText != null){
                         if(!TextUtils.isEmpty(responseText)){
+                            parseImpressionStatistics(responseText, uid);
                             Message msg = handler.obtainMessage();
                             Bundle bundle = new Bundle();
                             bundle.putString("response", responseText);
@@ -364,6 +371,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
                             handler.sendMessage(msg);
                         }
                     }
+
                 }
             }
 
@@ -373,7 +381,90 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
             }
         });
     }
-    
+
+    private void setImpressionView(String response){
+        RecyclerView impressionStatisticsWrap = mHeaderEvaluation.findViewById(R.id.impression_statistics_list);
+        impressionStatisticsWrap.setLayoutManager(new LinearLayoutManager(this));
+        mMeetImpressionStatisticsAdapter = new MeetImpressionStatisticsAdapter(this);
+        impressionStatisticsWrap.setAdapter(mMeetImpressionStatisticsAdapter);
+    }
+
+    private void parseImpressionStatistics(String response, int uid){
+        JSONObject responseObj = null;
+        try{
+            responseObj = new JSONObject(response);
+        } catch (JSONException e){
+            e.printStackTrace();
+        }
+        if(responseObj != null){
+            JSONObject impressionStatisticsObj = responseObj.optJSONObject("features_statistics");
+            Iterator iterator = impressionStatisticsObj.keys();
+            while (iterator.hasNext()){
+                String key = (String) iterator.next();
+                int value = impressionStatisticsObj.optInt(key);
+                ImpressionStatistics impressionStatistics = new ImpressionStatistics();
+                impressionStatistics.impression = key;
+                impressionStatistics.impressionCount = value;
+                impressionStatistics.meetMemberList = getImpressionUser(key, uid);
+
+
+                Slog.d(TAG, "==============key: "+key+"   value: "+value);
+            }
+        }
+    }
+
+    class ImpressionStatistics{
+        public String impression;
+        public int impressionCount;
+        public List<MeetMemberInfo> meetMemberList = new ArrayList<>();
+    }
+
+    private List<MeetMemberInfo> getImpressionUser(String impression, int uid){
+        List<MeetMemberInfo> memberInfoList = new ArrayList<>();
+        RequestBody requestBody = new FormBody.Builder()
+                .add("impression", impression)
+                .add("uid", String.valueOf(uid)).build();
+        Slog.d(TAG, "impression: "+impression+ " uid: "+uid);
+        Response response = HttpUtil.sendOkHttpRequestSync(this, GET_IMPRESSION_USERS_URL, requestBody, null);
+
+        try {
+            String responseText = response.body().string();
+            Slog.d(TAG, "==========getImpressionUser response text : "+responseText);
+            try{
+               JSONObject responseObj = new JSONObject(responseText);
+               JSONArray responseArray = responseObj.optJSONArray("users");
+               if(responseArray.length() > 0){
+
+
+                   for (int i=0; i<responseArray.length(); i++){
+                       MeetMemberInfo meetMemberInfo = new MeetMemberInfo();
+                       JSONObject member = responseArray.optJSONObject(i);
+                       meetMemberInfo.setUid(member.optInt("uid"));
+                       meetMemberInfo.setSex(member.optInt("sex"));
+                       meetMemberInfo.setRealname(member.optString("realname"));
+                       meetMemberInfo.setPictureUri(member.optString("picture_uri"));
+                       if(member.optInt("situation") == 0){//student
+                           meetMemberInfo.setDegree(member.optString("degree"));
+                           meetMemberInfo.setMajor(member.optString("major"));
+                           meetMemberInfo.setUniversity(member.optString("university"));
+                       }else {
+                           meetMemberInfo.setCompany(member.optString("company"));
+                           meetMemberInfo.setJobTitle(member.optString("job_title"));
+                           meetMemberInfo.setLives(member.optString("lives"));
+                       }
+                       memberInfoList.add(meetMemberInfo);
+                   }
+               }
+            } catch (JSONException e){
+                e.printStackTrace();
+            }
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
+
+        return memberInfoList;
+    }
 
     private void loadReferences(int uid){
         RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
@@ -382,7 +473,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
             public void onResponse(Call call, Response response) throws IOException {
                 if(response.body() != null){
                     String responseText = response.body().string();
-                    Slog.d(TAG, "==========loadReferences response text : "+responseText);
+                    if (isDebug) Slog.d(TAG, "==========loadReferences response text : "+responseText);
                     if(responseText != null){
                         List<MeetReferenceInfo> meetReferenceInfoList = ParseUtils.getMeetReferenceList(responseText);
                         if(meetReferenceInfoList != null && meetReferenceInfoList.size() > 0){
@@ -409,7 +500,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
                 .add("step", String.valueOf(PAGE_SIZE))
                 .add("page", String.valueOf(page))
                 .build();
-        Log.d(TAG, "loadData requestBody:"+requestBody.toString()+" page:"+page+" uid:"+uid);
+        if (isDebug) Log.d(TAG, "loadData requestBody:"+requestBody.toString()+" page:"+page+" uid:"+uid);
         HttpUtil.sendOkHttpRequest(this, DYNAMICS_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
@@ -535,7 +626,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
     }
 
     private void getDynamicsComment(final Long aid) {
-        Log.d(TAG, "getDynamicsComment: aid:"+aid);
+        if (isDebug) Log.d(TAG, "getDynamicsComment: aid:"+aid);
         RequestBody requestBody = new FormBody.Builder().add("aid", aid.toString()).build();
         HttpUtil.sendOkHttpRequest(this, COMMENT_URL, requestBody, new Callback() {
             @Override
@@ -613,35 +704,10 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
         return null;
     }
     
-        @Override
+    @Override
     public void onBackFromRatingAndImpressionDialogFragment(boolean evaluated){
         if(evaluated){
             setEvaluatedMode();
-        }
-    }
-
-    private void setImpressionView(String response){
-        RecyclerView impressionStatisticsWrap = mHeaderEvaluation.findViewById(R.id.impression_statistics_list);
-        impressionStatisticsWrap.setLayoutManager(new LinearLayoutManager(this));
-        mMeetImpressionStatisticsAdapter = new MeetImpressionStatisticsAdapter(this);
-        impressionStatisticsWrap.setAdapter(mMeetImpressionStatisticsAdapter);
-
-
-
-
-
-    }
-
-    private void parseImpressionStatistics(String response){
-        JSONObject responseObj = null;
-        try{
-            responseObj = new JSONObject(response);
-        } catch (JSONException e){
-            e.printStackTrace();
-        }
-        if(responseObj != null){
-            JSONObject impressionStatistics = responseObj.optJSONObject("features_statistics");
-
         }
     }
 
@@ -698,7 +764,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
             case LOAD_IMPRESSION_DONE:
                 Bundle bundle = message.getData();
                 String response = bundle.getString("response");
-                setImpressionView(response);
+                //setImpressionView(response);
                 break;
             default:
                 break;

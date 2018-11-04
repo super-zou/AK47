@@ -20,6 +20,7 @@ import java.net.URL;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
+import okhttp3.Response;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -62,8 +63,9 @@ public class HttpUtil {
         client.newCall(request).enqueue(callback);
     }
 
-    public static void getOkHttpRequestSync(Context context, String address, RequestBody requestBody, okhttp3.Callback callback){
+    public static Response sendOkHttpRequestSync(Context context, String address, RequestBody requestBody, okhttp3.Callback callback){
         OkHttpClient client = new OkHttpClient();
+        Response response = null;
         Request request = null;
         String cookie = getCookie(context);
         if(requestBody != null){
@@ -83,22 +85,12 @@ public class HttpUtil {
         }
 
         try {
-            client.newCall(request).execute();
+            response = client.newCall(request).execute();
         }catch (IOException e){
             e.printStackTrace();
         }
-    }
 
-    public static void getOkHttpRequestAsync(String address, String session, okhttp3.Callback callback){
-        OkHttpClient client = new OkHttpClient();
-        Request request = null;
-
-        if(session != null){
-            request = new Request.Builder().addHeader("cookie", session).url(address).build();
-        }
-
-        client.newCall(request).enqueue(callback);
-
+        return response;
     }
 
     public static Bitmap getHttpBitmap(String url){
