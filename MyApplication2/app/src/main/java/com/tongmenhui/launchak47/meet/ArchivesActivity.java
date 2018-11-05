@@ -76,7 +76,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
     private static final String GET_IMPRESSION_USERS_URL = HttpUtil.DOMAIN + "?q=meet/impression/users";
 
     private List<MeetDynamics> mMeetList = new ArrayList<>();
-    private List<MeetMemberInfo> mImpressionList = new ArrayList<>();
+    private List<ImpressionStatistics> mImpressionStatisticsList = new ArrayList<>();
     private List<MeetReferenceInfo> mReferenceList = new ArrayList<>();
     private Handler handler;
     private static final int DONE = 1;
@@ -234,6 +234,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
                 loadDynamicsData(mMeetMember.getUid());
             }
         });
+
         RecyclerView referenceRecyclerView = mHeaderEvaluation.findViewById(R.id.reference_list);
         referenceRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -352,6 +353,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
     }
     
     private void loadImpressionStatistics(final int uid){
+
         RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
         HttpUtil.sendOkHttpRequest(this, GET_IMPRESSION_STATISTICS_URL, requestBody, new Callback() {
             @Override
@@ -363,12 +365,6 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
                     if(responseText != null){
                         if(!TextUtils.isEmpty(responseText)){
                             parseImpressionStatistics(responseText, uid);
-                            Message msg = handler.obtainMessage();
-                            Bundle bundle = new Bundle();
-                            bundle.putString("response", responseText);
-                            msg.setData(bundle);
-                            msg.what = LOAD_IMPRESSION_DONE;
-                            handler.sendMessage(msg);
                         }
                     }
 
@@ -382,7 +378,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
         });
     }
 
-    private void setImpressionView(String response){
+    private void setImpressionStatisticsView(){
         RecyclerView impressionStatisticsWrap = mHeaderEvaluation.findViewById(R.id.impression_statistics_list);
         impressionStatisticsWrap.setLayoutManager(new LinearLayoutManager(this));
         mMeetImpressionStatisticsAdapter = new MeetImpressionStatisticsAdapter(this);
@@ -398,22 +394,32 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
         }
         if(responseObj != null){
             JSONObject impressionStatisticsObj = responseObj.optJSONObject("features_statistics");
-            Iterator iterator = impressionStatisticsObj.keys();
-            while (iterator.hasNext()){
-                String key = (String) iterator.next();
-                int value = impressionStatisticsObj.optInt(key);
-                ImpressionStatistics impressionStatistics = new ImpressionStatistics();
-                impressionStatistics.impression = key;
-                impressionStatistics.impressionCount = value;
-                impressionStatistics.meetMemberList = getImpressionUser(key, uid);
+            if(impressionStatisticsObj != null){
+                Iterator iterator = impressionStatisticsObj.keys();
+                int index = 0;
+                while (iterator.hasNext()){
+                    index++;
+                    String key = (String) iterator.next();
+                    int value = impressionStatisticsObj.optInt(key);
+                    ImpressionStatistics impressionStatistics = new ImpressionStatistics();
+                    impressionStatistics.impression = key;
+                    impressionStatistics.impressionCount = value;
+                    impressionStatistics.meetMemberList = getImpressionUser(key, uid);
+                    mImpressionStatisticsList.add(impressionStatistics);
 
-
-                Slog.d(TAG, "==============key: "+key+"   value: "+value);
+                    Slog.d(TAG, "==============key: "+key+"   value: "+value);
+                    if(index == 5){
+                        break;
+                    }
+                }
+                Message msg = handler.obtainMessage();
+                msg.what = LOAD_IMPRESSION_DONE;
+                handler.sendMessage(msg);
             }
         }
     }
 
-    class ImpressionStatistics{
+    public class ImpressionStatistics{
         public String impression;
         public int impressionCount;
         public List<MeetMemberInfo> meetMemberList = new ArrayList<>();
@@ -762,9 +768,9 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
                 setRatingBarView();
                 break;
             case LOAD_IMPRESSION_DONE:
-                Bundle bundle = message.getData();
-                String response = bundle.getString("response");
-                //setImpressionView(response);
+                setImpressionStatisticsView();
+                mMeetImpressionStatisticsAdapter.setImpressionList(mImpressionStatisticsList);
+                mMeetImpressionStatisticsAdapter.notifyDataSetChanged();
                 break;
             default:
                 break;

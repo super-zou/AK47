@@ -12,6 +12,8 @@ import android.widget.TextView;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.NetworkImageView;
 import com.tongmenhui.launchak47.R;
+import com.tongmenhui.launchak47.meet.ArchivesActivity;
+import com.tongmenhui.launchak47.meet.MeetMemberInfo;
 import com.tongmenhui.launchak47.meet.MeetReferenceInfo;
 import com.tongmenhui.launchak47.util.FontManager;
 import com.tongmenhui.launchak47.util.HttpUtil;
@@ -24,7 +26,7 @@ public class MeetImpressionStatisticsAdapter extends RecyclerView.Adapter<MeetIm
 
     private static final String TAG = "MeetImpressionStatisticsAdapter";
     private static Context mContext;
-    private List<MeetReferenceInfo> mReferenceList;
+    private List<ArchivesActivity.ImpressionStatistics> mImpressionStatisticsList;
     RequestQueue queue;
 
     public MeetImpressionStatisticsAdapter(Context context){
@@ -33,38 +35,8 @@ public class MeetImpressionStatisticsAdapter extends RecyclerView.Adapter<MeetIm
 
     }
 
-    public void setReferenceList(List<MeetReferenceInfo> referenceList){
-        mReferenceList = referenceList;
-    }
-
-    public class ViewHolder extends RecyclerView.ViewHolder{
-        TextView realName;
-        TextView refereeProfile;
-        NetworkImageView refereeHeadUri;
-        TextView illustration;
-        TextView eyeView;
-        TextView lovedView;
-        TextView lovedIcon;
-        TextView thumbsView;
-        TextView thumbsUpIcon;
-        TextView referenceContent;
-        TextView createdView;
-        TextView commentIcon;
-
-        public ViewHolder(View view){
-            super(view);
-            realName = view.findViewById(R.id.referee_name);
-            refereeHeadUri = view.findViewById(R.id.referee_head_uri);
-            refereeProfile = view.findViewById(R.id.referee_profile);
-            thumbsUpIcon = view.findViewById(R.id.thumbs_up_icon);
-            commentIcon = view.findViewById(R.id.comment_icon);
-            createdView = view.findViewById(R.id.dynamic_time);
-            referenceContent = view.findViewById(R.id.reference_content);
-            //commentList = (LinearLayout) view.findViewById(R.id.dynamics_comments);
-
-            Typeface font = Typeface.createFromAsset(mContext.getAssets(), "fonts/fontawesome.ttf");
-            FontManager.markAsIconContainer(view.findViewById(R.id.evaluation_item), font);
-        }
+    public void setImpressionList(List<ArchivesActivity.ImpressionStatistics> impressionStatisticsList){
+        mImpressionStatisticsList = impressionStatisticsList;
     }
 
     @Override
@@ -77,24 +49,79 @@ public class MeetImpressionStatisticsAdapter extends RecyclerView.Adapter<MeetIm
 
     @Override
     public void onBindViewHolder(@NonNull MeetImpressionStatisticsAdapter.ViewHolder holder, int position) {
-        final MeetReferenceInfo referenceInfo = mReferenceList.get(position);
-        holder.realName.setText(referenceInfo.getRefereeName());
-        holder.refereeProfile.setText(referenceInfo.getRefereeProfile());
-        holder.referenceContent.setText(referenceInfo.getReferenceContent());
-        //holder.createdView.setText(referenceInfo.getCreated().toString());
+        Slog.d(TAG, "========================onBindViewHolder position: "+position);
+        final ArchivesActivity.ImpressionStatistics impressionStatistics = mImpressionStatisticsList.get(position);
+        holder.feature.setText(impressionStatistics.impression);
+        holder.featureCount.setText(String.valueOf(impressionStatistics.impressionCount));
 
-        if(referenceInfo.getHeadUri() != null && !"".equals(referenceInfo.getHeadUri())){
+        MeetMemberInfo meetMemberInfo = impressionStatistics.meetMemberList.get(0);
+        if(meetMemberInfo.getPictureUri() != null && !"".equals(meetMemberInfo.getPictureUri())){
             queue = RequestQueueSingleton.instance(mContext);
-            holder.refereeHeadUri.setTag(HttpUtil.DOMAIN+referenceInfo.getHeadUri());
-            HttpUtil.loadByImageLoader(queue, holder.refereeHeadUri, HttpUtil.DOMAIN+referenceInfo.getHeadUri(), 50, 50);
+            holder.headPicture1.setTag(HttpUtil.DOMAIN+meetMemberInfo.getPictureUri());
+            HttpUtil.loadByImageLoader(queue, holder.headPicture1, HttpUtil.DOMAIN+meetMemberInfo.getPictureUri(), 50, 50);
         }else{
-            holder.refereeHeadUri.setImageDrawable(mContext.getDrawable(R.mipmap.ic_launcher));
+            holder.headPicture1.setImageDrawable(mContext.getDrawable(R.mipmap.ic_launcher));
         }
 
+        if(impressionStatistics.meetMemberList.size() > 1){
+            holder.headPicture2.setVisibility(View.VISIBLE);
+            meetMemberInfo = impressionStatistics.meetMemberList.get(1);
+            if(meetMemberInfo.getPictureUri() != null && !"".equals(meetMemberInfo.getPictureUri())){
+                queue = RequestQueueSingleton.instance(mContext);
+                holder.headPicture2.setTag(HttpUtil.DOMAIN+meetMemberInfo.getPictureUri());
+                HttpUtil.loadByImageLoader(queue, holder.headPicture2, HttpUtil.DOMAIN+meetMemberInfo.getPictureUri(), 50, 50);
+            }else{
+                holder.headPicture2.setImageDrawable(mContext.getDrawable(R.mipmap.ic_launcher));
+            }
+            if(impressionStatistics.meetMemberList.size() > 2){
+                holder.headPicture3.setVisibility(View.VISIBLE);
+                meetMemberInfo = impressionStatistics.meetMemberList.get(2);
+                if(meetMemberInfo.getPictureUri() != null && !"".equals(meetMemberInfo.getPictureUri())){
+                    queue = RequestQueueSingleton.instance(mContext);
+                    holder.headPicture3.setTag(HttpUtil.DOMAIN+meetMemberInfo.getPictureUri());
+                    HttpUtil.loadByImageLoader(queue, holder.headPicture3, HttpUtil.DOMAIN+meetMemberInfo.getPictureUri(), 50, 50);
+                }else{
+                    holder.headPicture3.setImageDrawable(mContext.getDrawable(R.mipmap.ic_launcher));
+                }
+            }
+        }
+
+        if(impressionStatistics.meetMemberList.size() <= 3){
+            holder.approvedUsers.setText("认可");
+        }else {
+            holder.approvedUsers.setText("等"+impressionStatistics.meetMemberList.size()+"人认可");
+            holder.details.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
     public int getItemCount(){
-        return mReferenceList.size();
+        return mImpressionStatisticsList.size();
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder{
+        TextView feature;
+        TextView featureCount;
+        NetworkImageView headPicture1;
+        NetworkImageView headPicture2;
+        NetworkImageView headPicture3;
+        TextView approvedUsers;
+        TextView details;
+
+
+
+        public ViewHolder(View view){
+            super(view);
+            feature = view.findViewById(R.id.feature);
+            featureCount = view.findViewById(R.id.feature_count);
+            headPicture1 = view.findViewById(R.id.head_picure1);
+            headPicture2 = view.findViewById(R.id.head_picure2);
+            headPicture3 = view.findViewById(R.id.head_picure3);
+            approvedUsers = view.findViewById(R.id.approved_users);
+            details = view.findViewById(R.id.details);
+
+            //Typeface font = Typeface.createFromAsset(mContext.getAssets(), "fonts/fontawesome.ttf");
+            //FontManager.markAsIconContainer(view.findViewById(R.id.evaluation_item), font);
+        }
     }
 }

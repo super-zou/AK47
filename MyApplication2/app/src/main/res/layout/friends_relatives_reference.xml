@@ -128,14 +128,18 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/impression_statistics_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:background="@color/colorWhite">
 
     </android.support.v7.widget.RecyclerView>
+
     <RelativeLayout
         android:id="@+id/invite_reference"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
+        android:layout_marginTop="5dp"
         android:background="@color/colorWhite">
         <TextView
             android:id="@+id/textView2"
