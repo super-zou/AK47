@@ -360,7 +360,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
 
     @Override
     public int getItemCount(){
-        return mMeetList.size();
+        return mMeetList != null ? mMeetList.size():0;
     }
 
     public void addData(int position, MeetDynamics meetDynamics){
