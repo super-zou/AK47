@@ -43,7 +43,7 @@ public class EvaluateDialogFragment extends DialogFragment {
     private static final String TAG = "EvaluateDialogFragment";
     private Context mContext;
     private Dialog mDialog;
-        private View  view;
+    private View  view;
     private boolean mEvaluated = false;
     private EvaluateDialogFragmentListener evaluateDialogFragmentListener;
     private LayoutInflater inflater;

@@ -92,6 +92,13 @@ public class MeetImpressionStatisticsAdapter extends RecyclerView.Adapter<MeetIm
             holder.approvedUsers.setText("等"+impressionStatistics.meetMemberList.size()+"人认可");
             holder.details.setVisibility(View.VISIBLE);
         }
+
+        holder.details.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
     }
 
     @Override
