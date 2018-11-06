@@ -164,15 +164,15 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
                        JSONObject member = memberInfoArray.getJSONObject(i);
                        memberInfo.setUid(member.getInt("uid"));
                        memberInfo.setRealname(member.getString("realname"));
-                       String profile = "";
                        if(member.getInt("situation") == 0){
-                           profile = member.getString("university")+"."
-                                   +member.getString("degree")+"."
-                                   +member.getString("major");
+                           memberInfo.setUniversity(member.getString("university"));
+                           memberInfo.setDegree(member.getString("degree"));
+                           memberInfo.setMajor(member.getString("major"));
                        }else{
-                           profile = member.getString("job_title")+"."+member.getString("company");
+                           memberInfo.setCompany(member.getString("company"));
+                           memberInfo.setJobTitle(member.getString("job_title"));
                        }
-                       memberInfo.setProfile(profile);
+                       //memberInfo.setProfile(profile);
                        memberInfo.setPictureUri(member.getString("picture_uri"));
 
                        memberInfoList.add(memberInfo);
