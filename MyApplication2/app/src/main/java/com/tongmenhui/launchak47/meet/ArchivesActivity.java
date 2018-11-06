@@ -1,5 +1,7 @@
 package com.tongmenhui.launchak47.meet;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -381,7 +383,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
     private void setImpressionStatisticsView(){
         RecyclerView impressionStatisticsWrap = mHeaderEvaluation.findViewById(R.id.impression_statistics_list);
         impressionStatisticsWrap.setLayoutManager(new LinearLayoutManager(this));
-        mMeetImpressionStatisticsAdapter = new MeetImpressionStatisticsAdapter(this);
+        mMeetImpressionStatisticsAdapter = new MeetImpressionStatisticsAdapter(this, getSupportFragmentManager());
         impressionStatisticsWrap.setAdapter(mMeetImpressionStatisticsAdapter);
     }
 
@@ -419,10 +421,41 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
         }
     }
 
-    public class ImpressionStatistics{
+    public class ImpressionStatistics implements Parcelable{
         public String impression;
         public int impressionCount;
         public List<MeetMemberInfo> meetMemberList = new ArrayList<>();
+        
+                @Override
+        public int describeContents() {
+            return 0;
+        }
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            //序列化过程：必须按成员变量声明的顺序进行封装
+            dest.writeString(impression);
+            dest.writeInt(impressionCount);
+            dest.writeList(meetMemberList);
+        }
+        
+        public final Parcelable.Creator<ImpressionStatistics> CREATOR = new Creator<ImpressionStatistics>() {
+
+            @Override
+            public ImpressionStatistics createFromParcel(Parcel source) {
+                ImpressionStatistics impressionStatistics = new ImpressionStatistics();
+                impressionStatistics.impression = source.readString();
+                impressionStatistics.impressionCount = source.readInt();
+                //impressionStatistics.meetMemberList = new ArrayList<MeetMemberInfo>();
+                impressionStatistics.meetMemberList = source.readArrayList(getClass().getClassLoader());
+
+                return impressionStatistics;
+            }
+
+            @Override
+            public ImpressionStatistics[] newArray(int size) {
+                return new ImpressionStatistics[size];
+            }
+        };
     }
 
     private List<MeetMemberInfo> getImpressionUser(String impression, int uid){
