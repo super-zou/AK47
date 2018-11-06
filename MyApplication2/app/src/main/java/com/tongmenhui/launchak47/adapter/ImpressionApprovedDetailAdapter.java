@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ImpressionApprovedDetailAdapter extends RecyclerView.Adapter<ImpressionApprovedDetailAdapter.ViewHolder> {
-    private static final String TAG = "SearchUserListAdapter";
+    private static final String TAG = "ImpressionApprovedDetailAdapter";
     private ArrayList<MeetMemberInfo> mUnfilteredData;
     private List<MeetMemberInfo> mMemberInfoList;
     private Context mContext;
@@ -41,20 +41,17 @@ public class ImpressionApprovedDetailAdapter extends RecyclerView.Adapter<Impres
         public ImageView headPic;
         public TextView name;
         public TextView profile;
-        public Button invite;
 
         public ViewHolder(View view){
             super(view);
-            headPic =  view.findViewById(R.id.headPic);
+            headPic =  view.findViewById(R.id.networkImageView);
             name = view.findViewById(R.id.name);
             profile = view.findViewById(R.id.profile);
-            invite = view.findViewById(R.id.invite);
         }
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        Slog.d(TAG, "=============onCreateViewHolder");
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.impression_approved_user_info, parent, false);
         ViewHolder holder = new ViewHolder(view);
@@ -66,7 +63,6 @@ public class ImpressionApprovedDetailAdapter extends RecyclerView.Adapter<Impres
         final MeetMemberInfo memberInfo = mMemberInfoList.get(position);
         Slog.d(TAG, "=============get real name: "+memberInfo.getRealname());
         holder.name.setText(memberInfo.getRealname());
-        holder.invite.setTag(memberInfo.getUid());
         String profile = "";
         if(memberInfo.getSituation() == 0){//student
             profile = memberInfo.getUniversity()+"."+memberInfo.getDegree()+"."+memberInfo.getDegree();
@@ -82,21 +78,10 @@ public class ImpressionApprovedDetailAdapter extends RecyclerView.Adapter<Impres
         }else{
             holder.headPic.setImageDrawable(mContext.getDrawable(R.mipmap.ic_launcher));
         }
-
-        holder.invite.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(mContext, "uid: "+v.getTag(), Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     @Override
     public int getItemCount(){
-        if(null == mMemberInfoList){
-            return 0;
-        }
-
-        return mMemberInfoList.size();
+          return mMemberInfoList != null ? mMemberInfoList.size():0;
     }
 }
