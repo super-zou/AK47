@@ -1,8 +1,12 @@
 package com.tongmenhui.launchak47.adapter;
 
+import android.app.FragmentManager;
 import android.content.Context;
 import android.graphics.Typeface;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +18,7 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.meet.ArchivesActivity;
 import com.tongmenhui.launchak47.meet.MeetMemberInfo;
-import com.tongmenhui.launchak47.meet.MeetReferenceInfo;
+import com.tongmenhui.launchak47.meet.ApprovedUsersDialogFragment;
 import com.tongmenhui.launchak47.util.FontManager;
 import com.tongmenhui.launchak47.util.HttpUtil;
 import com.tongmenhui.launchak47.util.RequestQueueSingleton;
@@ -29,10 +33,13 @@ public class MeetImpressionStatisticsAdapter extends RecyclerView.Adapter<MeetIm
     private List<ArchivesActivity.ImpressionStatistics> mImpressionStatisticsList;
     RequestQueue queue;
 
-    public MeetImpressionStatisticsAdapter(Context context){
+    private ApprovedUsersDialogFragment approvedUsersDialogFragment;
+    private android.support.v4.app.FragmentManager mFragmentManager;
+
+    public MeetImpressionStatisticsAdapter(Context context, android.support.v4.app.FragmentManager fragmentManager){
         Slog.d(TAG, "==============MeetImpressionStatisticsAdapter init=================");
         mContext = context;
-
+        mFragmentManager = fragmentManager;
     }
 
     public void setImpressionList(List<ArchivesActivity.ImpressionStatistics> impressionStatisticsList){
@@ -96,14 +103,28 @@ public class MeetImpressionStatisticsAdapter extends RecyclerView.Adapter<MeetIm
         holder.details.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                FragmentTransaction ft = mFragmentManager.beginTransaction();
+                Fragment prev = mFragmentManager.findFragmentByTag("ApprovedUsersDialogFragment");
+                if (prev != null) {
+                    ft.remove(prev);
+                }
+                ft.addToBackStack(null);
+                if(approvedUsersDialogFragment == null) {
+                    approvedUsersDialogFragment = new ApprovedUsersDialogFragment();
+                }
+                Bundle bundle = new Bundle();
+               // bundle.putInt("uid", mMeetMember.getUid());
+               // bundle.putInt("sex", mMeetMember.getSex());
+                bundle.putParcelable("impressionStatistics", impressionStatistics);
+                approvedUsersDialogFragment.setArguments(bundle);
+                approvedUsersDialogFragment.show(ft, "ApprovedUsersDialogFragment");
             }
         });
     }
 
     @Override
     public int getItemCount(){
-        return mImpressionStatisticsList.size();
+        return mImpressionStatisticsList != null ?  mImpressionStatisticsList.size():0;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
