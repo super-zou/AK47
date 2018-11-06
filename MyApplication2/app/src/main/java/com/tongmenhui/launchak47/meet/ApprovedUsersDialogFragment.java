@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -13,14 +14,17 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.tongmenhui.launchak47.R;
+import com.tongmenhui.launchak47.adapter.ImpressionApprovedDetailAdapter;
+import com.tongmenhui.launchak47.util.Slog;
 
-public class ImpressionApprovedDetailsDialogFragment extends DialogFragment {
+public class ApprovedUsersDialogFragment extends DialogFragment {
 
     private static final String TAG = "ImpressionApprovedDetailsDialogFragment";
     private Context mContext;
     private Dialog mDialog;
     private View view;
     private RecyclerView mUsersDetailList;
+    private ImpressionApprovedDetailAdapter approvedDetailAdapter;
     private LayoutInflater inflater;
 
     @Override
@@ -31,12 +35,11 @@ public class ImpressionApprovedDetailsDialogFragment extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        int uid = -1;
-        int sex = 0;
+        ArchivesActivity.ImpressionStatistics impressionStatistics = null;
         Bundle bundle = getArguments();
         if(bundle != null){
-            uid = bundle.getInt("uid");
-            sex = bundle.getInt("sex");
+            impressionStatistics  = bundle.getParcelable("impressionStatistics");
+            Slog.d(TAG, "=================count: "+impressionStatistics.meetMemberList.size());
         }
         inflater = LayoutInflater.from(mContext);
         mDialog = new Dialog(mContext, android.R.style.Theme_Light_NoTitleBar_Fullscreen);
@@ -56,6 +59,14 @@ public class ImpressionApprovedDetailsDialogFragment extends DialogFragment {
 
         mUsersDetailList = mDialog.findViewById(R.id.users_detail);
 
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        mUsersDetailList.setLayoutManager(linearLayoutManager);
+        approvedDetailAdapter = new ImpressionApprovedDetailAdapter(mContext);
+        mUsersDetailList.setAdapter(approvedDetailAdapter);
+
+        approvedDetailAdapter.setData(impressionStatistics.meetMemberList);
+        approvedDetailAdapter.notifyDataSetChanged();
 
         return mDialog;
     }
