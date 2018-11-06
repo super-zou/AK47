@@ -56,7 +56,7 @@ public class MeetFragmentAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public int getCount() {
-        return mTitles.size();
+        return mTitles != null ? mTitles.size():0;
     }
 
     @Override
