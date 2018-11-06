@@ -103,6 +103,6 @@ public class MeetReferenceAdapter extends RecyclerView.Adapter<MeetReferenceAdap
 
     @Override
     public int getItemCount(){
-        return mReferenceList.size();
+        return mReferenceList != null ? mReferenceList.size():0;
     }
 }
