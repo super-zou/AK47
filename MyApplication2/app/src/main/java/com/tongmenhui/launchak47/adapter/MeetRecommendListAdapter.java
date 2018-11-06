@@ -194,7 +194,7 @@ public class MeetRecommendListAdapter extends RecyclerView.Adapter<MeetRecommend
     @Override
     public int getItemCount(){
 
-        return mMeetList.size();
+        return mMeetList != null ? mMeetList.size():0;
     }
 
     private Handler mHandler = new Handler(){
