@@ -482,6 +482,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
                        meetMemberInfo.setSex(member.optInt("sex"));
                        meetMemberInfo.setRealname(member.optString("realname"));
                        meetMemberInfo.setPictureUri(member.optString("picture_uri"));
+                       meetMemberInfo.setSituation(member.optInt("situation"));
                        if(member.optInt("situation") == 0){//student
                            meetMemberInfo.setDegree(member.optString("degree"));
                            meetMemberInfo.setMajor(member.optString("major"));
