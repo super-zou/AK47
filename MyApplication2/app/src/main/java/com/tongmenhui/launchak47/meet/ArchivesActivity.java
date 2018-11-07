@@ -167,6 +167,9 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
                // Toast.makeText(getApplicationContext(), "hahaha", Toast.LENGTH_SHORT).show();
                 InvitationDialogFragment invitationDialogFragment = new InvitationDialogFragment();
                // invitationDialogFragment.setTargetFragment(getApplicationContext(), REQUEST_CODE);
+                Bundle bundle = new Bundle();
+                bundle.putInt("uid", mMeetMember.getUid());
+                invitationDialogFragment.setArguments(bundle);
                 invitationDialogFragment.show(getSupportFragmentManager(), "InvitationDialogFragment");
             }
         });

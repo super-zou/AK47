@@ -58,41 +58,37 @@ public class ParseUtils {
 
     public static MeetMemberInfo setMeetMemberInfo(JSONObject member){
         MeetMemberInfo meetMemberInfo = new MeetMemberInfo();
-        try{
-            meetMemberInfo.setRealname(member.getString("realname"));
-            meetMemberInfo.setUid(member.getInt("uid"));
-            meetMemberInfo.setSex(member.optInt("sex"));
-            meetMemberInfo.setPictureUri(member.getString("picture_uri"));
-            meetMemberInfo.setBirthYear(member.getInt("birth_year"));
-            meetMemberInfo.setHeight(member.getInt("height"));
-            meetMemberInfo.setUniversity(member.getString("university"));
 
-            meetMemberInfo.setDegree(member.getString("degree"));
-            meetMemberInfo.setJobTitle(member.getString("job_title"));
-            meetMemberInfo.setLives(member.getString("lives"));
-            meetMemberInfo.setSituation(member.getInt("situation"));
-            
-                        //requirement
-            meetMemberInfo.setAgeLower(member.getInt("age_lower"));
-            meetMemberInfo.setAgeUpper(member.getInt("age_upper"));
-            meetMemberInfo.setRequirementHeight(member.getInt("requirement_height"));
-            meetMemberInfo.setRequirementDegree(member.getString("requirement_degree"));
-            meetMemberInfo.setRequirementLives(member.getString("requirement_lives"));
-            meetMemberInfo.setRequirementSex(member.getInt("requirement_sex"));
-            meetMemberInfo.setIllustration(member.getString("illustration"));
-            
-                        // meetMemberInfo.setSelf(recommender.getInt("self"));
-            meetMemberInfo.setBrowseCount(member.getInt("browse_count"));
-            meetMemberInfo.setLovedCount(member.getInt("loved_count"));
-            // meetMemberInfo.setLoved(recommender.getInt("loved"));
-            // meetMemberInfo.setPraised(recommender.getInt("praised"));
-            meetMemberInfo.setPraisedCount(member.getInt("praised_count"));
-            //  meetMemberInfo.setPictureChain(recommender.getString("pictureChain"));
-            // meetMemberInfo.setRequirementSet(recommender.getInt("requirementSet"));
-            
-            }catch (JSONException e){
-            e.printStackTrace();
-        }
+        meetMemberInfo.setRealname(member.optString("realname"));
+        meetMemberInfo.setUid(member.optInt("uid"));
+        meetMemberInfo.setSex(member.optInt("sex"));
+        meetMemberInfo.setPictureUri(member.optString("picture_uri"));
+        meetMemberInfo.setBirthYear(member.optInt("birth_year"));
+        meetMemberInfo.setHeight(member.optInt("height"));
+        meetMemberInfo.setUniversity(member.optString("university"));
+
+        meetMemberInfo.setDegree(member.optString("degree"));
+        meetMemberInfo.setJobTitle(member.optString("job_title"));
+        meetMemberInfo.setLives(member.optString("lives"));
+        meetMemberInfo.setSituation(member.optInt("situation"));
+
+                    //requirement
+        meetMemberInfo.setAgeLower(member.optInt("age_lower"));
+        meetMemberInfo.setAgeUpper(member.optInt("age_upper"));
+        meetMemberInfo.setRequirementHeight(member.optInt("requirement_height"));
+        meetMemberInfo.setRequirementDegree(member.optString("requirement_degree"));
+        meetMemberInfo.setRequirementLives(member.optString("requirement_lives"));
+        meetMemberInfo.setRequirementSex(member.optInt("requirement_sex"));
+        meetMemberInfo.setIllustration(member.optString("illustration"));
+
+                    // meetMemberInfo.setSelf(recommender.optInt("self"));
+        meetMemberInfo.setBrowseCount(member.optInt("browse_count"));
+        meetMemberInfo.setLovedCount(member.optInt("loved_count"));
+        // meetMemberInfo.setLoved(recommender.optInt("loved"));
+        // meetMemberInfo.setPraised(recommender.optInt("praised"));
+        meetMemberInfo.setPraisedCount(member.optInt("praised_count"));
+        //  meetMemberInfo.setPictureChain(recommender.optString("pictureChain"));
+        // meetMemberInfo.setRequirementSet(recommender.optInt("requirementSet"));
 
         return meetMemberInfo;
     }
@@ -140,19 +136,19 @@ public class ParseUtils {
                             meetReferenceInfo = new MeetReferenceInfo();
 
                             JSONObject reference = referenceArray.getJSONObject(i);
-                            meetReferenceInfo.setRefereeName(reference.getString("realname"));
+                            meetReferenceInfo.setRefereeName(reference.optString("realname"));
                             String profile = "";
-                            if(reference.getInt("situation") == 0){
-                                profile = reference.getString("university")+"."
-                                                 +reference.getString("degree")+"."
-                                                 +reference.getString("major");
+                            if(reference.optInt("situation") == 0){
+                                profile = reference.optString("university")+"."
+                                                 +reference.optString("degree")+"."
+                                                 +reference.optString("major");
                             }else{
-                                profile = reference.getString("job_title")+"."+reference.getString("company");
+                                profile = reference.optString("job_title")+"."+reference.optString("company");
                             }
                             meetReferenceInfo.setRefereeProfile(profile);
-                            meetReferenceInfo.setReferenceContent(reference.getString("content"));
+                            meetReferenceInfo.setReferenceContent(reference.optString("content"));
                             meetReferenceInfo.setCreated(reference.getLong("created"));
-                            meetReferenceInfo.setHeadUri(reference.getString("picture_uri"));
+                            meetReferenceInfo.setHeadUri(reference.optString("picture_uri"));
 
                             meetReferenceInfoList.add(meetReferenceInfo);
                         }

@@ -44,16 +44,20 @@ import okhttp3.Response;
 public class InvitationDialogFragment extends DialogFragment implements View.OnClickListener{
     private static final String TAG = "InvitationDialogFragment";
     private Dialog mDialog;
+    private int uid = -1;
     private RecyclerView searchResultsView;
     //private ArrayAdapter<String> adapter;
     private SearchUserListAdapter adapter;
     private List<MeetMemberInfo> mMemberInfoList = new ArrayList<>();
+    private List<MeetMemberInfo> mContactsList = new ArrayList<>();
     private Context mContext;
     private SearchView mSearchView;
     private static final int CLEAR_SEARCH_RESULTS = 0;
     private static final int QUERY_USER_DONE = 1;
+    private static final int GET_CONTACTS_DONE = 2;
     private static final int PAGE_SIZE = 20;
     private static final String SEARCH_USER_URL = HttpUtil.DOMAIN + "?q=personal_archive/search_name";
+    private static final String GET_CONTACTS_URL = HttpUtil.DOMAIN + "?q=contacts/get_default_contacts";
 
     private Handler handler = new MyHandler(this);
 
@@ -91,18 +95,51 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
         //adapter = new ArrayAdapter<String>(mContext, android.R.layout.simple_dropdown_item_1line);
         adapter = new SearchUserListAdapter(mContext);
         searchResultsView.setAdapter(adapter);
+
+        Bundle bundle = getArguments();
+        if(bundle != null){
+            uid = bundle.getInt("uid");
+        }
         
-        showAllFriends();
-        searchUsers();
+        getAllContacts(uid);
+        searchContactsByName();
 
         return mDialog;
     }
     
-   public void showAllFriends(){
+    public void getAllContacts(int uid){
+        int page = mContactsList.size() / PAGE_SIZE;
+        FormBody requestBody = new FormBody.Builder()
+                .add("uid", String.valueOf(uid))
+                .add("init_recommend_page", String.valueOf(PAGE_SIZE))
+                .add("contacts_index", String.valueOf(page))
+                .build();
+        HttpUtil.sendOkHttpRequest(mContext, GET_CONTACTS_URL, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if(response.body() != null){
+                    String responseText = response.body().string();
+                    Slog.d(TAG, "==========getAllContacts  response text : "+responseText);
+                    if(responseText != null && !TextUtils.isEmpty(responseText)){
+                        List<MeetMemberInfo> memberInfos = parseUserInfo(responseText);
+                        if (null != memberInfos) {
+                            mContactsList.addAll(memberInfos);
+                            Slog.d(TAG, "getResponseText list.size:"+memberInfos.size());
+                            handler.sendEmptyMessage(GET_CONTACTS_DONE);
+                        }
 
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+        });
     }
-    public void searchUsers(){
-                mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+    public void searchContactsByName(){
+            mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 if(!query.equals("")){
@@ -140,9 +177,9 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
             public void onResponse(Call call, Response response) throws IOException {
                 if(response.body() != null){
                     String responseText = response.body().string();
-                    Slog.d(TAG, "==========response text : "+responseText);
-                    if(responseText != null){
-                         List<MeetMemberInfo> memberInfos = parseSearchUser(responseText);
+                    Slog.d(TAG, "==========searchUserResults response text : "+responseText);
+                    if(responseText != null && !TextUtils.isEmpty(responseText)){
+                         List<MeetMemberInfo> memberInfos = parseUserInfo(responseText);
                         if (null != memberInfos) {
                             mMemberInfoList.addAll(memberInfos);
                             Slog.d(TAG, "getResponseText list.size:"+memberInfos.size());
@@ -160,18 +197,19 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
         });
     }
     
-    private List<MeetMemberInfo> parseSearchUser(String response){
+    private List<MeetMemberInfo> parseUserInfo(String response){
         List<MeetMemberInfo> memberInfoList = new ArrayList<MeetMemberInfo>();
         if(!TextUtils.isEmpty(response)){
            try{
                JSONObject memberInfosResponse = new JSONObject(response);
-               JSONArray memberInfoArray = memberInfosResponse.getJSONArray("user");
-               if(memberInfoArray.length() > 0){
+               JSONArray memberInfoArray = memberInfosResponse.optJSONArray("contacts_user");
+               if(memberInfoArray != null && memberInfoArray.length() > 0){
                    for (int i=0; i<memberInfoArray.length(); i++){
                        MeetMemberInfo memberInfo = new MeetMemberInfo();
                        JSONObject member = memberInfoArray.getJSONObject(i);
                        memberInfo.setUid(member.getInt("uid"));
                        memberInfo.setRealname(member.getString("realname"));
+                       memberInfo.setSituation(member.getInt("situation"));
                        if(member.getInt("situation") == 0){
                            memberInfo.setUniversity(member.getString("university"));
                            memberInfo.setDegree(member.getString("degree"));
@@ -189,7 +227,7 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
            }catch (JSONException e){
                e.printStackTrace();
            }
-            }
+        }
         return memberInfoList;
     }
 
@@ -224,6 +262,11 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
             case CLEAR_SEARCH_RESULTS:
                 adapter.setData(mMemberInfoList);
                 adapter.notifyDataSetChanged();
+                break;
+            case GET_CONTACTS_DONE:
+                adapter.setData(mContactsList);
+                adapter.notifyDataSetChanged();
+                break;
             default:
                 break;
         }
