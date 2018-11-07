@@ -92,7 +92,17 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
         adapter = new SearchUserListAdapter(mContext);
         searchResultsView.setAdapter(adapter);
         
-        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        showAllFriends();
+        searchUsers();
+
+        return mDialog;
+    }
+    
+   public void showAllFriends(){
+
+    }
+    public void searchUsers(){
+                mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 if(!query.equals("")){
@@ -116,8 +126,6 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
                 return false;
             }
         });
-
-        return mDialog;
     }
     
     public void searchUserResults(String word, boolean autocomplete){
