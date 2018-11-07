@@ -18,7 +18,6 @@ import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.adapter.MeetFragmentAdapter;
 import com.tongmenhui.launchak47.util.BaseFragment;
 import com.tongmenhui.launchak47.util.FontManager;
-import com.tongmenhui.launchak47.util.ItemsDialogFragment;
 
 import java.util.ArrayList;
 
