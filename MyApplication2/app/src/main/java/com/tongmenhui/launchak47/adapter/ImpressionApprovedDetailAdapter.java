@@ -68,8 +68,11 @@ public class ImpressionApprovedDetailAdapter extends RecyclerView.Adapter<Impres
             profile = memberInfo.getUniversity()+"."+memberInfo.getDegree()+"."+memberInfo.getDegree();
         }else{
             profile = memberInfo.getJobTitle()+"."+memberInfo.getCompany();
+            if(!"".equals(memberInfo.getLives())){
+                profile += "."+memberInfo.getLives();
+            }
         }
-        holder.profile.setText(profile);
+        holder.profile.setText(profile.replaceAll(" ",""));
 
         if(memberInfo.getPictureUri() != null && !"".equals(memberInfo.getPictureUri())){
             queue = RequestQueueSingleton.instance(mContext);
