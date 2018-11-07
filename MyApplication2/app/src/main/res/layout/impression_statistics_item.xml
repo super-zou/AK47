@@ -80,6 +80,7 @@
 
     <TextView
         android:visibility="gone"
+        android:textSize="25sp"
         android:id="@+id/details"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
