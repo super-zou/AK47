@@ -3,9 +3,11 @@ package com.tongmenhui.launchak47.util;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
+import android.content.Intent;
 
 import com.tongmenhui.launchak47.meet.MeetMemberInfo;
 import com.tongmenhui.launchak47.meet.MeetReferenceInfo;
+import com.tongmenhui.launchak47.meet.ArchivesActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -164,7 +166,7 @@ public class ParseUtils {
         return meetReferenceInfoList;
     }
 
-    public static void getMeetArchive(Context context, int uid){
+    public static void getMeetArchive(final Context context, int uid){
         RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
         HttpUtil.sendOkHttpRequest(context, GET_MEET_ARCHIVE_URL, requestBody, new Callback() {
             @Override
@@ -175,8 +177,13 @@ public class ParseUtils {
                     if(responseText != null){
                         if(!TextUtils.isEmpty(responseText)){
                             try {
-                                JSONObject jsonObject = new JSONObject(responseText);
-                                setMeetMemberInfo(jsonObject);
+                                JSONObject jsonObject = new JSONObject(responseText).optJSONObject("archive");
+                                MeetMemberInfo meetMemberInfo = setMeetMemberInfo(jsonObject);
+                                Intent intent = new Intent(context, ArchivesActivity.class);
+                                // Log.d(TAG, "meet:"+meet+" uid:"+meet.getUid());
+                                intent.putExtra("meet", meetMemberInfo);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                                context.startActivity(intent);
                             }catch (JSONException e){
                                 e.printStackTrace();
                             }
