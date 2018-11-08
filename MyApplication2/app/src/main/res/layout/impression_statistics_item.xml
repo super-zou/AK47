@@ -79,7 +79,7 @@
         app:layout_constraintTop_toTopOf="@+id/head_picure3" />
 
     <TextView
-        android:visibility="gone"
+        android:visibility="visible"
         android:textSize="25sp"
         android:id="@+id/details"
         android:layout_width="wrap_content"

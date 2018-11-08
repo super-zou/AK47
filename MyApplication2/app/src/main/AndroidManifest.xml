@@ -54,6 +54,9 @@
         <activity android:name=".meet.EvaluatorDetailsActivity"
             android:label="@string/evaluator_details"
             android:parentActivityName=".meet.ArchivesActivity"/>
+        <activity android:name=".meet.ApprovedUsersActivity"
+            android:label="@string/evaluator_details"
+            android:parentActivityName=".meet.ArchivesActivity"/>
 
     </application>
 

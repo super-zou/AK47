@@ -1,5 +1,7 @@
 package com.tongmenhui.launchak47.meet;
 
+import android.text.TextUtils;
+
 import java.io.Serializable;
 import java.util.Calendar;
 
@@ -24,7 +26,7 @@ public class MeetMemberInfo implements Serializable{
     public int birthDay = 0;
     public int height = 0;
     public String university = "";
-    public String degree = "";
+    public String degree = "-1";
     public String jobTitle = "";
     public String lives = "";
     public int situation = 0;
@@ -103,7 +105,7 @@ public class MeetMemberInfo implements Serializable{
     }
 
     public void setDegree(String degree){
-        if(degree != null){
+        if(degree != null && !TextUtils.isEmpty(degree)){
             this.degree = degree;
         }
     }

@@ -2,6 +2,7 @@ package com.tongmenhui.launchak47.adapter;
 
 import android.app.FragmentManager;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -16,9 +17,10 @@ import android.widget.TextView;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.NetworkImageView;
 import com.tongmenhui.launchak47.R;
+import com.tongmenhui.launchak47.meet.ApprovedUsersActivity;
 import com.tongmenhui.launchak47.meet.ArchivesActivity;
+import com.tongmenhui.launchak47.meet.EvaluatorDetailsActivity;
 import com.tongmenhui.launchak47.meet.MeetMemberInfo;
-import com.tongmenhui.launchak47.meet.ApprovedUsersDialogFragment;
 import com.tongmenhui.launchak47.util.FontManager;
 import com.tongmenhui.launchak47.util.HttpUtil;
 import com.tongmenhui.launchak47.util.RequestQueueSingleton;
@@ -33,7 +35,7 @@ public class MeetImpressionStatisticsAdapter extends RecyclerView.Adapter<MeetIm
     private List<ArchivesActivity.ImpressionStatistics> mImpressionStatisticsList;
     RequestQueue queue;
 
-    private ApprovedUsersDialogFragment approvedUsersDialogFragment;
+    //private ApprovedUsersDialogFragment approvedUsersDialogFragment;
     private android.support.v4.app.FragmentManager mFragmentManager;
 
     public MeetImpressionStatisticsAdapter(Context context, android.support.v4.app.FragmentManager fragmentManager){
@@ -103,6 +105,7 @@ public class MeetImpressionStatisticsAdapter extends RecyclerView.Adapter<MeetIm
         holder.details.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                /*
                 FragmentTransaction ft = mFragmentManager.beginTransaction();
                 Fragment prev = mFragmentManager.findFragmentByTag("ApprovedUsersDialogFragment");
                 if (prev != null) {
@@ -118,6 +121,11 @@ public class MeetImpressionStatisticsAdapter extends RecyclerView.Adapter<MeetIm
                 bundle.putParcelable("impressionStatistics", impressionStatistics);
                 approvedUsersDialogFragment.setArguments(bundle);
                 approvedUsersDialogFragment.show(ft, "ApprovedUsersDialogFragment");
+                */
+                Intent intent = new Intent(mContext, ApprovedUsersActivity.class);
+                intent.putExtra("impressionStatistics", impressionStatistics);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                mContext.startActivity(intent);
             }
         });
     }

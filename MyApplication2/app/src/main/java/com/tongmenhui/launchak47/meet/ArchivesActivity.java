@@ -130,6 +130,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
         scaleRatingBar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                 Fragment prev = getSupportFragmentManager().findFragmentByTag("EvaluateDialogFragment");
                 if (prev != null) {
@@ -145,6 +146,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
                 evaluateDialogFragment.setArguments(bundle);
                 //ratingAndImpressionDialogFragment.show(ft, "EvaluateDialogFragment");
                 evaluateDialogFragment.show(ft, "EvaluateDialogFragment");
+
             }
         });
         
@@ -424,7 +426,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
         }
     }
 
-    public class ImpressionStatistics implements Parcelable{
+    public static class ImpressionStatistics implements Parcelable{
         public String impression;
         public int impressionCount;
         public List<MeetMemberInfo> meetMemberList = new ArrayList<>();
@@ -441,7 +443,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
             dest.writeList(meetMemberList);
         }
         
-        public final Parcelable.Creator<ImpressionStatistics> CREATOR = new Creator<ImpressionStatistics>() {
+        public static final Parcelable.Creator<ImpressionStatistics> CREATOR = new Creator<ImpressionStatistics>() {
 
             @Override
             public ImpressionStatistics createFromParcel(Parcel source) {
