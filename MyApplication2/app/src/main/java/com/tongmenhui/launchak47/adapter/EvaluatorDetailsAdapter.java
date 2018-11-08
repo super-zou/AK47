@@ -36,12 +36,12 @@ import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-
+import static com.tongmenhui.launchak47.util.ParseUtils.getMeetArchive;
 import static com.tongmenhui.launchak47.util.ParseUtils.setMeetMemberInfo;
 
 public class EvaluatorDetailsAdapter extends RecyclerView.Adapter<EvaluatorDetailsAdapter.ViewHolder>{
     private static final String TAG = "EvaluatorDetailsAdapter";
-    private static final String GET_MEET_ARCHIVE_URL = HttpUtil.DOMAIN + "?q=meet/get_archive";
+
     private Context context;
     RequestQueue queueEvaluator;
     RequestQueueSingleton requestQueueSingleton;
@@ -98,37 +98,7 @@ public class EvaluatorDetailsAdapter extends RecyclerView.Adapter<EvaluatorDetai
         });
     }
 
-    public static void getMeetArchive(final Context context, int uid){
-        RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
-        HttpUtil.sendOkHttpRequest(context, GET_MEET_ARCHIVE_URL, requestBody, new Callback() {
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if(response.body() != null){
-                    String responseText = response.body().string();
-                    Slog.d(TAG, "==========get archive response text : "+responseText);
-                    if(responseText != null){
-                        if(!TextUtils.isEmpty(responseText)){
-                            try {
-                                JSONObject jsonObject = new JSONObject(responseText).optJSONObject("archive");
-                                MeetMemberInfo meetMemberInfo = setMeetMemberInfo(jsonObject);
-                                Intent intent = new Intent(context, ArchivesActivity.class);
-                                // Log.d(TAG, "meet:"+meet+" uid:"+meet.getUid());
-                                intent.putExtra("meet", meetMemberInfo);
-                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-                                context.startActivity(intent);
-                            }catch (JSONException e){
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                }
-            }
-            @Override
-            public void onFailure(Call call, IOException e) {}
-        });
-    }
-    
-        @Override
+    @Override
     public int getItemCount() {
         return  null != mEvaluatorDetailsList? mEvaluatorDetailsList.size():0;
     }
