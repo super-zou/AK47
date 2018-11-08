@@ -21,6 +21,7 @@ import com.tongmenhui.launchak47.util.Slog;
 
 import java.util.ArrayList;
 import java.util.List;
+import static com.tongmenhui.launchak47.util.ParseUtils.getMeetArchive;
 
 public class ImpressionApprovedDetailAdapter extends RecyclerView.Adapter<ImpressionApprovedDetailAdapter.ViewHolder> {
     private static final String TAG = "ImpressionApprovedDetailAdapter";
@@ -81,6 +82,13 @@ public class ImpressionApprovedDetailAdapter extends RecyclerView.Adapter<Impres
         }else{
             holder.headPic.setImageDrawable(mContext.getDrawable(R.mipmap.ic_launcher));
         }
+        
+        holder.headPic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getMeetArchive(mContext, 10);
+            }
+        });
     }
 
     @Override
