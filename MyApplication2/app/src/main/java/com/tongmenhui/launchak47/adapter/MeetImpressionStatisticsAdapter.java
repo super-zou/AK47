@@ -105,23 +105,6 @@ public class MeetImpressionStatisticsAdapter extends RecyclerView.Adapter<MeetIm
         holder.details.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*
-                FragmentTransaction ft = mFragmentManager.beginTransaction();
-                Fragment prev = mFragmentManager.findFragmentByTag("ApprovedUsersDialogFragment");
-                if (prev != null) {
-                    ft.remove(prev);
-                }
-                ft.addToBackStack(null);
-                if(approvedUsersDialogFragment == null) {
-                    approvedUsersDialogFragment = new ApprovedUsersDialogFragment();
-                }
-                Bundle bundle = new Bundle();
-               // bundle.putInt("uid", mMeetMember.getUid());
-               // bundle.putInt("sex", mMeetMember.getSex());
-                bundle.putParcelable("impressionStatistics", impressionStatistics);
-                approvedUsersDialogFragment.setArguments(bundle);
-                approvedUsersDialogFragment.show(ft, "ApprovedUsersDialogFragment");
-                */
                 Intent intent = new Intent(mContext, ApprovedUsersActivity.class);
                 intent.putExtra("impressionStatistics", impressionStatistics);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
