@@ -4,7 +4,10 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.DialogFragment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -28,9 +31,13 @@ import com.tongmenhui.launchak47.util.HttpUtil;
 import com.tongmenhui.launchak47.util.Slog;
 import com.willy.ratingbar.BaseRatingBar;
 import com.willy.ratingbar.ScaleRatingBar;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import okhttp3.Call;
@@ -47,7 +54,12 @@ public class EvaluateDialogFragment extends DialogFragment {
     private boolean mEvaluated = false;
     private EvaluateDialogFragmentListener evaluateDialogFragmentListener;
     private LayoutInflater inflater;
+    final List<String> selectedFeatures = new ArrayList<>();
+    private Handler handler = new EvaluateDialogFragment.MyHandler(this);
+    private static final int IMPRESSION_PARSE_DONE = 0;
+    private List<String> impressionList = new ArrayList<>();
     private static final String SET_IMPRESSION_URL = HttpUtil.DOMAIN + "?q=meet/impression/set";
+    private static final String GET_IMPRESSION_STATISTICS_URL = HttpUtil.DOMAIN + "?q=meet/impression/statistics";
 
         //When the dialog destried  the function will be called to transmit data to ArchivesActivity
     public interface EvaluateDialogFragmentListener{
@@ -91,19 +103,21 @@ public class EvaluateDialogFragment extends DialogFragment {
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         window.setAttributes(layoutParams);
 
-        characterImpression(uid, sex);
+        setImpressions(uid, sex);
 
         return mDialog;
     }
 
-    private void  characterImpression(final int uid, final int sex) {
+    private void  setImpressions(final int uid, final int sex) {
         final List<String> selectedFeatures = new ArrayList<>();
         ScaleRatingBar scaleRatingBar = view.findViewById(R.id.charm_rating_bar);
         final TextView charmRating = view.findViewById(R.id.charm_rating);
         final FlowLayout maleFeatures = view.findViewById(R.id.male_features);
         final FlowLayout femaleFeatures = view.findViewById(R.id.female_features);
         final FlowLayout diyFeatures = view.findViewById(R.id.diy_features);
-
+        
+        loadApprovedImpressions(uid);
+        
         if (sex == 0) {//display male features
             maleFeatures.setVisibility(View.VISIBLE);
         } else {//display female features
@@ -120,42 +134,10 @@ public class EvaluateDialogFragment extends DialogFragment {
 
         });
 
-        for (int i = 0; i < maleFeatures.getChildCount(); i++) {
-            final TextView feature = (TextView) maleFeatures.getChildAt(i);
-            //feature.setBackground(getDrawable(R.drawable.label_bg));
-            feature.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Slog.d(TAG, "===========get text: " + feature.getText() + " tag: " + feature.getTag());
-                    if (null != feature.getTag() && feature.getTag().equals("selected")) {
-                        feature.setBackground(getContext().getDrawable(R.drawable.label_bg));
-                        feature.setTag(null);
-                        selectedFeatures.remove(feature.getText().toString());
-                    } else {
-                        feature.setBackground(getContext().getDrawable(R.drawable.label_selected_bg));
-                        feature.setTag("selected");
-                        selectedFeatures.add(feature.getText().toString());
-                    }
-                }
-            });
-        }
-        for (int i = 0; i < femaleFeatures.getChildCount(); i++) {
-            final TextView feature = (TextView) femaleFeatures.getChildAt(i);
-            feature.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Slog.d(TAG, "===========get text: " + feature.getText() + " tag: " + feature.getTag());
-                    if (null != feature.getTag() && feature.getTag().equals("selected")) {
-                        feature.setBackground(getContext().getDrawable(R.drawable.label_bg));
-                        feature.setTag(null);
-                        selectedFeatures.remove(feature.getText().toString());
-                    } else {
-                        feature.setBackground(getContext().getDrawable(R.drawable.label_selected_bg));
-                        feature.setTag("selected");
-                        selectedFeatures.add(feature.getText().toString());
-                    }
-                }
-            });
+        if(sex == 0){
+            selectFeatures(maleFeatures);
+        }else{
+            selectFeatures(femaleFeatures);
         }
 
         Button addDiyFeature = view.findViewById(R.id.add_feature);
@@ -238,6 +220,124 @@ public class EvaluateDialogFragment extends DialogFragment {
         });
 
     }
+    
+        private void loadApprovedImpressions(final int uid){
+
+        RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
+        HttpUtil.sendOkHttpRequest(mContext, GET_IMPRESSION_STATISTICS_URL, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if(response.body() != null){
+                    String responseText = response.body().string();
+                    Slog.d(TAG, "==========loadApprovedImpressions response: "+responseText);
+
+                    if(responseText != null){
+                        if(!TextUtils.isEmpty(responseText)){
+                            parseImpressions(responseText);
+                        }
+                    }
+                }
+            }
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+        });
+    }
+    
+   public void parseImpressions(String responseText){
+
+        JSONObject responseObj = null;
+        try{
+            responseObj = new JSONObject(responseText);
+        } catch (JSONException e){
+            e.printStackTrace();
+        }
+        if(responseObj != null){
+            JSONObject impressionStatisticsObj = responseObj.optJSONObject("features_statistics");
+            if(impressionStatisticsObj != null){
+                Iterator iterator = impressionStatisticsObj.keys();
+                int index = 0;
+                while (iterator.hasNext()){
+                    index++;
+                    String key = (String) iterator.next();
+                    Slog.d(TAG, "==============key: "+key);
+                    impressionList.add(key);
+                    if(index == 7){
+                        break;
+                    }
+                }
+                Message msg = handler.obtainMessage();
+                msg.what = IMPRESSION_PARSE_DONE;
+                handler.sendMessage(msg);
+            }
+        }
+    }
+    
+   public void setImpressionsView(){
+        LinearLayout approvedFeaturesLabel = view.findViewById(R.id.approved_features_label);
+        FlowLayout approvedFeatures = view.findViewById(R.id.features_approved);
+        approvedFeaturesLabel.setVisibility(View.VISIBLE);
+        approvedFeatures.setVisibility(View.VISIBLE);
+        for (int i=0; i<impressionList.size(); i++){
+            TextView approvedTextView = new TextView(getContext());
+            approvedTextView.setPadding((int) dpToPx(8), (int) dpToPx(8), (int) dpToPx(8), (int) dpToPx(8));
+            approvedTextView.setText(impressionList.get(i));
+            approvedTextView.setGravity(Gravity.CENTER);
+            approvedTextView.setBackground(getContext().getDrawable(R.drawable.label_bg));
+            approvedFeatures.addView(approvedTextView);
+        }
+        selectFeatures(approvedFeatures);
+
+    }
+    
+    private void selectFeatures(FlowLayout featuresLayout){
+        for (int i = 0; i < featuresLayout.getChildCount(); i++) {
+            final TextView feature = (TextView) featuresLayout.getChildAt(i);
+            feature.setOnClickListener(new View.OnClickListener() {
+               @Override
+                public void onClick(View view) {
+                    Slog.d(TAG, "===========get text: " + feature.getText() + " tag: " + feature.getTag());
+                    if (null != feature.getTag() && feature.getTag().equals("selected")) {
+                        feature.setBackground(getContext().getDrawable(R.drawable.label_bg));
+                        feature.setTag(null);
+                        selectedFeatures.remove(feature.getText().toString());
+                    } else {
+                        feature.setBackground(getContext().getDrawable(R.drawable.label_selected_bg));
+                        feature.setTag("selected");
+                        selectedFeatures.add(feature.getText().toString());
+                    }
+                }
+            });
+        }
+    }
+    
+    static class MyHandler extends Handler {
+        WeakReference<EvaluateDialogFragment> evaluateDialogFragmentWeakReference;
+
+        MyHandler(EvaluateDialogFragment evaluateDialogFragment) {
+            evaluateDialogFragmentWeakReference = new WeakReference<EvaluateDialogFragment>(evaluateDialogFragment);
+        }
+
+        @Override
+        public void handleMessage(Message message) {
+            EvaluateDialogFragment evaluateDialogFragment = evaluateDialogFragmentWeakReference.get();
+            if(evaluateDialogFragment != null){
+                evaluateDialogFragment.handleMessage(message);
+            }
+        }
+    }
+    
+   public void handleMessage(Message message) {
+        switch (message.what) {
+            case IMPRESSION_PARSE_DONE:
+                setImpressionsView();
+                break;
+            default:
+                break;
+        }
+    }
+    
     @Override
     public void onDestroy() {
         super.onDestroy();
