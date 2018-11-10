@@ -48,6 +48,7 @@ import com.tongmenhui.launchak47.util.InvitationDialogFragment;
 import com.willy.ratingbar.BaseRatingBar;
 import com.willy.ratingbar.ScaleRatingBar;
 import android.widget.Toast;
+import com.tongmenhui.launchak47.util.PersonalityEditDialogFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -122,6 +123,8 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
         loadImpressionStatistics(uid);
 
         loadReferences(uid);
+        
+        processPersonality(uid);
 
         loadDynamicsData(uid);  
 
@@ -534,6 +537,22 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
 
             }
         });
+    }
+    
+    private void processPersonality(final int uid){
+
+        Button addPersonality = mHeaderEvaluation.findViewById(R.id.add_personality);
+        addPersonality.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PersonalityEditDialogFragment personalityEditDialogFragment = new PersonalityEditDialogFragment();
+                Bundle bundle = new Bundle();
+                bundle.putInt("uid", uid);
+                personalityEditDialogFragment.setArguments(bundle);
+                personalityEditDialogFragment.show(getSupportFragmentManager(), "PersonalityEditDialogFragment");
+            }
+        });
+
     }
 
     private void loadDynamicsData(int uid){
