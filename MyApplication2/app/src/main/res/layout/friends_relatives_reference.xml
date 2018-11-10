@@ -71,7 +71,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:layout_marginStart="0dp"
-            android:layout_marginTop="80dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="0dp"
             android:layout_marginBottom="10dp"
             android:orientation="horizontal">
@@ -184,18 +184,39 @@
         android:background="@color/colorWhite">
     </android.support.v7.widget.RecyclerView>
 
-    <TextView
-        android:text="个性标签"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-    <ListView
+   <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
-    </ListView>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="个性标签" />
+        <Button
+            android:id="@+id/add_personality"
+            android:text="添加个性标签"
+            android:layout_gravity="center"
+            android:textColor="#3799f4"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/label_btn_shape"/>
+    </LinearLayout>
     <TextView
         android:text="兴趣爱好"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+    
+   <com.nex3z.flowlayout.FlowLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorWhite">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="tennis" />
+    </com.nex3z.flowlayout.FlowLayout>
 
 </LinearLayout>
