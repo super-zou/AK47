@@ -109,7 +109,6 @@ public class EvaluateDialogFragment extends DialogFragment {
     }
 
     private void  setImpressions(final int uid, final int sex) {
-        final List<String> selectedFeatures = new ArrayList<>();
         ScaleRatingBar scaleRatingBar = view.findViewById(R.id.charm_rating_bar);
         final TextView charmRating = view.findViewById(R.id.charm_rating);
         final FlowLayout maleFeatures = view.findViewById(R.id.male_features);
