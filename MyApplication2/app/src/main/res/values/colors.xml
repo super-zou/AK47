@@ -21,5 +21,7 @@
     <color name="divider">#b6b6b6</color>
     <color name="color_c51">#f94c51</color>
     <color name="color_green">#43c117</color>
-     <color name="color_star_yellow">#FFFF00</color>
+    <color name="color_star_yellow">#FFFF00</color>
+    <color name="color_blue">#3799f4</color>
+    <color name="color_disabled">#12000000</color>
 </resources>

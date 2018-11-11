@@ -1,6 +1,8 @@
 package com.tongmenhui.launchak47.util;
 
+import android.content.Context;
 import android.text.TextUtils;
+import android.util.TypedValue;
 
 import org.json.JSONException;
 
@@ -22,5 +24,8 @@ public class Utility {
         }
         return false;
 
+    }
+    public static float dpToPx(Context context, float dp) {
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics());
     }
 }

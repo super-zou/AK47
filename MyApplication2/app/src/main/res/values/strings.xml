@@ -25,4 +25,5 @@
     <string name="loading_no_more">全部加载完成</string>
     <string name="dynamics_empty">未发布动态</string>
     <string name="evaluator_details">评价详情</string>
+    <string name="save">保存</string>
 </resources>

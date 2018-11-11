@@ -54,7 +54,7 @@ public class PersonalityDetailDialogFragment extends DialogFragment {
                 layoutParams.gravity = Gravity.BOTTOM;
         layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
         layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
-        window.setDimAmount(0.8f);
+        //window.setDimAmount(0.8f);
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         window.setAttributes(layoutParams);
 

@@ -29,6 +29,7 @@ import com.nex3z.flowlayout.FlowLayout;
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.util.HttpUtil;
 import com.tongmenhui.launchak47.util.Slog;
+import com.tongmenhui.launchak47.util.Utility;
 import com.willy.ratingbar.BaseRatingBar;
 import com.willy.ratingbar.ScaleRatingBar;
 import org.json.JSONException;
@@ -149,7 +150,8 @@ public class EvaluateDialogFragment extends DialogFragment {
                 if (!"".equals(featureInput.getText())) {
                     TextView diyTextView = new TextView(getContext());
                     //FlowLayout.LayoutParams layoutParams = new FlowLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                    diyTextView.setPadding((int) dpToPx(8), (int) dpToPx(8), (int) dpToPx(8), (int) dpToPx(8));
+                    diyTextView.setPadding((int) Utility.dpToPx(mContext, 8), (int) Utility.dpToPx(mContext, 8),
+                                           (int) Utility.dpToPx(mContext, 8), (int) Utility.dpToPx(mContext, 8));
                     diyTextView.setText(featureInput.getText());
                     diyTextView.setGravity(Gravity.CENTER);
                     diyTextView.setBackground(getContext().getDrawable(R.drawable.label_selected_bg));
@@ -220,7 +222,7 @@ public class EvaluateDialogFragment extends DialogFragment {
 
     }
     
-        private void loadApprovedImpressions(final int uid){
+    private void loadApprovedImpressions(final int uid){
 
         RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
         HttpUtil.sendOkHttpRequest(mContext, GET_IMPRESSION_STATISTICS_URL, requestBody, new Callback() {
@@ -280,7 +282,8 @@ public class EvaluateDialogFragment extends DialogFragment {
         approvedFeatures.setVisibility(View.VISIBLE);
         for (int i=0; i<impressionList.size(); i++){
             TextView approvedTextView = new TextView(getContext());
-            approvedTextView.setPadding((int) dpToPx(8), (int) dpToPx(8), (int) dpToPx(8), (int) dpToPx(8));
+            approvedTextView.setPadding((int) Utility.dpToPx(mContext, 8), (int) Utility.dpToPx(mContext, 8),
+                                         (int) Utility.dpToPx(mContext, 8), (int) Utility.dpToPx(mContext, 8));
             approvedTextView.setText(impressionList.get(i));
             approvedTextView.setGravity(Gravity.CENTER);
             approvedTextView.setBackground(getContext().getDrawable(R.drawable.label_bg));
@@ -360,7 +363,4 @@ public class EvaluateDialogFragment extends DialogFragment {
         super.onCancel(dialogInterface);
     }
 
-    private float dpToPx(float dp) {
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, getResources().getDisplayMetrics());
-    }
 }
