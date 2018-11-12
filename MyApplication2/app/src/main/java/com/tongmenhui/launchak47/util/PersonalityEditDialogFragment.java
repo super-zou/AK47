@@ -81,6 +81,10 @@ public class PersonalityEditDialogFragment extends DialogFragment {
     }
 
     private void initView(final int uid){
+        addPersonalityAction(uid);
+    }
+
+    private void addPersonalityAction(final int uid){
         final FlowLayout personalityFL = view.findViewById(R.id.personality_flow_layout);
         final EditText editText = view.findViewById(R.id.personality_edit_text);
         final TextView save = view.findViewById(R.id.save);
@@ -98,10 +102,10 @@ public class PersonalityEditDialogFragment extends DialogFragment {
             @Override
             public void afterTextChanged(Editable s) {
                 if(s.length() == 0 && personalityFL.getChildCount() == 0){
-                   if(save.isEnabled()){
-                       save.setEnabled(false);
-                       save.setTextColor(mContext.getResources().getColor(R.color.color_disabled));
-                   }
+                    if(save.isEnabled()){
+                        save.setEnabled(false);
+                        save.setTextColor(mContext.getResources().getColor(R.color.color_disabled));
+                    }
                 }else {
                     if (!save.isEnabled()){
                         save.setEnabled(true);
@@ -158,13 +162,13 @@ public class PersonalityEditDialogFragment extends DialogFragment {
                         String personality = personalityTV.getText().toString().replace(" ×", "#");
                         personalityStr += personality;
                     }
-                     uploadToServer(personalityStr, uid);
+                    uploadToServer(personalityStr, uid);
                 }
                 Slog.d(TAG, "==============personalityStr: "+personalityStr);
                 save.setEnabled(false);
             }
         });
-        
+
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -174,11 +178,11 @@ public class PersonalityEditDialogFragment extends DialogFragment {
     }
     
     private void uploadToServer(String personality, int uid){
-        Slog.d(TAG, "==============uploadToServer features: "+personality+" uid: "+uid);
+        //Slog.d(TAG, "==============uploadToServer features: "+personality+" uid: "+uid);
         RequestBody requestBody = new FormBody.Builder()
                 .add("uid", String.valueOf(uid))
                 .add("personality", personality).build();
-                HttpUtil.sendOkHttpRequest(getContext(), SET_PERSONALITY_URL, requestBody, new Callback() {
+        HttpUtil.sendOkHttpRequest(getContext(), SET_PERSONALITY_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();

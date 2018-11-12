@@ -77,6 +77,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
     private static final String GET_IMPRESSION_URL = HttpUtil.DOMAIN + "?q=meet/impression/get";
     private static final String GET_IMPRESSION_STATISTICS_URL = HttpUtil.DOMAIN + "?q=meet/impression/statistics";
     private static final String GET_IMPRESSION_USERS_URL = HttpUtil.DOMAIN + "?q=meet/impression/users";
+    private static final String GET_PERSONALITY_URL = HttpUtil.DOMAIN + "?q=meet/personality/get";
 
     private List<MeetDynamics> mMeetList = new ArrayList<>();
     private List<ImpressionStatistics> mImpressionStatisticsList = new ArrayList<>();
@@ -89,7 +90,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
     private static final int LOAD_IMPRESSION_DONE = 5;
     private static final int LOAD_REFERENCE_DONE = 6;
     private static final int PAGE_SIZE = 6;
-     private static final int REQUEST_CODE = 1;
+    private static final int REQUEST_CODE = 1;
     private int mTempSize;
     private XRecyclerView mXRecyclerView;
     private ArchivesListAdapter mArchivesListAdapter;
@@ -541,14 +542,37 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
     
     private void processPersonality(final int uid){
         getPersonality(uid);
-        setPersonality(uid);        
+        addPersonality(uid);
     }
     
     private void getPersonality(int uid){
+        Slog.d(TAG, "================getPersonalityDetail uid:"+uid);
+        RequestBody requestBody = new FormBody.Builder()
+                .add("uid", String.valueOf(uid))
+                .build();
+        HttpUtil.sendOkHttpRequest(this, GET_PERSONALITY_URL, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String responseText = response.body().string();
+                Slog.d(TAG, "================getPersonalityDetail response:"+responseText);
+                if(responseText != null && !TextUtils.isEmpty(responseText)){
+                    try {
+                        JSONObject statusObj = new JSONObject(responseText);
 
+                    }catch (JSONException e){
+                        e.printStackTrace();
+                    }
+                }
+
+            }
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+        });
     }
     
-    private void setPersonality(final int uid){
+    private void addPersonality(final int uid){
         Button addPersonality = mHeaderEvaluation.findViewById(R.id.add_personality);
         addPersonality.setOnClickListener(new View.OnClickListener() {
             @Override
