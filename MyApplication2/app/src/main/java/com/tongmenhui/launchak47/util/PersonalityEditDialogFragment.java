@@ -20,11 +20,22 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.nex3z.flowlayout.FlowLayout;
 import com.tongmenhui.launchak47.R;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
 import java.lang.ref.WeakReference;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class PersonalityEditDialogFragment extends DialogFragment {
     private static final String TAG = "PersonalityDialogFragment";
@@ -32,7 +43,8 @@ public class PersonalityEditDialogFragment extends DialogFragment {
     private Dialog mDialog;
     private View view;
     private LayoutInflater inflater;
-
+    private static final String SET_PERSONALITY_URL = HttpUtil.DOMAIN + "?q=meet/personality/set";
+    
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -42,8 +54,13 @@ public class PersonalityEditDialogFragment extends DialogFragment {
         @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
+        int uid = -1;
+        Bundle bundle = getArguments();
+        if(bundle != null){
+            uid = bundle.getInt("uid");
+        }
         inflater = LayoutInflater.from(mContext);
-        mDialog = new Dialog(mContext, android.R.style.Theme_Light_NoTitleBar_Fullscreen);
+        mDialog = new Dialog(mContext, android.R.style.Theme_Light_NoTitleBar);
         mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         view = inflater.inflate(R.layout.personality_edit, null);
         //mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -59,14 +76,15 @@ public class PersonalityEditDialogFragment extends DialogFragment {
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         window.setAttributes(layoutParams);
 
-        initView();
+        initView(uid);
         return mDialog;
     }
 
-    private void initView(){
+    private void initView(final int uid){
         final FlowLayout personalityFL = view.findViewById(R.id.personality_flow_layout);
         final EditText editText = view.findViewById(R.id.personality_edit_text);
         final TextView save = view.findViewById(R.id.save);
+        TextView cancel = view.findViewById(R.id.cancel);
 
         editText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -78,7 +96,19 @@ public class PersonalityEditDialogFragment extends DialogFragment {
             public void onTextChanged(CharSequence s, int start, int before, int count) {}
 
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void afterTextChanged(Editable s) {
+                if(s.length() == 0 && personalityFL.getChildCount() == 0){
+                   if(save.isEnabled()){
+                       save.setEnabled(false);
+                       save.setTextColor(mContext.getResources().getColor(R.color.color_disabled));
+                   }
+                }else {
+                    if (!save.isEnabled()){
+                        save.setEnabled(true);
+                        save.setTextColor(mContext.getResources().getColor(R.color.color_blue));
+                    }
+                }
+            }
         });
 
         editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -128,12 +158,50 @@ public class PersonalityEditDialogFragment extends DialogFragment {
                         String personality = personalityTV.getText().toString().replace(" ×", "#");
                         personalityStr += personality;
                     }
+                     uploadToServer(personalityStr, uid);
                 }
                 Slog.d(TAG, "==============personalityStr: "+personalityStr);
                 save.setEnabled(false);
             }
         });
+        
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mDialog.dismiss();
+            }
+        });
     }
+    
+    private void uploadToServer(String personality, int uid){
+        Slog.d(TAG, "==============uploadToServer features: "+personality+" uid: "+uid);
+        RequestBody requestBody = new FormBody.Builder()
+                .add("uid", String.valueOf(uid))
+                .add("personality", personality).build();
+                HttpUtil.sendOkHttpRequest(getContext(), SET_PERSONALITY_URL, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String responseText = response.body().string();
+                Slog.d(TAG, "================uploadToServer response:"+responseText);
+                try {
+                    JSONObject statusObj = new JSONObject(responseText);
+                    if(statusObj.optBoolean("status") != true){
+                        Toast.makeText(mContext, "保存失败，请稍后再试",Toast.LENGTH_LONG).show();
+                    }else {
+                        mDialog.dismiss();
+                    }
+
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+            }
+             @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+        });
+    }
+        
     
     static class MyHandler extends Handler {
         WeakReference<PersonalityEditDialogFragment> personalityEditDialogFragmentWeakReference;
