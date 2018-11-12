@@ -540,7 +540,15 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
     }
     
     private void processPersonality(final int uid){
+        getPersonality(uid);
+        setPersonality(uid);        
+    }
+    
+    private void getPersonality(int uid){
 
+    }
+    
+    private void setPersonality(final int uid){
         Button addPersonality = mHeaderEvaluation.findViewById(R.id.add_personality);
         addPersonality.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -552,7 +560,6 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
                 personalityEditDialogFragment.show(getSupportFragmentManager(), "PersonalityEditDialogFragment");
             }
         });
-
     }
 
     private void loadDynamicsData(int uid){
