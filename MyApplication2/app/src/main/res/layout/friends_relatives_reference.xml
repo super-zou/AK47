@@ -187,21 +187,24 @@
    <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@color/colorWhite">
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="个性标签" />
         <Button
             android:id="@+id/add_personality"
-            android:text="添加个性标签"
+            android:text="+添加个性标签"
             android:layout_gravity="center"
-            android:textColor="#3799f4"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
+            android:textColor="@color/colorWhite"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:elevation="3dp"
+            android:layout_marginBottom="8dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/label_btn_shape"/>
+            android:background="@drawable/label_selected_bg"/>
     </LinearLayout>
     <TextView
         android:text="兴趣爱好"
