@@ -557,8 +557,11 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
                 Slog.d(TAG, "================getPersonalityDetail response:"+responseText);
                 if(responseText != null && !TextUtils.isEmpty(responseText)){
                     try {
-                        JSONObject statusObj = new JSONObject(responseText);
-
+                        JSONArray statusArray = new JSONObject(responseText).optJSONArray("personality_detail");
+                        if(statusArray.length() > 0){
+                            bubbleSortWithCount(statusArray);
+                            Slog.d(TAG, "====================after sort: "+statusArray);
+                        }
                     }catch (JSONException e){
                         e.printStackTrace();
                     }
@@ -570,6 +573,29 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
 
             }
         });
+    }
+    
+    public static void bubbleSortWithCount(JSONArray jsonArray)
+    {
+        JSONObject temp = null;
+        int size = jsonArray.length();
+        try {
+            for(int i = 0 ; i < size-1; i ++)
+            {
+                for(int j = 0 ;j < size-1-i ; j++)
+                {
+                    if(jsonArray.getJSONObject(j).optInt("count") > jsonArray.getJSONObject(j+1).optInt("count"))  //交换两数位置
+                    {
+                       // temp = jsonArray.getJSONObject(j);
+                        jsonArray.put(i, jsonArray.getJSONObject(j+1));
+                        jsonArray.put(i+1, jsonArray.getJSONObject(j));
+                    }
+                }
+            }
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+
     }
     
     private void addPersonality(final int uid){
