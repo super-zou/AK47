@@ -49,6 +49,8 @@ import com.willy.ratingbar.BaseRatingBar;
 import com.willy.ratingbar.ScaleRatingBar;
 import android.widget.Toast;
 import com.tongmenhui.launchak47.util.PersonalityEditDialogFragment;
+import com.tongmenhui.launchak47.util.PersonalityDetailDialogFragment;
+import com.tongmenhui.launchak47.util.Utility;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -89,6 +91,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
     private static final int LOAD_RATING_DONE = 4;
     private static final int LOAD_IMPRESSION_DONE = 5;
     private static final int LOAD_REFERENCE_DONE = 6;
+    private static final int LOAD_PERSONALITY_DONE = 7;
     private static final int PAGE_SIZE = 6;
     private static final int REQUEST_CODE = 1;
     private int mTempSize;
@@ -106,6 +109,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
 
     private ImageView backLeft;
     private MeetMemberInfo mMeetMember;
+    private JSONArray personalityResponseArray;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -557,11 +561,12 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
                 Slog.d(TAG, "================getPersonalityDetail response:"+responseText);
                 if(responseText != null && !TextUtils.isEmpty(responseText)){
                     try {
-                        JSONArray statusArray = new JSONObject(responseText).optJSONArray("personality_detail");
-                        if(statusArray.length() > 0){
-                            bubbleSortWithCount(statusArray);
-                            Slog.d(TAG, "====================after sort: "+statusArray);
-                        }
+                        personalityResponseArray = new JSONObject(responseText).optJSONArray("personality_detail");
+                        if(personalityResponseArray.length() > 0){
+                            sortPersonalityWithCount(personalityResponseArray);
+                            Slog.d(TAG, "====================after sort: "+personalityResponseArray);
+                            //Message msg = new Message();
+                            handler.sendEmptyMessage(LOAD_PERSONALITY_DONE);
                     }catch (JSONException e){
                         e.printStackTrace();
                     }
@@ -575,7 +580,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
         });
     }
     
-    public static void bubbleSortWithCount(JSONArray jsonArray)
+    public static void sortPersonalityWithCount(JSONArray jsonArray)
     {
         JSONObject temp = null;
         int size = jsonArray.length();
@@ -584,11 +589,11 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
             {
                 for(int j = 0 ;j < size-1-i ; j++)
                 {
-                    if(jsonArray.getJSONObject(j).optInt("count") > jsonArray.getJSONObject(j+1).optInt("count"))  //交换两数位置
+                    if(jsonArray.getJSONObject(j).optInt("count") < jsonArray.getJSONObject(j+1).optInt("count"))  //交换两数位置
                     {
-                       // temp = jsonArray.getJSONObject(j);
-                        jsonArray.put(i, jsonArray.getJSONObject(j+1));
-                        jsonArray.put(i+1, jsonArray.getJSONObject(j));
+                        temp = jsonArray.getJSONObject(j);
+                        jsonArray.put(j, jsonArray.getJSONObject(j+1));
+                        jsonArray.put(j+1, temp);
                     }
                 }
             }
@@ -596,6 +601,43 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
             e.printStackTrace();
         }
 
+    }
+                                   
+    private void setPersonalityFlow(){
+        FlowLayout personalityFlow = mHeaderEvaluation.findViewById(R.id.personality_flow);
+
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        layoutParams.setMargins((int) Utility.dpToPx(this, 3),(int) Utility.dpToPx(this, 8),
+                (int) Utility.dpToPx(this, 8), (int) Utility.dpToPx(this, 3));
+                for (int i=0; i<personalityResponseArray.length(); i++){
+            final TextView personality = new TextView(this);
+
+            personality.setPadding((int) Utility.dpToPx(this, 8), (int) Utility.dpToPx(this, 6),
+                    (int) Utility.dpToPx(this, 8), (int) Utility.dpToPx(this, 6));
+            personality.setBackground(getDrawable(R.drawable.label_btn_shape));
+            personality.setTextColor(getResources().getColor(R.color.color_blue));
+            personality.setLayoutParams(layoutParams);
+                                String personalityName = personalityResponseArray.optJSONObject(i).optString("personality");
+            int count = personalityResponseArray.optJSONObject(i).optInt("count");
+            if(count != 0){
+                personality.setText(personalityName+" · "+count);
+            }else {
+                personality.setText(personalityName);
+            }
+                                personalityFlow.addView(personality);
+            final int pid = personalityResponseArray.optJSONObject(i).optInt("pid");
+            personality.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    final PersonalityDetailDialogFragment personalityDetailDialogFragment = new PersonalityDetailDialogFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("pid", pid);
+                    bundle.putString("personality", personality.getText().toString());
+                    personalityDetailDialogFragment.setArguments(bundle);
+                    personalityDetailDialogFragment.show(getSupportFragmentManager(), "PersonalityDetailDialogFragment");
+                }
+            });
+        }
     }
     
     private void addPersonality(final int uid){
@@ -886,6 +928,9 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
                 setImpressionStatisticsView();
                 mMeetImpressionStatisticsAdapter.setImpressionList(mImpressionStatisticsList);
                 mMeetImpressionStatisticsAdapter.notifyDataSetChanged();
+                break;
+            case LOAD_PERSONALITY_DONE:
+                setPersonalityFlow();
                 break;
             default:
                 break;
