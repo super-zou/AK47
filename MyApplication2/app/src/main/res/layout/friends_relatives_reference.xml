@@ -193,6 +193,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="个性标签" />
+        <com.nex3z.flowlayout.FlowLayout
+           android:id="@+id/personality_flow"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content">
+        </com.nex3z.flowlayout.FlowLayout>
         <Button
             android:id="@+id/add_personality"
             android:text="+添加个性标签"
