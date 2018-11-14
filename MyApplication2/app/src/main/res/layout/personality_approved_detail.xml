@@ -1,12 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android" 
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/darker_gray">
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/approved_detail"
+    <RelativeLayout
+        android:id="@+id/relativeLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:elevation="5dp"
+        android:padding="8dp"
+        android:background="@color/colorWhite"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+        
+        <TextView
+            android:id="@+id/cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="8dp"
+            android:text="×"
+            android:textSize="28dp" />
+        
+        <TextView
+            android:id="@+id/title_text"
+            android:singleLine="true"
+            android:maxLength="10"
+            android:ellipsize="start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/cancel"
+            android:layout_alignTop="@+id/cancel"
+            android:layout_marginStart="20dp"
+            android:layout_toEndOf="@+id/cancel"
+            android:textColor="@color/color_blue"
+            android:textSize="15dp" />
+        
+        <Button
+            android:id="@+id/approve"
+            android:textSize="15dp"
+            android:textColor="@color/color_blue"
+            android:background="@drawable/label_btn_shape"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="8dp"
+            android:text="@string/approve" />
+    </RelativeLayout>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/approved_detail_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/relativeLayout">
     </android.support.v7.widget.RecyclerView>
 
 </android.support.constraint.ConstraintLayout>
