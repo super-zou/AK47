@@ -93,7 +93,9 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
     private static final int LOAD_REFERENCE_DONE = 6;
     private static final int LOAD_PERSONALITY_DONE = 7;
     private static final int PAGE_SIZE = 6;
-    private static final int REQUEST_CODE = 1;
+
+    private static final int TYPE_HOBBY = 0;
+    private static final int TYPE_PERSONALITY = 1;
     private int mTempSize;
     private XRecyclerView mXRecyclerView;
     private ArchivesListAdapter mArchivesListAdapter;
@@ -130,6 +132,8 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
         loadReferences(uid);
         
         processPersonality(uid);
+
+        processHobby(uid);
 
         loadDynamicsData(uid);  
 
@@ -562,11 +566,12 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
                 if(responseText != null && !TextUtils.isEmpty(responseText)){
                     try {
                         personalityResponseArray = new JSONObject(responseText).optJSONArray("personality_detail");
-                        if(personalityResponseArray.length() > 0){
+                        if(personalityResponseArray.length() > 0) {
                             sortPersonalityWithCount(personalityResponseArray);
-                            Slog.d(TAG, "====================after sort: "+personalityResponseArray);
+                            Slog.d(TAG, "====================after sort: " + personalityResponseArray);
                             //Message msg = new Message();
                             handler.sendEmptyMessage(LOAD_PERSONALITY_DONE);
+                        }
                     }catch (JSONException e){
                         e.printStackTrace();
                     }
@@ -650,6 +655,31 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
                 bundle.putInt("uid", uid);
                 personalityEditDialogFragment.setArguments(bundle);
                 personalityEditDialogFragment.show(getSupportFragmentManager(), "PersonalityEditDialogFragment");
+            }
+        });
+    }
+
+    private void processHobby(int uid){
+        getHobbies(uid);
+        addHobbies(uid);
+    }
+
+    private void getHobbies(int uid){
+
+    }
+
+    private void addHobbies(final int uid){
+        Button add = mHeaderEvaluation.findViewById(R.id.add_hobby);
+        add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PersonalityEditDialogFragment personalityEditDialogFragment = new PersonalityEditDialogFragment();
+                Bundle bundle = new Bundle();
+                bundle.putInt("uid", uid);
+                bundle.putInt("type", TYPE_HOBBY);
+                personalityEditDialogFragment.setArguments(bundle);
+                personalityEditDialogFragment.show(getSupportFragmentManager(), "PersonalityEditDialogFragment");
+
             }
         });
     }

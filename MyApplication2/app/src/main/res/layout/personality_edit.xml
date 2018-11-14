@@ -25,19 +25,19 @@
                     android:textSize="28dp"
                     android:text="×" />
                 <TextView
-                android:textSize="18dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="105dp"
-                android:text="添加个性标签"
-                android:textColor="@color/color_blue" />
-            
+                    android:id="@+id/add_hobby_title"
+                    android:textSize="18dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="105dp"
+                    android:text="添加个性标签"
+                    android:textColor="@color/color_blue" />
                 <TextView
                     android:id="@+id/save"
                     android:enabled="false"
-                          android:textSize="15dp"
+                    android:textSize="15dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"

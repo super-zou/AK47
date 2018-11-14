@@ -44,7 +44,11 @@ public class PersonalityEditDialogFragment extends DialogFragment {
     private View view;
     private LayoutInflater inflater;
     private static final String SET_PERSONALITY_URL = HttpUtil.DOMAIN + "?q=meet/personality/set";
-    
+    private static final String CREATE_HOBBY_URL = HttpUtil.DOMAIN + "?q=personal_archive/hobby/create";
+    private static final int TYPE_HOBBY = 0;
+    private static final int TYPE_PERSONALITY = 1;
+    private int type = TYPE_PERSONALITY;
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -57,8 +61,10 @@ public class PersonalityEditDialogFragment extends DialogFragment {
         int uid = -1;
         Bundle bundle = getArguments();
         if(bundle != null){
+            type = bundle.getInt("type");
             uid = bundle.getInt("uid");
         }
+
         inflater = LayoutInflater.from(mContext);
         mDialog = new Dialog(mContext, android.R.style.Theme_Light_NoTitleBar);
         mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -75,6 +81,11 @@ public class PersonalityEditDialogFragment extends DialogFragment {
         //window.setDimAmount(0.8f);
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         window.setAttributes(layoutParams);
+
+        TextView title = view.findViewById(R.id.add_hobby_title);
+        if(type == TYPE_HOBBY){
+            title.setText("添加兴趣爱好");
+        }
 
         initView(uid);
         return mDialog;
@@ -177,33 +188,56 @@ public class PersonalityEditDialogFragment extends DialogFragment {
         });
     }
     
-    private void uploadToServer(String personality, int uid){
-        //Slog.d(TAG, "==============uploadToServer features: "+personality+" uid: "+uid);
-        RequestBody requestBody = new FormBody.Builder()
-                .add("uid", String.valueOf(uid))
-                .add("personality", personality).build();
-        HttpUtil.sendOkHttpRequest(getContext(), SET_PERSONALITY_URL, requestBody, new Callback() {
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                String responseText = response.body().string();
-                Slog.d(TAG, "================uploadToServer response:"+responseText);
-                try {
-                    JSONObject statusObj = new JSONObject(responseText);
-                    if(statusObj.optBoolean("status") != true){
-                        Toast.makeText(mContext, "保存失败，请稍后再试",Toast.LENGTH_LONG).show();
-                    }else {
-                        mDialog.dismiss();
+    private void uploadToServer(String input, int uid){
+        if(type ==TYPE_PERSONALITY){//for personality
+            RequestBody requestBody = new FormBody.Builder()
+                    .add("uid", String.valueOf(uid))
+                    .add("personality", input).build();
+            HttpUtil.sendOkHttpRequest(getContext(), SET_PERSONALITY_URL, requestBody, new Callback() {
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    String responseText = response.body().string();
+                    Slog.d(TAG, "================uploadToServer response:"+responseText);
+                    try {
+                        JSONObject statusObj = new JSONObject(responseText);
+                        if(statusObj.optBoolean("status") != true){
+                            Toast.makeText(mContext, "保存失败，请稍后再试",Toast.LENGTH_LONG).show();
+                        }else {
+                            mDialog.dismiss();
+                        }
+
+                    }catch (JSONException e){
+                        e.printStackTrace();
                     }
-
-                }catch (JSONException e){
-                    e.printStackTrace();
                 }
-            }
-             @Override
-            public void onFailure(Call call, IOException e) {
+                @Override
+                public void onFailure(Call call, IOException e) {
 
-            }
-        });
+                }
+            });
+        }else {//for hobby
+            RequestBody requestBody = new FormBody.Builder()
+                    .add("uid", String.valueOf(uid))
+                    .add("hobby", input).build();
+            HttpUtil.sendOkHttpRequest(getContext(), CREATE_HOBBY_URL, requestBody, new Callback() {
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    String responseText = response.body().string();
+                    Slog.d(TAG, "================uploadToServer response:"+responseText);
+                    try {
+                        JSONObject statusObj = new JSONObject(responseText);
+                        mDialog.dismiss();
+                    }catch (JSONException e){
+                        e.printStackTrace();
+                    }
+                }
+                @Override
+                public void onFailure(Call call, IOException e) {
+
+                }
+            });
+        }
+
     }
         
     

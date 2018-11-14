@@ -215,6 +215,18 @@
         android:text="兴趣爱好"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+    <Button
+        android:id="@+id/add_hobby"
+        android:text="+添加兴趣爱好"
+        android:layout_gravity="center"
+        android:textColor="@color/colorWhite"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:elevation="3dp"
+        android:layout_marginBottom="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/label_selected_bg"/>
     
    <com.nex3z.flowlayout.FlowLayout
         android:layout_width="match_parent"
@@ -225,6 +237,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="tennis" />
-    </com.nex3z.flowlayout.FlowLayout>
+   </com.nex3z.flowlayout.FlowLayout>
 
 </LinearLayout>

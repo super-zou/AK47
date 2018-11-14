@@ -69,7 +69,7 @@ public class ImpressionApprovedDetailAdapter extends RecyclerView.Adapter<Impres
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.impression_approved_user_info, parent, false);
+                .inflate(R.layout.approved_user_info, parent, false);
         ViewHolder holder = new ViewHolder(view);
         return holder;
     }

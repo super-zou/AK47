@@ -49,6 +49,7 @@ public class PersonalityDetailDialogFragment extends DialogFragment {
     private LayoutInflater inflater;
     private Handler handler;
     private static final int LOAD_APPROVED_USERS_DONE = 0;
+    private static final int HIDE_APPROVE = 1;
     public List<MeetMemberInfo> memberInfoList = new ArrayList<>();
     private PersonalityApprovedAdapter personalityApprovedAdapter;
     private static final String GET_APPROVED_USERS_URL = HttpUtil.DOMAIN + "?q=meet/personality/approved_users";
@@ -60,18 +61,17 @@ public class PersonalityDetailDialogFragment extends DialogFragment {
 
     }
     
-        @Override
-    public void onActivityCreated(Bundle bundle) {
-        super.onActivityCreated(bundle);
-       // getDialog().getWindow().setBackgroundDrawableResource(R.drawable.bg);
-        getDialog().getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.personality_dialog_title);
-    }
-    
-        @Override
+
+    @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        int pid = -1;
+        String personality = "";
+
         Bundle bundle = getArguments();
-        String personality = bundle.getString("personality");
-        int pid = bundle.getInt("pid");
+        if(bundle != null){
+            personality = bundle.getString("personality");
+            pid = bundle.getInt("pid");
+        }
 
         inflater = LayoutInflater.from(mContext);
         mDialog = new Dialog(mContext, android.R.style.Theme_Light_NoTitleBar);
@@ -99,7 +99,7 @@ public class PersonalityDetailDialogFragment extends DialogFragment {
         return mDialog;
     }
     
-        private void setApprovedUserView(final int pid){
+    private void setApprovedUserView(final int pid){
         TextView cancel = view.findViewById(R.id.cancel);
         approve = view.findViewById(R.id.approve);
         RecyclerView recyclerView = view.findViewById(R.id.approved_detail_list);
@@ -107,7 +107,7 @@ public class PersonalityDetailDialogFragment extends DialogFragment {
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(linearLayoutManager);
             
-                    personalityApprovedAdapter = new PersonalityApprovedAdapter(mContext);
+        personalityApprovedAdapter = new PersonalityApprovedAdapter(mContext);
         recyclerView.setAdapter(personalityApprovedAdapter);
 
         getUserList(pid);
@@ -168,7 +168,8 @@ public class PersonalityDetailDialogFragment extends DialogFragment {
                                 MeetMemberInfo meetMemberInfo = new MeetMemberInfo();
                                 JSONObject member = responseArray.optJSONObject(i);
                                 if(guestUid == member.optInt("uid")){
-                                    approve.setVisibility(View.INVISIBLE);
+                                    //approve.setVisibility(View.INVISIBLE);
+                                    handler.sendEmptyMessage(HIDE_APPROVE);
                                 }
                                                                 meetMemberInfo.setUid(member.optInt("uid"));
                                 meetMemberInfo.setSex(member.optInt("sex"));
@@ -220,6 +221,8 @@ public class PersonalityDetailDialogFragment extends DialogFragment {
                     personalityApprovedAdapter.setData(memberInfoList);
                     personalityApprovedAdapter.notifyDataSetChanged();
                     break;
+            case HIDE_APPROVE:
+                approve.setVisibility(View.INVISIBLE);
             default:
                 break;
         }
