@@ -102,39 +102,6 @@ public class ImpressionApprovedDetailAdapter extends RecyclerView.Adapter<Impres
             @Override
             public void onClick(View view) {
                 getMeetArchive(mContext, memberInfo.getUid());
-                /*
-                 String GET_MEET_ARCHIVE_URL = HttpUtil.DOMAIN + "?q=meet/get_archive";
-                RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(37)).build();
-                HttpUtil.sendOkHttpRequest(mContext, GET_MEET_ARCHIVE_URL, requestBody, new Callback() {
-                    @Override
-                    public void onResponse(Call call, Response response) throws IOException {
-                        if(response.body() != null){
-                            String responseText = response.body().string();
-                            Slog.d(TAG, "==========get archive response text : "+responseText);
-                            if(responseText != null){
-                                if(!TextUtils.isEmpty(responseText)){
-                                    try {
-                                        JSONObject jsonObject = new JSONObject(responseText).optJSONObject("archive");
-                                        MeetMemberInfo meetMemberInfo = setMeetMemberInfo(jsonObject);
-                                        Intent intent = new Intent(mContext, ArchivesActivity.class);
-                                        // Log.d(TAG, "meet:"+meet+" uid:"+meet.getUid());
-                                        intent.putExtra("meet", meetMemberInfo);
-                                       // intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-                                        Slog.d(TAG, "=====================hahahahahah");
-                                       // intent.setClass(mContext, ArchivesActivity.class);
-                                        mContext.startActivity(intent);
-
-                                    }catch (JSONException e){
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    @Override
-                    public void onFailure(Call call, IOException e) {}
-                });
-                */
             }
         });
     }
