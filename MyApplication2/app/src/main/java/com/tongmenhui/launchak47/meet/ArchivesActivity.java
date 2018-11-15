@@ -226,9 +226,9 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
         mXRecyclerView.setPullRefreshEnabled(false);
             
         mXRecyclerView.getDefaultRefreshHeaderView().setRefreshTimeVisible(true);
-        View headerProfile = LayoutInflater.from(this).inflate(R.layout.meet_item, (ViewGroup)findViewById(android.R.id.content),false);
+        View headerProfile = LayoutInflater.from(this).inflate(R.layout.meet_archive_profile, (ViewGroup)findViewById(android.R.id.content),false);
         mXRecyclerView.addHeaderView(headerProfile);
-        FontManager.markAsIconContainer(headerProfile.findViewById(R.id.meet_item_id), font);
+        FontManager.markAsIconContainer(headerProfile.findViewById(R.id.meet_archive_profile), font);
         updateHeader(headerProfile);
 
 
@@ -285,7 +285,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
         TextView photosView = (TextView)view.findViewById(R.id.photos_statistics);
 
         realname.setText(mMeetMember.getRealname());
-        lives.setText(mMeetMember.getLives());
+//        lives.setText(mMeetMember.getLives());
 
         if(!"".equals(mMeetMember.getPictureUri())){
             String picture_url = HttpUtil.DOMAIN + "/"+mMeetMember.getPictureUri();

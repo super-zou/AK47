@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorWhite"
+    android:id="@+id/meet_archive_profile">
+
+    <com.android.volley.toolbox.NetworkImageView
+        android:id="@+id/recommend_head_uri"
+        android:layout_width="110dp"
+        android:layout_height="110dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:elevation="2dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"></com.android.volley.toolbox.NetworkImageView>
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="hahaha"
+        android:textColor="@android:color/holo_blue_dark"
+        android:textSize="15sp"
+        android:textStyle="normal|bold"
+        app:layout_constraintEnd_toEndOf="@+id/recommend_head_uri"
+        app:layout_constraintStart_toStartOf="@+id/recommend_head_uri"
+        app:layout_constraintTop_toBottomOf="@+id/recommend_head_uri" />
+
+    <TextView
+        android:id="@+id/self_condition"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="tiaojian"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/name" />
+
+    <LinearLayout
+        android:id="@+id/partner_requirement_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="18dp"
+        android:layout_marginEnd="8dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/self_condition">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center"
+            android:layout_weight="6"
+            android:background="#999" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="期待"
+            android:textColor="#999" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_gravity="center"
+            android:layout_weight="6"
+            android:background="#999" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/partner_requirement"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="yaoqiu"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/partner_requirement_label" />
+
+    <TextView
+        android:id="@+id/illustration"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="shuoming"
+        android:textColor="@android:color/holo_blue_dark"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/partner_requirement"
+        tools:alpha="0.5" />
+
+    <TextView
+        android:id="@+id/eye_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:text="@string/fa_eye"
+        android:textColor="@android:color/holo_blue_dark"
+        app:layout_constraintStart_toStartOf="@+id/illustration"
+        app:layout_constraintTop_toBottomOf="@+id/illustration" />
+
+    <TextView
+        android:id="@+id/eye_statistics"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:gravity="center"
+        android:textColor="@android:color/holo_blue_dark"
+        app:layout_constraintBottom_toBottomOf="@+id/eye_icon"
+        app:layout_constraintStart_toEndOf="@+id/eye_icon"
+        app:layout_constraintTop_toTopOf="@+id/eye_icon" />
+
+    <TextView
+        android:id="@+id/loved_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:gravity="center"
+        android:paddingLeft="18dp"
+        android:text="@string/fa_heart"
+        android:textColor="@android:color/holo_red_dark"
+        app:layout_constraintBottom_toBottomOf="@+id/eye_icon"
+        app:layout_constraintStart_toEndOf="@+id/eye_statistics"
+        app:layout_constraintTop_toTopOf="@+id/eye_icon" />
+    <TextView
+        android:id="@+id/loved_statistics"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="@+id/eye_icon"
+        app:layout_constraintStart_toEndOf="@+id/loved_icon"
+        app:layout_constraintTop_toTopOf="@+id/eye_icon"
+        android:textColor="@android:color/holo_red_dark" />
+    <TextView
+        android:id="@+id/thumbs_up_icon"
+        android:text="@string/fa_thumbs_up"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/holo_blue_dark"
+        android:paddingLeft="18dp"
+        android:gravity="center"
+        app:layout_constraintStart_toEndOf="@+id/loved_statistics"
+        app:layout_constraintBottom_toBottomOf="@+id/eye_icon"
+        app:layout_constraintTop_toTopOf="@+id/eye_icon"
+        />
+    <TextView
+        android:id="@+id/thumbs_up_statistics"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/holo_blue_dark"
+        android:gravity="center"
+        app:layout_constraintStart_toEndOf="@+id/thumbs_up_icon"
+        app:layout_constraintBottom_toBottomOf="@+id/eye_icon"
+        app:layout_constraintTop_toTopOf="@+id/eye_icon"/>
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:layout_marginBottom="8dp"
+        android:text="添加联系人"
+        android:textColor="@color/colorWhite"
+        android:background="@color/color_blue"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/name"
+        app:layout_constraintTop_toBottomOf="@+id/illustration" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:textColor="@color/colorWhite"
+        android:background="@color/color_green"
+        android:text="聊天"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/name"
+        app:layout_constraintTop_toTopOf="@+id/button" />
+
+
+</android.support.constraint.ConstraintLayout>
