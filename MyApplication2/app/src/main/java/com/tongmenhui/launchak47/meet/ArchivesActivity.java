@@ -55,7 +55,7 @@ import com.tongmenhui.launchak47.util.Utility;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
+import java.lang.reflect.Array;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -80,6 +80,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
     private static final String GET_IMPRESSION_STATISTICS_URL = HttpUtil.DOMAIN + "?q=meet/impression/statistics";
     private static final String GET_IMPRESSION_USERS_URL = HttpUtil.DOMAIN + "?q=meet/impression/users";
     private static final String GET_PERSONALITY_URL = HttpUtil.DOMAIN + "?q=meet/personality/get";
+    private static final String LOAD_HOBBY_URL = HttpUtil.DOMAIN + "?q=personal_archive/hobby/load";
 
     private List<MeetDynamics> mMeetList = new ArrayList<>();
     private List<ImpressionStatistics> mImpressionStatisticsList = new ArrayList<>();
@@ -92,6 +93,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
     private static final int LOAD_IMPRESSION_DONE = 5;
     private static final int LOAD_REFERENCE_DONE = 6;
     private static final int LOAD_PERSONALITY_DONE = 7;
+    private static final int LOAD_HOBBY_DONE = 8;
     private static final int PAGE_SIZE = 6;
 
     private static final int TYPE_HOBBY = 0;
@@ -665,7 +667,41 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
     }
 
     private void getHobbies(int uid){
+        RequestBody requestBody = new FormBody.Builder()
+                .add("uid", String.valueOf(uid))
+                .build();
+        HttpUtil.sendOkHttpRequest(this, LOAD_HOBBY_URL, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String responseText = response.body().string();
+                Slog.d(TAG, "================get hobbies response:"+responseText);
+                if(responseText != null && !TextUtils.isEmpty(responseText)){
+                                        try {
 
+                        JSONArray hobbyJSONArray = new JSONObject(responseText).optJSONArray("hobby");
+                        String[] hobbyArray = new String[hobbyJSONArray.length()];
+                        for (int i=0; i<hobbyJSONArray.length(); i++){
+                            hobbyArray[i] = hobbyJSONArray.optJSONObject(i).optString("hobby");
+                        }
+                        if(hobbyArray.length > 0) {
+                            Message msg = new Message();
+                            Bundle bundle = new Bundle();
+                            bundle.putStringArray("hobby", hobbyArray);
+                            msg.setData(bundle);
+                            msg.what = LOAD_HOBBY_DONE;
+                            handler.sendMessage(msg);
+                        }
+                    }catch (JSONException e){
+                        e.printStackTrace();
+                    }
+                     }
+
+            }
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+        });
     }
 
     private void addHobbies(final int uid){
@@ -682,6 +718,26 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
 
             }
         });
+    }
+    
+   private void setHobbyFlow(String[] hobbyArray){
+        FlowLayout hobbyFlow = mHeaderEvaluation.findViewById(R.id.hobby_flow);
+
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        layoutParams.setMargins((int) Utility.dpToPx(this, 3),(int) Utility.dpToPx(this, 3),
+                (int) Utility.dpToPx(this, 3), (int) Utility.dpToPx(this, 3));
+        for (int i=0; i<hobbyArray.length; i++){
+            if(!hobbyArray[i].isEmpty()){
+                final TextView hobbyView = new TextView(this);
+                hobbyView.setPadding((int) Utility.dpToPx(this, 8), (int) Utility.dpToPx(this, 6),
+                        (int) Utility.dpToPx(this, 8), (int) Utility.dpToPx(this, 6));
+                //hobbyView.setBackground(getDrawable(R.drawable.label_btn_shape));
+                hobbyView.setTextColor(getResources().getColor(R.color.color_blue));
+                hobbyView.setLayoutParams(layoutParams);
+                hobbyView.setText(hobbyArray[i]);
+                hobbyFlow.addView(hobbyView);
+            }
+        }
     }
 
     private void loadDynamicsData(int uid){
@@ -961,6 +1017,12 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
                 break;
             case LOAD_PERSONALITY_DONE:
                 setPersonalityFlow();
+                break;
+            case LOAD_HOBBY_DONE:
+                Bundle bundle = new Bundle();
+                bundle = message.getData();
+                String[] hobby = bundle.getStringArray("hobby");
+                setHobbyFlow(hobby);
                 break;
             default:
                 break;
