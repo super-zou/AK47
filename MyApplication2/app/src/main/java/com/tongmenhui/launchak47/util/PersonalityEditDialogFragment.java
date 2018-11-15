@@ -42,6 +42,7 @@ public class PersonalityEditDialogFragment extends DialogFragment {
     private Context mContext;
     private Dialog mDialog;
     private View view;
+    private int totalWord = 0;
     private LayoutInflater inflater;
     private static final String SET_PERSONALITY_URL = HttpUtil.DOMAIN + "?q=meet/personality/set";
     private static final String CREATE_HOBBY_URL = HttpUtil.DOMAIN + "?q=personal_archive/hobby/create";
@@ -99,6 +100,7 @@ public class PersonalityEditDialogFragment extends DialogFragment {
         final FlowLayout personalityFL = view.findViewById(R.id.personality_flow_layout);
         final EditText editText = view.findViewById(R.id.personality_edit_text);
         final TextView save = view.findViewById(R.id.save);
+        final TextView remainWord = view.findViewById(R.id.word_remain);
         TextView cancel = view.findViewById(R.id.cancel);
 
         editText.addTextChangedListener(new TextWatcher() {
@@ -108,7 +110,14 @@ public class PersonalityEditDialogFragment extends DialogFragment {
             }
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                int remain = 64 - totalWord - s.length();
+                if(remain >= 0){
+                    remainWord.setText(remain+"/64");
+                }else {
+                    Toast.makeText(mContext, "已经超出64个文字限制", Toast.LENGTH_LONG).show();
+                }
+            }
 
             @Override
             public void afterTextChanged(Editable s) {
@@ -136,6 +145,7 @@ public class PersonalityEditDialogFragment extends DialogFragment {
                             (int) Utility.dpToPx(mContext, 8), (int) Utility.dpToPx(mContext, 3));
                     final TextView personality = new TextView(mContext);
                     personality.setText(v.getText()+" ×");
+                    totalWord += v.getText().length();
 
                     personality.setPadding((int) Utility.dpToPx(mContext, 8), (int) Utility.dpToPx(mContext, 6),
                             (int) Utility.dpToPx(mContext, 8), (int) Utility.dpToPx(mContext, 6));
@@ -152,6 +162,8 @@ public class PersonalityEditDialogFragment extends DialogFragment {
                                 save.setEnabled(false);
                                 save.setTextColor(mContext.getResources().getColor(R.color.color_disabled));
                             }
+                            totalWord -= personality.getText().length() - 2;
+                            remainWord.setText((64-totalWord)+"/64");
                         }
                     });
                     editText.setText("");
@@ -168,15 +180,19 @@ public class PersonalityEditDialogFragment extends DialogFragment {
             @Override
             public void onClick(View v) {
                 if(personalityFL.getChildCount() > 0){
-                    for (int i=0; i<personalityFL.getChildCount(); i++){
-                        final TextView personalityTV = (TextView) personalityFL.getChildAt(i);
-                        String personality = personalityTV.getText().toString().replace(" ×", "#");
-                        personalityStr += personality;
-                    }
-                    uploadToServer(personalityStr, uid);
+                    if(totalWord < 64){
+                        for (int i=0; i<personalityFL.getChildCount(); i++){
+                            final TextView personalityTV = (TextView) personalityFL.getChildAt(i);
+                            String personality = personalityTV.getText().toString().replace(" ×", "#");
+                            personalityStr += personality;
+                        }
+                        uploadToServer(personalityStr, uid);
+                        Slog.d(TAG, "==============personalityStr: "+personalityStr);
+                        save.setEnabled(false);
+                        }else {
+                        Toast.makeText(mContext, "已经超出64个文字限制，请减少到64个文字!", Toast.LENGTH_LONG).show();
+                        }
                 }
-                Slog.d(TAG, "==============personalityStr: "+personalityStr);
-                save.setEnabled(false);
             }
         });
 
@@ -223,10 +239,13 @@ public class PersonalityEditDialogFragment extends DialogFragment {
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
                     String responseText = response.body().string();
-                    Slog.d(TAG, "================uploadToServer response:"+responseText);
                     try {
                         JSONObject statusObj = new JSONObject(responseText);
-                        mDialog.dismiss();
+                        if(statusObj.optBoolean("status") != true){
+                            Toast.makeText(mContext, "保存失败，请稍后再试",Toast.LENGTH_LONG).show();
+                        }else {
+                            mDialog.dismiss();
+                        }
                     }catch (JSONException e){
                         e.printStackTrace();
                     }
