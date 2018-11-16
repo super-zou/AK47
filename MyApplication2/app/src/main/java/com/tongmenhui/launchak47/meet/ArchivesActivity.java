@@ -229,7 +229,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
         View headerProfile = LayoutInflater.from(this).inflate(R.layout.meet_archive_profile, (ViewGroup)findViewById(android.R.id.content),false);
         mXRecyclerView.addHeaderView(headerProfile);
         FontManager.markAsIconContainer(headerProfile.findViewById(R.id.meet_archive_profile), font);
-        updateHeader(headerProfile);
+        updateHeaderProfile(headerProfile);
 
 
         mHeaderEvaluation = LayoutInflater.from(this).inflate(R.layout.friends_relatives_reference, (ViewGroup)findViewById(android.R.id.content),false);
@@ -270,12 +270,29 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
     }
     
 
-    private void updateHeader(View view){
+    private void updateHeaderProfile(View view){
         TextView realname = (TextView) view.findViewById(R.id.name);
-        TextView lives = (TextView) view.findViewById(R.id.lives);
         NetworkImageView headUri = (NetworkImageView) view.findViewById(R.id.recommend_head_uri);
-        TextView selfcondition = (TextView) view.findViewById(R.id.self_condition);
-        TextView requirement = (TextView) view.findViewById(R.id.partner_requirement);
+        LinearLayout baseProfile = view.findViewById(R.id.base_profile);
+        LinearLayout education = view.findViewById(R.id.education);
+        LinearLayout work = view.findViewById(R.id.work);
+              TextView age = baseProfile.findViewById(R.id.age);
+        TextView height = baseProfile.findViewById(R.id.height);
+        TextView sex = baseProfile.findViewById(R.id.sex);
+        TextView lives = baseProfile.findViewById(R.id.lives);
+
+        TextView degree = education.findViewById(R.id.degree);
+        TextView major = education.findViewById(R.id.major);
+        TextView university = education.findViewById(R.id.university);
+                TextView job = work.findViewById(R.id.job);
+        TextView company = work.findViewById(R.id.company);
+
+        TextView ageRequirement = view.findViewById(R.id.age_require);
+        TextView heightRequirement = view.findViewById(R.id.height_require);
+        TextView degreeRequirement = view.findViewById(R.id.degree_require);
+        TextView livesRequirement = view.findViewById(R.id.lives_require);
+        TextView sexRequirement = view.findViewById(R.id.sex_require);
+        
         TextView illustration = (TextView) view.findViewById(R.id.illustration);
         TextView eyeView = (TextView) view.findViewById(R.id.eye_statistics);
         TextView lovedView = (TextView)view.findViewById(R.id.loved_statistics);
@@ -298,13 +315,29 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
         }
 
 
-        selfcondition.setText(mMeetMember.getSelfCondition(mMeetMember.getSituation()));
-        requirement.setText(mMeetMember.getRequirement());
-
+        age.setText(String.valueOf(mMeetMember.getAge())+"岁");
+        height.setText(String.valueOf(mMeetMember.getHeight())+"CM");
+        sex.setText(String.valueOf(mMeetMember.getSelfSex()));
+        lives.setText(mMeetMember.getLives());
+                if(mMeetMember.getSituation() == 0){
+            major.setText(mMeetMember.getMajor());
+            degree.setText(mMeetMember.getDegreeName(mMeetMember.getDegree()));
+            university.setText(mMeetMember.getUniversity());
+        }else {
+            job.setText(mMeetMember.getJobTitle());
+            company.setText(mMeetMember.getCompany());
+        }
+                ageRequirement.setText(mMeetMember.getAgeLower()+"~"+ mMeetMember.getAgeUpper()+"岁");
+        heightRequirement.setText(String.valueOf(mMeetMember.getRequirementHeight())+"CM以上");
+        degreeRequirement.setText(mMeetMember.getDegreeName(mMeetMember.getRequirementDegree())+"学历");
+        livesRequirement.setText("住在"+mMeetMember.getRequirementLives());
+        sexRequirement.setText("的"+mMeetMember.getRequirementSex());
+        
+        illustration.setText(mMeetMember.getIllustration());
         eyeView.setText(String.valueOf(mMeetMember.getBrowseCount()));
         lovedView.setText(String.valueOf(mMeetMember.getLovedCount()));
         thumbsView.setText(String.valueOf(mMeetMember.getPraisedCount()));
-        illustration.setText(mMeetMember.getIllustration());
+
 
     }
 
