@@ -25,7 +25,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="hahaha"
         android:textColor="@android:color/holo_blue_dark"
         android:textSize="15sp"
         android:textStyle="normal|bold"
@@ -33,35 +32,131 @@
         app:layout_constraintStart_toStartOf="@+id/recommend_head_uri"
         app:layout_constraintTop_toBottomOf="@+id/recommend_head_uri" />
 
-    <TextView
-        android:id="@+id/self_condition"
+   <LinearLayout
+        android:id="@+id/base_profile"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="tiaojian"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/name" />
+        android:gravity="center"
+        android:layout_marginTop="18dp"
+        app:layout_constraintEnd_toEndOf="@+id/name"
+        app:layout_constraintStart_toStartOf="@+id/name"
+        app:layout_constraintTop_toBottomOf="@+id/name">
+                <TextView
+            android:id="@+id/age"
+            android:text="age"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:text="·"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+               <TextView
+            android:id="@+id/height"
+            android:text="height"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:text="·"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+               <TextView
+            android:id="@+id/sex"
+            android:text="sex"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:text="·"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+               <TextView
+            android:id="@+id/lives"
+            android:text="lives"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+        <LinearLayout
+        android:orientation="horizontal"
+        android:id="@+id/education"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginTop="10dp"
+        app:layout_constraintEnd_toEndOf="@+id/base_profile"
+        app:layout_constraintStart_toStartOf="@+id/base_profile"
+        app:layout_constraintTop_toBottomOf="@+id/base_profile">
+                    <TextView
+            android:id="@+id/degree"
+            android:text="degree"
+            android:paddingBottom="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:text="·"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+                    <TextView
+            android:id="@+id/major"
+            android:text="major"
+            android:paddingBottom="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:text="·"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+                    <TextView
+            android:id="@+id/university"
+            android:text="university"
+            android:paddingBottom="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+        <LinearLayout
+        android:id="@+id/work"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginTop="10dp"
+        app:layout_constraintEnd_toEndOf="@+id/education"
+        app:layout_constraintStart_toStartOf="@+id/education"
+        app:layout_constraintTop_toBottomOf="@+id/education">
+                    <TextView
+            android:id="@+id/job"
+            android:text="job"
+            android:paddingBottom="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:text="·"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+                    <TextView
+            android:id="@+id/company"
+            android:text="company"
+            android:paddingBottom="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+    
 
     <LinearLayout
         android:id="@+id/partner_requirement_label"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="18dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/self_condition">
+        app:layout_constraintEnd_toEndOf="@+id/work"
+        app:layout_constraintStart_toStartOf="@+id/work"
+        app:layout_constraintTop_toBottomOf="@+id/work">
 
         <TextView
             android:layout_width="0dp"
-            android:layout_height="1dp"
+            android:layout_height="0.5dp"
             android:layout_centerVertical="true"
             android:layout_gravity="center"
+                  android:alpha="0.7"
             android:layout_weight="6"
             android:background="#999" />
 
@@ -69,28 +164,71 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
+                  android:alpha="0.8"
             android:text="期待"
             android:textColor="#999" />
 
         <TextView
             android:layout_width="0dp"
-            android:layout_height="1dp"
+            android:layout_height="0.5dp"
             android:layout_gravity="center"
+                  android:alpha="0.7"
             android:layout_weight="6"
             android:background="#999" />
     </LinearLayout>
-
-    <TextView
+        <com.nex3z.flowlayout.FlowLayout
         android:id="@+id/partner_requirement"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="yaoqiu"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/partner_requirement_label" />
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintEnd_toEndOf="@+id/partner_requirement_label"
+        app:layout_constraintStart_toStartOf="@+id/partner_requirement_label"
+        app:layout_constraintTop_toBottomOf="@+id/partner_requirement_label">
+                    <TextView
+            android:id="@+id/age_require"
+            android:text="age"
+            android:paddingBottom="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:text="，"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+                    <TextView
+            android:id="@+id/height_require"
+            android:text="height"
+            android:paddingBottom="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:text="，"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+                    <TextView
+            android:id="@+id/degree_require"
+            android:text="degree"
+            android:paddingBottom="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:text="，"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+                    <TextView
+            android:id="@+id/lives_require"
+            android:text="lives"
+            android:paddingBottom="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/sex_require"
+            android:text="sex"
+            android:paddingBottom="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </com.nex3z.flowlayout.FlowLayout>
 
     <TextView
         android:id="@+id/illustration"
