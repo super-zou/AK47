@@ -130,7 +130,7 @@ public class MeetMemberInfo implements Serializable{
                     Degree = "博士";
                     break;
                 default:
-                    Degree = "其它";
+                    Degree = "不限";
                     break;
             }
         }

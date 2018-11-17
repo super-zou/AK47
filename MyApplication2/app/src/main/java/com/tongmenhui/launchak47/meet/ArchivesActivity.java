@@ -81,6 +81,9 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
     private static final String GET_IMPRESSION_USERS_URL = HttpUtil.DOMAIN + "?q=meet/impression/users";
     private static final String GET_PERSONALITY_URL = HttpUtil.DOMAIN + "?q=meet/personality/get";
     private static final String LOAD_HOBBY_URL = HttpUtil.DOMAIN + "?q=personal_archive/hobby/load";
+    private static final String FOLLOW_ACTION_URL = HttpUtil.DOMAIN + "?q=follow/action/";
+    private static final String GET_FOLLOW_URL = HttpUtil.DOMAIN + "?q=follow/get/";
+    private static final String GET_FOLLOW_STATUS_URL = HttpUtil.DOMAIN + "?q=follow/isFollowed";
 
     private List<MeetDynamics> mMeetList = new ArrayList<>();
     private List<ImpressionStatistics> mImpressionStatisticsList = new ArrayList<>();
@@ -94,11 +97,14 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
     private static final int LOAD_REFERENCE_DONE = 6;
     private static final int LOAD_PERSONALITY_DONE = 7;
     private static final int LOAD_HOBBY_DONE = 8;
+    private static final int GET_FOLLOW_DONE = 9;
     private static final int PAGE_SIZE = 6;
 
     private static final int TYPE_HOBBY = 0;
     private static final int TYPE_PERSONALITY = 1;
+    private boolean isFollowed = false;
     private int mTempSize;
+    private View mArchiveProfile;
     private XRecyclerView mXRecyclerView;
     private ArchivesListAdapter mArchivesListAdapter;
     private MeetReferenceAdapter mMeetReferenceAdapter;
@@ -126,6 +132,8 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
         final int uid = mMeetMember.getUid();
 
         initView();
+
+        setArchiveProfile();
 
         loadRatingAndImpression(uid);
 
@@ -226,11 +234,9 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
         mXRecyclerView.setPullRefreshEnabled(false);
             
         mXRecyclerView.getDefaultRefreshHeaderView().setRefreshTimeVisible(true);
-        View headerProfile = LayoutInflater.from(this).inflate(R.layout.meet_archive_profile, (ViewGroup)findViewById(android.R.id.content),false);
-        mXRecyclerView.addHeaderView(headerProfile);
-        FontManager.markAsIconContainer(headerProfile.findViewById(R.id.meet_archive_profile), font);
-        updateHeaderProfile(headerProfile);
-
+        mArchiveProfile = LayoutInflater.from(this).inflate(R.layout.meet_archive_profile, (ViewGroup)findViewById(android.R.id.content),false);
+        mXRecyclerView.addHeaderView(mArchiveProfile);
+        FontManager.markAsIconContainer(mArchiveProfile.findViewById(R.id.meet_archive_profile), font);
 
         mHeaderEvaluation = LayoutInflater.from(this).inflate(R.layout.friends_relatives_reference, (ViewGroup)findViewById(android.R.id.content),false);
         mXRecyclerView.addHeaderView(mHeaderEvaluation);
@@ -270,13 +276,13 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
     }
     
 
-    private void updateHeaderProfile(View view){
-        TextView realname = (TextView) view.findViewById(R.id.name);
-        NetworkImageView headUri = (NetworkImageView) view.findViewById(R.id.recommend_head_uri);
-        LinearLayout baseProfile = view.findViewById(R.id.base_profile);
-        LinearLayout education = view.findViewById(R.id.education);
-        LinearLayout work = view.findViewById(R.id.work);
-              TextView age = baseProfile.findViewById(R.id.age);
+    private void setArchiveProfile(){
+        TextView realname = mArchiveProfile.findViewById(R.id.name);
+        NetworkImageView headUri = (NetworkImageView) mArchiveProfile.findViewById(R.id.recommend_head_uri);
+        LinearLayout baseProfile = mArchiveProfile.findViewById(R.id.base_profile);
+        LinearLayout education = mArchiveProfile.findViewById(R.id.education);
+        LinearLayout work = mArchiveProfile.findViewById(R.id.work);
+        TextView age = baseProfile.findViewById(R.id.age);
         TextView height = baseProfile.findViewById(R.id.height);
         TextView sex = baseProfile.findViewById(R.id.sex);
         TextView lives = baseProfile.findViewById(R.id.lives);
@@ -284,25 +290,24 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
         TextView degree = education.findViewById(R.id.degree);
         TextView major = education.findViewById(R.id.major);
         TextView university = education.findViewById(R.id.university);
-                TextView job = work.findViewById(R.id.job);
+        TextView job = work.findViewById(R.id.job);
         TextView company = work.findViewById(R.id.company);
 
-        TextView ageRequirement = view.findViewById(R.id.age_require);
-        TextView heightRequirement = view.findViewById(R.id.height_require);
-        TextView degreeRequirement = view.findViewById(R.id.degree_require);
-        TextView livesRequirement = view.findViewById(R.id.lives_require);
-        TextView sexRequirement = view.findViewById(R.id.sex_require);
+        TextView ageRequirement = mArchiveProfile.findViewById(R.id.age_require);
+        TextView heightRequirement = mArchiveProfile.findViewById(R.id.height_require);
+        TextView degreeRequirement = mArchiveProfile.findViewById(R.id.degree_require);
+        TextView livesRequirement = mArchiveProfile.findViewById(R.id.lives_require);
+        TextView sexRequirement = mArchiveProfile.findViewById(R.id.sex_require);
         
-        TextView illustration = (TextView) view.findViewById(R.id.illustration);
-        TextView eyeView = (TextView) view.findViewById(R.id.eye_statistics);
-        TextView lovedView = (TextView)view.findViewById(R.id.loved_statistics);
-        TextView lovedIcon = (TextView)view.findViewById(R.id.loved_icon);
-        TextView thumbsView = (TextView)view.findViewById(R.id.thumbs_up_statistics);
-        TextView thumbsIcon = (TextView)view.findViewById(R.id.thumbs_up_icon);
-        TextView photosView = (TextView)view.findViewById(R.id.photos_statistics);
+        TextView illustration = mArchiveProfile.findViewById(R.id.illustration);
+        TextView eyeView = mArchiveProfile.findViewById(R.id.eye_statistics);
+        TextView lovedView = mArchiveProfile.findViewById(R.id.loved_statistics);
+        TextView lovedIcon = mArchiveProfile.findViewById(R.id.loved_icon);
+        TextView thumbsView = mArchiveProfile.findViewById(R.id.thumbs_up_statistics);
+        TextView thumbsIcon = mArchiveProfile.findViewById(R.id.thumbs_up_icon);
+        TextView photosView = mArchiveProfile.findViewById(R.id.photos_statistics);
 
         realname.setText(mMeetMember.getRealname());
-//        lives.setText(mMeetMember.getLives());
 
         if(!"".equals(mMeetMember.getPictureUri())){
             String picture_url = HttpUtil.DOMAIN + "/"+mMeetMember.getPictureUri();
@@ -319,7 +324,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
         height.setText(String.valueOf(mMeetMember.getHeight())+"CM");
         sex.setText(String.valueOf(mMeetMember.getSelfSex()));
         lives.setText(mMeetMember.getLives());
-                if(mMeetMember.getSituation() == 0){
+        if(mMeetMember.getSituation() == 0){
             major.setText(mMeetMember.getMajor());
             degree.setText(mMeetMember.getDegreeName(mMeetMember.getDegree()));
             university.setText(mMeetMember.getUniversity());
@@ -327,21 +332,145 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
             job.setText(mMeetMember.getJobTitle());
             company.setText(mMeetMember.getCompany());
         }
-                ageRequirement.setText(mMeetMember.getAgeLower()+"~"+ mMeetMember.getAgeUpper()+"岁");
-        heightRequirement.setText(String.valueOf(mMeetMember.getRequirementHeight())+"CM以上");
+        ageRequirement.setText(mMeetMember.getAgeLower()+"~"+ mMeetMember.getAgeUpper());
+        heightRequirement.setText(String.valueOf(mMeetMember.getRequirementHeight())+"CM");
         degreeRequirement.setText(mMeetMember.getDegreeName(mMeetMember.getRequirementDegree())+"学历");
         livesRequirement.setText("住在"+mMeetMember.getRequirementLives());
-        sexRequirement.setText("的"+mMeetMember.getRequirementSex());
+        sexRequirement.setText(mMeetMember.getRequirementSex());
         
         illustration.setText(mMeetMember.getIllustration());
         eyeView.setText(String.valueOf(mMeetMember.getBrowseCount()));
         lovedView.setText(String.valueOf(mMeetMember.getLovedCount()));
         thumbsView.setText(String.valueOf(mMeetMember.getPraisedCount()));
 
+        getFollowStatus(mMeetMember.getUid());
+        getFollowStatistics();
+
+        processChatAction(mMeetMember.getUid());
 
     }
 
-    private void updateEvaluationHeader(){
+    private void getFollowStatus(final int uid){
+
+        RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
+        HttpUtil.sendOkHttpRequest(ArchivesActivity.this, GET_FOLLOW_STATUS_URL, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if(response.body() != null){
+                    String responseText = response.body().string();
+                    if(isDebug) Slog.d(TAG, "==========getFollowStatus : "+responseText);
+                    try {
+                        JSONObject status = new JSONObject(responseText);
+                        isFollowed = status.optBoolean("isFollowed");
+                        handler.sendEmptyMessage(GET_FOLLOW_DONE);
+                    }catch (JSONException e){
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+            @Override
+            public void onFailure(Call call, IOException e) {}
+        });
+    }
+
+    private void getFollowStatistics(){
+        RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(mMeetMember.getUid())).build();
+        HttpUtil.sendOkHttpRequest(ArchivesActivity.this, GET_FOLLOW_URL+"followed", requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if(response.body() != null){
+                    String responseText = response.body().string();
+                    //if(isDebug)
+                    Slog.d(TAG, "==========getFollowed count : "+responseText);
+                    /*
+                    try {
+                        JSONObject status = new JSONObject(responseText);
+                        isFollowed = status.optBoolean("isFollowed");
+                        handler.sendEmptyMessage(GET_FOLLOW_DONE);
+                    }catch (JSONException e){
+                        e.printStackTrace();
+                    }
+                    */
+
+                }
+            }
+            @Override
+            public void onFailure(Call call, IOException e) {}
+        });
+        HttpUtil.sendOkHttpRequest(ArchivesActivity.this, GET_FOLLOW_URL+"following", requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if(response.body() != null){
+                    String responseText = response.body().string();
+                    //if(isDebug)
+                        Slog.d(TAG, "==========getFollowing count : "+responseText);
+                    /*
+                    try {
+                        JSONObject status = new JSONObject(responseText);
+                        isFollowed = status.optBoolean("isFollowed");
+                        handler.sendEmptyMessage(GET_FOLLOW_DONE);
+                    }catch (JSONException e){
+                        e.printStackTrace();
+                    }
+                    */
+
+                }
+            }
+            @Override
+            public void onFailure(Call call, IOException e) {}
+        });
+    }
+
+    private void processFollowAction(){
+        final Button followBtn = mArchiveProfile.findViewById(R.id.follow);
+        if(isFollowed == true){
+            followBtn.setText("已关注");
+            followBtn.setBackground(getDrawable(R.drawable.btn_disable));
+            followBtn.setTextColor(getResources().getColor(R.color.color_dark_grey));
+        }
+
+        followBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(mMeetMember.getUid())).build();
+                String followUrl = "";
+                if(isFollowed == true){
+                    isFollowed = false;
+                    followUrl = FOLLOW_ACTION_URL+"cancel";
+                    followBtn.setText("+关注");
+                    followBtn.setTextColor(getResources().getColor(R.color.color_blue));
+                    followBtn.setBackground(getDrawable(R.drawable.btn_default));
+                }else{
+                    isFollowed = true;
+                    followUrl = FOLLOW_ACTION_URL+"add";
+                    followBtn.setText("已关注");
+                    followBtn.setBackground(getDrawable(R.drawable.btn_disable));
+                    followBtn.setTextColor(getResources().getColor(R.color.color_dark_grey));
+                }
+
+                HttpUtil.sendOkHttpRequest(ArchivesActivity.this, followUrl, requestBody, new Callback() {
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        if(response.body() != null){
+                            String responseText = response.body().string();
+                            if(isDebug) Slog.d(TAG, "==========get impression response text : "+responseText);
+                        }
+                    }
+                    @Override
+                    public void onFailure(Call call, IOException e) {}
+                });
+            }
+        });
+    }
+
+
+
+    private void processChatAction(int uid){
+
+    }
+
+    private void setEvaluationHeader(){
 
         RecyclerView recyclerView = mHeaderEvaluation.findViewById(R.id.reference_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -1010,6 +1139,8 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
     }
 
     public void handleMessage(Message message){
+        Bundle bundle = new Bundle();
+        bundle = message.getData();
         switch (message.what){
             case DONE:
                 mArchivesListAdapter.setData(mMeetList);
@@ -1036,7 +1167,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
                 mArchivesListAdapter.notifyDataSetChanged();
                 break;
             case LOAD_REFERENCE_DONE:
-                updateEvaluationHeader();
+                setEvaluationHeader();
                 mMeetReferenceAdapter.setReferenceList(mReferenceList);
                 mMeetReferenceAdapter.notifyDataSetChanged();
                 break;
@@ -1052,10 +1183,11 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
                 setPersonalityFlow();
                 break;
             case LOAD_HOBBY_DONE:
-                Bundle bundle = new Bundle();
-                bundle = message.getData();
                 String[] hobby = bundle.getStringArray("hobby");
                 setHobbyFlow(hobby);
+                break;
+            case GET_FOLLOW_DONE:
+                processFollowAction();
                 break;
             default:
                 break;

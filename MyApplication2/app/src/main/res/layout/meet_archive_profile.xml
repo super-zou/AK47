@@ -22,15 +22,26 @@
 
     <TextView
         android:id="@+id/name"
+        android:text="name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:textColor="@android:color/holo_blue_dark"
-        android:textSize="15sp"
+        android:layout_marginTop="18dp"
+        android:textSize="18sp"
         android:textStyle="normal|bold"
         app:layout_constraintEnd_toEndOf="@+id/recommend_head_uri"
         app:layout_constraintStart_toStartOf="@+id/recommend_head_uri"
         app:layout_constraintTop_toBottomOf="@+id/recommend_head_uri" />
+
+    <TextView
+        android:id="@+id/profile_detail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:text="详细资料  >"
+        android:alpha="0.6"
+        app:layout_constraintBottom_toBottomOf="@+id/name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/name" />
 
    <LinearLayout
         android:id="@+id/base_profile"
@@ -41,7 +52,7 @@
         app:layout_constraintEnd_toEndOf="@+id/name"
         app:layout_constraintStart_toStartOf="@+id/name"
         app:layout_constraintTop_toBottomOf="@+id/name">
-                <TextView
+        <TextView
             android:id="@+id/age"
             android:text="age"
             android:layout_width="wrap_content"
@@ -50,7 +61,7 @@
             android:text="·"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
-               <TextView
+        <TextView
             android:id="@+id/height"
             android:text="height"
             android:layout_width="wrap_content"
@@ -59,7 +70,7 @@
             android:text="·"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
-               <TextView
+        <TextView
             android:id="@+id/sex"
             android:text="sex"
             android:layout_width="wrap_content"
@@ -68,15 +79,15 @@
             android:text="·"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
-               <TextView
+        <TextView
             android:id="@+id/lives"
             android:text="lives"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </LinearLayout>
-        <LinearLayout
-        android:orientation="horizontal"
+    <LinearLayout
         android:id="@+id/education"
+        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -84,7 +95,7 @@
         app:layout_constraintEnd_toEndOf="@+id/base_profile"
         app:layout_constraintStart_toStartOf="@+id/base_profile"
         app:layout_constraintTop_toBottomOf="@+id/base_profile">
-                    <TextView
+        <TextView
             android:id="@+id/degree"
             android:text="degree"
             android:paddingBottom="5dp"
@@ -94,7 +105,7 @@
             android:text="·"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
-                    <TextView
+        <TextView
             android:id="@+id/major"
             android:text="major"
             android:paddingBottom="5dp"
@@ -104,14 +115,14 @@
             android:text="·"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
-                    <TextView
+        <TextView
             android:id="@+id/university"
             android:text="university"
             android:paddingBottom="5dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </LinearLayout>
-        <LinearLayout
+    <LinearLayout
         android:id="@+id/work"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -120,7 +131,7 @@
         app:layout_constraintEnd_toEndOf="@+id/education"
         app:layout_constraintStart_toStartOf="@+id/education"
         app:layout_constraintTop_toBottomOf="@+id/education">
-                    <TextView
+        <TextView
             android:id="@+id/job"
             android:text="job"
             android:paddingBottom="5dp"
@@ -130,7 +141,7 @@
             android:text="·"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
-                    <TextView
+        <TextView
             android:id="@+id/company"
             android:text="company"
             android:paddingBottom="5dp"
@@ -156,7 +167,7 @@
             android:layout_height="0.5dp"
             android:layout_centerVertical="true"
             android:layout_gravity="center"
-                  android:alpha="0.7"
+            android:alpha="0.3"
             android:layout_weight="6"
             android:background="#999" />
 
@@ -164,7 +175,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-                  android:alpha="0.8"
+            android:alpha="0.8"
             android:text="期待"
             android:textColor="#999" />
 
@@ -172,11 +183,11 @@
             android:layout_width="0dp"
             android:layout_height="0.5dp"
             android:layout_gravity="center"
-                  android:alpha="0.7"
+            android:alpha="0.3"
             android:layout_weight="6"
             android:background="#999" />
     </LinearLayout>
-        <com.nex3z.flowlayout.FlowLayout
+    <com.nex3z.flowlayout.FlowLayout
         android:id="@+id/partner_requirement"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -186,153 +197,249 @@
         app:layout_constraintEnd_toEndOf="@+id/partner_requirement_label"
         app:layout_constraintStart_toStartOf="@+id/partner_requirement_label"
         app:layout_constraintTop_toBottomOf="@+id/partner_requirement_label">
-                    <TextView
+        <TextView
             android:id="@+id/age_require"
             android:text="age"
-            android:paddingBottom="5dp"
+            android:padding="8dp"
+            android:layout_marginBottom="3dp"
+            android:textColor="@color/color_blue"
+            android:background="@drawable/label_btn_shape"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <TextView
-            android:text="，"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-                    <TextView
             android:id="@+id/height_require"
             android:text="height"
-            android:paddingBottom="5dp"
+            android:layout_marginLeft="3dp"
+            android:layout_marginBottom="3dp"
+            android:padding="8dp"
+            android:textColor="@color/color_blue"
+            android:background="@drawable/label_btn_shape"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <TextView
-            android:text="，"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-                    <TextView
             android:id="@+id/degree_require"
             android:text="degree"
-            android:paddingBottom="5dp"
+            android:padding="8dp"
+            android:layout_marginLeft="3dp"
+            android:layout_marginBottom="3dp"
+            android:textColor="@color/color_blue"
+            android:background="@drawable/label_btn_shape"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <TextView
-            android:text="，"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-                    <TextView
             android:id="@+id/lives_require"
             android:text="lives"
-            android:paddingBottom="5dp"
+            android:padding="8dp"
+            android:layout_marginLeft="3dp"
+            android:layout_marginBottom="3dp"
+            android:textColor="@color/color_blue"
+            android:background="@drawable/label_btn_shape"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <TextView
             android:id="@+id/sex_require"
             android:text="sex"
-            android:paddingBottom="5dp"
+            android:padding="8dp"
+            android:layout_marginLeft="3dp"
+            android:layout_marginBottom="3dp"
+            android:textColor="@color/color_blue"
+            android:background="@drawable/label_btn_shape"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </com.nex3z.flowlayout.FlowLayout>
 
     <TextView
+        android:id="@+id/profile_divider"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:alpha="0.3"
+        android:background="#999"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/partner_requirement"/>
+
+    <TextView
         android:id="@+id/illustration"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="shuoming"
-        android:textColor="@android:color/holo_blue_dark"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:text="hahahahah"
+        android:textColor="@color/color_blue"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/partner_requirement"
-        tools:alpha="0.5" />
+        app:layout_constraintTop_toBottomOf="@+id/profile_divider"
+         />
 
     <TextView
-        android:id="@+id/eye_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:id="@+id/illustration_divider"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_gravity="center"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="10dp"
+        android:alpha="0.3"
+        android:background="#999"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/illustration"/>
+
+    <LinearLayout
+        android:id="@+id/interaction_wrap"
         android:gravity="center"
-        android:text="@string/fa_eye"
-        android:textColor="@android:color/holo_blue_dark"
-        app:layout_constraintStart_toStartOf="@+id/illustration"
-        app:layout_constraintTop_toBottomOf="@+id/illustration" />
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/illustration_divider">
+        <Button
+            android:id="@+id/follow"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/btn_default"
+            android:text="+关注"
+            android:elevation="5dp"
+            android:textColor="@color/color_blue" />
+
+        <Button
+            android:id="@+id/chat"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/btn_primary"
+            android:text="聊天"
+            android:elevation="5dp"
+            android:textColor="@color/colorWhite" />
+    </LinearLayout>
 
     <TextView
-        android:id="@+id/eye_statistics"
-        android:layout_width="wrap_content"
+        android:id="@+id/interaction_statistics_divider"
+        android:background="@drawable/line_half"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:alpha="0.3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/interaction_wrap" />
+
+    <LinearLayout
+        android:id="@+id/follow_statistics_wrap"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
         android:gravity="center"
-        android:textColor="@android:color/holo_blue_dark"
-        app:layout_constraintBottom_toBottomOf="@+id/eye_icon"
-        app:layout_constraintStart_toEndOf="@+id/eye_icon"
-        app:layout_constraintTop_toTopOf="@+id/eye_icon" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/interaction_statistics_divider">
+
+        <TextView
+            android:text="被关注"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/followed_count"
+            android:layout_marginLeft="3dp"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:text="|"
+            android:layout_marginLeft="18dp"
+            android:layout_marginRight="18dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:text="关注的"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/follow_count"
+            android:layout_marginLeft="3dp"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+
 
     <TextView
-        android:id="@+id/loved_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:gravity="center"
-        android:paddingLeft="18dp"
-        android:text="@string/fa_heart"
-        android:textColor="@android:color/holo_red_dark"
-        app:layout_constraintBottom_toBottomOf="@+id/eye_icon"
-        app:layout_constraintStart_toEndOf="@+id/eye_statistics"
-        app:layout_constraintTop_toTopOf="@+id/eye_icon" />
-    <TextView
-        android:id="@+id/loved_statistics"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        app:layout_constraintBottom_toBottomOf="@+id/eye_icon"
-        app:layout_constraintStart_toEndOf="@+id/loved_icon"
-        app:layout_constraintTop_toTopOf="@+id/eye_icon"
-        android:textColor="@android:color/holo_red_dark" />
-    <TextView
-        android:id="@+id/thumbs_up_icon"
-        android:text="@string/fa_thumbs_up"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@android:color/holo_blue_dark"
-        android:paddingLeft="18dp"
-        android:gravity="center"
-        app:layout_constraintStart_toEndOf="@+id/loved_statistics"
-        app:layout_constraintBottom_toBottomOf="@+id/eye_icon"
-        app:layout_constraintTop_toTopOf="@+id/eye_icon"
-        />
-    <TextView
-        android:id="@+id/thumbs_up_statistics"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@android:color/holo_blue_dark"
-        android:gravity="center"
-        app:layout_constraintStart_toEndOf="@+id/thumbs_up_icon"
-        app:layout_constraintBottom_toBottomOf="@+id/eye_icon"
-        app:layout_constraintTop_toTopOf="@+id/eye_icon"/>
+        android:id="@+id/follow_statistics_divider"
+        android:background="@drawable/line_half"
+        android:layout_width="match_parent"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_height="0dp"
+        android:alpha="0.3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/follow_statistics_wrap" />
 
-    <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/interaction_statistics_wrap"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
-        android:layout_marginBottom="8dp"
-        android:text="添加联系人"
-        android:textColor="@color/colorWhite"
-        android:background="@color/color_blue"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/name"
-        app:layout_constraintTop_toBottomOf="@+id/illustration" />
+        android:gravity="right"
+        android:layout_marginTop="18dp"
+        android:paddingBottom="18dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/follow_statistics_divider">
+        <TextView
+            android:id="@+id/eye_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/fa_eye" />
 
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:textColor="@color/colorWhite"
-        android:background="@color/color_green"
-        android:text="聊天"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/name"
-        app:layout_constraintTop_toTopOf="@+id/button" />
+        <TextView
+            android:id="@+id/eye_statistics"
+            android:layout_marginLeft="3dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
+        <TextView
+            android:id="@+id/loved_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingLeft="18dp"
+            android:text="@string/fa_heart"
+            android:textColor="@android:color/holo_red_dark" />
+
+        <TextView
+            android:id="@+id/loved_statistics"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="3dp"
+            android:gravity="center"
+            android:textColor="@android:color/holo_red_dark" />
+
+        <TextView
+            android:id="@+id/thumbs_up_icon"
+            android:text="@string/fa_thumbs_up"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/color_blue"
+            android:paddingLeft="18dp" />
+
+        <TextView
+            android:id="@+id/thumbs_up_statistics"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="3dp"
+            android:paddingRight="8dp"
+            android:textColor="@color/color_blue" />
+    </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
