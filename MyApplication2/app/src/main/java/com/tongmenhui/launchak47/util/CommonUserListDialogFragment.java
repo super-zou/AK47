@@ -40,20 +40,24 @@ import com.tongmenhui.launchak47.R;
 
 import java.lang.ref.WeakReference;
 
-public class PersonalityDetailDialogFragment extends DialogFragment {
-    private static final String TAG = "PersonalityDialogFragment";
+public class CommonUserListDialogFragment extends DialogFragment {
+    private static final String TAG = "CommonUserListDialogFragment";
     private Context mContext;
     private Dialog mDialog;
     private View view;
     private Button approve;
     private LayoutInflater inflater;
     private Handler handler;
-    private static final int LOAD_APPROVED_USERS_DONE = 0;
+    private static final int LOAD_USERS_DONE = 0;
     private static final int HIDE_APPROVE = 1;
+    private static final int PERSONALITY = 0;
+    private static final int FOLLOWED = 1;
+    private static final int FOLLOWING = 2;
     public List<MeetMemberInfo> memberInfoList = new ArrayList<>();
     private PersonalityApprovedAdapter personalityApprovedAdapter;
     private static final String GET_APPROVED_USERS_URL = HttpUtil.DOMAIN + "?q=meet/personality/approved_users";
     private static final String APPROVE_PERSONALITY_URL = HttpUtil.DOMAIN + "?q=meet/personality/approve";
+    private static final String GET_FOLLOW_USERS_URL = HttpUtil.DOMAIN + "?q=follow/get/";
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -64,15 +68,8 @@ public class PersonalityDetailDialogFragment extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        int pid = -1;
-        String personality = "";
 
         Bundle bundle = getArguments();
-        if(bundle != null){
-            personality = bundle.getString("personality");
-            pid = bundle.getInt("pid");
-        }
-
         inflater = LayoutInflater.from(mContext);
         mDialog = new Dialog(mContext, android.R.style.Theme_Light_NoTitleBar);
         mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -89,37 +86,72 @@ public class PersonalityDetailDialogFragment extends DialogFragment {
         //window.setDimAmount(0.8f);
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         window.setAttributes(layoutParams);
-        
-        TextView titleText = view.findViewById(R.id.title_text);
-        titleText.setText(personality);
 
-        handler = new PersonalityDetailDialogFragment.MyHandler(PersonalityDetailDialogFragment.this);
-        setApprovedUserView(pid);
+        initView();
+
+
+
+        TextView titleText = view.findViewById(R.id.title_text);
+
+        handler = new CommonUserListDialogFragment.MyHandler(CommonUserListDialogFragment.this);
+        int type = bundle.getInt("type", 0);
+        int uid = -1;
+        String title = "";
+        switch (type){
+            case PERSONALITY:
+                int pid = -1;
+                String personality = "";
+
+                if(bundle != null){
+                    personality = bundle.getString("personality");
+                    pid = bundle.getInt("pid");
+                }
+                titleText.setText(personality);
+                setApprovedUserView(pid);
+                break;
+            case FOLLOWED:
+                uid = bundle.getInt("uid");
+                title = bundle.getString("title");
+                titleText.setText(title);
+                setFollowUserView(type, uid);
+                break;
+            case FOLLOWING:
+                uid = bundle.getInt("uid");
+                title = bundle.getString("title");
+                titleText.setText(title);
+                setFollowUserView(type, uid);
+                break;
+        }
 
         return mDialog;
     }
-    
-    private void setApprovedUserView(final int pid){
-        TextView cancel = view.findViewById(R.id.cancel);
-        approve = view.findViewById(R.id.approve);
+
+    private void initView(){
         RecyclerView recyclerView = view.findViewById(R.id.approved_detail_list);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(linearLayoutManager);
-            
+
         personalityApprovedAdapter = new PersonalityApprovedAdapter(mContext);
         recyclerView.setAdapter(personalityApprovedAdapter);
 
-        getUserList(pid);
-
+        TextView cancel = view.findViewById(R.id.cancel);
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mDialog.dismiss();
             }
         });
-            
-                    approve.setOnClickListener(new View.OnClickListener() {
+
+    }
+    
+    private void setApprovedUserView(final int pid){
+        approve = view.findViewById(R.id.approve);
+        approve.setVisibility(View.VISIBLE);
+
+        getUserList(PERSONALITY, -1, pid);
+
+        approve.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Slog.d(TAG, "=======================approve click");
@@ -149,29 +181,54 @@ public class PersonalityDetailDialogFragment extends DialogFragment {
             }
         });
     }
+
+    private void setFollowUserView(int type, int uid){
+        getUserList(type, uid, -1);
+    }
     
-        private void getUserList(int pid){
-        final RequestBody requestBody = new FormBody.Builder()
-                                              .add("pid", String.valueOf(pid)).build();
-        HttpUtil.sendOkHttpRequest(mContext, GET_APPROVED_USERS_URL, requestBody, new Callback() {
+    private void getUserList(final int type, int uid, int pid){
+        RequestBody requestBody = null;
+        String url = "";
+        if(type == PERSONALITY){
+            requestBody = new FormBody.Builder().add("pid", String.valueOf(pid)).build();
+            url = GET_APPROVED_USERS_URL;
+        }
+
+        if(type == FOLLOWED){
+            requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
+            url = GET_FOLLOW_USERS_URL+"followed";
+        }
+
+        if(type == FOLLOWING){
+            requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
+            url = GET_FOLLOW_USERS_URL+"following";
+        }
+
+        HttpUtil.sendOkHttpRequest(mContext, url, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if(response.body() != null){
-                                        try {
+                    try {
                         String responseText = response.body().string();
                         Slog.d(TAG, "==========getPersonality  response text : "+responseText);
                         JSONObject responseObj = new JSONObject(responseText);
                         JSONArray responseArray = responseObj.optJSONArray("users");
-                        int guestUid = responseObj.optInt("guest_uid");
-                                                                    if(responseArray.length() > 0){
+                        int guestUid = -1;
+                        if(type == PERSONALITY){
+                            guestUid = responseObj.optInt("guest_uid");
+                        }
+
+                        if(responseArray.length() > 0){
                             for (int i=0; i<responseArray.length(); i++){
                                 MeetMemberInfo meetMemberInfo = new MeetMemberInfo();
                                 JSONObject member = responseArray.optJSONObject(i);
-                                if(guestUid == member.optInt("uid")){
-                                    //approve.setVisibility(View.INVISIBLE);
-                                    handler.sendEmptyMessage(HIDE_APPROVE);
+                                if(type == PERSONALITY){
+                                    if(guestUid == member.optInt("uid")){
+                                        //approve.setVisibility(View.INVISIBLE);
+                                        handler.sendEmptyMessage(HIDE_APPROVE);
+                                    }
                                 }
-                                                                meetMemberInfo.setUid(member.optInt("uid"));
+                                meetMemberInfo.setUid(member.optInt("uid"));
                                 meetMemberInfo.setSex(member.optInt("sex"));
                                 meetMemberInfo.setRealname(member.optString("realname"));
                                 meetMemberInfo.setPictureUri(member.optString("picture_uri"));
@@ -187,7 +244,7 @@ public class PersonalityDetailDialogFragment extends DialogFragment {
                                 }
                                 memberInfoList.add(meetMemberInfo);
                             }
-                            handler.sendEmptyMessage(LOAD_APPROVED_USERS_DONE);
+                            handler.sendEmptyMessage(LOAD_USERS_DONE);
                         }
                     }catch (JSONException e){
                         e.printStackTrace();
@@ -199,25 +256,25 @@ public class PersonalityDetailDialogFragment extends DialogFragment {
         });
     }
     
-        static class MyHandler extends Handler {
-        WeakReference<PersonalityDetailDialogFragment> personalityDialogFragmentWeakReference;
+    static class MyHandler extends Handler {
+        WeakReference<CommonUserListDialogFragment> commonUserListDialogFragmentWeakReference;
 
-        MyHandler(PersonalityDetailDialogFragment personalityDialogFragment) {
-            personalityDialogFragmentWeakReference = new WeakReference<PersonalityDetailDialogFragment>(personalityDialogFragment);
+        MyHandler(CommonUserListDialogFragment personalityDialogFragment) {
+            commonUserListDialogFragmentWeakReference = new WeakReference<CommonUserListDialogFragment>(personalityDialogFragment);
         }
 
         @Override
         public void handleMessage(Message message) {
-            PersonalityDetailDialogFragment personalityDialogFragment = personalityDialogFragmentWeakReference.get();
+            CommonUserListDialogFragment personalityDialogFragment = commonUserListDialogFragmentWeakReference.get();
             if(personalityDialogFragment != null){
                 personalityDialogFragment.handleMessage(message);
             }
         }
     }
     
-        public void handleMessage(Message message) {
+    public void handleMessage(Message message) {
         switch (message.what) {
-            case LOAD_APPROVED_USERS_DONE:
+            case LOAD_USERS_DONE:
                     personalityApprovedAdapter.setData(memberInfoList);
                     personalityApprovedAdapter.notifyDataSetChanged();
                     break;

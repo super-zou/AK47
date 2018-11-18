@@ -49,7 +49,7 @@ import com.willy.ratingbar.BaseRatingBar;
 import com.willy.ratingbar.ScaleRatingBar;
 import android.widget.Toast;
 import com.tongmenhui.launchak47.util.PersonalityEditDialogFragment;
-import com.tongmenhui.launchak47.util.PersonalityDetailDialogFragment;
+import com.tongmenhui.launchak47.util.CommonUserListDialogFragment;
 import com.tongmenhui.launchak47.util.Utility;
 
 import org.json.JSONArray;
@@ -83,6 +83,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
     private static final String LOAD_HOBBY_URL = HttpUtil.DOMAIN + "?q=personal_archive/hobby/load";
     private static final String FOLLOW_ACTION_URL = HttpUtil.DOMAIN + "?q=follow/action/";
     private static final String GET_FOLLOW_URL = HttpUtil.DOMAIN + "?q=follow/get/";
+    private static final String GET_FOLLOW_STATISTICS_URL = HttpUtil.DOMAIN + "?q=follow/statistics";
     private static final String GET_FOLLOW_STATUS_URL = HttpUtil.DOMAIN + "?q=follow/isFollowed";
 
     private List<MeetDynamics> mMeetList = new ArrayList<>();
@@ -98,6 +99,10 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
     private static final int LOAD_PERSONALITY_DONE = 7;
     private static final int LOAD_HOBBY_DONE = 8;
     private static final int GET_FOLLOW_DONE = 9;
+    private static final int GET_FOLLOW_STATISTICS_URL_DONE = 10;
+
+    private static final int FOLLOWED = 1;
+    private static final int FOLLOWING = 2;
     private static final int PAGE_SIZE = 6;
 
     private static final int TYPE_HOBBY = 0;
@@ -376,50 +381,66 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
 
     private void getFollowStatistics(){
         RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(mMeetMember.getUid())).build();
-        HttpUtil.sendOkHttpRequest(ArchivesActivity.this, GET_FOLLOW_URL+"followed", requestBody, new Callback() {
+        HttpUtil.sendOkHttpRequest(ArchivesActivity.this, GET_FOLLOW_STATISTICS_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if(response.body() != null){
                     String responseText = response.body().string();
                     //if(isDebug)
-                    Slog.d(TAG, "==========getFollowed count : "+responseText);
-                    /*
+                    Slog.d(TAG, "==========getFollow statistics : "+responseText);
                     try {
-                        JSONObject status = new JSONObject(responseText);
-                        isFollowed = status.optBoolean("isFollowed");
-                        handler.sendEmptyMessage(GET_FOLLOW_DONE);
+                        JSONObject followObject = new JSONObject(responseText);
+                        int following_count = followObject.optInt("following_count");
+                        int followed_count = followObject.optInt("followed_count");
+                        if(following_count !=0 || followed_count != 0){
+                            Bundle bundle = new Bundle();
+                            bundle.putInt("following_count", following_count);
+                            bundle.putInt("followed_count", followed_count);
+                            Message msg = new Message();
+                            msg.setData(bundle);
+                            msg.what = GET_FOLLOW_STATISTICS_URL_DONE;
+                            handler.sendMessage(msg);
+                        }
                     }catch (JSONException e){
                         e.printStackTrace();
                     }
-                    */
-
                 }
             }
             @Override
             public void onFailure(Call call, IOException e) {}
         });
-        HttpUtil.sendOkHttpRequest(ArchivesActivity.this, GET_FOLLOW_URL+"following", requestBody, new Callback() {
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if(response.body() != null){
-                    String responseText = response.body().string();
-                    //if(isDebug)
-                        Slog.d(TAG, "==========getFollowing count : "+responseText);
-                    /*
-                    try {
-                        JSONObject status = new JSONObject(responseText);
-                        isFollowed = status.optBoolean("isFollowed");
-                        handler.sendEmptyMessage(GET_FOLLOW_DONE);
-                    }catch (JSONException e){
-                        e.printStackTrace();
-                    }
-                    */
 
-                }
-            }
+        LinearLayout followingCountWrap = mArchiveProfile.findViewById(R.id.following_count_wrap);
+        LinearLayout followedCountWrap = mArchiveProfile.findViewById(R.id.followed_count_wrap);
+        final TextView followedCount = mArchiveProfile.findViewById(R.id.followed_count);
+        final TextView followingCount = mArchiveProfile.findViewById(R.id.following_count);
+        followedCountWrap.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onFailure(Call call, IOException e) {}
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putInt("type", FOLLOWED);
+                bundle.putInt("uid", mMeetMember.getUid());
+                bundle.putString("title", "被关注"+followedCount.getText());
+                CommonUserListDialogFragment commonUserListDialogFragment = new CommonUserListDialogFragment();
+                commonUserListDialogFragment.setArguments(bundle);
+                commonUserListDialogFragment.show(getSupportFragmentManager(), "CommonUserListDialogFragment");
+            }
         });
+
+        followingCountWrap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putInt("type", FOLLOWING);
+                bundle.putInt("uid", mMeetMember.getUid());
+                bundle.putString("title", "关注的"+followingCount.getText());
+                CommonUserListDialogFragment commonUserListDialogFragment = new CommonUserListDialogFragment();
+                commonUserListDialogFragment.setArguments(bundle);
+                commonUserListDialogFragment.show(getSupportFragmentManager(), "CommonUserListDialogFragment");
+            }
+        });
+
+
     }
 
     private void processFollowAction(){
@@ -464,7 +485,17 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
         });
     }
 
+    private void setFollowStatistics(Bundle bundle){
+        TextView followedCount = mArchiveProfile.findViewById(R.id.followed_count);
+        TextView followingCount = mArchiveProfile.findViewById(R.id.following_count);
+        if(bundle.getInt("followed_count") > 0){
+            followedCount.setText(String.valueOf(bundle.getInt("followed_count")));
+        }
 
+        if(bundle.getInt("following_count") > 0){
+            followingCount.setText(String.valueOf(bundle.getInt("following_count")));
+        }
+    }
 
     private void processChatAction(int uid){
 
@@ -798,12 +829,12 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
             personality.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    final PersonalityDetailDialogFragment personalityDetailDialogFragment = new PersonalityDetailDialogFragment();
+                    final CommonUserListDialogFragment commonUserListDialogFragment = new CommonUserListDialogFragment();
                     Bundle bundle = new Bundle();
                     bundle.putInt("pid", pid);
                     bundle.putString("personality", personality.getText().toString());
-                    personalityDetailDialogFragment.setArguments(bundle);
-                    personalityDetailDialogFragment.show(getSupportFragmentManager(), "PersonalityDetailDialogFragment");
+                    commonUserListDialogFragment.setArguments(bundle);
+                    commonUserListDialogFragment.show(getSupportFragmentManager(), "CommonUserListDialogFragment");
                 }
             });
         }
@@ -1189,6 +1220,8 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
             case GET_FOLLOW_DONE:
                 processFollowAction();
                 break;
+            case GET_FOLLOW_STATISTICS_URL_DONE:
+                setFollowStatistics(bundle);
             default:
                 break;
         }

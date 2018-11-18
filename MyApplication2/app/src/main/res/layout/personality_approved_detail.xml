@@ -41,6 +41,7 @@
         
         <Button
             android:id="@+id/approve"
+            android:visibility="gone"
             android:textSize="15dp"
             android:textColor="@color/color_blue"
             android:background="@drawable/label_btn_shape"
