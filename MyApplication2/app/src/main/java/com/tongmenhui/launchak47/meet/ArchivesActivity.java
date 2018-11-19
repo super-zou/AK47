@@ -82,9 +82,10 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
     private static final String GET_PERSONALITY_URL = HttpUtil.DOMAIN + "?q=meet/personality/get";
     private static final String LOAD_HOBBY_URL = HttpUtil.DOMAIN + "?q=personal_archive/hobby/load";
     private static final String FOLLOW_ACTION_URL = HttpUtil.DOMAIN + "?q=follow/action/";
-    private static final String GET_FOLLOW_URL = HttpUtil.DOMAIN + "?q=follow/get/";
     private static final String GET_FOLLOW_STATISTICS_URL = HttpUtil.DOMAIN + "?q=follow/statistics";
     private static final String GET_FOLLOW_STATUS_URL = HttpUtil.DOMAIN + "?q=follow/isFollowed";
+    private static final String GET_LOVE_STATISTICS_URL = HttpUtil.DOMAIN + "?q=meet/love/statistics";
+    private static final String GET_PRAISE_STATISTICS_URL = HttpUtil.DOMAIN + "?q=meet/praise/statistics";
 
     private List<MeetDynamics> mMeetList = new ArrayList<>();
     private List<ImpressionStatistics> mImpressionStatisticsList = new ArrayList<>();
@@ -100,9 +101,16 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
     private static final int LOAD_HOBBY_DONE = 8;
     private static final int GET_FOLLOW_DONE = 9;
     private static final int GET_FOLLOW_STATISTICS_URL_DONE = 10;
+        private static final int GET_PRAISE_STATISTICS_URL_DONE = 11;
+    private static final int GET_LOVE_STATISTICS_URL_DONE = 12;
 
     private static final int FOLLOWED = 1;
     private static final int FOLLOWING = 2;
+        private static final int PRAISED = 3;
+    private static final int PRAISE = 4;
+    private static final int LOVED = 5;
+    private static final int LOVE = 6;
+    
     private static final int PAGE_SIZE = 6;
 
     private static final int TYPE_HOBBY = 0;
@@ -340,7 +348,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
         ageRequirement.setText(mMeetMember.getAgeLower()+"~"+ mMeetMember.getAgeUpper());
         heightRequirement.setText(String.valueOf(mMeetMember.getRequirementHeight())+"CM");
         degreeRequirement.setText(mMeetMember.getDegreeName(mMeetMember.getRequirementDegree())+"学历");
-        livesRequirement.setText("住在"+mMeetMember.getRequirementLives());
+        livesRequirement.setText(mMeetMember.getRequirementLives());
         sexRequirement.setText(mMeetMember.getRequirementSex());
         
         illustration.setText(mMeetMember.getIllustration());
@@ -350,6 +358,8 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
 
         getFollowStatus(mMeetMember.getUid());
         getFollowStatistics();
+        getPraiseStatistics();
+        getLoveStatistics();
 
         processChatAction(mMeetMember.getUid());
 
@@ -420,7 +430,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
                 Bundle bundle = new Bundle();
                 bundle.putInt("type", FOLLOWED);
                 bundle.putInt("uid", mMeetMember.getUid());
-                bundle.putString("title", "被关注"+followedCount.getText());
+                bundle.putString("title", "被关注 "+followedCount.getText());
                 CommonUserListDialogFragment commonUserListDialogFragment = new CommonUserListDialogFragment();
                 commonUserListDialogFragment.setArguments(bundle);
                 commonUserListDialogFragment.show(getSupportFragmentManager(), "CommonUserListDialogFragment");
@@ -433,7 +443,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
                 Bundle bundle = new Bundle();
                 bundle.putInt("type", FOLLOWING);
                 bundle.putInt("uid", mMeetMember.getUid());
-                bundle.putString("title", "关注的"+followingCount.getText());
+                bundle.putString("title", "关注的 "+followingCount.getText());
                 CommonUserListDialogFragment commonUserListDialogFragment = new CommonUserListDialogFragment();
                 commonUserListDialogFragment.setArguments(bundle);
                 commonUserListDialogFragment.show(getSupportFragmentManager(), "CommonUserListDialogFragment");
@@ -442,6 +452,126 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
 
 
     }
+    
+        private void getPraiseStatistics(){
+        RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(mMeetMember.getUid())).build();
+        HttpUtil.sendOkHttpRequest(ArchivesActivity.this, GET_PRAISE_STATISTICS_URL, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if(response.body() != null){
+                    String responseText = response.body().string();
+                    //if(isDebug)
+                                        Slog.d(TAG, "==========getPraiseStatistics statistics : "+responseText);
+                    try {
+                        JSONObject praiseObject = new JSONObject(responseText);
+                        int praise_count = praiseObject.optInt("praise_count");
+                        int praised_count = praiseObject.optInt("praised_count");
+                        if(praise_count !=0 || praised_count != 0){
+                            Bundle bundle = new Bundle();
+                            bundle.putInt("praise_count", praise_count);
+                            bundle.putInt("praised_count", praised_count);
+                            Message msg = new Message();
+                            msg.setData(bundle);
+                            msg.what = GET_PRAISE_STATISTICS_URL_DONE;
+                            handler.sendMessage(msg);
+                        }
+                    }catch (JSONException e){
+                        e.printStackTrace();
+                    }
+                    }
+            }
+            @Override
+            public void onFailure(Call call, IOException e) {}
+        });
+
+        LinearLayout praiseCountWrap = mArchiveProfile.findViewById(R.id.praise_count_wrap);
+        LinearLayout praisedCountWrap = mArchiveProfile.findViewById(R.id.praised_count_wrap);
+        final TextView praisedCount = mArchiveProfile.findViewById(R.id.praised_count);
+        final TextView praiseCount = mArchiveProfile.findViewById(R.id.praise_count);
+                    praisedCountWrap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putInt("type", PRAISED);
+                bundle.putInt("uid", mMeetMember.getUid());
+                bundle.putString("title", "被赞 "+praisedCount.getText());
+                CommonUserListDialogFragment commonUserListDialogFragment = new CommonUserListDialogFragment();
+                commonUserListDialogFragment.setArguments(bundle);
+                commonUserListDialogFragment.show(getSupportFragmentManager(), "CommonUserListDialogFragment");
+            }
+        });
+                    praiseCountWrap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putInt("type", PRAISE);
+                bundle.putInt("uid", mMeetMember.getUid());
+                bundle.putString("title", "赞过的 "+praiseCount.getText());
+                CommonUserListDialogFragment commonUserListDialogFragment = new CommonUserListDialogFragment();
+                commonUserListDialogFragment.setArguments(bundle);
+                commonUserListDialogFragment.show(getSupportFragmentManager(), "CommonUserListDialogFragment");
+            }
+        });
+    }
+    
+        private void getLoveStatistics(){
+        RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(mMeetMember.getUid())).build();
+        HttpUtil.sendOkHttpRequest(ArchivesActivity.this, GET_LOVE_STATISTICS_URL, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if(response.body() != null){
+                    String responseText = response.body().string();
+                    //if(isDebug)
+                                        Slog.d(TAG, "==========getLoveStatistics statistics : "+responseText);
+                    try {
+                        JSONObject loveObject = new JSONObject(responseText);
+                        int loveCount = loveObject.optInt("love_count");
+                        int lovedCount = loveObject.optInt("loved_count");
+                        if(loveCount !=0 || lovedCount != 0){
+                            Bundle bundle = new Bundle();
+                            bundle.putInt("love_count", loveCount);
+                            bundle.putInt("loved_count", lovedCount);
+                            Message msg = new Message();
+                            msg.setData(bundle);
+                            msg.what = GET_LOVE_STATISTICS_URL_DONE;
+                            handler.sendMessage(msg);
+                        }
+                         }catch (JSONException e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+            @Override
+            public void onFailure(Call call, IOException e) {}
+        });
+            LinearLayout loveCountWrap = mArchiveProfile.findViewById(R.id.love_count_wrap);
+        LinearLayout lovedCountWrap = mArchiveProfile.findViewById(R.id.loved_count_wrap);
+        final TextView lovedCount = mArchiveProfile.findViewById(R.id.loved_count);
+        final TextView loveCount = mArchiveProfile.findViewById(R.id.love_count);
+        lovedCountWrap.setOnClickListener(new View.OnClickListener() {
+            @Override
+             public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putInt("type", LOVED);
+                bundle.putInt("uid", mMeetMember.getUid());
+                bundle.putString("title", "被喜欢 "+lovedCount.getText());
+                CommonUserListDialogFragment commonUserListDialogFragment = new CommonUserListDialogFragment();
+                commonUserListDialogFragment.setArguments(bundle);
+                commonUserListDialogFragment.show(getSupportFragmentManager(), "CommonUserListDialogFragment");
+            }
+        });
+        loveCountWrap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putInt("type", LOVE);
+                bundle.putInt("uid", mMeetMember.getUid());
+                bundle.putString("title", "喜欢的 "+loveCount.getText());
+                CommonUserListDialogFragment commonUserListDialogFragment = new CommonUserListDialogFragment();
+                commonUserListDialogFragment.setArguments(bundle);
+                commonUserListDialogFragment.show(getSupportFragmentManager(), "CommonUserListDialogFragment");
+            }
+        });
 
     private void processFollowAction(){
         final Button followBtn = mArchiveProfile.findViewById(R.id.follow);
@@ -494,6 +624,30 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
 
         if(bundle.getInt("following_count") > 0){
             followingCount.setText(String.valueOf(bundle.getInt("following_count")));
+        }
+    }
+            
+    private void setPraiseStatistics(Bundle bundle){
+        TextView praisedCount = mArchiveProfile.findViewById(R.id.praised_count);
+        TextView praiseCount = mArchiveProfile.findViewById(R.id.praise_count);
+        if(bundle.getInt("praised_count") > 0){
+            praisedCount.setText(String.valueOf(bundle.getInt("praised_count")));
+        }
+
+        if(bundle.getInt("praise_count") > 0){
+            praiseCount.setText(String.valueOf(bundle.getInt("praise_count")));
+        }
+    }
+    
+   private void setLoveStatistics(Bundle bundle){
+        TextView lovedCount = mArchiveProfile.findViewById(R.id.loved_count);
+        TextView loveCount = mArchiveProfile.findViewById(R.id.love_count);
+        if(bundle.getInt("loved_count") > 0){
+            lovedCount.setText(String.valueOf(bundle.getInt("loved_count")));
+        }
+
+        if(bundle.getInt("love_count") > 0){
+            loveCount.setText(String.valueOf(bundle.getInt("love_count")));
         }
     }
 
@@ -1222,6 +1376,13 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
                 break;
             case GET_FOLLOW_STATISTICS_URL_DONE:
                 setFollowStatistics(bundle);
+                break;
+            case GET_PRAISE_STATISTICS_URL_DONE:
+                setPraiseStatistics(bundle);
+                break;
+            case GET_LOVE_STATISTICS_URL_DONE:
+                setLoveStatistics(bundle);
+                break;
             default:
                 break;
         }
