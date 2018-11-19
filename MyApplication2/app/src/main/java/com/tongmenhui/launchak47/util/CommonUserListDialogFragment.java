@@ -53,39 +53,31 @@ public class CommonUserListDialogFragment extends DialogFragment {
     private static final int PERSONALITY = 0;
     private static final int FOLLOWED = 1;
     private static final int FOLLOWING = 2;
+        private static final int PRAISED = 3;
+    private static final int PRAISE = 4;
+    private static final int LOVED = 5;
+    private static final int LOVE = 6;
     public List<MeetMemberInfo> memberInfoList = new ArrayList<>();
     private PersonalityApprovedAdapter personalityApprovedAdapter;
     private static final String GET_APPROVED_USERS_URL = HttpUtil.DOMAIN + "?q=meet/personality/approved_users";
     private static final String APPROVE_PERSONALITY_URL = HttpUtil.DOMAIN + "?q=meet/personality/approve";
     private static final String GET_FOLLOW_USERS_URL = HttpUtil.DOMAIN + "?q=follow/get/";
+    private static final String GET_LOVE_USERS_URL = HttpUtil.DOMAIN + "?q=meet/love_detail/";
+    private static final String GET_PRAISE_USERS_URL = HttpUtil.DOMAIN + "?q=meet/praise_detail/";
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         mContext = context;
-
+        handler = new CommonUserListDialogFragment.MyHandler(CommonUserListDialogFragment.this);
     }
     
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
+        int uid = -1;
+        String title = "";
         Bundle bundle = getArguments();
-        inflater = LayoutInflater.from(mContext);
-        mDialog = new Dialog(mContext, android.R.style.Theme_Light_NoTitleBar);
-        mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-
-        view = inflater.inflate(R.layout.personality_approved_detail, null);
-        //mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        mDialog.setContentView(view);
-        mDialog.setCanceledOnTouchOutside(true);
-        Window window = mDialog.getWindow();
-        WindowManager.LayoutParams layoutParams = window.getAttributes();
-        layoutParams.gravity = Gravity.TOP;
-        layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
-        layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT;
-        //window.setDimAmount(0.8f);
-        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-        window.setAttributes(layoutParams);
 
         initView();
 
@@ -121,12 +113,53 @@ public class CommonUserListDialogFragment extends DialogFragment {
                 titleText.setText(title);
                 setFollowUserView(type, uid);
                 break;
+                 case PRAISED:
+                uid = bundle.getInt("uid");
+                title = bundle.getString("title");
+                titleText.setText(title);
+                setFollowUserView(type, uid);
+                break;
+            case PRAISE:
+                uid = bundle.getInt("uid");
+                title = bundle.getString("title");
+                titleText.setText(title);
+                setFollowUserView(type, uid);
+                break;
+            case LOVED:
+                uid = bundle.getInt("uid");
+                title = bundle.getString("title");
+                titleText.setText(title);
+                setFollowUserView(type, uid);
+                break;
+            case LOVE:
+                uid = bundle.getInt("uid");
+                title = bundle.getString("title");
+                titleText.setText(title);
+                setFollowUserView(type, uid);
+                break;
         }
 
         return mDialog;
     }
 
     private void initView(){
+        inflater = LayoutInflater.from(mContext);
+        mDialog = new Dialog(mContext, android.R.style.Theme_Light_NoTitleBar);
+        mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        view = inflater.inflate(R.layout.personality_approved_detail, null);
+        //mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        mDialog.setContentView(view);
+        mDialog.setCanceledOnTouchOutside(true);
+        Window window = mDialog.getWindow();
+        WindowManager.LayoutParams layoutParams = window.getAttributes();
+        layoutParams.gravity = Gravity.TOP;
+        layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
+        layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT;
+        //window.setDimAmount(0.8f);
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+        window.setAttributes(layoutParams);
+        
         RecyclerView recyclerView = view.findViewById(R.id.approved_detail_list);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -189,20 +222,37 @@ public class CommonUserListDialogFragment extends DialogFragment {
     private void getUserList(final int type, int uid, int pid){
         RequestBody requestBody = null;
         String url = "";
-        if(type == PERSONALITY){
-            requestBody = new FormBody.Builder().add("pid", String.valueOf(pid)).build();
-            url = GET_APPROVED_USERS_URL;
-        }
-
-        if(type == FOLLOWED){
-            requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
-            url = GET_FOLLOW_USERS_URL+"followed";
-        }
-
-        if(type == FOLLOWING){
-            requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
-            url = GET_FOLLOW_USERS_URL+"following";
-        }
+        switch (type){
+            case PERSONALITY:
+                requestBody = new FormBody.Builder().add("pid", String.valueOf(pid)).build();
+                url = GET_APPROVED_USERS_URL;
+                break;
+            case FOLLOWED:
+                requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
+                url = GET_FOLLOW_USERS_URL+"followed";
+                break;
+            case FOLLOWING:
+                requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
+                url = GET_FOLLOW_USERS_URL+"following";
+                break;
+            case PRAISED:
+                requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
+                url = GET_PRAISE_USERS_URL+"praised";
+                break;
+            case PRAISE:
+                requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
+                url = GET_PRAISE_USERS_URL+"praise";
+                break;
+           case LOVED:
+                requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
+                url = GET_LOVE_USERS_URL+"loved";
+                break;
+            case LOVE:
+                requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
+                url = GET_LOVE_USERS_URL+"love";
+                break;
+                default:
+                    break;
 
         HttpUtil.sendOkHttpRequest(mContext, url, requestBody, new Callback() {
             @Override
@@ -218,7 +268,7 @@ public class CommonUserListDialogFragment extends DialogFragment {
                             guestUid = responseObj.optInt("guest_uid");
                         }
 
-                        if(responseArray.length() > 0){
+                        if(responseArray != null && responseArray.length() > 0){
                             for (int i=0; i<responseArray.length(); i++){
                                 MeetMemberInfo meetMemberInfo = new MeetMemberInfo();
                                 JSONObject member = responseArray.optJSONObject(i);
