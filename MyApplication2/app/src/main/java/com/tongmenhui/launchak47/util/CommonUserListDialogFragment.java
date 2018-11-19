@@ -81,14 +81,11 @@ public class CommonUserListDialogFragment extends DialogFragment {
 
         initView();
 
-
-
         TextView titleText = view.findViewById(R.id.title_text);
 
         handler = new CommonUserListDialogFragment.MyHandler(CommonUserListDialogFragment.this);
         int type = bundle.getInt("type", 0);
-        int uid = -1;
-        String title = "";
+
         switch (type){
             case PERSONALITY:
                 int pid = -1;
@@ -222,38 +219,38 @@ public class CommonUserListDialogFragment extends DialogFragment {
     private void getUserList(final int type, int uid, int pid){
         RequestBody requestBody = null;
         String url = "";
-        switch (type){
+        switch (type) {
             case PERSONALITY:
                 requestBody = new FormBody.Builder().add("pid", String.valueOf(pid)).build();
                 url = GET_APPROVED_USERS_URL;
                 break;
             case FOLLOWED:
                 requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
-                url = GET_FOLLOW_USERS_URL+"followed";
+                url = GET_FOLLOW_USERS_URL + "followed";
                 break;
             case FOLLOWING:
                 requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
-                url = GET_FOLLOW_USERS_URL+"following";
+                url = GET_FOLLOW_USERS_URL + "following";
                 break;
             case PRAISED:
                 requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
-                url = GET_PRAISE_USERS_URL+"praised";
+                url = GET_PRAISE_USERS_URL + "praised";
                 break;
             case PRAISE:
                 requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
-                url = GET_PRAISE_USERS_URL+"praise";
+                url = GET_PRAISE_USERS_URL + "praise";
                 break;
-           case LOVED:
+            case LOVED:
                 requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
-                url = GET_LOVE_USERS_URL+"loved";
+                url = GET_LOVE_USERS_URL + "loved";
                 break;
             case LOVE:
                 requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
-                url = GET_LOVE_USERS_URL+"love";
+                url = GET_LOVE_USERS_URL + "love";
                 break;
-                default:
-                    break;
-
+            default:
+                break;
+        }
         HttpUtil.sendOkHttpRequest(mContext, url, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {

@@ -227,16 +227,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <TextView
-            android:id="@+id/lives_require"
-            android:text="lives"
-            android:padding="8dp"
-            android:layout_marginLeft="3dp"
-            android:layout_marginBottom="3dp"
-            android:textColor="@color/color_blue"
-            android:background="@drawable/label_btn_shape"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <TextView
             android:id="@+id/sex_require"
             android:text="sex"
             android:padding="8dp"
@@ -246,6 +236,17 @@
             android:background="@drawable/label_btn_shape"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/lives_require"
+            android:text="lives"
+            android:padding="8dp"
+            android:layout_marginLeft="3dp"
+            android:layout_marginBottom="3dp"
+            android:textColor="@color/color_blue"
+            android:background="@drawable/label_btn_shape"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
     </com.nex3z.flowlayout.FlowLayout>
 
     <TextView
@@ -355,6 +356,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
             <TextView
+                android:id="@+id/followed_count_title"
                 android:text="被关注"
                 android:textSize="16sp"
                 android:layout_width="wrap_content"
@@ -380,6 +382,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
             <TextView
+                android:id="@+id/following_count_title"
                 android:text="关注的"
                 android:textSize="16sp"
                 android:layout_width="wrap_content"
@@ -412,6 +415,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
             <TextView
+                android:id="@+id/praised_count_title"
                 android:textSize="16sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -437,7 +441,8 @@
             android:id="@+id/praise_count_wrap"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
-                   <TextView
+            <TextView
+                android:id="@+id/praise_count_title"
                 android:textSize="16sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -472,10 +477,11 @@
             android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/loved_count_title"
                 android:textSize="16sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="被喜欢" />
+                android:text="喜欢我的" />
             <TextView
                 android:id="@+id/loved_count"
                 android:textSize="16sp"
@@ -485,7 +491,7 @@
                 android:textColor="@color/black"
                 android:textStyle="bold" />
         </LinearLayout>
-                <TextView
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="18dp"
@@ -496,11 +502,12 @@
             android:id="@+id/love_count_wrap"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
-                        <TextView
+            <TextView
+                android:id="@+id/love_count_title"
                 android:textSize="16sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="喜欢的" />
+                android:text="我喜欢的" />
 
             <TextView
                 android:textSize="16sp"
@@ -538,18 +545,21 @@
         app:layout_constraintTop_toBottomOf="@+id/follow_statistics_divider">
         <TextView
             android:id="@+id/eye_icon"
+            android:textSize="18sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/fa_eye" />
 
         <TextView
             android:id="@+id/eye_statistics"
+            android:textSize="18sp"
             android:layout_marginLeft="3dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
         <TextView
             android:id="@+id/loved_icon"
+            android:textSize="18sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -559,6 +569,7 @@
 
         <TextView
             android:id="@+id/loved_statistics"
+            android:textSize="18sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="3dp"
@@ -566,7 +577,8 @@
             android:textColor="@android:color/holo_red_dark" />
 
         <TextView
-            android:id="@+id/thumbs_up_icon"
+            android:id="@+id/praised_icon"
+            android:textSize="18sp"
             android:text="@string/fa_thumbs_up"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -574,7 +586,8 @@
             android:paddingLeft="18dp" />
 
         <TextView
-            android:id="@+id/thumbs_up_statistics"
+            android:id="@+id/praised_statistics"
+            android:textSize="18sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="3dp"
