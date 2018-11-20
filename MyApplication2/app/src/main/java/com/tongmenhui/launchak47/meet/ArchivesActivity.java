@@ -105,6 +105,12 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
     private static final int GET_FOLLOW_STATISTICS_URL_DONE = 10;
         private static final int GET_PRAISE_STATISTICS_URL_DONE = 11;
     private static final int GET_LOVE_STATISTICS_URL_DONE = 12;
+    
+        private static final int UPDATE_LOVED_COUNT = 13;
+    private static final int UPDATE_PRAISED_COUNT = 14;
+
+    private boolean isLoved = false;
+    private boolean isPraised = false;
 
     private static final int FOLLOWED = 1;
     private static final int FOLLOWING = 2;
@@ -347,7 +353,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
             job.setText(mMeetMember.getJobTitle());
             company.setText(mMeetMember.getCompany());
         }
-        ageRequirement.setText(mMeetMember.getAgeLower()+"~"+ mMeetMember.getAgeUpper());
+        ageRequirement.setText(mMeetMember.getAgeLower()+"~"+ mMeetMember.getAgeUpper()+"岁");
         heightRequirement.setText(String.valueOf(mMeetMember.getRequirementHeight())+"CM");
         degreeRequirement.setText(mMeetMember.getDegreeName(mMeetMember.getRequirementDegree())+"学历");
         livesRequirement.setText(mMeetMember.getRequirementLives());
@@ -362,8 +368,6 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
         getFollowStatistics();
         getPraiseStatistics();
         getLoveStatistics();
-
-        processInterAction();//process love or praise action
 
         processChatAction(mMeetMember.getUid());
 
@@ -474,6 +478,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
                             Bundle bundle = new Bundle();
                             bundle.putInt("praise_count", praise_count);
                             bundle.putInt("praised_count", praised_count);
+                            isPraised = praiseObject.optBoolean("isPraised");
                             Message msg = new Message();
                             msg.setData(bundle);
                             msg.what = GET_PRAISE_STATISTICS_URL_DONE;
@@ -531,15 +536,16 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
                             JSONObject loveObject = new JSONObject(responseText);
                             int loveCount = loveObject.optInt("love_count");
                             int lovedCount = loveObject.optInt("loved_count");
-                            if (loveCount != 0 || lovedCount != 0) {
-                                Bundle bundle = new Bundle();
-                                bundle.putInt("love_count", loveCount);
-                                bundle.putInt("loved_count", lovedCount);
-                                Message msg = new Message();
-                                msg.setData(bundle);
-                                msg.what = GET_LOVE_STATISTICS_URL_DONE;
-                                handler.sendMessage(msg);
-                            }
+                            isLoved = loveObject.optBoolean("isLoved");
+                           
+                            Bundle bundle = new Bundle();
+                            bundle.putInt("love_count", loveCount);
+                            bundle.putInt("loved_count", lovedCount);
+                            Message msg = new Message();
+                            msg.setData(bundle);
+                            msg.what = GET_LOVE_STATISTICS_URL_DONE;
+                            handler.sendMessage(msg);
+                            
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -648,34 +654,45 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
         if(bundle.getInt("praise_count") > 0){
             praiseCount.setText(String.valueOf(bundle.getInt("praise_count")));
         }
+        
+        processPraiseAction();
     }
     
    private void setLoveStatistics(Bundle bundle){
         TextView lovedCount = mArchiveProfile.findViewById(R.id.loved_count);
         TextView loveCount = mArchiveProfile.findViewById(R.id.love_count);
         TextView lovedStatistics = mArchiveProfile.findViewById(R.id.loved_statistics);
+        if(bundle != null){
+           if(bundle.getInt("loved_count") > 0){
+                lovedCount.setText(String.valueOf(bundle.getInt("loved_count")));
+                lovedStatistics.setText(String.valueOf(bundle.getInt("loved_count")));
+            }
 
-        if(bundle.getInt("loved_count") > 0){
-
-            lovedCount.setText(String.valueOf(bundle.getInt("loved_count")));
-            lovedStatistics.setText(String.valueOf(bundle.getInt("loved_count")));
+            if(bundle.getInt("love_count") > 0){
+                loveCount.setText(String.valueOf(bundle.getInt("love_count")));
+            }
         }
 
-        if(bundle.getInt("love_count") > 0){
-            loveCount.setText(String.valueOf(bundle.getInt("love_count")));
-        }
+       
+        processLoveAction();//process love or praise action();
     }
 
     private void processChatAction(int uid){
 
     }
 
-    private void processInterAction(){
+    private void processLoveAction(){
 
-        getInterAction();
-
-        TextView loveIcon = mArchiveProfile.findViewById(R.id.loved_icon);
-        TextView praiseIcon = mArchiveProfile.findViewById(R.id.praised_icon);
+        final TextView loveIcon = mArchiveProfile.findViewById(R.id.loved_icon);
+        final TextView loveCount = mArchiveProfile.findViewById(R.id.loved_statistics);
+        Slog.d(TAG, "===============processLoveAction isLoved: "+isLoved);
+        if(isLoved){
+            loveIcon.setEnabled(false);
+            loveCount.setEnabled(false);
+        }else {
+            loveIcon.setEnabled(true);
+            loveCount.setEnabled(true);
+        }
         final RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(mMeetMember.getUid())).build();
 
         loveIcon.setOnClickListener(new View.OnClickListener() {
@@ -693,11 +710,48 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
                     @Override
                     public void onFailure(Call call, IOException e) {}
                 });
-
+                isLoved = true;
+                loveIcon.setEnabled(false);
+                loveCount.setEnabled(false);
+                handler.sendEmptyMessage(UPDATE_LOVED_COUNT);
             }
         });
+        
+        loveCount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                HttpUtil.sendOkHttpRequest(ArchivesActivity.this, LOVE_ADD_URL, requestBody, new Callback() {
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        if(response.body() != null){
+                            String responseText = response.body().string();
+                            //if(isDebug)
+                                Slog.d(TAG, "==========love add response text : "+responseText);
+                        }
+                    }
+                    @Override
+                    public void onFailure(Call call, IOException e) {}
+                });
+                isLoved = true;
+                loveIcon.setEnabled(false);
+                loveCount.setEnabled(false);
+                handler.sendEmptyMessage(UPDATE_LOVED_COUNT);
+            }
+        });
+        
+    }
+    
+  private void processPraiseAction(){
+        TextView praisedIcon = mArchiveProfile.findViewById(R.id.praised_icon);
+        TextView praisedCount = mArchiveProfile.findViewById(R.id.praised_statistics);
 
-        praiseIcon.setOnClickListener(new View.OnClickListener() {
+        if(isPraised){
+           // praisedIcon.setTextColor(R.color.holo_red_dark);
+          //  praisedIcon.setTextColor(getResources().getColor(R.color.h));
+            praisedIcon.setSelected(true);
+        }
+        final RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(mMeetMember.getUid())).build();
+      praisedIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 HttpUtil.sendOkHttpRequest(ArchivesActivity.this, PRAISE_ADD_URL, requestBody, new Callback() {
@@ -705,20 +759,36 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
                     public void onResponse(Call call, Response response) throws IOException {
                         if(response.body() != null){
                             String responseText = response.body().string();
-                            //if(isDebug)
-                                Slog.d(TAG, "==========praise add response text : "+responseText);
+                            if(isDebug)  Slog.d(TAG, "==========praise add response text : "+responseText);
                         }
                     }
                     @Override
                     public void onFailure(Call call, IOException e) {}
                 });
+                handler.sendEmptyMessage(UPDATE_PRAISED_COUNT);
             }
         });
-    }
+              praisedCount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                HttpUtil.sendOkHttpRequest(ArchivesActivity.this, PRAISE_ADD_URL, requestBody, new Callback() {
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        if(response.body() != null){
+                            String responseText = response.body().string();
+                            if(isDebug) Slog.d(TAG, "==========praise add response text : "+responseText);
+                        }
+                    }
+                    @Override
+                    public void onFailure(Call call, IOException e) {}
+                });
+                handler.sendEmptyMessage(UPDATE_PRAISED_COUNT);
+            }
+        });
+      
+  }
 
-    private void getInterAction(){
 
-    }
 
     private void setEvaluationHeader(){
 
@@ -1371,6 +1441,46 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
             setEvaluatedMode();
         }
     }
+    
+        private void updateLovedCount(){
+        TextView lovedStatistics = mArchiveProfile.findViewById(R.id.loved_statistics);
+        TextView lovedCount = mArchiveProfile.findViewById(R.id.loved_count);
+        int newLovedStatistics = 0;
+        int newLovedCount = 0;
+        if(lovedStatistics.getText().toString().length() == 0){
+            newLovedStatistics = 1;
+        }else{
+            newLovedStatistics = Integer.parseInt(lovedStatistics.getText().toString())+1;
+        }
+        lovedStatistics.setText(String.valueOf(newLovedStatistics));
+
+        if(lovedCount.getText().toString().length() == 0){
+            newLovedCount = 1;
+        }else {
+            newLovedCount = Integer.parseInt(lovedCount.getText().toString())+1;
+        }
+        lovedCount.setText(String.valueOf(newLovedCount));
+    }
+    
+        private void updatePraisedCount(){
+        TextView praisedStatistics = mArchiveProfile.findViewById(R.id.praised_statistics);
+        TextView praisedCount = mArchiveProfile.findViewById(R.id.praised_count);
+        int newPraisedStatistics = 0;
+        int newPraisedCount = 0;
+        if(praisedStatistics.getText().toString().length() == 0){
+            newPraisedStatistics = 1;
+        }else{
+            newPraisedStatistics = Integer.parseInt(praisedStatistics.getText().toString())+1;
+        }
+        praisedStatistics.setText(String.valueOf(newPraisedStatistics));
+
+        if(praisedCount.getText().toString().length() == 0){
+            newPraisedCount = 1;
+        }else {
+            newPraisedCount = Integer.parseInt(praisedCount.getText().toString())+1;
+        }
+        praisedCount.setText(String.valueOf(newPraisedCount));
+    }
 
     static class MyHandler extends Handler {
         WeakReference<ArchivesActivity> meetDynamicsFragmentWeakReference;
@@ -1447,6 +1557,12 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
                 break;
             case GET_LOVE_STATISTICS_URL_DONE:
                 setLoveStatistics(bundle);
+                break;
+            case UPDATE_LOVED_COUNT:
+                updateLovedCount();
+                break;
+            case UPDATE_PRAISED_COUNT:
+                updatePraisedCount();
                 break;
             default:
                 break;
