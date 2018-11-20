@@ -1,15 +1,14 @@
 package com.tongmenhui.launchak47.meet;
 
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.content.Intent;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.design.widget.TextInputEditText;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,44 +19,37 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TableLayout;
-import android.widget.TableRow;
-import android.widget.TextView;
-import android.support.constraint.ConstraintLayout;
-import com.nex3z.flowlayout.FlowLayout;
-import android.util.TypedValue;
-import android.view.Gravity;
-import android.widget.EditText;
 import android.widget.LinearLayout;
-import java.math.BigDecimal;
+import android.widget.TextView;
+
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.NetworkImageView;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
+import com.nex3z.flowlayout.FlowLayout;
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.adapter.ArchivesListAdapter;
 import com.tongmenhui.launchak47.adapter.MeetImpressionStatisticsAdapter;
 import com.tongmenhui.launchak47.adapter.MeetReferenceAdapter;
 import com.tongmenhui.launchak47.main.BaseAppCompatActivity;
+import com.tongmenhui.launchak47.util.CommonUserListDialogFragment;
 import com.tongmenhui.launchak47.util.FontManager;
 import com.tongmenhui.launchak47.util.HttpUtil;
+import com.tongmenhui.launchak47.util.InvitationDialogFragment;
 import com.tongmenhui.launchak47.util.ParseUtils;
+import com.tongmenhui.launchak47.util.PersonalityEditDialogFragment;
 import com.tongmenhui.launchak47.util.RequestQueueSingleton;
 import com.tongmenhui.launchak47.util.Slog;
-import com.tongmenhui.launchak47.util.InvitationDialogFragment;
-import com.willy.ratingbar.BaseRatingBar;
-import com.willy.ratingbar.ScaleRatingBar;
-import android.widget.Toast;
-import com.tongmenhui.launchak47.util.PersonalityEditDialogFragment;
-import com.tongmenhui.launchak47.util.CommonUserListDialogFragment;
 import com.tongmenhui.launchak47.util.Utility;
+import com.willy.ratingbar.ScaleRatingBar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import java.lang.reflect.Array;
+
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -103,10 +95,10 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
     private static final int LOAD_HOBBY_DONE = 8;
     private static final int GET_FOLLOW_DONE = 9;
     private static final int GET_FOLLOW_STATISTICS_URL_DONE = 10;
-        private static final int GET_PRAISE_STATISTICS_URL_DONE = 11;
+    private static final int GET_PRAISE_STATISTICS_URL_DONE = 11;
     private static final int GET_LOVE_STATISTICS_URL_DONE = 12;
-    
-        private static final int UPDATE_LOVED_COUNT = 13;
+
+    private static final int UPDATE_LOVED_COUNT = 13;
     private static final int UPDATE_PRAISED_COUNT = 14;
 
     private boolean isLoved = false;
@@ -114,11 +106,11 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
 
     private static final int FOLLOWED = 1;
     private static final int FOLLOWING = 2;
-        private static final int PRAISED = 3;
+    private static final int PRAISED = 3;
     private static final int PRAISE = 4;
     private static final int LOVED = 5;
     private static final int LOVE = 6;
-    
+
     private static final int PAGE_SIZE = 6;
 
     private static final int TYPE_HOBBY = 0;
@@ -161,12 +153,12 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
         loadImpressionStatistics(uid);
 
         loadReferences(uid);
-        
+
         processPersonality(uid);
 
         processHobby(uid);
 
-        loadDynamicsData(uid);  
+        loadDynamicsData(uid);
 
         LinearLayout scaleRatingBar = mHeaderEvaluation.findViewById(R.id.charm_rating_bar);
 
@@ -192,7 +184,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
 
             }
         });
-        
+
         TextView evaluatorDetails = mHeaderEvaluation.findViewById(R.id.rating_member_details);
         evaluatorDetails.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -209,19 +201,19 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
         inviteReference.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               // Toast.makeText(getApplicationContext(), "hahaha", Toast.LENGTH_SHORT).show();
+                // Toast.makeText(getApplicationContext(), "hahaha", Toast.LENGTH_SHORT).show();
                 InvitationDialogFragment invitationDialogFragment = new InvitationDialogFragment();
-               // invitationDialogFragment.setTargetFragment(getApplicationContext(), REQUEST_CODE);
+                // invitationDialogFragment.setTargetFragment(getApplicationContext(), REQUEST_CODE);
                 Bundle bundle = new Bundle();
                 bundle.putInt("uid", mMeetMember.getUid());
                 invitationDialogFragment.setArguments(bundle);
                 invitationDialogFragment.show(getSupportFragmentManager(), "InvitationDialogFragment");
             }
         });
-        
+
 
     }
-    
+
     private void initView(){
         backLeft = findViewById(R.id.left_back);
         backLeft.setOnClickListener(new View.OnClickListener() {
@@ -243,7 +235,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
                 super.onScrollStateChanged(recyclerView, newState);
             }
         });
-            
+
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mXRecyclerView.setLayoutManager(linearLayoutManager);
 
@@ -253,7 +245,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
 
         mXRecyclerView.getDefaultRefreshHeaderView().setRefreshTimeVisible(true);
         mXRecyclerView.setPullRefreshEnabled(false);
-            
+
         mXRecyclerView.getDefaultRefreshHeaderView().setRefreshTimeVisible(true);
         mArchiveProfile = LayoutInflater.from(this).inflate(R.layout.meet_archive_profile, (ViewGroup)findViewById(android.R.id.content),false);
         mXRecyclerView.addHeaderView(mArchiveProfile);
@@ -288,14 +280,14 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
 
         mXRecyclerView.setAdapter(mArchivesListAdapter);
     }
-    
+
     private void setEvaluatedMode(){
         LinearLayout charmRatingBar = mHeaderEvaluation.findViewById(R.id.charm_rating_bar);
         TextView notice = mHeaderEvaluation.findViewById(R.id.notice);
         charmRatingBar.setVisibility(View.GONE);
         notice.setVisibility(View.GONE);
     }
-    
+
 
     private void setArchiveProfile(){
         TextView realname = mArchiveProfile.findViewById(R.id.name);
@@ -319,13 +311,13 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
         TextView degreeRequirement = mArchiveProfile.findViewById(R.id.degree_require);
         TextView livesRequirement = mArchiveProfile.findViewById(R.id.lives_require);
         TextView sexRequirement = mArchiveProfile.findViewById(R.id.sex_require);
-        
+
         TextView illustration = mArchiveProfile.findViewById(R.id.illustration);
         TextView eyeView = mArchiveProfile.findViewById(R.id.eye_statistics);
-       // TextView lovedView = mArchiveProfile.findViewById(R.id.loved_statistics);
+        // TextView lovedView = mArchiveProfile.findViewById(R.id.loved_statistics);
         //TextView lovedIcon = mArchiveProfile.findViewById(R.id.loved_icon);
-       // TextView thumbsView = mArchiveProfile.findViewById(R.id.thumbs_up_statistics);
-       // TextView thumbsIcon = mArchiveProfile.findViewById(R.id.thumbs_up_icon);
+        // TextView thumbsView = mArchiveProfile.findViewById(R.id.thumbs_up_statistics);
+        // TextView thumbsIcon = mArchiveProfile.findViewById(R.id.thumbs_up_icon);
         TextView photosView = mArchiveProfile.findViewById(R.id.photos_statistics);
 
         realname.setText(mMeetMember.getRealname());
@@ -358,7 +350,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
         degreeRequirement.setText(mMeetMember.getDegreeName(mMeetMember.getRequirementDegree())+"学历");
         livesRequirement.setText(mMeetMember.getRequirementLives());
         sexRequirement.setText(mMeetMember.getRequirementSex());
-        
+
         illustration.setText(mMeetMember.getIllustration());
         eyeView.setText(String.valueOf(mMeetMember.getBrowseCount()));
         //lovedView.setText(String.valueOf(mMeetMember.getLovedCount()));
@@ -460,7 +452,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
 
 
     }
-    
+
     private void getPraiseStatistics(){
         RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(mMeetMember.getUid())).build();
         HttpUtil.sendOkHttpRequest(ArchivesActivity.this, GET_PRAISE_STATISTICS_URL, requestBody, new Callback() {
@@ -469,25 +461,25 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
                 if(response.body() != null){
                     String responseText = response.body().string();
                     //if(isDebug)
-                                        Slog.d(TAG, "==========getPraiseStatistics statistics : "+responseText);
+                    Slog.d(TAG, "==========getPraiseStatistics statistics : "+responseText);
                     try {
                         JSONObject praiseObject = new JSONObject(responseText);
                         int praise_count = praiseObject.optInt("praise_count");
                         int praised_count = praiseObject.optInt("praised_count");
-                        if(praise_count !=0 || praised_count != 0){
-                            Bundle bundle = new Bundle();
-                            bundle.putInt("praise_count", praise_count);
-                            bundle.putInt("praised_count", praised_count);
-                            isPraised = praiseObject.optBoolean("isPraised");
-                            Message msg = new Message();
-                            msg.setData(bundle);
-                            msg.what = GET_PRAISE_STATISTICS_URL_DONE;
-                            handler.sendMessage(msg);
-                        }
+
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("praise_count", praise_count);
+                        bundle.putInt("praised_count", praised_count);
+                        isPraised = praiseObject.optBoolean("isPraised");
+                        Message msg = new Message();
+                        msg.setData(bundle);
+                        msg.what = GET_PRAISE_STATISTICS_URL_DONE;
+                        handler.sendMessage(msg);
+
                     }catch (JSONException e){
                         e.printStackTrace();
                     }
-                    }
+                }
             }
             @Override
             public void onFailure(Call call, IOException e) {}
@@ -497,7 +489,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
         LinearLayout praisedCountWrap = mArchiveProfile.findViewById(R.id.praised_count_wrap);
         final TextView praisedCount = mArchiveProfile.findViewById(R.id.praised_count);
         final TextView praiseCount = mArchiveProfile.findViewById(R.id.praise_count);
-                    praisedCountWrap.setOnClickListener(new View.OnClickListener() {
+        praisedCountWrap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
@@ -509,7 +501,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
                 commonUserListDialogFragment.show(getSupportFragmentManager(), "CommonUserListDialogFragment");
             }
         });
-                    praiseCountWrap.setOnClickListener(new View.OnClickListener() {
+        praiseCountWrap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
@@ -522,69 +514,69 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
             }
         });
     }
-    
-        private void getLoveStatistics() {
-            RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(mMeetMember.getUid())).build();
-            HttpUtil.sendOkHttpRequest(ArchivesActivity.this, GET_LOVE_STATISTICS_URL, requestBody, new Callback() {
-                @Override
-                public void onResponse(Call call, Response response) throws IOException {
-                    if (response.body() != null) {
-                        String responseText = response.body().string();
-                        //if(isDebug)
-                        Slog.d(TAG, "==========getLoveStatistics statistics : " + responseText);
-                        try {
-                            JSONObject loveObject = new JSONObject(responseText);
-                            int loveCount = loveObject.optInt("love_count");
-                            int lovedCount = loveObject.optInt("loved_count");
-                            isLoved = loveObject.optBoolean("isLoved");
-                           
-                            Bundle bundle = new Bundle();
-                            bundle.putInt("love_count", loveCount);
-                            bundle.putInt("loved_count", lovedCount);
-                            Message msg = new Message();
-                            msg.setData(bundle);
-                            msg.what = GET_LOVE_STATISTICS_URL_DONE;
-                            handler.sendMessage(msg);
-                            
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+
+    private void getLoveStatistics() {
+        RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(mMeetMember.getUid())).build();
+        HttpUtil.sendOkHttpRequest(ArchivesActivity.this, GET_LOVE_STATISTICS_URL, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.body() != null) {
+                    String responseText = response.body().string();
+                    //if(isDebug)
+                    Slog.d(TAG, "==========getLoveStatistics statistics : " + responseText);
+                    try {
+                        JSONObject loveObject = new JSONObject(responseText);
+                        int loveCount = loveObject.optInt("love_count");
+                        int lovedCount = loveObject.optInt("loved_count");
+                        isLoved = loveObject.optBoolean("isLoved");
+
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("love_count", loveCount);
+                        bundle.putInt("loved_count", lovedCount);
+                        Message msg = new Message();
+                        msg.setData(bundle);
+                        msg.what = GET_LOVE_STATISTICS_URL_DONE;
+                        handler.sendMessage(msg);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
                 }
+            }
 
-                @Override
-                public void onFailure(Call call, IOException e) {
-                }
-            });
-            LinearLayout loveCountWrap = mArchiveProfile.findViewById(R.id.love_count_wrap);
-            LinearLayout lovedCountWrap = mArchiveProfile.findViewById(R.id.loved_count_wrap);
-            final TextView lovedCount = mArchiveProfile.findViewById(R.id.loved_count);
-            final TextView loveCount = mArchiveProfile.findViewById(R.id.love_count);
-            lovedCountWrap.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("type", LOVED);
-                    bundle.putInt("uid", mMeetMember.getUid());
-                    bundle.putString("title", "被喜欢 " + lovedCount.getText());
-                    CommonUserListDialogFragment commonUserListDialogFragment = new CommonUserListDialogFragment();
-                    commonUserListDialogFragment.setArguments(bundle);
-                    commonUserListDialogFragment.show(getSupportFragmentManager(), "CommonUserListDialogFragment");
-                }
-            });
-            loveCountWrap.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("type", LOVE);
-                    bundle.putInt("uid", mMeetMember.getUid());
-                    bundle.putString("title", "喜欢的 " + loveCount.getText());
-                    CommonUserListDialogFragment commonUserListDialogFragment = new CommonUserListDialogFragment();
-                    commonUserListDialogFragment.setArguments(bundle);
-                    commonUserListDialogFragment.show(getSupportFragmentManager(), "CommonUserListDialogFragment");
-                }
-            });
-        }
+            @Override
+            public void onFailure(Call call, IOException e) {
+            }
+        });
+        LinearLayout loveCountWrap = mArchiveProfile.findViewById(R.id.love_count_wrap);
+        LinearLayout lovedCountWrap = mArchiveProfile.findViewById(R.id.loved_count_wrap);
+        final TextView lovedCount = mArchiveProfile.findViewById(R.id.loved_count);
+        final TextView loveCount = mArchiveProfile.findViewById(R.id.love_count);
+        lovedCountWrap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putInt("type", LOVED);
+                bundle.putInt("uid", mMeetMember.getUid());
+                bundle.putString("title", "被喜欢 " + lovedCount.getText());
+                CommonUserListDialogFragment commonUserListDialogFragment = new CommonUserListDialogFragment();
+                commonUserListDialogFragment.setArguments(bundle);
+                commonUserListDialogFragment.show(getSupportFragmentManager(), "CommonUserListDialogFragment");
+            }
+        });
+        loveCountWrap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putInt("type", LOVE);
+                bundle.putInt("uid", mMeetMember.getUid());
+                bundle.putString("title", "喜欢的 " + loveCount.getText());
+                CommonUserListDialogFragment commonUserListDialogFragment = new CommonUserListDialogFragment();
+                commonUserListDialogFragment.setArguments(bundle);
+                commonUserListDialogFragment.show(getSupportFragmentManager(), "CommonUserListDialogFragment");
+            }
+        });
+    }
 
     private void processFollowAction(){
         final Button followBtn = mArchiveProfile.findViewById(R.id.follow);
@@ -639,7 +631,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
             followingCount.setText(String.valueOf(bundle.getInt("following_count")));
         }
     }
-            
+
     private void setPraiseStatistics(Bundle bundle){
 
         TextView praisedCount = mArchiveProfile.findViewById(R.id.praised_count);
@@ -654,16 +646,16 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
         if(bundle.getInt("praise_count") > 0){
             praiseCount.setText(String.valueOf(bundle.getInt("praise_count")));
         }
-        
+
         processPraiseAction();
     }
-    
-   private void setLoveStatistics(Bundle bundle){
+
+    private void setLoveStatistics(Bundle bundle){
         TextView lovedCount = mArchiveProfile.findViewById(R.id.loved_count);
         TextView loveCount = mArchiveProfile.findViewById(R.id.love_count);
         TextView lovedStatistics = mArchiveProfile.findViewById(R.id.loved_statistics);
         if(bundle != null){
-           if(bundle.getInt("loved_count") > 0){
+            if(bundle.getInt("loved_count") > 0){
                 lovedCount.setText(String.valueOf(bundle.getInt("loved_count")));
                 lovedStatistics.setText(String.valueOf(bundle.getInt("loved_count")));
             }
@@ -673,7 +665,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
             }
         }
 
-       
+
         processLoveAction();//process love or praise action();
     }
 
@@ -683,19 +675,19 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
 
     private void processLoveAction(){
 
-        final TextView loveIcon = mArchiveProfile.findViewById(R.id.loved_icon);
-        final TextView loveCount = mArchiveProfile.findViewById(R.id.loved_statistics);
+        final TextView lovedIcon = mArchiveProfile.findViewById(R.id.loved_icon);
+        final TextView lovedCount = mArchiveProfile.findViewById(R.id.loved_statistics);
         Slog.d(TAG, "===============processLoveAction isLoved: "+isLoved);
         if(isLoved){
-            loveIcon.setEnabled(false);
-            loveCount.setEnabled(false);
+            lovedIcon.setEnabled(false);
+            lovedCount.setEnabled(false);
         }else {
-            loveIcon.setEnabled(true);
-            loveCount.setEnabled(true);
+            lovedIcon.setEnabled(true);
+            lovedCount.setEnabled(true);
         }
         final RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(mMeetMember.getUid())).build();
 
-        loveIcon.setOnClickListener(new View.OnClickListener() {
+        lovedIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 HttpUtil.sendOkHttpRequest(ArchivesActivity.this, LOVE_ADD_URL, requestBody, new Callback() {
@@ -704,20 +696,20 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
                         if(response.body() != null){
                             String responseText = response.body().string();
                             //if(isDebug)
-                                Slog.d(TAG, "==========love add response text : "+responseText);
+                            Slog.d(TAG, "==========love add response text : "+responseText);
                         }
                     }
                     @Override
                     public void onFailure(Call call, IOException e) {}
                 });
                 isLoved = true;
-                loveIcon.setEnabled(false);
-                loveCount.setEnabled(false);
+                lovedIcon.setEnabled(false);
+                lovedCount.setEnabled(false);
                 handler.sendEmptyMessage(UPDATE_LOVED_COUNT);
             }
         });
-        
-        loveCount.setOnClickListener(new View.OnClickListener() {
+
+        lovedCount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 HttpUtil.sendOkHttpRequest(ArchivesActivity.this, LOVE_ADD_URL, requestBody, new Callback() {
@@ -726,34 +718,39 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
                         if(response.body() != null){
                             String responseText = response.body().string();
                             //if(isDebug)
-                                Slog.d(TAG, "==========love add response text : "+responseText);
+                            Slog.d(TAG, "==========love add response text : "+responseText);
                         }
                     }
                     @Override
                     public void onFailure(Call call, IOException e) {}
                 });
                 isLoved = true;
-                loveIcon.setEnabled(false);
-                loveCount.setEnabled(false);
+                lovedIcon.setEnabled(false);
+                lovedCount.setEnabled(false);
                 handler.sendEmptyMessage(UPDATE_LOVED_COUNT);
             }
         });
-        
+
     }
-    
-  private void processPraiseAction(){
-        TextView praisedIcon = mArchiveProfile.findViewById(R.id.praised_icon);
-        TextView praisedCount = mArchiveProfile.findViewById(R.id.praised_statistics);
 
+    private void processPraiseAction(){
+        final TextView praisedIcon = mArchiveProfile.findViewById(R.id.praised_icon);
+        final TextView praisedCount = mArchiveProfile.findViewById(R.id.praised_statistics);
+
+        Slog.d(TAG, "===================processPraiseAction isPraised: "+isPraised);
         if(isPraised){
-           // praisedIcon.setTextColor(R.color.holo_red_dark);
-          //  praisedIcon.setTextColor(getResources().getColor(R.color.h));
-            praisedIcon.setSelected(true);
+            praisedCount.setEnabled(false);
+            praisedIcon.setEnabled(false);
+        }else {
+            praisedCount.setEnabled(true);
+            praisedIcon.setEnabled(true);
         }
+
         final RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(mMeetMember.getUid())).build();
-      praisedIcon.setOnClickListener(new View.OnClickListener() {
+        praisedIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Slog.d(TAG, "=================processPraiseAction praisedIcon click");
                 HttpUtil.sendOkHttpRequest(ArchivesActivity.this, PRAISE_ADD_URL, requestBody, new Callback() {
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
@@ -765,10 +762,13 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
                     @Override
                     public void onFailure(Call call, IOException e) {}
                 });
+                isPraised = true;
+                praisedIcon.setEnabled(false);
+                praisedCount.setEnabled(false);
                 handler.sendEmptyMessage(UPDATE_PRAISED_COUNT);
             }
         });
-              praisedCount.setOnClickListener(new View.OnClickListener() {
+        praisedCount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 HttpUtil.sendOkHttpRequest(ArchivesActivity.this, PRAISE_ADD_URL, requestBody, new Callback() {
@@ -782,11 +782,14 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
                     @Override
                     public void onFailure(Call call, IOException e) {}
                 });
+                isPraised = true;
+                praisedIcon.setEnabled(false);
+                praisedCount.setEnabled(false);
                 handler.sendEmptyMessage(UPDATE_PRAISED_COUNT);
             }
         });
-      
-  }
+
+    }
 
 
 
@@ -798,9 +801,9 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
         recyclerView.setAdapter(mMeetReferenceAdapter);
         Typeface font = Typeface.createFromAsset(getAssets(), "fonts/fontawesome.ttf");
         FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.meet_item_id), font);
-        
+
     }
-    
+
     private void setRatingBarView(){
         JSONArray impressionArray = impressionObj.optJSONArray("impression");
         //MeetReferenceInfo meetReferenceInfo = null;
@@ -827,15 +830,15 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
 
         }
     }
-    
-   private void loadRatingAndImpression(int uid){
+
+    private void loadRatingAndImpression(int uid){
         RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
         HttpUtil.sendOkHttpRequest(this, GET_IMPRESSION_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if(response.body() != null){
                     String responseText = response.body().string();
-                   if(isDebug) Slog.d(TAG, "==========get impression response text : "+responseText);
+                    if(isDebug) Slog.d(TAG, "==========get impression response text : "+responseText);
                     if(responseText != null){
                         if(!TextUtils.isEmpty(responseText)){
                             try {
@@ -854,7 +857,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
             public void onFailure(Call call, IOException e) {}
         });
     }
-    
+
     private void loadImpressionStatistics(final int uid){
 
         RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
@@ -926,8 +929,8 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
         public String impression;
         public int impressionCount;
         public List<MeetMemberInfo> meetMemberList = new ArrayList<>();
-        
-                @Override
+
+        @Override
         public int describeContents() {
             return 0;
         }
@@ -938,7 +941,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
             dest.writeInt(impressionCount);
             dest.writeList(meetMemberList);
         }
-        
+
         public static final Parcelable.Creator<ImpressionStatistics> CREATOR = new Creator<ImpressionStatistics>() {
 
             @Override
@@ -971,31 +974,31 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
             String responseText = response.body().string();
             Slog.d(TAG, "==========getImpressionUser response text : "+responseText);
             try{
-               JSONObject responseObj = new JSONObject(responseText);
-               JSONArray responseArray = responseObj.optJSONArray("users");
-               if(responseArray.length() > 0){
+                JSONObject responseObj = new JSONObject(responseText);
+                JSONArray responseArray = responseObj.optJSONArray("users");
+                if(responseArray.length() > 0){
 
 
-                   for (int i=0; i<responseArray.length(); i++){
-                       MeetMemberInfo meetMemberInfo = new MeetMemberInfo();
-                       JSONObject member = responseArray.optJSONObject(i);
-                       meetMemberInfo.setUid(member.optInt("uid"));
-                       meetMemberInfo.setSex(member.optInt("sex"));
-                       meetMemberInfo.setRealname(member.optString("realname"));
-                       meetMemberInfo.setPictureUri(member.optString("picture_uri"));
-                       meetMemberInfo.setSituation(member.optInt("situation"));
-                       if(member.optInt("situation") == 0){//student
-                           meetMemberInfo.setDegree(member.optString("degree"));
-                           meetMemberInfo.setMajor(member.optString("major"));
-                           meetMemberInfo.setUniversity(member.optString("university"));
-                       }else {
-                           meetMemberInfo.setCompany(member.optString("company"));
-                           meetMemberInfo.setJobTitle(member.optString("job_title"));
-                           meetMemberInfo.setLives(member.optString("lives"));
-                       }
-                       memberInfoList.add(meetMemberInfo);
-                   }
-               }
+                    for (int i=0; i<responseArray.length(); i++){
+                        MeetMemberInfo meetMemberInfo = new MeetMemberInfo();
+                        JSONObject member = responseArray.optJSONObject(i);
+                        meetMemberInfo.setUid(member.optInt("uid"));
+                        meetMemberInfo.setSex(member.optInt("sex"));
+                        meetMemberInfo.setRealname(member.optString("realname"));
+                        meetMemberInfo.setPictureUri(member.optString("picture_uri"));
+                        meetMemberInfo.setSituation(member.optInt("situation"));
+                        if(member.optInt("situation") == 0){//student
+                            meetMemberInfo.setDegree(member.optString("degree"));
+                            meetMemberInfo.setMajor(member.optString("major"));
+                            meetMemberInfo.setUniversity(member.optString("university"));
+                        }else {
+                            meetMemberInfo.setCompany(member.optString("company"));
+                            meetMemberInfo.setJobTitle(member.optString("job_title"));
+                            meetMemberInfo.setLives(member.optString("lives"));
+                        }
+                        memberInfoList.add(meetMemberInfo);
+                    }
+                }
             } catch (JSONException e){
                 e.printStackTrace();
             }
@@ -1031,12 +1034,12 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
             }
         });
     }
-    
+
     private void processPersonality(final int uid){
         getPersonality(uid);
         addPersonality(uid);
     }
-    
+
     private void getPersonality(int uid){
         Slog.d(TAG, "================getPersonalityDetail uid:"+uid);
         RequestBody requestBody = new FormBody.Builder()
@@ -1068,7 +1071,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
             }
         });
     }
-    
+
     public static void sortPersonalityWithCount(JSONArray jsonArray)
     {
         JSONObject temp = null;
@@ -1091,14 +1094,14 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
         }
 
     }
-                                   
+
     private void setPersonalityFlow(){
         FlowLayout personalityFlow = mHeaderEvaluation.findViewById(R.id.personality_flow);
 
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         layoutParams.setMargins((int) Utility.dpToPx(this, 3),(int) Utility.dpToPx(this, 8),
                 (int) Utility.dpToPx(this, 8), (int) Utility.dpToPx(this, 3));
-                for (int i=0; i<personalityResponseArray.length(); i++){
+        for (int i=0; i<personalityResponseArray.length(); i++){
             final TextView personality = new TextView(this);
 
             personality.setPadding((int) Utility.dpToPx(this, 8), (int) Utility.dpToPx(this, 6),
@@ -1106,14 +1109,14 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
             personality.setBackground(getDrawable(R.drawable.label_btn_shape));
             personality.setTextColor(getResources().getColor(R.color.color_blue));
             personality.setLayoutParams(layoutParams);
-                                String personalityName = personalityResponseArray.optJSONObject(i).optString("personality");
+            String personalityName = personalityResponseArray.optJSONObject(i).optString("personality");
             int count = personalityResponseArray.optJSONObject(i).optInt("count");
             if(count != 0){
                 personality.setText(personalityName+" · "+count);
             }else {
                 personality.setText(personalityName);
             }
-                                personalityFlow.addView(personality);
+            personalityFlow.addView(personality);
             final int pid = personalityResponseArray.optJSONObject(i).optInt("pid");
             personality.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -1128,7 +1131,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
             });
         }
     }
-    
+
     private void addPersonality(final int uid){
         Button addPersonality = mHeaderEvaluation.findViewById(R.id.add_personality);
         addPersonality.setOnClickListener(new View.OnClickListener() {
@@ -1158,7 +1161,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
                 String responseText = response.body().string();
                 Slog.d(TAG, "================get hobbies response:"+responseText);
                 if(responseText != null && !TextUtils.isEmpty(responseText)){
-                                        try {
+                    try {
 
                         JSONArray hobbyJSONArray = new JSONObject(responseText).optJSONArray("hobby");
                         String[] hobbyArray = new String[hobbyJSONArray.length()];
@@ -1176,7 +1179,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
                     }catch (JSONException e){
                         e.printStackTrace();
                     }
-                     }
+                }
 
             }
             @Override
@@ -1201,8 +1204,8 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
             }
         });
     }
-    
-   private void setHobbyFlow(String[] hobbyArray){
+
+    private void setHobbyFlow(String[] hobbyArray){
         FlowLayout hobbyFlow = mHeaderEvaluation.findViewById(R.id.hobby_flow);
 
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -1434,15 +1437,15 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
         }
         return null;
     }
-    
+
     @Override
     public void onBackFromRatingAndImpressionDialogFragment(boolean evaluated){
         if(evaluated){
             setEvaluatedMode();
         }
     }
-    
-        private void updateLovedCount(){
+
+    private void updateLovedCount(){
         TextView lovedStatistics = mArchiveProfile.findViewById(R.id.loved_statistics);
         TextView lovedCount = mArchiveProfile.findViewById(R.id.loved_count);
         int newLovedStatistics = 0;
@@ -1461,8 +1464,8 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
         }
         lovedCount.setText(String.valueOf(newLovedCount));
     }
-    
-        private void updatePraisedCount(){
+
+    private void updatePraisedCount(){
         TextView praisedStatistics = mArchiveProfile.findViewById(R.id.praised_statistics);
         TextView praisedCount = mArchiveProfile.findViewById(R.id.praised_count);
         int newPraisedStatistics = 0;

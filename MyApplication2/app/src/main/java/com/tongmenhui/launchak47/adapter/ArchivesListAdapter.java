@@ -25,7 +25,6 @@ import com.tongmenhui.launchak47.meet.MeetDynamics;
 import com.tongmenhui.launchak47.util.FontManager;
 import com.tongmenhui.launchak47.util.HttpUtil;
 import com.tongmenhui.launchak47.util.RequestQueueSingleton;
-import com.tongmenhui.launchak47.util.Slog;
 
 import org.json.JSONException;
 import org.json.JSONObject;

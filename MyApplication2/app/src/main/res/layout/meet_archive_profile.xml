@@ -583,7 +583,7 @@
             android:text="@string/fa_thumbs_up"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/color_blue"
+            android:textColor="@drawable/praise_selector"
             android:paddingLeft="20dp" />
 
         <TextView
