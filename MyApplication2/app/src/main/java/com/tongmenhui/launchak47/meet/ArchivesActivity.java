@@ -74,6 +74,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
     private static final String GET_PERSONALITY_URL = HttpUtil.DOMAIN + "?q=meet/personality/get";
     private static final String LOAD_HOBBY_URL = HttpUtil.DOMAIN + "?q=personal_archive/hobby/load";
     private static final String CONTACTS_ADD_URL = HttpUtil.DOMAIN + "?q=contacts/add_contacts";
+    private static final String GET_CONTACTS_STATUS_URL = HttpUtil.DOMAIN + "?q=contacts/status";
     private static final String FOLLOW_ACTION_URL = HttpUtil.DOMAIN + "?q=follow/action/";
     private static final String GET_FOLLOW_STATISTICS_URL = HttpUtil.DOMAIN + "?q=follow/statistics";
     private static final String GET_FOLLOW_STATUS_URL = HttpUtil.DOMAIN + "?q=follow/isFollowed";
@@ -95,12 +96,14 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
     private static final int LOAD_PERSONALITY_DONE = 7;
     private static final int LOAD_HOBBY_DONE = 8;
     private static final int GET_FOLLOW_DONE = 9;
-    private static final int GET_FOLLOW_STATISTICS_URL_DONE = 10;
-    private static final int GET_PRAISE_STATISTICS_URL_DONE = 11;
-    private static final int GET_LOVE_STATISTICS_URL_DONE = 12;
+    private static final int GET_CONTACTS_STATUS_DONE = 10;
+    private static final int GET_FOLLOW_STATISTICS_URL_DONE = 11;
+    private static final int GET_PRAISE_STATISTICS_URL_DONE = 12;
+    private static final int GET_LOVE_STATISTICS_URL_DONE = 13;
 
-    private static final int UPDATE_LOVED_COUNT = 13;
-    private static final int UPDATE_PRAISED_COUNT = 14;
+
+    private static final int UPDATE_LOVED_COUNT = 14;
+    private static final int UPDATE_PRAISED_COUNT = 15;
 
     private boolean isLoved = false;
     private boolean isPraised = false;
@@ -117,6 +120,11 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
     private static final int TYPE_HOBBY = 0;
     private static final int TYPE_PERSONALITY = 1;
     private boolean isFollowed = false;
+    private int contactStatus = 0;
+
+    private static final int APPLIED = 0;
+    private static final int ESTABLISHED = 1;
+    private static final int APPROVE = 2;
     private int mTempSize;
     private View mArchiveProfile;
     private XRecyclerView mXRecyclerView;
@@ -293,8 +301,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
     private void setArchiveProfile(){
 
         setMeetProfile();
-        processContactsAction();
-        getFollowStatus(mMeetMember.getUid());
+        getConnectStatus();
         getFollowStatistics();
         getPraiseStatistics();
         getLoveStatistics();
@@ -373,41 +380,56 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
 
     private void processContactsAction(){
         final Button contacts = mArchiveProfile.findViewById(R.id.contacts);
-
+        
+        if(contactStatus == APPLIED){
+            contacts.setEnabled(false);
+            contacts.setText("已申请");
+        }else if(contactStatus == ESTABLISHED){
+            contacts.setVisibility(View.GONE);
+        }else if (contactStatus == APPROVE){
+            contacts.setText("同意请求");
+            contacts.setTag("approve");
+        }
+        
         contacts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(mMeetMember.getUid())).build();
-                HttpUtil.sendOkHttpRequest(ArchivesActivity.this, CONTACTS_ADD_URL, requestBody, new Callback() {
-                    @Override
-                    public void onResponse(Call call, Response response) throws IOException {
-                        if(response.body() != null){
-                            String responseText = response.body().string();
-                            //if(isDebug)
-                                Slog.d(TAG, "==========processContactsAction : "+responseText);
-                            /*
-                            try {
-                                JSONObject status = new JSONObject(responseText);
-                                isFollowed = status.optBoolean("isFollowed");
-                                handler.sendEmptyMessage(GET_FOLLOW_DONE);
-                            }catch (JSONException e){
-                                e.printStackTrace();
+                if(contacts.getTag().equals("approve")){
+                   Slog.d(TAG, "=====================同意请求");
+                }else {
+                    RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(mMeetMember.getUid())).build();
+                    HttpUtil.sendOkHttpRequest(ArchivesActivity.this, CONTACTS_ADD_URL, requestBody, new Callback() {
+                        @Override
+                        public void onResponse(Call call, Response response) throws IOException {
+                            if(response.body() != null){
+                                String responseText = response.body().string();
+                                //if(isDebug)
+                                    Slog.d(TAG, "==========processContactsAction : "+responseText);
+                                /*
+                                try {
+                                    JSONObject status = new JSONObject(responseText);
+                                    isFollowed = status.optBoolean("isFollowed");
+                                    handler.sendEmptyMessage(GET_FOLLOW_DONE);
+                                }catch (JSONException e){
+                                    e.printStackTrace();
+                                }
+                                */
                             }
-                            */
                         }
-                    }
-                    @Override
-                    public void onFailure(Call call, IOException e) {}
-                });
+                        @Override
+                        public void onFailure(Call call, IOException e) {}
+                    });
 
-                contacts.setText("已申请");
+                    contacts.setText("已申请");
+                    contacts.setEnabled(false);
+                }
             }
         });
     }
 
-    private void getFollowStatus(final int uid){
+    private void getConnectStatus(){
 
-        RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
+        RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(mMeetMember.getUid())).build();
         HttpUtil.sendOkHttpRequest(ArchivesActivity.this, GET_FOLLOW_STATUS_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
@@ -431,6 +453,30 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
 
     private void getFollowStatistics(){
         RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(mMeetMember.getUid())).build();
+        
+        //for contacts
+        HttpUtil.sendOkHttpRequest(ArchivesActivity.this, GET_CONTACTS_STATUS_URL, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if(response.body() != null){
+                    String responseText = response.body().string();
+                    //if(isDebug)
+                        Slog.d(TAG, "==========getContacts Status : "+responseText);
+                    try {
+                        JSONObject status = new JSONObject(responseText);
+                        contactStatus = status.optInt("status");
+                        handler.sendEmptyMessage(GET_CONTACTS_STATUS_DONE);
+                    }catch (JSONException e){
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+            @Override
+            public void onFailure(Call call, IOException e) {}
+        });
+        
+        //for follow
         HttpUtil.sendOkHttpRequest(ArchivesActivity.this, GET_FOLLOW_STATISTICS_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
@@ -1095,7 +1141,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
                         personalityResponseArray = new JSONObject(responseText).optJSONArray("personality_detail");
                         if(personalityResponseArray.length() > 0) {
                             sortPersonalityWithCount(personalityResponseArray);
-                            Slog.d(TAG, "====================after sort: " + personalityResponseArray);
+                            if(isDebug) Slog.d(TAG, "====================after sort: " + personalityResponseArray);
                             //Message msg = new Message();
                             handler.sendEmptyMessage(LOAD_PERSONALITY_DONE);
                         }
@@ -1588,6 +1634,9 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
             case LOAD_HOBBY_DONE:
                 String[] hobby = bundle.getStringArray("hobby");
                 setHobbyFlow(hobby);
+                break;
+            case GET_CONTACTS_STATUS_DONE:
+                processContactsAction();
                 break;
             case GET_FOLLOW_DONE:
                 processFollowAction();
