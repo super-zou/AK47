@@ -73,6 +73,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
     private static final String GET_IMPRESSION_USERS_URL = HttpUtil.DOMAIN + "?q=meet/impression/users";
     private static final String GET_PERSONALITY_URL = HttpUtil.DOMAIN + "?q=meet/personality/get";
     private static final String LOAD_HOBBY_URL = HttpUtil.DOMAIN + "?q=personal_archive/hobby/load";
+    private static final String CONTACTS_ADD_URL = HttpUtil.DOMAIN + "?q=contacts/add_contacts";
     private static final String FOLLOW_ACTION_URL = HttpUtil.DOMAIN + "?q=follow/action/";
     private static final String GET_FOLLOW_STATISTICS_URL = HttpUtil.DOMAIN + "?q=follow/statistics";
     private static final String GET_FOLLOW_STATUS_URL = HttpUtil.DOMAIN + "?q=follow/isFollowed";
@@ -290,6 +291,19 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
 
 
     private void setArchiveProfile(){
+
+        setMeetProfile();
+        processContactsAction();
+        getFollowStatus(mMeetMember.getUid());
+        getFollowStatistics();
+        getPraiseStatistics();
+        getLoveStatistics();
+
+        processChatAction(mMeetMember.getUid());
+
+    }
+
+    private void setMeetProfile(){
         TextView realname = mArchiveProfile.findViewById(R.id.name);
         NetworkImageView headUri = (NetworkImageView) mArchiveProfile.findViewById(R.id.recommend_head_uri);
         LinearLayout baseProfile = mArchiveProfile.findViewById(R.id.base_profile);
@@ -355,14 +369,40 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
         eyeView.setText(String.valueOf(mMeetMember.getBrowseCount()));
         //lovedView.setText(String.valueOf(mMeetMember.getLovedCount()));
         //thumbsView.setText(String.valueOf(mMeetMember.getPraisedCount()));
+    }
 
-        getFollowStatus(mMeetMember.getUid());
-        getFollowStatistics();
-        getPraiseStatistics();
-        getLoveStatistics();
+    private void processContactsAction(){
+        final Button contacts = mArchiveProfile.findViewById(R.id.contacts);
 
-        processChatAction(mMeetMember.getUid());
+        contacts.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(mMeetMember.getUid())).build();
+                HttpUtil.sendOkHttpRequest(ArchivesActivity.this, CONTACTS_ADD_URL, requestBody, new Callback() {
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        if(response.body() != null){
+                            String responseText = response.body().string();
+                            //if(isDebug)
+                                Slog.d(TAG, "==========processContactsAction : "+responseText);
+                            /*
+                            try {
+                                JSONObject status = new JSONObject(responseText);
+                                isFollowed = status.optBoolean("isFollowed");
+                                handler.sendEmptyMessage(GET_FOLLOW_DONE);
+                            }catch (JSONException e){
+                                e.printStackTrace();
+                            }
+                            */
+                        }
+                    }
+                    @Override
+                    public void onFailure(Call call, IOException e) {}
+                });
 
+                contacts.setText("已申请");
+            }
+        });
     }
 
     private void getFollowStatus(final int uid){
