@@ -57,7 +57,7 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
     private static final int GET_CONTACTS_DONE = 2;
     private static final int PAGE_SIZE = 20;
     private static final String SEARCH_USER_URL = HttpUtil.DOMAIN + "?q=personal_archive/search_name";
-    private static final String GET_CONTACTS_URL = HttpUtil.DOMAIN + "?q=contacts/get_default_contacts";
+    private static final String GET_CONTACTS_URL = HttpUtil.DOMAIN + "?q=contacts/get_all_contacts";
 
     private Handler handler = new MyHandler(this);
 
@@ -111,8 +111,8 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
         int page = mContactsList.size() / PAGE_SIZE;
         FormBody requestBody = new FormBody.Builder()
                 .add("uid", String.valueOf(uid))
-                .add("init_recommend_page", String.valueOf(PAGE_SIZE))
-                .add("contacts_index", String.valueOf(page))
+               // .add("init_recommend_page", String.valueOf(PAGE_SIZE))
+               // .add("contacts_index", String.valueOf(page))
                 .build();
         HttpUtil.sendOkHttpRequest(mContext, GET_CONTACTS_URL, requestBody, new Callback() {
             @Override
@@ -120,6 +120,7 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
                 if(response.body() != null){
                     String responseText = response.body().string();
                     Slog.d(TAG, "==========getAllContacts  response text : "+responseText);
+
                     if(responseText != null && !TextUtils.isEmpty(responseText)){
                         List<MeetMemberInfo> memberInfos = parseUserInfo(responseText);
                         if (null != memberInfos) {
@@ -129,6 +130,7 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
                         }
 
                     }
+
                 }
             }
 
