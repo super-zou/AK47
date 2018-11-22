@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginTop="2dp"
     android:background="@color/colorWhite">
 
     <ImageView
@@ -30,7 +31,11 @@
         android:id="@+id/profile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:maxLines="2"
+        android:maxEms="15"
+        android:ellipsize="end"
         android:layout_marginTop="8dp"
+        android:maxWidth="30dp"
         android:text="profile"
         app:layout_constraintStart_toStartOf="@+id/name"
         app:layout_constraintTop_toBottomOf="@+id/name" />
@@ -42,12 +47,12 @@
         android:layout_height="33dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="2dp"
         android:layout_marginBottom="8dp"
-        android:background="@color/color_green"
+        android:background="@drawable/btn_stress"
         android:text="邀请推荐"
         android:textColor="@color/colorWhite"
-        android:textSize="15sp"
+        android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
