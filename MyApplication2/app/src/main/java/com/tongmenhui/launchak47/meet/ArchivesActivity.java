@@ -232,6 +232,8 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
             }
         });
         Typeface font = Typeface.createFromAsset(getAssets(), "fonts/fontawesome.ttf");
+                Typeface font_solid = Typeface.createFromAsset(getAssets(), "fonts/fa-solid-900.ttf");
+        Typeface font_regular = Typeface.createFromAsset(getAssets(), "fonts/fa-regular-400.ttf");
         mArchivesListAdapter = new ArchivesListAdapter(this);
         mXRecyclerView = (XRecyclerView) findViewById(R.id.recyclerview);
         mEmptyView = (TextView) findViewById(R.id.empty_text);
@@ -258,12 +260,11 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
         mXRecyclerView.getDefaultRefreshHeaderView().setRefreshTimeVisible(true);
         mArchiveProfile = LayoutInflater.from(this).inflate(R.layout.meet_archive_profile, (ViewGroup)findViewById(android.R.id.content),false);
         mXRecyclerView.addHeaderView(mArchiveProfile);
-        FontManager.markAsIconContainer(mArchiveProfile.findViewById(R.id.meet_archive_profile), font);
+        FontManager.markAsIconContainer(mArchiveProfile.findViewById(R.id.meet_archive_profile), font_regular);
 
         mHeaderEvaluation = LayoutInflater.from(this).inflate(R.layout.friends_relatives_reference, (ViewGroup)findViewById(android.R.id.content),false);
         mXRecyclerView.addHeaderView(mHeaderEvaluation);
-        FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.charm_rating_bar), font);
-        FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.rating_member_details), font);
+FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_relatives_reference), font_solid);
 
         mXRecyclerView.getDefaultFootView().setLoadingHint(getString(R.string.loading_pull_up_tip));
         mXRecyclerView.getDefaultFootView().setNoMoreHint(getString(R.string.loading_no_more));
