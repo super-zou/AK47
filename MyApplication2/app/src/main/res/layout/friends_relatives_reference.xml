@@ -5,14 +5,25 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp"
     android:orientation="vertical"
     android:id="@+id/friends_relatives_reference">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorWhite">
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="3dp"
-            android:background="@color/colorWhite"
+            android:text="@string/evaluate" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="3dp"
             android:text="性格魅力" />
+    </LinearLayout>
+    
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
@@ -121,16 +132,28 @@
             android:layout_marginBottom="10dp"
             android:text="您认为该用户魅力如何" />
     </RelativeLayout>
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:text="好友印象"/>
+        android:background="@color/colorWhite">
+        
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/impress"
+            android:padding="3dp" />
+        <TextView
+            android:text="好友印象"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="3dp" />
+    </LinearLayout>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/impression_statistics_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
         android:background="@color/colorWhite">
 
     </android.support.v7.widget.RecyclerView>
@@ -173,10 +196,22 @@
             android:text="+"
             android:textSize="20dp" />
     </RelativeLayout>
-    <TextView
-        android:text="亲友推荐"
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:background="@color/white">
+        <TextView
+            android:text="@string/hand_holding_heart"
+            android:padding="3dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:text="亲友推荐"
+            android:padding="3dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/reference_list"
@@ -190,10 +225,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorWhite">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="个性标签" />
+       <LinearLayout
+           android:orientation="horizontal"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content">
+           <TextView
+               android:padding="3dp"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:text="@string/personality" />
+           <TextView
+               android:padding="3dp"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:text="个性标签" />
+       </LinearLayout>
         <com.nex3z.flowlayout.FlowLayout
            android:id="@+id/personality_flow"
            android:layout_width="match_parent"
@@ -217,10 +263,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorWhite">
-    <TextView
-        android:text="兴趣爱好"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        <LinearLayout
+            android:id="@+id/hobby_wrap"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:text="@string/dna"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:text="兴趣爱好"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
             
     <com.nex3z.flowlayout.FlowLayout
         android:id="@+id/hobby_flow"
