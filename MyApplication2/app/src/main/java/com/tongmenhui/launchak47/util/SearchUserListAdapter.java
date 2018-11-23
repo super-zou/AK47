@@ -70,9 +70,9 @@ public class SearchUserListAdapter extends RecyclerView.Adapter<SearchUserListAd
         holder.invite.setTag(memberInfo.getUid());
         String profile = "";
         if(memberInfo.getSituation() == 0){//student
-            profile = memberInfo.getUniversity()+"."+memberInfo.getDegree()+"."+memberInfo.getDegree();
+            profile = memberInfo.getUniversity()+"·"+memberInfo.getDegree()+"·"+memberInfo.getDegree();
         }else{
-            profile = memberInfo.getJobTitle()+"."+memberInfo.getCompany();
+            profile = memberInfo.getJobTitle()+"·"+memberInfo.getCompany();
         }
         holder.profile.setText(profile);
 
