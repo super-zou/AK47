@@ -60,7 +60,7 @@ public class Register extends BaseAppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                if(checkUserInput()) {
+                if (checkUserInput()) {
                     next.setEnabled(true);
                 } else {
                     next.setEnabled(false);
@@ -91,7 +91,7 @@ public class Register extends BaseAppCompatActivity {
     }
 
     /*+Begin: added by xuchunping 2018.7.19*/
-    private boolean checkUserInput(){
+    private boolean checkUserInput() {
         String account = mAccount.getText().toString();
         String verifyCode = mVerifyCode.getText().toString();
         String password = mPassword.getText().toString();
@@ -105,7 +105,7 @@ public class Register extends BaseAppCompatActivity {
         if (!password.equals(confirmPass)) {
             return false;
         }
-        if(password.length() < 8) {
+        if (password.length() < 8) {
             return false;
         }
         return true;
@@ -119,21 +119,21 @@ public class Register extends BaseAppCompatActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
-                Slog.d(TAG, "checkRigister response : " + responseText+" "+TextUtils.isEmpty(responseText));
+                Slog.d(TAG, "checkRigister response : " + responseText + " " + TextUtils.isEmpty(responseText));
                 if (!TextUtils.isEmpty(responseText)) {
                     try {
                         JSONObject check_response = new JSONObject(responseText);
                         exist = check_response.optBoolean("exist");
                         user_name = check_response.optString("user_name");
-                        Slog.d(TAG, "checkRigister isExist: "+exist);
-                        Slog.d(TAG, "checkRigister user_name: "+user_name);
+                        Slog.d(TAG, "checkRigister isExist: " + exist);
+                        Slog.d(TAG, "checkRigister user_name: " + user_name);
 
                         if (!exist) {
                             //TODO unregister
                             register();
                         }
-                    } catch (JSONException e){
-                        Slog.e(TAG, "checkRigister onResponse e:"+e.toString());
+                    } catch (JSONException e) {
+                        Slog.e(TAG, "checkRigister onResponse e:" + e.toString());
                     }
                 }
             }
@@ -158,14 +158,14 @@ public class Register extends BaseAppCompatActivity {
             if (isEmail) {
                 obj.put("mail", account);
                 obj.put("account_type", "0");
-            }else {
+            } else {
                 obj.put("phone", account);
                 obj.put("account_type", "1");
             }
             //
             obj.put("pass", mConfirmPassword.getText().toString());
         } catch (JSONException e) {
-            Slog.e(TAG, "register JSONException:"+e.toString());
+            Slog.e(TAG, "register JSONException:" + e.toString());
         }
         RequestBody requestBody = new FormBody.Builder()
                 .add("user_info", obj.toString())//0 for mail
@@ -179,20 +179,20 @@ public class Register extends BaseAppCompatActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
-                Slog.d(TAG, "register response : " + responseText+" "+TextUtils.isEmpty(responseText));
+                Slog.d(TAG, "register response : " + responseText + " " + TextUtils.isEmpty(responseText));
                 if (!TextUtils.isEmpty(responseText)) {
                     try {
                         JSONObject check_response = new JSONObject(responseText);
                         exist = check_response.optBoolean("exist");
                         user_name = check_response.optString("user_name");
-                        Slog.d(TAG, "register isExist: "+exist);
-                        Slog.d(TAG, "register user_name: "+user_name);
+                        Slog.d(TAG, "register isExist: " + exist);
+                        Slog.d(TAG, "register user_name: " + user_name);
 
                         if (exist) {
                             //TODO unregistered
                         }
-                    } catch (JSONException e){
-                        Slog.e(TAG, "onResponse e:"+e.toString());
+                    } catch (JSONException e) {
+                        Slog.e(TAG, "onResponse e:" + e.toString());
                     }
                 }
             }
@@ -201,7 +201,8 @@ public class Register extends BaseAppCompatActivity {
             public void onFailure(Call call, IOException e) {
                 runOnUiThread(new Runnable() {
                     @Override
-                    public void run() {}
+                    public void run() {
+                    }
                 });
             }
         });

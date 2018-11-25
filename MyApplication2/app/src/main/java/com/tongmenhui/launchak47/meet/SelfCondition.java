@@ -7,13 +7,12 @@ import java.util.Calendar;
  */
 
 public class SelfCondition {
+    public static final String SEX_MALE = "男生";
+    public static final String SEX_FEMALE = "女生";
     private static final String TAG = "SelfCondition";
-
     public int cid = -1;
-
     //self condition
     public int uid = -1;
-    private int selfSex = -1;
     public String realname;
     public String pictureUri = "";
     public int birthYear;
@@ -25,8 +24,6 @@ public class SelfCondition {
     public String jobTitle;
     public String lives;
     public int situation;
-    private String selfCondition;
-
     public int self;
     public int lovedCount;
     public int loved;
@@ -36,69 +33,76 @@ public class SelfCondition {
     public int browseCount;
 
     public int requirementSet = -1;
+    private int selfSex = -1;
+    private String selfCondition;
 
-    public static final String SEX_MALE = "男生";
-    public static final String SEX_FEMALE = "女生";
-
-
-    public int getUid(){
+    public int getUid() {
         return uid;
     }
-    public void setUid(int uid){
+
+    public void setUid(int uid) {
         this.uid = uid;
     }
 
-    public int getCid(){
+    public int getCid() {
         return cid;
     }
-    public void setCid(int cid){
+
+    public void setCid(int cid) {
         this.cid = cid;
     }
 
-    public int getSelfSex(){
+    public int getSelfSex() {
         return selfSex;
     }
-    public void setSelfSex(int selfSex){
+
+    public void setSelfSex(int selfSex) {
         this.selfSex = selfSex;
     }
 
-    public int getHeight(){
+    public int getHeight() {
         return height;
     }
-    public void setHeight(int height){
+
+    public void setHeight(int height) {
         this.height = height;
     }
-    public void setUniversity(String university){
-        this.university = university;
-    }
-    public String getUniversity(){
+
+    public String getUniversity() {
         return university;
     }
 
-    public void setDegree(String degree){
-        this.degree = degree;
+    public void setUniversity(String university) {
+        this.university = university;
     }
-    public String getDegree(){
+
+    public String getDegree() {
         return degree;
     }
-    public int getDegreeIndex(){
-        if(degree.equals("大专")){
+
+    public void setDegree(String degree) {
+        this.degree = degree;
+    }
+
+    public int getDegreeIndex() {
+        if (degree.equals("大专")) {
             return 0;
         }
-        if(degree.equals("本科")){
+        if (degree.equals("本科")) {
             return 1;
         }
-        if(degree.equals("硕士")){
+        if (degree.equals("硕士")) {
             return 2;
         }
-        if(degree.equals("博士")){
+        if (degree.equals("博士")) {
             return 3;
         }
         return 4;
     }
-    public String getDegreeName(int degree){
+
+    public String getDegreeName(int degree) {
         String Degree;
-        switch (degree){
+        switch (degree) {
             case 0:
                 Degree = "大专";
                 break;
@@ -118,125 +122,140 @@ public class SelfCondition {
         return Degree;
     }
 
-    public void setJobTitle(String jobTitle){
-        this.jobTitle = jobTitle;
-    }
-    public String getJobTitle(){
+    public String getJobTitle() {
         return jobTitle;
     }
 
-    public void setLives(String lives){
-        this.lives = lives;
+    public void setJobTitle(String jobTitle) {
+        this.jobTitle = jobTitle;
     }
-    public String getLives(){
+
+    public String getLives() {
         return lives;
     }
 
-    public void setSituation(int situation){
-        this.situation = situation;
+    public void setLives(String lives) {
+        this.lives = lives;
     }
-    public int getSituation(){
+
+    public int getSituation() {
         return situation;
     }
 
-    public void setBirthYear(int birthYear){
-        this.birthYear = birthYear;
+    public void setSituation(int situation) {
+        this.situation = situation;
     }
-    public int getBirthYear(){
+
+    public int getBirthYear() {
         return birthYear;
     }
 
-    public void setBirthMonth(int birthMonth){
-        this.birthMonth = birthMonth;
+    public void setBirthYear(int birthYear) {
+        this.birthYear = birthYear;
     }
-    public int getBirthMonth(){
+
+    public int getBirthMonth() {
         return birthMonth;
     }
 
-    public void setBirthDay(int birthDay){
-        this.birthDay = birthDay;
+    public void setBirthMonth(int birthMonth) {
+        this.birthMonth = birthMonth;
     }
-    public int getBirthDay(){
+
+    public int getBirthDay() {
         return birthDay;
     }
 
-    public String getRealname(){
+    public void setBirthDay(int birthDay) {
+        this.birthDay = birthDay;
+    }
+
+    public String getRealname() {
         return realname;
     }
-    public void setRealname(String realname){
+
+    public void setRealname(String realname) {
         this.realname = realname;
     }
 
-    public void setPictureUri(String pictureUri){
-        if(!"".equals(pictureUri)){
-            this.pictureUri = pictureUri;
-        }
-    }
-    public String getPictureUri(){
+    public String getPictureUri() {
         return pictureUri;
     }
 
-    public int getAge(){
-        Calendar calendar= Calendar.getInstance();
+    public void setPictureUri(String pictureUri) {
+        if (!"".equals(pictureUri)) {
+            this.pictureUri = pictureUri;
+        }
+    }
+
+    public int getAge() {
+        Calendar calendar = Calendar.getInstance();
         return calendar.get(calendar.YEAR) - birthYear;
     }
 
-    public void setBrowseCount(int browseCount){
-        this.browseCount = browseCount;
-    }
-    public int getBrowseCount(){
+    public int getBrowseCount() {
         return browseCount;
     }
 
-    public void setLoved(int loved){
-        this.loved = loved;
+    public void setBrowseCount(int browseCount) {
+        this.browseCount = browseCount;
     }
-    public int getLoved(){
+
+    public int getLoved() {
         return loved;
     }
 
-    public void setLovedCount(int lovedCount){
-        this.lovedCount = lovedCount;
+    public void setLoved(int loved) {
+        this.loved = loved;
     }
-    public int getLovedCount(){
+
+    public int getLovedCount() {
         return lovedCount;
     }
 
-    public void setPraised(int praised){
-        this.praised = praised;
+    public void setLovedCount(int lovedCount) {
+        this.lovedCount = lovedCount;
     }
-    public int getPraised(){
+
+    public int getPraised() {
         return praised;
     }
 
-    public void setPraisedCount(int praisedCount){
-        this.praisedCount = praisedCount;
+    public void setPraised(int praised) {
+        this.praised = praised;
     }
-    public int getPraisedCount(){
+
+    public int getPraisedCount() {
         return praisedCount;
     }
 
-    public void setPictureChain(String pictureChain){
-        this.pictureChain = pictureChain;
+    public void setPraisedCount(int praisedCount) {
+        this.praisedCount = praisedCount;
     }
-    public String getPictureChain(){
+
+    public String getPictureChain() {
         return pictureChain;
     }
 
-    public void setRequirementSet(int requirementSet){
-        this.requirementSet = requirementSet;
+    public void setPictureChain(String pictureChain) {
+        this.pictureChain = pictureChain;
     }
-    public int getRequirementSet(){
+
+    public int getRequirementSet() {
         return requirementSet;
     }
 
-    public String getSelfCondition(int situation){
+    public void setRequirementSet(int requirementSet) {
+        this.requirementSet = requirementSet;
+    }
 
-        selfCondition = getAge()+"岁/"+height+"CM/"+getDegree();
-        if(situation ==0){//for student
-            selfCondition += "/"+university;
-        }else{//for worker
-            selfCondition += "/"+ jobTitle;
+    public String getSelfCondition(int situation) {
+
+        selfCondition = getAge() + "岁/" + height + "CM/" + getDegree();
+        if (situation == 0) {//for student
+            selfCondition += "/" + university;
+        } else {//for worker
+            selfCondition += "/" + jobTitle;
         }
         return selfCondition;
     }

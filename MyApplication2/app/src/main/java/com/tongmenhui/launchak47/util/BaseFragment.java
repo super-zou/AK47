@@ -27,7 +27,7 @@ public abstract class BaseFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Slog.d(TAG, "   " + this.getClass().getSimpleName()+"====onCreateView========================================");
+        Slog.d(TAG, "   " + this.getClass().getSimpleName() + "====onCreateView========================================");
         convertView = inflater.inflate(getLayoutId(), container, false);
         mViews = new SparseArray<>();
         initView(convertView);
@@ -36,8 +36,8 @@ public abstract class BaseFragment extends Fragment {
         return convertView;
     }
 
-    public Context getContext(){
-        if(activity == null){
+    public Context getContext() {
+        if (activity == null) {
             return MyApplication.getContext();
         }
         return activity;
@@ -64,6 +64,7 @@ public abstract class BaseFragment extends Fragment {
 
     /**
      * 加载页面布局文件
+     *
      * @return
      */
     protected abstract int getLayoutId();
@@ -71,7 +72,7 @@ public abstract class BaseFragment extends Fragment {
     protected abstract void initView(View view);
 
     /*
-    ** If first load data, init set true.
+     ** If first load data, init set true.
      */
     protected abstract void loadData();
 
@@ -83,12 +84,12 @@ public abstract class BaseFragment extends Fragment {
         }
 
         if (isVisible) {//only visible
-            if(isFirstLoad){//only first load
+            if (isFirstLoad) {//only first load
                 Slog.d(TAG, "========完成数据第一次加载");
                 loadData();
                 isFirstLoad = false;
             }
-        }else{
+        } else {
             Slog.d(TAG, "=======不加载" + "   " + this.getClass().getSimpleName());
             return;
         }
@@ -97,6 +98,7 @@ public abstract class BaseFragment extends Fragment {
 
     /**
      * fragment中可以通过这个方法直接找到需要的view，而不需要进行类型强转
+     *
      * @param viewId
      * @param <E>
      * @return

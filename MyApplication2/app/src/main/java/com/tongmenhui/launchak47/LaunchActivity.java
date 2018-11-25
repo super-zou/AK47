@@ -7,9 +7,9 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -33,18 +33,18 @@ public class LaunchActivity extends AppCompatActivity {
             }
         });
 
-        Button loginEntryBtn = (Button)findViewById(R.id.LoginEntryBtn);
-        Button registerEntryBtn = (Button)findViewById(R.id.RegisterEntryBtn);
+        Button loginEntryBtn = (Button) findViewById(R.id.LoginEntryBtn);
+        Button registerEntryBtn = (Button) findViewById(R.id.RegisterEntryBtn);
 
-        loginEntryBtn.setOnClickListener(new View.OnClickListener(){
+        loginEntryBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view){
+            public void onClick(View view) {
                 login();
             }
         });
-        registerEntryBtn.setOnClickListener(new View.OnClickListener(){
+        registerEntryBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view){
+            public void onClick(View view) {
                 register();
                 Toast.makeText(LaunchActivity.this, "register click", Toast.LENGTH_SHORT).show();
             }
@@ -80,12 +80,12 @@ public class LaunchActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void login(){
-        Intent intent = new Intent(this,Login.class);
+    private void login() {
+        Intent intent = new Intent(this, Login.class);
         startActivity(intent);
     }
 
-    private void register(){
+    private void register() {
         Intent intent = new Intent(this, Register.class);
         startActivity(intent);
 

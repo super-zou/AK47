@@ -11,38 +11,43 @@ public class MeetReferenceInfo {
     private Long created;
     private String headUri;
 
-    public String getRefereeName(){
+    public String getRefereeName() {
         return refereeName;
     }
-    public void setRefereeName(String referee_name){
+
+    public void setRefereeName(String referee_name) {
         this.refereeName = referee_name;
     }
 
-    public String getRefereeProfile(){
+    public String getRefereeProfile() {
         return refereeProfile;
     }
-    public void setRefereeProfile(String referee_profile){
+
+    public void setRefereeProfile(String referee_profile) {
         this.refereeProfile = referee_profile;
     }
-    public String getReferenceContent(){
+
+    public String getReferenceContent() {
         return content;
     }
-    public void setReferenceContent(String reference_content){
+
+    public void setReferenceContent(String reference_content) {
         this.content = reference_content;
     }
 
-    public Long getCreated(){
+    public Long getCreated() {
         return created;
     }
 
-    public void setCreated(Long created){
+    public void setCreated(Long created) {
         this.created = created;
     }
 
-    public String getHeadUri(){
+    public String getHeadUri() {
         return headUri;
     }
-    public void setHeadUri(String headUri){
+
+    public void setHeadUri(String headUri) {
         this.headUri = headUri;
     }
 

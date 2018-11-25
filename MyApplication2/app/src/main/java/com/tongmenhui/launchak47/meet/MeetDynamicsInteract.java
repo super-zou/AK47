@@ -14,52 +14,59 @@ public class MeetDynamicsInteract {
     private String content;
     //private String timestamp;
 
-    public boolean getType(){
+    public boolean getType() {
         return type;
     }
-    public void setType(boolean type){
+
+    public void setType(boolean type) {
         this.type = type;
     }
 
-    public void setPictureUri(String picture_uri){
-        this.picture_uri = picture_uri;
-    }
-    public String getPictureUri(){
+    public String getPictureUri() {
         return picture_uri;
     }
 
-    public void setAuthorName(String author_name){
-        this.author_name = author_name;
+    public void setPictureUri(String picture_uri) {
+        this.picture_uri = picture_uri;
     }
-    public String getAuthorName(){
+
+    public String getAuthorName() {
         return author_name;
     }
 
-    public void setAuthorUid(int author_id){
-        this.author_uid = author_id;
+    public void setAuthorName(String author_name) {
+        this.author_name = author_name;
     }
-    public int getAuthorUid(){
+
+    public int getAuthorUid() {
         return author_uid;
     }
 
-    public void setCommenterName(String commenter_name){
-        this.commenter_name = commenter_name;
+    public void setAuthorUid(int author_id) {
+        this.author_uid = author_id;
     }
-    public String getCommenterName(){
+
+    public String getCommenterName() {
         return commenter_name;
     }
 
-    public void setCommenterUid(String commenter_uid){
-        this.commenter_uid = commenter_uid;
+    public void setCommenterName(String commenter_name) {
+        this.commenter_name = commenter_name;
     }
-    public String getCommenterUid(){
+
+    public String getCommenterUid() {
         return commenter_uid;
     }
 
-    public void setContent(String content){
-        this.content = content;
+    public void setCommenterUid(String commenter_uid) {
+        this.commenter_uid = commenter_uid;
     }
-    public String getContent(){
+
+    public String getContent() {
         return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 }

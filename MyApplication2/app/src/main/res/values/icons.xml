@@ -10,12 +10,12 @@
     <string name="fa_camera_retro">&#xf083;</string>
     <string name="fa_star_o">&#xf005;</string>
     <string name="chevron_right">&#xf054;</string>
-        <string name="personality">&#xf024;</string>
+    <string name="personality">&#xf02c;</string>
     <string name="certificate">&#xf0a3;</string>
-    <string name="dna">&#xf471;</string>
+    <string name="hobby">&#xf11e;</string>
     <string name="flag_checkered">&#xf11e;</string>
-    <string name="hands">&#xf4c2;</string>
+    <string name="hands">&#xf2a7;</string>
     <string name="hand_holding_heart">&#xf4be;</string>
-    <string name="evaluate">&#xf56b;</string>
-    <string name="impress">&#xf530;</string>
+    <string name="evaluate">&#xf06c;</string>
+    <string name="impress">&#xf1b0;</string>
 </resources>

@@ -1,9 +1,5 @@
 package com.tongmenhui.launchak47.meet;
 
-import android.widget.ArrayAdapter;
-
-import com.tongmenhui.launchak47.util.CommentDialogFragment;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -15,6 +11,7 @@ import java.util.List;
 
 public class MeetDynamics extends MeetMemberInfo {
 
+    public List<DynamicsComment> dynamicsCommentList = new ArrayList<>();
     private long aid;
     private long created;
     private int praisedDynamicsCount;
@@ -22,62 +19,73 @@ public class MeetDynamics extends MeetMemberInfo {
     private int commentCount;
     private String content;
     private String activity_picture = "";
-    public List<DynamicsComment> dynamicsCommentList = new ArrayList<>();
 
-
-    public long getAid(){
+    public long getAid() {
         return aid;
     }
-    public void setAid(long aid){
+
+    public void setAid(long aid) {
         this.aid = aid;
     }
-    public String getContent(){
+
+    public String getContent() {
         return content;
     }
-    public void setContent(String content){
+
+    public void setContent(String content) {
         this.content = content;
     }
-    public String getCreated(){
-        Date date = new Date(created*1000);
+
+    public String getCreated() {
+        Date date = new Date(created * 1000);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         return simpleDateFormat.format(date);
     }
-    public void setCreated(long created){
+
+    public void setCreated(long created) {
         this.created = created;
     }
-    public void setPraisedDynamicsCount(int praiseCount){
-        this.praisedDynamicsCount = praiseCount;
-    }
-    public int getPraisedDynamicsCount(){
+
+    public int getPraisedDynamicsCount() {
         return praisedDynamicsCount;
     }
-    public void setCommentCount(int commentCount){
-        this.commentCount = commentCount;
+
+    public void setPraisedDynamicsCount(int praiseCount) {
+        this.praisedDynamicsCount = praiseCount;
     }
-    public int getCommentCount(){
+
+    public int getCommentCount() {
         return commentCount;
     }
-    public String getActivityPicture(){
-         return activity_picture;
+
+    public void setCommentCount(int commentCount) {
+        this.commentCount = commentCount;
     }
-    public void setActivityPicture(String activity_picture){
-        if(activity_picture != null && !activity_picture.equals("")){
+
+    public String getActivityPicture() {
+        return activity_picture;
+    }
+
+    public void setActivityPicture(String activity_picture) {
+        if (activity_picture != null && !activity_picture.equals("")) {
             this.activity_picture = activity_picture;
         }
     }
-    public void addComment(DynamicsComment dynamicsComment){
+
+    public void addComment(DynamicsComment dynamicsComment) {
         dynamicsCommentList.add(dynamicsComment);
     }
-    public List<DynamicsComment> getComments(){
+
+    public List<DynamicsComment> getComments() {
         return dynamicsCommentList;
     }
 
-    public void setPraisedDynamics(int praised){
-        this.praisedDynamics = praised;
+    public int getPraisedDynamics() {
+        return praisedDynamics;
     }
 
-    public int getPraisedDynamics(){
-        return praisedDynamics;
+    public void setPraisedDynamics(int praised) {
+        this.praisedDynamics = praised;
     }
 
 

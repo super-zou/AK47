@@ -1,13 +1,13 @@
 package com.tongmenhui.launchak47.util;
 
 import android.content.Context;
+import android.content.Intent;
 import android.text.TextUtils;
 import android.util.Log;
-import android.content.Intent;
 
+import com.tongmenhui.launchak47.meet.ArchivesActivity;
 import com.tongmenhui.launchak47.meet.MeetMemberInfo;
 import com.tongmenhui.launchak47.meet.MeetReferenceInfo;
-import com.tongmenhui.launchak47.meet.ArchivesActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,10 +29,10 @@ public class ParseUtils {
     private static final String TAG = "ParseUtils";
     private static final String GET_MEET_ARCHIVE_URL = HttpUtil.DOMAIN + "?q=meet/get_archive";
 
-    public static List<MeetMemberInfo> getMeetList(String responseText){
+    public static List<MeetMemberInfo> getMeetList(String responseText) {
         List<MeetMemberInfo> list = null;
-        Log.d(TAG, "getMeetList responseText:"+responseText);
-        if (TextUtils.isEmpty(responseText)){
+        Log.d(TAG, "getMeetList responseText:" + responseText);
+        if (TextUtils.isEmpty(responseText)) {
             return null;
         }
         try {
@@ -47,18 +47,18 @@ public class ParseUtils {
             list = new ArrayList<MeetMemberInfo>();
             int length = recommendation.length();
             MeetMemberInfo meetMemberInfo = null;
-            for (int i=0; i< length; i++){
+            for (int i = 0; i < length; i++) {
                 JSONObject recommender = recommendation.getJSONObject(i);
                 meetMemberInfo = setMeetMemberInfo(recommender);
                 list.add(meetMemberInfo);
             }
-        }catch (JSONException e){
+        } catch (JSONException e) {
             e.printStackTrace();
         }
         return list;
     }
 
-    public static MeetMemberInfo setMeetMemberInfo(JSONObject member){
+    public static MeetMemberInfo setMeetMemberInfo(JSONObject member) {
         MeetMemberInfo meetMemberInfo = new MeetMemberInfo();
 
         meetMemberInfo.setRealname(member.optString("realname"));
@@ -74,7 +74,7 @@ public class ParseUtils {
         meetMemberInfo.setLives(member.optString("lives"));
         meetMemberInfo.setSituation(member.optInt("situation"));
 
-                    //requirement
+        //requirement
         meetMemberInfo.setAgeLower(member.optInt("age_lower"));
         meetMemberInfo.setAgeUpper(member.optInt("age_upper"));
         meetMemberInfo.setRequirementHeight(member.optInt("requirement_height"));
@@ -83,7 +83,7 @@ public class ParseUtils {
         meetMemberInfo.setRequirementSex(member.optInt("requirement_sex"));
         meetMemberInfo.setIllustration(member.optString("illustration"));
 
-                    // meetMemberInfo.setSelf(recommender.optInt("self"));
+        // meetMemberInfo.setSelf(recommender.optInt("self"));
         meetMemberInfo.setBrowseCount(member.optInt("browse_count"));
         meetMemberInfo.setLovedCount(member.optInt("loved_count"));
         // meetMemberInfo.setLoved(recommender.optInt("loved"));
@@ -95,13 +95,13 @@ public class ParseUtils {
         return meetMemberInfo;
     }
 
-    public static List<MeetMemberInfo> getMeetDiscoveryList(String responseText){
+    public static List<MeetMemberInfo> getMeetDiscoveryList(String responseText) {
         List<MeetMemberInfo> list = null;
-        Log.d(TAG, "getMeetDiscoveryList responseText:"+responseText);
-        if (TextUtils.isEmpty(responseText)){
+        Log.d(TAG, "getMeetDiscoveryList responseText:" + responseText);
+        if (TextUtils.isEmpty(responseText)) {
             return null;
         }
-        try{
+        try {
             JSONObject recommend_response = new JSONObject(responseText);
             if (null == recommend_response) {
                 return null;
@@ -113,39 +113,40 @@ public class ParseUtils {
             list = new ArrayList<MeetMemberInfo>();
             int length = discovery.length();
             MeetMemberInfo meetMemberInfo = null;
-            for (int i=0; i< length; i++){
+            for (int i = 0; i < length; i++) {
                 JSONObject discoveryObj = discovery.getJSONObject(i);
-                meetMemberInfo = setMeetMemberInfo(discoveryObj);;
+                meetMemberInfo = setMeetMemberInfo(discoveryObj);
+                ;
 
                 list.add(meetMemberInfo);
             }
-        }catch (JSONException e){
+        } catch (JSONException e) {
 
         }
         return list;
     }
 
-    public static List<MeetReferenceInfo> getMeetReferenceList(String responseText){
+    public static List<MeetReferenceInfo> getMeetReferenceList(String responseText) {
         List<MeetReferenceInfo> meetReferenceInfoList = new ArrayList<MeetReferenceInfo>();
-        if(!TextUtils.isEmpty(responseText)){
+        if (!TextUtils.isEmpty(responseText)) {
             try {
                 JSONObject referenceObj = new JSONObject(responseText);
-                if(referenceObj != null){
+                if (referenceObj != null) {
                     JSONArray referenceArray = referenceObj.optJSONArray("reference");
                     MeetReferenceInfo meetReferenceInfo = null;
-                    if(referenceArray != null && referenceArray.length() > 0){
-                        for (int i=0; i<referenceArray.length(); i++){
+                    if (referenceArray != null && referenceArray.length() > 0) {
+                        for (int i = 0; i < referenceArray.length(); i++) {
                             meetReferenceInfo = new MeetReferenceInfo();
 
                             JSONObject reference = referenceArray.getJSONObject(i);
                             meetReferenceInfo.setRefereeName(reference.optString("realname"));
                             String profile = "";
-                            if(reference.optInt("situation") == 0){
-                                profile = reference.optString("university")+"."
-                                                 +reference.optString("degree")+"."
-                                                 +reference.optString("major");
-                            }else{
-                                profile = reference.optString("job_title")+"."+reference.optString("company");
+                            if (reference.optInt("situation") == 0) {
+                                profile = reference.optString("university") + "."
+                                        + reference.optString("degree") + "."
+                                        + reference.optString("major");
+                            } else {
+                                profile = reference.optString("job_title") + "." + reference.optString("company");
                             }
                             meetReferenceInfo.setRefereeProfile(profile);
                             meetReferenceInfo.setReferenceContent(reference.optString("content"));
@@ -158,7 +159,7 @@ public class ParseUtils {
                     }
 
                 }
-            }catch (JSONException e){
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
@@ -166,16 +167,16 @@ public class ParseUtils {
         return meetReferenceInfoList;
     }
 
-    public static void getMeetArchive(final Context context, int uid){
+    public static void getMeetArchive(final Context context, int uid) {
         RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
         HttpUtil.sendOkHttpRequest(context, GET_MEET_ARCHIVE_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                if(response.body() != null){
+                if (response.body() != null) {
                     String responseText = response.body().string();
-                    Slog.d(TAG, "==========get archive response text : "+responseText);
-                    if(responseText != null){
-                        if(!TextUtils.isEmpty(responseText)){
+                    Slog.d(TAG, "==========get archive response text : " + responseText);
+                    if (responseText != null) {
+                        if (!TextUtils.isEmpty(responseText)) {
                             try {
                                 JSONObject jsonObject = new JSONObject(responseText).optJSONObject("archive");
                                 MeetMemberInfo meetMemberInfo = setMeetMemberInfo(jsonObject);
@@ -184,15 +185,17 @@ public class ParseUtils {
                                 intent.putExtra("meet", meetMemberInfo);
                                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
                                 context.startActivity(intent);
-                            }catch (JSONException e){
+                            } catch (JSONException e) {
                                 e.printStackTrace();
                             }
                         }
                     }
                 }
             }
+
             @Override
-            public void onFailure(Call call, IOException e) {}
+            public void onFailure(Call call, IOException e) {
+            }
         });
     }
 }

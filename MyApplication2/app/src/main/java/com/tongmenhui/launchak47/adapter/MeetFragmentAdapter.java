@@ -1,26 +1,19 @@
 package com.tongmenhui.launchak47.adapter;
 
-import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.meet.MeetDiscoveryFragment;
 import com.tongmenhui.launchak47.meet.MeetDynamicsFragment;
 import com.tongmenhui.launchak47.meet.MeetRecommendFragment;
 import com.tongmenhui.launchak47.util.BaseFragment;
-import com.tongmenhui.launchak47.util.FontManager;
-import com.tongmenhui.launchak47.util.Slog;
 
 import java.util.ArrayList;
-
-import static com.tongmenhui.launchak47.util.MyApplication.getContext;
 
 /**
  * Created by haichao.zou on 2017/11/13.
@@ -41,7 +34,7 @@ public class MeetFragmentAdapter extends FragmentStatePagerAdapter {
     public Fragment getItem(int position) {
         //Fragment fragment;
         //Slog.d(TAG, "============title: "+mTitles.get(position));
-        switch (position){
+        switch (position) {
             case 0:
                 return new MeetRecommendFragment();
             case 1:
@@ -56,7 +49,7 @@ public class MeetFragmentAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public int getCount() {
-        return mTitles != null ? mTitles.size():0;
+        return mTitles != null ? mTitles.size() : 0;
     }
 
     @Override
@@ -70,10 +63,11 @@ public class MeetFragmentAdapter extends FragmentStatePagerAdapter {
         return PagerAdapter.POSITION_NONE;
     }
 
-    @Override @NonNull
+    @Override
+    @NonNull
     public Object instantiateItem(ViewGroup container, int position) {
         BaseFragment baseFragment;
-        switch (position){
+        switch (position) {
             case 0:
                 baseFragment = (MeetRecommendFragment) super.instantiateItem(container, position);
                 break;

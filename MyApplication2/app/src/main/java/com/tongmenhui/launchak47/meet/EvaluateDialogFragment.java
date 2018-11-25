@@ -8,9 +8,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.DialogFragment;
 import android.text.TextUtils;
-import android.util.Log;
-import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -19,12 +18,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-
-import android.graphics.Color;
-import android.graphics.drawable.ClipDrawable;
-import android.graphics.drawable.ColorDrawable;
-import android.view.LayoutInflater;
-
 import com.nex3z.flowlayout.FlowLayout;
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.util.HttpUtil;
@@ -32,6 +25,7 @@ import com.tongmenhui.launchak47.util.Slog;
 import com.tongmenhui.launchak47.util.Utility;
 import com.willy.ratingbar.BaseRatingBar;
 import com.willy.ratingbar.ScaleRatingBar;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -49,32 +43,26 @@ import okhttp3.Response;
 
 public class EvaluateDialogFragment extends DialogFragment {
     private static final String TAG = "EvaluateDialogFragment";
+    private static final int IMPRESSION_PARSE_DONE = 0;
+    private static final String SET_IMPRESSION_URL = HttpUtil.DOMAIN + "?q=meet/impression/set";
+    private static final String GET_IMPRESSION_STATISTICS_URL = HttpUtil.DOMAIN + "?q=meet/impression/statistics";
+    final List<String> selectedFeatures = new ArrayList<>();
     private Context mContext;
     private Dialog mDialog;
-    private View  view;
+    private View view;
     private boolean mEvaluated = false;
     private EvaluateDialogFragmentListener evaluateDialogFragmentListener;
     private LayoutInflater inflater;
-    final List<String> selectedFeatures = new ArrayList<>();
     private Handler handler = new EvaluateDialogFragment.MyHandler(this);
-    private static final int IMPRESSION_PARSE_DONE = 0;
     private List<String> impressionList = new ArrayList<>();
-    private static final String SET_IMPRESSION_URL = HttpUtil.DOMAIN + "?q=meet/impression/set";
-    private static final String GET_IMPRESSION_STATISTICS_URL = HttpUtil.DOMAIN + "?q=meet/impression/statistics";
 
-        //When the dialog destried  the function will be called to transmit data to ArchivesActivity
-    public interface EvaluateDialogFragmentListener{
-        //evaluated set true if user rating or set impression, or else set false
-        void onBackFromRatingAndImpressionDialogFragment(boolean evaluated);
-    }
-    
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         mContext = context;
         try {
-            evaluateDialogFragmentListener = (EvaluateDialogFragmentListener)context;
-        }catch (ClassCastException e){
+            evaluateDialogFragmentListener = (EvaluateDialogFragmentListener) context;
+        } catch (ClassCastException e) {
             throw new ClassCastException(context.toString() + "must implement evaluateDialogFragmentListener");
         }
     }
@@ -84,7 +72,7 @@ public class EvaluateDialogFragment extends DialogFragment {
         int uid = -1;
         int sex = 0;
         Bundle bundle = getArguments();
-        if(bundle != null){
+        if (bundle != null) {
             uid = bundle.getInt("uid");
             sex = bundle.getInt("sex");
         }
@@ -109,15 +97,15 @@ public class EvaluateDialogFragment extends DialogFragment {
         return mDialog;
     }
 
-    private void  setImpressions(final int uid, final int sex) {
+    private void setImpressions(final int uid, final int sex) {
         ScaleRatingBar scaleRatingBar = view.findViewById(R.id.charm_rating_bar);
         final TextView charmRating = view.findViewById(R.id.charm_rating);
         final FlowLayout maleFeatures = view.findViewById(R.id.male_features);
         final FlowLayout femaleFeatures = view.findViewById(R.id.female_features);
         final FlowLayout diyFeatures = view.findViewById(R.id.diy_features);
-        
+
         loadApprovedImpressions(uid);
-        
+
         if (sex == 0) {//display male features
             maleFeatures.setVisibility(View.VISIBLE);
         } else {//display female features
@@ -134,9 +122,9 @@ public class EvaluateDialogFragment extends DialogFragment {
 
         });
 
-        if(sex == 0){
+        if (sex == 0) {
             selectFeatures(maleFeatures);
-        }else{
+        } else {
             selectFeatures(femaleFeatures);
         }
 
@@ -151,7 +139,7 @@ public class EvaluateDialogFragment extends DialogFragment {
                     TextView diyTextView = new TextView(getContext());
                     //FlowLayout.LayoutParams layoutParams = new FlowLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                     diyTextView.setPadding((int) Utility.dpToPx(mContext, 8), (int) Utility.dpToPx(mContext, 8),
-                                           (int) Utility.dpToPx(mContext, 8), (int) Utility.dpToPx(mContext, 8));
+                            (int) Utility.dpToPx(mContext, 8), (int) Utility.dpToPx(mContext, 8));
                     diyTextView.setText(featureInput.getText());
                     diyTextView.setGravity(Gravity.CENTER);
                     diyTextView.setBackground(getContext().getDrawable(R.drawable.label_selected_bg));
@@ -176,10 +164,10 @@ public class EvaluateDialogFragment extends DialogFragment {
                     mEvaluated = true;
                 }
                 float rating = 0;
-                if(charmRating.getText().toString() != null && !"".equals(charmRating.getText().toString())){
+                if (charmRating.getText().toString() != null && !"".equals(charmRating.getText().toString())) {
                     rating = Float.parseFloat(charmRating.getText().toString());
                     mEvaluated = true;
-                }else {
+                } else {
                     errorNotice.setVisibility(View.VISIBLE);
                     return;
                 }
@@ -189,8 +177,8 @@ public class EvaluateDialogFragment extends DialogFragment {
         });
     }
 
-    private void uploadToServer(String features, float rating, int uid){
-        Slog.d(TAG, "==============uploadToServer features: "+features+" rating: "+rating+" uid: "+uid);
+    private void uploadToServer(String features, float rating, int uid) {
+        Slog.d(TAG, "==============uploadToServer features: " + features + " rating: " + rating + " uid: " + uid);
         RequestBody requestBody = new FormBody.Builder()
                 .add("uid", String.valueOf(uid))
                 .add("rating", String.valueOf(rating))
@@ -221,50 +209,51 @@ public class EvaluateDialogFragment extends DialogFragment {
         });
 
     }
-    
-    private void loadApprovedImpressions(final int uid){
+
+    private void loadApprovedImpressions(final int uid) {
 
         RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
         HttpUtil.sendOkHttpRequest(mContext, GET_IMPRESSION_STATISTICS_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                if(response.body() != null){
+                if (response.body() != null) {
                     String responseText = response.body().string();
-                    Slog.d(TAG, "==========loadApprovedImpressions response: "+responseText);
+                    Slog.d(TAG, "==========loadApprovedImpressions response: " + responseText);
 
-                    if(responseText != null){
-                        if(!TextUtils.isEmpty(responseText)){
+                    if (responseText != null) {
+                        if (!TextUtils.isEmpty(responseText)) {
                             parseImpressions(responseText);
                         }
                     }
                 }
             }
+
             @Override
             public void onFailure(Call call, IOException e) {
 
             }
         });
     }
-    
-   public void parseImpressions(String responseText){
+
+    public void parseImpressions(String responseText) {
 
         JSONObject responseObj = null;
-        try{
+        try {
             responseObj = new JSONObject(responseText);
-        } catch (JSONException e){
+        } catch (JSONException e) {
             e.printStackTrace();
         }
-        if(responseObj != null){
+        if (responseObj != null) {
             JSONObject impressionStatisticsObj = responseObj.optJSONObject("features_statistics");
-            if(impressionStatisticsObj != null){
+            if (impressionStatisticsObj != null) {
                 Iterator iterator = impressionStatisticsObj.keys();
                 int index = 0;
-                while (iterator.hasNext()){
+                while (iterator.hasNext()) {
                     index++;
                     String key = (String) iterator.next();
-                    Slog.d(TAG, "==============key: "+key);
+                    Slog.d(TAG, "==============key: " + key);
                     impressionList.add(key);
-                    if(index == 7){
+                    if (index == 7) {
                         break;
                     }
                 }
@@ -274,16 +263,16 @@ public class EvaluateDialogFragment extends DialogFragment {
             }
         }
     }
-    
-   public void setImpressionsView(){
+
+    public void setImpressionsView() {
         LinearLayout approvedFeaturesLabel = view.findViewById(R.id.approved_features_label);
         FlowLayout approvedFeatures = view.findViewById(R.id.features_approved);
         approvedFeaturesLabel.setVisibility(View.VISIBLE);
         approvedFeatures.setVisibility(View.VISIBLE);
-        for (int i=0; i<impressionList.size(); i++){
+        for (int i = 0; i < impressionList.size(); i++) {
             TextView approvedTextView = new TextView(getContext());
             approvedTextView.setPadding((int) Utility.dpToPx(mContext, 8), (int) Utility.dpToPx(mContext, 8),
-                                         (int) Utility.dpToPx(mContext, 8), (int) Utility.dpToPx(mContext, 8));
+                    (int) Utility.dpToPx(mContext, 8), (int) Utility.dpToPx(mContext, 8));
             approvedTextView.setText(impressionList.get(i));
             approvedTextView.setGravity(Gravity.CENTER);
             approvedTextView.setBackground(getContext().getDrawable(R.drawable.label_bg));
@@ -292,12 +281,12 @@ public class EvaluateDialogFragment extends DialogFragment {
         selectFeatures(approvedFeatures);
 
     }
-    
-    private void selectFeatures(FlowLayout featuresLayout){
+
+    private void selectFeatures(FlowLayout featuresLayout) {
         for (int i = 0; i < featuresLayout.getChildCount(); i++) {
             final TextView feature = (TextView) featuresLayout.getChildAt(i);
             feature.setOnClickListener(new View.OnClickListener() {
-               @Override
+                @Override
                 public void onClick(View view) {
                     Slog.d(TAG, "===========get text: " + feature.getText() + " tag: " + feature.getTag());
                     if (null != feature.getTag() && feature.getTag().equals("selected")) {
@@ -313,7 +302,46 @@ public class EvaluateDialogFragment extends DialogFragment {
             });
         }
     }
-    
+
+    public void handleMessage(Message message) {
+        switch (message.what) {
+            case IMPRESSION_PARSE_DONE:
+                setImpressionsView();
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        //KeyboardUtils.hideSoftInput(getContext());
+        if (mDialog != null) {
+            mDialog.dismiss();
+            mDialog = null;
+        }
+        if (evaluateDialogFragmentListener != null) {//callback from ArchivesActivity class
+            evaluateDialogFragmentListener.onBackFromRatingAndImpressionDialogFragment(mEvaluated);
+        }
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialogInterface) {
+        super.onDismiss(dialogInterface);
+    }
+
+    @Override
+    public void onCancel(DialogInterface dialogInterface) {
+        super.onCancel(dialogInterface);
+    }
+
+    //When the dialog destried  the function will be called to transmit data to ArchivesActivity
+    public interface EvaluateDialogFragmentListener {
+        //evaluated set true if user rating or set impression, or else set false
+        void onBackFromRatingAndImpressionDialogFragment(boolean evaluated);
+    }
+
     static class MyHandler extends Handler {
         WeakReference<EvaluateDialogFragment> evaluateDialogFragmentWeakReference;
 
@@ -324,43 +352,10 @@ public class EvaluateDialogFragment extends DialogFragment {
         @Override
         public void handleMessage(Message message) {
             EvaluateDialogFragment evaluateDialogFragment = evaluateDialogFragmentWeakReference.get();
-            if(evaluateDialogFragment != null){
+            if (evaluateDialogFragment != null) {
                 evaluateDialogFragment.handleMessage(message);
             }
         }
-    }
-    
-   public void handleMessage(Message message) {
-        switch (message.what) {
-            case IMPRESSION_PARSE_DONE:
-                setImpressionsView();
-                break;
-            default:
-                break;
-        }
-    }
-    
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        //KeyboardUtils.hideSoftInput(getContext());
-        if(mDialog != null){
-            mDialog.dismiss();
-            mDialog = null;
-        }
-        if(evaluateDialogFragmentListener != null){//callback from ArchivesActivity class
-            evaluateDialogFragmentListener.onBackFromRatingAndImpressionDialogFragment(mEvaluated);
-        }
-    }
-
-    @Override
-    public void onDismiss(DialogInterface dialogInterface){
-        super.onDismiss(dialogInterface);
-    }
-
-    @Override
-    public void onCancel(DialogInterface dialogInterface){
-        super.onCancel(dialogInterface);
     }
 
 }

@@ -34,7 +34,7 @@ public class BaseAppCompatActivity extends AppCompatActivity {
         dismissProgressDialog();
     }
 
-    public void showProgressDialog(String msg){
+    public void showProgressDialog(String msg) {
         if (null == mProgressDialog) {
             mProgressDialog = new ProgressDialog(this);
             mProgressDialog.setMessage(msg);
@@ -43,7 +43,7 @@ public class BaseAppCompatActivity extends AppCompatActivity {
         mProgressDialog.show();
     }
 
-    public void dismissProgressDialog(){
+    public void dismissProgressDialog() {
         if (null != mProgressDialog) {
             mProgressDialog.dismiss();
         }
@@ -52,7 +52,7 @@ public class BaseAppCompatActivity extends AppCompatActivity {
     public void toast(String msg) {
         if (mToast == null) {
             mToast = Toast.makeText(this, msg, Toast.LENGTH_SHORT);
-        }else {
+        } else {
             mToast.setText(msg);
         }
         mToast.show();

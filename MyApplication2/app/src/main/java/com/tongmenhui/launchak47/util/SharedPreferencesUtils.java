@@ -12,11 +12,11 @@ public class SharedPreferencesUtils {
     private static final String LAST_DYNAMICS = "last_dynamics";
     private static final String LAST_DISCOVERY = "last_discovery";
 
-    private static SharedPreferences getSharePreferences(Context context){
-        return context.getSharedPreferences(SHARED_NAME,  Context.MODE_PRIVATE);
+    private static SharedPreferences getSharePreferences(Context context) {
+        return context.getSharedPreferences(SHARED_NAME, Context.MODE_PRIVATE);
     }
 
-    public static String getAccount(Context context){
+    public static String getAccount(Context context) {
         return getSharePreferences(context).getString(ACCOUNT, "");
     }
 
@@ -24,7 +24,7 @@ public class SharedPreferencesUtils {
         getSharePreferences(context).edit().putString(ACCOUNT, account).commit();
     }
 
-    public static int getAccountType(Context context){
+    public static int getAccountType(Context context) {
         return getSharePreferences(context).getInt(ACCOUNT_TYPE, 0);
     }
 
@@ -32,7 +32,7 @@ public class SharedPreferencesUtils {
         getSharePreferences(context).edit().putInt(ACCOUNT_TYPE, type).commit();
     }
 
-    public static String getRecommendLast(Context context){
+    public static String getRecommendLast(Context context) {
         return getSharePreferences(context).getString(LAST_RECOMMNED, "");
     }
 
@@ -40,7 +40,7 @@ public class SharedPreferencesUtils {
         getSharePreferences(context).edit().putString(LAST_RECOMMNED, last).commit();
     }
 
-    public static String getDynamicsLast(Context context){
+    public static String getDynamicsLast(Context context) {
         return getSharePreferences(context).getString(LAST_DYNAMICS, "");
     }
 
@@ -48,7 +48,7 @@ public class SharedPreferencesUtils {
         getSharePreferences(context).edit().putString(LAST_DYNAMICS, last).commit();
     }
 
-    public static String getDiscoveryLast(Context context){
+    public static String getDiscoveryLast(Context context) {
         return getSharePreferences(context).getString(LAST_DISCOVERY, "");
     }
 

@@ -10,15 +10,17 @@ import com.android.volley.toolbox.Volley;
  */
 
 public class RequestQueueSingleton {
-    private static RequestQueue requestQueue;
     public static Context mContext;
-    public void RequestQueueSingleton(){
+    private static RequestQueue requestQueue;
 
-    }
-    public static RequestQueue instance(Context context){
-        if(requestQueue == null){
+    public static RequestQueue instance(Context context) {
+        if (requestQueue == null) {
             requestQueue = new Volley().newRequestQueue(context);
         }
         return requestQueue;
+    }
+
+    public void RequestQueueSingleton() {
+
     }
 }

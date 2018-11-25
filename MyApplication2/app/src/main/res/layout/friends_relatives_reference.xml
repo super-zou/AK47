@@ -202,7 +202,7 @@
         android:layout_height="wrap_content"
         android:background="@color/white">
         <TextView
-            android:text="@string/hand_holding_heart"
+            android:text="@string/hands"
             android:padding="3dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
@@ -268,10 +268,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <TextView
-                android:text="@string/dna"
+                android:padding="3dp"
+                android:text="@string/hobby"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
             <TextView
+                android:padding="3dp"
                 android:text="兴趣爱好"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />

@@ -18,7 +18,6 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.meet.MeetDynamicsFragment;
@@ -33,6 +32,32 @@ public class CommentDialogFragment extends DialogFragment implements View.OnClic
     private Button sendBtn;
     private InputMethodManager inputMethodManager;
     //private DialogFragmentDataCallback dataCallback;
+    private TextWatcher mTextWatcher = new TextWatcher() {
+
+        private CharSequence temp;
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            temp = s;
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            if (temp.length() > 0) {
+                sendBtn.setEnabled(true);
+                sendBtn.setClickable(true);
+                sendBtn.setTextColor(ContextCompat.getColor(getActivity(), R.color.blue));
+            } else {
+                sendBtn.setEnabled(true);
+                sendBtn.setTextColor(ContextCompat.getColor(getActivity(), R.color.black));
+            }
+        }
+    };
 
     @Override
     public void onAttach(Context context) {
@@ -86,39 +111,12 @@ public class CommentDialogFragment extends DialogFragment implements View.OnClic
         });
     }
 
-    private TextWatcher mTextWatcher = new TextWatcher() {
-
-        private CharSequence temp;
-
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            temp = s;
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-            if (temp.length() > 0) {
-                sendBtn.setEnabled(true);
-                sendBtn.setClickable(true);
-                sendBtn.setTextColor(ContextCompat.getColor(getActivity(), R.color.blue));
-            } else {
-                sendBtn.setEnabled(true);
-                sendBtn.setTextColor(ContextCompat.getColor(getActivity(), R.color.black));
-            }
-        }
-    };
-
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.comment_send:
                 //Toast.makeText(getActivity(), commentEditText.getText().toString(), Toast.LENGTH_LONG).show();
-                Intent intent= new Intent();
+                Intent intent = new Intent();
                 intent.putExtra("comment_text", commentEditText.getText().toString());
                 getTargetFragment().onActivityResult(MeetDynamicsFragment.REQUEST_CODE, Activity.RESULT_OK, intent);
                 commentEditText.setText("");
@@ -130,12 +128,12 @@ public class CommentDialogFragment extends DialogFragment implements View.OnClic
     }
 
     @Override
-    public void onDismiss(DialogInterface dialogInterface){
+    public void onDismiss(DialogInterface dialogInterface) {
         super.onDismiss(dialogInterface);
     }
 
     @Override
-    public void onCancel(DialogInterface dialogInterface){
+    public void onCancel(DialogInterface dialogInterface) {
         super.onCancel(dialogInterface);
     }
 

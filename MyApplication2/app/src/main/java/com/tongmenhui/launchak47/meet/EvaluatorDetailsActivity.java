@@ -3,12 +3,10 @@ package com.tongmenhui.launchak47.meet;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.view.View;
+
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.tongmenhui.launchak47.R;
@@ -16,8 +14,6 @@ import com.tongmenhui.launchak47.adapter.EvaluatorDetailsAdapter;
 import com.tongmenhui.launchak47.main.BaseAppCompatActivity;
 import com.tongmenhui.launchak47.util.HttpUtil;
 import com.tongmenhui.launchak47.util.Slog;
-
-import android.widget.LinearLayout;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -39,26 +35,26 @@ import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 public class EvaluatorDetailsActivity extends BaseAppCompatActivity {
     private static final String TAG = "EvaluatorDetailsActivity";
     private static final int PAGE_SIZE = 12;
+    private static final int LOAD_EVALUATOR_DONE = 0;
+    private static final String GET_IMPRESSION_DETAIL_URL = HttpUtil.DOMAIN + "?q=meet/impression/get_detail";
+    List<EvaluatorDetails> mEvaluatorDetailsList;
+    XRecyclerView mEvaluatorDetailsListRV;
     //private XRecyclerView mXRecyclerView;
     //private JSONObject impressionObj;
     private Handler handler;
-    private static final int LOAD_EVALUATOR_DONE = 0;
     private EvaluatorDetailsAdapter mEvaluatorDetailsAdapter;
-    List<EvaluatorDetails> mEvaluatorDetailsList;
-    XRecyclerView mEvaluatorDetailsListRV;
-    private static final String GET_IMPRESSION_DETAIL_URL = HttpUtil.DOMAIN + "?q=meet/impression/get_detail";
-    
-        @Override
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.evaluator_details);
-        final int uid =  (int)getIntent().getIntExtra("uid", -1);
+        final int uid = (int) getIntent().getIntExtra("uid", -1);
         handler = new EvaluatorDetailsActivity.MyHandler(this);
         mEvaluatorDetailsList = new ArrayList<>();
 
         mEvaluatorDetailsAdapter = new EvaluatorDetailsAdapter(this);
         mEvaluatorDetailsListRV = findViewById(R.id.evaluator_details_list);
-       
+
         mEvaluatorDetailsListRV.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -66,7 +62,7 @@ public class EvaluatorDetailsActivity extends BaseAppCompatActivity {
                 super.onScrollStateChanged(recyclerView, newState);
             }
         });
-        
+
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mEvaluatorDetailsListRV.setLayoutManager(linearLayoutManager);
@@ -76,7 +72,7 @@ public class EvaluatorDetailsActivity extends BaseAppCompatActivity {
         mEvaluatorDetailsListRV.setPullRefreshEnabled(false);
         mEvaluatorDetailsListRV.getDefaultFootView().setLoadingHint(getString(R.string.loading_pull_up_tip));
         mEvaluatorDetailsListRV.getDefaultFootView().setNoMoreHint(getString(R.string.loading_no_more));
-  
+
         // When the item number of the screen number is list.size-2,we call the onLoadMore
         mEvaluatorDetailsListRV.setLimitNumberToCallLoadMore(18);
         mEvaluatorDetailsListRV.setRefreshProgressStyle(ProgressStyle.BallBeat);
@@ -94,13 +90,13 @@ public class EvaluatorDetailsActivity extends BaseAppCompatActivity {
                 getEvaluatorDetails(uid);
             }
         });
-        
+
         mEvaluatorDetailsListRV.setAdapter(mEvaluatorDetailsAdapter);
 
         getEvaluatorDetails(uid);
     }
-    
-    private void getEvaluatorDetails(int uid){
+
+    private void getEvaluatorDetails(int uid) {
         int page = mEvaluatorDetailsList.size() / PAGE_SIZE;
         RequestBody requestBody = new FormBody.Builder()
                 .add("uid", String.valueOf(uid))
@@ -110,11 +106,11 @@ public class EvaluatorDetailsActivity extends BaseAppCompatActivity {
         HttpUtil.sendOkHttpRequest(this, GET_IMPRESSION_DETAIL_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                if(response.body() != null){
+                if (response.body() != null) {
                     String responseText = response.body().string();
-                    Slog.d(TAG, "==========getEvaluatorDetails : "+responseText);
-                    if(responseText != null){
-                        if(!TextUtils.isEmpty(responseText)){
+                    Slog.d(TAG, "==========getEvaluatorDetails : " + responseText);
+                    if (responseText != null) {
+                        if (!TextUtils.isEmpty(responseText)) {
                             Message msg = handler.obtainMessage();
                             Bundle bundle = new Bundle();
                             bundle.putString("response", responseText);
@@ -125,22 +121,24 @@ public class EvaluatorDetailsActivity extends BaseAppCompatActivity {
                     }
                 }
             }
+
             @Override
-            public void onFailure(Call call, IOException e) {}
+            public void onFailure(Call call, IOException e) {
+            }
         });
     }
-    
-     private void setEvaluatorDetails(String response){
+
+    private void setEvaluatorDetails(String response) {
         JSONObject evaluatorDetailsObjWraper = null;
         try {
             evaluatorDetailsObjWraper = new JSONObject(response);
-        }catch (JSONException e){
+        } catch (JSONException e) {
             e.printStackTrace();
         }
-        
+
         JSONArray impressionArray = evaluatorDetailsObjWraper.optJSONArray("impression");
-        if(impressionArray != null && impressionArray.length() > 0){
-            for (int i=0; i<impressionArray.length(); i++){
+        if (impressionArray != null && impressionArray.length() > 0) {
+            for (int i = 0; i < impressionArray.length(); i++) {
                 EvaluatorDetails evaluatorDetails = new EvaluatorDetails();
                 JSONObject evaluatorDetailsObj = impressionArray.optJSONObject(i);
                 evaluatorDetails.setEvaluatorUid(evaluatorDetailsObj.optInt("evaluator_uid"));
@@ -157,24 +155,9 @@ public class EvaluatorDetailsActivity extends BaseAppCompatActivity {
         }
 
     }
-    static class MyHandler extends Handler {
-        WeakReference<EvaluatorDetailsActivity> evaluatorDetailsActivityWeakReference;
 
-        MyHandler(EvaluatorDetailsActivity evaluatorDetailsActivity) {
-            evaluatorDetailsActivityWeakReference = new WeakReference<EvaluatorDetailsActivity>(evaluatorDetailsActivity);
-        }
-
-        @Override
-        public void handleMessage(Message message) {
-            EvaluatorDetailsActivity evaluatorDetailsActivity = evaluatorDetailsActivityWeakReference.get();
-            if(evaluatorDetailsActivity != null){
-                evaluatorDetailsActivity.handleMessage(message);
-            }
-        }
-    }
-    
-    public void handleMessage(Message message){
-        switch (message.what){
+    public void handleMessage(Message message) {
+        switch (message.what) {
             case LOAD_EVALUATOR_DONE:
                 Bundle bundle = message.getData();
                 String response = bundle.getString("response");
@@ -185,8 +168,24 @@ public class EvaluatorDetailsActivity extends BaseAppCompatActivity {
                 break;
         }
     }
-    
-    public class EvaluatorDetails{
+
+    static class MyHandler extends Handler {
+        WeakReference<EvaluatorDetailsActivity> evaluatorDetailsActivityWeakReference;
+
+        MyHandler(EvaluatorDetailsActivity evaluatorDetailsActivity) {
+            evaluatorDetailsActivityWeakReference = new WeakReference<EvaluatorDetailsActivity>(evaluatorDetailsActivity);
+        }
+
+        @Override
+        public void handleMessage(Message message) {
+            EvaluatorDetailsActivity evaluatorDetailsActivity = evaluatorDetailsActivityWeakReference.get();
+            if (evaluatorDetailsActivity != null) {
+                evaluatorDetailsActivity.handleMessage(message);
+            }
+        }
+    }
+
+    public class EvaluatorDetails {
         private int uid;
         private String name;
         private String pictureUri;
@@ -195,10 +194,11 @@ public class EvaluatorDetailsActivity extends BaseAppCompatActivity {
         private double rating;
         private String features;
 
-        public int getUid(){
+        public int getUid() {
             return uid;
         }
-        public void setUid(int uid){
+
+        public void setUid(int uid) {
             this.uid = uid;
         }
 
@@ -213,7 +213,7 @@ public class EvaluatorDetailsActivity extends BaseAppCompatActivity {
         public double getRating() {
             return rating;
         }
-        
+
         public void setRating(double rating) {
             this.rating = rating;
         }
@@ -226,20 +226,20 @@ public class EvaluatorDetailsActivity extends BaseAppCompatActivity {
             this.features = features;
         }
 
-        public void setName(String name) {
-            this.name = name;
-        }
-        
         public String getName() {
             return name;
         }
 
-        public void setPictureUri(String pictureUri) {
-            this.pictureUri = pictureUri;
+        public void setName(String name) {
+            this.name = name;
         }
 
         public String getPictureUri() {
             return pictureUri;
+        }
+
+        public void setPictureUri(String pictureUri) {
+            this.pictureUri = pictureUri;
         }
     }
 }

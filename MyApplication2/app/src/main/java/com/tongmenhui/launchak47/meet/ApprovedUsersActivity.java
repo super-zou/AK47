@@ -2,32 +2,26 @@ package com.tongmenhui.launchak47.meet;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.adapter.ImpressionApprovedDetailAdapter;
-import com.tongmenhui.launchak47.util.Slog;
 
 public class ApprovedUsersActivity extends AppCompatActivity {
 
     private static final String TAG = "ApprovedUsersActivity";
+    ArchivesActivity.ImpressionStatistics impressionStatistics = null;
     private Context mContext;
     private Dialog mDialog;
     private View view;
     private RecyclerView mUsersDetailList;
     private ImpressionApprovedDetailAdapter approvedDetailAdapter;
     private LayoutInflater inflater;
-    ArchivesActivity.ImpressionStatistics impressionStatistics = null;
 
     /*
     @Override
@@ -37,7 +31,7 @@ public class ApprovedUsersActivity extends AppCompatActivity {
     }
 */
     @Override
-    protected void onCreate(Bundle savedInstanceState){
+    protected void onCreate(Bundle savedInstanceState) {
         mContext = this;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.impression_approved_users_detail);

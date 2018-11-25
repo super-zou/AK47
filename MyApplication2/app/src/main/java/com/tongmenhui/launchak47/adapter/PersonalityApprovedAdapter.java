@@ -16,81 +16,81 @@ import com.tongmenhui.launchak47.util.HttpUtil;
 import com.tongmenhui.launchak47.util.RequestQueueSingleton;
 import com.tongmenhui.launchak47.util.Slog;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.tongmenhui.launchak47.util.ParseUtils.getMeetArchive;
 
 public class PersonalityApprovedAdapter extends RecyclerView.Adapter<PersonalityApprovedAdapter.ViewHolder> {
     private static final String TAG = "PersonalityApprovedAdapter";
+    RequestQueue queue;
     private List<MeetMemberInfo> mMemberInfoList;
     private Context mContext;
-    RequestQueue queue;
 
-    public PersonalityApprovedAdapter(Context context){
+    public PersonalityApprovedAdapter(Context context) {
         mContext = context;
     }
-    
-        public void setData(List<MeetMemberInfo> memberInfoList){
+
+    public void setData(List<MeetMemberInfo> memberInfoList) {
         mMemberInfoList = memberInfoList;
     }
-    public class ViewHolder extends RecyclerView.ViewHolder{
 
-        public ImageView headPic;
-        public TextView name;
-        public TextView profile;
-
-        public ViewHolder(View view){
-            super(view);
-            headPic =  view.findViewById(R.id.networkImageView);
-            name = view.findViewById(R.id.name);
-            profile = view.findViewById(R.id.profile);
-        }
-    }
-    
-        @Override
+    @Override
     public PersonalityApprovedAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.approved_user_info, parent, false);
         PersonalityApprovedAdapter.ViewHolder holder = new PersonalityApprovedAdapter.ViewHolder(view);
         return holder;
     }
-    
-        @Override
+
+    @Override
     public void onBindViewHolder(@NonNull PersonalityApprovedAdapter.ViewHolder holder, int position) {
         final MeetMemberInfo memberInfo = mMemberInfoList.get(position);
-        Slog.d(TAG, "=============get real name: "+memberInfo.getRealname());
+        Slog.d(TAG, "=============get real name: " + memberInfo.getRealname());
         holder.name.setText(memberInfo.getRealname());
         String profile = "";
-        if(memberInfo.getSituation() == 0){//student
-            profile = memberInfo.getUniversity()+"."+memberInfo.getDegree()+"."+memberInfo.getDegree();
-        }else{
-            profile = memberInfo.getJobTitle()+"."+memberInfo.getCompany();
-            if(!"".equals(memberInfo.getLives())){
-                profile += "."+memberInfo.getLives();
+        if (memberInfo.getSituation() == 0) {//student
+            profile = memberInfo.getUniversity() + "." + memberInfo.getDegree() + "." + memberInfo.getDegree();
+        } else {
+            profile = memberInfo.getJobTitle() + "." + memberInfo.getCompany();
+            if (!"".equals(memberInfo.getLives())) {
+                profile += "." + memberInfo.getLives();
             }
         }
-        
-        holder.profile.setText(profile.replaceAll(" ",""));
 
-        if(memberInfo.getPictureUri() != null && !"".equals(memberInfo.getPictureUri())){
+        holder.profile.setText(profile.replaceAll(" ", ""));
+
+        if (memberInfo.getPictureUri() != null && !"".equals(memberInfo.getPictureUri())) {
             queue = RequestQueueSingleton.instance(mContext);
-            holder.headPic.setTag(HttpUtil.DOMAIN+memberInfo.getPictureUri());
+            holder.headPic.setTag(HttpUtil.DOMAIN + memberInfo.getPictureUri());
             HttpUtil.loadByImageLoader(queue, holder.headPic, HttpUtil.DOMAIN + memberInfo.getPictureUri(), 50, 50);
-        }else{
+        } else {
             holder.headPic.setImageDrawable(mContext.getDrawable(R.mipmap.ic_launcher));
         }
-        
-                holder.headPic.setOnClickListener(new View.OnClickListener() {
+
+        holder.headPic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 getMeetArchive(mContext, memberInfo.getUid());
             }
         });
     }
-    
+
     @Override
-    public int getItemCount(){
-        return mMemberInfoList != null ? mMemberInfoList.size():0;
+    public int getItemCount() {
+        return mMemberInfoList != null ? mMemberInfoList.size() : 0;
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+
+        public ImageView headPic;
+        public TextView name;
+        public TextView profile;
+
+        public ViewHolder(View view) {
+            super(view);
+            headPic = view.findViewById(R.id.networkImageView);
+            name = view.findViewById(R.id.name);
+            profile = view.findViewById(R.id.profile);
+        }
     }
 }

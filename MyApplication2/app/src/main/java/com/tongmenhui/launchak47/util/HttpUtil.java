@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.android.volley.RequestQueue;
@@ -31,30 +30,32 @@ import static android.content.Context.MODE_PRIVATE;
 public class HttpUtil {
     public static final String TAG = "HttpUtil";
     /*+Begin: added by xuchunping 2018.7.19*/
-    public static final String  DOMAIN = "http://112.126.83.127:88/";
+    public static final String DOMAIN = "http://112.126.83.127:88/";
     /*-End: added by xuchunping 2018.7.19*/
     private static String Cookie;
-    public static String getCookie(Context context){
+
+    public static String getCookie(Context context) {
         SharedPreferences preferences = context.getSharedPreferences("session", MODE_PRIVATE);
-        Cookie = preferences.getString("sessionName", "")+"="+preferences.getString("sessionId", "");
+        Cookie = preferences.getString("sessionName", "") + "=" + preferences.getString("sessionId", "");
 
         return Cookie;
     }
-    public static void sendOkHttpRequest(Context context, String address, RequestBody requestBody, okhttp3.Callback callback){
+
+    public static void sendOkHttpRequest(Context context, String address, RequestBody requestBody, okhttp3.Callback callback) {
         OkHttpClient client = new OkHttpClient();
         Request request = null;
         String cookie = getCookie(context);
-        if(requestBody != null){
-            if(cookie != null){
+        if (requestBody != null) {
+            if (cookie != null) {
                 request = new Request.Builder().url(address).addHeader("cookie", cookie).post(requestBody).build();
-            }else{
+            } else {
                 request = new Request.Builder().url(address).post(requestBody).build();
             }
 
-        }else{
-            if(cookie != null){
+        } else {
+            if (cookie != null) {
                 request = new Request.Builder().url(address).addHeader("cookie", cookie).build();
-            }else{
+            } else {
                 request = new Request.Builder().url(address).build();
             }
 
@@ -63,22 +64,22 @@ public class HttpUtil {
         client.newCall(request).enqueue(callback);
     }
 
-    public static Response sendOkHttpRequestSync(Context context, String address, RequestBody requestBody, okhttp3.Callback callback){
+    public static Response sendOkHttpRequestSync(Context context, String address, RequestBody requestBody, okhttp3.Callback callback) {
         OkHttpClient client = new OkHttpClient();
         Response response = null;
         Request request = null;
         String cookie = getCookie(context);
-        if(requestBody != null){
-            if(cookie != null){
+        if (requestBody != null) {
+            if (cookie != null) {
                 request = new Request.Builder().url(address).addHeader("cookie", cookie).post(requestBody).build();
-            }else{
+            } else {
                 request = new Request.Builder().url(address).post(requestBody).build();
             }
 
-        }else{
-            if(cookie != null){
+        } else {
+            if (cookie != null) {
                 request = new Request.Builder().url(address).addHeader("cookie", cookie).build();
-            }else{
+            } else {
                 request = new Request.Builder().url(address).build();
             }
 
@@ -86,20 +87,20 @@ public class HttpUtil {
 
         try {
             response = client.newCall(request).execute();
-        }catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
         return response;
     }
 
-    public static Bitmap getHttpBitmap(String url){
+    public static Bitmap getHttpBitmap(String url) {
         URL myFileURL;
-        Bitmap bitmap=null;
-        try{
+        Bitmap bitmap = null;
+        try {
             myFileURL = new URL(url);
             //获得连接
-            HttpURLConnection conn=(HttpURLConnection)myFileURL.openConnection();
+            HttpURLConnection conn = (HttpURLConnection) myFileURL.openConnection();
             //设置超时时间为6000毫秒，conn.setConnectionTiem(0);表示没有时间限制
             conn.setConnectTimeout(0);
             //连接设置获得数据流
@@ -114,39 +115,40 @@ public class HttpUtil {
             bitmap = BitmapFactory.decodeStream(is);
             //关闭数据流
             is.close();
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
         return bitmap;
 
     }
-    public static void loadByImageLoader(RequestQueue queue, ImageView imageView, String url, int width, int height){
 
-        if(url != null){
+    public static void loadByImageLoader(RequestQueue queue, ImageView imageView, String url, int width, int height) {
+
+        if (url != null) {
             //创建ImageLoader对象，参数（加入请求队列，自定义缓存机制）
-            ImageLoader imageLoader =new ImageLoader(queue, BitmapCache.instance());
-            if(url.equals(imageView.getTag())){
-                if(imageView instanceof NetworkImageView){
+            ImageLoader imageLoader = new ImageLoader(queue, BitmapCache.instance());
+            if (url.equals(imageView.getTag())) {
+                if (imageView instanceof NetworkImageView) {
                     //Slog.d(TAG, "================NetworkImageView  instance============");
                     ((NetworkImageView) imageView).setDefaultImageResId(R.drawable.main_bottom_attention_press);
                     ((NetworkImageView) imageView).setErrorImageResId(android.R.drawable.stat_notify_error);
                     //imageView.setLayoutParams(layoutParams);
                     ((NetworkImageView) imageView).setImageUrl(url, imageLoader);
-                }else{
+                } else {
                     //获取图片监听器 参数（要显示的ImageView控件，默认显示的图片，加载错误显示的图片）
                     ImageLoader.ImageListener listener = ImageLoader.getImageListener(imageView,
                             R.drawable.main_bottom_attention_press,
                             R.drawable.error);
 
-                    imageLoader.get(url,listener,width, height);
+                    imageLoader.get(url, listener, width, height);
                 }
             }
         }
 
     }
 
-    public static void uploadImage(){
+    public static void uploadImage() {
 
     }
 

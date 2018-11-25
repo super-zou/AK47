@@ -9,16 +9,14 @@ import java.util.Calendar;
  * Created by haichao.zou on 2017/9/15.
  */
 
-public class MeetMemberInfo implements Serializable{
+public class MeetMemberInfo implements Serializable {
 
+    public static final String SEX_MALE = "男生";
+    public static final String SEX_FEMALE = "女生";
     private static final String TAG = "MeetMemberInfo";
-
     public int cid = -1;
-    private int sex = 0;
-
     //self condition
     public int uid = -1;
-    private int selfSex = -1;
     public String realname = "";
     public String pictureUri = "";
     public int birthYear = 0;
@@ -30,13 +28,6 @@ public class MeetMemberInfo implements Serializable{
     public String jobTitle = "";
     public String lives = "";
     public int situation = 0;
-    private String selfCondition = "";
-    
-    private String major;
-    private String company;
-
-    private String profile = "";
-
     //requirement
     public int ageLower = 0;
     public int ageUpper = 0;
@@ -52,11 +43,13 @@ public class MeetMemberInfo implements Serializable{
     public int praisedCount = 0;
     public String pictureChain = "";
     public int browseCount = 0;
-
     public int requirementSet = 0;
-
-    public static final String SEX_MALE = "男生";
-    public static final String SEX_FEMALE = "女生";
+    private int sex = 0;
+    private int selfSex = -1;
+    private String selfCondition = "";
+    private String major;
+    private String company;
+    private String profile = "";
 
 
     /*
@@ -65,58 +58,68 @@ public class MeetMemberInfo implements Serializable{
     }
     */
 
-    public int getUid(){
+    public int getUid() {
         return uid;
     }
-    public void setUid(int uid){
+
+    public void setUid(int uid) {
         this.uid = uid;
     }
 
-    public int getCid(){
+    public int getCid() {
         return cid;
     }
-    public void setCid(int cid){
+
+    public void setCid(int cid) {
         this.cid = cid;
     }
-    public int getSex(){
+
+    public int getSex() {
         return sex;
     }
-    public void setSex(int sex){
+
+    public void setSex(int sex) {
         this.sex = sex;
     }
-    public int getSelfSex(){
+
+    public int getSelfSex() {
         return selfSex;
     }
-    public void setSelfSex(int selfSex){
+
+    public void setSelfSex(int selfSex) {
         this.selfSex = selfSex;
     }
 
-    public int getHeight(){
+    public int getHeight() {
         return height;
     }
-    public void setHeight(int height){
+
+    public void setHeight(int height) {
         this.height = height;
     }
-    public void setUniversity(String university){
-        this.university = university;
-    }
-    public String getUniversity(){
+
+    public String getUniversity() {
         return university;
     }
 
-    public void setDegree(String degree){
-        if(degree != null && !TextUtils.isEmpty(degree)){
-            this.degree = degree;
-        }
+    public void setUniversity(String university) {
+        this.university = university;
     }
-    public String getDegree(){
+
+    public String getDegree() {
         return degree;
     }
 
-    public String getDegreeName(String degree){
+    public void setDegree(String degree) {
+        if (degree != null && !TextUtils.isEmpty(degree)) {
+            this.degree = degree;
+        }
+    }
+
+    public String getDegreeName(String degree) {
         String Degree = "";
-        if(degree != "" && !degree.equals("null")){
-            switch (Integer.parseInt(degree)){
+        if (degree != "" && !degree.equals("null")) {
+            switch (Integer.parseInt(degree)) {
                 case 0:
                     Degree = "大专";
                     break;
@@ -137,251 +140,275 @@ public class MeetMemberInfo implements Serializable{
         return Degree;
     }
 
-    public void setJobTitle(String jobTitle){
-        this.jobTitle = jobTitle;
-    }
-    public String getJobTitle(){
+    public String getJobTitle() {
         return jobTitle;
     }
 
-    public void setLives(String lives){
-        this.lives = lives;
+    public void setJobTitle(String jobTitle) {
+        this.jobTitle = jobTitle;
     }
-    public String getLives(){
+
+    public String getLives() {
         return lives;
     }
 
-    public void setSituation(int situation){
-        this.situation = situation;
+    public void setLives(String lives) {
+        this.lives = lives;
     }
-    public int getSituation(){
+
+    public int getSituation() {
         return situation;
     }
 
-    public void setBirthYear(int birthYear){
-        this.birthYear = birthYear;
+    public void setSituation(int situation) {
+        this.situation = situation;
     }
-    public int getBirthYear(){
+
+    public int getBirthYear() {
         return birthYear;
     }
 
-    public void setBirthMonth(int birthMonth){
-        this.birthMonth = birthMonth;
+    public void setBirthYear(int birthYear) {
+        this.birthYear = birthYear;
     }
-    public int getBirthMonth(){
+
+    public int getBirthMonth() {
         return birthMonth;
     }
 
-    public void setBirthDay(int birthDay){
-        this.birthDay = birthDay;
+    public void setBirthMonth(int birthMonth) {
+        this.birthMonth = birthMonth;
     }
-    public int getBirthDay(){
+
+    public int getBirthDay() {
         return birthDay;
     }
 
-    public String getRealname(){
+    public void setBirthDay(int birthDay) {
+        this.birthDay = birthDay;
+    }
+
+    public String getRealname() {
         return realname;
     }
-    public void setRealname(String realname){
+
+    public void setRealname(String realname) {
         this.realname = realname;
     }
 
-    public void setPictureUri(String pictureUri){
-        if(!"".equals(pictureUri)){
-            this.pictureUri = pictureUri;
-        }
-    }
-    public String getPictureUri(){
+    public String getPictureUri() {
         return pictureUri;
     }
 
-    public int getAge(){
-        if(birthYear != 0){
-            Calendar calendar= Calendar.getInstance();
+    public void setPictureUri(String pictureUri) {
+        if (!"".equals(pictureUri)) {
+            this.pictureUri = pictureUri;
+        }
+    }
+
+    public int getAge() {
+        if (birthYear != 0) {
+            Calendar calendar = Calendar.getInstance();
             return calendar.get(calendar.YEAR) - birthYear;
         }
 
         return 0;
     }
 
-    public void setAgeLower(int ageLower){
-        this.ageLower = ageLower;
-    }
-    public int getAgeLower(){
+    public int getAgeLower() {
         return ageLower;
     }
 
-    public void setAgeUpper(int ageUpper){
-        this.ageUpper = ageUpper;
+    public void setAgeLower(int ageLower) {
+        this.ageLower = ageLower;
     }
-    public int getAgeUpper(){
+
+    public int getAgeUpper() {
         return ageUpper;
     }
 
-    public void setRequirementHeight(int requirementHeight){
-        this.requirementHeight = requirementHeight;
+    public void setAgeUpper(int ageUpper) {
+        this.ageUpper = ageUpper;
     }
-    public int getRequirementHeight(){
+
+    public int getRequirementHeight() {
         return requirementHeight;
     }
 
-    public void setRequirementDegree(String requirementDegree){
-        this.requirementDegree = requirementDegree;
+    public void setRequirementHeight(int requirementHeight) {
+        this.requirementHeight = requirementHeight;
     }
-    public String getRequirementDegree(){
+
+    public String getRequirementDegree() {
         return requirementDegree;
     }
 
-    public void setRequirementLives(String requirementLives){
-        this.requirementLives = requirementLives;
+    public void setRequirementDegree(String requirementDegree) {
+        this.requirementDegree = requirementDegree;
     }
-    public String getRequirementLives(){
+
+    public String getRequirementLives() {
         return requirementLives;
     }
 
-    public void setRequirementSex(int requirementSex){
-        this.requirementSex = requirementSex;
+    public void setRequirementLives(String requirementLives) {
+        this.requirementLives = requirementLives;
     }
-    public String getRequirementSex(){
-        if(requirementSet == 0){
+
+    public String getRequirementSex() {
+        if (requirementSet == 0) {
             return SEX_MALE;
-        }else{
+        } else {
             return SEX_FEMALE;
         }
     }
 
-    public void setIllustration(String illustration){
-        this.illustration = illustration;
+    public void setRequirementSex(int requirementSex) {
+        this.requirementSex = requirementSex;
     }
-    public String getIllustration(){
+
+    public String getIllustration() {
         return illustration;
     }
 
-    public void setBrowseCount(int browseCount){
-        this.browseCount = browseCount;
+    public void setIllustration(String illustration) {
+        this.illustration = illustration;
     }
-    public int getBrowseCount(){
+
+    public int getBrowseCount() {
         return browseCount;
     }
 
-    public void setLoved(int loved){
-        this.loved = loved;
+    public void setBrowseCount(int browseCount) {
+        this.browseCount = browseCount;
     }
-    public int getLoved(){
+
+    public int getLoved() {
         return loved;
     }
 
-    public void setLovedCount(int lovedCount){
-        this.lovedCount = lovedCount;
+    public void setLoved(int loved) {
+        this.loved = loved;
     }
-    public int getLovedCount(){
+
+    public int getLovedCount() {
         return lovedCount;
     }
 
-    public void setPraised(int praised){
-        this.praised = praised;
+    public void setLovedCount(int lovedCount) {
+        this.lovedCount = lovedCount;
     }
-    public int getPraised(){
+
+    public int getPraised() {
         return praised;
     }
 
-    public void setPraisedCount(int praisedCount){
-        this.praisedCount = praisedCount;
+    public void setPraised(int praised) {
+        this.praised = praised;
     }
-    public int getPraisedCount(){
+
+    public int getPraisedCount() {
         return praisedCount;
     }
 
-    public void setPictureChain(String pictureChain){
-        this.pictureChain = pictureChain;
+    public void setPraisedCount(int praisedCount) {
+        this.praisedCount = praisedCount;
     }
-    public String getPictureChain(){
+
+    public String getPictureChain() {
         return pictureChain;
     }
-    
-        public String getMajor(){
+
+    public void setPictureChain(String pictureChain) {
+        this.pictureChain = pictureChain;
+    }
+
+    public String getMajor() {
         return major;
     }
-    public void setMajor(String major){
+
+    public void setMajor(String major) {
         this.major = major;
     }
 
-    public String getCompany(){
+    public String getCompany() {
         return company;
     }
 
-    public void setCompany(String company){
+    public void setCompany(String company) {
         this.company = company;
     }
 
-    public void setRequirementSet(int requirementSet){
-        this.requirementSet = requirementSet;
-    }
-    public int getRequirementSet(){
+    public int getRequirementSet() {
         return requirementSet;
     }
 
-    public void setProfile(String profile){
-        this.profile = profile;
+    public void setRequirementSet(int requirementSet) {
+        this.requirementSet = requirementSet;
     }
-    public String getProfile(){
+
+    public String getProfile() {
         String profile;
-        if(getSituation() == 0){//student
-            profile = getUniversity()+"."+getMajor()+"."+getDegree();
-        }else {
-            profile = getJobTitle()+"."+getCompany()+"."+getLives();
+        if (getSituation() == 0) {//student
+            profile = getUniversity() + "." + getMajor() + "." + getDegree();
+        } else {
+            profile = getJobTitle() + "." + getCompany() + "." + getLives();
         }
         return profile;
     }
 
-    public String getSelfCondition(int situation){
+    public void setProfile(String profile) {
+        this.profile = profile;
+    }
+
+    public String getSelfCondition(int situation) {
         selfCondition = "";
-        if(getAge() != 0){
-            selfCondition = getAge()+"岁/";
+        if (getAge() != 0) {
+            selfCondition = getAge() + "岁/";
         }
-        if(height != 0){
-            selfCondition += height+"CM/";
+        if (height != 0) {
+            selfCondition += height + "CM/";
         }
-        if(!"".equals(getDegreeName(getDegree()))){
+        if (!"".equals(getDegreeName(getDegree()))) {
             selfCondition += getDegreeName(getDegree());
         }
         //selfCondition = getAge()+"岁/"+height+"CM/"+getDegreeName(getDegree());
-        if(situation == 0){//for student
-            if(!"".equals(university)){
+        if (situation == 0) {//for student
+            if (!"".equals(university)) {
                 selfCondition += university;
             }
 
-        }else{//for worker
-            if(!"".equals(jobTitle)){
+        } else {//for worker
+            if (!"".equals(jobTitle)) {
                 selfCondition += jobTitle;
             }
         }
         return selfCondition;
     }
 
-    public String getRequirement(){
+    public String getRequirement() {
 
         String requirement = "期待遇见";
-        if(getAgeLower() != 0 && getAgeUpper() != 0){
-            requirement += getAgeLower()+"~"+ getAgeUpper()+"岁,";
-        }else{// meet requirement not set, should return ""
+        if (getAgeLower() != 0 && getAgeUpper() != 0) {
+            requirement += getAgeLower() + "~" + getAgeUpper() + "岁,";
+        } else {// meet requirement not set, should return ""
             return "";
         }
 
-        if(getRequirementHeight() != 0){
-            requirement += getRequirementHeight()+"CM以上,";
+        if (getRequirementHeight() != 0) {
+            requirement += getRequirementHeight() + "CM以上,";
         }
 
-        if(!"".equals(getDegreeName(String.valueOf(getRequirementDegree())))){
-            requirement += getDegreeName(String.valueOf(getRequirementDegree()))+"以上,";
+        if (!"".equals(getDegreeName(String.valueOf(getRequirementDegree())))) {
+            requirement += getDegreeName(String.valueOf(getRequirementDegree())) + "以上,";
         }
 
-        if(!"".equals(getRequirementLives())){
-            requirement +=  "住在 "+ getRequirementLives();
+        if (!"".equals(getRequirementLives())) {
+            requirement += "住在 " + getRequirementLives();
         }
 
-        if(!"".equals(getRequirementSex())){
-            requirement += "的"+ getRequirementSex();
+        if (!"".equals(getRequirementSex())) {
+            requirement += "的" + getRequirementSex();
         }
         /*
         String requirement = "期待遇见："+ getAgeLower()+"~"+ getAgeUpper()+"岁,"

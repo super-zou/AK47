@@ -1,6 +1,5 @@
 package com.tongmenhui.launchak47.main;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -10,9 +9,7 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.support.v4.app.Fragment;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.adapter.MeetFragmentAdapter;
@@ -20,8 +17,6 @@ import com.tongmenhui.launchak47.util.BaseFragment;
 import com.tongmenhui.launchak47.util.FontManager;
 
 import java.util.ArrayList;
-
-import static com.tongmenhui.launchak47.util.MyApplication.getContext;
 
 /**
  * Created by super-zou on 17-9-11.
@@ -35,7 +30,7 @@ public class MeetFragment extends BaseFragment {
     private TabLayout.Tab dynamics_tab;
     private TabLayout.Tab discovery_tab;
 
-    private ArrayList<String> mMeetTitleList = new ArrayList<String>(){
+    private ArrayList<String> mMeetTitleList = new ArrayList<String>() {
         {
             add("recomend");
             add("dynamics");
@@ -44,29 +39,29 @@ public class MeetFragment extends BaseFragment {
     };
 
     @Override
-    protected void initView(View view){
+    protected void initView(View view) {
 
     }
 
     @Override
-    protected void loadData(){
+    protected void loadData() {
 
     }
 
     @Override
-    protected int getLayoutId(){
-       return 0;
+    protected int getLayoutId() {
+        return 0;
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View viewContent = inflater.inflate(R.layout.fragment_meet,container,false);
+        View viewContent = inflater.inflate(R.layout.fragment_meet, container, false);
         initConentView(viewContent);
         return viewContent;
     }
 
-    public void initConentView(View view){
+    public void initConentView(View view) {
         mTabLayout = (TabLayout) view.findViewById(R.id.meet_tab_layout);
         mViewPager = (ViewPager) view.findViewById(R.id.meet_view_pager);
         //获取标签数据
@@ -87,13 +82,13 @@ public class MeetFragment extends BaseFragment {
         //将TabLayout和ViewPager关联起来
         mTabLayout.setupWithViewPager(mViewPager);
 
-        Typeface font = Typeface.createFromAsset(getContext().getAssets(), "fonts/fontawesome.ttf");
+        Typeface font = Typeface.createFromAsset(getContext().getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
         FontManager.markAsIconContainer(view.findViewById(R.id.activity_create), font);
 
         TextView ActivityCreate = (TextView) view.findViewById(R.id.activity_create);
-        ActivityCreate.setOnClickListener(new View.OnClickListener(){
+        ActivityCreate.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v){
+            public void onClick(View v) {
                 Intent intent = new Intent(getContext(), AddDynamicsActivity.class);
                 startActivity(intent);
             }

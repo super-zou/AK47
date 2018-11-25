@@ -1,34 +1,28 @@
 package com.tongmenhui.launchak47.adapter;
 
-import android.graphics.Typeface;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.view.View;
 
-import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.main.ActivitiesFragment;
 import com.tongmenhui.launchak47.main.ArchiveFragment;
 import com.tongmenhui.launchak47.main.MeetFragment;
-import com.tongmenhui.launchak47.util.FontManager;
-import com.tongmenhui.launchak47.util.Slog;
 
 import java.util.ArrayList;
-
-import static com.tongmenhui.launchak47.util.MyApplication.getContext;
 
 /**
  * Created by super-zou on 17-9-11.
  */
 
-public class MainFragmentAdapter extends FragmentStatePagerAdapter{
+public class MainFragmentAdapter extends FragmentStatePagerAdapter {
     public static final String TAG = "MainFragmentAdapter";
     private ArrayList<String> mTitles;
     private View view;
 
     public MainFragmentAdapter(FragmentManager fm, ArrayList<String> titles) {
         super(fm);
-       // this.view = view;
+        // this.view = view;
         mTitles = titles;
 
     }
@@ -36,9 +30,9 @@ public class MainFragmentAdapter extends FragmentStatePagerAdapter{
     @Override
     public Fragment getItem(int position) {
         //初始化Fragment数据
-       // Slog.d(TAG, "===========main position: "+position);
+        // Slog.d(TAG, "===========main position: "+position);
         Fragment fragment;
-        switch (position){
+        switch (position) {
             case 0:
                 fragment = new MeetFragment();
 
@@ -61,7 +55,7 @@ public class MainFragmentAdapter extends FragmentStatePagerAdapter{
 
     @Override
     public int getCount() {
-        return mTitles != null ? mTitles.size():0;
+        return mTitles != null ? mTitles.size() : 0;
     }
 
     @Override

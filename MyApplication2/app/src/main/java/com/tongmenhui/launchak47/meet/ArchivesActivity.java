@@ -62,7 +62,7 @@ import okhttp3.Response;
 
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
-public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateDialogFragment.EvaluateDialogFragmentListener{
+public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateDialogFragment.EvaluateDialogFragmentListener {
     private static final String TAG = "ArchivesActivity";
     private static final boolean isDebug = false;
     private static final String DYNAMICS_URL = HttpUtil.DOMAIN + "?q=meet/activity/get";
@@ -82,11 +82,6 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
     private static final String GET_PRAISE_STATISTICS_URL = HttpUtil.DOMAIN + "?q=meet/praise/statistics";
     private static final String LOVE_ADD_URL = HttpUtil.DOMAIN + "?q=meet/love/add";
     private static final String PRAISE_ADD_URL = HttpUtil.DOMAIN + "?q=meet/praise/add";
-
-    private List<MeetDynamics> mMeetList = new ArrayList<>();
-    private List<ImpressionStatistics> mImpressionStatisticsList = new ArrayList<>();
-    private List<MeetReferenceInfo> mReferenceList = new ArrayList<>();
-    private Handler handler;
     private static final int DONE = 1;
     private static final int UPDATE = 2;
     private static final int UPDATE_COMMENT = 3;
@@ -100,31 +95,32 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
     private static final int GET_FOLLOW_STATISTICS_URL_DONE = 11;
     private static final int GET_PRAISE_STATISTICS_URL_DONE = 12;
     private static final int GET_LOVE_STATISTICS_URL_DONE = 13;
-
-
     private static final int UPDATE_LOVED_COUNT = 14;
     private static final int UPDATE_PRAISED_COUNT = 15;
-
-    private boolean isLoved = false;
-    private boolean isPraised = false;
-
     private static final int FOLLOWED = 1;
     private static final int FOLLOWING = 2;
     private static final int PRAISED = 3;
     private static final int PRAISE = 4;
     private static final int LOVED = 5;
     private static final int LOVE = 6;
-
     private static final int PAGE_SIZE = 6;
-
     private static final int TYPE_HOBBY = 0;
     private static final int TYPE_PERSONALITY = 1;
-    private boolean isFollowed = false;
-    private int contactStatus = 0;
-
     private static final int APPLIED = 0;
     private static final int ESTABLISHED = 1;
     private static final int APPROVE = 2;
+    public String impression;
+    public int impressionCount;
+    public List<MeetMemberInfo> meetMemberList;
+    View mHeaderEvaluation;
+    private List<MeetDynamics> mMeetList = new ArrayList<>();
+    private List<ImpressionStatistics> mImpressionStatisticsList = new ArrayList<>();
+    private List<MeetReferenceInfo> mReferenceList = new ArrayList<>();
+    private Handler handler;
+    private boolean isLoved = false;
+    private boolean isPraised = false;
+    private boolean isFollowed = false;
+    private int contactStatus = 0;
     private int mTempSize;
     private View mArchiveProfile;
     private XRecyclerView mXRecyclerView;
@@ -132,22 +128,39 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
     private MeetReferenceAdapter mMeetReferenceAdapter;
     private MeetImpressionStatisticsAdapter mMeetImpressionStatisticsAdapter;
     private TextView mEmptyView;
-    View mHeaderEvaluation;
     private JSONObject impressionObj;
-    public String impression;
-    public int impressionCount;
-    public List<MeetMemberInfo> meetMemberList;
     private EvaluateDialogFragment evaluateDialogFragment;
 
     private ImageView backLeft;
     private MeetMemberInfo mMeetMember;
     private JSONArray personalityResponseArray;
+
+    public static void sortPersonalityWithCount(JSONArray jsonArray) {
+        JSONObject temp = null;
+        int size = jsonArray.length();
+        try {
+            for (int i = 0; i < size - 1; i++) {
+                for (int j = 0; j < size - 1 - i; j++) {
+                    if (jsonArray.getJSONObject(j).optInt("count") < jsonArray.getJSONObject(j + 1).optInt("count"))  //交换两数位置
+                    {
+                        temp = jsonArray.getJSONObject(j);
+                        jsonArray.put(j, jsonArray.getJSONObject(j + 1));
+                        jsonArray.put(j + 1, temp);
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.archives);
         ActionBar actionBar = getSupportActionBar();
-        if(actionBar != null){
+        if (actionBar != null) {
             actionBar.hide();
         }
         mMeetMember = (MeetMemberInfo) getIntent().getSerializableExtra("meet");
@@ -181,7 +194,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
                     ft.remove(prev);
                 }
                 ft.addToBackStack(null);
-                if(evaluateDialogFragment == null) {
+                if (evaluateDialogFragment == null) {
                     evaluateDialogFragment = new EvaluateDialogFragment();
                 }
                 Bundle bundle = new Bundle();
@@ -198,7 +211,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
         evaluatorDetails.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(isDebug) Slog.d(TAG, "==============start EvaluatorDetailsActivity");
+                if (isDebug) Slog.d(TAG, "==============start EvaluatorDetailsActivity");
                 Intent intent = new Intent(ArchivesActivity.this, EvaluatorDetailsActivity.class);
                 intent.putExtra("uid", mMeetMember.getUid());
                 //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
@@ -223,7 +236,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
 
     }
 
-    private void initView(){
+    private void initView() {
         backLeft = findViewById(R.id.left_back);
         backLeft.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -231,9 +244,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
                 finish();
             }
         });
-        Typeface font = Typeface.createFromAsset(getAssets(), "fonts/fontawesome.ttf");
-                Typeface font_solid = Typeface.createFromAsset(getAssets(), "fonts/fa-solid-900.ttf");
-        Typeface font_regular = Typeface.createFromAsset(getAssets(), "fonts/fa-regular-400.ttf");
+        Typeface font = Typeface.createFromAsset(getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
         mArchivesListAdapter = new ArchivesListAdapter(this);
         mXRecyclerView = (XRecyclerView) findViewById(R.id.recyclerview);
         mEmptyView = (TextView) findViewById(R.id.empty_text);
@@ -258,13 +269,13 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
         mXRecyclerView.setPullRefreshEnabled(false);
 
         mXRecyclerView.getDefaultRefreshHeaderView().setRefreshTimeVisible(true);
-        mArchiveProfile = LayoutInflater.from(this).inflate(R.layout.meet_archive_profile, (ViewGroup)findViewById(android.R.id.content),false);
+        mArchiveProfile = LayoutInflater.from(this).inflate(R.layout.meet_archive_profile, (ViewGroup) findViewById(android.R.id.content), false);
         mXRecyclerView.addHeaderView(mArchiveProfile);
-        FontManager.markAsIconContainer(mArchiveProfile.findViewById(R.id.meet_archive_profile), font_regular);
+        FontManager.markAsIconContainer(mArchiveProfile.findViewById(R.id.meet_archive_profile), font);
 
-        mHeaderEvaluation = LayoutInflater.from(this).inflate(R.layout.friends_relatives_reference, (ViewGroup)findViewById(android.R.id.content),false);
+        mHeaderEvaluation = LayoutInflater.from(this).inflate(R.layout.friends_relatives_reference, (ViewGroup) findViewById(android.R.id.content), false);
         mXRecyclerView.addHeaderView(mHeaderEvaluation);
-FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_relatives_reference), font_solid);
+        FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_relatives_reference), font);
 
         mXRecyclerView.getDefaultFootView().setLoadingHint(getString(R.string.loading_pull_up_tip));
         mXRecyclerView.getDefaultFootView().setNoMoreHint(getString(R.string.loading_no_more));
@@ -291,15 +302,14 @@ FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_rela
         mXRecyclerView.setAdapter(mArchivesListAdapter);
     }
 
-    private void setEvaluatedMode(){
+    private void setEvaluatedMode() {
         LinearLayout charmRatingBar = mHeaderEvaluation.findViewById(R.id.charm_rating_bar);
         TextView notice = mHeaderEvaluation.findViewById(R.id.notice);
         charmRatingBar.setVisibility(View.GONE);
         notice.setVisibility(View.GONE);
     }
 
-
-    private void setArchiveProfile(){
+    private void setArchiveProfile() {
 
         setMeetProfile();
         getConnectStatus();
@@ -311,7 +321,7 @@ FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_rela
 
     }
 
-    private void setMeetProfile(){
+    private void setMeetProfile() {
         TextView realname = mArchiveProfile.findViewById(R.id.name);
         NetworkImageView headUri = (NetworkImageView) mArchiveProfile.findViewById(R.id.recommend_head_uri);
         LinearLayout baseProfile = mArchiveProfile.findViewById(R.id.base_profile);
@@ -344,32 +354,32 @@ FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_rela
 
         realname.setText(mMeetMember.getRealname());
 
-        if(!"".equals(mMeetMember.getPictureUri())){
-            String picture_url = HttpUtil.DOMAIN + "/"+mMeetMember.getPictureUri();
+        if (!"".equals(mMeetMember.getPictureUri())) {
+            String picture_url = HttpUtil.DOMAIN + "/" + mMeetMember.getPictureUri();
             RequestQueue queue = RequestQueueSingleton.instance(this);
 
             headUri.setTag(picture_url);
             HttpUtil.loadByImageLoader(queue, headUri, picture_url, 110, 110);
-        }else{
+        } else {
             headUri.setImageDrawable(getDrawable(R.mipmap.ic_launcher));
         }
 
 
-        age.setText(String.valueOf(mMeetMember.getAge())+"岁");
-        height.setText(String.valueOf(mMeetMember.getHeight())+"CM");
+        age.setText(String.valueOf(mMeetMember.getAge()) + "岁");
+        height.setText(String.valueOf(mMeetMember.getHeight()) + "CM");
         sex.setText(String.valueOf(mMeetMember.getSelfSex()));
         lives.setText(mMeetMember.getLives());
-        if(mMeetMember.getSituation() == 0){
+        if (mMeetMember.getSituation() == 0) {
             major.setText(mMeetMember.getMajor());
             degree.setText(mMeetMember.getDegreeName(mMeetMember.getDegree()));
             university.setText(mMeetMember.getUniversity());
-        }else {
+        } else {
             job.setText(mMeetMember.getJobTitle());
             company.setText(mMeetMember.getCompany());
         }
-        ageRequirement.setText(mMeetMember.getAgeLower()+"~"+ mMeetMember.getAgeUpper()+"岁");
-        heightRequirement.setText(String.valueOf(mMeetMember.getRequirementHeight())+"CM");
-        degreeRequirement.setText(mMeetMember.getDegreeName(mMeetMember.getRequirementDegree())+"学历");
+        ageRequirement.setText(mMeetMember.getAgeLower() + "~" + mMeetMember.getAgeUpper() + "岁");
+        heightRequirement.setText(String.valueOf(mMeetMember.getRequirementHeight()) + "CM");
+        degreeRequirement.setText(mMeetMember.getDegreeName(mMeetMember.getRequirementDegree()) + "学历");
         livesRequirement.setText(mMeetMember.getRequirementLives());
         sexRequirement.setText(mMeetMember.getRequirementSex());
 
@@ -379,33 +389,33 @@ FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_rela
         //thumbsView.setText(String.valueOf(mMeetMember.getPraisedCount()));
     }
 
-    private void processContactsAction(){
+    private void processContactsAction() {
         final Button contacts = mArchiveProfile.findViewById(R.id.contacts);
-        
-        if(contactStatus == APPLIED){
+
+        if (contactStatus == APPLIED) {
             contacts.setEnabled(false);
             contacts.setText("已申请");
-        }else if(contactStatus == ESTABLISHED){
+        } else if (contactStatus == ESTABLISHED) {
             contacts.setVisibility(View.GONE);
-        }else if (contactStatus == APPROVE){
+        } else if (contactStatus == APPROVE) {
             contacts.setText("同意请求");
             contacts.setTag("approve");
         }
-        
+
         contacts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(contacts.getTag().equals("approve")){
-                   Slog.d(TAG, "=====================同意请求");
-                }else {
+                if (contacts.getTag().equals("approve")) {
+                    Slog.d(TAG, "=====================同意请求");
+                } else {
                     RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(mMeetMember.getUid())).build();
                     HttpUtil.sendOkHttpRequest(ArchivesActivity.this, CONTACTS_ADD_URL, requestBody, new Callback() {
                         @Override
                         public void onResponse(Call call, Response response) throws IOException {
-                            if(response.body() != null){
+                            if (response.body() != null) {
                                 String responseText = response.body().string();
                                 //if(isDebug)
-                                    Slog.d(TAG, "==========processContactsAction : "+responseText);
+                                Slog.d(TAG, "==========processContactsAction : " + responseText);
                                 /*
                                 try {
                                     JSONObject status = new JSONObject(responseText);
@@ -417,8 +427,10 @@ FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_rela
                                 */
                             }
                         }
+
                         @Override
-                        public void onFailure(Call call, IOException e) {}
+                        public void onFailure(Call call, IOException e) {
+                        }
                     });
 
                     contacts.setText("已申请");
@@ -428,68 +440,72 @@ FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_rela
         });
     }
 
-    private void getConnectStatus(){
+    private void getConnectStatus() {
 
         RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(mMeetMember.getUid())).build();
         HttpUtil.sendOkHttpRequest(ArchivesActivity.this, GET_FOLLOW_STATUS_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                if(response.body() != null){
+                if (response.body() != null) {
                     String responseText = response.body().string();
-                    if(isDebug) Slog.d(TAG, "==========getFollowStatus : "+responseText);
+                    if (isDebug) Slog.d(TAG, "==========getFollowStatus : " + responseText);
                     try {
                         JSONObject status = new JSONObject(responseText);
                         isFollowed = status.optBoolean("isFollowed");
                         handler.sendEmptyMessage(GET_FOLLOW_DONE);
-                    }catch (JSONException e){
+                    } catch (JSONException e) {
                         e.printStackTrace();
                     }
 
                 }
             }
+
             @Override
-            public void onFailure(Call call, IOException e) {}
+            public void onFailure(Call call, IOException e) {
+            }
         });
     }
 
-    private void getFollowStatistics(){
+    private void getFollowStatistics() {
         RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(mMeetMember.getUid())).build();
-        
+
         //for contacts
         HttpUtil.sendOkHttpRequest(ArchivesActivity.this, GET_CONTACTS_STATUS_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                if(response.body() != null){
+                if (response.body() != null) {
                     String responseText = response.body().string();
                     //if(isDebug)
-                        Slog.d(TAG, "==========getContacts Status : "+responseText);
+                    Slog.d(TAG, "==========getContacts Status : " + responseText);
                     try {
                         JSONObject status = new JSONObject(responseText);
                         contactStatus = status.optInt("status");
                         handler.sendEmptyMessage(GET_CONTACTS_STATUS_DONE);
-                    }catch (JSONException e){
+                    } catch (JSONException e) {
                         e.printStackTrace();
                     }
 
                 }
             }
+
             @Override
-            public void onFailure(Call call, IOException e) {}
+            public void onFailure(Call call, IOException e) {
+            }
         });
-        
+
         //for follow
         HttpUtil.sendOkHttpRequest(ArchivesActivity.this, GET_FOLLOW_STATISTICS_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                if(response.body() != null){
+                if (response.body() != null) {
                     String responseText = response.body().string();
                     //if(isDebug)
-                    Slog.d(TAG, "==========getFollow statistics : "+responseText);
+                    Slog.d(TAG, "==========getFollow statistics : " + responseText);
                     try {
                         JSONObject followObject = new JSONObject(responseText);
                         int following_count = followObject.optInt("following_count");
                         int followed_count = followObject.optInt("followed_count");
-                        if(following_count !=0 || followed_count != 0){
+                        if (following_count != 0 || followed_count != 0) {
                             Bundle bundle = new Bundle();
                             bundle.putInt("following_count", following_count);
                             bundle.putInt("followed_count", followed_count);
@@ -498,13 +514,15 @@ FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_rela
                             msg.what = GET_FOLLOW_STATISTICS_URL_DONE;
                             handler.sendMessage(msg);
                         }
-                    }catch (JSONException e){
+                    } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
             }
+
             @Override
-            public void onFailure(Call call, IOException e) {}
+            public void onFailure(Call call, IOException e) {
+            }
         });
 
         LinearLayout followingCountWrap = mArchiveProfile.findViewById(R.id.following_count_wrap);
@@ -517,7 +535,7 @@ FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_rela
                 Bundle bundle = new Bundle();
                 bundle.putInt("type", FOLLOWED);
                 bundle.putInt("uid", mMeetMember.getUid());
-                bundle.putString("title", "被关注 "+followedCount.getText());
+                bundle.putString("title", "被关注 " + followedCount.getText());
                 CommonUserListDialogFragment commonUserListDialogFragment = new CommonUserListDialogFragment();
                 commonUserListDialogFragment.setArguments(bundle);
                 commonUserListDialogFragment.show(getSupportFragmentManager(), "CommonUserListDialogFragment");
@@ -530,7 +548,7 @@ FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_rela
                 Bundle bundle = new Bundle();
                 bundle.putInt("type", FOLLOWING);
                 bundle.putInt("uid", mMeetMember.getUid());
-                bundle.putString("title", "关注的 "+followingCount.getText());
+                bundle.putString("title", "关注的 " + followingCount.getText());
                 CommonUserListDialogFragment commonUserListDialogFragment = new CommonUserListDialogFragment();
                 commonUserListDialogFragment.setArguments(bundle);
                 commonUserListDialogFragment.show(getSupportFragmentManager(), "CommonUserListDialogFragment");
@@ -540,15 +558,15 @@ FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_rela
 
     }
 
-    private void getPraiseStatistics(){
+    private void getPraiseStatistics() {
         RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(mMeetMember.getUid())).build();
         HttpUtil.sendOkHttpRequest(ArchivesActivity.this, GET_PRAISE_STATISTICS_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                if(response.body() != null){
+                if (response.body() != null) {
                     String responseText = response.body().string();
                     //if(isDebug)
-                    Slog.d(TAG, "==========getPraiseStatistics statistics : "+responseText);
+                    Slog.d(TAG, "==========getPraiseStatistics statistics : " + responseText);
                     try {
                         JSONObject praiseObject = new JSONObject(responseText);
                         int praise_count = praiseObject.optInt("praise_count");
@@ -563,13 +581,15 @@ FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_rela
                         msg.what = GET_PRAISE_STATISTICS_URL_DONE;
                         handler.sendMessage(msg);
 
-                    }catch (JSONException e){
+                    } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
             }
+
             @Override
-            public void onFailure(Call call, IOException e) {}
+            public void onFailure(Call call, IOException e) {
+            }
         });
 
         LinearLayout praiseCountWrap = mArchiveProfile.findViewById(R.id.praise_count_wrap);
@@ -582,7 +602,7 @@ FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_rela
                 Bundle bundle = new Bundle();
                 bundle.putInt("type", PRAISED);
                 bundle.putInt("uid", mMeetMember.getUid());
-                bundle.putString("title", "被赞 "+praisedCount.getText());
+                bundle.putString("title", "被赞 " + praisedCount.getText());
                 CommonUserListDialogFragment commonUserListDialogFragment = new CommonUserListDialogFragment();
                 commonUserListDialogFragment.setArguments(bundle);
                 commonUserListDialogFragment.show(getSupportFragmentManager(), "CommonUserListDialogFragment");
@@ -594,7 +614,7 @@ FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_rela
                 Bundle bundle = new Bundle();
                 bundle.putInt("type", PRAISE);
                 bundle.putInt("uid", mMeetMember.getUid());
-                bundle.putString("title", "赞过的 "+praiseCount.getText());
+                bundle.putString("title", "赞过的 " + praiseCount.getText());
                 CommonUserListDialogFragment commonUserListDialogFragment = new CommonUserListDialogFragment();
                 commonUserListDialogFragment.setArguments(bundle);
                 commonUserListDialogFragment.show(getSupportFragmentManager(), "CommonUserListDialogFragment");
@@ -665,9 +685,9 @@ FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_rela
         });
     }
 
-    private void processFollowAction(){
+    private void processFollowAction() {
         final Button followBtn = mArchiveProfile.findViewById(R.id.follow);
-        if(isFollowed == true){
+        if (isFollowed == true) {
             followBtn.setText("已关注");
             followBtn.setBackground(getDrawable(R.drawable.btn_disable));
             followBtn.setTextColor(getResources().getColor(R.color.color_dark_grey));
@@ -678,15 +698,15 @@ FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_rela
             public void onClick(View v) {
                 RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(mMeetMember.getUid())).build();
                 String followUrl = "";
-                if(isFollowed == true){
+                if (isFollowed == true) {
                     isFollowed = false;
-                    followUrl = FOLLOW_ACTION_URL+"cancel";
+                    followUrl = FOLLOW_ACTION_URL + "cancel";
                     followBtn.setText("+关注");
                     followBtn.setTextColor(getResources().getColor(R.color.color_blue));
                     followBtn.setBackground(getDrawable(R.drawable.btn_default));
-                }else{
+                } else {
                     isFollowed = true;
-                    followUrl = FOLLOW_ACTION_URL+"add";
+                    followUrl = FOLLOW_ACTION_URL + "add";
                     followBtn.setText("已关注");
                     followBtn.setBackground(getDrawable(R.drawable.btn_disable));
                     followBtn.setTextColor(getResources().getColor(R.color.color_dark_grey));
@@ -695,59 +715,62 @@ FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_rela
                 HttpUtil.sendOkHttpRequest(ArchivesActivity.this, followUrl, requestBody, new Callback() {
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
-                        if(response.body() != null){
+                        if (response.body() != null) {
                             String responseText = response.body().string();
-                            if(isDebug) Slog.d(TAG, "==========get impression response text : "+responseText);
+                            if (isDebug)
+                                Slog.d(TAG, "==========get impression response text : " + responseText);
                         }
                     }
+
                     @Override
-                    public void onFailure(Call call, IOException e) {}
+                    public void onFailure(Call call, IOException e) {
+                    }
                 });
             }
         });
     }
 
-    private void setFollowStatistics(Bundle bundle){
+    private void setFollowStatistics(Bundle bundle) {
         TextView followedCount = mArchiveProfile.findViewById(R.id.followed_count);
         TextView followingCount = mArchiveProfile.findViewById(R.id.following_count);
-        if(bundle.getInt("followed_count") > 0){
+        if (bundle.getInt("followed_count") > 0) {
             followedCount.setText(String.valueOf(bundle.getInt("followed_count")));
         }
 
-        if(bundle.getInt("following_count") > 0){
+        if (bundle.getInt("following_count") > 0) {
             followingCount.setText(String.valueOf(bundle.getInt("following_count")));
         }
     }
 
-    private void setPraiseStatistics(Bundle bundle){
+    private void setPraiseStatistics(Bundle bundle) {
 
         TextView praisedCount = mArchiveProfile.findViewById(R.id.praised_count);
         TextView praiseCount = mArchiveProfile.findViewById(R.id.praise_count);
         TextView praisedStatistics = mArchiveProfile.findViewById(R.id.praised_statistics);
 
-        if(bundle.getInt("praised_count") > 0){
+        if (bundle.getInt("praised_count") > 0) {
             praisedCount.setText(String.valueOf(bundle.getInt("praised_count")));
             praisedStatistics.setText(String.valueOf(bundle.getInt("praised_count")));
         }
 
-        if(bundle.getInt("praise_count") > 0){
+        if (bundle.getInt("praise_count") > 0) {
             praiseCount.setText(String.valueOf(bundle.getInt("praise_count")));
         }
 
         processPraiseAction();
     }
 
-    private void setLoveStatistics(Bundle bundle){
+    private void setLoveStatistics(Bundle bundle) {
         TextView lovedCount = mArchiveProfile.findViewById(R.id.loved_count);
         TextView loveCount = mArchiveProfile.findViewById(R.id.love_count);
         TextView lovedStatistics = mArchiveProfile.findViewById(R.id.loved_statistics);
-        if(bundle != null){
-            if(bundle.getInt("loved_count") > 0){
+        if (bundle != null) {
+            if (bundle.getInt("loved_count") > 0) {
                 lovedCount.setText(String.valueOf(bundle.getInt("loved_count")));
                 lovedStatistics.setText(String.valueOf(bundle.getInt("loved_count")));
             }
 
-            if(bundle.getInt("love_count") > 0){
+            if (bundle.getInt("love_count") > 0) {
                 loveCount.setText(String.valueOf(bundle.getInt("love_count")));
             }
         }
@@ -756,19 +779,19 @@ FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_rela
         processLoveAction();//process love or praise action();
     }
 
-    private void processChatAction(int uid){
+    private void processChatAction(int uid) {
 
     }
 
-    private void processLoveAction(){
+    private void processLoveAction() {
 
         final TextView lovedIcon = mArchiveProfile.findViewById(R.id.loved_icon);
         final TextView lovedCount = mArchiveProfile.findViewById(R.id.loved_statistics);
-        Slog.d(TAG, "===============processLoveAction isLoved: "+isLoved);
-        if(isLoved){
+        Slog.d(TAG, "===============processLoveAction isLoved: " + isLoved);
+        if (isLoved) {
             lovedIcon.setEnabled(false);
             lovedCount.setEnabled(false);
-        }else {
+        } else {
             lovedIcon.setEnabled(true);
             lovedCount.setEnabled(true);
         }
@@ -780,14 +803,16 @@ FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_rela
                 HttpUtil.sendOkHttpRequest(ArchivesActivity.this, LOVE_ADD_URL, requestBody, new Callback() {
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
-                        if(response.body() != null){
+                        if (response.body() != null) {
                             String responseText = response.body().string();
                             //if(isDebug)
-                            Slog.d(TAG, "==========love add response text : "+responseText);
+                            Slog.d(TAG, "==========love add response text : " + responseText);
                         }
                     }
+
                     @Override
-                    public void onFailure(Call call, IOException e) {}
+                    public void onFailure(Call call, IOException e) {
+                    }
                 });
                 isLoved = true;
                 lovedIcon.setEnabled(false);
@@ -802,14 +827,16 @@ FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_rela
                 HttpUtil.sendOkHttpRequest(ArchivesActivity.this, LOVE_ADD_URL, requestBody, new Callback() {
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
-                        if(response.body() != null){
+                        if (response.body() != null) {
                             String responseText = response.body().string();
                             //if(isDebug)
-                            Slog.d(TAG, "==========love add response text : "+responseText);
+                            Slog.d(TAG, "==========love add response text : " + responseText);
                         }
                     }
+
                     @Override
-                    public void onFailure(Call call, IOException e) {}
+                    public void onFailure(Call call, IOException e) {
+                    }
                 });
                 isLoved = true;
                 lovedIcon.setEnabled(false);
@@ -820,15 +847,15 @@ FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_rela
 
     }
 
-    private void processPraiseAction(){
+    private void processPraiseAction() {
         final TextView praisedIcon = mArchiveProfile.findViewById(R.id.praised_icon);
         final TextView praisedCount = mArchiveProfile.findViewById(R.id.praised_statistics);
 
-        Slog.d(TAG, "===================processPraiseAction isPraised: "+isPraised);
-        if(isPraised){
+        Slog.d(TAG, "===================processPraiseAction isPraised: " + isPraised);
+        if (isPraised) {
             praisedCount.setEnabled(false);
             praisedIcon.setEnabled(false);
-        }else {
+        } else {
             praisedCount.setEnabled(true);
             praisedIcon.setEnabled(true);
         }
@@ -841,13 +868,16 @@ FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_rela
                 HttpUtil.sendOkHttpRequest(ArchivesActivity.this, PRAISE_ADD_URL, requestBody, new Callback() {
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
-                        if(response.body() != null){
+                        if (response.body() != null) {
                             String responseText = response.body().string();
-                            if(isDebug)  Slog.d(TAG, "==========praise add response text : "+responseText);
+                            if (isDebug)
+                                Slog.d(TAG, "==========praise add response text : " + responseText);
                         }
                     }
+
                     @Override
-                    public void onFailure(Call call, IOException e) {}
+                    public void onFailure(Call call, IOException e) {
+                    }
                 });
                 isPraised = true;
                 praisedIcon.setEnabled(false);
@@ -861,13 +891,16 @@ FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_rela
                 HttpUtil.sendOkHttpRequest(ArchivesActivity.this, PRAISE_ADD_URL, requestBody, new Callback() {
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
-                        if(response.body() != null){
+                        if (response.body() != null) {
                             String responseText = response.body().string();
-                            if(isDebug) Slog.d(TAG, "==========praise add response text : "+responseText);
+                            if (isDebug)
+                                Slog.d(TAG, "==========praise add response text : " + responseText);
                         }
                     }
+
                     @Override
-                    public void onFailure(Call call, IOException e) {}
+                    public void onFailure(Call call, IOException e) {
+                    }
                 });
                 isPraised = true;
                 praisedIcon.setEnabled(false);
@@ -878,39 +911,37 @@ FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_rela
 
     }
 
-
-
-    private void setEvaluationHeader(){
+    private void setEvaluationHeader() {
 
         RecyclerView recyclerView = mHeaderEvaluation.findViewById(R.id.reference_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         mMeetReferenceAdapter = new MeetReferenceAdapter(this);
         recyclerView.setAdapter(mMeetReferenceAdapter);
-        Typeface font = Typeface.createFromAsset(getAssets(), "fonts/fontawesome.ttf");
+        Typeface font = Typeface.createFromAsset(getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
         FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.meet_item_id), font);
 
     }
 
-    private void setRatingBarView(){
+    private void setRatingBarView() {
         JSONArray impressionArray = impressionObj.optJSONArray("impression");
         //MeetReferenceInfo meetReferenceInfo = null;
-        if(impressionArray != null && impressionArray.length() > 0){
+        if (impressionArray != null && impressionArray.length() > 0) {
             TextView ratingMemberCount = mHeaderEvaluation.findViewById(R.id.rating_member_count);
-            ratingMemberCount.setText(impressionArray.length()+"人评价");
+            ratingMemberCount.setText(impressionArray.length() + "人评价");
             float ratingCount = 0;
-            for (int i=0; i<impressionArray.length(); i++){
+            for (int i = 0; i < impressionArray.length(); i++) {
                 JSONObject impression = impressionArray.optJSONObject(i);
-                if(impressionObj.optInt("visitor_uid") == impression.optInt("evaluator_uid")){
+                if (impressionObj.optInt("visitor_uid") == impression.optInt("evaluator_uid")) {
                     setEvaluatedMode();
                 }
                 ratingCount += impression.optDouble("rating");
             }
-            float ratingAverage = ratingCount/impressionArray.length();
+            float ratingAverage = ratingCount / impressionArray.length();
             float ratingAverageRoundUp = 0;
-            BigDecimal  b = new BigDecimal(ratingAverage);
+            BigDecimal b = new BigDecimal(ratingAverage);
             ratingAverageRoundUp = b.setScale(1, BigDecimal.ROUND_HALF_UP).floatValue();
             TextView ratingAverageTV = mHeaderEvaluation.findViewById(R.id.chram_synthesized_results);
-            ratingAverageTV.setText(ratingAverageRoundUp+"分");
+            ratingAverageTV.setText(ratingAverageRoundUp + "分");
 
             ScaleRatingBar scaleRatingBarCount = mHeaderEvaluation.findViewById(R.id.charm_synthesized_rating);
             scaleRatingBarCount.setRating(ratingAverageRoundUp);
@@ -918,45 +949,48 @@ FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_rela
         }
     }
 
-    private void loadRatingAndImpression(int uid){
+    private void loadRatingAndImpression(int uid) {
         RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
         HttpUtil.sendOkHttpRequest(this, GET_IMPRESSION_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                if(response.body() != null){
+                if (response.body() != null) {
                     String responseText = response.body().string();
-                    if(isDebug) Slog.d(TAG, "==========get impression response text : "+responseText);
-                    if(responseText != null){
-                        if(!TextUtils.isEmpty(responseText)){
+                    if (isDebug)
+                        Slog.d(TAG, "==========get impression response text : " + responseText);
+                    if (responseText != null) {
+                        if (!TextUtils.isEmpty(responseText)) {
                             try {
                                 impressionObj = new JSONObject(responseText);
-                                if(impressionObj != null){
+                                if (impressionObj != null) {
                                     handler.sendEmptyMessage(LOAD_RATING_DONE);
                                 }
-                            }catch (JSONException e){
+                            } catch (JSONException e) {
                                 e.printStackTrace();
                             }
                         }
                     }
                 }
             }
+
             @Override
-            public void onFailure(Call call, IOException e) {}
+            public void onFailure(Call call, IOException e) {
+            }
         });
     }
 
-    private void loadImpressionStatistics(final int uid){
+    private void loadImpressionStatistics(final int uid) {
 
         RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
         HttpUtil.sendOkHttpRequest(this, GET_IMPRESSION_STATISTICS_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                if(response.body() != null){
+                if (response.body() != null) {
                     String responseText = response.body().string();
-                    Slog.d(TAG, "==========loadImpressionStatistics response text : "+responseText);
+                    Slog.d(TAG, "==========loadImpressionStatistics response text : " + responseText);
 
-                    if(responseText != null){
-                        if(!TextUtils.isEmpty(responseText)){
+                    if (responseText != null) {
+                        if (!TextUtils.isEmpty(responseText)) {
                             parseImpressionStatistics(responseText, uid);
                         }
                     }
@@ -971,26 +1005,26 @@ FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_rela
         });
     }
 
-    private void setImpressionStatisticsView(){
+    private void setImpressionStatisticsView() {
         RecyclerView impressionStatisticsWrap = mHeaderEvaluation.findViewById(R.id.impression_statistics_list);
         impressionStatisticsWrap.setLayoutManager(new LinearLayoutManager(this));
         mMeetImpressionStatisticsAdapter = new MeetImpressionStatisticsAdapter(this, getSupportFragmentManager());
         impressionStatisticsWrap.setAdapter(mMeetImpressionStatisticsAdapter);
     }
 
-    private void parseImpressionStatistics(String response, int uid){
+    private void parseImpressionStatistics(String response, int uid) {
         JSONObject responseObj = null;
-        try{
+        try {
             responseObj = new JSONObject(response);
-        } catch (JSONException e){
+        } catch (JSONException e) {
             e.printStackTrace();
         }
-        if(responseObj != null){
+        if (responseObj != null) {
             JSONObject impressionStatisticsObj = responseObj.optJSONObject("features_statistics");
-            if(impressionStatisticsObj != null){
+            if (impressionStatisticsObj != null) {
                 Iterator iterator = impressionStatisticsObj.keys();
                 int index = 0;
-                while (iterator.hasNext()){
+                while (iterator.hasNext()) {
                     index++;
                     String key = (String) iterator.next();
                     int value = impressionStatisticsObj.optInt(key);
@@ -1000,8 +1034,8 @@ FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_rela
                     impressionStatistics.meetMemberList = getImpressionUser(key, uid);
                     mImpressionStatisticsList.add(impressionStatistics);
 
-                    Slog.d(TAG, "==============key: "+key+"   value: "+value);
-                    if(index == 5){
+                    Slog.d(TAG, "==============key: " + key + "   value: " + value);
+                    if (index == 5) {
                         break;
                     }
                 }
@@ -1012,61 +1046,24 @@ FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_rela
         }
     }
 
-    public static class ImpressionStatistics implements Parcelable{
-        public String impression;
-        public int impressionCount;
-        public List<MeetMemberInfo> meetMemberList = new ArrayList<>();
-
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            //序列化过程：必须按成员变量声明的顺序进行封装
-            dest.writeString(impression);
-            dest.writeInt(impressionCount);
-            dest.writeList(meetMemberList);
-        }
-
-        public static final Parcelable.Creator<ImpressionStatistics> CREATOR = new Creator<ImpressionStatistics>() {
-
-            @Override
-            public ImpressionStatistics createFromParcel(Parcel source) {
-                ImpressionStatistics impressionStatistics = new ImpressionStatistics();
-                impressionStatistics.impression = source.readString();
-                impressionStatistics.impressionCount = source.readInt();
-                //impressionStatistics.meetMemberList = new ArrayList<MeetMemberInfo>();
-                impressionStatistics.meetMemberList = source.readArrayList(getClass().getClassLoader());
-
-                return impressionStatistics;
-            }
-
-            @Override
-            public ImpressionStatistics[] newArray(int size) {
-                return new ImpressionStatistics[size];
-            }
-        };
-    }
-
-    private List<MeetMemberInfo> getImpressionUser(String impression, int uid){
+    private List<MeetMemberInfo> getImpressionUser(String impression, int uid) {
         List<MeetMemberInfo> memberInfoList = new ArrayList<>();
         RequestBody requestBody = new FormBody.Builder()
                 .add("impression", impression)
                 .add("uid", String.valueOf(uid)).build();
-        Slog.d(TAG, "impression: "+impression+ " uid: "+uid);
+        Slog.d(TAG, "impression: " + impression + " uid: " + uid);
         Response response = HttpUtil.sendOkHttpRequestSync(this, GET_IMPRESSION_USERS_URL, requestBody, null);
 
         try {
             String responseText = response.body().string();
-            Slog.d(TAG, "==========getImpressionUser response text : "+responseText);
-            try{
+            Slog.d(TAG, "==========getImpressionUser response text : " + responseText);
+            try {
                 JSONObject responseObj = new JSONObject(responseText);
                 JSONArray responseArray = responseObj.optJSONArray("users");
-                if(responseArray.length() > 0){
+                if (responseArray.length() > 0) {
 
 
-                    for (int i=0; i<responseArray.length(); i++){
+                    for (int i = 0; i < responseArray.length(); i++) {
                         MeetMemberInfo meetMemberInfo = new MeetMemberInfo();
                         JSONObject member = responseArray.optJSONObject(i);
                         meetMemberInfo.setUid(member.optInt("uid"));
@@ -1074,11 +1071,11 @@ FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_rela
                         meetMemberInfo.setRealname(member.optString("realname"));
                         meetMemberInfo.setPictureUri(member.optString("picture_uri"));
                         meetMemberInfo.setSituation(member.optInt("situation"));
-                        if(member.optInt("situation") == 0){//student
+                        if (member.optInt("situation") == 0) {//student
                             meetMemberInfo.setDegree(member.optString("degree"));
                             meetMemberInfo.setMajor(member.optString("major"));
                             meetMemberInfo.setUniversity(member.optString("university"));
-                        }else {
+                        } else {
                             meetMemberInfo.setCompany(member.optString("company"));
                             meetMemberInfo.setJobTitle(member.optString("job_title"));
                             meetMemberInfo.setLives(member.optString("lives"));
@@ -1086,10 +1083,10 @@ FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_rela
                         memberInfoList.add(meetMemberInfo);
                     }
                 }
-            } catch (JSONException e){
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
-        }catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -1097,17 +1094,18 @@ FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_rela
         return memberInfoList;
     }
 
-    private void loadReferences(int uid){
+    private void loadReferences(int uid) {
         RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
         HttpUtil.sendOkHttpRequest(this, LOAD_REFERENCE_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                if(response.body() != null){
+                if (response.body() != null) {
                     String responseText = response.body().string();
-                    if (isDebug) Slog.d(TAG, "==========loadReferences response text : "+responseText);
-                    if(responseText != null){
+                    if (isDebug)
+                        Slog.d(TAG, "==========loadReferences response text : " + responseText);
+                    if (responseText != null) {
                         List<MeetReferenceInfo> meetReferenceInfoList = ParseUtils.getMeetReferenceList(responseText);
-                        if(meetReferenceInfoList != null && meetReferenceInfoList.size() > 0){
+                        if (meetReferenceInfoList != null && meetReferenceInfoList.size() > 0) {
                             mReferenceList.addAll(meetReferenceInfoList);
                         }
                         handler.sendEmptyMessage(LOAD_REFERENCE_DONE);
@@ -1122,13 +1120,13 @@ FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_rela
         });
     }
 
-    private void processPersonality(final int uid){
+    private void processPersonality(final int uid) {
         getPersonality(uid);
         addPersonality(uid);
     }
 
-    private void getPersonality(int uid){
-        Slog.d(TAG, "================getPersonalityDetail uid:"+uid);
+    private void getPersonality(int uid) {
+        Slog.d(TAG, "================getPersonalityDetail uid:" + uid);
         RequestBody requestBody = new FormBody.Builder()
                 .add("uid", String.valueOf(uid))
                 .build();
@@ -1136,22 +1134,24 @@ FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_rela
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
-                Slog.d(TAG, "================getPersonalityDetail response:"+responseText);
-                if(responseText != null && !TextUtils.isEmpty(responseText)){
+                Slog.d(TAG, "================getPersonalityDetail response:" + responseText);
+                if (responseText != null && !TextUtils.isEmpty(responseText)) {
                     try {
                         personalityResponseArray = new JSONObject(responseText).optJSONArray("personality_detail");
-                        if(personalityResponseArray.length() > 0) {
+                        if (personalityResponseArray.length() > 0) {
                             sortPersonalityWithCount(personalityResponseArray);
-                            if(isDebug) Slog.d(TAG, "====================after sort: " + personalityResponseArray);
+                            if (isDebug)
+                                Slog.d(TAG, "====================after sort: " + personalityResponseArray);
                             //Message msg = new Message();
                             handler.sendEmptyMessage(LOAD_PERSONALITY_DONE);
                         }
-                    }catch (JSONException e){
+                    } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
 
             }
+
             @Override
             public void onFailure(Call call, IOException e) {
 
@@ -1159,36 +1159,13 @@ FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_rela
         });
     }
 
-    public static void sortPersonalityWithCount(JSONArray jsonArray)
-    {
-        JSONObject temp = null;
-        int size = jsonArray.length();
-        try {
-            for(int i = 0 ; i < size-1; i ++)
-            {
-                for(int j = 0 ;j < size-1-i ; j++)
-                {
-                    if(jsonArray.getJSONObject(j).optInt("count") < jsonArray.getJSONObject(j+1).optInt("count"))  //交换两数位置
-                    {
-                        temp = jsonArray.getJSONObject(j);
-                        jsonArray.put(j, jsonArray.getJSONObject(j+1));
-                        jsonArray.put(j+1, temp);
-                    }
-                }
-            }
-        }catch (JSONException e){
-            e.printStackTrace();
-        }
-
-    }
-
-    private void setPersonalityFlow(){
+    private void setPersonalityFlow() {
         FlowLayout personalityFlow = mHeaderEvaluation.findViewById(R.id.personality_flow);
 
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        layoutParams.setMargins((int) Utility.dpToPx(this, 3),(int) Utility.dpToPx(this, 8),
+        layoutParams.setMargins((int) Utility.dpToPx(this, 3), (int) Utility.dpToPx(this, 8),
                 (int) Utility.dpToPx(this, 8), (int) Utility.dpToPx(this, 3));
-        for (int i=0; i<personalityResponseArray.length(); i++){
+        for (int i = 0; i < personalityResponseArray.length(); i++) {
             final TextView personality = new TextView(this);
 
             personality.setPadding((int) Utility.dpToPx(this, 8), (int) Utility.dpToPx(this, 6),
@@ -1198,9 +1175,9 @@ FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_rela
             personality.setLayoutParams(layoutParams);
             String personalityName = personalityResponseArray.optJSONObject(i).optString("personality");
             int count = personalityResponseArray.optJSONObject(i).optInt("count");
-            if(count != 0){
-                personality.setText(personalityName+" · "+count);
-            }else {
+            if (count != 0) {
+                personality.setText(personalityName + " · " + count);
+            } else {
                 personality.setText(personalityName);
             }
             personalityFlow.addView(personality);
@@ -1219,7 +1196,7 @@ FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_rela
         }
     }
 
-    private void addPersonality(final int uid){
+    private void addPersonality(final int uid) {
         Button addPersonality = mHeaderEvaluation.findViewById(R.id.add_personality);
         addPersonality.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1233,12 +1210,12 @@ FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_rela
         });
     }
 
-    private void processHobby(int uid){
+    private void processHobby(int uid) {
         getHobbies(uid);
         addHobbies(uid);
     }
 
-    private void getHobbies(int uid){
+    private void getHobbies(int uid) {
         RequestBody requestBody = new FormBody.Builder()
                 .add("uid", String.valueOf(uid))
                 .build();
@@ -1246,16 +1223,16 @@ FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_rela
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
-                Slog.d(TAG, "================get hobbies response:"+responseText);
-                if(responseText != null && !TextUtils.isEmpty(responseText)){
+                Slog.d(TAG, "================get hobbies response:" + responseText);
+                if (responseText != null && !TextUtils.isEmpty(responseText)) {
                     try {
 
                         JSONArray hobbyJSONArray = new JSONObject(responseText).optJSONArray("hobby");
                         String[] hobbyArray = new String[hobbyJSONArray.length()];
-                        for (int i=0; i<hobbyJSONArray.length(); i++){
+                        for (int i = 0; i < hobbyJSONArray.length(); i++) {
                             hobbyArray[i] = hobbyJSONArray.optJSONObject(i).optString("hobby");
                         }
-                        if(hobbyArray.length > 0) {
+                        if (hobbyArray.length > 0) {
                             Message msg = new Message();
                             Bundle bundle = new Bundle();
                             bundle.putStringArray("hobby", hobbyArray);
@@ -1263,12 +1240,13 @@ FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_rela
                             msg.what = LOAD_HOBBY_DONE;
                             handler.sendMessage(msg);
                         }
-                    }catch (JSONException e){
+                    } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
 
             }
+
             @Override
             public void onFailure(Call call, IOException e) {
 
@@ -1276,7 +1254,7 @@ FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_rela
         });
     }
 
-    private void addHobbies(final int uid){
+    private void addHobbies(final int uid) {
         Button add = mHeaderEvaluation.findViewById(R.id.add_hobby);
         add.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1292,14 +1270,14 @@ FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_rela
         });
     }
 
-    private void setHobbyFlow(String[] hobbyArray){
+    private void setHobbyFlow(String[] hobbyArray) {
         FlowLayout hobbyFlow = mHeaderEvaluation.findViewById(R.id.hobby_flow);
 
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        layoutParams.setMargins((int) Utility.dpToPx(this, 3),(int) Utility.dpToPx(this, 3),
+        layoutParams.setMargins((int) Utility.dpToPx(this, 3), (int) Utility.dpToPx(this, 3),
                 (int) Utility.dpToPx(this, 3), (int) Utility.dpToPx(this, 3));
-        for (int i=0; i<hobbyArray.length; i++){
-            if(!hobbyArray[i].isEmpty()){
+        for (int i = 0; i < hobbyArray.length; i++) {
+            if (!hobbyArray[i].isEmpty()) {
                 final TextView hobbyView = new TextView(this);
                 hobbyView.setPadding((int) Utility.dpToPx(this, 8), (int) Utility.dpToPx(this, 6),
                         (int) Utility.dpToPx(this, 8), (int) Utility.dpToPx(this, 6));
@@ -1312,7 +1290,7 @@ FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_rela
         }
     }
 
-    private void loadDynamicsData(int uid){
+    private void loadDynamicsData(int uid) {
         handler = new ArchivesActivity.MyHandler(this);
 
         int page = mMeetList.size() / PAGE_SIZE;
@@ -1321,20 +1299,21 @@ FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_rela
                 .add("step", String.valueOf(PAGE_SIZE))
                 .add("page", String.valueOf(page))
                 .build();
-        if (isDebug) Log.d(TAG, "loadData requestBody:"+requestBody.toString()+" page:"+page+" uid:"+uid);
+        if (isDebug)
+            Log.d(TAG, "loadData requestBody:" + requestBody.toString() + " page:" + page + " uid:" + uid);
         HttpUtil.sendOkHttpRequest(this, DYNAMICS_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                if(response.body() != null){
+                if (response.body() != null) {
                     String responseText = response.body().string();
-                    Slog.d(TAG, "==========response text : "+responseText);
-                    if(responseText != null){
+                    Slog.d(TAG, "==========response text : " + responseText);
+                    if (responseText != null) {
                         List<MeetDynamics> tempList = parseDynamics(responseText);
                         mTempSize = 0;
                         if (null != tempList) {
                             mTempSize = tempList.size();
                             mMeetList.addAll(tempList);
-                            Log.d(TAG, "getResponseText list.size:"+tempList.size());
+                            Log.d(TAG, "getResponseText list.size:" + tempList.size());
                         }
                         handler.sendEmptyMessage(DONE);
                     }
@@ -1348,7 +1327,7 @@ FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_rela
         });
     }
 
-    private List<MeetDynamics> parseDynamics(String responseText){
+    private List<MeetDynamics> parseDynamics(String responseText) {
         List<MeetDynamics> tempList = new ArrayList<MeetDynamics>();
         if (!TextUtils.isEmpty(responseText)) {
             try {
@@ -1369,48 +1348,48 @@ FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_rela
                     meetDynamics.setSex(dynamics.optInt("sex"));
                     meetDynamics.setPictureUri(dynamics.optString("picture_uri"));
 
-                    if(!dynamics.isNull("birth_year")){
+                    if (!dynamics.isNull("birth_year")) {
                         meetDynamics.setBirthYear(dynamics.optInt("birth_year"));
                     }
-                    if(!dynamics.isNull("height")){
+                    if (!dynamics.isNull("height")) {
                         meetDynamics.setHeight(dynamics.optInt("height"));
                     }
-                    if(!dynamics.isNull("degree")){
+                    if (!dynamics.isNull("degree")) {
                         meetDynamics.setDegree(dynamics.optString("degree"));
                     }
-                    if(!dynamics.isNull("university")){
+                    if (!dynamics.isNull("university")) {
                         meetDynamics.setUniversity(dynamics.optString("university"));
                     }
-                    if(!dynamics.isNull("job_title")){
+                    if (!dynamics.isNull("job_title")) {
                         meetDynamics.setJobTitle(dynamics.optString("job_title"));
                     }
-                    if(!dynamics.isNull("lives")){
+                    if (!dynamics.isNull("lives")) {
                         meetDynamics.setLives(dynamics.optString("lives"));
                     }
-                    if(!dynamics.isNull("situation")){
+                    if (!dynamics.isNull("situation")) {
                         meetDynamics.setSituation(dynamics.optInt("situation"));
                     }
 
                     //requirement
-                    if(!dynamics.isNull("age_lower")){
+                    if (!dynamics.isNull("age_lower")) {
                         meetDynamics.setAgeLower(dynamics.optInt("age_lower"));
                     }
-                    if(!dynamics.isNull("age_upper")){
+                    if (!dynamics.isNull("age_upper")) {
                         meetDynamics.setAgeUpper(dynamics.optInt("age_upper"));
                     }
-                    if(!dynamics.isNull("requirement_height")){
+                    if (!dynamics.isNull("requirement_height")) {
                         meetDynamics.setRequirementHeight(dynamics.optInt("requirement_height"));
                     }
-                    if(!dynamics.isNull("requirement_degree")){
+                    if (!dynamics.isNull("requirement_degree")) {
                         meetDynamics.setRequirementDegree(dynamics.optString("requirement_degree"));
                     }
-                    if(!dynamics.isNull("requirement_lives")){
+                    if (!dynamics.isNull("requirement_lives")) {
                         meetDynamics.setRequirementLives(dynamics.optString("requirement_lives"));
                     }
-                    if(!dynamics.isNull("requirement_sex")){
+                    if (!dynamics.isNull("requirement_sex")) {
                         meetDynamics.setRequirementSex(dynamics.optInt("requirement_sex"));
                     }
-                    if(!dynamics.isNull("illustration")){
+                    if (!dynamics.isNull("illustration")) {
                         meetDynamics.setIllustration(dynamics.optString("illustration"));
                     }
                     //interact count
@@ -1421,7 +1400,7 @@ FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_rela
                     meetDynamics.setPraised(dynamics.optInt("praised"));
 
                     //dynamics content
-                    if(!dynamics.isNull("created")){
+                    if (!dynamics.isNull("created")) {
                         meetDynamics.setCreated(dynamics.optLong("created"));
                     }
                     String content = dynamics.optString("content");
@@ -1447,7 +1426,7 @@ FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_rela
     }
 
     private void getDynamicsComment(final Long aid) {
-        if (isDebug) Log.d(TAG, "getDynamicsComment: aid:"+aid);
+        if (isDebug) Log.d(TAG, "getDynamicsComment: aid:" + aid);
         RequestBody requestBody = new FormBody.Builder().add("aid", aid.toString()).build();
         HttpUtil.sendOkHttpRequest(this, COMMENT_URL, requestBody, new Callback() {
             @Override
@@ -1481,7 +1460,7 @@ FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_rela
 
             @Override
             public void onFailure(Call call, IOException e) {
-                Log.e(TAG, "onFailure e:"+e);
+                Log.e(TAG, "onFailure e:" + e);
             }
         });
 
@@ -1511,13 +1490,13 @@ FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_rela
                 dynamicsComment.setContent(comment.optString("content"));
                 meetDynamics.addComment(dynamicsComment);
             }
-        }catch (JSONException e) {
+        } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
     private MeetDynamics getMeetDynamicsById(long aId) {
-        for(int i = 0;i < mMeetList.size();i++) {
+        for (int i = 0; i < mMeetList.size(); i++) {
             if (aId == mMeetList.get(i).getAid()) {
                 return mMeetList.get(i);
             }
@@ -1526,72 +1505,56 @@ FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_rela
     }
 
     @Override
-    public void onBackFromRatingAndImpressionDialogFragment(boolean evaluated){
-        if(evaluated){
+    public void onBackFromRatingAndImpressionDialogFragment(boolean evaluated) {
+        if (evaluated) {
             setEvaluatedMode();
         }
     }
 
-    private void updateLovedCount(){
+    private void updateLovedCount() {
         TextView lovedStatistics = mArchiveProfile.findViewById(R.id.loved_statistics);
         TextView lovedCount = mArchiveProfile.findViewById(R.id.loved_count);
         int newLovedStatistics = 0;
         int newLovedCount = 0;
-        if(lovedStatistics.getText().toString().length() == 0){
+        if (lovedStatistics.getText().toString().length() == 0) {
             newLovedStatistics = 1;
-        }else{
-            newLovedStatistics = Integer.parseInt(lovedStatistics.getText().toString())+1;
+        } else {
+            newLovedStatistics = Integer.parseInt(lovedStatistics.getText().toString()) + 1;
         }
         lovedStatistics.setText(String.valueOf(newLovedStatistics));
 
-        if(lovedCount.getText().toString().length() == 0){
+        if (lovedCount.getText().toString().length() == 0) {
             newLovedCount = 1;
-        }else {
-            newLovedCount = Integer.parseInt(lovedCount.getText().toString())+1;
+        } else {
+            newLovedCount = Integer.parseInt(lovedCount.getText().toString()) + 1;
         }
         lovedCount.setText(String.valueOf(newLovedCount));
     }
 
-    private void updatePraisedCount(){
+    private void updatePraisedCount() {
         TextView praisedStatistics = mArchiveProfile.findViewById(R.id.praised_statistics);
         TextView praisedCount = mArchiveProfile.findViewById(R.id.praised_count);
         int newPraisedStatistics = 0;
         int newPraisedCount = 0;
-        if(praisedStatistics.getText().toString().length() == 0){
+        if (praisedStatistics.getText().toString().length() == 0) {
             newPraisedStatistics = 1;
-        }else{
-            newPraisedStatistics = Integer.parseInt(praisedStatistics.getText().toString())+1;
+        } else {
+            newPraisedStatistics = Integer.parseInt(praisedStatistics.getText().toString()) + 1;
         }
         praisedStatistics.setText(String.valueOf(newPraisedStatistics));
 
-        if(praisedCount.getText().toString().length() == 0){
+        if (praisedCount.getText().toString().length() == 0) {
             newPraisedCount = 1;
-        }else {
-            newPraisedCount = Integer.parseInt(praisedCount.getText().toString())+1;
+        } else {
+            newPraisedCount = Integer.parseInt(praisedCount.getText().toString()) + 1;
         }
         praisedCount.setText(String.valueOf(newPraisedCount));
     }
 
-    static class MyHandler extends Handler {
-        WeakReference<ArchivesActivity> meetDynamicsFragmentWeakReference;
-
-        MyHandler(ArchivesActivity archivesActivity) {
-            meetDynamicsFragmentWeakReference = new WeakReference<ArchivesActivity>(archivesActivity);
-        }
-
-        @Override
-        public void handleMessage(Message message) {
-            ArchivesActivity archivesActivity = meetDynamicsFragmentWeakReference.get();
-            if(archivesActivity != null){
-                archivesActivity.handleMessage(message);
-            }
-        }
-    }
-
-    public void handleMessage(Message message){
+    public void handleMessage(Message message) {
         Bundle bundle = new Bundle();
         bundle = message.getData();
-        switch (message.what){
+        switch (message.what) {
             case DONE:
                 mArchivesListAdapter.setData(mMeetList);
                 mArchivesListAdapter.notifyDataSetChanged();
@@ -1659,6 +1622,59 @@ FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_rela
                 break;
             default:
                 break;
+        }
+    }
+
+    public static class ImpressionStatistics implements Parcelable {
+        public static final Parcelable.Creator<ImpressionStatistics> CREATOR = new Creator<ImpressionStatistics>() {
+
+            @Override
+            public ImpressionStatistics createFromParcel(Parcel source) {
+                ImpressionStatistics impressionStatistics = new ImpressionStatistics();
+                impressionStatistics.impression = source.readString();
+                impressionStatistics.impressionCount = source.readInt();
+                //impressionStatistics.meetMemberList = new ArrayList<MeetMemberInfo>();
+                impressionStatistics.meetMemberList = source.readArrayList(getClass().getClassLoader());
+
+                return impressionStatistics;
+            }
+
+            @Override
+            public ImpressionStatistics[] newArray(int size) {
+                return new ImpressionStatistics[size];
+            }
+        };
+        public String impression;
+        public int impressionCount;
+        public List<MeetMemberInfo> meetMemberList = new ArrayList<>();
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            //序列化过程：必须按成员变量声明的顺序进行封装
+            dest.writeString(impression);
+            dest.writeInt(impressionCount);
+            dest.writeList(meetMemberList);
+        }
+    }
+
+    static class MyHandler extends Handler {
+        WeakReference<ArchivesActivity> meetDynamicsFragmentWeakReference;
+
+        MyHandler(ArchivesActivity archivesActivity) {
+            meetDynamicsFragmentWeakReference = new WeakReference<ArchivesActivity>(archivesActivity);
+        }
+
+        @Override
+        public void handleMessage(Message message) {
+            ArchivesActivity archivesActivity = meetDynamicsFragmentWeakReference.get();
+            if (archivesActivity != null) {
+                archivesActivity.handleMessage(message);
+            }
         }
     }
 

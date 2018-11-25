@@ -30,9 +30,10 @@ import java.util.List;
  * Created by super-zou on 18-3-13.
  */
 
-public class GridImageAdapter extends RecyclerView.Adapter<GridImageAdapter.ViewHolder>{
+public class GridImageAdapter extends RecyclerView.Adapter<GridImageAdapter.ViewHolder> {
     public static final int TYPE_CAMERA = 1;
     public static final int TYPE_PICTURE = 2;
+    protected OnItemClickListener mItemClickListener;
     private LayoutInflater mInflater;
     private List<LocalMedia> list = new ArrayList<>();
     private int selectMax = 9;
@@ -41,10 +42,6 @@ public class GridImageAdapter extends RecyclerView.Adapter<GridImageAdapter.View
      * 点击添加图片跳转
      */
     private onAddPicClickListener mOnAddPicClickListener;
-
-    public interface onAddPicClickListener {
-        void onAddPicClick();
-    }
 
     public GridImageAdapter(Context context, onAddPicClickListener mOnAddPicClickListener) {
         this.context = context;
@@ -58,20 +55,6 @@ public class GridImageAdapter extends RecyclerView.Adapter<GridImageAdapter.View
 
     public void setList(List<LocalMedia> list) {
         this.list = list;
-    }
-
-    public class ViewHolder extends RecyclerView.ViewHolder {
-
-        ImageView mImg;
-        LinearLayout ll_del;
-        TextView tv_duration;
-
-        public ViewHolder(View view) {
-            super(view);
-            mImg = (ImageView) view.findViewById(R.id.fiv);
-            ll_del = (LinearLayout) view.findViewById(R.id.ll_del);
-            tv_duration = (TextView) view.findViewById(R.id.tv_duration);
-        }
     }
 
     @Override
@@ -199,13 +182,29 @@ public class GridImageAdapter extends RecyclerView.Adapter<GridImageAdapter.View
         }
     }
 
-    protected OnItemClickListener mItemClickListener;
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.mItemClickListener = listener;
+    }
+
+    public interface onAddPicClickListener {
+        void onAddPicClick();
+    }
 
     public interface OnItemClickListener {
         void onItemClick(int position, View v);
     }
 
-    public void setOnItemClickListener(OnItemClickListener listener) {
-        this.mItemClickListener = listener;
+    public class ViewHolder extends RecyclerView.ViewHolder {
+
+        ImageView mImg;
+        LinearLayout ll_del;
+        TextView tv_duration;
+
+        public ViewHolder(View view) {
+            super(view);
+            mImg = (ImageView) view.findViewById(R.id.fiv);
+            ll_del = (LinearLayout) view.findViewById(R.id.ll_del);
+            tv_duration = (TextView) view.findViewById(R.id.tv_duration);
+        }
     }
 }

@@ -1,16 +1,14 @@
 package com.tongmenhui.launchak47.meet;
 
 //import android.app.Fragment;
+
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,7 +26,6 @@ import com.tongmenhui.launchak47.util.SharedPreferencesUtils;
 import com.tongmenhui.launchak47.util.Slog;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -41,7 +38,6 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static android.content.Context.MODE_PRIVATE;
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
@@ -52,53 +48,52 @@ import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 public class MeetRecommendFragment extends BaseFragment {
     private static final boolean debug = false;
     private static final String TAG = "MeetRecommendFragment";
+    //+Begin add by xuchunping for use XRecyclerView support loadmore
+    //private RecyclerView recyclerView;
+    private static final int PAGE_SIZE = 6;//page size
+    private static final int DONE = 1;
+    private static final int UPDATE = 2;
+    private static final String get_recommend_url = HttpUtil.DOMAIN + "?q=meet/recommend";
+    private static String responseText;
+    JSONObject recommend_response;
+    JSONArray recommendation;
     private View viewContent;
     private int mType = 0;
     private String mTitle;
     private List<MeetMemberInfo> meetList = new ArrayList<>();
     private MeetMemberInfo meetMemberInfo;
-    //+Begin add by xuchunping for use XRecyclerView support loadmore
-    //private RecyclerView recyclerView;
-    private static final int PAGE_SIZE = 6;//page size
     private XRecyclerView recyclerView;
     private int mTempSize;
     //-End add by xuchunping for use XRecyclerView support loadmore
     private MeetRecommendListAdapter meetRecommendListAdapter;
-   // private String realname;
+    // private String realname;
     private int uid;
-    private static String responseText;
-    JSONObject recommend_response;
-    JSONArray recommendation;
     private Boolean loaded = false;
     private Handler handler;
-    private static final int DONE = 1;
-    private static final int UPDATE = 2;
-
-    private static final String get_recommend_url = HttpUtil.DOMAIN + "?q=meet/recommend";
 
     @Override
-    protected void initView(View view){
+    protected void initView(View view) {
 
     }
 
     @Override
-    protected void loadData(){
+    protected void loadData() {
 
     }
 
     @Override
-    protected int getLayoutId(){
+    protected int getLayoutId() {
         return 0;
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        if(debug) Slog.d(TAG, "=================onCreateView===================");
+        if (debug) Slog.d(TAG, "=================onCreateView===================");
         initContentView();
         meetRecommendListAdapter = new MeetRecommendListAdapter(getContext());
         viewContent = inflater.inflate(R.layout.meet_recommend, container, false);
-        TextView addMeetInfo = (TextView)viewContent.findViewById(R.id.meet_info_add);
+        TextView addMeetInfo = (TextView) viewContent.findViewById(R.id.meet_info_add);
         addMeetInfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -110,13 +105,13 @@ public class MeetRecommendFragment extends BaseFragment {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
 
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener(){
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState){
-                if(newState == SCROLL_STATE_IDLE){
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                if (newState == SCROLL_STATE_IDLE) {
                     meetRecommendListAdapter.setScrolling(false);
                     meetRecommendListAdapter.notifyDataSetChanged();
-                }else{
+                } else {
                     meetRecommendListAdapter.setScrolling(true);
                 }
                 super.onScrollStateChanged(recyclerView, newState);
@@ -162,23 +157,24 @@ public class MeetRecommendFragment extends BaseFragment {
         return viewContent;
 
     }
+
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if(debug) Slog.d(TAG, "=================onViewCreated===================");
-       // initConentView();
+        if (debug) Slog.d(TAG, "=================onViewCreated===================");
+        // initConentView();
     }
 
-    public void initContentView(){
-        if(debug) Slog.d(TAG, "===============initConentView==============");
+    public void initContentView() {
+        if (debug) Slog.d(TAG, "===============initConentView==============");
 
-        int page = meetList.size() / PAGE_SIZE ;
+        int page = meetList.size() / PAGE_SIZE;
         RequestBody requestBody = new FormBody.Builder()
                 .add("step", String.valueOf(PAGE_SIZE))
                 .add("page", String.valueOf(page))
                 .build();
-        Log.d(TAG, "initContentView requestBody:"+requestBody.toString()+" page:"+page);
-        HttpUtil.sendOkHttpRequest(getContext(), get_recommend_url, requestBody, new Callback(){
+        Log.d(TAG, "initContentView requestBody:" + requestBody.toString() + " page:" + page);
+        HttpUtil.sendOkHttpRequest(getContext(), get_recommend_url, requestBody, new Callback() {
             int check_login_user = 0;
             String user_name;
 
@@ -186,20 +182,20 @@ public class MeetRecommendFragment extends BaseFragment {
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
                 //Slog.d(TAG, "response : "+responseText);
-                Log.d(TAG, "onResponse responseText:"+responseText);
+                Log.d(TAG, "onResponse responseText:" + responseText);
                 getResponseText(responseText);
             }
 
             @Override
-            public void onFailure(Call call, IOException e){
-                Log.e(TAG, "onFailure e:"+e);
+            public void onFailure(Call call, IOException e) {
+                Log.e(TAG, "onFailure e:" + e);
             }
         });
 
-        handler = new Handler(){
+        handler = new Handler() {
             @Override
-            public void handleMessage(Message message){
-                if(message.what == DONE){
+            public void handleMessage(Message message) {
+                if (message.what == DONE) {
                     meetRecommendListAdapter.setData(meetList);
                     meetRecommendListAdapter.notifyDataSetChanged();
                     recyclerView.refreshComplete();
@@ -209,10 +205,9 @@ public class MeetRecommendFragment extends BaseFragment {
                         recyclerView.setNoMore(true);
                         recyclerView.setLoadingMoreEnabled(false);
                     }
-                }
-                else if (message.what == UPDATE) {
+                } else if (message.what == UPDATE) {
                     //save last update timemills
-                    SharedPreferencesUtils.setRecommendLast(getContext(), String.valueOf(System.currentTimeMillis()/1000));
+                    SharedPreferencesUtils.setRecommendLast(getContext(), String.valueOf(System.currentTimeMillis() / 1000));
 
                     meetRecommendListAdapter.setData(meetList);
                     meetRecommendListAdapter.notifyDataSetChanged();
@@ -221,29 +216,29 @@ public class MeetRecommendFragment extends BaseFragment {
             }
         };
 
-       // getResponseText(responseText);
+        // getResponseText(responseText);
 
     }
 
-    public void getResponseText(String responseText){
+    public void getResponseText(String responseText) {
 
-        if(debug) Slog.d(TAG, "====================getResponseText: "+responseText);
+        if (debug) Slog.d(TAG, "====================getResponseText: " + responseText);
         //+Begin added by xuchunping
         List<MeetMemberInfo> tempList = ParseUtils.getMeetList(responseText);
         mTempSize = 0;
         if (null != tempList) {
             mTempSize = tempList.size();
             meetList.addAll(tempList);
-            Log.d(TAG, "getResponseText list.size:"+tempList.size());
+            Log.d(TAG, "getResponseText list.size:" + tempList.size());
         }
         handler.sendEmptyMessage(DONE);
         //-End added by xuchunping
     }
 
-    private void updateData(){
+    private void updateData() {
         String last = SharedPreferencesUtils.getRecommendLast(getContext());
-        if(debug) Slog.d(TAG, "=======last:"+last);
-        Log.d(TAG, "=======last:"+last);
+        if (debug) Slog.d(TAG, "=======last:" + last);
+        Log.d(TAG, "=======last:" + last);
 
         int page = 0;
         RequestBody requestBody = new FormBody.Builder().add("last", last)
@@ -251,20 +246,20 @@ public class MeetRecommendFragment extends BaseFragment {
                 .add("page", String.valueOf(0))
                 .build();
 
-        Log.d(TAG, "updateData requestBody:"+requestBody.toString());
+        Log.d(TAG, "updateData requestBody:" + requestBody.toString());
         HttpUtil.sendOkHttpRequest(getContext(), get_recommend_url, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                if(response.body() != null){
+                if (response.body() != null) {
                     String responseText = response.body().string();
-                    Slog.d(TAG, "==========response text : "+responseText);
-                    if(responseText != null){
+                    Slog.d(TAG, "==========response text : " + responseText);
+                    if (responseText != null) {
                         List<MeetMemberInfo> tempList = ParseUtils.getMeetList(responseText);
                         if (null != tempList && tempList.size() != 0) {
                             mTempSize = tempList.size();
                             meetList.clear();
                             meetList.addAll(tempList);
-                            Log.d(TAG, "getResponseText list.size:"+tempList.size());
+                            Log.d(TAG, "getResponseText list.size:" + tempList.size());
                         }
                         handler.sendEmptyMessage(UPDATE);
                     }

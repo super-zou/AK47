@@ -17,6 +17,9 @@ import java.util.List;
 
 public class XmlParserHandler extends DefaultHandler {
 
+    ProvinceModel provinceModel = new ProvinceModel();
+    CityModel cityModel = new CityModel();
+    DistrictModel districtModel = new DistrictModel();
     /**
      * 存储所有的解析对象
      */
@@ -34,10 +37,6 @@ public class XmlParserHandler extends DefaultHandler {
     public void startDocument() throws SAXException {
         // 当读到第一个开始标签的时候，会触发这个方法
     }
-
-    ProvinceModel provinceModel = new ProvinceModel();
-    CityModel cityModel = new CityModel();
-    DistrictModel districtModel = new DistrictModel();
 
     @Override
     public void startElement(String uri, String localName, String qName,

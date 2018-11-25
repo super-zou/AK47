@@ -8,12 +8,13 @@ public class CommonUtils {
 
     /**
      * 验证邮箱输入是否合法
+     *
      * @param strEmail
      * @return
      */
     public static boolean isEmail(String strEmail) {
-    // String strPattern =
-    // "^([a-z0-9A-Z]+[-|\\.]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-zA-Z]{2,}$";
+        // String strPattern =
+        // "^([a-z0-9A-Z]+[-|\\.]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-zA-Z]{2,}$";
         String mailPattern = "^\\s*\\w+(?:\\.{0,1}[\\w-]+)*@[a-zA-Z0-9]+(?:[-.][a-zA-Z0-9]+)*\\.[a-zA-Z]+\\s*$";
         Pattern p = Pattern.compile(mailPattern);
         Matcher m = p.matcher(strEmail);
@@ -22,6 +23,7 @@ public class CommonUtils {
 
     /**
      * 验证是否是手机号码
+     *
      * @param strPhone
      * @return
      */

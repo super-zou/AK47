@@ -41,77 +41,52 @@ import okhttp3.Response;
  * Created by haichao.zou on 2017/9/15.
  */
 
-public class MeetRecommendListAdapter extends RecyclerView.Adapter<MeetRecommendListAdapter.ViewHolder>{
+public class MeetRecommendListAdapter extends RecyclerView.Adapter<MeetRecommendListAdapter.ViewHolder> {
     private static final String TAG = "MeetRecommendList";
-    private static final String  domain = "http://112.126.83.127:88";
+    private static final String domain = "http://112.126.83.127:88";
     //+Begin by xuchunping
-    private static final String  LOVED_URL = HttpUtil.DOMAIN + "?q=meet/love/add";
-    private static final String  PRAISED_URL = HttpUtil.DOMAIN + "?q=meet/praise/add";
+    private static final String LOVED_URL = HttpUtil.DOMAIN + "?q=meet/love/add";
+    private static final String PRAISED_URL = HttpUtil.DOMAIN + "?q=meet/praise/add";
     private static final int UPDATE_LOVE_COUNT = 0;
     private static final int UPDATE_PRAISED_COUNT = 1;
     //-End by xuchunping
-
+    private static Context mContext;
+    RequestQueue queue;
     private List<MeetMemberInfo> mMeetList;
     private String picture_url;
-    private static Context mContext;
     private boolean isScrolling = false;
-
-    RequestQueue queue;
-
-    public void setScrolling(boolean isScrolling){
-        this.isScrolling = isScrolling;
-    }
-
-
-    public static class ViewHolder extends RecyclerView.ViewHolder{
-        //TextView addMeetInfo;
-        TextView realname;
-        TextView lives;
-        TextView selfcondition;
-        TextView requirement;
-        NetworkImageView headUri;
-        TextView illustration;
-        TextView eyeView;
-        TextView lovedView;
-        TextView lovedIcon;
-        TextView thumbsView;
-        TextView thumbsIcon;
-        TextView photosView;
-
-        public ViewHolder(View view){
-
-            super(view);
-            //addMeetInfo = (TextView)view.findViewById(R.id.meet_info_add);
-            realname = (TextView) view.findViewById(R.id.name);
-            lives = (TextView) view.findViewById(R.id.lives);
-            headUri = (NetworkImageView) view.findViewById(R.id.recommend_head_uri);
-            selfcondition = (TextView) view.findViewById(R.id.self_condition);
-            requirement = (TextView) view.findViewById(R.id.partner_requirement);
-            illustration = (TextView) view.findViewById(R.id.illustration);
-            eyeView = (TextView)view.findViewById(R.id.eye_statistics);
-            lovedView = (TextView)view.findViewById(R.id.loved_statistics);
-            lovedIcon = (TextView)view.findViewById(R.id.loved_icon);
-            thumbsView = (TextView)view.findViewById(R.id.thumbs_up_statistics);
-            thumbsIcon = (TextView)view.findViewById(R.id.thumbs_up_icon);
-            photosView = (TextView)view.findViewById(R.id.photos_statistics);
-
-            Typeface font = Typeface.createFromAsset(mContext.getAssets(), "fonts/fontawesome.ttf");
-            FontManager.markAsIconContainer(view.findViewById(R.id.behavior_statistics), font);
-
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case UPDATE_LOVE_COUNT:
+                    notifyDataSetChanged();
+                    break;
+                case UPDATE_PRAISED_COUNT:
+                    notifyDataSetChanged();
+                    break;
+            }
+            super.handleMessage(msg);
         }
-    }
+    };
 
-    public MeetRecommendListAdapter(Context context){
+
+    public MeetRecommendListAdapter(Context context) {
         Slog.d(TAG, "==============MeetRecommendListAdapter init=================");
         mContext = context;
         mMeetList = new ArrayList<MeetMemberInfo>();
     }
-    public void setData(List<MeetMemberInfo> meetList){
+
+    public void setScrolling(boolean isScrolling) {
+        this.isScrolling = isScrolling;
+    }
+
+    public void setData(List<MeetMemberInfo> meetList) {
         mMeetList = meetList;
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         //Slog.d(TAG, "===========onCreateViewHolder==============");
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.meet_item, parent, false);
@@ -121,21 +96,21 @@ public class MeetRecommendListAdapter extends RecyclerView.Adapter<MeetRecommend
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position){
+    public void onBindViewHolder(final ViewHolder holder, int position) {
 
-       // Slog.d(TAG, "===========onBindViewHolder==============");
+        // Slog.d(TAG, "===========onBindViewHolder==============");
         final MeetMemberInfo meet = mMeetList.get(position);
-       // Slog.d(TAG, "get name============="+meet.getRealname());
+        // Slog.d(TAG, "get name============="+meet.getRealname());
         holder.realname.setText(meet.getRealname());
         holder.lives.setText(meet.getLives());
 
-        if(!"".equals(meet.getPictureUri()) && !isScrolling){
-            picture_url = HttpUtil.DOMAIN+meet.getPictureUri();
+        if (!"".equals(meet.getPictureUri()) && !isScrolling) {
+            picture_url = HttpUtil.DOMAIN + meet.getPictureUri();
             queue = RequestQueueSingleton.instance(mContext);
 
             holder.headUri.setTag(picture_url);
             HttpUtil.loadByImageLoader(queue, holder.headUri, picture_url, 110, 110);
-        }else{
+        } else {
             holder.headUri.setImageDrawable(mContext.getDrawable(R.mipmap.ic_launcher));
         }
 
@@ -152,7 +127,7 @@ public class MeetRecommendListAdapter extends RecyclerView.Adapter<MeetRecommend
         holder.lovedIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (1 == meet.getLoved()){
+                if (1 == meet.getLoved()) {
                     Toast.makeText(mContext, "You have loved it!", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -174,7 +149,7 @@ public class MeetRecommendListAdapter extends RecyclerView.Adapter<MeetRecommend
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(mContext, ArchivesActivity.class);
-                Log.d(TAG, "meet:"+meet+" uid:"+meet.getUid());
+                Log.d(TAG, "meet:" + meet + " uid:" + meet.getUid());
                 intent.putExtra("meet", meet);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
                 mContext.startActivity(intent);
@@ -192,49 +167,34 @@ public class MeetRecommendListAdapter extends RecyclerView.Adapter<MeetRecommend
     }
 
     @Override
-    public int getItemCount(){
+    public int getItemCount() {
 
-        return mMeetList != null ? mMeetList.size():0;
+        return mMeetList != null ? mMeetList.size() : 0;
     }
 
-    private Handler mHandler = new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what){
-                case UPDATE_LOVE_COUNT:
-                    notifyDataSetChanged();
-                    break;
-                case UPDATE_PRAISED_COUNT:
-                    notifyDataSetChanged();
-                    break;
-            }
-            super.handleMessage(msg);
-        }
-    };
-
-    private void sendMessage(int what, Object obj){
+    private void sendMessage(int what, Object obj) {
         Message msg = mHandler.obtainMessage();
         msg.what = what;
         msg.obj = obj;
         msg.sendToTarget();
     }
 
-    private void sendMessage(int what){
+    private void sendMessage(int what) {
         sendMessage(what, null);
     }
 
-    private void praiseArchives(final MeetMemberInfo meetMemberInfo){
+    private void praiseArchives(final MeetMemberInfo meetMemberInfo) {
         RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(meetMemberInfo.getUid())).build();
         HttpUtil.sendOkHttpRequest(mContext, PRAISED_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
-                Log.d(TAG,"praiseArchives responseText:"+responseText);
+                Log.d(TAG, "praiseArchives responseText:" + responseText);
                 if (!TextUtils.isEmpty(responseText)) {
                     try {
                         JSONObject commentResponse = new JSONObject(responseText);
                         int status = commentResponse.optInt("status");
-                        Log.d(TAG,"praiseArchives status:"+status);
+                        Log.d(TAG, "praiseArchives status:" + status);
                         if (1 == status) {
                             MeetMemberInfo member = getMeetMemberById(meetMemberInfo.getUid());
                             member.setPraised(1);
@@ -253,18 +213,18 @@ public class MeetRecommendListAdapter extends RecyclerView.Adapter<MeetRecommend
         });
     }
 
-    private void love(final MeetMemberInfo meetMemberInfo){
+    private void love(final MeetMemberInfo meetMemberInfo) {
         RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(meetMemberInfo.getUid())).build();
         HttpUtil.sendOkHttpRequest(mContext, LOVED_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
-                Log.d(TAG,"love responseText"+responseText);
+                Log.d(TAG, "love responseText" + responseText);
                 if (!TextUtils.isEmpty(responseText)) {
                     try {
                         JSONObject commentResponse = new JSONObject(responseText);
                         int status = commentResponse.optInt("status");
-                        Log.d(TAG,"love status"+status);
+                        Log.d(TAG, "love status" + status);
                         if (1 == status) {
                             MeetMemberInfo member = getMeetMemberById(meetMemberInfo.getUid());
                             member.setLoved(1);
@@ -284,15 +244,53 @@ public class MeetRecommendListAdapter extends RecyclerView.Adapter<MeetRecommend
     }
 
     private MeetMemberInfo getMeetMemberById(int uid) {
-        if (null == mMeetList){
+        if (null == mMeetList) {
             return null;
         }
-        for(int i = 0;i < mMeetList.size();i++) {
+        for (int i = 0; i < mMeetList.size(); i++) {
             if (uid == mMeetList.get(i).getUid()) {
                 return mMeetList.get(i);
             }
         }
         return null;
+    }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        //TextView addMeetInfo;
+        TextView realname;
+        TextView lives;
+        TextView selfcondition;
+        TextView requirement;
+        NetworkImageView headUri;
+        TextView illustration;
+        TextView eyeView;
+        TextView lovedView;
+        TextView lovedIcon;
+        TextView thumbsView;
+        TextView thumbsIcon;
+        TextView photosView;
+
+        public ViewHolder(View view) {
+
+            super(view);
+            //addMeetInfo = (TextView)view.findViewById(R.id.meet_info_add);
+            realname = (TextView) view.findViewById(R.id.name);
+            lives = (TextView) view.findViewById(R.id.lives);
+            headUri = (NetworkImageView) view.findViewById(R.id.recommend_head_uri);
+            selfcondition = (TextView) view.findViewById(R.id.self_condition);
+            requirement = (TextView) view.findViewById(R.id.partner_requirement);
+            illustration = (TextView) view.findViewById(R.id.illustration);
+            eyeView = (TextView) view.findViewById(R.id.eye_statistics);
+            lovedView = (TextView) view.findViewById(R.id.loved_statistics);
+            lovedIcon = (TextView) view.findViewById(R.id.loved_icon);
+            thumbsView = (TextView) view.findViewById(R.id.thumbs_up_statistics);
+            thumbsIcon = (TextView) view.findViewById(R.id.thumbs_up_icon);
+            photosView = (TextView) view.findViewById(R.id.photos_statistics);
+
+            Typeface font = Typeface.createFromAsset(mContext.getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
+            FontManager.markAsIconContainer(view.findViewById(R.id.behavior_statistics), font);
+
+        }
     }
     //-End by xuchunping
 }

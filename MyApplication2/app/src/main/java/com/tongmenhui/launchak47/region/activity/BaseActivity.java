@@ -47,19 +47,18 @@ public class BaseActivity extends AppCompatActivity {
     /**
      * 当前区的名称
      */
-    protected String mCurrentDistrictName ="";
+    protected String mCurrentDistrictName = "";
 
     /**
      * 当前区的邮政编码
      */
-    protected String mCurrentZipCode ="";
+    protected String mCurrentZipCode = "";
 
     /**
      * 解析省市区的XML数据
      */
 
-    protected void initProvinceDatas()
-    {
+    protected void initProvinceDatas() {
         List<ProvinceModel> provinceList = null;
         AssetManager asset = getAssets();
         try {
@@ -74,10 +73,10 @@ public class BaseActivity extends AppCompatActivity {
             // 获取解析出来的数据
             provinceList = handler.getDataList();
             //*/ 初始化默认选中的省、市、区
-            if (provinceList!= null && !provinceList.isEmpty()) {
+            if (provinceList != null && !provinceList.isEmpty()) {
                 mCurrentProviceName = provinceList.get(0).getName();
                 List<CityModel> cityList = provinceList.get(0).getCityList();
-                if (cityList!= null && !cityList.isEmpty()) {
+                if (cityList != null && !cityList.isEmpty()) {
                     mCurrentCityName = cityList.get(0).getName();
                     List<DistrictModel> districtList = cityList.get(0).getDistrictList();
                     mCurrentDistrictName = districtList.get(0).getName();
@@ -86,18 +85,18 @@ public class BaseActivity extends AppCompatActivity {
             }
             //*/
             mProvinceDatas = new String[provinceList.size()];
-            for (int i=0; i< provinceList.size(); i++) {
+            for (int i = 0; i < provinceList.size(); i++) {
                 // 遍历所有省的数据
                 mProvinceDatas[i] = provinceList.get(i).getName();
                 List<CityModel> cityList = provinceList.get(i).getCityList();
                 String[] cityNames = new String[cityList.size()];
-                for (int j=0; j< cityList.size(); j++) {
+                for (int j = 0; j < cityList.size(); j++) {
                     // 遍历省下面的所有市的数据
                     cityNames[j] = cityList.get(j).getName();
                     List<DistrictModel> districtList = cityList.get(j).getDistrictList();
                     String[] distrinctNameArray = new String[districtList.size()];
                     DistrictModel[] distrinctArray = new DistrictModel[districtList.size()];
-                    for (int k=0; k<districtList.size(); k++) {
+                    for (int k = 0; k < districtList.size(); k++) {
                         // 遍历市下面所有区/县的数据
                         DistrictModel districtModel = new DistrictModel(districtList.get(k).getName(), districtList.get(k).getZipcode());
                         // 区/县对于的邮编，保存到mZipcodeDatasMap

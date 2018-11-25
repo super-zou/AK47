@@ -1,27 +1,27 @@
 package com.tongmenhui.launchak47.main;
 
+import android.os.Bundle;
 import android.support.design.widget.TabLayout;
-//import android.support.v4.app.FragmentTabHost;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.adapter.MainFragmentAdapter;
 
 import java.util.ArrayList;
 
+//import android.support.v4.app.FragmentTabHost;
+
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
-    private TabLayout mTabLayout;
-    private ViewPager mViewPager;
-    private MainFragmentAdapter mFragmentAdapter;
     TabLayout.Tab meet_tab;
     TabLayout.Tab activity_tab;
     TabLayout.Tab archive_tab;
-
-    private ArrayList<String> mTitleList = new ArrayList<String>(){
+    private TabLayout mTabLayout;
+    private ViewPager mViewPager;
+    private MainFragmentAdapter mFragmentAdapter;
+    private ArrayList<String> mTitleList = new ArrayList<String>() {
         {
             add("meet");
             add("activities");
@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     };
 
     @Override
-    protected void onCreate(Bundle savedInstanceState){
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
         mTabLayout.setupWithViewPager(mViewPager);
     }
 
-    private void initView(){
+    private void initView() {
         mTabLayout = (TabLayout) findViewById(R.id.tabs);
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
     }

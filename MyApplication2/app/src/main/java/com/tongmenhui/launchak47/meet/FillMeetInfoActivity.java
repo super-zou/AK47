@@ -1,7 +1,6 @@
 package com.tongmenhui.launchak47.meet;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -14,8 +13,6 @@ import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-//import com.google.gson.JsonSerializer;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.region.activity.RegionSelectionActivity;
@@ -28,10 +25,8 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -40,7 +35,13 @@ import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+//import com.google.gson.JsonSerializer;
+
 public class FillMeetInfoActivity extends AppCompatActivity {
+    public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    private final static int SELFREQUEST = 1;
+    private final static int REQUIREREQUEST = 2;
+    private static final String fillMeetInfoUrl = "http://112.126.83.127:88/?q=meet/look_friend";
     Resources res;
     String[] years;
     String[] months;
@@ -48,8 +49,6 @@ public class FillMeetInfoActivity extends AppCompatActivity {
     String[] heights;
     String[] degrees;
     String[] ages;
-    private final static int SELFREQUEST = 1;
-    private final static int REQUIREREQUEST = 2;
     MeetMemberInfo meetMemberInfo;
     SelfCondition selfCondition;
     PartnerRequirement partnerRequirement;
@@ -68,10 +67,6 @@ public class FillMeetInfoActivity extends AppCompatActivity {
     boolean REQUIRELIVESELECTED = false;
     String selfConditionJson;
     String partnerRequirementJson;
-    private static final String fillMeetInfoUrl = "http://112.126.83.127:88/?q=meet/look_friend";
-    public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +75,7 @@ public class FillMeetInfoActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        res =getResources();
+        res = getResources();
         years = res.getStringArray(R.array.years);
         months = res.getStringArray(R.array.months);
         days = res.getStringArray(R.array.days);
@@ -92,18 +87,18 @@ public class FillMeetInfoActivity extends AppCompatActivity {
         selfCondition = new SelfCondition();
         partnerRequirement = new PartnerRequirement();
 
-        final LinearLayout selfLayout = (LinearLayout)findViewById(R.id.self);
-        final LinearLayout requireLayout = (LinearLayout)findViewById(R.id.requirement);
+        final LinearLayout selfLayout = (LinearLayout) findViewById(R.id.self);
+        final LinearLayout requireLayout = (LinearLayout) findViewById(R.id.requirement);
 
-        RadioGroup self_sex = (RadioGroup)findViewById(R.id.self_sex);
+        RadioGroup self_sex = (RadioGroup) findViewById(R.id.self_sex);
         self_sex.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if(checkedId == R.id.self_sex_male){
+                if (checkedId == R.id.self_sex_male) {
                     //Toast.makeText(FillMeetInfoActivity.this,"male", Toast.LENGTH_SHORT).show();
                     //meetMemberInfo.setSelfSex(0);
                     selfCondition.setSelfSex(0);
-                }else{
+                } else {
                     //Toast.makeText(FillMeetInfoActivity.this,"female", Toast.LENGTH_SHORT).show();
                     //meetMemberInfo.setSelfSex(1);
                     selfCondition.setSelfSex(1);
@@ -115,7 +110,7 @@ public class FillMeetInfoActivity extends AppCompatActivity {
         NiceSpinner niceSpinnerYears = (NiceSpinner) findViewById(R.id.nice_spinner_years);
         final List<String> yearList = new LinkedList<>(Arrays.asList(years));
         niceSpinnerYears.attachDataSource(yearList);
-        niceSpinnerYears.addOnItemClickListener(new AdapterView.OnItemClickListener(){
+        niceSpinnerYears.addOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 //Slog.e("什么数据",String.valueOf(yearList.get(i)));
@@ -129,7 +124,7 @@ public class FillMeetInfoActivity extends AppCompatActivity {
         NiceSpinner niceSpinnerMonths = (NiceSpinner) findViewById(R.id.nice_spinner_months);
         final List<String> monthList = new LinkedList<>(Arrays.asList(months));
         niceSpinnerMonths.attachDataSource(monthList);
-        niceSpinnerMonths.addOnItemClickListener(new AdapterView.OnItemClickListener(){
+        niceSpinnerMonths.addOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 //Slog.e("什么数据",String.valueOf(yearList.get(i)));
@@ -143,7 +138,7 @@ public class FillMeetInfoActivity extends AppCompatActivity {
         NiceSpinner niceSpinnerDays = (NiceSpinner) findViewById(R.id.nice_spinner_days);
         final List<String> dayList = new LinkedList<>(Arrays.asList(days));
         niceSpinnerDays.attachDataSource(dayList);
-        niceSpinnerDays.addOnItemClickListener(new AdapterView.OnItemClickListener(){
+        niceSpinnerDays.addOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 //Slog.e("什么数据",String.valueOf(yearList.get(i)));
@@ -157,7 +152,7 @@ public class FillMeetInfoActivity extends AppCompatActivity {
         NiceSpinner niceSpinnerHeight = (NiceSpinner) findViewById(R.id.nice_spinner_height);
         final List<String> heightList = new LinkedList<>(Arrays.asList(heights));
         niceSpinnerHeight.attachDataSource(heightList);
-        niceSpinnerHeight.addOnItemClickListener(new AdapterView.OnItemClickListener(){
+        niceSpinnerHeight.addOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 //Slog.e("什么数据",String.valueOf(yearList.get(i)));
@@ -171,7 +166,7 @@ public class FillMeetInfoActivity extends AppCompatActivity {
         NiceSpinner niceSpinnerDegree = (NiceSpinner) findViewById(R.id.nice_spinner_degree);
         final List<String> degreeList = new LinkedList<>(Arrays.asList(degrees));
         niceSpinnerDegree.attachDataSource(degreeList);
-        niceSpinnerDegree.addOnItemClickListener(new AdapterView.OnItemClickListener(){
+        niceSpinnerDegree.addOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 //Slog.e("什么数据",String.valueOf(yearList.get(i)));
@@ -181,7 +176,7 @@ public class FillMeetInfoActivity extends AppCompatActivity {
             }
 
         });
-        Button selfRegionSelection = (Button)findViewById(R.id.self_region);
+        Button selfRegionSelection = (Button) findViewById(R.id.self_region);
         selfRegionSelection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -190,13 +185,13 @@ public class FillMeetInfoActivity extends AppCompatActivity {
             }
         });
 
-        final Button preButton = (Button)findViewById(R.id.prev);
+        final Button preButton = (Button) findViewById(R.id.prev);
         final Button nextButton = (Button) findViewById(R.id.next);
-        final Button doneButton = (Button)findViewById(R.id.done);
+        final Button doneButton = (Button) findViewById(R.id.done);
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(checkSelfInfo()){
+                if (checkSelfInfo()) {
                     selfLayout.setVisibility(View.GONE);
                     requireLayout.setVisibility(View.VISIBLE);
                     createRequiredView();
@@ -223,17 +218,17 @@ public class FillMeetInfoActivity extends AppCompatActivity {
         doneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EditText editText = (EditText)findViewById(R.id.illustration);
+                EditText editText = (EditText) findViewById(R.id.illustration);
                 partnerRequirement.setIllustration(editText.getText().toString());
                 partnerRequirementJson = getPartnerRequirementJsonObject().toString();
                 ObjectMapper mapper = new ObjectMapper();
-                if(checkRequiredInfo()){
+                if (checkRequiredInfo()) {
                     RequestBody requestBody = new FormBody.Builder()
-                                                          .add("self_condition", selfConditionJson)
-                                                          .add("partner_requirement", partnerRequirementJson)
-                                                          .build();
+                            .add("self_condition", selfConditionJson)
+                            .add("partner_requirement", partnerRequirementJson)
+                            .build();
 
-                    HttpUtil.sendOkHttpRequest(FillMeetInfoActivity.this, fillMeetInfoUrl, requestBody, new Callback(){
+                    HttpUtil.sendOkHttpRequest(FillMeetInfoActivity.this, fillMeetInfoUrl, requestBody, new Callback() {
                         @Override
                         public void onResponse(Call call, Response response) throws IOException {
                             String responseText = response.body().string();
@@ -243,7 +238,7 @@ public class FillMeetInfoActivity extends AppCompatActivity {
                         }
 
                         @Override
-                        public void onFailure(Call call, IOException e){
+                        public void onFailure(Call call, IOException e) {
 
                         }
                     });
@@ -253,7 +248,7 @@ public class FillMeetInfoActivity extends AppCompatActivity {
 
     }
 
-    private JSONObject getSelfConditionJsonObject(){
+    private JSONObject getSelfConditionJsonObject() {
         JSONObject jsonObject = new JSONObject();
         JSONArray jsonArray = new JSONArray();
         try {
@@ -272,7 +267,7 @@ public class FillMeetInfoActivity extends AppCompatActivity {
             jsonObject.put("height", selfCondition.getHeight());
             jsonObject.put("degree", selfCondition.getDegreeIndex());
             jsonObject.put("lives", selfCondition.getLives());
-        }catch (JSONException e){
+        } catch (JSONException e) {
             e.printStackTrace();
         }
 
@@ -280,7 +275,7 @@ public class FillMeetInfoActivity extends AppCompatActivity {
         return jsonObject;
     }
 
-    private JSONObject getPartnerRequirementJsonObject(){
+    private JSONObject getPartnerRequirementJsonObject() {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("sex", partnerRequirement.getRequirementSex());
@@ -290,7 +285,7 @@ public class FillMeetInfoActivity extends AppCompatActivity {
             jsonObject.put("degree", partnerRequirement.getDegreeIndex());
             jsonObject.put("lives", partnerRequirement.getRequirementLives());
             jsonObject.put("illustration", partnerRequirement.getIllustration());
-        }catch (JSONException e){
+        } catch (JSONException e) {
             e.printStackTrace();
         }
 
@@ -298,38 +293,38 @@ public class FillMeetInfoActivity extends AppCompatActivity {
         return jsonObject;
     }
 
-    private boolean checkSelfInfo(){
-        if(SELFSEXCHECKED == false){
+    private boolean checkSelfInfo() {
+        if (SELFSEXCHECKED == false) {
             Toast.makeText(FillMeetInfoActivity.this, "请选择性别", Toast.LENGTH_LONG).show();
             return false;
         }
 
-        if(BIRTHYEARSELECTED == false){
+        if (BIRTHYEARSELECTED == false) {
             Toast.makeText(FillMeetInfoActivity.this, "请选择出生年份", Toast.LENGTH_LONG).show();
             return false;
         }
 
-        if(BIRTHMONTHSELECTED == false){
+        if (BIRTHMONTHSELECTED == false) {
             Toast.makeText(FillMeetInfoActivity.this, "请选择出生月份", Toast.LENGTH_LONG).show();
             return false;
         }
 
-        if(BIRTHDAYSELECTED == false){
+        if (BIRTHDAYSELECTED == false) {
             Toast.makeText(FillMeetInfoActivity.this, "请选择出生日", Toast.LENGTH_LONG).show();
             return false;
         }
 
-        if(HEIGHTSELECTED == false){
+        if (HEIGHTSELECTED == false) {
             Toast.makeText(FillMeetInfoActivity.this, "请选择身高", Toast.LENGTH_LONG).show();
             return false;
         }
 
-        if(DEGREESELECTED == false){
+        if (DEGREESELECTED == false) {
             Toast.makeText(FillMeetInfoActivity.this, "请选择学历", Toast.LENGTH_LONG).show();
             return false;
         }
 
-        if(SELFLIVESELECTED == false){
+        if (SELFLIVESELECTED == false) {
             Toast.makeText(FillMeetInfoActivity.this, "请选择居住地", Toast.LENGTH_LONG).show();
             return false;
         }
@@ -337,50 +332,51 @@ public class FillMeetInfoActivity extends AppCompatActivity {
         return true;
     }
 
-    private boolean checkRequiredInfo(){
+    private boolean checkRequiredInfo() {
 
-        if(REQUIRESEXCHECKED == false){
+        if (REQUIRESEXCHECKED == false) {
             Toast.makeText(FillMeetInfoActivity.this, "请选择性别", Toast.LENGTH_LONG).show();
             return false;
         }
 
-        if(LOWERAGESELECTED == false){
+        if (LOWERAGESELECTED == false) {
             Toast.makeText(FillMeetInfoActivity.this, "请选择年龄下限", Toast.LENGTH_LONG).show();
             return false;
         }
 
-        if(UPPERAGESELECTED == false){
+        if (UPPERAGESELECTED == false) {
             Toast.makeText(FillMeetInfoActivity.this, "请选择年龄上限", Toast.LENGTH_LONG).show();
             return false;
         }
 
-        if(REQUIREHEIGHTSELECTED == false){
+        if (REQUIREHEIGHTSELECTED == false) {
             Toast.makeText(FillMeetInfoActivity.this, "请选择身高", Toast.LENGTH_LONG).show();
             return false;
         }
 
-        if(REQUIREDEGREESELECTED == false){
+        if (REQUIREDEGREESELECTED == false) {
             Toast.makeText(FillMeetInfoActivity.this, "请选择学历", Toast.LENGTH_LONG).show();
             return false;
         }
 
-        if(REQUIRELIVESELECTED == false){
+        if (REQUIRELIVESELECTED == false) {
             Toast.makeText(FillMeetInfoActivity.this, "请选择居住地", Toast.LENGTH_LONG).show();
             return false;
         }
 
         return true;
     }
-    private void createRequiredView(){
 
-        RadioGroup require_sex = (RadioGroup)findViewById(R.id.require_sex);
+    private void createRequiredView() {
+
+        RadioGroup require_sex = (RadioGroup) findViewById(R.id.require_sex);
         require_sex.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if(checkedId == R.id.require_sex_male){
+                if (checkedId == R.id.require_sex_male) {
                     //Toast.makeText(FillMeetInfoActivity.this,"male", Toast.LENGTH_SHORT).show();
                     partnerRequirement.setRequirementSex(0);
-                }else{
+                } else {
                     //Toast.makeText(FillMeetInfoActivity.this,"female", Toast.LENGTH_SHORT).show();
                     partnerRequirement.setRequirementSex(1);
                 }
@@ -391,7 +387,7 @@ public class FillMeetInfoActivity extends AppCompatActivity {
         final List<String> ageList = new LinkedList<>(Arrays.asList(ages));
         NiceSpinner niceSpinnerAgeLower = (NiceSpinner) findViewById(R.id.nice_spinner_require_age_lower);
         niceSpinnerAgeLower.attachDataSource(ageList);
-        niceSpinnerAgeLower.addOnItemClickListener(new AdapterView.OnItemClickListener(){
+        niceSpinnerAgeLower.addOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 //Slog.e("什么数据",String.valueOf(yearList.get(i)));
@@ -404,7 +400,7 @@ public class FillMeetInfoActivity extends AppCompatActivity {
 
         NiceSpinner niceSpinnerAgeUpper = (NiceSpinner) findViewById(R.id.nice_spinner_require_age_upper);
         niceSpinnerAgeUpper.attachDataSource(ageList);
-        niceSpinnerAgeUpper.addOnItemClickListener(new AdapterView.OnItemClickListener(){
+        niceSpinnerAgeUpper.addOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 //Slog.e("什么数据",String.valueOf(yearList.get(i)));
@@ -418,7 +414,7 @@ public class FillMeetInfoActivity extends AppCompatActivity {
         NiceSpinner niceSpinnerHeight = (NiceSpinner) findViewById(R.id.nice_spinner_require_height);
         final List<String> heightList = new LinkedList<>(Arrays.asList(heights));
         niceSpinnerHeight.attachDataSource(heightList);
-        niceSpinnerHeight.addOnItemClickListener(new AdapterView.OnItemClickListener(){
+        niceSpinnerHeight.addOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 //Slog.e("什么数据",String.valueOf(yearList.get(i)));
@@ -432,7 +428,7 @@ public class FillMeetInfoActivity extends AppCompatActivity {
         NiceSpinner niceSpinnerDegree = (NiceSpinner) findViewById(R.id.nice_spinner_require_degree);
         final List<String> degreeList = new LinkedList<>(Arrays.asList(degrees));
         niceSpinnerDegree.attachDataSource(degreeList);
-        niceSpinnerDegree.addOnItemClickListener(new AdapterView.OnItemClickListener(){
+        niceSpinnerDegree.addOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 //Slog.e("什么数据",String.valueOf(yearList.get(i)));
@@ -443,7 +439,7 @@ public class FillMeetInfoActivity extends AppCompatActivity {
 
         });
 
-        Button requireRegionSelection = (Button)findViewById(R.id.require_region);
+        Button requireRegionSelection = (Button) findViewById(R.id.require_region);
         requireRegionSelection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -455,26 +451,26 @@ public class FillMeetInfoActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-         super.onActivityResult(requestCode, resultCode, data);
-         // RESULT_OK，判断另外一个activity已经结束数据输入功能，Standard activity result:
-         // operation succeeded. 默认值是-1
-         if (resultCode == 2) {
-             String SelectedResult = data.getStringExtra("SelectedResult");
-                 if (requestCode == SELFREQUEST) {
-                     //设置结果显示框的显示数值
-                     Button button = (Button)findViewById(R.id.self_region);
-                     button.setText(SelectedResult);
-                     selfCondition.setLives(SelectedResult);
-                     SELFLIVESELECTED = true;
+        super.onActivityResult(requestCode, resultCode, data);
+        // RESULT_OK，判断另外一个activity已经结束数据输入功能，Standard activity result:
+        // operation succeeded. 默认值是-1
+        if (resultCode == 2) {
+            String SelectedResult = data.getStringExtra("SelectedResult");
+            if (requestCode == SELFREQUEST) {
+                //设置结果显示框的显示数值
+                Button button = (Button) findViewById(R.id.self_region);
+                button.setText(SelectedResult);
+                selfCondition.setLives(SelectedResult);
+                SELFLIVESELECTED = true;
 
-                 }else{
-                     //设置结果显示框的显示数值
-                     Button button = (Button)findViewById(R.id.require_region);
-                     button.setText(SelectedResult);
-                     partnerRequirement.setRequirementLives(SelectedResult);
-                     REQUIRELIVESELECTED = true;
-                 }
-         }
+            } else {
+                //设置结果显示框的显示数值
+                Button button = (Button) findViewById(R.id.require_region);
+                button.setText(SelectedResult);
+                partnerRequirement.setRequirementLives(SelectedResult);
+                REQUIRELIVESELECTED = true;
+            }
+        }
     }
 
 

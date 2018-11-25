@@ -16,67 +16,84 @@ public class DynamicsComment {
     private String mContent;
     private int mTimeStamp;
 
-    public void setType(int type){
-        mType = type;
-    }
-    public int getType(){
+    public int getType() {
         return mType;
     }
-    public void setAid(int aid){
-        mAid = aid;
+
+    public void setType(int type) {
+        mType = type;
     }
-    public int getAid(){
+
+    public int getAid() {
         return mAid;
     }
-    public void setCid(int cid){
-        mCid = cid;
+
+    public void setAid(int aid) {
+        mAid = aid;
     }
-    public int getCid(){
+
+    public int getCid() {
         return mCid;
     }
-    public void setPictureUrl(String pictureUrl){
-        mPictureUrl = pictureUrl;
+
+    public void setCid(int cid) {
+        mCid = cid;
     }
-    public String getPictureUrl(){
+
+    public String getPictureUrl() {
         return mPictureUrl;
     }
-    public void setAuthorName(String authorName){
-        mAuthorName = authorName;
+
+    public void setPictureUrl(String pictureUrl) {
+        mPictureUrl = pictureUrl;
     }
-    public String getAuthorName(){
+
+    public String getAuthorName() {
         return mAuthorName;
     }
-    public void setAuthorUid(Long authorUid){
-        mAuthorUid = authorUid;
+
+    public void setAuthorName(String authorName) {
+        mAuthorName = authorName;
     }
-    public Long getAuthorUid(){
+
+    public Long getAuthorUid() {
         return mAuthorUid;
     }
-    public void setCommenterName(String commenterName){
-        mCommenterName = commenterName;
+
+    public void setAuthorUid(Long authorUid) {
+        mAuthorUid = authorUid;
     }
-    public String getCommenterName(){
+
+    public String getCommenterName() {
         return mCommenterName;
     }
-    public void setCommenterUid(Long commenterUid){
-        mCommenterUid = commenterUid;
+
+    public void setCommenterName(String commenterName) {
+        mCommenterName = commenterName;
     }
-    public Long getCommenterUid(){
+
+    public Long getCommenterUid() {
         return mCommenterUid;
     }
 
-    public void setContent(String content){
-        mContent = content;
+    public void setCommenterUid(Long commenterUid) {
+        mCommenterUid = commenterUid;
     }
-    public String getContent(){
+
+    public String getContent() {
         return mContent;
     }
 
-    public void setTimeStamp(int timeStamp){
-        mTimeStamp = timeStamp;
+    public void setContent(String content) {
+        mContent = content;
     }
-    public int getTimeStamp(){
+
+    public int getTimeStamp() {
         return mTimeStamp;
+    }
+
+    public void setTimeStamp(int timeStamp) {
+        mTimeStamp = timeStamp;
     }
 
 }

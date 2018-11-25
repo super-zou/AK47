@@ -17,39 +17,42 @@
 package com.tongmenhui.launchak47.region.wheel.widget.adapters;
 
 //import wheel.widget.WheelAdapter;
+
 import android.content.Context;
 
 import com.tongmenhui.launchak47.region.wheel.widget.WheelAdapter;
 
 /**
  * Adapter class for old wheel adapter (deprecated WheelAdapter class).
- * 
+ *
  * @deprecated Will be removed soon
  */
 public class AdapterWheel extends AbstractWheelTextAdapter {
 
     // Source adapter
     private WheelAdapter adapter;
-    
+
     /**
      * Constructor
+     *
      * @param context the current context
      * @param adapter the source adapter
      */
     public AdapterWheel(Context context, WheelAdapter adapter) {
         super(context);
-        
+
         this.adapter = adapter;
     }
 
     /**
      * Gets original adapter
+     *
      * @return the original adapter
      */
     public WheelAdapter getAdapter() {
         return adapter;
     }
-    
+
     @Override
     public int getItemsCount() {
         return adapter.getItemsCount();

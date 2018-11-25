@@ -2,15 +2,14 @@ package com.tongmenhui.launchak47.main;
 
 import android.Manifest;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -47,7 +46,11 @@ import okhttp3.Response;
 
 public class AddDynamicsActivity extends AppCompatActivity {
 
+    public static final String DYNAMICS_ADD_BROADCAST = "com.tongmenhui.action.DYNAMICS_ADD";
     private static final String TAG = "AddDynamicsActivity";
+    private static final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/jpeg");
+    private static final String domain = "http://112.126.83.127:88/";
+    private static final String reqUrl = domain + "?q=meet/dynamic/add";
     private int maxSelectNum = 9;
     private int themeId;
     private TextView publishBtn;
@@ -60,159 +63,6 @@ public class AddDynamicsActivity extends AppCompatActivity {
     private List<File> selectFileList = new ArrayList<>();
     private Map<String, String> dynamicsText = new HashMap<>();
     private String user_activity;
-
-    public static final String DYNAMICS_ADD_BROADCAST = "com.tongmenhui.action.DYNAMICS_ADD";
-    private static final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/jpeg");
-    private static final String  domain = "http://112.126.83.127:88/";
-    private static final String reqUrl = domain + "?q=meet/dynamic/add";
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_dynamics);
-        ActionBar actionBar = getSupportActionBar();
-        if(actionBar != null){
-            actionBar.hide();
-        }
-        editText = findViewById(R.id.dynamics_input);
-        publishBtn = findViewById(R.id.dynamic_publish);
-        backLeft = findViewById(R.id.left_back);
-        themeId = R.style.picture_default_style;
-        recyclerView = findViewById(R.id.recycler);
-        FullyGridLayoutManager manager = new FullyGridLayoutManager(AddDynamicsActivity.this, 4, GridLayoutManager.VERTICAL, false);
-        recyclerView.setLayoutManager(manager);
-        adapter = new GridImageAdapter(AddDynamicsActivity.this, onAddPicClickListener);
-        adapter.setList(selectList);
-        adapter.setSelectMax(maxSelectNum);
-        recyclerView.setAdapter(adapter);
-        adapter.setOnItemClickListener(new GridImageAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(int position, View v) {
-                if (selectList.size() > 0) {
-                    LocalMedia media = selectList.get(position);
-                    String pictureType = media.getPictureType();
-                    int mediaType = PictureMimeType.pictureToVideo(pictureType);
-                    switch (mediaType) {
-                        case 1:
-                            // 预览图片 可自定长按保存路径
-                            //PictureSelector.create(MainActivity.this).externalPicturePreview(position, "/custom_file", selectList);
-                            PictureSelector.create(AddDynamicsActivity.this).externalPicturePreview(position, selectList);
-                            break;
-                        case 2:
-                            // 预览视频
-                            PictureSelector.create(AddDynamicsActivity.this).externalPictureVideo(media.getPath());
-                            break;
-                        case 3:
-                            // 预览音频
-                            PictureSelector.create(AddDynamicsActivity.this).externalPictureAudio(media.getPath());
-                            break;
-                    }
-                }
-            }
-        });
-
-        // 清空图片缓存，包括裁剪、压缩后的图片 注意:必须要在上传完成后调用 必须要获取权限
-        RxPermissions permissions = new RxPermissions(this);
-        permissions.request(Manifest.permission.WRITE_EXTERNAL_STORAGE).subscribe(new Observer<Boolean>() {
-            @Override
-            public void onSubscribe(Disposable d) {
-            }
-
-            @Override
-            public void onNext(Boolean aBoolean) {
-                if (aBoolean) {
-                    PictureFileUtils.deleteCacheDirFile(AddDynamicsActivity.this);
-                } else {
-                    Toast.makeText(AddDynamicsActivity.this,
-                            getString(R.string.picture_jurisdiction), Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onError(Throwable e) {
-            }
-
-            @Override
-            public void onComplete() {
-            }
-        });
-
-        publishBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String dynamics_input = editText.getText().toString();
-               // Toast.makeText(AddDynamicsActivity.this, editText.getText().toString(), Toast.LENGTH_SHORT).show();
-                if(dynamics_input.length() > 0){
-                    //user_activity = dynamics_input;
-                    dynamicsText.put("text", dynamics_input);
-                    uploadPictures(reqUrl, dynamicsText, "picture", selectFileList);
-                    finish();
-                }
-            }
-        });
-        backLeft.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
-    }
-
-    private void uploadPictures(String reqUrl, Map<String, String> params, String picKey, List<File> files){
-        OkHttpClient mOkHttpClent = new OkHttpClient();
-
-        MultipartBody.Builder multipartBodyBuilder = new MultipartBody.Builder();
-        multipartBodyBuilder.setType(MultipartBody.FORM);
-        //遍历map中所有参数到builder
-        if (params != null){
-            for (String key : params.keySet()) {
-                multipartBodyBuilder.addFormDataPart(key, params.get(key));
-            }
-        }
-        if(files != null && files.size() > 0){
-            //遍历paths中所有图片绝对路径到builder，并约定key如“upload”作为后台接受多张图片的key
-            int i = 0;
-            for (File file : files) {
-                Slog.d(TAG, "file name: "+file.getName());
-                multipartBodyBuilder.addFormDataPart(picKey+i, file.getName(), RequestBody.create(MEDIA_TYPE_PNG, file));
-                i++;
-            }
-        }
-
-        //构建请求体
-        String cookie = HttpUtil.getCookie(AddDynamicsActivity.this);
-        RequestBody requestBody = multipartBodyBuilder.build();
-        Request.Builder RequestBuilder = new Request.Builder();
-        RequestBuilder.url(reqUrl).addHeader("cookie", cookie);// 添加URL地址
-        RequestBuilder.post(requestBody);
-        Request request = RequestBuilder.build();
-        mOkHttpClent.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                Log.e(TAG, "onFailure: "+e );
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(AddDynamicsActivity.this, "失败", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                Log.e(TAG, "成功"+response);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(AddDynamicsActivity.this, "成功", Toast.LENGTH_SHORT).show();
-                        sendBroadcast();//send broadcast to meetdynamicsfragment notify  meet dynamics to update
-                    }
-                });
-            }
-        });
-    }
-
     private GridImageAdapter.onAddPicClickListener onAddPicClickListener = new GridImageAdapter.onAddPicClickListener() {
         @Override
         public void onAddPicClick() {
@@ -305,6 +155,153 @@ public class AddDynamicsActivity extends AppCompatActivity {
     };
 
     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_add_dynamics);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.hide();
+        }
+        editText = findViewById(R.id.dynamics_input);
+        publishBtn = findViewById(R.id.dynamic_publish);
+        backLeft = findViewById(R.id.left_back);
+        themeId = R.style.picture_default_style;
+        recyclerView = findViewById(R.id.recycler);
+        FullyGridLayoutManager manager = new FullyGridLayoutManager(AddDynamicsActivity.this, 4, GridLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(manager);
+        adapter = new GridImageAdapter(AddDynamicsActivity.this, onAddPicClickListener);
+        adapter.setList(selectList);
+        adapter.setSelectMax(maxSelectNum);
+        recyclerView.setAdapter(adapter);
+        adapter.setOnItemClickListener(new GridImageAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position, View v) {
+                if (selectList.size() > 0) {
+                    LocalMedia media = selectList.get(position);
+                    String pictureType = media.getPictureType();
+                    int mediaType = PictureMimeType.pictureToVideo(pictureType);
+                    switch (mediaType) {
+                        case 1:
+                            // 预览图片 可自定长按保存路径
+                            //PictureSelector.create(MainActivity.this).externalPicturePreview(position, "/custom_file", selectList);
+                            PictureSelector.create(AddDynamicsActivity.this).externalPicturePreview(position, selectList);
+                            break;
+                        case 2:
+                            // 预览视频
+                            PictureSelector.create(AddDynamicsActivity.this).externalPictureVideo(media.getPath());
+                            break;
+                        case 3:
+                            // 预览音频
+                            PictureSelector.create(AddDynamicsActivity.this).externalPictureAudio(media.getPath());
+                            break;
+                    }
+                }
+            }
+        });
+
+        // 清空图片缓存，包括裁剪、压缩后的图片 注意:必须要在上传完成后调用 必须要获取权限
+        RxPermissions permissions = new RxPermissions(this);
+        permissions.request(Manifest.permission.WRITE_EXTERNAL_STORAGE).subscribe(new Observer<Boolean>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+            }
+
+            @Override
+            public void onNext(Boolean aBoolean) {
+                if (aBoolean) {
+                    PictureFileUtils.deleteCacheDirFile(AddDynamicsActivity.this);
+                } else {
+                    Toast.makeText(AddDynamicsActivity.this,
+                            getString(R.string.picture_jurisdiction), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+            }
+
+            @Override
+            public void onComplete() {
+            }
+        });
+
+        publishBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String dynamics_input = editText.getText().toString();
+                // Toast.makeText(AddDynamicsActivity.this, editText.getText().toString(), Toast.LENGTH_SHORT).show();
+                if (dynamics_input.length() > 0) {
+                    //user_activity = dynamics_input;
+                    dynamicsText.put("text", dynamics_input);
+                    uploadPictures(reqUrl, dynamicsText, "picture", selectFileList);
+                    finish();
+                }
+            }
+        });
+        backLeft.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+    }
+
+    private void uploadPictures(String reqUrl, Map<String, String> params, String picKey, List<File> files) {
+        OkHttpClient mOkHttpClent = new OkHttpClient();
+
+        MultipartBody.Builder multipartBodyBuilder = new MultipartBody.Builder();
+        multipartBodyBuilder.setType(MultipartBody.FORM);
+        //遍历map中所有参数到builder
+        if (params != null) {
+            for (String key : params.keySet()) {
+                multipartBodyBuilder.addFormDataPart(key, params.get(key));
+            }
+        }
+        if (files != null && files.size() > 0) {
+            //遍历paths中所有图片绝对路径到builder，并约定key如“upload”作为后台接受多张图片的key
+            int i = 0;
+            for (File file : files) {
+                Slog.d(TAG, "file name: " + file.getName());
+                multipartBodyBuilder.addFormDataPart(picKey + i, file.getName(), RequestBody.create(MEDIA_TYPE_PNG, file));
+                i++;
+            }
+        }
+
+        //构建请求体
+        String cookie = HttpUtil.getCookie(AddDynamicsActivity.this);
+        RequestBody requestBody = multipartBodyBuilder.build();
+        Request.Builder RequestBuilder = new Request.Builder();
+        RequestBuilder.url(reqUrl).addHeader("cookie", cookie);// 添加URL地址
+        RequestBuilder.post(requestBody);
+        Request request = RequestBuilder.build();
+        mOkHttpClent.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.e(TAG, "onFailure: " + e);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(AddDynamicsActivity.this, "失败", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Log.e(TAG, "成功" + response);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(AddDynamicsActivity.this, "成功", Toast.LENGTH_SHORT).show();
+                        sendBroadcast();//send broadcast to meetdynamicsfragment notify  meet dynamics to update
+                    }
+                });
+            }
+        });
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
@@ -317,12 +314,12 @@ public class AddDynamicsActivity extends AppCompatActivity {
                     // 2.media.getCutPath();为裁剪后path，需判断media.isCut();是否为true
                     // 3.media.getCompressPath();为压缩后path，需判断media.isCompressed();是否为true
                     // 如果裁剪并压缩了，已取压缩路径为准，因为是先裁剪后压缩的
-                    Slog.d(TAG, "Selected pictures: "+selectList.size());
+                    Slog.d(TAG, "Selected pictures: " + selectList.size());
                     //activity_picture_array = new String[selectList.size()];
                     for (LocalMedia media : selectList) {
                         Log.i("图片-----》", media.getPath());
                         Log.d("压缩图片------->>", media.getCompressPath());
-                        Slog.d(TAG, "===========num: "+media.getNum());
+                        Slog.d(TAG, "===========num: " + media.getNum());
                         //activity_picture_array[media.getNum() - 1] = media.getCompressPath();
                         selectFileList.add(new File(media.getCompressPath()));
                     }
@@ -333,7 +330,7 @@ public class AddDynamicsActivity extends AppCompatActivity {
         }
     }
 
-    private void sendBroadcast(){
+    private void sendBroadcast() {
         LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(DYNAMICS_ADD_BROADCAST));
     }
 }

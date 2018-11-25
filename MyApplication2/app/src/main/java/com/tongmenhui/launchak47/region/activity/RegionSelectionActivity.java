@@ -7,7 +7,6 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.tongmenhui.launchak47.R;
-import com.tongmenhui.launchak47.main.MainActivity;
 import com.tongmenhui.launchak47.region.wheel.widget.OnWheelChangedListener;
 import com.tongmenhui.launchak47.region.wheel.widget.WheelView;
 import com.tongmenhui.launchak47.region.wheel.widget.adapters.ArrayWheelAdapter;
@@ -60,13 +59,13 @@ public class RegionSelectionActivity extends BaseActivity implements View.OnClic
     @Override
     public void onChanged(WheelView wheel, int oldValue, int newValue) {
         // TODO Auto-generated method stub
-        mCurrentDistrictName=mDistrictDatasMap.get(mCurrentCityName)[0];
+        mCurrentDistrictName = mDistrictDatasMap.get(mCurrentCityName)[0];
         if (wheel == mViewProvince) {
             updateCities();
-            mCurrentDistrictName=mDistrictDatasMap.get(mCurrentCityName)[0];
+            mCurrentDistrictName = mDistrictDatasMap.get(mCurrentCityName)[0];
         } else if (wheel == mViewCity) {
             updateAreas();
-            mCurrentDistrictName =mDistrictDatasMap.get(mCurrentCityName)[0];
+            mCurrentDistrictName = mDistrictDatasMap.get(mCurrentCityName)[0];
         } else if (wheel == mViewDistrict) {
             mCurrentDistrictName = mDistrictDatasMap.get(mCurrentCityName)[newValue];
             mCurrentZipCode = mZipcodeDatasMap.get(mCurrentDistrictName);
@@ -82,7 +81,7 @@ public class RegionSelectionActivity extends BaseActivity implements View.OnClic
         String[] areas = mDistrictDatasMap.get(mCurrentCityName);
 
         if (areas == null) {
-            areas = new String[] { "" };
+            areas = new String[]{""};
         }
         mViewDistrict.setViewAdapter(new ArrayWheelAdapter<String>(this, areas));
         mViewDistrict.setCurrentItem(0);
@@ -96,7 +95,7 @@ public class RegionSelectionActivity extends BaseActivity implements View.OnClic
         mCurrentProviceName = mProvinceDatas[pCurrent];
         String[] cities = mCitisDatasMap.get(mCurrentProviceName);
         if (cities == null) {
-            cities = new String[] { "" };
+            cities = new String[]{""};
         }
         mViewCity.setViewAdapter(new ArrayWheelAdapter<String>(this, cities));
         mViewCity.setCurrentItem(0);
@@ -116,13 +115,13 @@ public class RegionSelectionActivity extends BaseActivity implements View.OnClic
     }
 
     private void showSelectedResult() {
-        Toast.makeText(RegionSelectionActivity.this, "当前选中:"+mCurrentProviceName+","+mCurrentCityName+","
-                +mCurrentDistrictName+","+mCurrentZipCode, Toast.LENGTH_SHORT).show();
+        Toast.makeText(RegionSelectionActivity.this, "当前选中:" + mCurrentProviceName + "," + mCurrentCityName + ","
+                + mCurrentDistrictName + "," + mCurrentZipCode, Toast.LENGTH_SHORT).show();
     }
 
-    private void returnSelectedResult(){
+    private void returnSelectedResult() {
         Intent intent = new Intent();
-        String SelectedResult = mCurrentProviceName+"-"+mCurrentCityName+"-"+mCurrentDistrictName;
+        String SelectedResult = mCurrentProviceName + "-" + mCurrentCityName + "-" + mCurrentDistrictName;
         intent.putExtra("SelectedResult", SelectedResult);
         setResult(2, intent);
         finish();
