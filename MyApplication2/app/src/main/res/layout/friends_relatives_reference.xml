@@ -158,45 +158,8 @@
 
     </android.support.v7.widget.RecyclerView>
 
-    <RelativeLayout
-        android:id="@+id/invite_reference"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:layout_marginTop="5dp"
-        android:background="@color/colorWhite">
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="邀请" />
-
-        <TextView
-            android:id="@+id/textView3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignStart="@+id/textView4"
-            android:layout_alignParentTop="true"
-            android:text="邀请好友推荐" />
-        <TextView
-            android:id="@+id/textView4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_marginLeft="80dp"
-            android:layout_marginTop="20dp"
-            android:text="只有经过好友推荐后才能在平台展示" />
-
-       <TextView
-            android:id="@+id/textView"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:text="+"
-            android:textSize="20dp" />
-    </RelativeLayout>
     <LinearLayout
+        android:layout_marginTop="5dp"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -207,20 +170,85 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <TextView
-            android:text="亲友推荐"
+            android:text="好友推荐"
             android:padding="3dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </LinearLayout>
-
     <android.support.v7.widget.RecyclerView
+        android:visibility="gone"
         android:id="@+id/reference_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorWhite">
     </android.support.v7.widget.RecyclerView>
 
+    <RelativeLayout
+        android:visibility="gone"
+        android:id="@+id/invite_reference"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="18dp"
+        android:paddingBottom="8dp"
+        android:layout_marginBottom="10dp"
+        android:background="@color/colorWhite">
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/textView4"
+            android:layout_alignParentTop="true"
+            android:text="邀请好友写推荐信" />
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="80dp"
+            android:layout_marginTop="20dp"
+            android:textSize="10sp"
+            android:text="需要好友的推荐才能在平台展示" />
+
+       <TextView
+            android:id="@+id/textView"
+            android:background="@drawable/label_selected_bg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+           android:gravity="center"
+           android:layout_centerVertical="true"
+           android:layout_centerInParent="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:textColor="@color/white"
+            android:padding="8dp"
+           android:layout_marginRight="5dp"
+            android:text="+邀请" />
+    </RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:gravity="center">
+        <TextView
+            android:id="@+id/write_reference"
+            android:text="+推荐好友"
+            android:textColor="@color/colorWhite"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:elevation="3dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/label_selected_bg"/>
+    </LinearLayout>
+
+
    <LinearLayout
+       android:layout_marginTop="8dp"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -245,11 +273,13 @@
            android:layout_width="match_parent"
            android:layout_height="wrap_content">
         </com.nex3z.flowlayout.FlowLayout>
+
         <Button
             android:id="@+id/add_personality"
             android:text="+添加个性标签"
             android:layout_gravity="center"
             android:textColor="@color/colorWhite"
+            android:layout_marginTop="8dp"
             android:paddingLeft="12dp"
             android:paddingRight="12dp"
             android:elevation="3dp"
