@@ -7,10 +7,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.NetworkImageView;
+import com.bumptech.glide.Glide;
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.meet.ApprovedUsersActivity;
 import com.tongmenhui.launchak47.meet.ArchivesActivity;
@@ -58,8 +59,11 @@ public class MeetImpressionStatisticsAdapter extends RecyclerView.Adapter<MeetIm
         MeetMemberInfo meetMemberInfo = impressionStatistics.meetMemberList.get(0);
         if (meetMemberInfo.getPictureUri() != null && !"".equals(meetMemberInfo.getPictureUri())) {
             queue = RequestQueueSingleton.instance(mContext);
-            holder.headPicture1.setTag(HttpUtil.DOMAIN + meetMemberInfo.getPictureUri());
-            HttpUtil.loadByImageLoader(queue, holder.headPicture1, HttpUtil.DOMAIN + meetMemberInfo.getPictureUri(), 50, 50);
+            /*+Begin: added by xuchunping for Use glide loader image, 2018/11/28*/
+            //holder.headPicture1.setTag(HttpUtil.DOMAIN + meetMemberInfo.getPictureUri());
+            //HttpUtil.loadByImageLoader(queue, holder.headPicture1, HttpUtil.DOMAIN + meetMemberInfo.getPictureUri(), 50, 50);
+            Glide.with(mContext).load(HttpUtil.DOMAIN + meetMemberInfo.getPictureUri()).into(holder.headPicture1);
+            /*-End: added by xuchunping for Use glide loader image*, 2018/11/28*/
         } else {
             holder.headPicture1.setImageDrawable(mContext.getDrawable(R.mipmap.ic_launcher));
         }
@@ -69,8 +73,11 @@ public class MeetImpressionStatisticsAdapter extends RecyclerView.Adapter<MeetIm
             meetMemberInfo = impressionStatistics.meetMemberList.get(1);
             if (meetMemberInfo.getPictureUri() != null && !"".equals(meetMemberInfo.getPictureUri())) {
                 queue = RequestQueueSingleton.instance(mContext);
-                holder.headPicture2.setTag(HttpUtil.DOMAIN + meetMemberInfo.getPictureUri());
-                HttpUtil.loadByImageLoader(queue, holder.headPicture2, HttpUtil.DOMAIN + meetMemberInfo.getPictureUri(), 50, 50);
+                /*+Begin: added by xuchunping for Use glide loader image, 2018/11/28*/
+                //holder.headPicture2.setTag(HttpUtil.DOMAIN + meetMemberInfo.getPictureUri());
+                //HttpUtil.loadByImageLoader(queue, holder.headPicture2, HttpUtil.DOMAIN + meetMemberInfo.getPictureUri(), 50, 50);
+                Glide.with(mContext).load(HttpUtil.DOMAIN + meetMemberInfo.getPictureUri()).into(holder.headPicture2);
+                /*-End: added by xuchunping for Use glide loader image*, 2018/11/28*/
             } else {
                 holder.headPicture2.setImageDrawable(mContext.getDrawable(R.mipmap.ic_launcher));
             }
@@ -79,8 +86,11 @@ public class MeetImpressionStatisticsAdapter extends RecyclerView.Adapter<MeetIm
                 meetMemberInfo = impressionStatistics.meetMemberList.get(2);
                 if (meetMemberInfo.getPictureUri() != null && !"".equals(meetMemberInfo.getPictureUri())) {
                     queue = RequestQueueSingleton.instance(mContext);
-                    holder.headPicture3.setTag(HttpUtil.DOMAIN + meetMemberInfo.getPictureUri());
-                    HttpUtil.loadByImageLoader(queue, holder.headPicture3, HttpUtil.DOMAIN + meetMemberInfo.getPictureUri(), 50, 50);
+                    /*+Begin: added by xuchunping for Use glide loader image, 2018/11/28*/
+                    //holder.headPicture3.setTag(HttpUtil.DOMAIN + meetMemberInfo.getPictureUri());
+                    //HttpUtil.loadByImageLoader(queue, holder.headPicture3, HttpUtil.DOMAIN + meetMemberInfo.getPictureUri(), 50, 50);
+                    Glide.with(mContext).load(HttpUtil.DOMAIN + meetMemberInfo.getPictureUri()).into(holder.headPicture3);
+                    /*-End: added by xuchunping for Use glide loader image*, 2018/11/28*/
                 } else {
                     holder.headPicture3.setImageDrawable(mContext.getDrawable(R.mipmap.ic_launcher));
                 }
@@ -113,9 +123,9 @@ public class MeetImpressionStatisticsAdapter extends RecyclerView.Adapter<MeetIm
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView feature;
         TextView featureCount;
-        NetworkImageView headPicture1;
-        NetworkImageView headPicture2;
-        NetworkImageView headPicture3;
+        ImageView headPicture1;
+        ImageView headPicture2;
+        ImageView headPicture3;
         TextView approvedUsers;
         TextView details;
 

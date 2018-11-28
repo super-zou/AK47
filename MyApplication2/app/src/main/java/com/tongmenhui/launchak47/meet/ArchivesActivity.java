@@ -23,7 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.NetworkImageView;
+import com.bumptech.glide.Glide;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.nex3z.flowlayout.FlowLayout;
@@ -323,7 +323,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
 
     private void setMeetProfile() {
         TextView realname = mArchiveProfile.findViewById(R.id.name);
-        NetworkImageView headUri = (NetworkImageView) mArchiveProfile.findViewById(R.id.recommend_head_uri);
+        ImageView headUri = (ImageView) mArchiveProfile.findViewById(R.id.recommend_head_uri);
         LinearLayout baseProfile = mArchiveProfile.findViewById(R.id.base_profile);
         LinearLayout education = mArchiveProfile.findViewById(R.id.education);
         LinearLayout work = mArchiveProfile.findViewById(R.id.work);
@@ -358,8 +358,11 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
             String picture_url = HttpUtil.DOMAIN + "/" + mMeetMember.getPictureUri();
             RequestQueue queue = RequestQueueSingleton.instance(this);
 
-            headUri.setTag(picture_url);
-            HttpUtil.loadByImageLoader(queue, headUri, picture_url, 110, 110);
+            /*+Begin: added by xuchunping for Use glide loader image, 2018/11/28*/
+            //headUri.setTag(picture_url);
+            //HttpUtil.loadByImageLoader(queue, headUri, picture_url, 110, 110);
+            Glide.with(this).load(picture_url).into(headUri);
+            /*-End: added by xuchunping for Use glide loader image, 2018/11/28*/
         } else {
             headUri.setImageDrawable(getDrawable(R.mipmap.ic_launcher));
         }
