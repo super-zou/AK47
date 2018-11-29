@@ -22,6 +22,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.tongmenhui.launchak47.util.ReferenceWriteDialogFragment;
+
 import com.android.volley.RequestQueue;
 import com.bumptech.glide.Glide;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
@@ -174,7 +176,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
 
         loadImpressionStatistics(uid);
 
-        loadReferences(uid);
+        processReferences(uid);
 
         processPersonality(uid);
 
@@ -211,28 +213,12 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
         evaluatorDetails.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (isDebug) Slog.d(TAG, "==============start EvaluatorDetailsActivity");
                 Intent intent = new Intent(ArchivesActivity.this, EvaluatorDetailsActivity.class);
                 intent.putExtra("uid", mMeetMember.getUid());
                 //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
                 startActivity(intent);
             }
         });
-
-        View inviteReference = mHeaderEvaluation.findViewById(R.id.invite_reference);
-        inviteReference.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Toast.makeText(getApplicationContext(), "hahaha", Toast.LENGTH_SHORT).show();
-                InvitationDialogFragment invitationDialogFragment = new InvitationDialogFragment();
-                // invitationDialogFragment.setTargetFragment(getApplicationContext(), REQUEST_CODE);
-                Bundle bundle = new Bundle();
-                bundle.putInt("uid", mMeetMember.getUid());
-                invitationDialogFragment.setArguments(bundle);
-                invitationDialogFragment.show(getSupportFragmentManager(), "InvitationDialogFragment");
-            }
-        });
-
 
     }
 
@@ -295,9 +281,6 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
                 loadDynamicsData(mMeetMember.getUid());
             }
         });
-
-        RecyclerView referenceRecyclerView = mHeaderEvaluation.findViewById(R.id.reference_list);
-        referenceRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         mXRecyclerView.setAdapter(mArchivesListAdapter);
     }
@@ -409,7 +392,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
             @Override
             public void onClick(View v) {
                 if (contacts.getTag().equals("approve")) {
-                    Slog.d(TAG, "=====================同意请求");
+                    if(isDebug) Slog.d(TAG, "=====================同意请求");
                 } else {
                     RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(mMeetMember.getUid())).build();
                     HttpUtil.sendOkHttpRequest(ArchivesActivity.this, CONTACTS_ADD_URL, requestBody, new Callback() {
@@ -417,7 +400,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
                         public void onResponse(Call call, Response response) throws IOException {
                             if (response.body() != null) {
                                 String responseText = response.body().string();
-                                //if(isDebug)
+                                if(isDebug)
                                 Slog.d(TAG, "==========processContactsAction : " + responseText);
                                 /*
                                 try {
@@ -478,7 +461,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
                     String responseText = response.body().string();
-                    //if(isDebug)
+                    if(isDebug)
                     Slog.d(TAG, "==========getContacts Status : " + responseText);
                     try {
                         JSONObject status = new JSONObject(responseText);
@@ -502,7 +485,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
                     String responseText = response.body().string();
-                    //if(isDebug)
+                    if(isDebug)
                     Slog.d(TAG, "==========getFollow statistics : " + responseText);
                     try {
                         JSONObject followObject = new JSONObject(responseText);
@@ -568,7 +551,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
                     String responseText = response.body().string();
-                    //if(isDebug)
+                    if(isDebug)
                     Slog.d(TAG, "==========getPraiseStatistics statistics : " + responseText);
                     try {
                         JSONObject praiseObject = new JSONObject(responseText);
@@ -632,7 +615,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
                     String responseText = response.body().string();
-                    //if(isDebug)
+                    if(isDebug)
                     Slog.d(TAG, "==========getLoveStatistics statistics : " + responseText);
                     try {
                         JSONObject loveObject = new JSONObject(responseText);
@@ -790,7 +773,6 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
 
         final TextView lovedIcon = mArchiveProfile.findViewById(R.id.loved_icon);
         final TextView lovedCount = mArchiveProfile.findViewById(R.id.loved_statistics);
-        Slog.d(TAG, "===============processLoveAction isLoved: " + isLoved);
         if (isLoved) {
             lovedIcon.setEnabled(false);
             lovedCount.setEnabled(false);
@@ -808,7 +790,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
                     public void onResponse(Call call, Response response) throws IOException {
                         if (response.body() != null) {
                             String responseText = response.body().string();
-                            //if(isDebug)
+                            if(isDebug)
                             Slog.d(TAG, "==========love add response text : " + responseText);
                         }
                     }
@@ -832,7 +814,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
                     public void onResponse(Call call, Response response) throws IOException {
                         if (response.body() != null) {
                             String responseText = response.body().string();
-                            //if(isDebug)
+                            if(isDebug)
                             Slog.d(TAG, "==========love add response text : " + responseText);
                         }
                     }
@@ -853,8 +835,6 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
     private void processPraiseAction() {
         final TextView praisedIcon = mArchiveProfile.findViewById(R.id.praised_icon);
         final TextView praisedCount = mArchiveProfile.findViewById(R.id.praised_statistics);
-
-        Slog.d(TAG, "===================processPraiseAction isPraised: " + isPraised);
         if (isPraised) {
             praisedCount.setEnabled(false);
             praisedIcon.setEnabled(false);
@@ -867,7 +847,6 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
         praisedIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Slog.d(TAG, "=================processPraiseAction praisedIcon click");
                 HttpUtil.sendOkHttpRequest(ArchivesActivity.this, PRAISE_ADD_URL, requestBody, new Callback() {
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
@@ -914,12 +893,17 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
 
     }
 
-    private void setEvaluationHeader() {
+    private void setReferenceView(List<MeetReferenceInfo> meetReferenceInfoList) {
 
         RecyclerView recyclerView = mHeaderEvaluation.findViewById(R.id.reference_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         mMeetReferenceAdapter = new MeetReferenceAdapter(this);
         recyclerView.setAdapter(mMeetReferenceAdapter);
+        
+        if(meetReferenceInfoList.size() > 0){
+            recyclerView.setVisibility(View.VISIBLE);
+        }
+        
         Typeface font = Typeface.createFromAsset(getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
         FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.meet_item_id), font);
 
@@ -990,7 +974,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
                     String responseText = response.body().string();
-                    Slog.d(TAG, "==========loadImpressionStatistics response text : " + responseText);
+                    if(isDebug) Slog.d(TAG, "==========loadImpressionStatistics response text : " + responseText);
 
                     if (responseText != null) {
                         if (!TextUtils.isEmpty(responseText)) {
@@ -1037,7 +1021,6 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
                     impressionStatistics.meetMemberList = getImpressionUser(key, uid);
                     mImpressionStatisticsList.add(impressionStatistics);
 
-                    Slog.d(TAG, "==============key: " + key + "   value: " + value);
                     if (index == 5) {
                         break;
                     }
@@ -1059,7 +1042,6 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
 
         try {
             String responseText = response.body().string();
-            Slog.d(TAG, "==========getImpressionUser response text : " + responseText);
             try {
                 JSONObject responseObj = new JSONObject(responseText);
                 JSONArray responseArray = responseObj.optJSONArray("users");
@@ -1096,6 +1078,39 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
 
         return memberInfoList;
     }
+    
+    private void processReferences(int uid){
+        loadReferences(uid);
+
+        View inviteReference = mHeaderEvaluation.findViewById(R.id.invite_reference);
+        inviteReference.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Toast.makeText(getApplicationContext(), "hahaha", Toast.LENGTH_SHORT).show();
+                InvitationDialogFragment invitationDialogFragment = new InvitationDialogFragment();
+                // invitationDialogFragment.setTargetFragment(getApplicationContext(), REQUEST_CODE);
+                Bundle bundle = new Bundle();
+                bundle.putInt("uid", mMeetMember.getUid());
+                invitationDialogFragment.setArguments(bundle);
+                invitationDialogFragment.show(getSupportFragmentManager(), "InvitationDialogFragment");
+            }
+        });
+        
+        TextView writeReference = mHeaderEvaluation.findViewById(R.id.write_reference);
+        writeReference.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ReferenceWriteDialogFragment referenceWriteDialogFragment = new ReferenceWriteDialogFragment();
+                Bundle bundle = new Bundle();
+                bundle.putInt("uid", mMeetMember.getUid());
+                bundle.putString("name", mMeetMember.getRealname());
+
+                referenceWriteDialogFragment.setArguments(bundle);
+                referenceWriteDialogFragment.show(getSupportFragmentManager(), "ReferenceWriteDialogFragment");
+            }
+        });
+
+    }
 
     private void loadReferences(int uid) {
         RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
@@ -1129,7 +1144,6 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
     }
 
     private void getPersonality(int uid) {
-        Slog.d(TAG, "================getPersonalityDetail uid:" + uid);
         RequestBody requestBody = new FormBody.Builder()
                 .add("uid", String.valueOf(uid))
                 .build();
@@ -1137,7 +1151,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
-                Slog.d(TAG, "================getPersonalityDetail response:" + responseText);
+                if(isDebug) Slog.d(TAG, "================getPersonalityDetail response:" + responseText);
                 if (responseText != null && !TextUtils.isEmpty(responseText)) {
                     try {
                         personalityResponseArray = new JSONObject(responseText).optJSONArray("personality_detail");
@@ -1309,7 +1323,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
                     String responseText = response.body().string();
-                    Slog.d(TAG, "==========response text : " + responseText);
+                    if(isDebug) Slog.d(TAG, "==========response text : " + responseText);
                     if (responseText != null) {
                         List<MeetDynamics> tempList = parseDynamics(responseText);
                         mTempSize = 0;
@@ -1583,7 +1597,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
                 mArchivesListAdapter.notifyDataSetChanged();
                 break;
             case LOAD_REFERENCE_DONE:
-                setEvaluationHeader();
+                setReferenceView(mReferenceList);
                 mMeetReferenceAdapter.setReferenceList(mReferenceList);
                 mMeetReferenceAdapter.notifyDataSetChanged();
                 break;
