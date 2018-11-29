@@ -140,6 +140,7 @@ public class ParseUtils {
 
                             JSONObject reference = referenceArray.getJSONObject(i);
                             meetReferenceInfo.setRefereeName(reference.optString("realname"));
+                            meetReferenceInfo.setRelation(reference.optString("relation"));
                             String profile = "";
                             if (reference.optInt("situation") == 0) {
                                 profile = reference.optString("university") + "."
