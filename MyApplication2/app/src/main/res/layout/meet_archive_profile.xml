@@ -9,7 +9,7 @@
     android:background="@color/colorWhite"
     android:id="@+id/meet_archive_profile">
 
-    <com.android.volley.toolbox.NetworkImageView
+    <ImageView
         android:id="@+id/recommend_head_uri"
         android:layout_width="111dp"
         android:layout_height="180dp"
@@ -20,7 +20,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-        </com.android.volley.toolbox.NetworkImageView>
+        </ImageView>
 
     <TextView
         android:id="@+id/name"
