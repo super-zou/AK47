@@ -44,7 +44,7 @@ public class MeetReferenceAdapter extends RecyclerView.Adapter<MeetReferenceAdap
     @Override
     public ReferenceViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.evaluation_item, parent, false);
+                .inflate(R.layout.reference_item, parent, false);
         ReferenceViewHolder holder = new ReferenceViewHolder(view);
         return holder;
     }
@@ -53,6 +53,7 @@ public class MeetReferenceAdapter extends RecyclerView.Adapter<MeetReferenceAdap
     public void onBindViewHolder(@NonNull MeetReferenceAdapter.ReferenceViewHolder holder, int position) {
         final MeetReferenceInfo referenceInfo = mReferenceList.get(position);
         holder.realName.setText(referenceInfo.getRefereeName());
+        holder.relation.setText(referenceInfo.getRelation());
         holder.refereeProfile.setText(referenceInfo.getRefereeProfile());
         holder.referenceContent.setText(referenceInfo.getReferenceContent());
         //holder.createdView.setText(referenceInfo.getCreated().toString());
@@ -74,6 +75,7 @@ public class MeetReferenceAdapter extends RecyclerView.Adapter<MeetReferenceAdap
 
     public class ReferenceViewHolder extends RecyclerView.ViewHolder {
         TextView realName;
+        TextView relation;
         TextView refereeProfile;
         NetworkImageView refereeHeadUri;
         TextView illustration;
@@ -89,6 +91,7 @@ public class MeetReferenceAdapter extends RecyclerView.Adapter<MeetReferenceAdap
         public ReferenceViewHolder(View view) {
             super(view);
             realName = view.findViewById(R.id.referee_name);
+            relation = view.findViewById(R.id.relation);
             refereeHeadUri = view.findViewById(R.id.referee_head_uri);
             refereeProfile = view.findViewById(R.id.referee_profile);
             thumbsUpIcon = view.findViewById(R.id.thumbs_up_icon);
@@ -98,7 +101,7 @@ public class MeetReferenceAdapter extends RecyclerView.Adapter<MeetReferenceAdap
             //commentList = (LinearLayout) view.findViewById(R.id.dynamics_comments);
 
             Typeface font = Typeface.createFromAsset(mContext.getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
-            FontManager.markAsIconContainer(view.findViewById(R.id.evaluation_item), font);
+            FontManager.markAsIconContainer(view.findViewById(R.id.reference_item), font);
         }
     }
 }
