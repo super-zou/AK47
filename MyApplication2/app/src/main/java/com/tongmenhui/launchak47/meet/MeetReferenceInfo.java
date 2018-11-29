@@ -6,6 +6,7 @@ package com.tongmenhui.launchak47.meet;
 
 public class MeetReferenceInfo {
     private String refereeName;
+    private String relation;
     private String refereeProfile;
     private String content;
     private Long created;
@@ -17,6 +18,14 @@ public class MeetReferenceInfo {
 
     public void setRefereeName(String referee_name) {
         this.refereeName = referee_name;
+    }
+    
+    public String getRelation(){
+        return relation;
+    }
+
+    public void setRelation(String relation){
+        this.relation = relation;
     }
 
     public String getRefereeProfile() {
