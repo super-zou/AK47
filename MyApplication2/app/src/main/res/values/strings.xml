@@ -26,5 +26,15 @@
     <string name="dynamics_empty">未发布动态</string>
     <string name="evaluator_details">评价详情</string>
     <string name="save">保存</string>
+    <string name="done">完成</string>
     <string name="approve">认可</string>
+
+    <!--+Begin: relations, add by zouhaichao 2018.11.27-->
+    <string name="classmate">同学</string>
+    <string name="roommate">室友</string>
+    <string name="friend">好友</string>
+    <string name="colleague">同事</string>
+    <string name="schoolmate">校友</string>
+    <string name="relative">亲人</string>
+    <!--+End: relations, add by zouhaichao 2018.11.27-->
 </resources>
