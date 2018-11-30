@@ -1,13 +1,18 @@
 package com.tongmenhui.launchak47.meet;
 
+import android.app.ActionBar;
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.TextView;
+import com.tongmenhui.launchak47.util.FontManager;
 
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.adapter.ImpressionApprovedDetailAdapter;
@@ -35,18 +40,44 @@ public class ApprovedUsersActivity extends AppCompatActivity {
         mContext = this;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.impression_approved_users_detail);
+        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.hide();
+        }
+        
         mUsersDetailList = findViewById(R.id.users_detail);
+        
+
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mUsersDetailList.setLayoutManager(linearLayoutManager);
         approvedDetailAdapter = new ImpressionApprovedDetailAdapter(mContext);
         mUsersDetailList.setAdapter(approvedDetailAdapter);
-
+        int uid = getIntent().getIntExtra("uid", -1);
         impressionStatistics = getIntent().getParcelableExtra("impressionStatistics");
 
         approvedDetailAdapter.setData(impressionStatistics.meetMemberList);
         approvedDetailAdapter.notifyDataSetChanged();
+                TextView back = findViewById(R.id.left);
+        TextView approve = findViewById(R.id.approve);
+        TextView title = findViewById(R.id.title);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+        
+                approve.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        Typeface font = Typeface.createFromAsset(getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
+        FontManager.markAsIconContainer(findViewById(R.id.custom_actionbar), font);
     }
     /*
     @Override
