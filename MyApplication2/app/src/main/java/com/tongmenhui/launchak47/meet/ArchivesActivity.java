@@ -997,6 +997,17 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
         impressionStatisticsWrap.setLayoutManager(new LinearLayoutManager(this));
         mMeetImpressionStatisticsAdapter = new MeetImpressionStatisticsAdapter(this, getSupportFragmentManager());
         impressionStatisticsWrap.setAdapter(mMeetImpressionStatisticsAdapter);
+        
+        mMeetImpressionStatisticsAdapter.setItemClickListener(new MeetImpressionStatisticsAdapter.MyItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Intent intent = new Intent(ArchivesActivity.this, ApprovedUsersActivity.class);
+                intent.putExtra("uid", mMeetMember.getUid());
+                intent.putExtra("impressionStatistics", mImpressionStatisticsList.get(position));
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                startActivity(intent);
+            }
+        });
     }
 
     private void parseImpressionStatistics(String response, int uid) {
