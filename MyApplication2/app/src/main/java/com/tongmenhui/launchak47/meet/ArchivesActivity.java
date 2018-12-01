@@ -70,7 +70,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
     private static final String DYNAMICS_URL = HttpUtil.DOMAIN + "?q=meet/activity/get";
     private static final String COMMENT_URL = HttpUtil.DOMAIN + "?q=meet/activity/interact/get";
     private static final String LOAD_REFERENCE_URL = HttpUtil.DOMAIN + "?q=meet/reference/load";
-    private static final String GET_IMPRESSION_URL = HttpUtil.DOMAIN + "?q=meet/impression/get";
+    private static final String GET_RATING_URL = HttpUtil.DOMAIN + "?q=meet/rating/get";
     private static final String GET_IMPRESSION_STATISTICS_URL = HttpUtil.DOMAIN + "?q=meet/impression/statistics";
     private static final String GET_IMPRESSION_USERS_URL = HttpUtil.DOMAIN + "?q=meet/impression/users";
     private static final String GET_PERSONALITY_URL = HttpUtil.DOMAIN + "?q=meet/personality/get";
@@ -130,32 +130,12 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
     private MeetReferenceAdapter mMeetReferenceAdapter;
     private MeetImpressionStatisticsAdapter mMeetImpressionStatisticsAdapter;
     private TextView mEmptyView;
-    private JSONObject impressionObj;
+    private JSONObject mRatingObj;
     private EvaluateDialogFragment evaluateDialogFragment;
 
     private ImageView backLeft;
     private MeetMemberInfo mMeetMember;
     private JSONArray personalityResponseArray;
-
-    public static void sortPersonalityWithCount(JSONArray jsonArray) {
-        JSONObject temp = null;
-        int size = jsonArray.length();
-        try {
-            for (int i = 0; i < size - 1; i++) {
-                for (int j = 0; j < size - 1 - i; j++) {
-                    if (jsonArray.getJSONObject(j).optInt("count") < jsonArray.getJSONObject(j + 1).optInt("count"))  //交换两数位置
-                    {
-                        temp = jsonArray.getJSONObject(j);
-                        jsonArray.put(j, jsonArray.getJSONObject(j + 1));
-                        jsonArray.put(j + 1, temp);
-                    }
-                }
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -172,7 +152,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
 
         setArchiveProfile();
 
-        loadRatingAndImpression(uid);
+        loadRating(uid);
 
         loadImpressionStatistics(uid);
 
@@ -910,20 +890,20 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
     }
 
     private void setRatingBarView() {
-        JSONArray impressionArray = impressionObj.optJSONArray("impression");
+        JSONArray ratingArray = mRatingObj.optJSONArray("rating");
         //MeetReferenceInfo meetReferenceInfo = null;
-        if (impressionArray != null && impressionArray.length() > 0) {
+        if (ratingArray != null && ratingArray.length() > 0) {
             TextView ratingMemberCount = mHeaderEvaluation.findViewById(R.id.rating_member_count);
-            ratingMemberCount.setText(impressionArray.length() + "人评价");
+            ratingMemberCount.setText(ratingArray.length() + "人评价");
             float ratingCount = 0;
-            for (int i = 0; i < impressionArray.length(); i++) {
-                JSONObject impression = impressionArray.optJSONObject(i);
-                if (impressionObj.optInt("visitor_uid") == impression.optInt("evaluator_uid")) {
+            for (int i = 0; i < ratingArray.length(); i++) {
+                JSONObject ratingObj = ratingArray.optJSONObject(i);
+                if (mRatingObj.optInt("visitor_uid") == ratingObj.optInt("evaluator_uid")) {
                     setEvaluatedMode();
                 }
-                ratingCount += impression.optDouble("rating");
+                ratingCount += ratingObj.optDouble("rating");
             }
-            float ratingAverage = ratingCount / impressionArray.length();
+            float ratingAverage = ratingCount / ratingArray.length();
             float ratingAverageRoundUp = 0;
             BigDecimal b = new BigDecimal(ratingAverage);
             ratingAverageRoundUp = b.setScale(1, BigDecimal.ROUND_HALF_UP).floatValue();
@@ -936,20 +916,20 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
         }
     }
 
-    private void loadRatingAndImpression(int uid) {
+    private void loadRating(int uid) {
         RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
-        HttpUtil.sendOkHttpRequest(this, GET_IMPRESSION_URL, requestBody, new Callback() {
+        HttpUtil.sendOkHttpRequest(this, GET_RATING_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
                     String responseText = response.body().string();
                     if (isDebug)
-                        Slog.d(TAG, "==========get impression response text : " + responseText);
+                        Slog.d(TAG, "==========get rating response text : " + responseText);
                     if (responseText != null) {
                         if (!TextUtils.isEmpty(responseText)) {
                             try {
-                                impressionObj = new JSONObject(responseText);
-                                if (impressionObj != null) {
+                                mRatingObj = new JSONObject(responseText);
+                                if (mRatingObj != null) {
                                     handler.sendEmptyMessage(LOAD_RATING_DONE);
                                 }
                             } catch (JSONException e) {
@@ -1154,6 +1134,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
         addPersonality(uid);
     }
 
+
     private void getPersonality(int uid) {
         RequestBody requestBody = new FormBody.Builder()
                 .add("uid", String.valueOf(uid))
@@ -1185,6 +1166,26 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
 
             }
         });
+    }
+
+    public static void sortPersonalityWithCount(JSONArray jsonArray) {
+        JSONObject temp = null;
+        int size = jsonArray.length();
+        try {
+            for (int i = 0; i < size - 1; i++) {
+                for (int j = 0; j < size - 1 - i; j++) {
+                    if (jsonArray.getJSONObject(j).optInt("count") < jsonArray.getJSONObject(j + 1).optInt("count"))  //交换两数位置
+                    {
+                        temp = jsonArray.getJSONObject(j);
+                        jsonArray.put(j, jsonArray.getJSONObject(j + 1));
+                        jsonArray.put(j + 1, temp);
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void setPersonalityFlow() {

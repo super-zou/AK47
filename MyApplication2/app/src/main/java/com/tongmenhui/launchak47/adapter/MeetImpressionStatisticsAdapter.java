@@ -55,55 +55,56 @@ public class MeetImpressionStatisticsAdapter extends RecyclerView.Adapter<MeetIm
 
         final ArchivesActivity.ImpressionStatistics impressionStatistics = mImpressionStatisticsList.get(position);
         holder.feature.setText(impressionStatistics.impression + " · " + String.valueOf(impressionStatistics.impressionCount));
-        
-        MeetMemberInfo meetMemberInfo = impressionStatistics.meetMemberList.get(0);
-        if (meetMemberInfo.getPictureUri() != null && !"".equals(meetMemberInfo.getPictureUri())) {
-            queue = RequestQueueSingleton.instance(mContext);
-            /*+Begin: added by xuchunping for Use glide loader image, 2018/11/28*/
-            //holder.headPicture1.setTag(HttpUtil.DOMAIN + meetMemberInfo.getPictureUri());
-            //HttpUtil.loadByImageLoader(queue, holder.headPicture1, HttpUtil.DOMAIN + meetMemberInfo.getPictureUri(), 50, 50);
-            Glide.with(mContext).load(HttpUtil.DOMAIN + meetMemberInfo.getPictureUri()).into(holder.headPicture1);
-            /*-End: added by xuchunping for Use glide loader image*, 2018/11/28*/
-        } else {
-            holder.headPicture1.setImageDrawable(mContext.getDrawable(R.mipmap.ic_launcher));
-        }
 
-        if (impressionStatistics.meetMemberList.size() > 1) {
-            holder.headPicture2.setVisibility(View.VISIBLE);
-            meetMemberInfo = impressionStatistics.meetMemberList.get(1);
+        if(impressionStatistics.meetMemberList.size() > 0){
+            MeetMemberInfo meetMemberInfo = impressionStatistics.meetMemberList.get(0);
             if (meetMemberInfo.getPictureUri() != null && !"".equals(meetMemberInfo.getPictureUri())) {
                 queue = RequestQueueSingleton.instance(mContext);
                 /*+Begin: added by xuchunping for Use glide loader image, 2018/11/28*/
-                //holder.headPicture2.setTag(HttpUtil.DOMAIN + meetMemberInfo.getPictureUri());
-                //HttpUtil.loadByImageLoader(queue, holder.headPicture2, HttpUtil.DOMAIN + meetMemberInfo.getPictureUri(), 50, 50);
-                Glide.with(mContext).load(HttpUtil.DOMAIN + meetMemberInfo.getPictureUri()).into(holder.headPicture2);
+                //holder.headPicture1.setTag(HttpUtil.DOMAIN + meetMemberInfo.getPictureUri());
+                //HttpUtil.loadByImageLoader(queue, holder.headPicture1, HttpUtil.DOMAIN + meetMemberInfo.getPictureUri(), 50, 50);
+                Glide.with(mContext).load(HttpUtil.DOMAIN + meetMemberInfo.getPictureUri()).into(holder.headPicture1);
                 /*-End: added by xuchunping for Use glide loader image*, 2018/11/28*/
             } else {
-                holder.headPicture2.setImageDrawable(mContext.getDrawable(R.mipmap.ic_launcher));
+                holder.headPicture1.setImageDrawable(mContext.getDrawable(R.mipmap.ic_launcher));
             }
-            if (impressionStatistics.meetMemberList.size() > 2) {
-                holder.headPicture3.setVisibility(View.VISIBLE);
-                meetMemberInfo = impressionStatistics.meetMemberList.get(2);
+
+            if (impressionStatistics.meetMemberList.size() > 1) {
+                holder.headPicture2.setVisibility(View.VISIBLE);
+                meetMemberInfo = impressionStatistics.meetMemberList.get(1);
                 if (meetMemberInfo.getPictureUri() != null && !"".equals(meetMemberInfo.getPictureUri())) {
                     queue = RequestQueueSingleton.instance(mContext);
                     /*+Begin: added by xuchunping for Use glide loader image, 2018/11/28*/
-                    //holder.headPicture3.setTag(HttpUtil.DOMAIN + meetMemberInfo.getPictureUri());
-                    //HttpUtil.loadByImageLoader(queue, holder.headPicture3, HttpUtil.DOMAIN + meetMemberInfo.getPictureUri(), 50, 50);
-                    Glide.with(mContext).load(HttpUtil.DOMAIN + meetMemberInfo.getPictureUri()).into(holder.headPicture3);
+                    //holder.headPicture2.setTag(HttpUtil.DOMAIN + meetMemberInfo.getPictureUri());
+                    //HttpUtil.loadByImageLoader(queue, holder.headPicture2, HttpUtil.DOMAIN + meetMemberInfo.getPictureUri(), 50, 50);
+                    Glide.with(mContext).load(HttpUtil.DOMAIN + meetMemberInfo.getPictureUri()).into(holder.headPicture2);
                     /*-End: added by xuchunping for Use glide loader image*, 2018/11/28*/
                 } else {
-                    holder.headPicture3.setImageDrawable(mContext.getDrawable(R.mipmap.ic_launcher));
+                    holder.headPicture2.setImageDrawable(mContext.getDrawable(R.mipmap.ic_launcher));
+                }
+                if (impressionStatistics.meetMemberList.size() > 2) {
+                    holder.headPicture3.setVisibility(View.VISIBLE);
+                    meetMemberInfo = impressionStatistics.meetMemberList.get(2);
+                    if (meetMemberInfo.getPictureUri() != null && !"".equals(meetMemberInfo.getPictureUri())) {
+                        queue = RequestQueueSingleton.instance(mContext);
+                        /*+Begin: added by xuchunping for Use glide loader image, 2018/11/28*/
+                        //holder.headPicture3.setTag(HttpUtil.DOMAIN + meetMemberInfo.getPictureUri());
+                        //HttpUtil.loadByImageLoader(queue, holder.headPicture3, HttpUtil.DOMAIN + meetMemberInfo.getPictureUri(), 50, 50);
+                        Glide.with(mContext).load(HttpUtil.DOMAIN + meetMemberInfo.getPictureUri()).into(holder.headPicture3);
+                        /*-End: added by xuchunping for Use glide loader image*, 2018/11/28*/
+                    } else {
+                        holder.headPicture3.setImageDrawable(mContext.getDrawable(R.mipmap.ic_launcher));
+                    }
                 }
             }
-        }
 
-        if (impressionStatistics.meetMemberList.size() <= 3) {
-            holder.approvedUsers.setText("认可");
-        } else {
-            holder.approvedUsers.setText("等" + impressionStatistics.meetMemberList.size() + "人认可");
-            
-        }
+            if (impressionStatistics.meetMemberList.size() <= 3) {
+                holder.approvedUsers.setText("认可");
+            } else {
+                holder.approvedUsers.setText("等" + impressionStatistics.meetMemberList.size() + "人认可");
 
+            }
+        }
     }
 
     @Override
@@ -123,13 +124,12 @@ public class MeetImpressionStatisticsAdapter extends RecyclerView.Adapter<MeetIm
         public ViewHolder(View view, MyItemClickListener myItemClickListener) {
             super(view);
             feature = view.findViewById(R.id.feature);
-            featureCount = view.findViewById(R.id.feature_count);
+
             headPicture1 = view.findViewById(R.id.head_picure1);
             headPicture2 = view.findViewById(R.id.head_picure2);
             headPicture3 = view.findViewById(R.id.head_picure3);
             approvedUsers = view.findViewById(R.id.approved_users);
-            details = view.findViewById(R.id.details);
-            
+
                         //将全局的监听赋值给接口
             this.mListener = myItemClickListener;
             itemView.setOnClickListener(this);

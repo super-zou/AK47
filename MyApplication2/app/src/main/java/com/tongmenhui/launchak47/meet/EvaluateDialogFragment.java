@@ -44,7 +44,8 @@ import okhttp3.Response;
 public class EvaluateDialogFragment extends DialogFragment {
     private static final String TAG = "EvaluateDialogFragment";
     private static final int IMPRESSION_PARSE_DONE = 0;
-    private static final String SET_IMPRESSION_URL = HttpUtil.DOMAIN + "?q=meet/impression/set";
+   // private static final String SET_IMPRESSION_URL = HttpUtil.DOMAIN + "?q=meet/impression/set";
+    private static final String SET_EVALUATION_URL = HttpUtil.DOMAIN + "?q=meet/evaluation/set";
     private static final String GET_IMPRESSION_STATISTICS_URL = HttpUtil.DOMAIN + "?q=meet/impression/statistics";
     final List<String> selectedFeatures = new ArrayList<>();
     private Context mContext;
@@ -178,13 +179,22 @@ public class EvaluateDialogFragment extends DialogFragment {
     }
 
     private void uploadToServer(String features, float rating, int uid) {
-        Slog.d(TAG, "==============uploadToServer features: " + features + " rating: " + rating + " uid: " + uid);
+
+        FormBody.Builder builder = new FormBody.Builder()
+                                                .add("uid", String.valueOf(uid))
+                                                .add("rating", String.valueOf(rating));
+        if(features != null && features.length() > 0){
+            builder.add("features", features);
+        }
+        /*
         RequestBody requestBody = new FormBody.Builder()
                 .add("uid", String.valueOf(uid))
                 .add("rating", String.valueOf(rating))
                 .add("features", features).build();
+                */
+        RequestBody requestBody = builder.build();
 
-        HttpUtil.sendOkHttpRequest(getContext(), SET_IMPRESSION_URL, requestBody, new Callback() {
+        HttpUtil.sendOkHttpRequest(getContext(), SET_EVALUATION_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 /*

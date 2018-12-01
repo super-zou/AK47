@@ -16,6 +16,15 @@ import com.tongmenhui.launchak47.util.FontManager;
 
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.adapter.ImpressionApprovedDetailAdapter;
+import com.tongmenhui.launchak47.util.HttpUtil;
+
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class ApprovedUsersActivity extends AppCompatActivity {
 
@@ -27,6 +36,7 @@ public class ApprovedUsersActivity extends AppCompatActivity {
     private RecyclerView mUsersDetailList;
     private ImpressionApprovedDetailAdapter approvedDetailAdapter;
     private LayoutInflater inflater;
+    private static final String IMPRESSION_APPROVE_URL = HttpUtil.DOMAIN + "?q=meet/impression/approve";
 
     /*
     @Override
@@ -47,21 +57,21 @@ public class ApprovedUsersActivity extends AppCompatActivity {
         
         mUsersDetailList = findViewById(R.id.users_detail);
         
-
-
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mUsersDetailList.setLayoutManager(linearLayoutManager);
         approvedDetailAdapter = new ImpressionApprovedDetailAdapter(mContext);
         mUsersDetailList.setAdapter(approvedDetailAdapter);
-        int uid = getIntent().getIntExtra("uid", -1);
+        final int uid = getIntent().getIntExtra("uid", -1);
         impressionStatistics = getIntent().getParcelableExtra("impressionStatistics");
 
         approvedDetailAdapter.setData(impressionStatistics.meetMemberList);
         approvedDetailAdapter.notifyDataSetChanged();
-                TextView back = findViewById(R.id.left);
+        TextView back = findViewById(R.id.left);
         TextView approve = findViewById(R.id.approve);
         TextView title = findViewById(R.id.title);
+        title.setText(impressionStatistics.impression+" · "+impressionStatistics.impressionCount);
+
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -69,15 +79,46 @@ public class ApprovedUsersActivity extends AppCompatActivity {
             }
         });
         
-                approve.setOnClickListener(new View.OnClickListener() {
+        approve.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                set_impression_approve(uid);
+                finish();
             }
         });
 
         Typeface font = Typeface.createFromAsset(getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
         FontManager.markAsIconContainer(findViewById(R.id.custom_actionbar), font);
+    }
+
+    private void set_impression_approve(int uid){
+        RequestBody requestBody = new FormBody.Builder()
+                .add("uid", String.valueOf(uid))
+                .add("features", impressionStatistics.impression).build();
+        HttpUtil.sendOkHttpRequest(ApprovedUsersActivity.this, IMPRESSION_APPROVE_URL, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                /*
+                if(response.body() != null){
+                    String responseText = response.body().string();
+                    Slog.d(TAG, "==========loadReferences response text : "+responseText);
+                    if(responseText != null){
+                        List<MeetReferenceInfo> meetReferenceInfoList = ParseUtils.getMeetReferenceList(responseText);
+                        if(meetReferenceInfoList != null && meetReferenceInfoList.size() > 0){
+                            mReferenceList.addAll(meetReferenceInfoList);
+                        }
+                        handler.sendEmptyMessage(LOAD_REFERENCE_DONE);
+                    }
+                }
+                */
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+        });
+
     }
     /*
     @Override
