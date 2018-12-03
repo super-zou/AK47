@@ -288,10 +288,12 @@
             android:layout_height="wrap_content"
             android:background="@drawable/label_selected_bg"/>
     </LinearLayout>
+
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:background="@color/colorWhite">
         <LinearLayout
             android:id="@+id/hobby_wrap"
@@ -330,5 +332,50 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/label_selected_bg"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@color/colorWhite">
+        <LinearLayout
+            android:id="@+id/cheering_group_wrap"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:padding="3dp"
+                android:text="@string/group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:padding="3dp"
+                android:text="亲友团"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <com.nex3z.flowlayout.FlowLayout
+            android:id="@+id/cheering_group_flow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:background="@color/colorWhite">
+        </com.nex3z.flowlayout.FlowLayout>
+        <Button
+            android:id="@+id/add_cheering_member"
+            android:text="+创建亲友团"
+            android:layout_gravity="center"
+            android:textColor="@color/colorWhite"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:layout_marginTop="8dp"
+            android:elevation="3dp"
+            android:layout_marginBottom="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/label_selected_bg"/>
     </LinearLayout>
 </LinearLayout>
