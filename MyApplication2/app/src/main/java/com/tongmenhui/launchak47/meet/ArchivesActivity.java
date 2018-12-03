@@ -23,7 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.tongmenhui.launchak47.util.ReferenceWriteDialogFragment;
-
+import com.tongmenhui.launchak47.adapter.CheeringGroupAdapter;
 import com.android.volley.RequestQueue;
 import com.bumptech.glide.Glide;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
@@ -129,6 +129,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
     private ArchivesListAdapter mArchivesListAdapter;
     private MeetReferenceAdapter mMeetReferenceAdapter;
     private MeetImpressionStatisticsAdapter mMeetImpressionStatisticsAdapter;
+    private CheeringGroupAdapter mCheeringGroupAdapter;
     private TextView mEmptyView;
     private JSONObject mRatingObj;
     private EvaluateDialogFragment evaluateDialogFragment;
@@ -161,6 +162,8 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
         processPersonality(uid);
 
         processHobby(uid);
+        
+        processCheeringGroup(uid);
 
         loadDynamicsData(uid);
 
@@ -1242,6 +1245,29 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
     private void processHobby(int uid) {
         getHobbies(uid);
         addHobbies(uid);
+    }
+    
+   private void processCheeringGroup(int uid){
+        getCheeringGroup(uid);
+        addCheeringGroupMember(uid);
+    }
+
+    private void getCheeringGroup(int uid){
+
+    }
+
+    private void addCheeringGroupMember(int uid){
+
+    }
+
+    private void setCheeringGroupView(){
+        RecyclerView cheeringGroupList = mHeaderEvaluation.findViewById(R.id.cheering_group_list);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        cheeringGroupList.setLayoutManager(linearLayoutManager);
+
+        mCheeringGroupAdapter = new CheeringGroupAdapter(this);
+        cheeringGroupList.setAdapter(mCheeringGroupAdapter);
     }
 
     private void getHobbies(int uid) {
