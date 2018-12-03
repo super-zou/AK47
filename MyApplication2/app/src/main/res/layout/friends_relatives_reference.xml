@@ -356,14 +356,12 @@
                 android:layout_height="wrap_content" />
         </LinearLayout>
 
-        <com.nex3z.flowlayout.FlowLayout
-            android:id="@+id/cheering_group_flow"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/cheering_group_list"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:background="@color/colorWhite">
-        </com.nex3z.flowlayout.FlowLayout>
+            android:layout_height="match_parent">
+        </android.support.v7.widget.RecyclerView>
+        
         <Button
             android:id="@+id/add_cheering_member"
             android:text="+创建亲友团"
