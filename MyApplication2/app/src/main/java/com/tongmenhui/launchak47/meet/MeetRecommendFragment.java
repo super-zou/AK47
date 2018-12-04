@@ -224,7 +224,7 @@ public class MeetRecommendFragment extends BaseFragment {
 
         if (debug) Slog.d(TAG, "====================getResponseText: " + responseText);
         //+Begin added by xuchunping
-        List<MeetMemberInfo> tempList = ParseUtils.getMeetList(responseText);
+        List<MeetMemberInfo> tempList = ParseUtils.getRecommendMeetList(responseText);
         mTempSize = 0;
         if (null != tempList) {
             mTempSize = tempList.size();
@@ -254,7 +254,7 @@ public class MeetRecommendFragment extends BaseFragment {
                     String responseText = response.body().string();
                     Slog.d(TAG, "==========response text : " + responseText);
                     if (responseText != null) {
-                        List<MeetMemberInfo> tempList = ParseUtils.getMeetList(responseText);
+                        List<MeetMemberInfo> tempList = ParseUtils.getRecommendMeetList(responseText);
                         if (null != tempList && tempList.size() != 0) {
                             mTempSize = tempList.size();
                             meetList.clear();
