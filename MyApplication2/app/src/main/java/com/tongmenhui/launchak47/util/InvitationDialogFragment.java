@@ -43,6 +43,7 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
     private static final String GET_CONTACTS_URL = HttpUtil.DOMAIN + "?q=contacts/get_all_contacts";
     private Dialog mDialog;
     private int uid = -1;
+    private int type = 0;
     private RecyclerView searchResultsView;
     //private ArrayAdapter<String> adapter;
     private SearchUserListAdapter adapter;
@@ -90,6 +91,7 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
         Bundle bundle = getArguments();
         if (bundle != null) {
             uid = bundle.getInt("uid");
+            type = bundle.getInt("type", 0);
         }
 
         getAllContacts();
@@ -241,18 +243,18 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
         switch (message.what) {
             case QUERY_USER_DONE:
                 Slog.d(TAG, "=======handle message: " + QUERY_USER_DONE);
-                adapter.setData(mMemberInfoList);
+                adapter.setData(mMemberInfoList, type);
                 adapter.notifyDataSetChanged();
                 break;
             case CLEAR_SEARCH_RESULTS:
                 mMemberInfoList.clear();
                 mContactsList.clear();
                 searchResultsView.removeAllViews();
-                adapter.setData(mMemberInfoList);
+                adapter.setData(mMemberInfoList, type);
                 adapter.notifyDataSetChanged();
                 break;
             case GET_CONTACTS_DONE:
-                adapter.setData(mContactsList);
+                adapter.setData(mMemberInfoList, type);
                 adapter.notifyDataSetChanged();
                 break;
             default:
