@@ -364,7 +364,7 @@
         
         <Button
             android:id="@+id/add_cheering_member"
-            android:text="+创建亲友团"
+            android:text="+添加亲友团"
             android:layout_gravity="center"
             android:textColor="@color/colorWhite"
             android:paddingLeft="12dp"
