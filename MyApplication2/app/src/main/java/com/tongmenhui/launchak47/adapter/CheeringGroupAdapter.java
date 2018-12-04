@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.NetworkImageView;
 import com.tongmenhui.launchak47.R;
+import com.tongmenhui.launchak47.meet.MeetMemberInfo;
 import com.tongmenhui.launchak47.meet.MeetReferenceInfo;
 import com.tongmenhui.launchak47.util.FontManager;
 import com.tongmenhui.launchak47.util.HttpUtil;
@@ -24,13 +25,13 @@ public class CheeringGroupAdapter extends RecyclerView.Adapter<CheeringGroupAdap
     private static final String TAG = "CheeringGroupAdapter";
     private static Context mContext;
     RequestQueue queue;
-    private List<MeetReferenceInfo> mCheeringGroupList;
+    private List<MeetMemberInfo> mCheeringGroupList;
 
     public CheeringGroupAdapter(Context context) {
         mContext = context;
     }
     
-        public void setCheeringGroupList(List<MeetReferenceInfo> cheeringGroupList) {
+        public void setCheeringGroupList(List<MeetMemberInfo> cheeringGroupList) {
         mCheeringGroupList = cheeringGroupList;
     }
 
@@ -44,15 +45,14 @@ public class CheeringGroupAdapter extends RecyclerView.Adapter<CheeringGroupAdap
     
         @Override
     public void onBindViewHolder(@NonNull CheeringGroupAdapter.ViewHolder holder, int position) {
-        final MeetReferenceInfo cheeringGroup = mCheeringGroupList.get(position);
-        holder.realName.setText(cheeringGroup.getRefereeName());
-        holder.relation.setText(cheeringGroup.getRelation());
-        holder.profile.setText(cheeringGroup.getRefereeProfile());
+        final MeetMemberInfo cheeringGroup = mCheeringGroupList.get(position);
+        holder.realName.setText(cheeringGroup.getRealname());
+        holder.profile.setText(cheeringGroup.getProfile());
 
-        if (cheeringGroup.getHeadUri() != null && !"".equals(cheeringGroup.getHeadUri())) {
+        if (cheeringGroup.getPictureUri() != null && !"".equals(cheeringGroup.getPictureUri())) {
             queue = RequestQueueSingleton.instance(mContext);
-            holder.headUri.setTag(HttpUtil.DOMAIN + cheeringGroup.getHeadUri());
-            HttpUtil.loadByImageLoader(queue, holder.headUri, HttpUtil.DOMAIN + cheeringGroup.getHeadUri(), 37, 60);
+            holder.headUri.setTag(HttpUtil.DOMAIN + cheeringGroup.getPictureUri());
+            HttpUtil.loadByImageLoader(queue, holder.headUri, HttpUtil.DOMAIN + cheeringGroup.getPictureUri(), 37, 60);
         } else {
             holder.headUri.setImageDrawable(mContext.getDrawable(R.mipmap.ic_launcher));
         }
@@ -66,7 +66,6 @@ public class CheeringGroupAdapter extends RecyclerView.Adapter<CheeringGroupAdap
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView realName;
-        TextView relation;
         TextView profile;
         NetworkImageView headUri;
 
@@ -75,7 +74,6 @@ public class CheeringGroupAdapter extends RecyclerView.Adapter<CheeringGroupAdap
             realName = view.findViewById(R.id.name);
             headUri = view.findViewById(R.id.head_uri);
             profile = view.findViewById(R.id.profile);
-            relation = view.findViewById(R.id.relation);
         }
     }
 }
