@@ -22,8 +22,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.tongmenhui.launchak47.util.ReferenceWriteDialogFragment;
 import com.tongmenhui.launchak47.adapter.CheeringGroupAdapter;
+import com.tongmenhui.launchak47.util.ReferenceWriteDialogFragment;
+
 import com.android.volley.RequestQueue;
 import com.bumptech.glide.Glide;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
@@ -74,6 +75,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
     private static final String GET_IMPRESSION_STATISTICS_URL = HttpUtil.DOMAIN + "?q=meet/impression/statistics";
     private static final String GET_IMPRESSION_USERS_URL = HttpUtil.DOMAIN + "?q=meet/impression/users";
     private static final String GET_PERSONALITY_URL = HttpUtil.DOMAIN + "?q=meet/personality/get";
+    private static final String GET_CHEERING_GROUP_URL = HttpUtil.DOMAIN + "?q=meet/cheering_group/get";
     private static final String LOAD_HOBBY_URL = HttpUtil.DOMAIN + "?q=personal_archive/hobby/load";
     private static final String CONTACTS_ADD_URL = HttpUtil.DOMAIN + "?q=contacts/add_contacts";
     private static final String GET_CONTACTS_STATUS_URL = HttpUtil.DOMAIN + "?q=contacts/status";
@@ -99,6 +101,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
     private static final int GET_LOVE_STATISTICS_URL_DONE = 13;
     private static final int UPDATE_LOVED_COUNT = 14;
     private static final int UPDATE_PRAISED_COUNT = 15;
+    private static final int GET_CHEERING_GROUP_DONE = 16;
     private static final int FOLLOWED = 1;
     private static final int FOLLOWING = 2;
     private static final int PRAISED = 3;
@@ -108,12 +111,14 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
     private static final int PAGE_SIZE = 6;
     private static final int TYPE_HOBBY = 0;
     private static final int TYPE_PERSONALITY = 1;
+    private static final int TYPE_CHEERING_GROUP = 2;
     private static final int APPLIED = 0;
     private static final int ESTABLISHED = 1;
     private static final int APPROVE = 2;
     public String impression;
     public int impressionCount;
     public List<MeetMemberInfo> meetMemberList;
+    public List<MeetMemberInfo> mCheeringGroupMemberList = new ArrayList<>();
     View mHeaderEvaluation;
     private List<MeetDynamics> mMeetList = new ArrayList<>();
     private List<ImpressionStatistics> mImpressionStatisticsList = new ArrayList<>();
@@ -128,6 +133,7 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
     private XRecyclerView mXRecyclerView;
     private ArchivesListAdapter mArchivesListAdapter;
     private MeetReferenceAdapter mMeetReferenceAdapter;
+    private MeetImpressionStatisticsAdapter mMeetImpressionStatisticsAdapter;
     private MeetImpressionStatisticsAdapter mMeetImpressionStatisticsAdapter;
     private CheeringGroupAdapter mCheeringGroupAdapter;
     private TextView mEmptyView;
@@ -1253,11 +1259,44 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
     }
 
     private void getCheeringGroup(int uid){
+        RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
+        HttpUtil.sendOkHttpRequest(this, GET_CHEERING_GROUP_URL, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.body() != null) {
+                    String responseText = response.body().string();
+                    //if (isDebug)
+                        Slog.d(TAG, "==========getCheeringGroup response text : " + responseText);
+                    if (responseText != null) {
+                        List<MeetMemberInfo> meetMemberInfoList = ParseUtils.getBaseMeetInfoList(responseText);
+                        if (meetMemberInfoList != null && meetMemberInfoList.size() > 0) {
+                            mCheeringGroupMemberList.addAll(meetMemberInfoList);
+                        }
+                        handler.sendEmptyMessage(GET_CHEERING_GROUP_DONE);
+                       }
+                }
+            }
 
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+        });
     }
 
     private void addCheeringGroupMember(int uid){
-
+        Button addMember = mHeaderEvaluation.findViewById(R.id.add_cheering_member);
+        addMember.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                InvitationDialogFragment invitationDialogFragment = new InvitationDialogFragment();
+                Bundle bundle = new Bundle();
+                bundle.putInt("uid", mMeetMember.getUid());
+                bundle.putInt("type", TYPE_CHEERING_GROUP);
+                invitationDialogFragment.setArguments(bundle);
+                invitationDialogFragment.show(getSupportFragmentManager(), "InvitationDialogFragment");
+            }
+        });
     }
 
     private void setCheeringGroupView(){
@@ -1268,6 +1307,9 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
 
         mCheeringGroupAdapter = new CheeringGroupAdapter(this);
         cheeringGroupList.setAdapter(mCheeringGroupAdapter);
+        
+        mCheeringGroupAdapter.setCheeringGroupList(mCheeringGroupMemberList);
+        mCheeringGroupAdapter.notifyDataSetChanged();
     }
 
     private void getHobbies(int uid) {
@@ -1674,6 +1716,9 @@ public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateD
                 break;
             case UPDATE_PRAISED_COUNT:
                 updatePraisedCount();
+                break;
+            case GET_CHEERING_GROUP_DONE:
+                setCheeringGroupView();
                 break;
             default:
                 break;
