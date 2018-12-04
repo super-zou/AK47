@@ -37,5 +37,7 @@
     <string name="colleague">同事</string>
     <string name="schoolmate">校友</string>
     <string name="relative">亲人</string>
+    <string name="add_member">添加成员</string>
+    <string name="added_member">已添加</string>
     <!--+End: relations, add by zouhaichao 2018.11.27-->
 </resources>
