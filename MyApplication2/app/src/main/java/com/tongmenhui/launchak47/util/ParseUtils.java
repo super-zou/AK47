@@ -28,10 +28,39 @@ public class ParseUtils {
 
     private static final String TAG = "ParseUtils";
     private static final String GET_MEET_ARCHIVE_URL = HttpUtil.DOMAIN + "?q=meet/get_archive";
-
-    public static List<MeetMemberInfo> getMeetList(String responseText) {
+    
+    public static List<MeetMemberInfo> getBaseMeetInfoList(String responseText) {
         List<MeetMemberInfo> list = null;
-        Log.d(TAG, "getMeetList responseText:" + responseText);
+        Log.d(TAG, "getBaseMeetInfoList responseText:" + responseText);
+        if (TextUtils.isEmpty(responseText)) {
+            return null;
+        }
+        try {
+            JSONObject response = new JSONObject(responseText);
+            if (null == response) {
+                return null;
+            }
+            JSONArray jsonArray = response.getJSONArray("response");
+            if (null == jsonArray) {
+                return null;
+            }
+            list = new ArrayList<MeetMemberInfo>();
+            int length = jsonArray.length();
+            MeetMemberInfo meetMemberInfo = new MeetMemberInfo();
+            for (int i = 0; i < length; i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                setBaseProfile(meetMemberInfo, jsonObject);
+                list.add(meetMemberInfo);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public static List<MeetMemberInfo> getRecommendMeetList(String responseText) {
+        List<MeetMemberInfo> list = null;
+        Log.d(TAG, "getRecommendMeetList responseText:" + responseText);
         if (TextUtils.isEmpty(responseText)) {
             return null;
         }
@@ -49,7 +78,7 @@ public class ParseUtils {
             MeetMemberInfo meetMemberInfo = null;
             for (int i = 0; i < length; i++) {
                 JSONObject recommender = recommendation.getJSONObject(i);
-                meetMemberInfo = setMeetMemberInfo(recommender);
+                meetMemberInfo = setRecommendMemberInfo(recommender);
                 list.add(meetMemberInfo);
             }
         } catch (JSONException e) {
@@ -58,22 +87,33 @@ public class ParseUtils {
         return list;
     }
 
-    public static MeetMemberInfo setMeetMemberInfo(JSONObject member) {
-        MeetMemberInfo meetMemberInfo = new MeetMemberInfo();
-
+    public static MeetMemberInfo setBaseProfile(MeetMemberInfo meetMemberInfo, JSONObject member){
         meetMemberInfo.setRealname(member.optString("realname"));
         meetMemberInfo.setUid(member.optInt("uid"));
         meetMemberInfo.setSex(member.optInt("sex"));
         meetMemberInfo.setPictureUri(member.optString("picture_uri"));
         meetMemberInfo.setBirthYear(member.optInt("birth_year"));
         meetMemberInfo.setHeight(member.optInt("height"));
-        meetMemberInfo.setUniversity(member.optString("university"));
 
+        meetMemberInfo.setMajor(member.optString("major"));
         meetMemberInfo.setDegree(member.optString("degree"));
-        meetMemberInfo.setJobTitle(member.optString("job_title"));
-        meetMemberInfo.setLives(member.optString("lives"));
+        meetMemberInfo.setUniversity(member.optString("university"));
         meetMemberInfo.setSituation(member.optInt("situation"));
+        
+        if(member.optInt("situation") != 0){
+            meetMemberInfo.setJobTitle(member.optString("job_title"));
+            meetMemberInfo.setCompany(member.optString("company"));
+            meetMemberInfo.setLives(member.optString("lives"));
+        }
 
+        return meetMemberInfo;
+    }
+    
+    public static MeetMemberInfo setRecommendMemberInfo(JSONObject member) {
+        MeetMemberInfo meetMemberInfo = new MeetMemberInfo();
+
+        setBaseProfile(meetMemberInfo, member);
+        
         //requirement
         meetMemberInfo.setAgeLower(member.optInt("age_lower"));
         meetMemberInfo.setAgeUpper(member.optInt("age_upper"));
@@ -82,16 +122,10 @@ public class ParseUtils {
         meetMemberInfo.setRequirementLives(member.optString("requirement_lives"));
         meetMemberInfo.setRequirementSex(member.optInt("requirement_sex"));
         meetMemberInfo.setIllustration(member.optString("illustration"));
-
-        // meetMemberInfo.setSelf(recommender.optInt("self"));
+        
         meetMemberInfo.setBrowseCount(member.optInt("browse_count"));
         meetMemberInfo.setLovedCount(member.optInt("loved_count"));
-        // meetMemberInfo.setLoved(recommender.optInt("loved"));
-        // meetMemberInfo.setPraised(recommender.optInt("praised"));
         meetMemberInfo.setPraisedCount(member.optInt("praised_count"));
-        //  meetMemberInfo.setPictureChain(recommender.optString("pictureChain"));
-        // meetMemberInfo.setRequirementSet(recommender.optInt("requirementSet"));
-
         return meetMemberInfo;
     }
 
@@ -115,7 +149,7 @@ public class ParseUtils {
             MeetMemberInfo meetMemberInfo = null;
             for (int i = 0; i < length; i++) {
                 JSONObject discoveryObj = discovery.getJSONObject(i);
-                meetMemberInfo = setMeetMemberInfo(discoveryObj);
+                meetMemberInfo = setRecommendMemberInfo(discoveryObj);
                 ;
 
                 list.add(meetMemberInfo);
@@ -180,7 +214,7 @@ public class ParseUtils {
                         if (!TextUtils.isEmpty(responseText)) {
                             try {
                                 JSONObject jsonObject = new JSONObject(responseText).optJSONObject("archive");
-                                MeetMemberInfo meetMemberInfo = setMeetMemberInfo(jsonObject);
+                                MeetMemberInfo meetMemberInfo = setRecommendMemberInfo(jsonObject);
                                 Intent intent = new Intent(context, ArchivesActivity.class);
                                 // Log.d(TAG, "meet:"+meet+" uid:"+meet.getUid());
                                 intent.putExtra("meet", meetMemberInfo);
