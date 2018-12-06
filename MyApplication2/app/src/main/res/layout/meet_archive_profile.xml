@@ -6,7 +6,8 @@
     android:typeface="serif"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/colorWhite"
+    
+    android:background="@color/background"
     android:id="@+id/meet_archive_profile">
 
     <ImageView
@@ -152,11 +153,12 @@
     
     <LinearLayout
         android:id="@+id/partner_requirement_label"
+        android:background="@color/white"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginTop="18dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="@+id/profile_detail"
         app:layout_constraintStart_toStartOf="@+id/profile_detail"
@@ -176,7 +178,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:alpha="0.8"
-            android:text="期待"
+            android:text="期待遇见"
             android:textColor="#999" />
 
         <TextView
@@ -191,114 +193,105 @@
         android:id="@+id/partner_requirement"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/white"
         android:gravity="center"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginBottom="8dp"
         app:layout_constraintEnd_toEndOf="@+id/partner_requirement_label"
         app:layout_constraintStart_toStartOf="@+id/partner_requirement_label"
         app:layout_constraintTop_toBottomOf="@+id/partner_requirement_label">
         <TextView
             android:id="@+id/age_require"
-            android:text="age"
-            android:padding="8dp"
-            android:layout_marginBottom="3dp"
-            android:textColor="@color/color_blue"
-            android:background="@drawable/label_btn_shape"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="3dp"
+            android:background="@drawable/label_btn_shape"
+            android:padding="8dp"
+            android:text="age"
+            android:textColor="@color/color_blue" />
         <TextView
             android:id="@+id/height_require"
-            android:text="height"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="3dp"
             android:layout_marginBottom="3dp"
-            android:padding="8dp"
-            android:textColor="@color/color_blue"
             android:background="@drawable/label_btn_shape"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:padding="8dp"
+            android:text="height"
+            android:textColor="@color/color_blue" />
         <TextView
             android:id="@+id/degree_require"
-            android:text="degree"
-            android:padding="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="3dp"
             android:layout_marginBottom="3dp"
-            android:textColor="@color/color_blue"
             android:background="@drawable/label_btn_shape"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:padding="8dp"
+            android:text="degree"
+            android:textColor="@color/color_blue" />
         <TextView
             android:id="@+id/sex_require"
-            android:text="sex"
-            android:padding="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="3dp"
             android:layout_marginBottom="3dp"
-            android:textColor="@color/color_blue"
             android:background="@drawable/label_btn_shape"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:padding="8dp"
+            android:text="sex"
+            android:textColor="@color/color_blue" />
         <TextView
             android:id="@+id/lives_require"
-            android:text="lives"
-            android:padding="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="3dp"
             android:layout_marginBottom="3dp"
-            android:textColor="@color/color_blue"
             android:background="@drawable/label_btn_shape"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:padding="8dp"
+            android:text="lives"
+            android:textColor="@color/color_blue" />
 
     </com.nex3z.flowlayout.FlowLayout>
-
-    <TextView
-        android:id="@+id/profile_divider"
-        android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:alpha="0.3"
-        android:background="#999"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/partner_requirement"/>
-
-    <TextView
-        android:id="@+id/illustration"
+    
+    <LinearLayout
+        android:orientation="vertical"
+        android:id="@+id/illustration_wrap"
+        android:background="@color/white"
+        android:paddingTop="8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:text="hahahahah"
-        android:textColor="@color/color_blue"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profile_divider"
-         />
+        app:layout_constraintTop_toBottomOf="@+id/partner_requirement">
+        <View
+            android:id="@+id/divider2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?android:attr/listDivider" />
 
-    <TextView
-        android:id="@+id/illustration_divider"
-        android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:layout_gravity="center"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="10dp"
-        android:alpha="0.3"
-        android:background="#999"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/illustration"/>
+        <TextView
+            android:id="@+id/illustration"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:background="@color/white"
+            android:text="hahahahah"
+            android:textColor="@color/color_blue"/>
+        <View
+            android:id="@+id/divider3"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?android:attr/listDivider" />
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/interaction_wrap"
+        android:background="@color/white"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="18dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/illustration_divider">
+        app:layout_constraintTop_toBottomOf="@+id/illustration_wrap">
         <Button
             android:id="@+id/contacts"
             android:layout_width="0dp"
@@ -341,28 +334,17 @@
             android:textColor="@color/colorWhite" />
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/interaction_statistics_divider"
-        android:background="@drawable/line_half"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:alpha="0.3"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/interaction_wrap" />
-
     <LinearLayout
         android:id="@+id/follow_statistics_wrap"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="32dp"
+        android:background="@color/white"
+        android:gravity="center"
         android:paddingTop="3dp"
         android:paddingBottom="3dp"
-        android:gravity="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/interaction_statistics_divider">
+        app:layout_constraintTop_toBottomOf="@+id/interaction_wrap">
 
         <LinearLayout
             android:id="@+id/followed_count_wrap"
@@ -414,10 +396,10 @@
     </LinearLayout>
     <LinearLayout
         android:id="@+id/praise_statistics_wrap"
+        android:background="@color/white"
         android:layout_width="match_parent"
-        android:layout_height="22dp"
+        android:layout_height="32dp"
         android:gravity="center"
-        android:layout_marginTop="8dp"
         android:paddingTop="3dp"
         android:paddingBottom="3dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -475,10 +457,10 @@
 
     <LinearLayout
         android:id="@+id/love_statistics_wrap"
+        android:background="@color/white"
         android:layout_width="match_parent"
-        android:layout_height="22dp"
+        android:layout_height="32dp"
         android:gravity="center"
-        android:layout_marginTop="8dp"
         android:paddingTop="3dp"
         android:paddingBottom="3dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -535,28 +517,18 @@
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/follow_statistics_divider"
-        android:background="@drawable/line_half"
-        android:layout_width="match_parent"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_height="0dp"
-        android:alpha="0.3"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/love_statistics_wrap" />
-
     <LinearLayout
         android:id="@+id/interaction_statistics_wrap"
+        android:background="@color/white"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="right"
-        android:layout_marginTop="18dp"
+        android:paddingTop="18dp"
         android:paddingBottom="18dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/follow_statistics_divider">
+        app:layout_constraintTop_toBottomOf="@+id/love_statistics_wrap">
+        
         <TextView
             android:id="@+id/eye_icon"
             android:textSize="18sp"
