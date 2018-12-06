@@ -254,7 +254,7 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
                 adapter.notifyDataSetChanged();
                 break;
             case GET_CONTACTS_DONE:
-                adapter.setData(mMemberInfoList, type);
+                adapter.setData(mContactsList, type);
                 adapter.notifyDataSetChanged();
                 break;
             default:
