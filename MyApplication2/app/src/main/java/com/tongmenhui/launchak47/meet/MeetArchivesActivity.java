@@ -24,7 +24,8 @@ import android.widget.TextView;
 
 import com.tongmenhui.launchak47.adapter.CheeringGroupAdapter;
 import com.tongmenhui.launchak47.util.ReferenceWriteDialogFragment;
-
+import com.tongmenhui.launchak47.main.ArchiveActivity;
+import com.tongmenhui.launchak47.main.MainActivity;
 import com.android.volley.RequestQueue;
 import com.bumptech.glide.Glide;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
@@ -66,7 +67,7 @@ import okhttp3.Response;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
 public class MeetArchivesActivity extends BaseAppCompatActivity implements EvaluateDialogFragment.EvaluateDialogFragmentListener {
-    private static final String TAG = "ArchivesActivity";
+    private static final String TAG = "MeetArchivesActivity";
     private static final boolean isDebug = false;
     private static final String DYNAMICS_URL = HttpUtil.DOMAIN + "?q=meet/activity/get";
     private static final String COMMENT_URL = HttpUtil.DOMAIN + "?q=meet/activity/interact/get";
@@ -117,7 +118,6 @@ public class MeetArchivesActivity extends BaseAppCompatActivity implements Evalu
     private static final int APPROVE = 2;
     public String impression;
     public int impressionCount;
-    public List<MeetMemberInfo> meetMemberList;
     public List<MeetMemberInfo> mCheeringGroupMemberList = new ArrayList<>();
     View mHeaderEvaluation;
     private List<MeetDynamics> mMeetList = new ArrayList<>();
@@ -134,7 +134,6 @@ public class MeetArchivesActivity extends BaseAppCompatActivity implements Evalu
     private ArchivesListAdapter mArchivesListAdapter;
     private MeetReferenceAdapter mMeetReferenceAdapter;
     private MeetImpressionStatisticsAdapter mMeetImpressionStatisticsAdapter;
-    private MeetImpressionStatisticsAdapter mMeetImpressionStatisticsAdapter;
     private CheeringGroupAdapter mCheeringGroupAdapter;
     private TextView mEmptyView;
     private JSONObject mRatingObj;
@@ -147,7 +146,7 @@ public class MeetArchivesActivity extends BaseAppCompatActivity implements Evalu
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.archives);
+        setContentView(R.layout.meet_archive);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.hide();
@@ -202,7 +201,7 @@ public class MeetArchivesActivity extends BaseAppCompatActivity implements Evalu
         evaluatorDetails.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(ArchivesActivity.this, EvaluatorDetailsActivity.class);
+                Intent intent = new Intent(MeetArchivesActivity.this, EvaluatorDetailsActivity.class);
                 intent.putExtra("uid", mMeetMember.getUid());
                 //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
                 startActivity(intent);
@@ -384,7 +383,7 @@ public class MeetArchivesActivity extends BaseAppCompatActivity implements Evalu
                     if(isDebug) Slog.d(TAG, "=====================同意请求");
                 } else {
                     RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(mMeetMember.getUid())).build();
-                    HttpUtil.sendOkHttpRequest(ArchivesActivity.this, CONTACTS_ADD_URL, requestBody, new Callback() {
+                    HttpUtil.sendOkHttpRequest(MeetArchivesActivity.this, CONTACTS_ADD_URL, requestBody, new Callback() {
                         @Override
                         public void onResponse(Call call, Response response) throws IOException {
                             if (response.body() != null) {
@@ -418,7 +417,7 @@ public class MeetArchivesActivity extends BaseAppCompatActivity implements Evalu
     private void getConnectStatus() {
 
         RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(mMeetMember.getUid())).build();
-        HttpUtil.sendOkHttpRequest(ArchivesActivity.this, GET_FOLLOW_STATUS_URL, requestBody, new Callback() {
+        HttpUtil.sendOkHttpRequest(MeetArchivesActivity.this, GET_FOLLOW_STATUS_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
@@ -445,7 +444,7 @@ public class MeetArchivesActivity extends BaseAppCompatActivity implements Evalu
         RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(mMeetMember.getUid())).build();
 
         //for contacts
-        HttpUtil.sendOkHttpRequest(ArchivesActivity.this, GET_CONTACTS_STATUS_URL, requestBody, new Callback() {
+        HttpUtil.sendOkHttpRequest(MeetArchivesActivity.this, GET_CONTACTS_STATUS_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
@@ -469,7 +468,7 @@ public class MeetArchivesActivity extends BaseAppCompatActivity implements Evalu
         });
 
         //for follow
-        HttpUtil.sendOkHttpRequest(ArchivesActivity.this, GET_FOLLOW_STATISTICS_URL, requestBody, new Callback() {
+        HttpUtil.sendOkHttpRequest(MeetArchivesActivity.this, GET_FOLLOW_STATISTICS_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
@@ -535,7 +534,7 @@ public class MeetArchivesActivity extends BaseAppCompatActivity implements Evalu
 
     private void getPraiseStatistics() {
         RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(mMeetMember.getUid())).build();
-        HttpUtil.sendOkHttpRequest(ArchivesActivity.this, GET_PRAISE_STATISTICS_URL, requestBody, new Callback() {
+        HttpUtil.sendOkHttpRequest(MeetArchivesActivity.this, GET_PRAISE_STATISTICS_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
@@ -599,7 +598,7 @@ public class MeetArchivesActivity extends BaseAppCompatActivity implements Evalu
 
     private void getLoveStatistics() {
         RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(mMeetMember.getUid())).build();
-        HttpUtil.sendOkHttpRequest(ArchivesActivity.this, GET_LOVE_STATISTICS_URL, requestBody, new Callback() {
+        HttpUtil.sendOkHttpRequest(MeetArchivesActivity.this, GET_LOVE_STATISTICS_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
@@ -687,7 +686,7 @@ public class MeetArchivesActivity extends BaseAppCompatActivity implements Evalu
                     followBtn.setTextColor(getResources().getColor(R.color.color_dark_grey));
                 }
 
-                HttpUtil.sendOkHttpRequest(ArchivesActivity.this, followUrl, requestBody, new Callback() {
+                HttpUtil.sendOkHttpRequest(MeetArchivesActivity.this, followUrl, requestBody, new Callback() {
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
                         if (response.body() != null) {
@@ -774,7 +773,7 @@ public class MeetArchivesActivity extends BaseAppCompatActivity implements Evalu
         lovedIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                HttpUtil.sendOkHttpRequest(ArchivesActivity.this, LOVE_ADD_URL, requestBody, new Callback() {
+                HttpUtil.sendOkHttpRequest(MeetArchivesActivity.this, LOVE_ADD_URL, requestBody, new Callback() {
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
                         if (response.body() != null) {
@@ -798,7 +797,7 @@ public class MeetArchivesActivity extends BaseAppCompatActivity implements Evalu
         lovedCount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                HttpUtil.sendOkHttpRequest(ArchivesActivity.this, LOVE_ADD_URL, requestBody, new Callback() {
+                HttpUtil.sendOkHttpRequest(MeetArchivesActivity.this, LOVE_ADD_URL, requestBody, new Callback() {
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
                         if (response.body() != null) {
@@ -836,7 +835,7 @@ public class MeetArchivesActivity extends BaseAppCompatActivity implements Evalu
         praisedIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                HttpUtil.sendOkHttpRequest(ArchivesActivity.this, PRAISE_ADD_URL, requestBody, new Callback() {
+                HttpUtil.sendOkHttpRequest(MeetArchivesActivity.this, PRAISE_ADD_URL, requestBody, new Callback() {
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
                         if (response.body() != null) {
@@ -859,7 +858,7 @@ public class MeetArchivesActivity extends BaseAppCompatActivity implements Evalu
         praisedCount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                HttpUtil.sendOkHttpRequest(ArchivesActivity.this, PRAISE_ADD_URL, requestBody, new Callback() {
+                HttpUtil.sendOkHttpRequest(MeetArchivesActivity.this, PRAISE_ADD_URL, requestBody, new Callback() {
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
                         if (response.body() != null) {
@@ -990,7 +989,7 @@ public class MeetArchivesActivity extends BaseAppCompatActivity implements Evalu
         mMeetImpressionStatisticsAdapter.setItemClickListener(new MeetImpressionStatisticsAdapter.MyItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Intent intent = new Intent(ArchivesActivity.this, ApprovedUsersActivity.class);
+                Intent intent = new Intent(MeetArchivesActivity.this, ApprovedUsersActivity.class);
                 intent.putExtra("uid", mMeetMember.getUid());
                 intent.putExtra("impressionStatistics", mImpressionStatisticsList.get(position));
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
@@ -1039,10 +1038,9 @@ public class MeetArchivesActivity extends BaseAppCompatActivity implements Evalu
                 .add("uid", String.valueOf(uid)).build();
         Slog.d(TAG, "impression: " + impression + " uid: " + uid);
         Response response = HttpUtil.sendOkHttpRequestSync(this, GET_IMPRESSION_USERS_URL, requestBody, null);
-
-        try {
-            String responseText = response.body().string();
+        if(response != null){          
             try {
+                String responseText = response.body().string();
                 JSONObject responseObj = new JSONObject(responseText);
                 JSONArray responseArray = responseObj.optJSONArray("users");
                 if (responseArray.length() > 0) {
@@ -1070,11 +1068,11 @@ public class MeetArchivesActivity extends BaseAppCompatActivity implements Evalu
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
+            }catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        
         }
-
 
         return memberInfoList;
     }
@@ -1308,6 +1306,17 @@ public class MeetArchivesActivity extends BaseAppCompatActivity implements Evalu
         mCheeringGroupAdapter = new CheeringGroupAdapter(this);
         cheeringGroupList.setAdapter(mCheeringGroupAdapter);
         
+        mCheeringGroupAdapter.setItemClickListener(new CheeringGroupAdapter.MyItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+
+                Intent intent = new Intent(MeetArchivesActivity.this, ArchiveActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                startActivity(intent);
+
+            }
+        });
+        
         mCheeringGroupAdapter.setCheeringGroupList(mCheeringGroupMemberList);
         mCheeringGroupAdapter.notifyDataSetChanged();
     }
@@ -1388,7 +1397,7 @@ public class MeetArchivesActivity extends BaseAppCompatActivity implements Evalu
     }
 
     private void loadDynamicsData(int uid) {
-        handler = new ArchivesActivity.MyHandler(this);
+        handler = new MeetArchivesActivity.MyHandler(this);
 
         int page = mMeetList.size() / PAGE_SIZE;
         FormBody requestBody = new FormBody.Builder()
@@ -1763,17 +1772,17 @@ public class MeetArchivesActivity extends BaseAppCompatActivity implements Evalu
     }
 
     static class MyHandler extends Handler {
-        WeakReference<ArchivesActivity> meetDynamicsFragmentWeakReference;
+        WeakReference<MeetArchivesActivity> meetDynamicsFragmentWeakReference;
 
-        MyHandler(ArchivesActivity archivesActivity) {
-            meetDynamicsFragmentWeakReference = new WeakReference<ArchivesActivity>(archivesActivity);
+        MyHandler(MeetArchivesActivity meetArchivesActivity) {
+            meetDynamicsFragmentWeakReference = new WeakReference<ArchivesActivity>(meetArchivesActivity);
         }
 
         @Override
         public void handleMessage(Message message) {
-            ArchivesActivity archivesActivity = meetDynamicsFragmentWeakReference.get();
-            if (archivesActivity != null) {
-                archivesActivity.handleMessage(message);
+            MeetArchivesActivity meetArchivesActivity = meetDynamicsFragmentWeakReference.get();
+            if (meetArchivesActivity != null) {
+                meetArchivesActivity.handleMessage(message);
             }
         }
     }
