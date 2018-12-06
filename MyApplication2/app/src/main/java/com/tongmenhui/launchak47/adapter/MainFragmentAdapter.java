@@ -6,7 +6,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.view.View;
 
 import com.tongmenhui.launchak47.main.ActivitiesFragment;
-import com.tongmenhui.launchak47.main.ArchiveFragment;
+import com.tongmenhui.launchak47.main.MyArchiveFragment;
 import com.tongmenhui.launchak47.main.MeetFragment;
 
 import java.util.ArrayList;
@@ -42,7 +42,7 @@ public class MainFragmentAdapter extends FragmentStatePagerAdapter {
 
                 break;
             case 2:
-                fragment = new ArchiveFragment();
+                fragment = new MyArchiveFragment();
                 break;
 
             default:
