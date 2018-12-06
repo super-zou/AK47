@@ -13,7 +13,6 @@ import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.tongmenhui.launchak47.R;
-import com.tongmenhui.launchak47.meet.ArchivesActivity;
 import com.tongmenhui.launchak47.meet.MeetMemberInfo;
 
 import java.io.IOException;
