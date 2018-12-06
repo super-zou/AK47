@@ -17,7 +17,7 @@ import android.widget.Toast;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.NetworkImageView;
 import com.tongmenhui.launchak47.R;
-import com.tongmenhui.launchak47.meet.ArchivesActivity;
+import com.tongmenhui.launchak47.meet.MeetArchivesActivity;
 import com.tongmenhui.launchak47.meet.MeetMemberInfo;
 import com.tongmenhui.launchak47.util.FontManager;
 import com.tongmenhui.launchak47.util.HttpUtil;
@@ -148,7 +148,7 @@ public class MeetRecommendListAdapter extends RecyclerView.Adapter<MeetRecommend
         holder.headUri.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(mContext, ArchivesActivity.class);
+                Intent intent = new Intent(mContext, MeetArchivesActivity.class);
                 Log.d(TAG, "meet:" + meet + " uid:" + meet.getUid());
                 intent.putExtra("meet", meet);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
@@ -158,7 +158,7 @@ public class MeetRecommendListAdapter extends RecyclerView.Adapter<MeetRecommend
         holder.photosView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(mContext, ArchivesActivity.class);
+                Intent intent = new Intent(mContext, MeetArchivesActivity.class);
                 intent.putExtra("meet", meet);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
                 mContext.startActivity(intent);
