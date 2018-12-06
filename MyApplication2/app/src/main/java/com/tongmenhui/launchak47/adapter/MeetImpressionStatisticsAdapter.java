@@ -14,7 +14,7 @@ import com.android.volley.RequestQueue;
 import com.bumptech.glide.Glide;
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.meet.ApprovedUsersActivity;
-import com.tongmenhui.launchak47.meet.ArchivesActivity;
+import com.tongmenhui.launchak47.meet.MeetArchivesActivity;
 import com.tongmenhui.launchak47.meet.MeetMemberInfo;
 import com.tongmenhui.launchak47.util.HttpUtil;
 import com.tongmenhui.launchak47.util.RequestQueueSingleton;
@@ -28,7 +28,7 @@ public class MeetImpressionStatisticsAdapter extends RecyclerView.Adapter<MeetIm
     private static Context mContext;
     RequestQueue queue;
     private MyItemClickListener mItemClickListener;
-    private List<ArchivesActivity.ImpressionStatistics> mImpressionStatisticsList;
+    private List<MeetArchivesActivity.ImpressionStatistics> mImpressionStatisticsList;
     //private ApprovedUsersDialogFragment approvedUsersDialogFragment;
     private android.support.v4.app.FragmentManager mFragmentManager;
 
@@ -38,7 +38,7 @@ public class MeetImpressionStatisticsAdapter extends RecyclerView.Adapter<MeetIm
         mFragmentManager = fragmentManager;
     }
 
-    public void setImpressionList(List<ArchivesActivity.ImpressionStatistics> impressionStatisticsList) {
+    public void setImpressionList(List<MeetArchivesActivity.ImpressionStatistics> impressionStatisticsList) {
         mImpressionStatisticsList = impressionStatisticsList;
     }
 
@@ -53,7 +53,7 @@ public class MeetImpressionStatisticsAdapter extends RecyclerView.Adapter<MeetIm
     @Override
     public void onBindViewHolder(@NonNull MeetImpressionStatisticsAdapter.ViewHolder holder, int position) {
 
-        final ArchivesActivity.ImpressionStatistics impressionStatistics = mImpressionStatisticsList.get(position);
+        final MeetArchivesActivity.ImpressionStatistics impressionStatistics = mImpressionStatisticsList.get(position);
         holder.feature.setText(impressionStatistics.impression + " · " + String.valueOf(impressionStatistics.impressionCount));
 
         if(impressionStatistics.meetMemberList.size() > 0){
