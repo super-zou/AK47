@@ -29,7 +29,7 @@ import okhttp3.Response;
 public class ApprovedUsersActivity extends AppCompatActivity {
 
     private static final String TAG = "ApprovedUsersActivity";
-    ArchivesActivity.ImpressionStatistics impressionStatistics = null;
+    MeetArchivesActivity.ImpressionStatistics impressionStatistics = null;
     private Context mContext;
     private Dialog mDialog;
     private View view;
