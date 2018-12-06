@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.tongmenhui.launchak47.meet.ArchivesActivity;
+import com.tongmenhui.launchak47.meet.MeetArchivesActivity;
 import com.tongmenhui.launchak47.meet.MeetMemberInfo;
 import com.tongmenhui.launchak47.meet.MeetReferenceInfo;
 
@@ -46,8 +46,9 @@ public class ParseUtils {
             }
             list = new ArrayList<MeetMemberInfo>();
             int length = jsonArray.length();
-            MeetMemberInfo meetMemberInfo = new MeetMemberInfo();
+            
             for (int i = 0; i < length; i++) {
+                MeetMemberInfo meetMemberInfo = new MeetMemberInfo();
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 setBaseProfile(meetMemberInfo, jsonObject);
                 list.add(meetMemberInfo);
@@ -215,7 +216,7 @@ public class ParseUtils {
                             try {
                                 JSONObject jsonObject = new JSONObject(responseText).optJSONObject("archive");
                                 MeetMemberInfo meetMemberInfo = setRecommendMemberInfo(jsonObject);
-                                Intent intent = new Intent(context, ArchivesActivity.class);
+                                Intent intent = new Intent(context, MeetArchivesActivity.class);
                                 // Log.d(TAG, "meet:"+meet+" uid:"+meet.getUid());
                                 intent.putExtra("meet", meetMemberInfo);
                                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
