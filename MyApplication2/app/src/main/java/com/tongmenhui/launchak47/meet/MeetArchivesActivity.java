@@ -65,7 +65,7 @@ import okhttp3.Response;
 
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
-public class ArchivesActivity extends BaseAppCompatActivity implements EvaluateDialogFragment.EvaluateDialogFragmentListener {
+public class MeetArchivesActivity extends BaseAppCompatActivity implements EvaluateDialogFragment.EvaluateDialogFragmentListener {
     private static final String TAG = "ArchivesActivity";
     private static final boolean isDebug = false;
     private static final String DYNAMICS_URL = HttpUtil.DOMAIN + "?q=meet/activity/get";
