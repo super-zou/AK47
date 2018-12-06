@@ -13,7 +13,7 @@ import com.tongmenhui.launchak47.util.BaseFragment;
  * Created by super-zou on 17-9-11.
  */
 
-public class MyActivitiesFragment extends BaseFragment {
+public class ActivitiesFragment extends BaseFragment {
     private View viewContent;
 
     @Nullable
