@@ -49,15 +49,16 @@
         <activity android:name=".region.activity.RegionSelectionActivity" />
         <activity android:name=".region.activity.BaseActivity" />
         <activity android:name=".main.AddDynamicsActivity" />
-        <activity android:name=".meet.ArchivesActivity"
+        <activity android:name=".meet.MeetArchivesActivity"
             android:launchMode="singleTop"/>
         <activity android:name=".meet.EvaluatorDetailsActivity"
             android:label="@string/evaluator_details"
-            android:parentActivityName=".meet.ArchivesActivity"/>
+            android:parentActivityName=".meet.MeetArchivesActivity"/>
         <activity android:name=".meet.ApprovedUsersActivity"
             android:label="@string/evaluator_details"
-            android:parentActivityName=".meet.ArchivesActivity"/>
-
+            android:parentActivityName=".meet.MeetArchivesActivity"/>
+        <activity android:name=".main.ArchiveActivity"
+            android:launchMode="singleTask"/>
     </application>
 
 </manifest>
