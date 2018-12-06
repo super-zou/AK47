@@ -350,9 +350,9 @@ public class MeetMemberInfo implements Serializable {
     public String getProfile() {
         String profile;
         if (getSituation() == 0) {//student
-            profile = getUniversity() + "." + getMajor() + "." + getDegree();
+            profile = getUniversity() + "·" + getMajor() + "·" + getDegree();
         } else {
-            profile = getJobTitle() + "." + getCompany() + "." + getLives();
+            profile = getJobTitle() + "·" + getCompany() + "·" + getLives();
         }
         return profile;
     }
