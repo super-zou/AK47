@@ -1311,6 +1311,7 @@ public class MeetArchivesActivity extends BaseAppCompatActivity implements Evalu
             public void onItemClick(View view, int position) {
 
                 Intent intent = new Intent(MeetArchivesActivity.this, ArchiveActivity.class);
+                intent.putExtra("uid", mCheeringGroupMemberList.get(position).getUid());
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
                 startActivity(intent);
 
@@ -1775,7 +1776,7 @@ public class MeetArchivesActivity extends BaseAppCompatActivity implements Evalu
         WeakReference<MeetArchivesActivity> meetDynamicsFragmentWeakReference;
 
         MyHandler(MeetArchivesActivity meetArchivesActivity) {
-            meetDynamicsFragmentWeakReference = new WeakReference<ArchivesActivity>(meetArchivesActivity);
+            meetDynamicsFragmentWeakReference = new WeakReference<MeetArchivesActivity>(meetArchivesActivity);
         }
 
         @Override
