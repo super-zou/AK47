@@ -22,4 +22,7 @@
     <string name="left_angle">&#xf104;</string>
     <string name="graduation">&#xf19d;</string>
     <string name="work">&#xf2bb;</string>
+    <string name="location">&#xf041;</string>
+    <string name="mars">&#xf222;</string>
+    <string name="venus">&#xf221;</string>
 </resources>
