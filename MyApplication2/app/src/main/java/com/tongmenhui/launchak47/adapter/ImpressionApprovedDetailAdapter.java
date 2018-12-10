@@ -47,7 +47,6 @@ public class ImpressionApprovedDetailAdapter extends RecyclerView.Adapter<Impres
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         final MeetMemberInfo memberInfo = mMemberInfoList.get(position);
-        Slog.d(TAG, "=============get real name: " + memberInfo.getRealname());
         holder.name.setText(memberInfo.getRealname());
         String profile = "";
         if (memberInfo.getSituation() == 0) {//student
