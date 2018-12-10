@@ -1,11 +1,13 @@
 package com.tongmenhui.launchak47.main;
 
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -33,6 +35,8 @@ import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+
+import static com.tongmenhui.launchak47.util.ParseUtils.getMeetArchive;
 
 public class ArchiveActivity extends AppCompatActivity {
     private static final String TAG = "ArchiveActivity";
@@ -80,13 +84,21 @@ public class ArchiveActivity extends AppCompatActivity {
         mEducationBackgroundListView = findViewById(R.id.education_background_list);
         mWorkExperienceListView = findViewById(R.id.work_experience_list);
 
-        int uid = getIntent().getIntExtra("uid", -1);
+        final int uid = getIntent().getIntExtra("uid", -1);
 
         getSummary(uid);
 
         getEducationBackground(uid);
 
         getWorkExperience(uid);
+            
+       TextView meetArchive = findViewById(R.id.meet_archive);
+        meetArchive.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getMeetArchive(ArchiveActivity.this, uid);
+            }
+        });
     }
     
     private void getSummary(int uid){
