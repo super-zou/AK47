@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
@@ -139,7 +140,7 @@ public class MeetArchivesActivity extends BaseAppCompatActivity implements Evalu
     private JSONObject mRatingObj;
     private EvaluateDialogFragment evaluateDialogFragment;
 
-    private ImageView backLeft;
+    private TextView backLeft;
     private MeetMemberInfo mMeetMember;
     private JSONArray personalityResponseArray;
 
@@ -211,6 +212,10 @@ public class MeetArchivesActivity extends BaseAppCompatActivity implements Evalu
     }
 
     private void initView() {
+        
+        Typeface font = Typeface.createFromAsset(getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
+        FontManager.markAsIconContainer(findViewById(R.id.custom_actionbar), font);
+        
         backLeft = findViewById(R.id.left_back);
         backLeft.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -218,10 +223,8 @@ public class MeetArchivesActivity extends BaseAppCompatActivity implements Evalu
                 finish();
             }
         });
-        Typeface font = Typeface.createFromAsset(getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
         mArchivesListAdapter = new ArchivesListAdapter(this);
         mXRecyclerView = (XRecyclerView) findViewById(R.id.recyclerview);
-        mEmptyView = (TextView) findViewById(R.id.empty_text);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         mXRecyclerView.setLayoutManager(linearLayoutManager);
         mXRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -298,10 +301,15 @@ public class MeetArchivesActivity extends BaseAppCompatActivity implements Evalu
         LinearLayout baseProfile = mArchiveProfile.findViewById(R.id.base_profile);
         LinearLayout education = mArchiveProfile.findViewById(R.id.education);
         LinearLayout work = mArchiveProfile.findViewById(R.id.work);
+        
+        LinearLayout livingWrap = mArchiveProfile.findViewById(R.id.living_wrap);
+        LinearLayout illustrationWrap = mArchiveProfile.findViewById(R.id.illustration_wrap);
+        TextView profileDetail = mArchiveProfile.findViewById(R.id.profile_detail);
+        
         TextView age = baseProfile.findViewById(R.id.age);
         TextView height = baseProfile.findViewById(R.id.height);
         TextView sex = baseProfile.findViewById(R.id.sex);
-        TextView lives = baseProfile.findViewById(R.id.lives);
+        TextView living = livingWrap.findViewById(R.id.living);
 
         TextView degree = education.findViewById(R.id.degree);
         TextView major = education.findViewById(R.id.major);
@@ -342,12 +350,14 @@ public class MeetArchivesActivity extends BaseAppCompatActivity implements Evalu
         age.setText(String.valueOf(mMeetMember.getAge()) + "岁");
         height.setText(String.valueOf(mMeetMember.getHeight()) + "CM");
         sex.setText(String.valueOf(mMeetMember.getSelfSex()));
-        lives.setText(mMeetMember.getLives());
+        living.setText("现居住"+mMeetMember.getLives());
         if (mMeetMember.getSituation() == 0) {
             major.setText(mMeetMember.getMajor());
             degree.setText(mMeetMember.getDegreeName(mMeetMember.getDegree()));
             university.setText(mMeetMember.getUniversity());
         } else {
+            education.setVisibility(View.GONE);
+            work.setVisibility(View.VISIBLE);
             job.setText(mMeetMember.getJobTitle());
             company.setText(mMeetMember.getCompany());
         }
@@ -357,10 +367,24 @@ public class MeetArchivesActivity extends BaseAppCompatActivity implements Evalu
         livesRequirement.setText(mMeetMember.getRequirementLives());
         sexRequirement.setText(mMeetMember.getRequirementSex());
 
-        illustration.setText(mMeetMember.getIllustration());
+        if(mMeetMember.getIllustration() != null && !TextUtils.isEmpty(mMeetMember.getIllustration())){
+            illustrationWrap.setVisibility(View.VISIBLE);
+            illustration.setText(mMeetMember.getIllustration());
+        }
+        
         eyeView.setText(String.valueOf(mMeetMember.getBrowseCount()));
         //lovedView.setText(String.valueOf(mMeetMember.getLovedCount()));
         //thumbsView.setText(String.valueOf(mMeetMember.getPraisedCount()));
+        
+        profileDetail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MeetArchivesActivity.this, ArchiveActivity.class);
+                intent.putExtra("uid", mMeetMember.getUid());
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                startActivity(intent);
+            }
+        });
     }
 
     private void processContactsAction() {
