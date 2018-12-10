@@ -28,13 +28,15 @@ public class MeetFragment extends BaseFragment {
     private MeetFragmentAdapter mFragmentAdapter;
     private TabLayout.Tab recomend_tab;
     private TabLayout.Tab dynamics_tab;
+    private TabLayout.Tab singleGroup_tab;
     private TabLayout.Tab discovery_tab;
 
     private ArrayList<String> mMeetTitleList = new ArrayList<String>() {
         {
-            add("recomend");
-            add("dynamics");
-            add("discovery");
+            add("推荐");
+            add("动态");
+            add("单身团");
+            add("发现");
         }
     };
 
@@ -67,17 +69,19 @@ public class MeetFragment extends BaseFragment {
         //获取标签数据
         recomend_tab = mTabLayout.newTab().setText(mMeetTitleList.get(0));
         dynamics_tab = mTabLayout.newTab().setText(mMeetTitleList.get(1));
-        discovery_tab = mTabLayout.newTab().setText(mMeetTitleList.get(2));
+        singleGroup_tab = mTabLayout.newTab().setText(mMeetTitleList.get(2));
+        discovery_tab = mTabLayout.newTab().setText(mMeetTitleList.get(3));
         //添加tab
         mTabLayout.addTab(recomend_tab, 0, true);
         mTabLayout.addTab(dynamics_tab, 1, false);
-        mTabLayout.addTab(discovery_tab, 2, false);
+        mTabLayout.addTab(singleGroup_tab, 2, false);
+        mTabLayout.addTab(discovery_tab, 3, false);
 
         //创建一个viewpager的adapter
         mFragmentAdapter = new MeetFragmentAdapter(getFragmentManager(), mMeetTitleList);
         mViewPager.setAdapter(mFragmentAdapter);
         //mViewPager.setCurrentItem(0);
-        mViewPager.setOffscreenPageLimit(3);
+        mViewPager.setOffscreenPageLimit(4);
 
         //将TabLayout和ViewPager关联起来
         mTabLayout.setupWithViewPager(mViewPager);
