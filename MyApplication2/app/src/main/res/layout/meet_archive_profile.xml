@@ -26,6 +26,7 @@
     <TextView
         android:id="@+id/name"
         android:text="name"
+        android:textColor="@color/white"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="18dp"
@@ -47,35 +48,37 @@
         <TextView
             android:id="@+id/age"
             android:text="age"
+            android:textColor="@color/white"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <TextView
             android:text="·"
+            android:textColor="@color/white"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <TextView
             android:id="@+id/height"
             android:text="height"
+            android:textColor="@color/white"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <TextView
             android:text="·"
+            android:textColor="@color/white"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <TextView
             android:id="@+id/sex"
             android:text="sex"
+            android:textColor="@color/white"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <TextView
             android:text="·"
+            android:textColor="@color/white"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
-        <TextView
-            android:id="@+id/lives"
-            android:text="lives"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+
     </LinearLayout>
     <LinearLayout
         android:id="@+id/education"
@@ -90,16 +93,19 @@
         <TextView
             android:id="@+id/degree"
             android:text="degree"
+            android:textColor="@color/white"
             android:paddingBottom="5dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <TextView
             android:text="·"
+            android:textColor="@color/white"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <TextView
             android:id="@+id/major"
             android:text="major"
+            android:textColor="@color/white"
             android:paddingBottom="5dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
@@ -111,11 +117,13 @@
             android:id="@+id/university"
             android:text="university"
             android:paddingBottom="5dp"
+            android:textColor="@color/white"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </LinearLayout>
     <LinearLayout
         android:id="@+id/work"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -126,30 +134,59 @@
         <TextView
             android:id="@+id/job"
             android:text="job"
+            android:textColor="@color/white"
             android:paddingBottom="5dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <TextView
             android:text="·"
+            android:textColor="@color/white"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <TextView
             android:id="@+id/company"
             android:text="company"
+            android:textColor="@color/white"
             android:paddingBottom="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+    
+    <LinearLayout
+        android:id="@+id/living_wrap"
+        android:gravity="center_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="@+id/work"
+        app:layout_constraintStart_toStartOf="@+id/work"
+        app:layout_constraintTop_toBottomOf="@+id/work">
+        <TextView
+            android:text="@string/location"
+            android:textColor="@color/white"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/living"
+            android:layout_marginLeft="8dp"
+            android:textColor="@color/white"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </LinearLayout>
     
     <TextView
         android:id="@+id/profile_detail"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="right"
         android:layout_marginTop="8dp"
+        android:layout_marginRight="8dp"
         android:text="详细资料  >"
-        app:layout_constraintEnd_toEndOf="@+id/work"
-        app:layout_constraintStart_toStartOf="@+id/work"
-        app:layout_constraintTop_toBottomOf="@+id/work" />
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="@+id/living_wrap"
+        app:layout_constraintStart_toStartOf="@+id/living_wrap"
+        app:layout_constraintTop_toBottomOf="@+id/living_wrap" />
     
     <LinearLayout
         android:id="@+id/partner_requirement_label"
@@ -158,36 +195,28 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="18dp"
         android:paddingTop="8dp"
-        android:paddingBottom="8dp"
+        android:paddingBottom="16dp"
+        android:gravity="center_horizontal"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="@+id/profile_detail"
         app:layout_constraintStart_toStartOf="@+id/profile_detail"
         app:layout_constraintTop_toBottomOf="@+id/profile_detail">
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="0.5dp"
-            android:layout_centerVertical="true"
-            android:layout_gravity="center"
-            android:alpha="0.3"
-            android:layout_weight="6"
-            android:background="#999" />
+            android:text="@string/fa_heart"
+            android:textColor="@color/color_red"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
+            android:layout_marginLeft="3dp"
             android:alpha="0.8"
-            android:text="期待遇见"
+            android:text="期待一位"
             android:textColor="#999" />
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="0.5dp"
-            android:layout_gravity="center"
-            android:alpha="0.3"
-            android:layout_weight="6"
-            android:background="#999" />
     </LinearLayout>
     <com.nex3z.flowlayout.FlowLayout
         android:id="@+id/partner_requirement"
@@ -252,37 +281,6 @@
     </com.nex3z.flowlayout.FlowLayout>
     
     <LinearLayout
-        android:orientation="vertical"
-        android:id="@+id/illustration_wrap"
-        android:background="@color/white"
-        android:paddingTop="8dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/partner_requirement">
-        <View
-            android:id="@+id/divider2"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="?android:attr/listDivider" />
-
-        <TextView
-            android:id="@+id/illustration"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:background="@color/white"
-            android:text="hahahahah"
-            android:textColor="@color/color_blue"/>
-        <View
-            android:id="@+id/divider3"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="?android:attr/listDivider" />
-    </LinearLayout>
-
-    <LinearLayout
         android:id="@+id/interaction_wrap"
         android:background="@color/white"
         android:layout_width="match_parent"
@@ -291,7 +289,7 @@
         android:paddingBottom="18dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/illustration_wrap">
+        app:layout_constraintTop_toBottomOf="@+id/partner_requirement">
         <Button
             android:id="@+id/contacts"
             android:layout_width="0dp"
@@ -581,6 +579,33 @@
             android:layout_marginLeft="3dp"
             android:paddingRight="10dp"
             android:textColor="@color/color_blue" />
+    </LinearLayout>
+    
+        <LinearLayout
+        android:orientation="vertical"
+        android:id="@+id/illustration_wrap"
+        android:background="@color/white"
+        android:paddingTop="8dp"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/interaction_statistics_wrap">
+        <View
+            android:id="@+id/divider2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?android:attr/listDivider" />
+
+        <TextView
+            android:id="@+id/illustration"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:background="@color/white"
+            android:text="hahahahah"
+            android:textColor="@color/color_blue"/>
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
