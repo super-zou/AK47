@@ -15,17 +15,20 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
+    TabLayout.Tab main_tab;
     TabLayout.Tab meet_tab;
-    TabLayout.Tab activity_tab;
+    TabLayout.Tab contacts_tab;
+    //TabLayout.Tab activity_tab;
     TabLayout.Tab archive_tab;
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
     private MainFragmentAdapter mFragmentAdapter;
     private ArrayList<String> mTitleList = new ArrayList<String>() {
         {
-            add("meet");
-            add("activities");
-            add("archive");
+            add("主页");
+            add("遇见");
+            add("联系人");
+            add("我");
         }
     };
 
@@ -37,12 +40,14 @@ public class MainActivity extends AppCompatActivity {
         initView();
 
         //获取标签数据
-        meet_tab = mTabLayout.newTab().setText(mTitleList.get(0));
-        activity_tab = mTabLayout.newTab().setText(mTitleList.get(1));
-        archive_tab = mTabLayout.newTab().setText(mTitleList.get(2));
+        main_tab = mTabLayout.newTab().setText(mTitleList.get(0));
+        meet_tab = mTabLayout.newTab().setText(mTitleList.get(1));
+        contacts_tab = mTabLayout.newTab().setText(mTitleList.get(2));
+        archive_tab = mTabLayout.newTab().setText(mTitleList.get(3));
         //添加tab
+        mTabLayout.addTab(main_tab);
         mTabLayout.addTab(meet_tab);
-        mTabLayout.addTab(activity_tab);
+        mTabLayout.addTab(contacts_tab);
         mTabLayout.addTab(archive_tab);
 
         //创建一个viewpager的adapter
