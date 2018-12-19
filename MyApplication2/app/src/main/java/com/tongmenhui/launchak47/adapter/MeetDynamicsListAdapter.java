@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Handler;
 import android.os.Message;
+import com.bumptech.glide.Glide;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
@@ -135,9 +136,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
         if (!"".equals(meetDynamics.getPictureUri()) && !isScrolling) {
             picture_url = domain + "/" + meetDynamics.getPictureUri();
             //queueMemberInfo = new Volley().newRequestQueue(mContext);
-            queueMemberInfo = requestQueueSingleton.instance(mContext);
-            holder.headUri.setTag(picture_url);
-            HttpUtil.loadByImageLoader(queueMemberInfo, holder.headUri, picture_url, 110, 110);
+            Glide.with(mContext).load(HttpUtil.DOMAIN + meetDynamics.getPictureUri()).into(holder.headUri);
         } else {
             holder.headUri.setImageDrawable(mContext.getDrawable(R.mipmap.ic_launcher));
         }
@@ -175,14 +174,12 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
                         //将以上的属性赋给LinearLayout
                         linearLayout.setLayoutParams(layoutParams);
 
-                        NetworkImageView picture = new NetworkImageView(mContext);
+                        ImageView picture = new ImageView(mContext);
 
                         linearLayout.addView(picture);
                         holder.dynamicsGrid.addView(linearLayout);
 
-                        picture.setImageDrawable(mContext.getDrawable(R.mipmap.ic_launcher));
-                        picture.setTag(domain + "/" + picture_array[i]);
-                        HttpUtil.loadByImageLoader(queueDynamics, picture, domain + "/" + picture_array[i], 200, 200);
+                        Glide.with(mContext).load(HttpUtil.DOMAIN + picture_array[i]).into(picture);
                     }
                 }
 
@@ -490,7 +487,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
         TextView lives;
         TextView selfcondition;
         TextView requirement;
-        NetworkImageView headUri;
+        ImageView headUri;
         TextView illustration;
         TextView eyeView;
         TextView lovedView;
@@ -512,7 +509,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
             super(view);
             realname = (TextView) view.findViewById(R.id.name);
             lives = (TextView) view.findViewById(R.id.lives);
-            headUri = (NetworkImageView) view.findViewById(R.id.recommend_head_uri);
+            headUri =  view.findViewById(R.id.recommend_head_uri);
             selfcondition = (TextView) view.findViewById(R.id.self_condition);
             requirement = (TextView) view.findViewById(R.id.partner_requirement);
             illustration = (TextView) view.findViewById(R.id.illustration);
