@@ -120,9 +120,7 @@ public class MeetDynamicsFragment extends BaseFragment {
         recyclerView.setLoadingMoreProgressStyle(ProgressStyle.BallRotate);
         //mRecyclerView.setArrowImageView(R.drawable.);
 
-        recyclerView
-                .getDefaultRefreshHeaderView()
-                .setRefreshTimeVisible(true);
+        recyclerView.getDefaultRefreshHeaderView().setRefreshTimeVisible(true);
 
         recyclerView.getDefaultFootView().setLoadingHint(getString(R.string.loading_pull_up_tip));
         recyclerView.getDefaultFootView().setNoMoreHint(getString(R.string.loading_no_more));
