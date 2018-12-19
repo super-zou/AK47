@@ -7,15 +7,15 @@
     android:layout_height="wrap_content"
     android:id="@+id/reference_item">
 
-    <com.android.volley.toolbox.NetworkImageView
+    <ImageView
         android:id="@+id/referee_head_uri"
-        android:layout_width="31dp"
+        android:layout_width="30dp"
         android:layout_height="50dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-    </com.android.volley.toolbox.NetworkImageView>
+    </ImageView>
 
     <TextView
         android:id="@+id/referee_name"
