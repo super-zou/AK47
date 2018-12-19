@@ -84,13 +84,6 @@ public class MeetDynamicsFragment extends BaseFragment {
     private Handler handler;
     private DynamicsAddBroadcastReceiver mReceiver = new DynamicsAddBroadcastReceiver();
 
-    /*
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        // Slog.d(TAG, "=================onViewCreated===================");
-    }
-    */
 
     @Override
     protected int getLayoutId() {
