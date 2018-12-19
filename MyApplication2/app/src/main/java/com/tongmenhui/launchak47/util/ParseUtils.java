@@ -151,8 +151,7 @@ public class ParseUtils {
             for (int i = 0; i < length; i++) {
                 JSONObject discoveryObj = discovery.getJSONObject(i);
                 meetMemberInfo = setRecommendMemberInfo(discoveryObj);
-                ;
-
+                
                 list.add(meetMemberInfo);
             }
         } catch (JSONException e) {
