@@ -8,6 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.ImageView;
+import com.bumptech.glide.Glide;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.NetworkImageView;
@@ -59,9 +61,7 @@ public class MeetReferenceAdapter extends RecyclerView.Adapter<MeetReferenceAdap
         //holder.createdView.setText(referenceInfo.getCreated().toString());
 
         if (referenceInfo.getHeadUri() != null && !"".equals(referenceInfo.getHeadUri())) {
-            queue = RequestQueueSingleton.instance(mContext);
-            holder.refereeHeadUri.setTag(HttpUtil.DOMAIN + referenceInfo.getHeadUri());
-            HttpUtil.loadByImageLoader(queue, holder.refereeHeadUri, HttpUtil.DOMAIN + referenceInfo.getHeadUri(), 50, 50);
+            Glide.with(mContext).load(HttpUtil.DOMAIN + referenceInfo.getHeadUri()).into(holder.refereeHeadUri);
         } else {
             holder.refereeHeadUri.setImageDrawable(mContext.getDrawable(R.mipmap.ic_launcher));
         }
@@ -77,7 +77,7 @@ public class MeetReferenceAdapter extends RecyclerView.Adapter<MeetReferenceAdap
         TextView realName;
         TextView relation;
         TextView refereeProfile;
-        NetworkImageView refereeHeadUri;
+        ImageView refereeHeadUri;
         TextView illustration;
         TextView eyeView;
         TextView lovedView;
