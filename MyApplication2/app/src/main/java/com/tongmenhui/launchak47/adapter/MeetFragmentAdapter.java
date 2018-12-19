@@ -33,25 +33,26 @@ public class MeetFragmentAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        //Fragment fragment;
+        BaseFragment fragment;
         //Slog.d(TAG, "============title: "+mTitles.get(position));
         switch (position) {
             case 0:
-                return new MeetRecommendFragment();
+                fragment = new MeetRecommendFragment();
                 break;
             case 1:
-                return new MeetDynamicsFragment();
+                fragment = new MeetDynamicsFragment();
                 break;
             case 2:
-                return new MeetSingleGroupFragment();
+                fragment = new MeetSingleGroupFragment();
                 break;
             case 3:
-                return new MeetDiscoveryFragment();
+                fragment = new MeetDiscoveryFragment();
                 break;
             default:
-                return new MeetRecommendFragment();
+                fragment = new MeetRecommendFragment();
                 break;
         }
+        return fragment;
     }
 
     @Override
