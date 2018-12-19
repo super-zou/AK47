@@ -25,4 +25,8 @@
     <string name="location">&#xf041;</string>
     <string name="mars">&#xf222;</string>
     <string name="venus">&#xf221;</string>
+    <string name="home">&#xf015;</string>
+    <string name="contacts">&#xf2bc;</string>
+    <string name="meet">&#xf21e;</string>
+    <string name="me">&#xf2bd;</string>
 </resources>
