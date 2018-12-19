@@ -21,16 +21,13 @@
         android:id="@+id/tabs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
-        app:tabIndicatorColor="@color/colorPrimaryDark"
-        app:tabIndicatorHeight="0dp"
+        app:tabIndicatorColor="@color/background"
+        app:tabIndicatorHeight="2dp"
         app:tabTextColor="@color/colorWhite"
-        app:tabSelectedTextColor="@color/colorPrimaryDark"
+        app:tabSelectedTextColor="@color/background"
         app:tabMode="fixed"
-        app:tabBackground="@android:color/holo_blue_dark"
-        app:tabTextAppearance="@style/MyTabLayoutTextAppearance"
-        tools:tabBackground="@android:color/holo_blue_dark"
-        tools:tabSelectedTextColor="@color/colorPrimaryDark" />
-
+        app:tabBackground="@color/color_fa"
+        app:tabTextAppearance="@style/MyTabLayoutTextAppearance" >
+    </android.support.design.widget.TabLayout>
 
 </LinearLayout>
