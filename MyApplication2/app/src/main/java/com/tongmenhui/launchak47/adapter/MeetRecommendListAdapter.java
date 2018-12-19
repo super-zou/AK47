@@ -13,6 +13,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ImageView;
+import com.bumptech.glide.Glide;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.NetworkImageView;
@@ -106,10 +108,7 @@ public class MeetRecommendListAdapter extends RecyclerView.Adapter<MeetRecommend
 
         if (!"".equals(meet.getPictureUri()) && !isScrolling) {
             picture_url = HttpUtil.DOMAIN + meet.getPictureUri();
-            queue = RequestQueueSingleton.instance(mContext);
-
-            holder.headUri.setTag(picture_url);
-            HttpUtil.loadByImageLoader(queue, holder.headUri, picture_url, 110, 110);
+            Glide.with(mContext).load(HttpUtil.DOMAIN + meet.getPictureUri()).into(holder.headUri);
         } else {
             holder.headUri.setImageDrawable(mContext.getDrawable(R.mipmap.ic_launcher));
         }
@@ -261,7 +260,7 @@ public class MeetRecommendListAdapter extends RecyclerView.Adapter<MeetRecommend
         TextView lives;
         TextView selfcondition;
         TextView requirement;
-        NetworkImageView headUri;
+        ImageView headUri;
         TextView illustration;
         TextView eyeView;
         TextView lovedView;
@@ -276,7 +275,7 @@ public class MeetRecommendListAdapter extends RecyclerView.Adapter<MeetRecommend
             //addMeetInfo = (TextView)view.findViewById(R.id.meet_info_add);
             realname = (TextView) view.findViewById(R.id.name);
             lives = (TextView) view.findViewById(R.id.lives);
-            headUri = (NetworkImageView) view.findViewById(R.id.recommend_head_uri);
+            headUri =  view.findViewById(R.id.recommend_head_uri);
             selfcondition = (TextView) view.findViewById(R.id.self_condition);
             requirement = (TextView) view.findViewById(R.id.partner_requirement);
             illustration = (TextView) view.findViewById(R.id.illustration);
