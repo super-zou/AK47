@@ -29,7 +29,7 @@ public class HomeFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mContext = MyApplication.getContext();
-        View viewContent = inflater.inflate(R.layout.home_page, container, false);;
+        View viewContent = inflater.inflate(R.layout.home_page, container, false);
         initView(viewContent);
 
         return viewContent;
