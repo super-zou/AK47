@@ -59,6 +59,8 @@
             android:parentActivityName=".meet.MeetArchivesActivity"/>
         <activity android:name=".main.ArchiveActivity"
             android:launchMode="singleTask"/>
+        <activity android:name=".meet.SingleGroupDetailsActivity"
+            android:launchMode="singleTop"/>
     </application>
 
 </manifest>
