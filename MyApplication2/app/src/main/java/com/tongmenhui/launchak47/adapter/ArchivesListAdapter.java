@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.NetworkImageView;
+import com.bumptech.glide.Glide;
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.meet.DynamicsComment;
 import com.tongmenhui.launchak47.meet.MeetDynamics;
@@ -117,14 +118,12 @@ public class ArchivesListAdapter extends RecyclerView.Adapter<ArchivesListAdapte
                         //LinearLayout
                         linearLayout.setLayoutParams(layoutParams);
 
-                        NetworkImageView picture = new NetworkImageView(mContext);
+                        ImageView picture = new ImageView(mContext);
 
                         linearLayout.addView(picture);
                         holder.dynamicsGrid.addView(linearLayout);
 
-                        picture.setImageDrawable(mContext.getDrawable(R.mipmap.ic_launcher));
-                        picture.setTag(HttpUtil.DOMAIN + "/" + picture_array[i]);
-                        HttpUtil.loadByImageLoader(queueDynamics, picture, HttpUtil.DOMAIN + "/" + picture_array[i], 200, 200);
+                        Glide.with(mContext).load(HttpUtil.DOMAIN + picture_array[i]).into(picture);
                     }
                 }
 
@@ -255,7 +254,7 @@ public class ArchivesListAdapter extends RecyclerView.Adapter<ArchivesListAdapte
         TextView lives;
         TextView selfcondition;
         TextView requirement;
-        NetworkImageView headUri;
+        //NetworkImageView headUri;
         TextView illustration;
         TextView eyeView;
         TextView lovedView;
@@ -276,7 +275,7 @@ public class ArchivesListAdapter extends RecyclerView.Adapter<ArchivesListAdapte
             view.findViewById(R.id.meet_item_id).setVisibility(View.GONE);
             realname = (TextView) view.findViewById(R.id.name);
             lives = (TextView) view.findViewById(R.id.lives);
-            headUri = (NetworkImageView) view.findViewById(R.id.recommend_head_uri);
+            //headUri = (NetworkImageView) view.findViewById(R.id.recommend_head_uri);
             selfcondition = (TextView) view.findViewById(R.id.self_condition);
             requirement = (TextView) view.findViewById(R.id.partner_requirement);
             illustration = (TextView) view.findViewById(R.id.illustration);
