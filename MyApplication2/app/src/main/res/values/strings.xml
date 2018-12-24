@@ -59,5 +59,11 @@
     <string name="discovery">发现</string>
     <string name="interesting_person">推荐感兴趣的人</string>
     <string name="interesting_group">推荐单身团</string>
+    <string name="single_group_name_label">团名</string>
+    <string name="single_group_name_hint">单身团名字</string>
+    <string name="introduction_label">简介</string>
+    <string name="introduction_hint">介绍一下你创建的单身团</string>
+    <string name="org_label">组织</string>
+    <string name="org_hint">你所在的组织名称</string>
     <!--+End: add for archive, by zouhaichao 2018.12.6-->
 </resources>
