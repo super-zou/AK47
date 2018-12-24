@@ -1,7 +1,11 @@
 package com.tongmenhui.launchak47.meet;
 
+import android.content.Intent;
+import android.graphics.Typeface;
+
 import android.os.Bundle;
 import android.os.Debug;
+import android.support.design.widget.FloatingActionButton;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
@@ -12,6 +16,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import com.tongmenhui.launchak47.util.FontManager;
+import com.tongmenhui.launchak47.util.CreateSingleGroupDialogFragment;
+import com.tongmenhui.launchak47.util.MyLinearLayoutManager;
 
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
@@ -47,11 +54,10 @@ import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 public class MeetSingleGroupFragment extends BaseFragment {
     private static final boolean isDebug = true;
     private static final String TAG = "MeetSingleGroupFragment";
-    final int itemLimit = 5;
+    final int itemLimit = 3;
     private int mLoadSize = 0;
-    private static final int PAGE_SIZE = 6;
+    private static final int PAGE_SIZE = 5;
     private Handler handler;
-    private static final String SINGLE_GROUP_CREATE = HttpUtil.DOMAIN + "?q=single_group/create";
     private static final String SINGLE_GROUP_ADD = HttpUtil.DOMAIN + "?q=single_group/add";
     private static final String SINGLE_GROUP_APPLY = HttpUtil.DOMAIN + "?q=single_group/apply";
     private static final String SINGLE_GROUP_APPROVE = HttpUtil.DOMAIN + "?q=single_group/approve";
@@ -64,18 +70,21 @@ public class MeetSingleGroupFragment extends BaseFragment {
     private static final int GET_ALL_DONE = 1;
     private static final int UPDATE_ALL = 2;
 
-    private MeetSingleGroupSummaryAdapter meetSingleGroupSummaryAdapter;
+    private static final int GET_ALL_END = 3;
+
+    private MeetSingleGroupSummaryAdapter meetSingleGroupSummaryAdapter = new MeetSingleGroupSummaryAdapter(MyApplication.getContext());
     private XRecyclerView  recyclerView;
     private List<SingleGroup> mSingleGroupList = new ArrayList<>();
     
         @Override
     protected void initView(View convertView) {
         recyclerView = convertView.findViewById(R.id.single_group_summary_list);
-        meetSingleGroupSummaryAdapter = new MeetSingleGroupSummaryAdapter(MyApplication.getContext());
-
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        MyLinearLayoutManager linearLayoutManager = new MyLinearLayoutManager(getContext());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(linearLayoutManager);
+        
+        recyclerView.setRefreshProgressStyle(BallSpinFadeLoader);
+        recyclerView.setLoadingMoreProgressStyle(ProgressStyle.BallRotate);
         
         recyclerView.getDefaultRefreshHeaderView().setRefreshTimeVisible(true);
         recyclerView.getDefaultFootView().setLoadingHint(getString(R.string.loading_pull_up_tip));
@@ -110,8 +119,29 @@ public class MeetSingleGroupFragment extends BaseFragment {
                 loadData();
             }
         });
+        
+        meetSingleGroupSummaryAdapter.setItemClickListener(new MeetSingleGroupSummaryAdapter.MyItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Slog.d(TAG, "==========click : " + position);
+                Intent intent = new Intent(MyApplication.getContext(), SingleGroupDetailsActivity.class);
+                intent.putExtra("gid", mSingleGroupList.get(position).gid);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                startActivity(intent);
+            }
+        });
 
         recyclerView.setAdapter(meetSingleGroupSummaryAdapter);
+        
+        FloatingActionButton floatingActionButton = findView(R.id.create_single_group);
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CreateSingleGroupDialogFragment createSingleGroupDialogFragment = new CreateSingleGroupDialogFragment();
+                //createSingleGroupDialogFragment.setTargetFragment(MeetSingleGroupFragment.this, REQUEST_CODE);
+                createSingleGroupDialogFragment.show(getFragmentManager(), "CreateSingleGroupDialogFragment");
+            }
+        });
 
     }
     
@@ -133,7 +163,10 @@ public class MeetSingleGroupFragment extends BaseFragment {
                     if(isDebug) Slog.d(TAG, "==========response text : " + responseText);
                     if (responseText != null && !TextUtils.isEmpty(responseText)) {
                         mLoadSize = processResponse(responseText);
-                        handler.sendEmptyMessage(GET_ALL_DONE);
+                        
+                        if(mLoadSize > 0){
+                             handler.sendEmptyMessage(GET_ALL_DONE);
+                        }
                     }
                 }
             }
@@ -186,6 +219,8 @@ public class MeetSingleGroupFragment extends BaseFragment {
 
                 mSingleGroupList.add(singleGroup);
             }
+        }else {
+            handler.sendEmptyMessage(GET_ALL_END);
         }
 
         return SingleGroupArray!=null? SingleGroupArray.length():0;
@@ -204,16 +239,23 @@ public class MeetSingleGroupFragment extends BaseFragment {
         public void handleMessage(Message message) {
         switch (message.what) {
             case GET_ALL_DONE:
-                meetSingleGroupSummaryAdapter.setData(mSingleGroupList);
-                meetSingleGroupSummaryAdapter.notifyDataSetChanged();
-                recyclerView.refreshComplete();
-
                 if (mLoadSize < PAGE_SIZE) {
                     //loading finished
                     recyclerView.setNoMore(true);
                     recyclerView.setLoadingMoreEnabled(false);
                 }
 
+                meetSingleGroupSummaryAdapter.setData(mSingleGroupList, recyclerView.getWidth());
+                meetSingleGroupSummaryAdapter.notifyDataSetChanged();
+                recyclerView.refreshComplete();
+
+                break;
+           case GET_ALL_END:
+                Slog.d(TAG, "=============GET_ALL_END");
+                recyclerView.setNoMore(true);
+                recyclerView.setLoadingMoreEnabled(false);
+                meetSingleGroupSummaryAdapter.notifyDataSetChanged();
+                recyclerView.refreshComplete();
                 break;
             default:
                 break;
@@ -230,6 +272,10 @@ public class MeetSingleGroupFragment extends BaseFragment {
         public String created;
         public MeetMemberInfo leader;
         public List<String> headUrlList;
+    }
+    
+    private void createSingleGroup(){
+
     }
     
     static class MyHandler extends Handler {
