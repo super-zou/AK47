@@ -39,13 +39,31 @@
         app:layout_constraintLeft_toRightOf="@+id/leader_head_uri"
         app:layout_constraintTop_toTopOf="@+id/leader_head_uri"/>
         
+                <TextView
+            android:id="@+id/name_divider_label"
+            android:text="@string/dot"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toRightOf="@+id/leader_name"
+            app:layout_constraintTop_toTopOf="@+id/leader_name"/>
+        <TextView
+            android:id="@+id/leader_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/color_blue"
+            android:text="@string/group_leader"
+            app:layout_constraintLeft_toRightOf="@+id/name_divider_label"
+            app:layout_constraintTop_toTopOf="@+id/leader_name" />
+        
+        
     <TextView
-        android:id="@+id/university"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="18dp"
-        app:layout_constraintLeft_toRightOf="@+id/leader_name"
-        app:layout_constraintTop_toTopOf="@+id/leader_name"/>
+            android:id="@+id/university"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="18dp"
+            app:layout_constraintLeft_toRightOf="@+id/leader_label"
+            app:layout_constraintTop_toTopOf="@+id/leader_label"/>
+        
     <RelativeLayout
         android:visibility="visible"
         android:id="@+id/education_background"
