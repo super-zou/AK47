@@ -1,180 +1,302 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-
-    <include
-        android:id="@+id/custom_actionbar"
-        layout="@layout/custom_actionbar_common"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:fillViewport="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-        
-    <LinearLayout
-        android:id="@+id/base_profile"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:gravity="center_horizontal"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/custom_actionbar">
+        app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
-            android:id="@+id/head_uri"
-            android:layout_width="100dp"
-            android:layout_height="100dp" />
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/group_details_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            
+            <include
+                android:id="@+id/custom_actionbar"
+                layout="@layout/custom_actionbar_common"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/leader_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="name" />
+            <LinearLayout
+                android:id="@+id/base_profile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                          android:background="@color/background"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/custom_actionbar">
 
-        <TextView
-            android:id="@+id/leader_profile"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="profile" />
-    </LinearLayout>
+                <ImageView
+                    android:id="@+id/head_uri"
+                    android:layout_width="180dp"
+                    android:layout_height="180dp"
+                    android:elevation="8dp" />
+                
+                <TextView
+                    android:id="@+id/leader_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:textStyle="normal|bold" />
+
+                <TextView
+                    android:id="@+id/leader_profile"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:text="profile"
+                    android:textColor="@color/white"
+                    android:visibility="gone" />
+            </LinearLayout>
+            
+            <LinearLayout
+                android:id="@+id/education"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/background"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingTop="18dp"
+                app:layout_constraintEnd_toEndOf="@+id/base_profile"
+                app:layout_constraintStart_toStartOf="@+id/base_profile"
+                app:layout_constraintTop_toBottomOf="@+id/base_profile">
+                <TextView
+                    android:id="@+id/degree"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="5dp"
+                    android:text="degree"
+                    android:textColor="@color/white" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/dot"
+                    android:textColor="@color/white" />
+                
+                <TextView
+                    android:id="@+id/major"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="5dp"
+                    android:text="major"
+                    android:textColor="@color/white" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/dot"
+                    android:textColor="@color/white" />
+                
+                <TextView
+                    android:id="@+id/university"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="5dp"
+                    android:text="university"
+                    android:textColor="@color/white" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/work"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/background"
+                android:gravity="center"
+                android:paddingTop="18dp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="@+id/education"
+                app:layout_constraintStart_toStartOf="@+id/education"
+                app:layout_constraintTop_toBottomOf="@+id/education">
+                
+                 <TextView
+                    android:id="@+id/job"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="5dp"
+                    android:text="job"
+                    android:textColor="@color/white" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/dot"
+                    android:textColor="@color/white" />
+
+                <TextView
+                    android:id="@+id/company"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="5dp"
+                    android:text="company"
+                    android:textColor="@color/white" />
+            </LinearLayout>
+            
+            <LinearLayout
+                android:id="@+id/living_wrap"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/background"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal"
+                android:paddingTop="18dp"
+                android:paddingBottom="18dp"
+                app:layout_constraintEnd_toEndOf="@+id/work"
+                app:layout_constraintStart_toStartOf="@+id/work"
+                app:layout_constraintTop_toBottomOf="@+id/work">
+                
+                 <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/location"
+                    android:textColor="@color/white" />
+
+                <TextView
+                    android:id="@+id/living"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:textColor="@color/white" />
+            </LinearLayout>
+            
+            <TextView
+                android:id="@+id/leader_profile_detail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/background"
+                android:gravity="right"
+                android:padding="8dp"
+                android:text="详细资料  >"
+                android:textColor="@color/white"
+                app:layout_constraintEnd_toEndOf="@+id/living_wrap"
+                app:layout_constraintStart_toStartOf="@+id/living_wrap"
+                app:layout_constraintTop_toBottomOf="@+id/living_wrap" />
+            
+            <LinearLayout
+                android:id="@+id/count_org"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/leader_profile_detail">
+
+                <TextView
+                    android:id="@+id/group_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="group_name" />
+                
+                 <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="18dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginRight="18dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="?android:attr/listDivider" />
+
+                <TextView
+                    android:id="@+id/member_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="member count" />
+                
+                <View
+                    android:id="@+id/divider"
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="18dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginRight="18dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="?android:attr/listDivider" />
+
+                <TextView
+                    android:id="@+id/org"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="group org" />
+            </LinearLayout>
+            
+            <TextView
+                android:id="@+id/profile_detail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="profile detail"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/count_org" />
+
+            <android.support.v7.widget.GridLayout
+                android:id="@+id/member_summary"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="8dp"
+                android:background="@color/color_disabled"
+                app:columnCount="2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/profile_detail"></android.support.v7.widget.GridLayout>
+            
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@color/color_disabled"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/member_summary"/>
+        </android.support.constraint.ConstraintLayout>
+    </ScrollView>
     
     <LinearLayout
-        android:id="@+id/education"
-        android:orientation="horizontal"
+        android:id="@+id/join_wrap"
+        android:visibility="invisible"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
         android:gravity="center"
-        android:layout_marginTop="10dp"
-        app:layout_constraintEnd_toEndOf="@+id/base_profile"
-        app:layout_constraintStart_toStartOf="@+id/base_profile"
-        app:layout_constraintTop_toBottomOf="@+id/base_profile">
-        <TextView
-            android:id="@+id/degree"
-            android:text="degree"
-            android:textColor="@color/white"
-            android:paddingBottom="5dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" /> 
-        <TextView
-            android:text="·"
-            android:textColor="@color/white"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <TextView
-            android:id="@+id/major"
-            android:text="major"
-            android:textColor="@color/white"
-            android:paddingBottom="5dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <TextView
-            android:text="·"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <TextView
-            android:id="@+id/university"
-            android:text="university"
-            android:paddingBottom="5dp"
-            android:textColor="@color/white"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
-    
-    <LinearLayout
-        android:id="@+id/work"
-        android:visibility="gone"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_marginTop="10dp"
-        app:layout_constraintEnd_toEndOf="@+id/education"
-        app:layout_constraintStart_toStartOf="@+id/education"
-        app:layout_constraintTop_toBottomOf="@+id/education">
-        <TextView
-            android:id="@+id/job"
-            android:text="job"
-            android:textColor="@color/white"
-            android:paddingBottom="5dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-       <TextView
-            android:text="·"
-            android:textColor="@color/white"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <TextView
-            android:id="@+id/company"
-            android:text="company"
-            android:textColor="@color/white"
-            android:paddingBottom="5dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
-    
-    <LinearLayout
-        android:id="@+id/living_wrap"
-        android:gravity="center_horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="@+id/work"
-        app:layout_constraintStart_toStartOf="@+id/work"
-        app:layout_constraintTop_toBottomOf="@+id/work">
-        <TextView
-            android:text="@string/location"
-            android:textColor="@color/white"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <TextView
-            android:id="@+id/living"
-            android:layout_marginLeft="8dp"
-            android:textColor="@color/white"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
-    
-    <TextView
-        android:id="@+id/profile_detail"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="right"
-        android:layout_marginTop="8dp"
-        android:layout_marginRight="8dp"
-        android:text="详细资料  >"
-        android:textColor="@color/white"
-        app:layout_constraintEnd_toEndOf="@+id/living_wrap"
-        app:layout_constraintStart_toStartOf="@+id/living_wrap"
-        app:layout_constraintTop_toBottomOf="@+id/living_wrap" />
-
-    <View
-        android:id="@+id/divider"
-        android:layout_width="368dp"
-        android:layout_height="1dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
-        android:background="?android:attr/listDivider"
+        android:background="@color/background"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profile_detail" />
+        app:layout_constraintStart_toStartOf="parent">
+        <TextView
+            android:id="@+id/join"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:textStyle="normal|bold"
+            android:textSize="15sp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/join_group" />
+    </LinearLayout>
 
-    <android.support.v7.widget.GridLayout
-        android:id="@+id/member_summary"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider"
-        app:columnCount="2">
-    </android.support.v7.widget.GridLayout>
-
-</android.support.constraint.ConstraintLayout>
-        
+</RelativeLayout>
+       
