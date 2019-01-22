@@ -15,6 +15,9 @@ import android.widget.Toast;
 import com.tongmenhui.launchak47.main.MainActivity;
 import com.tongmenhui.launchak47.util.HttpUtil;
 import com.tongmenhui.launchak47.util.Slog;
+import android.support.design.widget.TextInputLayout;
+import android.widget.TextView;
+import com.luck.picture.lib.tools.StringUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,18 +32,23 @@ import okhttp3.Response;
 
 public class Login extends AppCompatActivity {
     private static final String TAG = "Login";
-    private static final String domain = "http://112.126.83.127:88";
-    private static final String token_url = domain + "?q=rest_services/user/token";
-    private static final String check_url = domain + "?q=account_manager/check_login_user";
-    private static final String login_url = domain + "?q=rest_services/user/login";
+    private static final String token_url = HttpUtil.DOMAIN + "?q=rest_services/user/token";
+    private static final String get_username_url = HttpUtil.DOMAIN + "?q=account_manager/getUsernameByPhonenumber";
+    private static final String login_url = HttpUtil.DOMAIN + "?q=rest_services/user/login";
     private EditText accountEdit;
     private EditText passwordEdit;
+    private boolean isLogin = false;
     private Button loginBtn;
     private ProgressDialog progressDialog;
     //Login form info
     private String account;
     private String password;
     private String token;
+    
+        private Button loginBtn;
+    private TextInputLayout phoneInputLayout;
+    private TextInputLayout passwordInputLayout;
+    private TextView retrievePassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,28 +56,95 @@ public class Login extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        
+        TextView smsVerificationCode = findViewById(R.id.sms_verification_code);
+        TextView loginByPassword = findViewById(R.id.login_by_password);
+        loginBtn = findViewById(R.id.login_button);
+        phoneInputLayout = findViewById(R.id.phoneInputLayout);
+        passwordInputLayout = findViewById(R.id.passwordInputLayout);
+        retrievePassword = findViewById(R.id.retrieve_password);
+        
+        smsVerificationCode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isLogin == true){
+                    isLogin = false;
+                }
+                loginBtn.setText("获取验证码");
+                if(passwordInputLayout.getVisibility() != View.GONE){
+                    passwordInputLayout.setVisibility(View.GONE);
+                }
+
+                if(retrievePassword.getVisibility() != View.GONE){
+                    retrievePassword.setVisibility(View.GONE);
+                }
+            }
+        });
+        
+        loginByPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isLogin == false){
+                    isLogin = true;
+                }
+                loginBtn.setText("登录");
+                if(passwordInputLayout.getVisibility() == View.GONE){
+                    passwordInputLayout.setVisibility(View.VISIBLE);
+                }
+
+                if(retrievePassword.getVisibility() == View.GONE){
+                    retrievePassword.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+        
+        
 
 
         accountEdit = (EditText) findViewById(R.id.account);
         passwordEdit = (EditText) findViewById(R.id.password);
         login_auto();
-        loginBtn = (Button) findViewById(R.id.login_button);
+        //loginBtn = (Button) findViewById(R.id.login_button);
 
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int type = 0;
-                account = accountEdit.getText().toString();
-                password = passwordEdit.getText().toString();
+                if(isLogin){//password login
+                    int type = 0;
+                    account = accountEdit.getText().toString();
+                    password = passwordEdit.getText().toString();
 
-                Slog.d(TAG, "account: " + account + " password: " + password);
-                RequestBody requestBody = new FormBody.Builder()
-                        .add("type", "0")
-                        .add("account", account)
-                        .add("password", password)
-                        .build();
-                showProgress();
-                goto_check(check_url, requestBody);
+                    if(TextUtils.isEmpty(account)){
+                        phoneInputLayout.setError("请输入手机号");
+                        return;
+                    }
+                    
+                    if (account.length() < 8){
+                        phoneInputLayout.setError("请输入正确的手机号");
+                        return;
+                    }
+
+                    if(TextUtils.isEmpty(password)){
+                        passwordInputLayout.setError("请输入密码");
+                        return;
+                    }
+
+                    if(password.length() < 6){
+                        passwordInputLayout.setError("密码至少6位");
+                        return;
+                    }
+                    
+                    Slog.d(TAG, "account: " + account + " password: " + password);
+                    RequestBody requestBody = new FormBody.Builder()
+                            .add("type", "0")
+                            .add("account", account)
+                            .add("password", password)
+                            .build();
+                    showProgress();
+                    get_username_by_phonenumber(get_username_url, requestBody);
+                }else {//join by verification code
+
+                }
             }
         });
 
@@ -85,7 +160,7 @@ public class Login extends AppCompatActivity {
         return true;
     }
 
-    private void goto_check(String address, RequestBody requestBody) {
+    private void get_username_by_phonenumber(String address, RequestBody requestBody) {
 
         HttpUtil.sendOkHttpRequest(Login.this, address, requestBody, new Callback() {
             int check_login_user = 0;
@@ -102,8 +177,27 @@ public class Login extends AppCompatActivity {
                         user_name = check_response.getString("user_name");
                         //Slog.d(TAG, "check_login_user: "+check_response.getString("check_login_user"));
                         //Slog.d(TAG, "user_name: "+check_response.getString("user_name"));
+                       if (check_login_user == 1) {//account not exist
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    closeProgressDialog();
+                                    phoneInputLayout.setError("输入的手机号不存在");
+                                    Toast.makeText(Login.this, "输入的手机号不存在", Toast.LENGTH_SHORT).show();
+                                }
+                            });
 
-                        if (check_login_user != 0) {
+                        }else if(check_login_user == 2){//password error
+                           runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    closeProgressDialog();
+                                    passwordInputLayout.setError("密码错误");
+                                    Toast.makeText(Login.this, "密码错误", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+
+                        }else {
                             SharedPreferences.Editor editor = getSharedPreferences("account_info", MODE_PRIVATE).edit();
                             editor.putString("account", account);
                             editor.putString("password", password);
@@ -181,7 +275,7 @@ public class Login extends AppCompatActivity {
                 .add("password", password)
                 .build();
 
-        HttpUtil.sendOkHttpRequest(Login.this, login_url, requestBody, new Callback() {
+        HttpUtil.loginOkHttpRequest(Login.this, token, login_url, requestBody, new Callback() {
             int check_login_user = 0;
             String user_name;
 
