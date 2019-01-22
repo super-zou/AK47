@@ -41,23 +41,34 @@ public class ParseUtils {
                 return null;
             }
             JSONArray jsonArray = response.getJSONArray("response");
-            if (null == jsonArray) {
-                return null;
-            }
-            list = new ArrayList<MeetMemberInfo>();
-            int length = jsonArray.length();
+            list = getMeetInfoListFromJsonArray(jsonArray);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
             
+public static List<MeetMemberInfo> getMeetInfoListFromJsonArray(JSONArray jsonArray){
+        List<MeetMemberInfo> list = null;
+        if (null == jsonArray) {
+            return null;
+        }
+        list = new ArrayList<MeetMemberInfo>();
+        int length = jsonArray.length();
+        try {
             for (int i = 0; i < length; i++) {
                 MeetMemberInfo meetMemberInfo = new MeetMemberInfo();
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 setBaseProfile(meetMemberInfo, jsonObject);
                 list.add(meetMemberInfo);
             }
-        } catch (JSONException e) {
+        }catch (JSONException e){
             e.printStackTrace();
         }
         return list;
-    }
+    }            
+            
+
 
     public static List<MeetMemberInfo> getRecommendMeetList(String responseText) {
         List<MeetMemberInfo> list = null;
