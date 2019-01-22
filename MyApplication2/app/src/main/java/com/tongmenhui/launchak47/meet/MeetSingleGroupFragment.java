@@ -272,6 +272,9 @@ public class MeetSingleGroupFragment extends BaseFragment {
         public String created;
         public MeetMemberInfo leader;
         public List<String> headUrlList;
+                public int authorStatus = -1;
+        public boolean isLeader = false;
+        public List<MeetMemberInfo> memberInfoList;
     }
     
     private void createSingleGroup(){
