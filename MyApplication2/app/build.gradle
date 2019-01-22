@@ -54,5 +54,6 @@ dependencies {//for third party
     implementation 'com.android.support:cardview-v7:27.1.1'
     implementation files('libs/MiPush_SDK_Client_3_6_12.jar')
     implementation 'com.parkingwang:okhttp3-loginterceptor:latest.integration'
+    implementation 'com.amap.api:location:latest.integration'
 }
 
