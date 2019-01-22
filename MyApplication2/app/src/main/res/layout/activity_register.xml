@@ -9,7 +9,17 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
 
-    tools:context="com.tongmenhui.launchak47.Register">
+   tools:context="com.tongmenhui.launchak47.join.VerificationCodeJoin"
+    android:background="@color/background">
+
+    <include layout="@layout/custom_actionbar_common"/>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/input_phone_number"
@@ -48,13 +58,5 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/validate_number"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-    </LinearLayout>
-
 
 </FrameLayout>
