@@ -115,6 +115,8 @@ public class MeetSingleGroupSummaryAdapter extends RecyclerView.Adapter<MeetSing
                 layoutParams.rightMargin = 2;
                 imageView.setLayoutParams(layoutParams);
                 imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+                holder.memberSummary.addView(imageView);
+                Glide.with(mContext).load(HttpUtil.DOMAIN + singleGroup.headUrlList.get(i)).into(imageView);
           }
         }
         holder.leaderProfile.setOnClickListener(new View.OnClickListener() {
