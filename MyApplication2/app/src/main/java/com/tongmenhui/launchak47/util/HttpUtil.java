@@ -30,7 +30,7 @@ import static android.content.Context.MODE_PRIVATE;
 public class HttpUtil {
     public static final String TAG = "HttpUtil";
     /*+Begin: added by xuchunping 2018.7.19*/
-    public static final String DOMAIN = "http://112.126.83.127:88/";
+    public static final String DOMAIN = "http://112.126.83.127:81/";
     /*-End: added by xuchunping 2018.7.19*/
     private static String Cookie;
 
@@ -59,6 +59,19 @@ public class HttpUtil {
                 request = new Request.Builder().url(address).build();
             }
 
+        }
+
+        client.newCall(request).enqueue(callback);
+    }
+    
+    public static void loginOkHttpRequest(Context context, String token, String address, RequestBody requestBody, okhttp3.Callback callback) {
+        OkHttpClient client = new OkHttpClient();
+        Request request;
+
+        if (requestBody != null) {
+            request = new Request.Builder().url(address).addHeader("X-CSRF-Token", token).post(requestBody).build();
+        } else {
+            request = new Request.Builder().url(address).addHeader("X-CSRF-Token", token).build();
         }
 
         client.newCall(request).enqueue(callback);
