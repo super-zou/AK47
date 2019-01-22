@@ -5,7 +5,7 @@
     <string name="login_phone">手机号登录</string>
     <string name="register">注册</string>
     <string name="title_activity_login">Login</string>
-    <string name="app_name">同门汇</string>
+    <string name="app_name">荷塘</string>
 
     <string name="meet_text">遇见</string>
     <string name="activity_text">活动</string>
@@ -20,7 +20,7 @@
     <string name="register_account_hint">请输入手机号码或邮箱</string>
     <string name="register_verify_code_hint">请输入验证码</string>
     <string name="register_password_hint">请输入密码</string>
-    <string name="register_password_confirm_hint">请输入重复密码</string>
+    <string name="register_password_confirm_hint">再次请确认密码</string>
     <string name="loading_pull_up_tip">上拉查看更多</string>
     <string name="loading_no_more">全部加载完成</string>
     <string name="dynamics_empty">未发布动态</string>
@@ -66,4 +66,59 @@
     <string name="org_label">组织</string>
     <string name="org_hint">你所在的组织名称</string>
     <!--+End: add for archive, by zouhaichao 2018.12.6-->
+    <string name="dot">" · "</string>
+    <string name="group_leader">团长</string>
+    <string name="join_group">+加入</string>
+    <!--+End: add for archive, by zouhaichao 2018.12.6-->
+    <string name="join_hetang">加入荷塘</string>
+    <string name="enter_phone">输入手机号</string>
+    <string name="phone_is_empty_error">请输入手机号</string>
+    <string name="phone_is_not_exist">输入的手机号不存在</string>
+    <string name="phone_is_error">请输入正确的手机号</string>
+    <string name="enter_password">输入密码，最少6位</string>
+    <string name="password_is_empty_error">请输入密码</string>
+     <string name="password_error">密码错误</string>
+    <string name="password_length_error">密码至少6位</string>
+    <string name="password_repeat_error">密码不一致</string>
+    <string name="get_verification_code">获取验证码</string>
+    <string name="sms_verification_code">验证码加入</string>
+    <string name="enter_verification_code">输入验证码</string>
+    <string name="send_verification_code">已发送验证码至</string>
+    <string name="request_verification_code">请输入验证码</string>
+    <string name="verify_verification_code_failed">校验失败，请重新获取</string>
+    <string name="login_by_password">密码登录</string>
+    <string name="login_failed">密码失败</string>
+    <string name="logining_progress">正在登陆...</string>
+    <string name="hetang_introduction">了解一个人，光有眼缘是不够的，才华、品格、性情等内在素养更重要。
+        荷塘能让你由外至内全方位地了解一个人，也能让你充分展示自己，遇见对的人。</string>
+    <string name="join">加入</string>
+    <string name="confirm">确认</string>
+    <string name="or">或</string>
+    <string name="account_exist">账号已存在，请输入密码登陆</string>
+    <string name="request_new_password">重新设置密码后登陆</string>
+    <string name="request_again">重新获取</string>
+    <string name="login_new_password">新密码登录</string>
+    <string name="prev">上一步</string>
+    <string name="next">下一步</string>
+    <string name="nickname">昵称</string>
+    <string name="name_option">姓名(可选)</string>
+    <string name="sex">性别</string>
+    <string name="male">男</string>
+    <string name="female">女</string>
+    <string name="living">居住地</string>
+    <string name="locating">正在定位</string>
+    <string name="select_living">选择居住地</string>
+    <string name="nickname_is_empty">请输入昵称</string>
+    <string name="location_service_not_available">定位功能申请</string>
+    <string name="location_permission_request">荷塘将使用手机的定位功能，帮您定位地址信息；\n如果禁用则部分功能不可用</string>
+    <string name="open_now">立即开启</string>
+    <string name="cancel">取消</string>
+    <string name="applied_wait">已申请入团，待审核</string>
+    <string name="approvied">同意加入</string>
+    <string name="member_count_suffix">位成员</string>
+    <string name="age">岁</string>
+    <string name="height">CM</string>
+    <string name="location_error">定位失败，请手动选择</string>
+    <string name="correction">更正</string>
+    <string name="location_select_notice">请选择居住地</string>
 </resources>
