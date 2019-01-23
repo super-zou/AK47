@@ -128,13 +128,14 @@ public class VerificationCodeJoin extends BaseAppCompatActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
-                Slog.d(TAG, "checkRigister response : " + responseText + " " + TextUtils.isEmpty(responseText));
+                Slog.d(TAG, "checkRigister response : " + responseText);
 
                     try {
                         if (!TextUtils.isEmpty(responseText)) {
                             JSONObject check_response = new JSONObject(responseText);
-                            boolean accountExist = check_response.optBoolean("account");
-                            if(accountExist != false){
+                            JSONObject accountObj = check_response.optJSONObject("account");
+                            Slog.d(TAG, "checkRigister response accountObj: " + accountObj);
+                            if(accountObj != null){
                                String name = "";
                                 updatePassword(name);
                             }else {
