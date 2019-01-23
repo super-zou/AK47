@@ -1,4 +1,4 @@
-package com.tongmenhui.launchak47;
+package com.tongmenhui.launchak47.join;
 
 import android.os.Bundle;
 import android.text.Editable;
