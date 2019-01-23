@@ -1,4 +1,4 @@
-package com.tongmenhui.launchak47;
+package com.tongmenhui.launchak47.join;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
