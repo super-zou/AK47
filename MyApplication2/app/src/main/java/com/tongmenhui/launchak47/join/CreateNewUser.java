@@ -117,7 +117,7 @@ public class CreateNewUser extends AppCompatActivity {
         manualSelectBtn = findViewById(R.id.manual_select);
         sexSelect = findViewById(R.id.sexRG);
         livingTextView = findViewById(R.id.living);
-        locatingProgressBar = findViewById(R.id.l
+        locatingProgressBar = findViewById(R.id.locating_progressbar);
         livingSelectNotice = findViewById(R.id.living_select_notice);
 
         actionBtn.setOnClickListener(new View.OnClickListener() {
