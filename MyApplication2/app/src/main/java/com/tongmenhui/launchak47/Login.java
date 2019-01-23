@@ -45,7 +45,7 @@ public class Login extends AppCompatActivity {
     private String password;
     private String token;
     
-        private Button loginBtn;
+    //private Button loginBtn;
     private TextInputLayout phoneInputLayout;
     private TextInputLayout passwordInputLayout;
     private TextView retrievePassword;
