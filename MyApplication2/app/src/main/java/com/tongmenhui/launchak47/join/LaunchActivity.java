@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.view.WindowManager;
 
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.main.MainActivity;
@@ -56,10 +57,9 @@ public class LaunchActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN , WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_login);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
+        
         TextView smsVerificationCode = findViewById(R.id.sms_verification_code);
         
         TextView loginByPassword = findViewById(R.id.login_by_password);
