@@ -29,6 +29,7 @@
         <item name="android:textSize">16sp</item>
     </style>
     <!--+End: add for checkbox color by zouhaichao, 2018.11.27-->
+    
     <!--+Begin: add for edittext color by zouhaichao, 2019.1.12-->
     <style name="MyEditText" parent="Theme.AppCompat.Light">
         <item name="colorControlNormal">@color/line_border</item>
