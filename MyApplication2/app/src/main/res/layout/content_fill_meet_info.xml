@@ -3,150 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/content_fill_meet_info"
+              android:background="@color/white"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.tongmenhui.launchak47.meet.FillMeetInfoActivity"
-    tools:showIn="@layout/activity_fill_meet_info"
+    tools:showIn="@layout/fill_meet_info"
     android:orientation="vertical">
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <LinearLayout
-            android:id="@+id/self"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <TextView
-                android:text="个人信息"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-            <!--sex-->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <TextView
-                    android:text="性别"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-                <RadioGroup
-                    android:id="@+id/self_sex"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                    <RadioButton
-                        android:text="男"
-                        android:id="@+id/self_sex_male"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent" />
-                    <RadioButton
-                        android:text="女"
-                        android:id="@+id/self_sex_female"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent" />
-                </RadioGroup>
-            </LinearLayout>
-            <!--birthday-->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <TextView
-                    android:text="生日"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-                <org.angmarch.views.NiceSpinner
-                    android:id="@+id/nice_spinner_years"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="4dp"
-                    android:entries="@array/years"/>
-                <org.angmarch.views.NiceSpinner
-                    android:id="@+id/nice_spinner_months"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="4dp"
-                    android:entries="@array/months"/>
-                <org.angmarch.views.NiceSpinner
-                    android:id="@+id/nice_spinner_days"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="4dp"
-                    android:entries="@array/days"/>
-            </LinearLayout>
-            <!--height-->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <TextView
-                    android:text="身高"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-                <org.angmarch.views.NiceSpinner
-                    android:id="@+id/nice_spinner_height"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="4dp"
-                    android:entries="@array/heights"/>
-            </LinearLayout>
-            <!--degree-->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <TextView
-                    android:text="学历"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-                <org.angmarch.views.NiceSpinner
-                    android:id="@+id/nice_spinner_degree"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="4dp"
-                    android:entries="@array/degrees"/>
-            </LinearLayout>
-            <!--lives-->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <TextView
-                    android:text="居住地"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-                <Button
-                    android:id="@+id/self_region"
-                    android:text="选择地区"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
-            <!--hobbies-->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="兴趣爱好" />
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <EditText
-                    android:hint="输入兴趣"
-                    android:layout_weight="10"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-                <Button
-                    android:layout_weight="1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="确定" />
-            </LinearLayout>
-        </LinearLayout>
         <LinearLayout
             android:orientation="vertical"
             android:id="@+id/requirement"
