@@ -6,7 +6,10 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.view.WindowManager;
 import android.widget.TextView;
+import android.os.Build;
 
 import com.tongmenhui.launchak47.R;
 import com.tongmenhui.launchak47.adapter.MainFragmentAdapter;
