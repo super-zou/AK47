@@ -1,6 +1,7 @@
 package com.tongmenhui.launchak47.main;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -37,8 +38,10 @@ public class HomeFragment extends BaseFragment {
     
     @Override
     protected void initView(View view) {
+                Typeface font = Typeface.createFromAsset(getContext().getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
+        FontManager.markAsIconContainer(view.findViewById(R.id.home_page), font);
         final HomePageAdapter homePageAdapter = new HomePageAdapter(mContext);
-        XRecyclerView xRecyclerView = view.findViewById(R.id.home_page);
+        XRecyclerView xRecyclerView = view.findViewById(R.id.home_page_recycler_view);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
