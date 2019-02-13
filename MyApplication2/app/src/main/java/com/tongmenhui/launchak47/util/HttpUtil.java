@@ -161,9 +161,4 @@ public class HttpUtil {
 
     }
 
-    public static void uploadImage() {
-
-    }
-
-
 }
