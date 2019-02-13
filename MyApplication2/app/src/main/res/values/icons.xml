@@ -7,6 +7,7 @@
     <string name="fa_thumbs_O_up">&#xf087;</string>
     <string name="fa_photo">&#xf03e;</string>
     <string name="fa_comment">&#xf075;</string>
+    <string name="fa_camera">&#xf030;</string>
     <string name="fa_camera_retro">&#xf083;</string>
     <string name="fa_star_o">&#xf005;</string>
     <string name="chevron_right">&#xf054;</string>
@@ -20,6 +21,7 @@
     <string name="impress">&#xf1b0;</string>
     <string name="group">&#xf0c0;</string>
     <string name="left_angle">&#xf104;</string>
+    <string name="right_angle">&#xf105;</string>
     <string name="graduation">&#xf19d;</string>
     <string name="work">&#xf2bb;</string>
     <string name="location">&#xf041;</string>
@@ -31,4 +33,7 @@
     <string name="me">&#xf2bd;</string>
     <string name="spinner">&#xf110;</string>
     <string name="refresh">&#xf021;</string>
+    <string name="universal_access">&#xf29a;</string>
+    <string name="circle">&#xf111;</string>
+    <string name="circle_o">&#xf10c;</string>
 </resources>
