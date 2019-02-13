@@ -244,4 +244,33 @@ public static List<MeetMemberInfo> getMeetInfoListFromJsonArray(JSONArray jsonAr
             }
         });
     }
+    
+    public static UserProfile getUserProfileFromJSONObject(JSONObject userObject){
+        UserProfile userProfile = new UserProfile();
+
+        JSONObject userExt = userObject.optJSONObject("ext");
+        userProfile.setUid(userObject.optInt("uid"));
+        userProfile.setName(userObject.optString("name"));
+        userProfile.setCreated(userObject.optInt("created"));
+        userProfile.setAccess(userObject.optInt("access"));
+        userProfile.setLogin(userObject.optInt("login"));
+        userProfile.setPictureFid(userObject.optInt("picture"));
+        userProfile.setInit(userObject.optString("init"));
+        //for ext data
+        userProfile.setAvatar(userExt.optString("avatar"));
+        userProfile.setSex(userExt.optInt("sex"));
+        userProfile.setSituation(userExt.optInt("situation"));
+        userProfile.setRealname(userExt.optString("realname"));
+        userProfile.setLiving(userExt.optString("living"));
+        userProfile.setMajor(userExt.optString("major"));
+        userProfile.setDegree(userExt.optString("degree"));
+        userProfile.setUniversity(userExt.optString("university"));
+        userProfile.setTitle(userExt.optString("title"));
+        userProfile.setIndustry(userExt.optString("industry"));
+        userProfile.setSummary(userExt.optString("summary"));
+        userProfile.setIntroduction(userExt.optString("introduction"));
+        userProfile.setCid(userExt.optInt("cid"));
+
+        return userProfile;
+    }
 }
