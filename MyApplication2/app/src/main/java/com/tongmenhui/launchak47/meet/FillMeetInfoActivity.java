@@ -1,5 +1,32 @@
 package com.tongmenhui.launchak47.meet;
 
+import android.Manifest;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.support.v4.view.ViewPager;
+import android.util.Log;
+import android.widget.GridView;
+import android.widget.TextView;
+import com.luck.picture.lib.PictureSelector;
+import com.luck.picture.lib.config.PictureConfig;
+import com.luck.picture.lib.config.PictureMimeType;
+import com.luck.picture.lib.entity.LocalMedia;
+import com.luck.picture.lib.permissions.RxPermissions;
+import com.luck.picture.lib.tools.PictureFileUtils;
+import com.tongmenhui.launchak47.adapter.GridImageAdapter;
+import com.tongmenhui.launchak47.main.AddDynamicsActivity;
+import com.tongmenhui.launchak47.util.FontManager;
+import com.tongmenhui.launchak47.util.Slog;
+
+import java.io.File;
+import java.util.ArrayList;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
+
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -38,10 +65,11 @@ import okhttp3.Response;
 //import com.google.gson.JsonSerializer;
 
 public class FillMeetInfoActivity extends AppCompatActivity {
+        private static final String TAG = "FillMeetInfoActivity";
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     private final static int SELFREQUEST = 1;
     private final static int REQUIREREQUEST = 2;
-    private static final String fillMeetInfoUrl = "http://112.126.83.127:88/?q=meet/look_friend";
+    private static final String fillMeetInfoUrl = HttpUtil.DOMAIN +"?q=meet/look_friend";
     Resources res;
     String[] years;
     String[] months;
@@ -67,13 +95,203 @@ public class FillMeetInfoActivity extends AppCompatActivity {
     boolean REQUIRELIVESELECTED = false;
     String selfConditionJson;
     String partnerRequirementJson;
+    
+        LinearLayout uploadPicture;
+    LinearLayout pageIndicator;
+    GridView morePicture;
+    Button addAvatar;
+    TextView addMorePicture;
+    TextView pageLeft;
+    TextView pageMiddle;
+    TextView pageRight;
+    private int themeId;
+    private Context mContext;
+    
+        private List<LocalMedia> selectList = new ArrayList<>();
+    private List<LocalMedia> avatarSelectList = new ArrayList<>();
+    private GridImageAdapter adapter;
+    private List<File> selectFileList = new ArrayList<>();
+    private List<File> avatarSelectFileList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fill_meet_info);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        mContext = this;
+        boolean avatarSet = getIntent().getBooleanExtra("avatarSet", false);
+
+        initView();
+
+        uploadPicture(avatarSet);   
+    }
+    
+    private void  initView(){
+        addAvatar = findViewById(R.id.add_avatar);
+        addMorePicture = findViewById(R.id.add_more_picture);
+        morePicture = findViewById(R.id.more_picture);
+        pageLeft = findViewById(R.id.page_left);
+        pageMiddle = findViewById(R.id.page_middle);
+        pageRight = findViewById(R.id.page_right);
+        uploadPicture = findViewById(R.id.upload_picture);
+        pageIndicator = findViewById(R.id.page_indicator);
+
+        Typeface font = Typeface.createFromAsset(getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
+        FontManager.markAsIconContainer(findViewById(R.id.fill_meet_info), font);
+    }
+    
+        private void uploadPicture(boolean avatarSet){
+        if(avatarSet == false){
+
+            RxPermissions permissions = new RxPermissions(this);
+            permissions.request(Manifest.permission.WRITE_EXTERNAL_STORAGE).subscribe(new Observer<Boolean>() {
+                @Override
+                public void onSubscribe(Disposable d) {
+                }
+                @Override
+                public void onNext(Boolean aBoolean) {
+                    if (aBoolean) {
+                        PictureFileUtils.deleteCacheDirFile(mContext);
+                    } else {
+                        Toast.makeText(mContext,
+                                getString(R.string.picture_jurisdiction), Toast.LENGTH_SHORT).show();
+                    }
+                }
+                
+                @Override
+                public void onError(Throwable e) {
+                }
+
+                @Override
+                public void onComplete() {
+                }
+            });
+            
+            if(uploadPicture.getVisibility() == View.GONE){
+                uploadPicture.setVisibility(View.VISIBLE);
+            }
+
+            if(pageMiddle.getVisibility() == View.GONE){
+                pageMiddle.setVisibility(View.VISIBLE);
+            }
+            
+            themeId = R.style.picture_default_style;
+
+            addAvatar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    PictureSelector.create(FillMeetInfoActivity.this)
+                            .openGallery(PictureMimeType.ofImage())// 全部.PictureMimeType.ofAll()、图片.ofImage()、视频.ofVideo()、音频.ofAudio()
+                            .theme(themeId)// 主题样式设置 具体参考 values/styles   用法：R.style.picture.white.style
+                            .maxSelectNum(1)// 最大图片选择数量
+                            .minSelectNum(1)// 最小选择数量
+                            .selectionMode(PictureConfig.SINGLE)// 多选 or 单选
+                            .previewImage(true)// 是否可预览图片
+                            .isCamera(true)// 是否显示拍照按钮
+                            .isZoomAnim(true)// 图片列表点击 缩放效果 默认true
+                        .enableCrop(true)// 是否裁剪
+                            .compress(true)// 是否压缩
+                            .synOrAsy(true)//同步true或异步false 压缩 默认同步
+                            .glideOverride(180, 180)// glide 加载宽高，越小图片列表越流畅，但会影响列表图片浏览的清晰度
+                            .withAspectRatio(1, 1)// 裁剪比例 如16:9 3:2 3:4 1:1 可自定义
+                        .isGif(true)// 是否显示gif图片
+                            .freeStyleCropEnabled(false)// 裁剪框是否可拖拽
+                            .showCropFrame(false)// 是否显示裁剪矩形边框 圆形裁剪时建议设为false
+                            .showCropGrid(true)// 是否显示裁剪矩形网格 圆形裁剪时建议设为false
+                            .openClickSound(true)// 是否开启点击声音
+                            .cropCompressQuality(90)// 裁剪压缩质量 默认100
+                            .minimumCompressSize(100)// 小于100kb的图片不压缩
+                            .cropWH(160, 160)// 裁剪宽高比，设置如果大于图片本身宽高则无效
+                            .rotateEnabled(true) // 裁剪是否可旋转图片
+                            .scaleEnabled(true)// 裁剪是否可放大缩小图片
+                            .forResult(PictureConfig.SINGLE);//结果回调onActivityResult code
+                    }
+            });
+        }
+    }
+    
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Slog.d(TAG, "=======uri: "+data.getData());
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case PictureConfig.SINGLE:
+                    // 图片选择结果回调
+                    avatarSelectList = PictureSelector.obtainMultipleResult(data);
+                    // 例如 LocalMedia 里面返回三种path
+                    // 1.media.getPath(); 为原图path
+                    // 2.media.getCutPath();为裁剪后path，需判断media.isCut();是否为true
+                    // 3.media.getCompressPath();为压缩后path，需判断media.isCompressed();是否为true
+                    // 如果裁剪并压缩了，已取压缩路径为准，因为是先裁剪后压缩的
+                    Slog.d(TAG, "Selected pictures: " + avatarSelectList.size());
+                    //activity_picture_array = new String[selectList.size()];
+                    for (LocalMedia media : avatarSelectList) {
+
+                        Log.i("图片-----》", media.getPath());
+                        Log.d("压缩图片------->>", media.getCompressPath());
+                        Slog.d(TAG, "===========num: " + media.getNum());
+                        //activity_picture_array[media.getNum() - 1] = media.getCompressPath();
+                        avatarSelectFileList.add(new File(media.getCompressPath()));
+
+                        Bitmap bitmap = BitmapFactory.decodeFile(media.getCompressPath());
+                        Drawable drawable = new BitmapDrawable(getResources(),bitmap);
+                        addAvatar.setBackground(drawable);
+                    }
+
+                    break;
+                    case PictureConfig.CHOOSE_REQUEST:
+                    // 图片选择结果回调
+                    selectList = PictureSelector.obtainMultipleResult(data);
+                    // 例如 LocalMedia 里面返回三种path
+                    // 1.media.getPath(); 为原图path
+                    // 2.media.getCutPath();为裁剪后path，需判断media.isCut();是否为true
+                    // 3.media.getCompressPath();为压缩后path，需判断media.isCompressed();是否为true
+                    // 如果裁剪并压缩了，已取压缩路径为准，因为是先裁剪后压缩的
+                    Slog.d(TAG, "Selected pictures: " + selectList.size());
+                    //activity_picture_array = new String[selectList.size()];
+                    for (LocalMedia media : selectList) {
+
+                        Log.i("图片-----》", media.getPath());
+                        Log.d("压缩图片------->>", media.getCompressPath());
+                        Slog.d(TAG, "===========num: " + media.getNum());
+                        //activity_picture_array[media.getNum() - 1] = media.getCompressPath();
+                        selectFileList.add(new File(media.getCompressPath()));
+
+                        /*
+                        Bitmap bitmap = BitmapFactory.decodeFile(media.getCompressPath());
+                        Drawable drawable = new BitmapDrawable(getResources(),bitmap);
+                        addAvatar.setBackground(drawable);
+                        */
+                    }
+                    if(false){
+                        adapter.setList(selectList);
+                        adapter.notifyDataSetChanged();
+                    }
+                    break;
+            }
+        }
+        
+        if (resultCode == 2) {
+            String SelectedResult = data.getStringExtra("SelectedResult");
+            if (requestCode == SELFREQUEST) {
+                //设置结果显示框的显示数值
+                Button button = (Button) findViewById(R.id.self_region);
+                button.setText(SelectedResult);
+                selfCondition.setLives(SelectedResult);
+                SELFLIVESELECTED = true;
+
+            } else {
+                //设置结果显示框的显示数值
+                Button button = (Button) findViewById(R.id.require_region);
+                button.setText(SelectedResult);
+                partnerRequirement.setRequirementLives(SelectedResult);
+                REQUIRELIVESELECTED = true;
+            }
+        }
+    }
+    
+    
+        private void fillMeetInfo(){
 
         res = getResources();
         years = res.getStringArray(R.array.years);
@@ -89,23 +307,6 @@ public class FillMeetInfoActivity extends AppCompatActivity {
 
         final LinearLayout selfLayout = (LinearLayout) findViewById(R.id.self);
         final LinearLayout requireLayout = (LinearLayout) findViewById(R.id.requirement);
-
-        RadioGroup self_sex = (RadioGroup) findViewById(R.id.self_sex);
-        self_sex.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (checkedId == R.id.self_sex_male) {
-                    //Toast.makeText(FillMeetInfoActivity.this,"male", Toast.LENGTH_SHORT).show();
-                    //meetMemberInfo.setSelfSex(0);
-                    selfCondition.setSelfSex(0);
-                } else {
-                    //Toast.makeText(FillMeetInfoActivity.this,"female", Toast.LENGTH_SHORT).show();
-                    //meetMemberInfo.setSelfSex(1);
-                    selfCondition.setSelfSex(1);
-                }
-                SELFSEXCHECKED = true;
-            }
-        });
 
         NiceSpinner niceSpinnerYears = (NiceSpinner) findViewById(R.id.nice_spinner_years);
         final List<String> yearList = new LinkedList<>(Arrays.asList(years));
@@ -294,10 +495,6 @@ public class FillMeetInfoActivity extends AppCompatActivity {
     }
 
     private boolean checkSelfInfo() {
-        if (SELFSEXCHECKED == false) {
-            Toast.makeText(FillMeetInfoActivity.this, "请选择性别", Toast.LENGTH_LONG).show();
-            return false;
-        }
 
         if (BIRTHYEARSELECTED == false) {
             Toast.makeText(FillMeetInfoActivity.this, "请选择出生年份", Toast.LENGTH_LONG).show();
@@ -448,30 +645,5 @@ public class FillMeetInfoActivity extends AppCompatActivity {
             }
         });
     }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        // RESULT_OK，判断另外一个activity已经结束数据输入功能，Standard activity result:
-        // operation succeeded. 默认值是-1
-        if (resultCode == 2) {
-            String SelectedResult = data.getStringExtra("SelectedResult");
-            if (requestCode == SELFREQUEST) {
-                //设置结果显示框的显示数值
-                Button button = (Button) findViewById(R.id.self_region);
-                button.setText(SelectedResult);
-                selfCondition.setLives(SelectedResult);
-                SELFLIVESELECTED = true;
-
-            } else {
-                //设置结果显示框的显示数值
-                Button button = (Button) findViewById(R.id.require_region);
-                button.setText(SelectedResult);
-                partnerRequirement.setRequirementLives(SelectedResult);
-                REQUIRELIVESELECTED = true;
-            }
-        }
-    }
-
 
 }
