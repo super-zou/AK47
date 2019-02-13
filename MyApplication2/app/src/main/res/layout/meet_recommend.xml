@@ -6,20 +6,32 @@
     android:layout_height="match_parent">
 
     <LinearLayout
+        android:visibility="gone"
+        android:id="@+id/meet_info_add"
+        android:orientation="vertical"
+        android:layout_marginTop="3dp"
+        android:padding="8dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@color/white"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
-            android:text="您还未完善征友信息"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <TextView
-            android:id="@+id/meet_info_add"
-            android:text="即刻填写，获取精准推荐"
-            android:layout_width="wrap_content"
+            android:id="@+id/look_friend"
+            android:text="@string/look_friend"
+            android:textSize="16sp"
+            android:gravity="center_horizontal"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:clickable="true"
+            android:textColor="@color/background" />
+        <TextView
+            android:text="@string/look_friend_notice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:textSize="12sp"
+            android:layout_marginTop="3dp"
             android:contextClickable="true"
-            android:textColor="@color/colorPrimaryDark" />
+            android:textColor="@color/text_default" />
     </LinearLayout>
     <com.jcodecraeer.xrecyclerview.XRecyclerView
         android:id="@+id/recyclerview"
