@@ -34,8 +34,8 @@ public class MeetFragment extends BaseFragment {
     private ArrayList<String> mMeetTitleList = new ArrayList<String>() {
         {
             add("推荐");
-            add("动态");
             add("单身团");
+            add("广场");
             add("发现");
         }
     };
@@ -68,13 +68,13 @@ public class MeetFragment extends BaseFragment {
         mViewPager = (ViewPager) view.findViewById(R.id.meet_view_pager);
         //获取标签数据
         recomend_tab = mTabLayout.newTab().setText(mMeetTitleList.get(0));
-        dynamics_tab = mTabLayout.newTab().setText(mMeetTitleList.get(1));
-        singleGroup_tab = mTabLayout.newTab().setText(mMeetTitleList.get(2));
+        singleGroup_tab = mTabLayout.newTab().setText(mMeetTitleList.get(1));
+        dynamics_tab = mTabLayout.newTab().setText(mMeetTitleList.get(2));
         discovery_tab = mTabLayout.newTab().setText(mMeetTitleList.get(3));
         //添加tab
         mTabLayout.addTab(recomend_tab, 0, true);
-        mTabLayout.addTab(dynamics_tab, 1, false);
-        mTabLayout.addTab(singleGroup_tab, 2, false);
+        mTabLayout.addTab(singleGroup_tab, 1, false);
+        mTabLayout.addTab(dynamics_tab, 2, false);
         mTabLayout.addTab(discovery_tab, 3, false);
 
         //创建一个viewpager的adapter
