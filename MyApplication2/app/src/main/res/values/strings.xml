@@ -13,7 +13,7 @@
 
     <item name="tag_first" type="id" />
     <item name="tag_second" type="id" />
-    <string name="title_activity_fill_meet_info">FillMeetInfo</string>
+    <string name="title_activity_fill_meet_info">填写征友信息</string>
     <string name="dynamics_input_hint">说点啥呢?</string>
     <!--added by xuchunping 2018.7.21-->
     <string name="register_account_check_error">请输入正确的手机号码或邮箱</string>
@@ -29,6 +29,8 @@
     <string name="done">完成</string>
     <string name="approve">认可</string>
     <string name="back">返回</string>
+        <string name="look_friend">+我要征友</string>
+    <string name="look_friend_notice">填写征友信息，获取精准推荐</string>
 
     <!--+Begin: relations, add by zouhaichao 2018.11.27-->
     <string name="classmate">同学</string>
@@ -121,4 +123,7 @@
     <string name="location_error">定位失败，请手动选择</string>
     <string name="correction">更正</string>
     <string name="location_select_notice">请选择居住地</string>
+    <string name="club">俱乐部</string>
+    <string name="set_avatar">设置头像</string>
+    <string name="set_more_picture">先来一波近照暖暖场子，助你获得更多关注哦</string>
 </resources>
