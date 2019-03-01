@@ -56,5 +56,7 @@ dependencies {//for third party
     implementation 'com.parkingwang:okhttp3-loginterceptor:latest.integration'
     implementation 'com.amap.api:location:latest.integration'
     implementation 'com.contrarywind:Android-PickerView:4.1.7'
+    implementation 'com.marshalchen.ultimaterecyclerview:library:0.7.3'
+
 }
 
