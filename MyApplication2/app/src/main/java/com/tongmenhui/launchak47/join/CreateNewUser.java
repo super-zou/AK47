@@ -85,7 +85,7 @@ public class CreateNewUser extends AppCompatActivity {
     private LaunchActivity launchActivity;
     private static final int USER_CREATE_DONE = 0;
     
-        //声明AMapLocationClient类对象
+    //声明AMapLocationClient类对象
     public AMapLocationClient mLocationClient = null;
     //声明定位回调监听器
     public AMapLocationListener mLocationListener;
@@ -94,7 +94,7 @@ public class CreateNewUser extends AppCompatActivity {
 
     private String[] permissions = { Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_WIFI_STATE};
     
-        @Override
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_new_user);
