@@ -116,7 +116,7 @@ public class FillMeetInfoActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_fill_meet_info);
+        setContentView(R.layout.fill_meet_info);
         mContext = this;
         boolean avatarSet = getIntent().getBooleanExtra("avatarSet", false);
 

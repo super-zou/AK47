@@ -14,6 +14,10 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
+        ndk {
+            //设置支持的SO库架构
+            abiFilters "armeabi-v7a", "arm64-v8a"
+        }
     }
     buildTypes {
         release {
@@ -56,4 +60,8 @@ dependencies {
     implementation 'com.parkingwang:okhttp3-loginterceptor:latest.integration'
     implementation 'com.amap.api:location:latest.integration'
     implementation 'com.contrarywind:Android-PickerView:4.1.7'
+    // 基础功能 (必需)
+    implementation 'com.netease.nimlib:basesdk:6.6.7'
+    // 小米、华为、魅族、fcm 推送
+    implementation 'com.netease.nimlib:push:6.6.7'
 }
