@@ -1,16 +1,15 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion rootProject.ext.compileSdkVersion
-    buildToolsVersion rootProject.ext.buildToolsVersion
+    compileSdkVersion 28
 
     defaultConfig {
-        minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion rootProject.ext.appTargetSdkVersion
-        versionCode rootProject.ext.versionCode
-        versionName rootProject.ext.versionName
+        minSdkVersion 21
+        targetSdkVersion 27
+        versionCode 1
+        versionName "1.0"
 
-        renderscriptTargetApi rootProject.ext.compileSdkVersion
+        //renderscriptTargetApi rootProject.ext.compileSdkVersion
         renderscriptSupportModeEnabled true
     }
 
@@ -54,4 +53,6 @@ dependencies {
 
     implementation "com.github.chrisbanes.photoview:library:1.2.4"
     //api 'jp.co.cyberagent.android.gpuimage:gpuimage-library:1.4.1' // if you want to use the Glide GPU Filters
+    implementation 'com.netease.nimlib:basesdk:6.6.7'
+
 }
