@@ -25,6 +25,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    
+    packagingOptions {
+        pickFirst  'lib/arm64-v8a/libne_audio.so'
+        pickFirst  'lib/armeabi-v7a/libne_audio.so'
+
+    }
 }
 
 dependencies {
@@ -64,4 +70,7 @@ dependencies {
     implementation 'com.netease.nimlib:basesdk:6.6.7'
     // 小米、华为、魅族、fcm 推送
     implementation 'com.netease.nimlib:push:6.6.7'
+    
+    implementation project(path:':uikit')
+
 }
