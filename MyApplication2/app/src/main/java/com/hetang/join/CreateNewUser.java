@@ -29,7 +29,7 @@ import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
-import com.hetang.launchak47.R;
+import com.hetang.R;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.Slog;

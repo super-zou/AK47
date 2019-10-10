@@ -12,7 +12,7 @@ import android.view.View;
 import android.widget.TextView;
 import com.hetang.util.FontManager;
 
-import com.hetang.launchak47.R;
+import com.hetang.R;
 import com.hetang.adapter.ImpressionApprovedDetailAdapter;
 import com.hetang.util.HttpUtil;
 

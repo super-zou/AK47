@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.hetang.launchak47.R;
+import com.hetang.R;
 import com.hetang.adapter.MeetFragmentAdapter;
 import com.hetang.util.BaseFragment;
 import com.hetang.util.FontManager;

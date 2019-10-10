@@ -20,7 +20,7 @@ import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
 import com.luck.picture.lib.tools.DateUtils;
 import com.luck.picture.lib.tools.StringUtils;
-import com.hetang.launchak47.R;
+import com.hetang.R;
 
 import java.io.File;
 import java.util.ArrayList;

@@ -12,7 +12,7 @@ import android.widget.LinearLayout;
 
 import com.android.volley.RequestQueue;
 import com.bumptech.glide.Glide;
-import com.hetang.launchak47.R;
+import com.hetang.R;
 import com.hetang.meet.MeetMemberInfo;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.Slog;

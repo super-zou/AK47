@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
-import com.hetang.launchak47.R;
+import com.hetang.R;
 
 import java.io.IOException;
 import java.io.InputStream;

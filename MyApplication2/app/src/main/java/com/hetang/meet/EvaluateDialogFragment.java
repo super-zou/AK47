@@ -19,7 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.nex3z.flowlayout.FlowLayout;
-import com.hetang.launchak47.R;
+import com.hetang.R;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.Slog;
 import com.hetang.util.Utility;

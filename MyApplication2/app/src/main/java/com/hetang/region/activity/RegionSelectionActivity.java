@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.hetang.launchak47.R;
+import com.hetang.R;
 import com.hetang.region.wheel.widget.OnWheelChangedListener;
 import com.hetang.region.wheel.widget.WheelView;
 import com.hetang.region.wheel.widget.adapters.ArrayWheelAdapter;

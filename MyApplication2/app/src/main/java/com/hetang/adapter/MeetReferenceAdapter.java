@@ -12,7 +12,7 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 
 import com.android.volley.RequestQueue;
-import com.hetang.launchak47.R;
+import com.hetang.R;
 import com.hetang.meet.MeetReferenceInfo;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;

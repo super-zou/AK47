@@ -9,7 +9,7 @@ import android.text.TextUtils;
 
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
-import com.hetang.launchak47.R;
+import com.hetang.R;
 import com.hetang.adapter.EvaluatorDetailsAdapter;
 import com.hetang.main.BaseAppCompatActivity;
 import com.hetang.util.HttpUtil;

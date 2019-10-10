@@ -7,7 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.hetang.launchak47.R;
+import com.hetang.R;
 import com.hetang.meet.MeetMemberInfo;
 
 import java.util.List;

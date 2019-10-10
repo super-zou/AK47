@@ -20,7 +20,7 @@ import android.widget.Toast;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.NetworkImageView;
 import com.bumptech.glide.Glide;
-import com.hetang.launchak47.R;
+import com.hetang.R;
 import com.hetang.meet.DynamicsComment;
 import com.hetang.meet.MeetDynamics;
 import com.hetang.util.FontManager;

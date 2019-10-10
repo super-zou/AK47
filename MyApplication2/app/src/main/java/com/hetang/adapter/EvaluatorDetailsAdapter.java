@@ -13,7 +13,7 @@ import android.widget.TextView;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.NetworkImageView;
 import com.nex3z.flowlayout.FlowLayout;
-import com.hetang.launchak47.R;
+import com.hetang.R;
 import com.hetang.meet.EvaluatorDetailsActivity;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.RequestQueueSingleton;

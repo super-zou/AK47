@@ -16,7 +16,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.SearchView;
 
-import com.hetang.launchak47.R;
+import com.hetang.R;
 import com.hetang.meet.MeetMemberInfo;
 
 import org.json.JSONArray;

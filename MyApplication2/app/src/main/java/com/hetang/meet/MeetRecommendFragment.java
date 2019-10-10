@@ -21,7 +21,7 @@ import java.lang.ref.WeakReference;
 
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
-import com.hetang.launchak47.R;
+import com.hetang.R;
 import com.hetang.adapter.MeetRecommendListAdapter;
 import com.hetang.util.BaseFragment;
 import com.hetang.util.HttpUtil;

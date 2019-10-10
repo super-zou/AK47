@@ -30,7 +30,7 @@ import com.bumptech.glide.Glide;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.nex3z.flowlayout.FlowLayout;
-import com.hetang.launchak47.R;
+import com.hetang.R;
 import com.hetang.adapter.ArchivesListAdapter;
 import com.hetang.adapter.MeetImpressionStatisticsAdapter;
 import com.hetang.adapter.MeetReferenceAdapter;

@@ -15,7 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.view.WindowManager;
 
-import com.hetang.launchak47.R;
+import com.hetang.R;
 import com.hetang.main.MainActivity;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.Slog;

@@ -16,7 +16,7 @@ import android.widget.Toast;
 
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
-import com.hetang.launchak47.R;
+import com.hetang.R;
 import com.hetang.adapter.MeetDynamicsListAdapter;
 import com.hetang.main.AddDynamicsActivity;
 import com.hetang.util.BaseFragment;

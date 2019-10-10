@@ -22,7 +22,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.hetang.launchak47.R;
+import com.hetang.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;

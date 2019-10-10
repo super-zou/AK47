@@ -1,4 +1,4 @@
-package com.tongmenhui.launchak47.adapter;
+package com.hetang.adapter;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,13 +12,13 @@ import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
 import com.bumptech.glide.Glide;
-import com.tongmenhui.launchak47.R;
-import com.tongmenhui.launchak47.meet.ApprovedUsersActivity;
-import com.tongmenhui.launchak47.meet.MeetArchivesActivity;
-import com.tongmenhui.launchak47.meet.MeetMemberInfo;
-import com.tongmenhui.launchak47.util.HttpUtil;
-import com.tongmenhui.launchak47.util.RequestQueueSingleton;
-import com.tongmenhui.launchak47.util.Slog;
+import com.hetang.R;
+import com.hetang.meet.ApprovedUsersActivity;
+import com.hetang.meet.MeetArchivesActivity;
+import com.hetang.meet.MeetMemberInfo;
+import com.hetang.util.HttpUtil;
+import com.hetang.util.RequestQueueSingleton;
+import com.hetang.util.Slog;
 
 import java.util.List;
 

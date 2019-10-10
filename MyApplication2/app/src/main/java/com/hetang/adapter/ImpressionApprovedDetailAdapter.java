@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
-import com.hetang.launchak47.R;
+import com.hetang.R;
 import com.hetang.meet.MeetMemberInfo;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.RequestQueueSingleton;

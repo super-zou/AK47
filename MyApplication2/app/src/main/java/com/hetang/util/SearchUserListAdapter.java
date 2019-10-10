@@ -12,7 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
-import com.hetang.launchak47.R;
+import com.hetang.R;
 import com.hetang.meet.MeetMemberInfo;
 
 import java.io.IOException;

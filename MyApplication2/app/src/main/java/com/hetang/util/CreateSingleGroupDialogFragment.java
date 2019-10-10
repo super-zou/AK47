@@ -14,7 +14,7 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.hetang.launchak47.R;
+import com.hetang.R;
 
 import java.io.IOException;
 

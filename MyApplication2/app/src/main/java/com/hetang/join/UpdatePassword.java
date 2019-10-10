@@ -14,7 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.hetang.launchak47.R;
+import com.hetang.R;
 import com.hetang.main.BaseAppCompatActivity;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;

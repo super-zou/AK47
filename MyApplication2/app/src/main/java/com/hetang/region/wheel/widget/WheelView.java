@@ -33,7 +33,7 @@ import android.view.ViewGroup.LayoutParams;
 import android.view.animation.Interpolator;
 import android.widget.LinearLayout;
 
-import com.hetang.launchak47.R;
+import com.hetang.R;
 import com.hetang.region.wheel.widget.adapters.WheelViewAdapter;
 
 import java.util.LinkedList;

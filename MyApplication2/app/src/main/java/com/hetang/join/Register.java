@@ -23,7 +23,7 @@ import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import com.hetang.launchak47.R;
+import com.hetang.R;
 
 public class Register extends BaseAppCompatActivity {
     /*+Begin: added by xuchunping 2018.7.19*/

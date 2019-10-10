@@ -19,7 +19,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.hetang.launchak47.R;
+import com.hetang.R;
 import com.hetang.meet.MeetDynamicsFragment;
 
 /**

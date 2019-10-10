@@ -38,7 +38,7 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hetang.launchak47.R;
+import com.hetang.R;
 import com.hetang.region.activity.RegionSelectionActivity;
 import com.hetang.util.HttpUtil;
 

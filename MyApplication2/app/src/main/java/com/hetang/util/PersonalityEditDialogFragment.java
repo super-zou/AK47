@@ -23,7 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nex3z.flowlayout.FlowLayout;
-import com.hetang.launchak47.R;
+import com.hetang.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;

@@ -14,7 +14,7 @@ import android.widget.LinearLayout;
 import org.json.JSONArray;
 
 import com.bumptech.glide.Glide;
-import com.hetang.launchak47.R;
+import com.hetang.R;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.Slog;

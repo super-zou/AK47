@@ -21,7 +21,7 @@ import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
 import com.luck.picture.lib.permissions.RxPermissions;
 import com.luck.picture.lib.tools.PictureFileUtils;
-import com.hetang.launchak47.R;
+import com.hetang.R;
 import com.hetang.adapter.GridImageAdapter;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.Slog;

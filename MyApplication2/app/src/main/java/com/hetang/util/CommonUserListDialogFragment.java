@@ -18,7 +18,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.hetang.launchak47.R;
+import com.hetang.R;
 import com.hetang.adapter.PersonalityApprovedAdapter;
 import com.hetang.meet.MeetMemberInfo;
 

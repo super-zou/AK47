@@ -7,7 +7,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
-import com.hetang.launchak47.R;
+import com.hetang.R;
 import com.hetang.adapter.MainFragmentAdapter;
 import com.hetang.util.BaseFragment;
 import com.hetang.util.FontManager;

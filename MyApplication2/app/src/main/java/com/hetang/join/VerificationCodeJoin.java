@@ -11,7 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import com.hetang.launchak47.R;
+import com.hetang.R;
 import com.hetang.main.BaseAppCompatActivity;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
