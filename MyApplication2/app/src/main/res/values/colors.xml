@@ -24,12 +24,12 @@
     <color name="color_red">#f94c51</color>
     <color name="color_green">#43c117</color>
     <color name="color_star_yellow">#FFFF00</color>
-    <color name="color_blue">#3799f4</color>
+    <color name="color_blue">#3A8BD6</color>
     <color name="color_disabled">#12000000</color>
-        <color name="color_dark_disabled">#b6b6b6</color>
+    <color name="color_dark_disabled">#b6b6b6</color>
     <color name="color_dark_grey">#393a3e</color>
     <color name="color_light_grey">#ff847d7b</color>
-    <color name="background">#36648B</color>
+    <color name="background">#47769D</color>
     <color name="blue_dark">#ff0099cc</color>
     <color name="text_default">#8a000000</color>
 </resources>
