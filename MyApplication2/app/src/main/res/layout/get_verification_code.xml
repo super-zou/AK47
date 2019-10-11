@@ -40,15 +40,15 @@
             android:textColor="@color/white"
             android:text="@string/send_verification_code" />
             
-            <TextView
+        <TextView
             android:id="@+id/phone_number"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="3dp"
             android:layout_weight="1"
             android:gravity="left"
-            android:textColor="@color/color_dark_disabled"
-            android:text="13333333333" />
+            android:textStyle="bold"
+            android:textColor="@color/black" />
     </LinearLayout>
 
     <LinearLayout
@@ -79,6 +79,7 @@
                 android:inputType="number"
                 android:hint="@string/enter_verification_code"
                 android:textColor="@color/white"
+                android:textSize="32sp"
                 android:textCursorDrawable="@drawable/cursor_color"
                 android:theme="@style/MyEditText" />
         </android.support.design.widget.TextInputLayout>
