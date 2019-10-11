@@ -18,7 +18,7 @@
         <TextView
             android:id="@+id/look_friend"
             android:text="@string/look_friend"
-            android:textSize="16sp"
+            android:textSize="18sp"
             android:gravity="center_horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -33,6 +33,12 @@
             android:contextClickable="true"
             android:textColor="@color/text_default" />
     </LinearLayout>
+    <ImageView
+        android:id="@+id/animal_progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="128dp"
+        android:src="@drawable/animal_progress" />
     <com.jcodecraeer.xrecyclerview.XRecyclerView
         android:id="@+id/recyclerview"
         android:layout_width="match_parent"
