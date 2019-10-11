@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="58dp"
     android:elevation="8dp"
-    android:background="@color/color_blue">
+    android:background="@color/background">
         <TextView
             android:id="@+id/left"
             android:textSize="28sp"
