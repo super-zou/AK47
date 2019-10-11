@@ -1,37 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<LinearLayout
+    android:orientation="vertical"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/home_page"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/home_page"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <LinearLayout
-        android:orientation="horizontal"
+
+    <RelativeLayout
         android:id="@+id/custom_actionbar"
         android:layout_width="match_parent"
-        android:layout_height="38dp"
-        android:paddingRight="18dp"
+        android:layout_height="wrap_content"
         android:background="@color/background"
-        android:gravity="end">
+        android:gravity="end"
+        android:orientation="horizontal"
+        android:paddingRight="18dp">
         <TextView
-            android:gravity="center_vertical"
-            android:textColor="@color/white"
-            android:text="@string/fa_camera_retro"
-            android:textSize="20sp"
+            android:id="@+id/dynamic_create"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent" />
-    </LinearLayout>
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_margin="8dp"
+            android:text="@string/fa_camera_retro"
+            android:textColor="@color/white"
+            android:textSize="20sp" />
+    </RelativeLayout>
 
     <com.jcodecraeer.xrecyclerview.XRecyclerView
         android:id="@+id/home_page_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/custom_actionbar">
+        android:layout_height="wrap_content">
     </com.jcodecraeer.xrecyclerview.XRecyclerView>
-</android.support.constraint.ConstraintLayout>
+    <ImageView
+        android:id="@+id/animal_progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="128dp"
+        android:src="@drawable/animal_progress" />
 
+
+</LinearLayout>
