@@ -1,47 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:clickable="true"
-    android:orientation="vertical">
-    <LinearLayout
+    android:layout_height="wrap_content"
+    android:background="@color/color_disabled">
+    <android.support.design.widget.TabLayout
+        android:id="@+id/meet_tab_layout"
         android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:background="@color/background"
+        app:tabBackground="@color/background"
+        app:tabIndicatorColor="@color/white"
+        app:tabIndicatorHeight="2dp"
+        app:tabMode="scrollable"
+        app:tabGravity="center"
+        app:tabSelectedTextColor="@color/white"
+        app:tabTextColor="@color/white"
+        app:tabTextAppearance="@style/MyTabLayoutTextAppearance"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/activity_create"/>
+    
+    <TextView
+        android:id="@+id/search"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <android.support.design.widget.TabLayout
-            android:id="@+id/meet_tab_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="36dp"
-            android:layout_weight="8"
-            android:background="@color/background"
-            app:tabIndicatorColor="@color/white"
-            app:tabIndicatorHeight="2dp"
-            app:tabTextColor="@color/text_default"
-            app:tabSelectedTextColor="@color/white"
-            app:tabMode="fixed"
-            app:tabBackground="@color/background"
-            app:tabTextAppearance="@style/MyTabLayoutTextAppearance"
-            />
-        <TextView
-            android:id="@+id/activity_create"
-            android:text="@string/fa_camera_retro"
-            android:layout_width="wrap_content"
-            android:layout_height="36dp"
-            android:layout_weight="2"
-            android:gravity="center"
-            android:background="@android:color/holo_blue_dark"
-            android:textColor="@color/colorWhite" />
-    </LinearLayout>
-
-
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/fa_search"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toTopOf="@+id/meet_view_pager"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/meet_tab_layout"></TextView>
+    
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/activity_create"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginEnd="8dp"
+        android:background="@color/background"
+        android:gravity="center"
+        android:text="@string/fa_camera_retro"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+    
     <android.support.v4.view.ViewPager
         android:id="@+id/meet_view_pager"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="@android:color/darker_gray"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        android:layout_height="wrap_content"
+        android:paddingBottom="36dp"
+        android:background="@color/color_disabled"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/meet_tab_layout" />
 
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>
