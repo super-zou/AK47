@@ -6,9 +6,10 @@
     <string name="fa_thumbs_up">&#xf164;</string>
     <string name="fa_thumbs_O_up">&#xf087;</string>
     <string name="fa_photo">&#xf03e;</string>
-    <string name="fa_comment">&#xf075;</string>
-    <string name="fa_camera">&#xf030;</string>
+    <string name="fa_comment">&#xf27a;</string>
+    <string name="fa_comment_o">&#xf27b;</string>
     <string name="fa_camera_retro">&#xf083;</string>
+    <string name="fa_camera">&#xf030;</string>
     <string name="fa_star_o">&#xf005;</string>
     <string name="chevron_right">&#xf054;</string>
     <string name="personality">&#xf02c;</string>
@@ -23,6 +24,7 @@
     <string name="left_angle">&#xf104;</string>
     <string name="right_angle">&#xf105;</string>
     <string name="graduation">&#xf19d;</string>
+    <string name="info">&#xf05a;</string>
     <string name="work">&#xf2bb;</string>
     <string name="location">&#xf041;</string>
     <string name="mars">&#xf222;</string>
@@ -36,4 +38,24 @@
     <string name="universal_access">&#xf29a;</string>
     <string name="circle">&#xf111;</string>
     <string name="circle_o">&#xf10c;</string>
+    <string name="message">&#xf0a2;</string>
+    <string name="check">&#xf00c;</string>
+    <string name="fa_weixin">&#xf1d7;</string>
+    <string name="fa_qq">&#xf1d6;</string>
+    <string name="fa_remove">&#xf00d;</string>
+    <string name="fa_history">&#xf1da;</string>
+    <string name="fa_prize">&#xf091;</string>
+    <string name="fa_chevron_down">&#xf078;</string>
+    <string name="fa_chevron_up">&#xf077;</string>
+    <string name="fa_more_experience">&#xf07b;</string>
+    <string name="fa_plus">&#xf055;</string>
+    <string name="fa_blog">&#xf040;</string>
+    <string name="fa_paper">&#xf02d;</string>
+    <string name="fa_link">&#xf0c1;</string>
+    <string name="fa_setting">&#xf013;</string>
+    <string name="fa_download">&#xf019;</string>
+    <string name="fa_key">&#xf084;</string>
+    <string name="fa_refresh">&#xf021;</string>
+    <string name="fa_share_alt">&#xf1e0;</string>
+    <string name="fa_search">&#xf002;</string>
 </resources>
