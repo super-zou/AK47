@@ -3,10 +3,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_gravity="center_horizontal"
+    android:background="@color/colorWhite"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
-    <ImageView
+    <com.hetang.util.RoundImageView
         android:id="@+id/member_head"
         android:layout_width="150dp"
         android:layout_height="150dp"
