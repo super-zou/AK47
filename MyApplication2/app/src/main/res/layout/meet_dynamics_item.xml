@@ -1,81 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/meet_dynamics_item"
-    android:layout_marginBottom="1dp">
-
-    <include layout="@layout/meet_item" />
-    <LinearLayout
-        android:orientation="vertical"
+    android:layout_marginTop="3dp"
+    android:background="@color/colorWhite">
+    
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/base_profile"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:layout_marginTop="-5dp"
-        tools:background="@color/colorWhite"
-        android:background="@color/colorWhite">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.hetang.util.RoundImageView
+            android:id="@+id/avatar"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="name"
+            android:textColor="@android:color/holo_blue_dark"
+            android:textSize="15sp"
+            android:textStyle="normal|bold"
+            app:layout_constraintStart_toEndOf="@+id/avatar"
+            app:layout_constraintTop_toTopOf="@+id/avatar" />
+        
+        <TextView
+            android:id="@+id/living_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="@string/location"
+            app:layout_constraintStart_toEndOf="@+id/name"
+            app:layout_constraintTop_toTopOf="@+id/name" />
+
+        <TextView
+            android:id="@+id/living"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="3dp"
+            android:layout_marginTop="1dp"
+            android:textSize="12sp"
+            app:layout_constraintStart_toEndOf="@+id/living_icon"
+            app:layout_constraintTop_toTopOf="@+id/living_icon" />
+        
+        <TextView
+            android:id="@+id/profile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:textSize="12sp"
+            app:layout_constraintStart_toEndOf="@+id/avatar"
+            app:layout_constraintTop_toBottomOf="@+id/name" />
+    </android.support.constraint.ConstraintLayout>
+    
+    <LinearLayout
+        android:id="@+id/dynamics_content_wrap"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/base_profile">
+        
         <TextView
             android:id="@+id/dynamics_content"
             android:layout_width="match_parent"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:lineSpacingMultiplier="1.5"
+            android:textColor="@color/black"
+            android:textSize="15sp" />
+
         <GridLayout
             android:id="@+id/dynamics_picture_grid"
             android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_gravity="center"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:layout_marginLeft="16dp"
             android:layout_marginTop="8dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
+            android:layout_marginRight="16dp"
             android:layout_marginBottom="20dp"
-            android:layout_weight="1"
-            android:orientation="horizontal">
-        </GridLayout>
-        <LinearLayout
-            android:id="@+id/dynamics_content_meta"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="right">
-            <TextView
-                android:id="@+id/dynamic_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-            <TextView
-                android:id="@+id/dynamic_praise_icon"
-                android:text="@string/fa_thumbs_up"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:textColor="@android:color/holo_blue_dark"
-                android:layout_marginLeft="18dp"
-                android:gravity="center"
-                />
-            <TextView
-                android:id="@+id/dynamic_praise"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-            <TextView
-                android:id="@+id/dynamic_comment_icon"
-                android:text="@string/fa_comment"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:textColor="@android:color/holo_blue_dark"
-                android:layout_marginLeft="18dp"
-                android:gravity="center"
-                />
-            <TextView
-                android:id="@+id/dynamic_comment_count"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-        </LinearLayout>
-        <LinearLayout
-            android:id="@+id/dynamics_comments"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-        </LinearLayout>
+            android:orientation="horizontal"></GridLayout>
     </LinearLayout>
+    
+     <include
+        android:id="@+id/dynamics_content_meta"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/dynamics_item_interact"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dynamics_content_wrap"/>
 
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>
