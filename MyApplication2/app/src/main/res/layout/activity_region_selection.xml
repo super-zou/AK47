@@ -28,26 +28,26 @@
         android:layout_marginTop="30dip"
         android:orientation="horizontal" >
 
-        <com.tongmenhui.launchak47.region.wheel.widget.WheelView
+        <com.hetang.region.wheel.widget.WheelView
             android:id="@+id/id_province"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1" >
-        </com.tongmenhui.launchak47.region.wheel.widget.WheelView>
+        </com.hetang.region.wheel.widget.WheelView>
 
-        <com.tongmenhui.launchak47.region.wheel.widget.WheelView
+        <com.hetang.region.wheel.widget.WheelView
             android:id="@+id/id_city"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1" >
-        </com.tongmenhui.launchak47.region.wheel.widget.WheelView>
+        </com.hetang.region.wheel.widget.WheelView>
 
-        <com.tongmenhui.launchak47.region.wheel.widget.WheelView
+        <com.hetang.region.wheel.widget.WheelView
             android:id="@+id/id_district"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1" >
-        </com.tongmenhui.launchak47.region.wheel.widget.WheelView>
+        </com.hetang.region.wheel.widget.WheelView>
     </LinearLayout>
 
     <Button
