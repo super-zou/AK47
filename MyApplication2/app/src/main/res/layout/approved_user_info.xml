@@ -3,13 +3,15 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/user_info"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="3dp"
+    android:fitsSystemWindows="true"
     android:background="@color/colorWhite">
 
-    <com.android.volley.toolbox.NetworkImageView
-        android:id="@+id/networkImageView"
+    <com.hetang.util.RoundImageView
+        android:id="@+id/avatar"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginStart="8dp"
@@ -25,9 +27,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:textColor="@android:color/holo_blue_dark"
         android:text="name"
-        app:layout_constraintStart_toEndOf="@+id/networkImageView"
-        app:layout_constraintTop_toTopOf="@+id/networkImageView" />
+        app:layout_constraintStart_toEndOf="@+id/avatar"
+        app:layout_constraintTop_toTopOf="@+id/avatar" />
 
     <TextView
         android:id="@+id/profile"
