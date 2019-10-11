@@ -3,9 +3,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:id="@+id/create_single_group"
-    android:background="@color/color_disabled"
+    android:background="@color/white"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <include
         android:id="@+id/custom_actionbar"
@@ -15,51 +15,54 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-        
-        <TextView
+    
+    <TextView
         android:id="@+id/name_label"
-        android:textColor="@color/blue_dark"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="18dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="13dp"
         android:text="@string/single_group_name_label"
+        android:textColor="@color/blue_dark"
+        app:layout_constraintBottom_toBottomOf="@+id/editTextName"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/custom_actionbar" />
+        app:layout_constraintTop_toTopOf="@+id/editTextName" />
 
     <EditText
         android:id="@+id/editTextName"
-        style="@android:style/Widget.Material.Light.EditText"
+        style="@style/EditTextCustom"
         android:layout_width="305dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:ems="10"
         android:hint="@string/single_group_name_hint"
         android:inputType="textPersonName"
         android:textColor="@color/blue_dark"
-        app:layout_constraintBottom_toBottomOf="@+id/name_label"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/name_label"
-        app:layout_constraintTop_toTopOf="@+id/name_label" />
-
-    <TextView
+        app:layout_constraintTop_toBottomOf="@+id/custom_actionbar" />
+    
+     <TextView
         android:id="@+id/profile_label"
-        android:textColor="@color/blue_dark"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="26dp"
         android:text="@string/introduction_label"
+        android:textColor="@color/blue_dark"
+        app:layout_constraintBottom_toBottomOf="@+id/editTextProfile"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextName" />
-        
-   <EditText
+        app:layout_constraintTop_toTopOf="@+id/editTextProfile" />
+    
+    <EditText
         android:id="@+id/editTextProfile"
-        style="@android:style/Widget.Material.EditText"
+        style="@style/EditTextCustom"
         android:layout_width="305dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:ems="10"
         android:hint="@string/introduction_hint"
@@ -69,35 +72,39 @@
         android:selectAllOnFocus="true"
         android:singleLine="true"
         android:textColor="@color/blue_dark"
-        app:layout_constraintBottom_toBottomOf="@+id/profile_label"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/profile_label"
-        app:layout_constraintTop_toTopOf="@+id/profile_label" />
-        
+        app:layout_constraintTop_toBottomOf="@+id/editTextName" />
+    
     <TextView
         android:id="@+id/org_label"
-        android:textColor="@color/blue_dark"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="26dp"
         android:text="@string/org_label"
+        android:textColor="@color/blue_dark"
+        app:layout_constraintBottom_toBottomOf="@+id/editTextOrg"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextProfile" />
-        
+        app:layout_constraintTop_toTopOf="@+id/editTextOrg" />
+   
     <EditText
         android:id="@+id/editTextOrg"
-        style="@android:style/Widget.Holo.EditText"
+        style="@style/EditTextCustom"
         android:layout_width="305dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginBottom="16dp"
         android:ems="10"
         android:hint="@string/org_hint"
         android:inputType="textShortMessage"
-        app:layout_constraintBottom_toBottomOf="@+id/org_label"
+        android:textColor="@color/blue_dark"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/org_label"
-        app:layout_constraintTop_toTopOf="@+id/org_label" />
+        app:layout_constraintTop_toBottomOf="@+id/editTextProfile" />
 
 </android.support.constraint.ConstraintLayout>
+    
+    
