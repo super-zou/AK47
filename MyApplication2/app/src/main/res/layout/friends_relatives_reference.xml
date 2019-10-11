@@ -11,6 +11,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:padding="8dp"
         android:background="@color/colorWhite">
         <TextView
             android:layout_width="wrap_content"
@@ -20,108 +21,108 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="3dp"
+            android:layout_marginLeft="3dp"
             android:text="性格魅力" />
     </LinearLayout>
-    
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:background="@color/colorWhite">
-            <com.willy.ratingbar.ScaleRatingBar xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/charm_synthesized_rating"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:srb_clearRatingEnabled="false"
-                app:srb_clickable="false"
-                app:srb_drawableEmpty="@drawable/empty_rating_bar"
-                app:srb_drawableFilled="@drawable/filled"
-                app:srb_isIndicator="false"
-                app:srb_minimumStars="0"
-                app:srb_numStars="5"
-                app:srb_rating="0"
-                app:srb_scrollable="false"
-                app:srb_starHeight="18dp"
-                app:srb_starPadding="3dp"
-                app:srb_starWidth="18dp"
-                app:srb_stepSize="0.1">
-            </com.willy.ratingbar.ScaleRatingBar>
-            <TextView
-                android:id="@+id/chram_synthesized_results"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="12dp"
-                android:text="几星" />
-            <TextView
-                android:id="@+id/rating_member_count"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="12dp"
-                android:text="多少人评价" />
-
-            <Button
-                android:id="@+id/rating_member_details"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="-38dp"
-                android:background="@android:color/transparent"
-                android:text="@string/chevron_right"
-                android:textSize="18dp" />
-        </LinearLayout>
-       
-        <RelativeLayout
+  
+        <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="15dp"
         android:background="@color/colorWhite">
-        <LinearLayout
-            android:id="@+id/charm_rating_bar"
-            android:layout_width="match_parent"
+
+        <com.willy.ratingbar.ScaleRatingBar xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/charm_synthesized_rating"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_marginStart="0dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="0dp"
-            android:layout_marginBottom="10dp"
-            android:orientation="horizontal">
-
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srb_clearRatingEnabled="false"
+            app:srb_clickable="false"
+            app:srb_drawableFilled="@drawable/filled"
+            app:srb_isIndicator="false"
+            app:srb_minimumStars="0"
+            app:srb_numStars="5"
+            app:srb_rating="0"
+            app:srb_scrollable="false"
+            app:srb_starHeight="18dp"
+            app:srb_starPadding="3dp"
+            app:srb_starWidth="18dp"
+            app:srb_stepSize="0.1"></com.willy.ratingbar.ScaleRatingBar>
+            
+             <TextView
+            android:id="@+id/chram_synthesized_results"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/charm_synthesized_rating"
+            app:layout_constraintTop_toTopOf="parent" />
+            
             <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="5dp"
-                    android:background="@drawable/empty"
-                    android:textSize="32dp" />
-
+            android:id="@+id/rating_member_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="多少人评价"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/chram_synthesized_results"
+            app:layout_constraintTop_toTopOf="parent" />
+            
             <TextView
+            android:visibility="invisible"
+            android:id="@+id/rating_member_details"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8dp"
+            android:background="@android:color/transparent"
+            android:text="@string/chevron_right"
+            android:textSize="12dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </android.support.constraint.ConstraintLayout>
+    
+    <RelativeLayout
+        android:id="@+id/rating_bar_wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:padding="8dp"
+        android:background="@color/colorWhite">
+        <com.willy.ratingbar.ScaleRatingBar xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/charm_rating_bar"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srb_clearRatingEnabled="true"
+            app:srb_clickable="true"
+            app:srb_drawableFilled="@drawable/filled"
+            app:srb_isIndicator="false"
+            app:srb_minimumStars="0"
+            app:srb_numStars="5"
+            app:srb_rating="0"
+            app:srb_scrollable="true"
+            app:srb_starHeight="30dp"
+            app:srb_starPadding="6dp"
+            app:srb_starWidth="30dp"
+            app:srb_stepSize="0.5">
+            <TextView
+                android:id="@+id/rating_score"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="5dp"
-                android:background="@drawable/empty"
-                android:textSize="32dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="5dp"
-                android:background="@drawable/empty"
-                android:textSize="32dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="5dp"
-                android:background="@drawable/empty"
-                android:textSize="32dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/empty"
-                android:textSize="32dp" />
-        </LinearLayout>
+                android:layout_height="wrap_content" />
+        </com.willy.ratingbar.ScaleRatingBar>
         
         <TextView
             android:id="@+id/notice"
@@ -129,103 +130,117 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/charm_rating_bar"
             android:gravity="center_horizontal"
-            android:layout_marginBottom="10dp"
-            android:text="您认为该用户魅力如何" />
-    </RelativeLayout>
-    <LinearLayout
-        android:orientation="horizontal"
+            android:layout_marginTop="8dp"
+            android:text="魅力评价" />
+        </RelativeLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/impression_wrapper"
+        android:layout_marginTop="8dp"
+        android:padding="8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorWhite">
         
         <TextView
+            android:id="@+id/impress_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/impress"
-            android:padding="3dp" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
         <TextView
             android:text="好友印象"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="3dp" />
-    </LinearLayout>
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/impression_statistics_list"
+            android:layout_marginLeft="3dp"
+            app:layout_constraintStart_toEndOf="@+id/impress_icon"
+            app:layout_constraintTop_toTopOf="parent"/>
+        
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/impression_statistics_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@color/colorWhite"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/impress_icon"></android.support.v7.widget.RecyclerView>
+    </android.support.constraint.ConstraintLayout>
+    
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/reference_wrapper"
+        android:layout_marginTop="8dp"
+        android:padding="8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorWhite">
-
-    </android.support.v7.widget.RecyclerView>
-
-    <LinearLayout
-        android:layout_marginTop="5dp"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white">
         <TextView
-            android:text="@string/hands"
-            android:padding="3dp"
+            android:id="@+id/reference_icon"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:text="@string/hands"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
         <TextView
             android:text="好友推荐"
-            android:padding="3dp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
-    <android.support.v7.widget.RecyclerView
-        android:visibility="gone"
-        android:id="@+id/reference_list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorWhite">
-    </android.support.v7.widget.RecyclerView>
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="3dp"
+            app:layout_constraintStart_toEndOf="@+id/reference_icon"
+            app:layout_constraintTop_toTopOf="parent"/>
 
-    <RelativeLayout
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/reference_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@color/colorWhite"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/reference_icon"></android.support.v7.widget.RecyclerView>
+        
+        </android.support.constraint.ConstraintLayout>
+    <android.support.constraint.ConstraintLayout
         android:visibility="gone"
         android:id="@+id/invite_reference"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="18dp"
-        android:paddingBottom="8dp"
-        android:layout_marginBottom="10dp"
         android:background="@color/colorWhite">
-
         <TextView
-            android:id="@+id/textView3"
+            android:id="@+id/invite"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignStart="@+id/textView4"
-            android:layout_alignParentTop="true"
-            android:text="邀请好友写推荐信" />
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="+邀请好友推荐"
+            android:textSize="16sp"
+            android:textColor="@color/color_blue"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
         <TextView
             android:id="@+id/textView4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_marginLeft="80dp"
-            android:layout_marginTop="20dp"
-            android:textSize="10sp"
-            android:text="需要好友的推荐才能在平台展示" />
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="16dp"
+            android:text="至少一位好友推荐后才能在平台展示"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.513"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/invite" />
 
-       <TextView
-            android:id="@+id/textView"
-            android:background="@drawable/label_selected_bg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-           android:gravity="center"
-           android:layout_centerVertical="true"
-           android:layout_centerInParent="true"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:textColor="@color/white"
-            android:padding="8dp"
-           android:layout_marginRight="5dp"
-            android:text="+邀请" />
-    </RelativeLayout>
+    </android.support.constraint.ConstraintLayout>
+    
     <LinearLayout
+        android:id="@+id/write_reference_wrapper"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
@@ -245,50 +260,55 @@
             android:layout_height="wrap_content"
             android:background="@drawable/label_selected_bg"/>
     </LinearLayout>
-
-
-   <LinearLayout
-       android:layout_marginTop="8dp"
-        android:orientation="vertical"
+    
+        <android.support.constraint.ConstraintLayout
+        android:id="@+id/personality_wrapper"
+        android:layout_marginTop="8dp"
+        android:padding="8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorWhite">
-       <LinearLayout
-           android:orientation="horizontal"
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content">
-           <TextView
-               android:padding="3dp"
-               android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
-               android:text="@string/personality" />
-           <TextView
-               android:padding="3dp"
-               android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
-               android:text="个性标签" />
-       </LinearLayout>
-        <com.nex3z.flowlayout.FlowLayout
-           android:id="@+id/personality_flow"
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content">
-        </com.nex3z.flowlayout.FlowLayout>
-
-        <Button
-            android:id="@+id/add_personality"
-            android:text="+添加个性标签"
-            android:layout_gravity="center"
-            android:textColor="@color/colorWhite"
-            android:layout_marginTop="8dp"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp"
-            android:elevation="3dp"
-            android:layout_marginBottom="8dp"
+        <TextView
+            android:id="@+id/personality_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/label_selected_bg"/>
-    </LinearLayout>
-
+            android:text="@string/personality"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+             <TextView
+            android:text="个性标签"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="3dp"
+            app:layout_constraintStart_toEndOf="@+id/personality_icon"
+            app:layout_constraintTop_toTopOf="parent"/>
+        <com.nex3z.flowlayout.FlowLayout
+            android:id="@+id/personality_flow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/personality_icon"/>
+            
+            <TextView
+            android:visibility="gone"
+            android:id="@+id/add_personality"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="18dp"
+            android:background="@drawable/label_selected_bg"
+            android:elevation="3dp"
+            android:paddingLeft="12dp"
+            android:paddingTop="10dp"
+            android:paddingRight="12dp"
+            android:paddingBottom="10dp"
+            android:text="+个性标签"
+            android:textColor="@color/colorWhite"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/personality_flow" />
+    </android.support.constraint.ConstraintLayout>
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -310,8 +330,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </LinearLayout>
-            
-    <com.nex3z.flowlayout.FlowLayout
+        <com.nex3z.flowlayout.FlowLayout
         android:id="@+id/hobby_flow"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -319,13 +338,16 @@
         android:layout_marginRight="8dp"
         android:background="@color/colorWhite">
     </com.nex3z.flowlayout.FlowLayout>
-    <Button
+    <TextView
+        android:visibility="gone"
         android:id="@+id/add_hobby"
-        android:text="+添加兴趣爱好"
+        android:text="+兴趣爱好"
         android:layout_gravity="center"
         android:textColor="@color/colorWhite"
         android:paddingLeft="12dp"
         android:paddingRight="12dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
         android:layout_marginTop="8dp"
         android:elevation="3dp"
         android:layout_marginBottom="8dp"
@@ -333,12 +355,12 @@
         android:layout_height="wrap_content"
         android:background="@drawable/label_selected_bg"/>
     </LinearLayout>
-
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
         android:background="@color/colorWhite">
         <LinearLayout
             android:id="@+id/cheering_group_wrap"
@@ -355,20 +377,46 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </LinearLayout>
-
-        <android.support.v7.widget.RecyclerView
+        <com.hetang.util.HtGridView
             android:id="@+id/cheering_group_list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-        </android.support.v7.widget.RecyclerView>
-        
-        <Button
-            android:id="@+id/add_cheering_member"
-            android:text="+添加亲友团"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:scrollbars="none"
+            android:verticalSpacing="8dp"
+            android:horizontalSpacing="8dp"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="2dp"
+            android:layout_marginTop="16dp"
+            android:transcriptMode="alwaysScroll"
+            android:numColumns="2">
+        </com.hetang.util.HtGridView>
+        <TextView
+            android:visibility="gone"
+            android:id="@+id/add_cheering_group"
+            android:text="+邀请亲友"
             android:layout_gravity="center"
             android:textColor="@color/colorWhite"
             android:paddingLeft="12dp"
             android:paddingRight="12dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:layout_marginTop="8dp"
+            android:elevation="3dp"
+            android:layout_marginBottom="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/label_selected_bg"/>
+        <TextView
+            android:visibility="gone"
+            android:id="@+id/join_cheering_group"
+            android:text="+加入亲友团"
+            android:layout_gravity="center"
+            android:textColor="@color/colorWhite"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
             android:layout_marginTop="8dp"
             android:elevation="3dp"
             android:layout_marginBottom="8dp"
@@ -377,3 +425,4 @@
             android:background="@drawable/label_selected_bg"/>
     </LinearLayout>
 </LinearLayout>
+    
