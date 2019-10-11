@@ -3,12 +3,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@android:color/darker_gray">
+    android:fitsSystemWindows="true"
+    android:background="@color/background">
+
     <include
         android:id="@+id/custom_actionbar"
+        layout="@layout/custom_actionbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        layout="@layout/custom_actionbar"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
     
     <android.support.v7.widget.RecyclerView
         android:id="@+id/users_detail"
