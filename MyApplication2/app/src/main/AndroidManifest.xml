@@ -1,66 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.hetang">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.CAMERA" />
-    <!--Begin: for yunxin -->
-    <!-- 控制呼吸灯，振动器等，用于新消息提醒 -->
-    <uses-permission android:name="android.permission.FLASHLIGHT" />
-    <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <!-- 8.0 系统需要-->
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <permission
-        android:name="com.tongmenhui.launchak47.permission.RECEIVE_MSG"
-        android:protectionLevel="signature"/>
-    <!-- 接收 SDK 消息广播权限， 第三方 APP 接入时，请将 com.netease.nim.demo 替换为自己的包名 -->
-    <uses-permission android:name="com.tongmenhui.launchak47.permission.RECEIVE_MSG"/>
-    <!--End for yunxin-->
-
-    <!--Begin: MI push-->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-        <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <!--用于访问GPS定位-->
+    <uses-permission android:name="android.permission.CAMERA" /> <!-- Begin: MI push -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- 用于访问GPS定位 -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.GET_TASKS" />
-    <uses-permission android:name="android.permission.VIBRATE"/>
-    <permission android:name="com.tongmenhui.launchak47.permission.MIPUSH_RECEIVE"
-        android:protectionLevel="signature" />
-    <uses-permission android:name="com.tongmenhui.launchak47.permission.MIPUSH_RECEIVE" />
-    <!--End: MI Push-->
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <!-- android 8.0+ 需要这个权限才能安装apk -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
+
+    <!--VISIBILITY_HIDDEN表示不显示任何通知栏提示的权限-->
+    <uses-permission android:name="android.permission.DOWNLOAD_WITH_NOTIFICATION"/>
+    <!--DownloadManager-->
+    <uses-permission android:name="android.permission.ACCESS_DOWNLOAD_MANAGER"/>
+
+    <permission
+        android:name="com.hetang.permission.MIPUSH_RECEIVE"
+        android:protectionLevel="signature" />
+
+    <uses-permission android:name="com.hetang.permission.MIPUSH_RECEIVE" />
+    
     <application
-        android:name="com.hetang.util.MyApplication"
+        android:name=".common.MyApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/hetang_icon"
         android:label="@string/app_name"
-        android:supportsRtl="true">
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme.NoActionBar"
+        tools:replace="android:theme">
+
         <activity
-            android:name="com.hetang.join.LaunchActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:name=".join.LoginSplash"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.NoActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.hetang.join.VerificationCodeJoin"
-            android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name="com.hetang.join.UpdatePassword"
-            android:launchMode="singleTop"
-            android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name="com.hetang.join.CreateNewUser"
-            android:launchMode="singleTop"
-            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
-            android:name="com.hetang.main.MainActivity"
+            android:name=".join.LaunchActivity"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+
+        <activity
+            android:name=".join.VerificationCodeJoin"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".join.UpdatePassword"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".join.CreateNewUser"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".main.MainActivity"
             android:label="@string/app_name"
+            android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar">
 
             <!--
@@ -71,92 +79,95 @@
             </intent-filter>
             -->
         </activity>
+        <activity android:name=".common.AddPictureActivity"></activity>
         <activity
-            android:name="com.hetang.meet.FillMeetInfoActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name="com.hetang.region.activity.RegionSelectionActivity" />
-        <activity android:name="com.hetang.region.activity.BaseActivity" />
-        <activity android:name="com.hetang.main.AddDynamicsActivity" />
-        <activity android:name="com.hetang.meet.MeetArchivesActivity"
-            android:launchMode="singleTop"/>
-        <activity android:name="com.hetang.meet.EvaluatorDetailsActivity"
+            android:name=".meet.FillMeetInfoActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity android:name=".util.CitySelectActivity" />
+        <activity android:name=".util.SetAvatarActivity" />
+        <activity android:name=".region.activity.RegionSelectionActivity" />
+        <activity android:name=".region.activity.BaseActivity" />
+        <activity android:name=".common.AddDynamicsActivity" />
+        <activity android:name=".common.SettingsActivity"></activity>
+        <activity
+            android:name=".meet.MeetArchiveActivity" />
+        <activity
+            android:name=".meet.EvaluatorDetailsActivity"
             android:label="@string/evaluator_details"
-            android:parentActivityName="com.hetang.meet.MeetArchivesActivity"/>
-        <activity android:name="com.hetang.meet.ApprovedUsersActivity"
+            android:parentActivityName=".meet.MeetArchiveActivity" />
+        
+        <activity
+            android:name=".meet.ApprovedUsersActivity"
             android:label="@string/evaluator_details"
-            android:parentActivityName="com.hetang.meet.MeetArchivesActivity"/>
-        <activity android:name="com.hetang.main.ArchiveActivity"
-            android:launchMode="singleTask"/>
-        <activity android:name="com.hetang.meet.SingleGroupDetailsActivity"
-            android:launchMode="singleTop"/>
+            android:parentActivityName=".meet.MeetArchiveActivity" />
+        <activity
+            android:name=".archive.ArchiveActivity"
+            android:windowSoftInputMode="adjustPan"
+            android:launchMode="singleTask" />
+        <activity
+            android:name=".common.DynamicsInteractDetailsActivity"
+            android:windowSoftInputMode="adjustPan"
+            android:launchMode="singleTask" />
+        <activity
+            android:name=".meet.SingleGroupDetailsActivity"
+            android:launchMode="singleTop" />
+        <activity android:name=".meet.SpecificUserDynamicsActivity"
+            android:launchMode="singleTask" />
+        <activity android:name=".archive.WorkEditActivity"
+            android:launchMode="singleTask" />
+        <activity android:name=".home.MoreRecommendActivity"
+            android:launchMode="singleTask" />
+        <activity android:name=".home.MeetSingleGroupActivity"
+            android:launchMode="singleTask" />
+        <activity android:name=".contacts.ContactsApplyListActivity"
+            android:launchMode="singleTask" />
+        <provider android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.hetang.fileprovider"
+            android:exported="false" android:grantUriPermissions="true">
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_provider_paths" />
+        </provider>
 
-        <!--Begin: for yunxin -->
-        <!-- 云信后台服务，请使用独立进程。 -->
+        <service android:name=".common.DownloadService"/>
+        <!-- Begin: MI push -->
         <service
-            android:name="com.netease.nimlib.service.NimService"
-            android:process=":core"/>
-        <!-- 云信后台辅助服务 -->
+            android:name="com.xiaomi.push.service.XMPushService"
+            android:enabled="true"
+            android:process=":pushservice" />
         <service
-            android:name="com.netease.nimlib.service.NimService$Aux"
-            android:process=":core"/>
-
-        <!-- 云信后台辅助服务 -->
-        <service
-            android:name="com.netease.nimlib.job.NIMJobService"
-            android:exported="true"
+            android:name="com.xiaomi.push.service.XMJobService"
+            android:enabled="true"
+            android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE"
-            android:process=":core"/>
-
-        <!-- 云信监视系统启动和网络变化的广播接收器，保持和 NimService 同一进程 -->
-        <receiver android:name="com.netease.nimlib.service.NimReceiver"
-            android:process=":core"
-            android:exported="false">
+            android:process=":pushservice" /> <!-- 注：此service必须在3.0.1版本以后（包括3.0.1版本）加入 -->
+        <service
+            android:name="com.xiaomi.mipush.sdk.PushMessageHandler"
+            android:enabled="true"
+            android:exported="true" />
+        <service
+            android:name="com.xiaomi.mipush.sdk.MessageHandleService"
+            android:enabled="true" /> <!-- 注：此service必须在2.2.5版本以后（包括2.2.5版本）加入 -->
+        <receiver
+            android:name="com.xiaomi.push.service.receivers.NetworkStatusReceiver"
+            android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
-
-        <!-- 云信进程间通信 Receiver -->
-        <receiver android:name="com.netease.nimlib.service.ResponseReceiver"/>
-
-        <!-- 云信进程间通信service -->
-        <service android:name="com.netease.nimlib.service.ResponseService"/>
-
-        <!-- 云信进程间通信provider -->
-        <!-- android:authorities="{包名}.ipc.provider", 请将com.netease.nim.demo替换为自己的包名 -->
-        <provider
-            android:name="com.netease.nimlib.ipc.NIMContentProvider"
-            android:authorities="com.tongmenhui.launchak47.ipc.provider"
+        <receiver
+            android:name="com.xiaomi.push.service.receivers.PingReceiver"
             android:exported="false"
-            android:process=":core" />
-        <!--End: for yunxin -->
-        <!--Begin: MI push-->
-        <service android:enabled="true" android:process=":pushservice" android:name="com.xiaomi.push.service.XMPushService"/>
-        <service android:name="com.xiaomi.push.service.XMJobService" android:enabled="true"
-            android:exported="false" android:permission="android.permission.BIND_JOB_SERVICE" android:process=":pushservice" />
-        <!--注：此service必须在3.0.1版本以后（包括3.0.1版本）加入-->
-        <service android:enabled="true" android:exported="true" android:name="com.xiaomi.mipush.sdk.PushMessageHandler" />
-        <service android:enabled="true" android:name="com.xiaomi.mipush.sdk.MessageHandleService" />
-        <!--注：此service必须在2.2.5版本以后（包括2.2.5版本）加入-->
-        <receiver android:exported="true" android:name="com.xiaomi.push.service.receivers.NetworkStatusReceiver" >
-        <intent-filter>
-            <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-            <category android:name="android.intent.category.DEFAULT" />
-        </intent-filter>
-
-    </receiver>
-        <receiver android:exported="false" android:process=":pushservice"
-            android:name="com.xiaomi.push.service.receivers.PingReceiver" >
+            android:process=":pushservice">
             <intent-filter>
                 <action android:name="com.xiaomi.push.PING_TIMER" />
             </intent-filter>
         </receiver>
-
         <receiver
-            android:exported="true"
-            android:name="com.hetang.push.MiMessageReceiver">
-            <!--这里com.xiaomi.mipushdemo.DemoMessageRreceiver改成app中定义的完整类名-->
+            android:name=".push.MiMessageReceiver"
+            android:exported="true">
+            <!-- 这里com.xiaomi.mipushdemo.DemoMessageRreceiver改成app中定义的完整类名 -->
             <intent-filter>
                 <action android:name="com.xiaomi.mipush.RECEIVE_MESSAGE" />
             </intent-filter>
@@ -166,11 +177,13 @@
             <intent-filter>
                 <action android:name="com.xiaomi.mipush.ERROR" />
             </intent-filter>
-        </receiver>
-        <!--End: MI Push-->
-        <!--Begin: 高德地图定位-->
-        <meta-data android:name="com.amap.api.v2.apikey" android:value="ca43f15d494ef6dedc441c848f3d07f5"></meta-data>
-        <service android:name="com.amap.api.location.APSService"></service>
+        </receiver> <!-- End: MI Push -->
+        
+        <!-- Begin: 高德地图定位 -->
+        <meta-data
+            android:name="com.amap.api.v2.apikey"
+            android:value="62143e27cfa4ffadfee27fdba62347c1" />
+        <service android:name="com.amap.api.location.APSService" />
     </application>
 
 </manifest>
