@@ -6,68 +6,19 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/background"
+    android:fitsSystemWindows="true"
     android:id="@+id/fill_meet_info">
-        <include
-        android:id="@+id/custom_actionbar"
+    
+    <include
+        android:id="@+id/custom_actionbar_id"
         layout="@layout/custom_actionbar_common"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-            <LinearLayout
-        android:id="@+id/upload_picture"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/custom_actionbar">
-        <TextView
-            android:layout_marginTop="8dp"
-            android:text="@string/set_avatar"
-            android:textColor="@color/white"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <Button
-            android:id="@+id/add_avatar"
-            android:layout_marginTop="8dp"
-            android:layout_width="160dp"
-            android:layout_height="160dp"
-            android:background="@drawable/addimg_1x"/>
-            <View
-            android:layout_margin="32dp"
-            android:background="@color/white"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"/>
-        <TextView
-            android:layout_marginTop="10dp"
-            android:id="@+id/add_more_picture"
-            android:textColor="@color/white"
-            android:textSize="36sp"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:elevation="10dp"
-            android:text="@string/fa_camera" />
-        <TextView
-            android:text="@string/set_more_picture"
-            android:textColor="@color/white"
-            android:layout_marginTop="8dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-            
-            <GridView
-            android:id="@+id/more_picture"
-            android:visibility="gone"
-            android:layout_marginTop="8dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-        </GridView>
-    </LinearLayout>
     
     <LinearLayout
-        android:visibility="gone"
         android:id="@+id/self"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -75,109 +26,265 @@
         android:padding="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/upload_picture">
-        
-        <TextView
-            android:text="个人信息"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-        <!--birthday-->
+        app:layout_constraintTop_toBottomOf="@+id/custom_actionbar_id">
+      <!--birthday&constellation-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
             android:orientation="horizontal">
             <TextView
-                android:text="生日"
-                android:layout_width="wrap_content"
+                android:text="@string/birthyear"
+                android:textColor="@color/white"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content" />  
+             <org.angmarch.views.NiceSpinner
+                android:id="@+id/nice_spinner_years"
+                android:layout_width="0dp"
+                android:layout_weight="3"
+                android:layout_height="wrap_content"
+                android:entries="@array/years"/>
+            <TextView
+                android:text="@string/constellation"
+                android:textColor="@color/white"
+                android:layout_marginLeft="18dp"
+                android:layout_weight="1"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content" />
             <org.angmarch.views.NiceSpinner
-                android:id="@+id/nice_spinner_years"
-                android:layout_width="wrap_content"
+                android:id="@+id/nice_spinner_constellations"
+                android:layout_weight="3"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="4dp"
-                android:entries="@array/years"/>
-            <org.angmarch.views.NiceSpinner
-                android:id="@+id/nice_spinner_months"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="4dp"
-                android:entries="@array/months"/>
-            <org.angmarch.views.NiceSpinner
-                android:id="@+id/nice_spinner_days"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="4dp"
-                android:entries="@array/days"/>
+                android:entries="@array/constellations"/>
         </LinearLayout>
-        <!--height-->
+        <!--height&degree-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:orientation="horizontal">
             <TextView
-                android:text="身高"
-                android:layout_width="wrap_content"
+                android:text="@string/height"
+                android:textColor="@color/white"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content" />
             <org.angmarch.views.NiceSpinner
                 android:id="@+id/nice_spinner_height"
-                android:layout_width="wrap_content"
+                android:layout_weight="3"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="4dp"
                 android:entries="@array/heights"/>
-        </LinearLayout>
-        <!--degree-->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
             <TextView
-                android:text="学历"
-                android:layout_width="wrap_content"
+                android:text="@string/degree"
+                android:textColor="@color/white"
+                android:layout_marginLeft="18dp"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content" />
             <org.angmarch.views.NiceSpinner
                 android:id="@+id/nice_spinner_degree"
-                android:layout_width="wrap_content"
+                android:layout_weight="3"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="4dp"
                 android:entries="@array/degrees"/>
         </LinearLayout>
-        <!--lives-->
+        <!--university && hometown-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:layout_marginTop="8dp"
             android:orientation="horizontal">
             <TextView
-                android:text="居住地"
-                android:layout_width="wrap_content"
+                android:text="@string/hometown"
+                android:textColor="@color/white"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content" />
-            <Button
-                android:id="@+id/self_region"
-                android:text="选择地区"
-                android:layout_width="match_parent"
+            <org.angmarch.views.NiceSpinner
+                android:id="@+id/nice_spinner_hometown"
+                android:layout_weight="3"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:entries="@array/hometown"/>
+            <TextView
+                android:text="@string/nation"
+                android:textColor="@color/white"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_marginLeft="18dp"
                 android:layout_height="wrap_content" />
+            <org.angmarch.views.NiceSpinner
+                android:id="@+id/nice_spinner_nation"
+                android:layout_weight="3"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:entries="@array/nations"/>
         </LinearLayout>
-        <!--hobbies-->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="兴趣爱好" />
+        
+        <!--nation && religions-->
         <LinearLayout
+            android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
             android:orientation="horizontal">
-            <EditText
-                android:hint="输入兴趣"
-                android:layout_weight="10"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-            <Button
+
+            <TextView
+                android:text="@string/religion"
+                android:textColor="@color/white"
+                android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <org.angmarch.views.NiceSpinner
+                android:id="@+id/nice_spinner_religion"
+                android:layout_width="0dp"
+                android:layout_weight="3"
                 android:layout_height="wrap_content"
-                android:text="确定" />
+                android:entries="@array/religions"/>
+            <TextView
+                android:text="@string/university"
+                android:textColor="@color/white"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_marginLeft="18dp"
+                android:layout_height="wrap_content" />
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/university_input_layout"
+                android:layout_weight="3"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:errorEnabled="true"
+                app:errorTextAppearance="@style/TextErrorAppearance"
+                app:hintTextAppearance="@style/HintAppearance">
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/university_edittext"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="@string/graduate_university"
+                    android:textColor="@color/white"
+                    android:textCursorDrawable="@drawable/cursor_color"
+                    android:theme="@style/MyEditText" />
+            </android.support.design.widget.TextInputLayout>
+        </LinearLayout>
+        <!--situation-->
+        <LinearLayout
+            android:id="@+id/situationWrap"
+            android:orientation="vertical"
+            android:layout_marginTop="36dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/situationText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textColor="@color/white"
+                    android:text="@string/situation" />
+                <RadioGroup
+                    android:id="@+id/situationRG"
+                    android:layout_marginLeft="18dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/radioStudent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:text="@string/student"
+                        android:theme="@style/MyRadioButton"/>
+                    <RadioButton
+                        android:id="@+id/radioWork"
+                        android:layout_marginLeft="28dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:text="@string/incumbency"
+                        android:theme="@style/MyRadioButton"/>
+                </RadioGroup>
+            </LinearLayout>
+            <LinearLayout
+                android:visibility="gone"
+                android:orientation="vertical"
+                android:id="@+id/student"
+                android:layout_marginTop="18dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/major_input_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    app:errorEnabled="true"
+                    app:errorTextAppearance="@style/TextErrorAppearance"
+                    app:hintTextAppearance="@style/HintAppearance">
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/major_edittext"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/major"
+                        android:textColor="@color/white"
+                        android:textCursorDrawable="@drawable/cursor_color"
+                        android:theme="@style/MyEditText" />
+                </android.support.design.widget.TextInputLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:visibility="gone"
+                android:orientation="vertical"
+                android:id="@+id/work"
+                android:layout_marginTop="18dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/position_input_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    app:errorEnabled="true"
+                    app:errorTextAppearance="@style/TextErrorAppearance"
+                    app:hintTextAppearance="@style/HintAppearance">
+                     <android.support.design.widget.TextInputEditText
+                        android:id="@+id/position_edittext"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/position_hint"
+                        android:textColor="@color/white"
+                        android:textCursorDrawable="@drawable/cursor_color"
+                        android:theme="@style/MyEditText" />
+                </android.support.design.widget.TextInputLayout>
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/industry_input_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    app:errorEnabled="true"
+                    app:errorTextAppearance="@style/TextErrorAppearance"
+                    app:hintTextAppearance="@style/HintAppearance">
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/industry_edittext"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/industry"
+                        android:textColor="@color/white"
+                        android:textCursorDrawable="@drawable/cursor_color"
+                        android:theme="@style/MyEditText" />
+                </android.support.design.widget.TextInputLayout>
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
-    
     <LinearLayout
         android:orientation="vertical"
         android:id="@+id/requirement"
@@ -185,110 +292,117 @@
         android:padding="16dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/self">
-        <TextView
-            android:text="征友要求"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-            <!--sex-->
+         <!--sex-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="18dp"
             android:orientation="horizontal">
-            <TextView
-                android:text="性别"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-                <RadioGroup
+            <RadioGroup
                 android:id="@+id/require_sex"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
                 <RadioButton
-                    android:text="男"
                     android:id="@+id/require_sex_male"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent" />
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:text="@string/male"
+                    android:theme="@style/MyRadioButton"/>
                 <RadioButton
-                    android:text="女"
                     android:id="@+id/require_sex_female"
+                    android:layout_marginLeft="28dp"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent" />
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:text="@string/female"
+                    android:theme="@style/MyRadioButton"/>
             </RadioGroup>
         </LinearLayout>
         <!--age-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:orientation="horizontal">
             <TextView
-                android:text="年龄"
-                android:layout_width="wrap_content"
+                android:text="@string/age"
+                android:textColor="@color/white"
+                android:layout_weight="1"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content" />
             <org.angmarch.views.NiceSpinner
                 android:id="@+id/nice_spinner_require_age_lower"
-                android:layout_width="wrap_content"
+                android:layout_weight="3"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="4dp"
                 android:entries="@array/ages"/>
             <TextView
-                android:text="～"
-                android:layout_width="wrap_content"
+                android:text="@string/divider"
+                android:textColor="@color/white"
+                android:layout_marginLeft="18dp"
+                android:layout_weight="1"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content" />
             <org.angmarch.views.NiceSpinner
                 android:id="@+id/nice_spinner_require_age_upper"
-                android:layout_width="wrap_content"
+                android:layout_weight="3"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="4dp"
                 android:entries="@array/ages"/>
         </LinearLayout>
-        <!--height-->
+        <!--height & degree-->
         <LinearLayout
+            android:layout_marginTop="8dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
             <TextView
-                android:text="身高"
-                android:layout_width="wrap_content"
+                android:text="@string/height"
+                android:textColor="@color/white"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content" />
             <org.angmarch.views.NiceSpinner
                 android:id="@+id/nice_spinner_require_height"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="3"
                 android:layout_height="wrap_content"
-                android:layout_margin="4dp"
                 android:entries="@array/heights"/>
-        </LinearLayout>
-        
-        <!--degree-->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
             <TextView
-                android:text="学历"
-                android:layout_width="wrap_content"
+                android:text="@string/degree"
+                android:textColor="@color/white"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_marginLeft="18dp"
                 android:layout_height="wrap_content" />
             <org.angmarch.views.NiceSpinner
                 android:id="@+id/nice_spinner_require_degree"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="3"
                 android:layout_height="wrap_content"
-                android:layout_margin="4dp"
                 android:entries="@array/degrees"/>
         </LinearLayout>
-        
         <!--lives-->
         <LinearLayout
+            android:layout_marginTop="8dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
             <TextView
-                android:text="居住地"
+                android:text="@string/living"
+                android:textColor="@color/white"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
             <Button
-                android:text="选择地区"
+                android:text="@string/select_living"
                 android:id="@+id/require_region"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
@@ -296,17 +410,19 @@
         
         <EditText
             android:id="@+id/illustration"
-            android:hint="hahaha"
+            android:hint="@string/illustration_hint"
+            android:layout_marginTop="8dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:enabled="true"
             android:gravity="top"
-            android:minLines="2"
-            android:maxLines="5"
+            android:minLines="5"
+            android:maxLines="8"
+            android:textSize="12sp"
             android:scrollbars="vertical"
             android:background="@drawable/shape"/>
+
     </LinearLayout>
-    
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -316,18 +432,17 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
-
         <Button
             android:id="@+id/prev"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:background="@drawable/btn_default"
-            android:text="上一页"
+            android:text="@string/prev"
             android:textColor="@color/background"
-            android:visibility="visible" />
-            
-            <LinearLayout
+            android:visibility="invisible" />
+
+        <LinearLayout
             android:id="@+id/page_indicator"
             android:layout_width="0dp"
             android:layout_weight="2"
@@ -337,43 +452,16 @@
             android:layout_marginRight="18dp"
             android:gravity="center_horizontal"
             android:orientation="horizontal">
+            </LinearLayout>
 
-            <TextView
-                android:id="@+id/page_left"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/circle_o"
-                android:textColor="@color/white" />
-                
-                 <TextView
-                android:id="@+id/page_middle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:text="@string/circle_o"
-                android:textColor="@color/white"
-                android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/page_right"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:text="@string/circle_o"
-                android:textColor="@color/white" />
-        </LinearLayout>
-        
         <Button
             android:id="@+id/next"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:background="@drawable/btn_default"
-            android:text="继续"
+            android:text="@string/next"
             android:textColor="@color/background" />
     </LinearLayout>
-
-
-
 </android.support.constraint.ConstraintLayout>
             
