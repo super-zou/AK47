@@ -1,36 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:fitsSystemWindows="true">
     <RelativeLayout
-        android:id="@+id/rl_title"
+        android:id="@+id/add_dynamics_statusbar"
         android:layout_width="match_parent"
+        android:layout_marginBottom="18dp"
         android:layout_height="48dp"
-        android:background="@color/bar_grey">
+        android:background="@color/background">
 
-        <ImageView
+        <TextView
             android:id="@+id/left_back"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_centerVertical="true"
-            android:background="@color/transparent"
-            android:padding="15dp"
-            android:src="@drawable/picture_back"
-            android:visibility="visible" />
-
-        <TextView
-            android:id="@+id/tv_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_centerVertical="true"
-            android:ellipsize="end"
-            android:maxEms="11"
-            android:text="@string/app_name"
+            android:text="@string/left_angle"
             android:textColor="@color/white"
-            android:textSize="18sp" />
-
-        <TextView
+            android:textSize="26sp"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:layout_width="50dp"
+            android:layout_height="match_parent" />
+         <TextView
             android:id="@+id/dynamic_publish"
             android:layout_width="48dp"
             android:layout_height="match_parent"
@@ -40,21 +32,34 @@
             android:gravity="center"
             android:text="发布"
             android:textColor="@color/white"
-            android:textSize="15sp" />
+            android:textSize="16sp" />
     </RelativeLayout>
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/dynamics_input_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        app:errorEnabled="true"
+        app:errorTextAppearance="@style/TextErrorAppearance"
+        app:hintTextAppearance="@style/HintAppearance">
 
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/dynamics_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/dynamics_input_hint"
+            android:textColor="@color/white"
+            android:textCursorDrawable="@drawable/cursor_color"
+            android:theme="@style/MyEditText" />
+    </android.support.design.widget.TextInputLayout>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="8dp"
         android:overScrollMode="never" />
-    <EditText
-        android:id="@+id/dynamics_input"
-        android:layout_marginTop="20dp"
-        android:hint="@string/dynamics_input_hint"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
 </LinearLayout>
