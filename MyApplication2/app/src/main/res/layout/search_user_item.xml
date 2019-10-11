@@ -9,23 +9,22 @@
     android:paddingBottom="3dp"
     android:paddingTop="3dp"
     android:paddingLeft="5dp"
+    android:id="@+id/search_user_item"
     android:background="@color/colorWhite">
 
-    <ImageView
+    <com.hetang.util.RoundImageView
         android:id="@+id/headPic"
-        android:layout_width="41dp"
-        android:layout_height="55dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        tools:srcCompat="@tools:sample/avatars[2]" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
         android:text="name"
         app:layout_constraintStart_toEndOf="@+id/headPic"
         app:layout_constraintTop_toTopOf="@+id/headPic" />
@@ -34,7 +33,7 @@
         android:id="@+id/profile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-              android:textSize="12sp"
+        android:textSize="12sp"
         android:maxLines="2"
         android:maxEms="13"
         android:ellipsize="end"
@@ -47,20 +46,18 @@
     <Button
         android:id="@+id/invite"
         style="@style/Theme.AppCompat.Light"
-        android:layout_width="75dp"
-        android:layout_height="33dp"
-        android:layout_marginStart="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="2dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:background="@drawable/btn_stress"
-        android:text="邀请推荐"
+        android:padding="5dp"
+        android:text="邀请"
         android:textColor="@color/colorWhite"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/headPic"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.027" />
+        app:layout_constraintTop_toTopOf="parent" />
+    
 </android.support.constraint.ConstraintLayout>
