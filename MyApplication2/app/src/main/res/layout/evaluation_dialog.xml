@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     android:focusable="true"
     android:focusableInTouchMode="true">
 
@@ -62,7 +63,7 @@
         android:layout_alignEnd="@+id/charm_rating_bar"
         android:layout_alignParentBottom="true"
         android:layout_marginTop="8dp"
-        android:text="您认为该用户魅力如何"
+        android:text="该用户魅力如何?"
         app:layout_constraintEnd_toEndOf="@+id/charm_rating_bar"
         app:layout_constraintStart_toStartOf="@+id/charm_rating_bar"
         app:layout_constraintTop_toBottomOf="@+id/charm_rating_bar" />
@@ -143,7 +144,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/features_approved">
-                <TextView
+        <TextView
             android:layout_width="0dp"
             android:layout_height="1dp"
             android:layout_centerVertical="true"
@@ -167,232 +168,81 @@
     </LinearLayout>
 
     <com.nex3z.flowlayout.FlowLayout
-        android:id="@+id/male_features"
+        android:id="@+id/features_demo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-         android:visibility="gone"
         app:flChildSpacing="8dp"
         app:flChildSpacingForLastRow="align"
         app:flRowSpacing="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/recommend_features_label">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/label_bg"
-            android:clickable="true"
-            android:gravity="center"
-            android:padding="8dp"
-            android:text="英俊潇洒" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/label_bg"
-            android:clickable="true"
-            android:gravity="center"
-            android:padding="8dp"
-            android:text="成熟" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/label_bg"
-            android:gravity="center"
-            android:padding="8dp"
-            android:text="博学多才" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/label_bg"
-            android:gravity="center"
-            android:padding="8dp"
-            android:text="热情开朗" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/label_bg"
-            android:gravity="center"
-            android:padding="8dp"
-            android:text="诚实正直" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/label_bg"
-            android:gravity="center"
-            android:padding="8dp"
-            android:text="幽默" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/label_bg"
-            android:gravity="center"
-            android:padding="8dp"
-            android:text="体贴" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/label_bg"
-            android:gravity="center"
-            android:padding="8dp"
-            android:text="谦虚好学" />
     </com.nex3z.flowlayout.FlowLayout>
-
-    <com.nex3z.flowlayout.FlowLayout
-        android:id="@+id/female_features"
+    
+    <LinearLayout
+        android:id="@+id/add_diy_features"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-         android:visibility="gone"
-        app:flChildSpacing="8dp"
-        app:flChildSpacingForLastRow="align"
-        app:flRowSpacing="8dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recommend_features_label">
+        app:layout_constraintTop_toBottomOf="@+id/features_demo">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <android.support.v7.widget.AppCompatEditText
+            android:id="@+id/feature_input"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="@drawable/label_bg"
-            android:gravity="center"
-            android:padding="8dp"
-            android:text="温柔体贴" />
+            android:layout_weight="5"
+            android:focusedByDefault="false"
+            android:hint="自定义" />
 
-        <TextView
-            android:layout_width="wrap_content"
+        <Button
+            android:id="@+id/add_feature"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="@drawable/label_bg"
-            android:gravity="center"
-            android:padding="8dp"
-            android:text="可爱" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/label_bg"
-            android:gravity="center"
-            android:padding="8dp"
-            android:text="善良贤惠" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/label_bg"
-            android:gravity="center"
-            android:padding="8dp"
-            android:text="热情开朗" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/label_bg"
-            android:gravity="center"
-            android:padding="8dp"
-            android:text="文静" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/label_bg"
-            android:gravity="center"
-            android:padding="8dp"
-            android:text="端庄秀丽" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/label_bg"
-            android:gravity="center"
-            android:padding="8dp"
-            android:text="小巧玲珑" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/label_bg"
-            android:gravity="center"
-            android:padding="8dp"
-            android:text="窈窕淑女" />
-    </com.nex3z.flowlayout.FlowLayout>
-
-    <android.support.v7.widget.AppCompatEditText
-        android:id="@+id/feature_input"
-        android:layout_width="247dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="90dp"
-        android:focusedByDefault="false"
-        android:hint="自定义"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recommend_features_label" />
-
-    <Button
-        android:id="@+id/add_feature"
-        android:layout_width="60dp"
-        android:layout_height="35dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:background="#3799f4"
-        android:text="+添加"
-        android:textColor="@color/colorWhite"
-            app:layout_constraintHorizontal_bias="0.849"
-        app:layout_constraintBottom_toBottomOf="@+id/feature_input"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/feature_input"
-        app:layout_constraintTop_toTopOf="@+id/feature_input"
-            app:layout_constraintVertical_bias="0.0"/>
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="2"
+            android:background="@drawable/btn_primary"
+            android:text="+添加"
+            android:textColor="@color/colorWhite" />
+        
+   </LinearLayout>
 
     <com.nex3z.flowlayout.FlowLayout
         android:id="@+id/diy_features"
-        android:visibility="visible"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
         app:flChildSpacing="8dp"
         app:flChildSpacingForLastRow="align"
         app:flRowSpacing="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/feature_input"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintTop_toBottomOf="@+id/add_diy_features">
 
     </com.nex3z.flowlayout.FlowLayout>
 
     <Button
         android:id="@+id/save_features"
         android:layout_width="match_parent"
-        android:layout_height="36dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:background="#3799f4"
+        android:background="@drawable/btn_stress"
         android:text="保存"
         android:textColor="@color/line_color"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/diy_features"
-        app:layout_constraintVertical_bias="0.019" />
+        app:layout_constraintTop_toBottomOf="@+id/diy_features" />
     
    <TextView
         android:id="@+id/error_notice"
