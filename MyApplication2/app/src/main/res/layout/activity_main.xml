@@ -5,10 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    android:background="@color/background"
     android:clickable="true"
     android:id="@+id/activity_main"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:focusable="true">
 
 
     <android.support.v4.view.ViewPager
@@ -16,7 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="@android:color/darker_gray"
+        android:background="@android:color/color_disabled"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     <android.support.design.widget.TabLayout
