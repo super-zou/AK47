@@ -54,7 +54,7 @@
             android:layout_marginBottom="16dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/write_reference_wrap"/>
-        <com.tongmenhui.launchak47.util.MyRadioGroup
+        <com.hetang.util.MyRadioGroup
             android:id="@+id/relation_radiogroup"
             android:orientation="horizontal"
             android:layout_width="match_parent"
@@ -119,7 +119,7 @@
                     android:theme="@style/MyRadioButton"
                     android:layout_height="wrap_content"
                     android:text="@string/relative"/>
-        </com.tongmenhui.launchak47.util.MyRadioGroup>
+        </com.hetang.util.MyRadioGroup>
         <EditText
             android:id="@+id/reference_edit_text"
             android:layout_width="match_parent"
