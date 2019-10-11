@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
+    android:fitsSystemWindows="true"
     tools:layout_editor_absoluteY="81dp">
 
     <TextView
@@ -28,53 +29,28 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0" />
-
-    <ImageView
-        android:id="@+id/head_picure1"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
+   <LinearLayout
+        android:id="@+id/avatar_abstract"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:gravity="center"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/feature"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.615" />
-
-    <ImageView
-        android:id="@+id/head_picure2"
-        android:visibility="gone"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
-        android:layout_marginStart="-8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/head_picure1"
-        app:layout_constraintStart_toEndOf="@+id/head_picure1"
-        app:layout_constraintTop_toTopOf="@+id/head_picure1" />
-
-    <ImageView
-        android:id="@+id/head_picure3"
-        android:visibility="gone"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
-        android:layout_marginStart="-8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/head_picure2"
-        app:layout_constraintStart_toEndOf="@+id/head_picure2"
-        app:layout_constraintTop_toTopOf="@+id/head_picure2" />
-
+        app:layout_constraintEnd_toStartOf="@+id/approved_users"
+        app:layout_constraintTop_toTopOf="parent"></LinearLayout>
+    
     <TextView
         android:id="@+id/approved_users"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
         android:layout_marginBottom="8dp"
-        android:textColor="@color/color_blue"
-        app:layout_constraintBottom_toBottomOf="@+id/head_picure3"
-        app:layout_constraintStart_toEndOf="@+id/head_picure3"
-        app:layout_constraintTop_toTopOf="@+id/head_picure3" />
+        android:text="@string/chevron_right"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+    
 
 </android.support.constraint.ConstraintLayout>
