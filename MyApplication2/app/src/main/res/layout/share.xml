@@ -13,4 +13,8 @@
     tools:context=".common.SettingsActivity">
     <TextView android:padding="16dp" android:textColor="@color/black" android:gravity="center" android:text="@string/share_to" app:layout_columnSpan="4" app:layout_columnWeight="1"/>
     <ImageView android:id="@+id/wechat" android:layout_margin="8dp"   android:layout_width="50dp" android:layout_height="50dp" android:src="@drawable/wechat" app:layout_columnWeight="1" />
-    <ImageView android:id="@+id/friend
+    <ImageView android:id="@+id/friend_circle" android:layout_margin="8dp"   android:layout_width="50dp" android:layout_height="50dp" android:src="@drawable/friend_circle" app:layout_columnWeight="1" />
+    <ImageView android:id="@+id/qq" android:layout_margin="8dp"   android:layout_width="50dp" android:layout_height="50dp" android:src="@drawable/qq" app:layout_columnWeight="1" />
+    <ImageView android:id="@+id/qqzone" android:layout_margin="8dp"   android:layout_width="50dp" android:layout_height="50dp" android:src="@drawable/qqzone" app:layout_columnWeight="1" />
+    <ImageView android:id="@+id/weibo" android:layout_margin="8dp"   android:layout_width="50dp" android:layout_height="50dp" android:src="@drawable/weibo" app:layout_columnWeight="1" />
+</android.support.v7.widget.GridLayout>
