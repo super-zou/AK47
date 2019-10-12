@@ -11,14 +11,17 @@ import android.widget.TextView;
 import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 
-import com.android.volley.RequestQueue;
 import com.hetang.R;
 import com.hetang.meet.MeetReferenceInfo;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
-import com.hetang.util.Slog;
+import com.hetang.common.MyApplication;
+import com.hetang.util.ParseUtils;
+import com.hetang.util.RoundImageView;
 
 import java.util.List;
+
+import static com.hetang.util.ParseUtils.startMeetArchiveActivity;
 
 /**
  * Created by super-zou on 18-9-21.
@@ -28,13 +31,10 @@ public class MeetReferenceAdapter extends RecyclerView.Adapter<MeetReferenceAdap
 
     private static final String TAG = "MeetReferenceAdapter";
     private static Context mContext;
-    RequestQueue queue;
     private List<MeetReferenceInfo> mReferenceList;
 
     public MeetReferenceAdapter(Context context) {
-        Slog.d(TAG, "==============MeetReferenceAdapter init=================");
         mContext = context;
-
     }
 
     public void setReferenceList(List<MeetReferenceInfo> referenceList) {
@@ -51,18 +51,35 @@ public class MeetReferenceAdapter extends RecyclerView.Adapter<MeetReferenceAdap
 
     @Override
     public void onBindViewHolder(@NonNull MeetReferenceAdapter.ReferenceViewHolder holder, int position) {
-        final MeetReferenceInfo referenceInfo = mReferenceList.get(position);
-        holder.realName.setText(referenceInfo.getRefereeName());
+        holder.name.setText(referenceInfo.getRefereeName());
         holder.relation.setText(referenceInfo.getRelation());
         holder.refereeProfile.setText(referenceInfo.getRefereeProfile());
-        holder.referenceContent.setText(referenceInfo.getReferenceContent());
+        holder.referenceContent.setText("“"+referenceInfo.getReferenceContent()+"”");
         //holder.createdView.setText(referenceInfo.getCreated().toString());
-
-        if (referenceInfo.getHeadUri() != null && !"".equals(referenceInfo.getHeadUri())) {
-            Glide.with(mContext).load(HttpUtil.DOMAIN + referenceInfo.getHeadUri()).into(holder.refereeHeadUri);
+        String avatar = referenceInfo.getAvatar();
+        if (avatar != null && !"".equals(avatar)) {
+            Glide.with(mContext).load(HttpUtil.DOMAIN + avatar).into(holder.refereeHeadUri);
         } else {
-            holder.refereeHeadUri.setImageDrawable(mContext.getDrawable(R.mipmap.ic_launcher));
+            if(referenceInfo.getSex() == 0){
+                holder.refereeHeadUri.setImageDrawable(MyApplication.getContext().getDrawable(R.drawable.male_default_avator));
+            }else {
+                holder.refereeHeadUri.setImageDrawable(MyApplication.getContext().getDrawable(R.drawable.female_default_avator));
+            }
         }
+        
+        holder.refereeHeadUri.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ParseUtils.startArchiveActivity(mContext, referenceInfo.getUid());
+            }
+        });
+
+        holder.name.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ParseUtils.startArchiveActivity(mContext, referenceInfo.getUid());
+            }
+        });
 
     }
 
@@ -72,15 +89,10 @@ public class MeetReferenceAdapter extends RecyclerView.Adapter<MeetReferenceAdap
     }
 
     public class ReferenceViewHolder extends RecyclerView.ViewHolder {
-        TextView realName;
+        TextView name;
         TextView relation;
         TextView refereeProfile;
-        ImageView refereeHeadUri;
-        TextView illustration;
-        TextView eyeView;
-        TextView lovedView;
-        TextView lovedIcon;
-        TextView thumbsView;
+        RoundImageView refereeHeadUri;
         TextView thumbsUpIcon;
         TextView referenceContent;
         TextView createdView;
@@ -88,13 +100,13 @@ public class MeetReferenceAdapter extends RecyclerView.Adapter<MeetReferenceAdap
 
         public ReferenceViewHolder(View view) {
             super(view);
-            realName = view.findViewById(R.id.referee_name);
+            name = view.findViewById(R.id.referee_name);
             relation = view.findViewById(R.id.relation);
             refereeHeadUri = view.findViewById(R.id.referee_head_uri);
             refereeProfile = view.findViewById(R.id.referee_profile);
             thumbsUpIcon = view.findViewById(R.id.thumbs_up_icon);
             commentIcon = view.findViewById(R.id.comment_icon);
-            createdView = view.findViewById(R.id.dynamic_time);
+            //createdView = view.findViewById(R.id.dynamic_time);
             referenceContent = view.findViewById(R.id.reference_content);
             //commentList = (LinearLayout) view.findViewById(R.id.dynamics_comments);
 
