@@ -9,29 +9,29 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.volley.RequestQueue;
+import com.bumptech.glide.Glide;
 import com.hetang.R;
-import com.hetang.meet.MeetMemberInfo;
+import com.hetang.meet.UserMeetInfo;
 import com.hetang.util.HttpUtil;
-import com.hetang.util.RequestQueueSingleton;
+import com.hetang.common.MyApplication;
+import com.hetang.util.ParseUtils;
+import com.hetang.util.RoundImageView;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import static com.hetang.util.ParseUtils.getMeetArchive;
+import static com.hetang.util.ParseUtils.startMeetArchiveActivity;
 
 public class ImpressionApprovedDetailAdapter extends RecyclerView.Adapter<ImpressionApprovedDetailAdapter.ViewHolder> {
     private static final String TAG = "ImpressionApprovedDetailAdapter";
-    RequestQueue queue;
-    private ArrayList<MeetMemberInfo> mUnfilteredData;
-    private List<MeetMemberInfo> mMemberInfoList;
+
+    private List<UserMeetInfo> mMemberInfoList;
     private Context mContext;
 
     public ImpressionApprovedDetailAdapter(Context context) {
         mContext = context;
     }
 
-    public void setData(List<MeetMemberInfo> memberInfoList) {
+    public void setData(List<UserMeetInfo> memberInfoList) {
         mMemberInfoList = memberInfoList;
     }
 
@@ -45,31 +45,34 @@ public class ImpressionApprovedDetailAdapter extends RecyclerView.Adapter<Impres
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        final MeetMemberInfo memberInfo = mMemberInfoList.get(position);
-        holder.name.setText(memberInfo.getRealname());
-        String profile = "";
-        if (memberInfo.getSituation() == 0) {//student
-            profile = memberInfo.getUniversity() + "." + memberInfo.getDegree() + "." + memberInfo.getDegree();
+        final UserMeetInfo memberInfo = mMemberInfoList.get(position);
+        holder.name.setText(memberInfo.getName());
+        String profile = memberInfo.getBaseProfile();
+        holder.profile.setText(profile.replaceAll(" ", ""));
+        
+        String avatar = memberInfo.getAvatar();
+        if (avatar != null && !"".equals(avatar)) {
+           // queue = RequestQueueSingleton.instance(mContext);
+           // holder.headPic.setTag(HttpUtil.DOMAIN + memberInfo.getPictureUri());
+           // HttpUtil.loadByImageLoader(queue, holder.headPic, HttpUtil.DOMAIN + memberInfo.getPictureUri(), 50, 50);
+            Glide.with(MyApplication.getContext()).load(HttpUtil.DOMAIN + avatar).into(holder.headPic);
         } else {
-            profile = memberInfo.getJobTitle() + "." + memberInfo.getCompany();
-            if (!"".equals(memberInfo.getLives())) {
-                profile += "." + memberInfo.getLives();
+            if(memberInfo.getSex() == 0){
+                holder.headPic.setImageDrawable(MyApplication.getContext().getDrawable(R.drawable.male_default_avator));
+            }else {
+                holder.headPic.setImageDrawable(MyApplication.getContext().getDrawable(R.drawable.female_default_avator));
             }
         }
-        holder.profile.setText(profile.replaceAll(" ", ""));
-
-        if (memberInfo.getPictureUri() != null && !"".equals(memberInfo.getPictureUri())) {
-            queue = RequestQueueSingleton.instance(mContext);
-            holder.headPic.setTag(HttpUtil.DOMAIN + memberInfo.getPictureUri());
-            HttpUtil.loadByImageLoader(queue, holder.headPic, HttpUtil.DOMAIN + memberInfo.getPictureUri(), 50, 50);
-        } else {
-            holder.headPic.setImageDrawable(mContext.getDrawable(R.mipmap.ic_launcher));
-        }
-
+        
         holder.headPic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getMeetArchive(mContext, memberInfo.getUid());
+                if (memberInfo.getCid() > 0){
+                    ParseUtils.startMeetArchiveActivity(mContext, memberInfo.getUid());
+                }else {
+                    ParseUtils.startArchiveActivity(mContext, memberInfo.getUid());
+                }
+
             }
         });
     }
@@ -81,13 +84,13 @@ public class ImpressionApprovedDetailAdapter extends RecyclerView.Adapter<Impres
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        public ImageView headPic;
+        public RoundImageView headPic;
         public TextView name;
         public TextView profile;
 
         public ViewHolder(View view) {
             super(view);
-            headPic = view.findViewById(R.id.networkImageView);
+            headPic = view.findViewById(R.id.avatar);
             name = view.findViewById(R.id.name);
             profile = view.findViewById(R.id.profile);
         }
