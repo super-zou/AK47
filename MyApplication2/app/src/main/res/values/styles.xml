@@ -22,7 +22,6 @@
 
     <style name="MyTabLayoutTextAppearance" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
         <item name="android:textSize">15sp</item>
-        <item name="android:textColor">@color/essence_tab_text_color_normal</item>
     </style>
     
     <!--+Begin: add for RadioButton color by zouhaichao, 2018.11.27-->
