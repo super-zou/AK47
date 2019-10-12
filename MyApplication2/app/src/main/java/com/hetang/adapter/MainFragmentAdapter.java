@@ -5,10 +5,10 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.hetang.main.ContactsFragment;
-import com.hetang.main.HomeFragment;
-import com.hetang.main.MyArchiveFragment;
+import com.hetang.home.HomeFragment;
+import com.hetang.main.ArchiveFragment;
 import com.hetang.main.MeetFragment;
-import com.hetang.util.BaseFragment;
+import com.hetang.main.MessageFragment;
 
 import java.util.List;
 
@@ -18,12 +18,13 @@ import java.util.List;
 
 public class MainFragmentAdapter extends FragmentStatePagerAdapter {
     public static final String TAG = "MainFragmentAdapter";
-    private List<BaseFragment> fragmentList;
-    private String[] mTitles = {"主页", "遇见", "联系人", "我"};
+    private List<Fragment> fragmentList;
+    private String[] mTitles;
 
-    public MainFragmentAdapter(FragmentManager fm, List<BaseFragment> fragmentList) {
+    public MainFragmentAdapter(FragmentManager fm, List<Fragment> fragmentList, String[] mTitles) {
         super(fm);
         this.fragmentList = fragmentList;
+        this.mTitles = mTitles;
     }
 
     @Override
@@ -39,10 +40,13 @@ public class MainFragmentAdapter extends FragmentStatePagerAdapter {
                 fragment = new MeetFragment();
                 break;
             case 2:
-                fragment = new ContactsFragment();
+                fragment = new MessageFragment();
                 break;
             case 3:
-                fragment = new MyArchiveFragment();
+                fragment = new ContactsFragment();
+                break;
+            case 4:
+                fragment = new ArchiveFragment();
                 break;
             default:
                 fragment = new HomeFragment();
