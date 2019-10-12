@@ -1,24 +1,23 @@
 package com.hetang.adapter;
 
 import android.content.Context;
-import android.content.Intent;
+import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
 import com.bumptech.glide.Glide;
 import com.hetang.R;
-import com.hetang.meet.ApprovedUsersActivity;
-import com.hetang.meet.MeetArchivesActivity;
-import com.hetang.meet.MeetMemberInfo;
+import com.hetang.meet.MeetArchiveActivity;
+import com.hetang.meet.UserMeetInfo;
+import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
-import com.hetang.util.RequestQueueSingleton;
-import com.hetang.util.Slog;
+import com.hetang.util.RoundImageView;
 
 import java.util.List;
 
@@ -28,7 +27,7 @@ public class MeetImpressionStatisticsAdapter extends RecyclerView.Adapter<MeetIm
     private static Context mContext;
     RequestQueue queue;
     private MyItemClickListener mItemClickListener;
-    private List<MeetArchivesActivity.ImpressionStatistics> mImpressionStatisticsList;
+    private List<MeetArchiveActivity.ImpressionStatistics> mImpressionStatisticsList;
     //private ApprovedUsersDialogFragment approvedUsersDialogFragment;
     private android.support.v4.app.FragmentManager mFragmentManager;
 
@@ -38,7 +37,7 @@ public class MeetImpressionStatisticsAdapter extends RecyclerView.Adapter<MeetIm
         mFragmentManager = fragmentManager;
     }
 
-    public void setImpressionList(List<MeetArchivesActivity.ImpressionStatistics> impressionStatisticsList) {
+    public void setImpressionList(List<MeetArchiveActivity.ImpressionStatistics> impressionStatisticsList) {
         mImpressionStatisticsList = impressionStatisticsList;
     }
 
@@ -52,58 +51,41 @@ public class MeetImpressionStatisticsAdapter extends RecyclerView.Adapter<MeetIm
 
     @Override
     public void onBindViewHolder(@NonNull MeetImpressionStatisticsAdapter.ViewHolder holder, int position) {
-
-        final MeetArchivesActivity.ImpressionStatistics impressionStatistics = mImpressionStatisticsList.get(position);
-        holder.feature.setText(impressionStatistics.impression + " · " + String.valueOf(impressionStatistics.impressionCount));
-
-        if(impressionStatistics.meetMemberList.size() > 0){
-            MeetMemberInfo meetMemberInfo = impressionStatistics.meetMemberList.get(0);
-            if (meetMemberInfo.getPictureUri() != null && !"".equals(meetMemberInfo.getPictureUri())) {
-                queue = RequestQueueSingleton.instance(mContext);
-                /*+Begin: added by xuchunping for Use glide loader image, 2018/11/28*/
-                //holder.headPicture1.setTag(HttpUtil.DOMAIN + meetMemberInfo.getPictureUri());
-                //HttpUtil.loadByImageLoader(queue, holder.headPicture1, HttpUtil.DOMAIN + meetMemberInfo.getPictureUri(), 50, 50);
-                Glide.with(mContext).load(HttpUtil.DOMAIN + meetMemberInfo.getPictureUri()).into(holder.headPicture1);
-                /*-End: added by xuchunping for Use glide loader image*, 2018/11/28*/
-            } else {
-                holder.headPicture1.setImageDrawable(mContext.getDrawable(R.mipmap.ic_launcher));
+        final MeetArchiveActivity.ImpressionStatistics impressionStatistics = mImpressionStatisticsList.get(position);
+        if(impressionStatistics.impression != null && impressionStatistics.impression.length() > 0){
+            String impression;
+            if(impressionStatistics.impression.length() < 12){
+                impression = impressionStatistics.impression;
+            }else {
+                impression = impressionStatistics.impression.substring(0,12) + "...";
             }
+ holder.feature.setText( impression+ " · " + String.valueOf(impressionStatistics.impressionCount));
+        }
 
-            if (impressionStatistics.meetMemberList.size() > 1) {
-                holder.headPicture2.setVisibility(View.VISIBLE);
-                meetMemberInfo = impressionStatistics.meetMemberList.get(1);
-                if (meetMemberInfo.getPictureUri() != null && !"".equals(meetMemberInfo.getPictureUri())) {
-                    queue = RequestQueueSingleton.instance(mContext);
-                    /*+Begin: added by xuchunping for Use glide loader image, 2018/11/28*/
-                    //holder.headPicture2.setTag(HttpUtil.DOMAIN + meetMemberInfo.getPictureUri());
-                    //HttpUtil.loadByImageLoader(queue, holder.headPicture2, HttpUtil.DOMAIN + meetMemberInfo.getPictureUri(), 50, 50);
-                    Glide.with(mContext).load(HttpUtil.DOMAIN + meetMemberInfo.getPictureUri()).into(holder.headPicture2);
-                    /*-End: added by xuchunping for Use glide loader image*, 2018/11/28*/
-                } else {
-                    holder.headPicture2.setImageDrawable(mContext.getDrawable(R.mipmap.ic_launcher));
+        int memberSize = impressionStatistics.meetMemberList.size();
+        if(memberSize > 0){
+            int size = 3;
+            if(memberSize < 3){
+                size = memberSize;
+            }
+            for (int i=0; i<size; i++){
+                RoundImageView avatarView = new RoundImageView(mContext);
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(80, 80);
+                lp.setMarginStart(3);
+                UserMeetInfo userMeetInfo = impressionStatistics.meetMemberList.get(i);
+                String avatarURL = userMeetInfo.getAvatar();
+                if(avatarURL != null && !"".equals(avatarURL)){
+                    Glide.with(mContext).load(HttpUtil.DOMAIN + avatarURL).into(avatarView);
                 }
-                if (impressionStatistics.meetMemberList.size() > 2) {
-                    holder.headPicture3.setVisibility(View.VISIBLE);
-                    meetMemberInfo = impressionStatistics.meetMemberList.get(2);
-                    if (meetMemberInfo.getPictureUri() != null && !"".equals(meetMemberInfo.getPictureUri())) {
-                        queue = RequestQueueSingleton.instance(mContext);
-                        /*+Begin: added by xuchunping for Use glide loader image, 2018/11/28*/
-                        //holder.headPicture3.setTag(HttpUtil.DOMAIN + meetMemberInfo.getPictureUri());
-                        //HttpUtil.loadByImageLoader(queue, holder.headPicture3, HttpUtil.DOMAIN + meetMemberInfo.getPictureUri(), 50, 50);
-                        Glide.with(mContext).load(HttpUtil.DOMAIN + meetMemberInfo.getPictureUri()).into(holder.headPicture3);
-                        /*-End: added by xuchunping for Use glide loader image*, 2018/11/28*/
-                    } else {
-                        holder.headPicture3.setImageDrawable(mContext.getDrawable(R.mipmap.ic_launcher));
-                    }
-                }
+                holder.avatarAbstractLL.addView(avatarView, lp);
+            }
+             if(memberSize > 5){
+                TextView textView = new TextView(mContext);
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                textView.setText("等");
+                holder.avatarAbstractLL.addView(textView, lp);
             }
 
-            if (impressionStatistics.meetMemberList.size() <= 3) {
-                holder.approvedUsers.setText("认可");
-            } else {
-                holder.approvedUsers.setText("等" + impressionStatistics.meetMemberList.size() + "人认可");
-
-            }
         }
     }
 
@@ -125,17 +107,14 @@ public class MeetImpressionStatisticsAdapter extends RecyclerView.Adapter<MeetIm
             super(view);
             feature = view.findViewById(R.id.feature);
 
-            headPicture1 = view.findViewById(R.id.head_picure1);
-            headPicture2 = view.findViewById(R.id.head_picure2);
-            headPicture3 = view.findViewById(R.id.head_picure3);
+            avatarAbstractLL = view.findViewById(R.id.avatar_abstract);
             approvedUsers = view.findViewById(R.id.approved_users);
-
-                        //将全局的监听赋值给接口
+            //将全局的监听赋值给接口
             this.mListener = myItemClickListener;
             itemView.setOnClickListener(this);
 
-            //Typeface font = Typeface.createFromAsset(mContext.getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
-            //FontManager.markAsIconContainer(view.findViewById(R.id.evaluation_item), font);
+            Typeface font = Typeface.createFromAsset(mContext.getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
+            FontManager.markAsIconContainer(view.findViewById(R.id.approved_users), font);
         }
                 /**
          * 实现OnClickListener接口重写的方法
