@@ -47,12 +47,12 @@
     </style>
      <style name="HintErrorAppearance" parent="TextAppearance.AppCompat">
          <item name="android:textColor">@color/color_red</item>
-         <item name="textColorError">@color/color_red</item>
+         <!-- <item name="textColorError">@color/color_red</item> -->
      </style>
      <style name="TextErrorAppearance" parent="TextAppearance.AppCompat">
          <item name="android:layout_marginLeft">16dp</item>
          <item name="android:textColor">@color/color_red</item>
-         <item name="textColorError">@color/color_red</item> 
+         <!-- <item name="textColorError">@color/color_red</item> -->
      </style>
     <!--+End: add for edittext color by zouhaichao, 2019.1.12-->
 
