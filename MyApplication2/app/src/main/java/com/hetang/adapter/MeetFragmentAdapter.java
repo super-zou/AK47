@@ -14,7 +14,6 @@ import com.hetang.meet.MeetDynamicsFragment;
 import com.hetang.meet.MeetRecommendFragment;
 import com.hetang.util.BaseFragment;
 
-import java.util.ArrayList;
 
 /**
  * Created by haichao.zou on 2017/11/13.
@@ -22,10 +21,10 @@ import java.util.ArrayList;
 
 public class MeetFragmentAdapter extends FragmentStatePagerAdapter {
     public static final String TAG = "MeetFragmentAdapter";
-    private ArrayList<String> mTitles;
+    private String[] mTitles;
     private View view;
 
-    public MeetFragmentAdapter(FragmentManager fm, ArrayList<String> titles) {
+    public MeetFragmentAdapter(FragmentManager fm, String[] titles) {
         super(fm);
         // this.view = view;
         mTitles = titles;
@@ -40,10 +39,10 @@ public class MeetFragmentAdapter extends FragmentStatePagerAdapter {
                 fragment = new MeetRecommendFragment();
                 break;
             case 1:
-                fragment = new MeetDynamicsFragment();
+                fragment = new MeetSingleGroupFragment();
                 break;
             case 2:
-                fragment = new MeetSingleGroupFragment();
+                 fragment = new MeetDynamicsFragment();
                 break;
             case 3:
                 fragment = new MeetDiscoveryFragment();
@@ -57,13 +56,13 @@ public class MeetFragmentAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public int getCount() {
-        return mTitles != null ? mTitles.size() : 0;
+        return mTitles != null ? mTitles.length : 0;
     }
 
     @Override
     public CharSequence getPageTitle(int position) {
 
-        return mTitles.get(position);
+        return mTitles[position];
     }
 
     @Override
@@ -80,11 +79,11 @@ public class MeetFragmentAdapter extends FragmentStatePagerAdapter {
                 baseFragment = (MeetRecommendFragment) super.instantiateItem(container, position);
                 break;
             case 1:
-                baseFragment = (MeetDynamicsFragment) super.instantiateItem(container, position);
+                baseFragment = (MeetSingleGroupFragment) super.instantiateItem(container, position);
                 break;
 
             case 2:
-                baseFragment = (MeetSingleGroupFragment) super.instantiateItem(container, position);
+                baseFragment = (MeetDynamicsFragment) super.instantiateItem(container, position);
                 break;
             case 3:
                 baseFragment = (MeetDiscoveryFragment) super.instantiateItem(container, position);
