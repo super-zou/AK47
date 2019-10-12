@@ -1,12 +1,19 @@
 package com.hetang.adapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Message;
 import com.bumptech.glide.Glide;
+
+import android.support.constraint.ConstraintLayout;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,16 +24,20 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.NetworkImageView;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.hetang.R;
-import com.hetang.meet.DynamicsComment;
-import com.hetang.meet.MeetDynamics;
-import com.hetang.util.CommentDialogFragmentInterface;
+import com.hetang.common.Dynamic;
+
+import com.hetang.archive.ArchiveActivity;
+import com.hetang.common.HandlerTemp;
+import com.hetang.util.InterActInterface;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
-import com.hetang.util.RequestQueueSingleton;
+import com.hetang.common.MyApplication;
+import com.hetang.util.RoundImageView;
 import com.hetang.util.Slog;
+import com.hetang.util.Utility;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,7 +45,6 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -45,276 +55,253 @@ import okhttp3.Response;
  * Created by haichao.zou on 2017/11/20.
  */
 
-public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsListAdapter.ViewHolder> {
-
+public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsListAdapter.MeetDynamicsViewHolder> {
+    
+    private static final boolean isDebug = false;
     private static final String TAG = "MeetDynamicsListAdapter";
-    private static final String domain = "http://112.126.83.127:88";
+
     //+ added by xuchunping
-    private static final String EYE_URL = HttpUtil.DOMAIN + "";
-    private static final String LOVED_URL = HttpUtil.DOMAIN + "?q=meet/love/add";
-    private static final String PRAISED_URL = HttpUtil.DOMAIN + "?q=meet/praise/add";
-    private static final String PRAISED_DYNAMICS_URL = HttpUtil.DOMAIN + "?q=meet/activity/interact/praise/add";
+    public static final String PRAISED_DYNAMICS_URL = HttpUtil.DOMAIN + "?q=dynamic/interact/praise/add";
 
     private static final int UPDATE_LOVE_COUNT = 0;
-    private static final int UPDATE_PRAISED_COUNT = 1;
+    public static final int UPDATE_PRAISED_COUNT = 1;
     private static final int UPDATE_COMMENT = 2;
+
+    private FragmentManager fragmentManager;
 
     private static final int TYPE_COMMENT = 0;
     private static final int TYPE_REPLY = 1;
-    private static Context mContext;
-    RequestQueue queueMemberInfo;
-    RequestQueue queueDynamics;
-    RequestQueueSingleton requestQueueSingleton;
-    CommentDialogFragmentInterface commentDialogFragmentListener;
-    //- added by xuchunping
-    private List<MeetDynamics> mMeetList;
-    private String picture_url;
-    private boolean isScrolling = false;
-    private MeetDynamicsListAdapter.ViewHolder mViewHolder;
-    //+added by xuchunping
-    private Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case UPDATE_LOVE_COUNT:
-                    notifyDataSetChanged();
-                    break;
-                case UPDATE_PRAISED_COUNT:
-                    notifyDataSetChanged();
-                    break;
-                case UPDATE_COMMENT:
-                    //notifyDataSetChanged();
-                    break;
-                default:
-                    break;
-            }
-            super.handleMessage(msg);
-        }
-    };
 
-    public MeetDynamicsListAdapter(Context context) {
+
+    private static Context mContext;
+    
+    static InterActInterface interActInterface;
+    private List<Dynamic> mMeetList;
+
+    private List<ImageView> imageViewList = new ArrayList<>();
+    private boolean isScrolling = false;
+    private MeetDynamicsViewHolder mMyViewHolder;
+    private DisplayMetrics outMetrics;
+    private static int width = 0;
+    private static int height = 0;
+    private static int innerWidth = 0;
+    private boolean specificUser = false;
+    private Handler mHandler = new MyHandler(this);
+    
+    public MeetDynamicsListAdapter(Context context, FragmentManager fragmentManager, boolean specificUser) {
         //Slog.d(TAG, "==============MeetRecommendListAdapter init=================");
         mContext = context;
-        mMeetList = new ArrayList<MeetDynamics>();
-        requestQueueSingleton = new RequestQueueSingleton();
-
+        mMeetList = new ArrayList<Dynamic>();
+        Resources resources = mContext.getResources();
+        DisplayMetrics dm = resources.getDisplayMetrics();
+        innerWidth = dm.widthPixels - (int)Utility.dpToPx(mContext, 32f);
+        this.specificUser = specificUser;
+        this.fragmentManager = fragmentManager;
 
     }
-
-    public void setScrolling(boolean isScrolling) {
+    
+     public void setScrolling(boolean isScrolling) {
         this.isScrolling = isScrolling;
     }
 
-    public void setData(List<MeetDynamics> meetList) {
+    public void setData(List<Dynamic> meetList) {
         mMeetList = meetList;
     }
 
     @Override
-    public MeetDynamicsListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        // Slog.d(TAG, "===========onCreateViewHolder==============");
-        View view = LayoutInflater.from(parent.getContext())
+    public int getItemViewType(int position) {
+        //Slog.d(TAG, "----------------->position: "+position+" type: "+mMeetList.get(position).getType()+" action: "+mMeetList.get(position).getAction());
+        return mMeetList.get(position).getType();
+    }
+    
+        @Override
+    public MeetDynamicsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (isDebug) Slog.d(TAG, "===========onCreateViewHolder==============");
+        View viewDynamic = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.meet_dynamics_item, parent, false);
-        MeetDynamicsListAdapter.ViewHolder holder = new MeetDynamicsListAdapter.ViewHolder(view);
-
+        MeetDynamicsViewHolder holder = new MeetDynamicsViewHolder(viewDynamic);
         return holder;
     }
 
-    //TODO 此处有异常，先屏蔽 by xuchunping 2018.8.5
-    /*@Override
-    public void onViewRecycled(MeetDynamicsListAdapter.ViewHolder holder){
-        super.onViewRecycled(holder);
-    }*/
-
     @Override
-    public void onBindViewHolder(final MeetDynamicsListAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(final MeetDynamicsViewHolder holder, final int position) {
+         if (isDebug) Slog.d(TAG, "-------->onBindViewHolder position: "+position+" dynamicsGrid: "+holder.dynamicsGrid.hashCode());
 
-        Slog.d(TAG, "===========onBindViewHolder==============");
-        final MeetDynamics meetDynamics = mMeetList.get(position);
-        holder.realname.setText(meetDynamics.getRealname());
-        holder.lives.setText(meetDynamics.getLives());
+        final Dynamic dynamic = mMeetList.get(position);
 
-        if (!"".equals(meetDynamics.getPictureUri()) && !isScrolling) {
-            picture_url = domain + "/" + meetDynamics.getPictureUri();
-            //queueMemberInfo = new Volley().newRequestQueue(mContext);
-            Glide.with(mContext).load(HttpUtil.DOMAIN + meetDynamics.getPictureUri()).into(holder.headUri);
-        } else {
-            holder.headUri.setImageDrawable(mContext.getDrawable(R.mipmap.ic_launcher));
+        if (specificUser){
+            holder.baseProfile.setVisibility(View.GONE);
+        }
+        
+        if (null != dynamic){
+            setDynamicContent(holder, dynamic, position);
         }
 
-        holder.selfcondition.setText(meetDynamics.getSelfCondition(meetDynamics.getSituation()));
-        holder.requirement.setText(meetDynamics.getRequirement());
-        holder.eyeView.setText(String.valueOf(meetDynamics.getBrowseCount()));
-        holder.lovedView.setText(String.valueOf(meetDynamics.getLovedCount()));
-        holder.thumbsView.setText(String.valueOf(meetDynamics.getPraisedCount()));
-        holder.illustration.setText(meetDynamics.getIllustration());
-        holder.contentView.setText(meetDynamics.getContent());
-
-        String pictures = meetDynamics.getActivityPicture();
-
-
-        if (!"".equals(pictures) && !isScrolling) {
-            holder.dynamicsGrid.removeAllViews();
-            queueDynamics = requestQueueSingleton.instance(mContext);
-
-            String[] picture_array = pictures.split(":");
-            int length = picture_array.length;
-            if (length > 0) {
-                if (length != 4) {
-                    holder.dynamicsGrid.setColumnCount(3);
-                } else {
-                    holder.dynamicsGrid.setColumnCount(2);
-                }
-
-                for (int i = 0; i < length; i++) {
-
-                    if (picture_array[i] != null) {
-                        LinearLayout linearLayout = new LinearLayout(mContext);
-                        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(200, 200);
-                        layoutParams.setMargins(4, 0, 0, 4);
-                        //将以上的属性赋给LinearLayout
-                        linearLayout.setLayoutParams(layoutParams);
-
-                        ImageView picture = new ImageView(mContext);
-
-                        linearLayout.addView(picture);
-                        holder.dynamicsGrid.addView(linearLayout);
-
-                        Glide.with(mContext).load(HttpUtil.DOMAIN + picture_array[i]).into(picture);
-                    }
-                }
-
-            }
-
-        } else {
-            holder.dynamicsGrid.removeAllViews();
-            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            ImageView picture = new ImageView(mContext);
-            picture.setLayoutParams(lp);
-            holder.dynamicsGrid.addView(picture);
-        }
-        holder.createdView.setText(meetDynamics.getCreated());
-        holder.dynamicsPraiseCount.setText(String.valueOf(meetDynamics.getPraisedDynamicsCount()));
-        //holder.dynamicsCommentCount.setText(String.valueOf(meetDynamics.getCommentCount()));
-        holder.commentList.removeAllViews();
-        setDynamicsCommentView(holder, meetDynamics.getComments());
-
-        //added by xuchunping
-        holder.lovedIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //TODO change UI to show loved or no
-                if (1 == meetDynamics.getLoved()) {
-                    Toast.makeText(mContext, "You have loved it!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                love(meetDynamics);
-            }
-        });
-        holder.thumbsUpIcon.setOnClickListener(new View.OnClickListener() {
+        holder.dynamicsPraise.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //TODO change UI to show parised or no
-                if (1 == meetDynamics.getPraised()) {
+                if (1 == dynamic.getPraisedDynamics()) {
                     Toast.makeText(mContext, "You have praised it!", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                praiseArchives(meetDynamics);
+                praiseDynamics(dynamic);
             }
         });
-        holder.dynamicsPraiseIcon.setOnClickListener(new View.OnClickListener() {
+        
+        holder.dynamicsPraiseCount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO change UI to show parised or no
-                if (1 == meetDynamics.getPraisedDynamics()) {
-                    Toast.makeText(mContext, "You have praised it!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                praiseDynamics(meetDynamics);
+                interActInterface.onPraiseClick(view, position);
             }
         });
 
         //when comment icon touched should show comment input dialog fragment
-        holder.dynamicsCommentIcon.setOnClickListener(new View.OnClickListener() {
+        holder.dynamicsComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //show the comment input dialog fragment
-                mViewHolder = holder;
-                DynamicsComment dynamicsComment = new DynamicsComment();//need singleton
-                dynamicsComment.setType(0);
-                commentDialogFragmentListener.onCommentClick(meetDynamics, dynamicsComment);
+                interActInterface.onCommentClick(v, position);
             }
         });
-
-        /*+Begin when comment item touched, should show comment input dialog fragment*/
-        ViewGroup vp = holder.commentList;
-        int count = vp.getChildCount();
-        for (int i = 0; i < count; i++) {
-            View view = vp.getChildAt(i);
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mViewHolder = holder;
-                    int tag = (int) v.getTag();
-
-                    TextView author_name;
-                    if (tag == TYPE_COMMENT) {
-                        author_name = v.findViewById(R.id.author_name);
-                    } else {//TYPE_REPLY
-                        author_name = v.findViewById(R.id.commenter_name);
-                    }
-
-                    DynamicsComment dynamicsComment = new DynamicsComment();//need singleton
-                    dynamicsComment.setType(TYPE_REPLY);
-                    //Slog.d(TAG, "==========tag: "+tag+"  author_name: "+author_name.getText());
-                    dynamicsComment.setAuthorName(author_name.getText().toString());
-                    dynamicsComment.setAuthorUid((Long) author_name.getTag());
-                    commentDialogFragmentListener.onCommentClick(meetDynamics, dynamicsComment);
-                }
-            });
-        }
-        /**/
+        
+         holder.baseProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(mContext, ArchiveActivity.class);
+                intent.putExtra("uid", dynamic.getUid());
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                mContext.startActivity(intent);
+            }
+        });
     }
 
-    public void setDynamicsCommentView(final ViewHolder viewHolder, List<DynamicsComment> dynamicsCommentList) {
-        //Slog.d(TAG, "*************setDynamicsCommentView : "+dynamicsCommentList);
-        if (dynamicsCommentList.size() != 0) {
-            for (int i = 0; i < dynamicsCommentList.size(); i++) {
-                final View viewComment = View.inflate(mContext, R.layout.dynamics_comment_item, null);
-                viewHolder.commentList.addView(viewComment);
+    public static void setDynamicContent(MeetDynamicsViewHolder holder, Dynamic dynamic, int position){
+        holder.name.setText(dynamic.getName());
+        holder.living.setText(dynamic.getLiving());
 
-                NetworkImageView imageView = (NetworkImageView) viewComment.findViewById(R.id.comment_picture);
-                //imageView.setImageDrawable(mContext.getDrawable(R.mipmap.ic_launcher));
-                RequestQueue queueComment = requestQueueSingleton.instance(mContext);
-                //Slog.d(TAG, "$$$$$$$$$$$$$$$$getUrl: "+dynamicsCommentList.get(i).getPictureUrl());
-                imageView.setTag(domain + "/" + dynamicsCommentList.get(i).getPictureUrl());
-                HttpUtil.loadByImageLoader(queueComment, imageView, domain + "/" + dynamicsCommentList.get(i).getPictureUrl(), 50, 50);
+        if (dynamic.getAvatar()!= null && !"".equals(dynamic.getAvatar())) {
+            String picture_url = HttpUtil.DOMAIN  + dynamic.getAvatar();
+            Glide.with(mContext).load(picture_url).into(holder.avatar);
+        } else {
+            if(dynamic.getSex() == 0){
+                holder.avatar.setImageDrawable(MyApplication.getContext().getDrawable(R.drawable.male_default_avator));
+            }else {
+                holder.avatar.setImageDrawable(MyApplication.getContext().getDrawable(R.drawable.female_default_avator));
+            }
+        }
 
-                if (dynamicsCommentList.get(i) != null) {
-                    viewComment.setTag(dynamicsCommentList.get(i).getType());
-                    if (dynamicsCommentList.get(i).getType() == 0) {//comment
-                        TextView author = (TextView) viewComment.findViewById(R.id.author_name);
-                        //Slog.d(TAG, "$$$$$$$$$$$$$$$$$$$$$comment author: "+dynamicsCommentList.get(i).getCommenterName());
-                        author.setText(dynamicsCommentList.get(i).getCommenterName());
-                        author.setTag(dynamicsCommentList.get(i).getCommenterUid());
+        String profile = "";
+        if (dynamic.getSituation() != -1){
+            if(dynamic.getSituation() == 0){
+                profile = dynamic.getMajor()+"·"+ dynamic.getDegreeName(dynamic.getDegree())+"·"+ dynamic.getUniversity();
+            }else {
+                profile = dynamic.getPosition()+"·"+ dynamic.getIndustry();
+            }
+            holder.profile.setText(profile);
+        }
+        
+        holder.contentView.setText(dynamic.getContent());
 
-                    } else {//reply
-                        TextView commenter = (TextView) viewComment.findViewById(R.id.commenter_name);
-                        commenter.setVisibility(View.VISIBLE);
-                        commenter.setText(dynamicsCommentList.get(i).getCommenterName());
-                        commenter.setTag(dynamicsCommentList.get(i).getCommenterUid());
+        String pictures = dynamic.getDynamicPicture();
 
-                        TextView replyFlag = (TextView) viewComment.findViewById(R.id.reply_flag);
-                        replyFlag.setVisibility(View.VISIBLE);
-
-                        TextView author = (TextView) viewComment.findViewById(R.id.author_name);
-                        author.setText(dynamicsCommentList.get(i).getAuthorName());
-                        author.setTag(dynamicsCommentList.get(i).getAuthorUid());
-                    }
-                    //Slog.d(TAG, "====================comment content: "+dynamicsCommentList.get(i).getContent());
-                    TextView content = (TextView) viewComment.findViewById(R.id.content);
-                    content.setText(dynamicsCommentList.get(i).getContent());
+        if (!"".equals(pictures)) {
+            if(holder.dynamicsGrid.getTag() == null){
+                setContentView(holder, pictures, dynamic, position);
+            }else {
+                if(!dynamic.equals(holder.dynamicsGrid.getTag())){
+                    holder.dynamicsGrid.removeAllViews();
+                    setContentView(holder, pictures, dynamic, position);
                 }
             }
+        }else {
+            if (holder.dynamicsGrid.getChildCount() > 0){
+                holder.dynamicsGrid.removeAllViews();
+            }
+        }
+        
+        if(dynamic.getPraisedDynamics() == 1){
+            holder.dynamicsPraise.setText(mContext.getResources().getString(R.string.fa_thumbs_up));
+        }else {
+            holder.dynamicsPraise.setText(mContext.getResources().getString(R.string.fa_thumbs_O_up));
+        }
+
+
+        if(dynamic.getPraisedDynamicsCount() > 0){
+            holder.dynamicsPraiseCount.setText(String.valueOf(dynamic.getPraisedDynamicsCount()));
+        }else {
+            holder.dynamicsPraiseCount.setText("");
+        }
+        
+        if(dynamic.getCommentCount() > 0){
+            holder.dynamicsComment.setText(mContext.getResources().getString(R.string.fa_comment_o)+" "+String.valueOf(dynamic.getCommentCount()));
+        }else {
+            holder.dynamicsComment.setText("");
+            holder.dynamicsComment.setText(mContext.getResources().getString(R.string.fa_comment_o));
+        }
+    }
+    
+    private static void setContentView(MeetDynamicsViewHolder holder, String pictures, Dynamic dynamic, final int position){
+        final String[] picture_array = pictures.split(":");
+        final int length = picture_array.length;
+        if (length > 0) {
+            if (length != 4) {
+                if(length < 4){
+                    holder.dynamicsGrid.setColumnCount(length);
+                    if(length == 1){
+                        width = innerWidth/2;
+                        height = LinearLayout.LayoutParams.WRAP_CONTENT;
+                    }else {
+                        width = (innerWidth - (int)Utility.dpToPx(mContext, 2f)*(length-1))/length;
+                        height = width;
+                    }
+                    
+                    }else {
+                    holder.dynamicsGrid.setColumnCount(3);
+                    width = (innerWidth - (int)Utility.dpToPx(mContext, 2f)*2)/3;
+                    height = width;
+                }
+            } else {
+                holder.dynamicsGrid.setColumnCount(2);
+                width = (innerWidth)/2;
+                height = width;
+            }
+            
+            final RequestOptions requestOptions = new RequestOptions()
+                    .placeholder(mContext.getDrawable(R.mipmap.hetang_icon))
+                    .diskCacheStrategy(DiskCacheStrategy.RESOURCE);
+            final List<Drawable> drawableList = new ArrayList<>();
+            for (int i = 0; i < length; i++) {
+                if (picture_array[i] != null) {
+                    //LinearLayout linearLayout = new LinearLayout(mContext);
+                    final RoundImageView picture = new RoundImageView(mContext);
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(width, height);
+                    layoutParams.setMargins(0, 0, 2, 4);
+                    //将以上的属性赋给LinearLayout
+                    picture.setLayoutParams(layoutParams);
+                    picture.setAdjustViewBounds(true);
+                     if(length == 1){
+                        picture.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                    }else {
+                        picture.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                    }
+                    picture.setMaxHeight(2 * width);
+
+                    holder.dynamicsGrid.addView(picture);
+                    Glide.with(mContext).load(HttpUtil.DOMAIN + picture_array[i]).apply(requestOptions).into(picture);
+
+                    picture.setId(i);
+                    picture.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            interActInterface.onDynamicPictureClick(view, position, picture_array, picture.getId());
+                        }
+                    });
+                    
+                    }
+            }
+
+            holder.dynamicsGrid.setTag(dynamic);
         }
     }
 
@@ -322,13 +309,8 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
     public int getItemCount() {
         return mMeetList != null ? mMeetList.size() : 0;
     }
-
-    public void addData(int position, MeetDynamics meetDynamics) {
-        mMeetList.add(position, meetDynamics);
-        notifyItemInserted(position);
-    }
-
-    private void sendMessage(int what, Object obj) {
+    
+     private void sendMessage(int what, Object obj) {
         Message msg = mHandler.obtainMessage();
         msg.what = what;
         msg.obj = obj;
@@ -338,51 +320,25 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
     private void sendMessage(int what) {
         sendMessage(what, null);
     }
+    
+     private void praiseDynamics(final Dynamic dynamic) {
 
-    private void praiseArchives(final MeetDynamics meetDynamics) {
-        RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(meetDynamics.getUid())).build();
-        HttpUtil.sendOkHttpRequest(mContext, PRAISED_URL, requestBody, new Callback() {
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                String responseText = response.body().string();
-                //Log.d(TAG,"praiseArchives responseText:"+responseText);
-                if (!TextUtils.isEmpty(responseText)) {
-                    try {
-                        JSONObject commentResponse = new JSONObject(responseText);
-                        int status = commentResponse.optInt("status");
-                        //Log.d(TAG,"praiseArchives status:"+status);
-                        if (1 == status) {
-                            updatePraisedByUid(meetDynamics.getUid(), 1);
-                            sendMessage(UPDATE_PRAISED_COUNT);
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call call, IOException e) {
-            }
-        });
-    }
-
-    private void praiseDynamics(final MeetDynamics meetDynamics) {
-        RequestBody requestBody = new FormBody.Builder().add("aid", String.valueOf(meetDynamics.getAid())).build();
+        RequestBody requestBody = new FormBody.Builder().add("did", String.valueOf(dynamic.getDid())).build();
         HttpUtil.sendOkHttpRequest(mContext, PRAISED_DYNAMICS_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
-                Log.d(TAG, "praiseDynamics responseText:" + responseText);
+                if (isDebug) Log.d(TAG, "praiseDynamics responseText:" + responseText);
                 if (!TextUtils.isEmpty(responseText)) {
                     try {
                         JSONObject commentResponse = new JSONObject(responseText);
                         int status = commentResponse.optInt("status");
-                        Log.d(TAG, "praiseDynamics status:" + status);
+                        if (isDebug) Log.d(TAG, "praiseDynamics status:" + status);
+                        
                         if (1 == status) {
-                            MeetDynamics tempInfo = getMeetDynamicsById(meetDynamics.getAid());
+                            Dynamic tempInfo = getMeetDynamicsById(dynamic.getDid());
                             tempInfo.setPraisedDynamics(1);
-                            tempInfo.setPraisedDynamicsCount(meetDynamics.getPraisedDynamicsCount() + 1);
+                            tempInfo.setPraisedDynamicsCount(dynamic.getPraisedDynamicsCount() + 1);
                             sendMessage(UPDATE_PRAISED_COUNT);
                         }
                     } catch (JSONException e) {
@@ -396,144 +352,89 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
             }
         });
     }
-
-    private void love(final MeetDynamics meetDynamics) {
-        RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(meetDynamics.getUid())).build();
-        HttpUtil.sendOkHttpRequest(mContext, LOVED_URL, requestBody, new Callback() {
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                String responseText = response.body().string();
-                Log.d(TAG, "love responseText" + responseText);
-                if (!TextUtils.isEmpty(responseText)) {
-                    try {
-                        JSONObject commentResponse = new JSONObject(responseText);
-                        int status = commentResponse.optInt("status");
-                        Log.d(TAG, "love status" + status);
-                        if (1 == status) {
-                            updateLovedByUid(meetDynamics.getUid(), 1);
-                            sendMessage(UPDATE_LOVE_COUNT);
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call call, IOException e) {
-            }
-        });
-    }
-
-    private MeetDynamics getMeetDynamicsById(long aId) {
+    
+    private Dynamic getMeetDynamicsById(long did) {
         if (null == mMeetList) {
             return null;
         }
         for (int i = 0; i < mMeetList.size(); i++) {
-            if (aId == mMeetList.get(i).getAid()) {
+            if (did == mMeetList.get(i).getDid()) {
                 return mMeetList.get(i);
             }
         }
         return null;
     }
-
-    private void updateLovedByUid(int uid, int loved) {
-        if (null == mMeetList) {
-            return;
-        }
-        MeetDynamics meet = null;
-        for (int i = 0; i < mMeetList.size(); i++) {
-            if (uid == mMeetList.get(i).getUid()) {
-                meet = mMeetList.get(i);
-                meet.setLoved(loved);
-                meet.setLovedCount(meet.getLovedCount() + 1);
-            }
-        }
+    
+     //register the interActInterface callback, add by zouhaichao 2018/9/16
+    public void setOnCommentClickListener(InterActInterface commentDialogFragmentListener) {
+        this.interActInterface = commentDialogFragmentListener;
     }
 
-    private void updatePraisedByUid(int uid, int praised) {
-        if (null == mMeetList) {
-            return;
-        }
-        MeetDynamics meet = null;
-        for (int i = 0; i < mMeetList.size(); i++) {
-            if (uid == mMeetList.get(i).getUid()) {
-                meet = mMeetList.get(i);
-                meet.setPraised(praised);
-                meet.setPraisedCount(meet.getPraisedCount() + 1);
-            }
+    private void handleMessage(Message message){
+        switch (message.what) {
+            case UPDATE_LOVE_COUNT:
+                notifyDataSetChanged();
+                break;
+            case UPDATE_PRAISED_COUNT:
+                notifyDataSetChanged();
+                break;
+            case UPDATE_COMMENT:
+                //notifyDataSetChanged();
+                break;
+            default:
+                break;
         }
     }
 
-    /*
-     *Send the dynamics' comment, by zouhaichao 2018/9/7
-     */
-    public int getDynamicsItemPosition() {
-        //int position = getViewHolder().getAdapterPosition();
-        int position = mViewHolder.getAdapterPosition();
-        //Toast.makeText(mContext, "position: "+position, Toast.LENGTH_SHORT).show();
-        Slog.d(TAG, "========getDynamicsItemPosition: " + position);
-        return position;
-    }
-    //-added by xuchunping
+    public  static class MeetDynamicsViewHolder extends RecyclerView.ViewHolder {
 
-    //register the commentDialogFragmentListener callback, add by zouhaichao 2018/9/16
-    public void setOnCommentClickListener(CommentDialogFragmentInterface commentDialogFragmentListener) {
-        this.commentDialogFragmentListener = commentDialogFragmentListener;
-    }
+        TextView name;
+        TextView living;
+        TextView profile;
+        RoundImageView avatar;
+        ConstraintLayout baseProfile;
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView realname;
-        TextView lives;
-        TextView selfcondition;
-        TextView requirement;
-        ImageView headUri;
-        TextView illustration;
-        TextView eyeView;
-        TextView lovedView;
-        TextView lovedIcon;
-        TextView thumbsView;
-        TextView thumbsUpIcon;
-        TextView photosView;
         TextView contentView;
         TextView createdView;
-        TextView dynamicsPraiseIcon;
         TextView dynamicsPraiseCount;
-        TextView dynamicsCommentCount;
-        TextView dynamicsCommentIcon;
+        TextView dynamicsPraise;
+        TextView dynamicsComment;
         GridLayout dynamicsGrid;
         LinearLayout commentList;
-
-        public ViewHolder(View view) {
-
+        LinearLayout contentMeta;
+        
+        public MeetDynamicsViewHolder(View view) {
             super(view);
-            realname = (TextView) view.findViewById(R.id.name);
-            lives = (TextView) view.findViewById(R.id.lives);
-            headUri =  view.findViewById(R.id.recommend_head_uri);
-            selfcondition = (TextView) view.findViewById(R.id.self_condition);
-            requirement = (TextView) view.findViewById(R.id.partner_requirement);
-            illustration = (TextView) view.findViewById(R.id.illustration);
-            eyeView = (TextView) view.findViewById(R.id.eye_statistics);
-            lovedView = (TextView) view.findViewById(R.id.loved_statistics);
-            lovedIcon = (TextView) view.findViewById(R.id.loved_icon);
-            thumbsView = (TextView) view.findViewById(R.id.thumbs_up_statistics);
-            thumbsUpIcon = (TextView) view.findViewById(R.id.thumbs_up_icon);
-            photosView = (TextView) view.findViewById(R.id.photos_statistics);
+            baseProfile = view.findViewById(R.id.base_profile);
+            name = (TextView) view.findViewById(R.id.name);
+            living = (TextView) view.findViewById(R.id.living);
+            avatar =  view.findViewById(R.id.avatar);
+            profile = (TextView) view.findViewById(R.id.profile);
             contentView = (TextView) view.findViewById(R.id.dynamics_content);
             dynamicsGrid = (GridLayout) view.findViewById(R.id.dynamics_picture_grid);
-            createdView = (TextView) view.findViewById(R.id.dynamic_time);
-            dynamicsPraiseIcon = (TextView) view.findViewById(R.id.dynamic_praise_icon);
-            dynamicsPraiseCount = (TextView) view.findViewById(R.id.dynamic_praise);
-            dynamicsCommentCount = (TextView) view.findViewById(R.id.dynamic_comment_count);
-            dynamicsCommentIcon = (TextView) view.findViewById(R.id.dynamic_comment_icon);
+            //createdView = (TextView) view.findViewById(R.id.dynamic_time);
+            dynamicsPraiseCount = (TextView) view.findViewById(R.id.dynamic_praise_count);
+            dynamicsPraise = (TextView) view.findViewById(R.id.dynamic_praise);
+            dynamicsComment = (TextView) view.findViewById(R.id.dynamic_comment);
+            contentMeta = view.findViewById(R.id.dynamics_content_meta);
 
-            commentList = (LinearLayout) view.findViewById(R.id.dynamics_comments);
             Typeface font = Typeface.createFromAsset(mContext.getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
             FontManager.markAsIconContainer(view.findViewById(R.id.meet_dynamics_item), font);
+        }
+    }
 
+    static class MyHandler extends HandlerTemp<MeetDynamicsListAdapter> {
+        public MyHandler(MeetDynamicsListAdapter cls){
+            super(cls);
+        }
+
+        @Override
+        public void handleMessage(Message message) {
+            MeetDynamicsListAdapter meetDynamicsListAdapter = ref.get();
+            if (meetDynamicsListAdapter != null) {
+                meetDynamicsListAdapter.handleMessage(message);
+            }
         }
     }
 
 }
-
-
