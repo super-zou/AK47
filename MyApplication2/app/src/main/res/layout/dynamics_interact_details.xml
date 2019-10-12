@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:id="@+id/dynamics_interact_details_wrapper"
+    android:background="@android:color/darker_gray">
+    
+        <include
+        android:id="@+id/custom_actionbar"
+        layout="@layout/custom_actionbar_common"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <com.jcodecraeer.xrecyclerview.XRecyclerView
+        android:id="@+id/dynamics_interact_details"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+        
+        <ImageView
+        android:id="@+id/animal_progress"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:src="@drawable/animal_progress" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="58dp"
+        android:background="@color/white"
+        android:orientation="horizontal"
+        android:gravity="bottom"
+        android:padding="5dp">
+        
+        <android.support.text.emoji.widget.EmojiAppCompatEditText
+            android:id="@+id/edit_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="5dp"
+            android:layout_weight="6"
+            android:inputType="text"
+            android:background="@null"
+            android:hint="请输入评论"
+            android:padding="5dp"
+            android:textSize="15sp"
+            android:theme="@style/MyEditText" />
+            
+             <TextView
+            android:id="@+id/publish"
+            android:layout_width="0dp"
+            android:layout_gravity="top"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="3dp"
+            android:layout_weight="1"
+            android:background="@color/color_disabled"
+            android:clickable="false"
+            android:enabled="false"
+            android:gravity="center_horizontal"
+            android:padding="3dp"
+            android:text="@string/publish" />
+    </LinearLayout>
+</LinearLayout>
