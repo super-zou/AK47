@@ -119,4 +119,11 @@ public abstract class BaseFragment extends Fragment {
         }
         return null;
     }
+    
+    public void sendMessage(Handler handler, int what, Object obj) {
+        Message msg = handler.obtainMessage();
+        msg.what = what;
+        msg.obj = obj;
+        msg.sendToTarget();
+    }
 }
