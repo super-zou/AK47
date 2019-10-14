@@ -3,9 +3,10 @@ package com.hetang.util;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
@@ -15,6 +16,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.hetang.R;
+import com.hetang.common.MyApplication;
+import com.hetang.meet.SingleGroupDetailsActivity;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -24,11 +30,12 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static com.hetang.meet.MeetSingleGroupFragment.GROUP_ADD_BROADCAST;
 /**
  * Created by super-zou on 18-9-9.
  */
  
- public class CreateSingleGroupDialogFragment extends DialogFragment {
+ public class CreateSingleGroupDialogFragment extends BaseDialogFragment {
     private Dialog mDialog;
     private static final boolean isDebug = true;
     private static final String TAG = "CreateSingleGroupDialogFragment";
@@ -60,7 +67,7 @@ import okhttp3.Response;
         save.setVisibility(View.VISIBLE);
 
         TextView title = mDialog.findViewById(R.id.title);
-        title.setText("´´½¨µ¥ÉíÍÅ");
+        title.setText(getString(R.string.create_single_group));
         
         save.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,8 +99,8 @@ import okhttp3.Response;
         if(TextUtils.isEmpty(groupName)){
             return;
         }
-        
-         RequestBody requestBody = new FormBody.Builder()
+        showProgressDialog("正在保存");
+        final RequestBody requestBody = new FormBody.Builder()
                 .add("group_name", groupName)
                 .add("group_profile", groupProfile)
                 .add("group_org", groupOrg)
@@ -109,6 +116,18 @@ import okhttp3.Response;
                     if(isDebug) Slog.d(TAG, "==========response text : " + responseText);
                     if (responseText != null && !TextUtils.isEmpty(responseText)) {
                         if(isDebug) Slog.d(TAG, "==========response text 1: " + responseText);
+                     try {
+                            JSONObject responseObj = new JSONObject(responseText);
+                            if (responseObj != null){
+                                int gid = responseObj.optInt("gid");
+                                if (gid > 0){
+                                    startSingleGroupDetailsActivity(gid);
+                                }
+                            }
+                        }catch (JSONException e){
+                            e.printStackTrace();
+                        }
+                        dismissProgressDialog();
                         mDialog.dismiss();
                     }
                 }
@@ -119,6 +138,17 @@ import okhttp3.Response;
 
             }
         });
+    }
+  
+    private void startSingleGroupDetailsActivity(int gid){
+        Intent intent = new Intent(MyApplication.getContext(), SingleGroupDetailsActivity.class);
+        intent.putExtra("gid", gid);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+        startActivity(intent);
+    }
+
+    private void sendBroadcast() {
+        LocalBroadcastManager.getInstance(getContext()).sendBroadcast(new Intent(GROUP_ADD_BROADCAST));
     }
     
     @Override
