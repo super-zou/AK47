@@ -1,16 +1,18 @@
 package com.hetang.meet;
+import com.hetang.util.UserProfile;
 
 /**
  * Created by super-zou on 18-9-22.
  */
 
-public class MeetReferenceInfo {
+public class MeetReferenceInfo extends UserProfile{
     private String refereeName;
     private String relation;
     private String refereeProfile;
     private String content;
     private Long created;
-    private String headUri;
+    private String avatar;
+    private int uid = 0;
 
     public String getRefereeName() {
         return refereeName;
@@ -43,21 +45,4 @@ public class MeetReferenceInfo {
     public void setReferenceContent(String reference_content) {
         this.content = reference_content;
     }
-
-    public Long getCreated() {
-        return created;
-    }
-
-    public void setCreated(Long created) {
-        this.created = created;
-    }
-
-    public String getHeadUri() {
-        return headUri;
-    }
-
-    public void setHeadUri(String headUri) {
-        this.headUri = headUri;
-    }
-
 }
