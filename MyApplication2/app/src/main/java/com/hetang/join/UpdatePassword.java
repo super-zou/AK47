@@ -15,7 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hetang.R;
-import com.hetang.main.BaseAppCompatActivity;
+import com.hetang.common.BaseAppCompatActivity;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.Slog;
@@ -42,7 +42,7 @@ public class UpdatePassword extends BaseAppCompatActivity {
     private TextInputEditText requestNewPasswordEdit;
     private TextInputLayout newPasswordRepeat;
     
-        private TextInputEditText newPasswordRepeatEdit;
+    private TextInputEditText newPasswordRepeatEdit;
     private Button resetLogin;
     private String account;
     private String password;
@@ -60,7 +60,7 @@ public class UpdatePassword extends BaseAppCompatActivity {
         setContentView(R.layout.update_password);
         mContext = this;
         account = getIntent().getStringExtra("account");//phone number
-        custom_actionbar_set();
+        customActionbarSet();
         enterPassword = findViewById(R.id.enter_password);
         enterPasswordEdit = findViewById(R.id.enter_password_edittext);
         passwordLogin = findViewById(R.id.login_password_button);
@@ -81,6 +81,7 @@ public class UpdatePassword extends BaseAppCompatActivity {
                 if (message.what == PASSWORD_RESET_DONE) {
                     Slog.d(TAG, "============handle message");
                     launchActivity.getUsernameByPhoneNumber(mContext,null, null, account, password);
+                    finish();
        }
             }
         };
@@ -105,6 +106,9 @@ public class UpdatePassword extends BaseAppCompatActivity {
                 }
 
                 launchActivity.getUsernameByPhoneNumber(mContext,null, enterPassword, account, password);
+                
+                finish();
+                
             }
         });
     }
@@ -182,7 +186,7 @@ public class UpdatePassword extends BaseAppCompatActivity {
         });
     }
 
-    private void custom_actionbar_set(){
+    private void customActionbarSet(){
         TextView back = findViewById(R.id.left_back);
         back.setOnClickListener(new View.OnClickListener() {
             @Override
