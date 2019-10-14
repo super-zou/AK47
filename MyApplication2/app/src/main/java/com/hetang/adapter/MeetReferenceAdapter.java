@@ -51,6 +51,7 @@ public class MeetReferenceAdapter extends RecyclerView.Adapter<MeetReferenceAdap
 
     @Override
     public void onBindViewHolder(@NonNull MeetReferenceAdapter.ReferenceViewHolder holder, int position) {
+        final MeetReferenceInfo referenceInfo = mReferenceList.get(position);
         holder.name.setText(referenceInfo.getRefereeName());
         holder.relation.setText(referenceInfo.getRelation());
         holder.refereeProfile.setText(referenceInfo.getRefereeProfile());
