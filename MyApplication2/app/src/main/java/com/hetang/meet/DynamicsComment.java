@@ -1,53 +1,52 @@
 package com.hetang.meet;
 
+import com.hetang.util.UserProfile;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by haichao.zou on 2017/12/19.
  */
+public class DynamicsComment extends UserProfile {
 
-public class DynamicsComment {
-    private int mType;
-    private int mAid;
-    private int mCid;
-    private String mPictureUrl;
+    private long mDid;
+    private long mCommentId;
+    private long mRid;
     private String mAuthorName;
-    private Long mAuthorUid;
-    private String mCommenterName;
-    private Long mCommenterUid;
+    private int mAuthorUid;
+    private String mReplierName;
+    private int mReplierUid;
+    private int mReplierSex;
     private String mContent;
-    private int mTimeStamp;
+    private String mReplyContent;
+    private int mCreated;
+    private int praiseCount;
+    private int replyCount;
+    private int replyPraiseCount;
 
-    public int getType() {
-        return mType;
+    public List<DynamicsComment> replyList = new ArrayList<>();
+    
+    public long getDid() {
+        return mDid;
     }
 
-    public void setType(int type) {
-        mType = type;
+    public void setDid(long did) {
+        mDid = did;
     }
 
-    public int getAid() {
-        return mAid;
+    public long getCommentId() {
+        return mCommentId;
     }
 
-    public void setAid(int aid) {
-        mAid = aid;
+    public void setCommentId(long commentId) {
+        mCommentId = commentId;
     }
 
-    public int getCid() {
-        return mCid;
-    }
+    public long getRid() { return mRid; }
 
-    public void setCid(int cid) {
-        mCid = cid;
-    }
-
-    public String getPictureUrl() {
-        return mPictureUrl;
-    }
-
-    public void setPictureUrl(String pictureUrl) {
-        mPictureUrl = pictureUrl;
-    }
-
+    public void setRid(long rid) { mRid = rid; }
+    
     public String getAuthorName() {
         return mAuthorName;
     }
@@ -56,30 +55,38 @@ public class DynamicsComment {
         mAuthorName = authorName;
     }
 
-    public Long getAuthorUid() {
+    public int getAuthorUid() {
         return mAuthorUid;
     }
 
-    public void setAuthorUid(Long authorUid) {
+    public void setAuthorUid(int authorUid) {
         mAuthorUid = authorUid;
     }
 
-    public String getCommenterName() {
-        return mCommenterName;
+    public String getReplierName() {
+        return mReplierName;
+    }
+    
+    public void setReplierName(String replierName) {
+        mReplierName = replierName;
     }
 
-    public void setCommenterName(String commenterName) {
-        mCommenterName = commenterName;
+    public int getReplierUid() {
+        return mReplierUid;
     }
 
-    public Long getCommenterUid() {
-        return mCommenterUid;
+    public void setReplierUid(int replierUid) {
+        mReplierUid = replierUid;
     }
 
-    public void setCommenterUid(Long commenterUid) {
-        mCommenterUid = commenterUid;
+    public int getReplierSex(){
+        return mReplierSex;
     }
 
+    public void setReplierSex(int replierSex){
+        mReplierSex = replierSex;
+    }
+    
     public String getContent() {
         return mContent;
     }
@@ -88,12 +95,29 @@ public class DynamicsComment {
         mContent = content;
     }
 
-    public int getTimeStamp() {
-        return mTimeStamp;
+    public String getReplyContent(){
+        return mReplyContent;
     }
 
-    public void setTimeStamp(int timeStamp) {
-        mTimeStamp = timeStamp;
+    public void setReplyContent(String replyContent){
+        mReplyContent = replyContent;
     }
+
+    public int getCreated() {
+        return mCreated;
+    }
+    
+    public void setCreated(int created) {
+        mCreated = created;
+    }
+
+    public int getPraiseCount() { return praiseCount; }
+    public void setPraiseCount(int praiseCount) { this.praiseCount = praiseCount; }
+
+    public int getReplyCount() { return  replyCount; }
+    public void setReplyCount(int replyCount) { this.replyCount = replyCount; }
+
+    public int getReplyPraiseCount() { return  replyPraiseCount; }
+    public void setReplyPraiseCount(int replyPraiseCount) { this.replyPraiseCount = replyPraiseCount; }
 
 }
