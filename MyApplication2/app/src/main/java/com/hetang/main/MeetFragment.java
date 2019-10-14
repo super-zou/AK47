@@ -1,28 +1,29 @@
 package com.hetang.main;
 
-import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.hetang.R;
 import com.hetang.adapter.MeetFragmentAdapter;
+import com.hetang.R;
 import com.hetang.util.BaseFragment;
 import com.hetang.util.FontManager;
-
-import java.util.ArrayList;
+import com.hetang.util.InvitationDialogFragment;
+import com.hetang.util.ParseUtils;
+import com.hetang.util.Slog;
 
 /**
  * Created by super-zou on 17-9-11.
  */
-
 public class MeetFragment extends BaseFragment {
+    private static final String TAG = "MeetFragment";
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
     private MeetFragmentAdapter mFragmentAdapter;
@@ -31,15 +32,9 @@ public class MeetFragment extends BaseFragment {
     private TabLayout.Tab singleGroup_tab;
     private TabLayout.Tab discovery_tab;
 
-    private ArrayList<String> mMeetTitleList = new ArrayList<String>() {
-        {
-            add("推荐");
-            add("单身团");
-            add("广场");
-            add("发现");
-        }
-    };
 
+    private String[] mMeetTitleList = getResources().getStringArray(R.array.meet_tabs);
+    
     @Override
     protected void initView(View view) {
 
@@ -54,7 +49,7 @@ public class MeetFragment extends BaseFragment {
     protected int getLayoutId() {
         return 0;
     }
-
+    
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -67,15 +62,16 @@ public class MeetFragment extends BaseFragment {
         mTabLayout = (TabLayout) view.findViewById(R.id.meet_tab_layout);
         mViewPager = (ViewPager) view.findViewById(R.id.meet_view_pager);
         //获取标签数据
-        recomend_tab = mTabLayout.newTab().setText(mMeetTitleList.get(0));
-        singleGroup_tab = mTabLayout.newTab().setText(mMeetTitleList.get(1));
-        dynamics_tab = mTabLayout.newTab().setText(mMeetTitleList.get(2));
-        discovery_tab = mTabLayout.newTab().setText(mMeetTitleList.get(3));
+        recomend_tab = mTabLayout.newTab().setText(mMeetTitleList[0]);
+        singleGroup_tab = mTabLayout.newTab().setText(mMeetTitleList[1]);
+        dynamics_tab = mTabLayout.newTab().setText(mMeetTitleList[2]);
+        //discovery_tab = mTabLayout.newTab().setText(mMeetTitleList[3]);
+        
         //添加tab
         mTabLayout.addTab(recomend_tab, 0, true);
         mTabLayout.addTab(singleGroup_tab, 1, false);
         mTabLayout.addTab(dynamics_tab, 2, false);
-        mTabLayout.addTab(discovery_tab, 3, false);
+        //mTabLayout.addTab(discovery_tab, 3, false);
 
         //创建一个viewpager的adapter
         mFragmentAdapter = new MeetFragmentAdapter(getFragmentManager(), mMeetTitleList);
@@ -85,17 +81,56 @@ public class MeetFragment extends BaseFragment {
 
         //将TabLayout和ViewPager关联起来
         mTabLayout.setupWithViewPager(mViewPager);
-
-        Typeface font = Typeface.createFromAsset(getContext().getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
-        FontManager.markAsIconContainer(view.findViewById(R.id.activity_create), font);
-
-        TextView ActivityCreate = (TextView) view.findViewById(R.id.activity_create);
-        ActivityCreate.setOnClickListener(new View.OnClickListener() {
+        
+        mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getContext(), AddDynamicsActivity.class);
-                startActivity(intent);
+            public void onTabSelected(TabLayout.Tab tab) {
+                TextView textView = new TextView(getActivity());
+                float selectedSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, 18, getResources().getDisplayMetrics());
+                textView.setTextSize(TypedValue.COMPLEX_UNIT_SP,selectedSize);
+                textView.setText(tab.getText());
+                textView.setTextColor(getResources().getColor(R.color.white));
+                tab.setCustomView(textView);
+            }
+            
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+                tab.setCustomView(null);
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
             }
         });
+        
+        TabLayout.Tab tab = mTabLayout.getTabAt(0);
+        TextView textView = new TextView(getActivity());
+        float selectedSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, 18, getResources().getDisplayMetrics());
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP,selectedSize);
+        textView.setText(tab.getText());
+        textView.setTextColor(getResources().getColor(R.color.white));
+        tab.setCustomView(textView);
+
+        TextView search = view.findViewById(R.id.search);
+        
+        search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startSearchUserDialog();
+            }
+        });
+
+        Typeface font = Typeface.createFromAsset(getContext().getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
+        FontManager.markAsIconContainer(view.findViewById(R.id.search), font);
     }
+    
+    private void startSearchUserDialog(){
+        InvitationDialogFragment invitationDialogFragment = new InvitationDialogFragment();
+        Bundle bundle = new Bundle();
+        bundle.putInt("type", ParseUtils.TYPE_COMMON_SEARCH);
+        invitationDialogFragment.setArguments(bundle);
+        invitationDialogFragment.show(getFragmentManager(), "InvitationDialogFragment");
+    }
+
 }
