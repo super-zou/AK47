@@ -16,7 +16,6 @@ import android.widget.Toast;
 import android.view.WindowManager;
 
 import com.hetang.R;
-import com.hetang.main.MainActivity;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.Slog;
 
@@ -41,7 +40,7 @@ public class LaunchActivity extends AppCompatActivity {
     private EditText accountEdit;
     private EditText passwordEdit;
     
-        private boolean isLogin = false;
+    private boolean isLogin = false;
     private ProgressDialog progressDialog;
     //Login form info
     private String account;
@@ -59,9 +58,9 @@ public class LaunchActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN , WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_login);
         
-        TextView smsVerificationCode = findViewById(R.id.sms_verification_code);
+        final TextView smsVerificationCode = findViewById(R.id.sms_verification_code);
         
-        TextView loginByPassword = findViewById(R.id.login_by_password);
+        final TextView loginByPassword = findViewById(R.id.login_by_password);
         loginBtn = findViewById(R.id.login_button);
         final TextInputLayout phoneInputLayout = findViewById(R.id.phoneInputLayout);
         final TextInputLayout passwordInputLayout = findViewById(R.id.passwordInputLayout);
@@ -82,7 +81,10 @@ public class LaunchActivity extends AppCompatActivity {
                     retrievePassword.setVisibility(View.GONE);
                 }
                 
-                            }
+                smsVerificationCode.setVisibility(View.GONE);
+                loginByPassword.setVisibility(View.VISIBLE);
+                
+           }
         });
 
         loginByPassword.setOnClickListener(new View.OnClickListener() {
@@ -99,13 +101,16 @@ public class LaunchActivity extends AppCompatActivity {
                 if(retrievePassword.getVisibility() == View.GONE){
                     retrievePassword.setVisibility(View.VISIBLE);
                 }
+                
+                loginByPassword.setVisibility(View.GONE);
+                smsVerificationCode.setVisibility(View.VISIBLE);
             }
         });
         
         accountEdit = (EditText) findViewById(R.id.account);
         passwordEdit = (EditText) findViewById(R.id.password);
 
-        loginAuto();
+        showAccountInfo();
        // loginBtn = (Button) findViewById(R.id.login_button);
 
         loginBtn.setOnClickListener(new View.OnClickListener() {
@@ -135,8 +140,10 @@ public class LaunchActivity extends AppCompatActivity {
                         return;
                     }
 
-                    Slog.d(TAG, "account: " + account + " password: " + password);
+                    //Slog.d(TAG, "account: " + account + " password: " + password);
                     getUsernameByPhoneNumber(LaunchActivity.this, phoneInputLayout, passwordInputLayout, account, password);
+                    finish();
+                    
                 }else {//join by verification code
                 if(TextUtils.isEmpty(account)){
                         phoneInputLayout.setError(getResources().getString(R.string.phone_is_empty_error));
@@ -150,12 +157,15 @@ public class LaunchActivity extends AppCompatActivity {
                     Intent intent = new Intent(LaunchActivity.this, VerificationCodeJoin.class);
                     intent.putExtra("account", account);
                     startActivity(intent);
+                    
+                    finish();
+                    
                 }
             }
         });
 
     }
-    private boolean loginAuto() {
+    private boolean showAccountInfo() {
         SharedPreferences preferences = getSharedPreferences("account_info", MODE_PRIVATE);
         if (preferences != null) {
             accountEdit.setText(preferences.getString("account", ""));
@@ -166,7 +176,7 @@ public class LaunchActivity extends AppCompatActivity {
     
     public void getUsernameByPhoneNumber(final Context context, final TextInputLayout phoneInputLayout, final TextInputLayout passwordInputLayout, String account, final String password) {
 
-        showProgress(context);
+        //showProgress(context);
         Slog.d(TAG, "====account: "+account+ "password: "+password);
         RequestBody requestBody = new FormBody.Builder()
                 .add("type", "0")
@@ -175,7 +185,9 @@ public class LaunchActivity extends AppCompatActivity {
                 .build();
         HttpUtil.sendOkHttpRequest(context, GET_USERNAME_URL, requestBody, new Callback() {
             int check_login_user = 0;
+            int uid;
             String userName;
+            String yunxinToken;
             
             @Override
             public void onResponse(Call call, Response response) throws IOException {
@@ -185,9 +197,7 @@ public class LaunchActivity extends AppCompatActivity {
                     try {
                         JSONObject check_response = new JSONObject(responseText);
                         check_login_user = Integer.parseInt(check_response.getString("check_login_user"));
-                        userName = check_response.getString("user_name");
-                        Slog.d(TAG, "check_login_user: "+check_response.getString("check_login_user"));
-                        Slog.d(TAG, "user_name: "+check_response.getString("user_name"));
+                        //userName = check_response.getString("user_name");
 
                         if (check_login_user == 1) {//account not exist
                             runOnUiThread(new Runnable() {
@@ -202,12 +212,15 @@ public class LaunchActivity extends AppCompatActivity {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    closeProgressDialog();
+                                    //closeProgressDialog();
                                     passwordInputLayout.setError(context.getResources().getString(R.string.password_error));
                                 }
                             });
-                            }else {
-                            gotoLogin(context, userName, password);
+                        }else {
+                                userName = check_response.optString("user_name");
+                                yunxinToken = check_response.optString("pass");
+                                uid = check_response.optInt("uid");
+                                gotoLogin(context, uid, userName, password, yunxinToken);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -220,7 +233,7 @@ public class LaunchActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        closeProgressDialog();
+                        //closeProgressDialog();
                         Toast.makeText(context, R.string.login_failed, Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -228,104 +241,27 @@ public class LaunchActivity extends AppCompatActivity {
         });
     }
     
-    public void gotoLogin(Context context, String userName, String password) {
+    public void gotoLogin(Context context, int uid, String userName, String password, String yunxinToken) {
 
         SharedPreferences.Editor editor = context.getSharedPreferences("account_info", MODE_PRIVATE).edit();
         editor.putString("account", account);
+        editor.putInt("uid", uid);
+        editor.putString("name", userName);
         editor.putString("password", password);
+        editor.putString("token", yunxinToken);
         editor.putInt("type", 0);
         editor.apply();
 
-        accessToken(context, userName, password);
+        //accessToken(context, userName, password);
+        Intent intent = new Intent(context, LoginSplash.class);
+        context.startActivity(intent);
+
+        //loginYunXinServer();
+
+        finish();
     }
-    
-    public void accessToken(final Context context, final String userName, final String password) {
-        RequestBody requestBody = new FormBody.Builder().build();
-        HttpUtil.sendOkHttpRequest(context, TOKEN_URL, requestBody, new Callback() {
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                String responseText = response.body().string();
-                Slog.d(TAG, "response token: " + responseText);
-                if (!TextUtils.isEmpty(responseText)) {
-                    try {
-                        JSONObject responseObject = new JSONObject(responseText);
-                        token = responseObject.getString("token");
-                        // Slog.d(TAG, "token : "+token);
-                        loginFinally(context, token, userName, password);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-
- }
-
-            @Override
-            public void onFailure(Call call, IOException e) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        closeProgressDialog();
-                        Toast.makeText(LaunchActivity.this, R.string.login_failed, Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-        });
-
-    }
-    
-    public void loginFinally(final Context context, String token, String userName, String password) {
-        Slog.d(TAG, "loginFinally username: "+userName+" password: "+password+ " token: "+token);
-        RequestBody requestBody = new FormBody.Builder()
-                .add("username", userName)
-                .add("password", password)
-                .build();
-
-        HttpUtil.loginOkHttpRequest(context, token, LOGIN_URL, requestBody, new Callback() {
-        @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                Slog.d(TAG, "========header :" + response.headers());
-                String responseText = response.body().string();
-                Slog.d(TAG, "login response : " + responseText);
-                if (!TextUtils.isEmpty(responseText)) {
-                    try {
-                        JSONObject login_response = new JSONObject(responseText);
-                        String sessionId = login_response.getString("sessid");
-                        String session_name = login_response.getString("session_name");
-                        JSONObject user = login_response.getJSONObject("user");
-                        Slog.d(TAG, "sessionId: " + sessionId + "===session name: " + session_name);
-                        
-                        SharedPreferences.Editor editor = context.getSharedPreferences("session", MODE_PRIVATE).edit();
-                        editor.putString("sessionId", sessionId);
-                        editor.putString("sessionName", session_name);
-                        editor.putInt("uid", user.getInt("uid"));
-                        editor.apply();
-
-                        closeProgressDialog();
-                        finish();
-                        Intent intent = new Intent(context, MainActivity.class);
-                        context.startActivity(intent);
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-            
-            @Override
-            public void onFailure(Call call, IOException e) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        closeProgressDialog();
-                        Toast.makeText(context, R.string.login_failed, Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-        });
-    }
-    
-     private void showProgress(Context context) {
+       
+   private void showProgress(Context context) {
         if (progressDialog == null) {
             progressDialog = new ProgressDialog(context);
             progressDialog.setMessage(context.getResources().getString(R.string.logining_progress));
