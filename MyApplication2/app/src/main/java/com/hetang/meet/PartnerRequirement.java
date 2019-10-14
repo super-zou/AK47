@@ -13,7 +13,7 @@ public class PartnerRequirement {
     public int ageUpper;
     public int requirementHeight;
     public String requirementDegree;
-    public String requirementLives;
+    public String requirementLiving;
     public int requirementSex = 0;
     public String illustration;
 
@@ -87,15 +87,19 @@ public class PartnerRequirement {
         return Degree;
     }
 
-    public String getRequirementLives() {
-        return requirementLives;
+    public String getRequirementLiving() {
+        return requirementLiving;
     }
 
-    public void setRequirementLives(String requirementLives) {
-        this.requirementLives = requirementLives;
+    public void setRequirementLiving(String requirementLiving) {
+        this.requirementLiving = requirementLiving;
     }
 
-    public String getRequirementSex() {
+    public int getRequirementSex() {
+        return requirementSex;
+    }
+    
+    public String getRequirementSexName() {
         if (requirementSex == 0) {
             return SEX_MALE;
         } else {
@@ -116,9 +120,9 @@ public class PartnerRequirement {
     }
 
     public String getRequirement() {
-        String requirement = "期待遇见：" + getAgeLower() + "~" + getAgeUpper() + "岁,"
-                + getRequirementHeight() + "CM以上," + getDegreeName(String.valueOf(getRequirementDegree())) + "以上,"
-                + "住在 " + getRequirementLives() + "的" + getRequirementSex();
+        String requirement = "期待一位：" + getAgeLower() + "~" + getAgeUpper() + "岁,"
+                + getRequirementHeight() + "以上," + getDegreeName(String.valueOf(getRequirementDegree())) + "以上,"
+                + "住在 " + getRequirementLiving() + "的" + getRequirementSexName();
 
         return requirement;
     }
