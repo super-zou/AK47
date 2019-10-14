@@ -1,8 +1,10 @@
 package com.hetang.util;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -15,6 +17,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,12 +51,14 @@ public class CommonUserListDialogFragment extends DialogFragment {
     private static final int PRAISE = 4;
     private static final int LOVED = 5;
     private static final int LOVE = 6;
+    private static final int DYNAMICS_PRAISED = 7;
     private static final String GET_APPROVED_USERS_URL = HttpUtil.DOMAIN + "?q=meet/personality/approved_users";
     private static final String APPROVE_PERSONALITY_URL = HttpUtil.DOMAIN + "?q=meet/personality/approve";
     private static final String GET_FOLLOW_USERS_URL = HttpUtil.DOMAIN + "?q=follow/get/";
     private static final String GET_LOVE_USERS_URL = HttpUtil.DOMAIN + "?q=meet/love_detail/";
     private static final String GET_PRAISE_USERS_URL = HttpUtil.DOMAIN + "?q=meet/praise_detail/";
-    public List<MeetMemberInfo> memberInfoList = new ArrayList<>();
+    private static final String GET_DYNAMICS_PRAISED_DETAIL_URL = HttpUtil.DOMAIN + "?q=dynamic/praised_detail";
+    public List<UserProfile> memberInfoList = new ArrayList<>();
     private Context mContext;
     private Dialog mDialog;
     private View view;
@@ -61,19 +66,34 @@ public class CommonUserListDialogFragment extends DialogFragment {
     private LayoutInflater inflater;
     private Handler handler;
     private PersonalityApprovedAdapter personalityApprovedAdapter;
+    private CommonDialogFragmentInterface commonDialogFragmentInterface;
+    private ProgressDialog progressDialog;
+    private boolean writeDone = false;
+    private int type;
+    ImageView progressImageView;
+    AnimationDrawable animationDrawable;
+
+    private static final int RESPONSE_FAILED = 0;
+    private static final int RESPONSE_SUCCESS = 1;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         mContext = context;
         handler = new CommonUserListDialogFragment.MyHandler(CommonUserListDialogFragment.this);
+        try {
+            commonDialogFragmentInterface = (CommonDialogFragmentInterface) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString() + "must implement commonDialogFragmentInterface");
+        }
     }
 
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-        int uid = -1;
+        int uid;
+        int did = 0;
         String title = "";
         Bundle bundle = getArguments();
 
@@ -82,7 +102,7 @@ public class CommonUserListDialogFragment extends DialogFragment {
         TextView titleText = view.findViewById(R.id.title_text);
 
         handler = new CommonUserListDialogFragment.MyHandler(CommonUserListDialogFragment.this);
-        int type = bundle.getInt("type", 0);
+        type = bundle.getInt("type", 0);
 
         switch (type) {
             case PERSONALITY:
@@ -100,7 +120,7 @@ public class CommonUserListDialogFragment extends DialogFragment {
                 uid = bundle.getInt("uid");
                 title = bundle.getString("title");
                 titleText.setText(title);
-                setFollowUserView(type, uid);
+                setUserView(type, uid);
                 break;
             case FOLLOWING:
                 uid = bundle.getInt("uid");
@@ -112,26 +132,34 @@ public class CommonUserListDialogFragment extends DialogFragment {
                 uid = bundle.getInt("uid");
                 title = bundle.getString("title");
                 titleText.setText(title);
-                setFollowUserView(type, uid);
+                setUserView(type, uid);
                 break;
             case PRAISE:
                 uid = bundle.getInt("uid");
                 title = bundle.getString("title");
                 titleText.setText(title);
-                setFollowUserView(type, uid);
+                setUserView(type, uid);
                 break;
             case LOVED:
                 uid = bundle.getInt("uid");
                 title = bundle.getString("title");
                 titleText.setText(title);
-                setFollowUserView(type, uid);
+                setUserView(type, uid);
                 break;
             case LOVE:
                 uid = bundle.getInt("uid");
                 title = bundle.getString("title");
                 titleText.setText(title);
-                setFollowUserView(type, uid);
+                setUserView(type, uid);
                 break;
+            case DYNAMICS_PRAISED:
+                did = (int)bundle.getLong("did");
+                title = bundle.getString("title");
+                titleText.setText(title);
+                setUserView(type, did);
+                break;
+                default:
+                    break;
         }
 
         return mDialog;
@@ -154,6 +182,15 @@ public class CommonUserListDialogFragment extends DialogFragment {
         //window.setDimAmount(0.8f);
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         window.setAttributes(layoutParams);
+        
+        progressImageView = view.findViewById(R.id.animal_progress);
+        animationDrawable = (AnimationDrawable)progressImageView.getDrawable();
+        progressImageView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                animationDrawable.start();
+            }
+        },50);
 
         RecyclerView recyclerView = view.findViewById(R.id.approved_detail_list);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
@@ -182,7 +219,8 @@ public class CommonUserListDialogFragment extends DialogFragment {
         approve.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Slog.d(TAG, "=======================approve click");
+                、、Slog.d(TAG, "=======================approve click");
+                showProgress(getContext().getResources().getString(R.string.saving_progress));
                 RequestBody requestBody = new FormBody.Builder()
                         .add("pid", String.valueOf(pid)).build();
                 HttpUtil.sendOkHttpRequest(mContext, APPROVE_PERSONALITY_URL, requestBody, new Callback() {
@@ -194,6 +232,7 @@ public class CommonUserListDialogFragment extends DialogFragment {
                                 Slog.d(TAG, "==========getPersonality  response text : " + responseText);
                                 boolean status = new JSONObject(responseText).optBoolean("status");
                                 if (status == true) {
+                                    writeDone = true;
                                     mDialog.dismiss();
                                 } else {
                                     Toast.makeText(mContext, "提交失败，请稍后尝试！", Toast.LENGTH_LONG).show();
@@ -225,28 +264,32 @@ public class CommonUserListDialogFragment extends DialogFragment {
                 url = GET_APPROVED_USERS_URL;
                 break;
             case FOLLOWED:
-                requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
+                requestBody = new FormBody.Builder().add("uid", String.valueOf(id)).build();
                 url = GET_FOLLOW_USERS_URL + "followed";
                 break;
             case FOLLOWING:
-                requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
+                requestBody = new FormBody.Builder().add("uid", String.valueOf(id)).build();
                 url = GET_FOLLOW_USERS_URL + "following";
                 break;
             case PRAISED:
-                requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
+                requestBody = new FormBody.Builder().add("uid", String.valueOf(id)).build();
                 url = GET_PRAISE_USERS_URL + "praised";
                 break;
             case PRAISE:
-                requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
+                requestBody = new FormBody.Builder().add("uid", String.valueOf(id)).build();
                 url = GET_PRAISE_USERS_URL + "praise";
                 break;
             case LOVED:
-                requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
+                requestBody = new FormBody.Builder().add("uid", String.valueOf(id)).build();
                 url = GET_LOVE_USERS_URL + "loved";
                 break;
             case LOVE:
-                requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
+                requestBody = new FormBody.Builder().add("uid", String.valueOf(id)).build();
                 url = GET_LOVE_USERS_URL + "love";
+                break;
+            case DYNAMICS_PRAISED:
+                requestBody = new FormBody.Builder().add("did", String.valueOf(id)).build();
+                url = GET_DYNAMICS_PRAISED_DETAIL_URL;
                 break;
             default:
                 break;
@@ -267,7 +310,7 @@ public class CommonUserListDialogFragment extends DialogFragment {
 
                         if (responseArray != null && responseArray.length() > 0) {
                             for (int i = 0; i < responseArray.length(); i++) {
-                                MeetMemberInfo meetMemberInfo = new MeetMemberInfo();
+                                UserProfile userProfile = new UserProfile();
                                 JSONObject member = responseArray.optJSONObject(i);
                                 if (type == PERSONALITY) {
                                     if (guestUid == member.optInt("uid")) {
@@ -275,21 +318,9 @@ public class CommonUserListDialogFragment extends DialogFragment {
                                         handler.sendEmptyMessage(HIDE_APPROVE);
                                     }
                                 }
-                                meetMemberInfo.setUid(member.optInt("uid"));
-                                meetMemberInfo.setSex(member.optInt("sex"));
-                                meetMemberInfo.setRealname(member.optString("realname"));
-                                meetMemberInfo.setPictureUri(member.optString("picture_uri"));
-                                meetMemberInfo.setSituation(member.optInt("situation"));
-                                if (member.optInt("situation") == 0) {//student
-                                    meetMemberInfo.setDegree(member.optString("degree"));
-                                    meetMemberInfo.setMajor(member.optString("major"));
-                                    meetMemberInfo.setUniversity(member.optString("university"));
-                                } else {
-                                    meetMemberInfo.setCompany(member.optString("company"));
-                                    meetMemberInfo.setJobTitle(member.optString("job_title"));
-                                    meetMemberInfo.setLives(member.optString("lives"));
-                                }
-                                memberInfoList.add(meetMemberInfo);
+
+                                userProfile = ParseUtils.getUserProfileFromJSONObject(member);
+                                memberInfoList.add(userProfile);
                             }
                             handler.sendEmptyMessage(LOAD_USERS_DONE);
                         }
@@ -310,6 +341,8 @@ public class CommonUserListDialogFragment extends DialogFragment {
             case LOAD_USERS_DONE:
                 personalityApprovedAdapter.setData(memberInfoList);
                 personalityApprovedAdapter.notifyDataSetChanged();
+                animationDrawable.stop();
+                progressImageView.setVisibility(View.GONE);
                 break;
             case HIDE_APPROVE:
                 approve.setVisibility(View.INVISIBLE);
@@ -321,10 +354,32 @@ public class CommonUserListDialogFragment extends DialogFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        //KeyboardUtils.hideSoftInput(getContext());
+        if (commonDialogFragmentInterface != null) {//callback from ArchivesActivity class
+            if (type == PERSONALITY){
+                commonDialogFragmentInterface.onBackFromDialog(ParseUtils.TYPE_PERSONALITY,0, writeDone);
+            }
+        }
+
+        closeProgressDialog();
+
         if (mDialog != null) {
             mDialog.dismiss();
             mDialog = null;
+        }
+    }
+    
+    private void showProgress(String message) {
+        if (progressDialog == null) {
+            progressDialog = new ProgressDialog(mContext);
+            progressDialog.setMessage(message);
+            progressDialog.setCanceledOnTouchOutside(false);
+        }
+        progressDialog.show();
+    }
+
+    private void closeProgressDialog() {
+        if (progressDialog != null) {
+            progressDialog.dismiss();
         }
     }
 
