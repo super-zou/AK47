@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.text.TextUtils;
@@ -12,7 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import com.hetang.R;
-import com.hetang.main.BaseAppCompatActivity;
+import com.hetang.common.BaseAppCompatActivity;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.Slog;
@@ -39,8 +40,9 @@ public class VerificationCodeJoin extends BaseAppCompatActivity {
     private EditText mConfirmPassword;
     private TextInputEditText mVerificationCodeEdit;
     private Button confirm;
+    private TextView title;
     
-        private TextView resend;
+    private TextView resend;
     private TimeCount timeCount;
     private String mVerificationCode;
     private TextInputLayout mVerifyCodeInputLayout;
@@ -53,8 +55,9 @@ public class VerificationCodeJoin extends BaseAppCompatActivity {
         setContentView(R.layout.get_verification_code);
 
         account = getIntent().getStringExtra("account");//phone number
-
-        custom_actionbar_set(getResources().getString(R.string.sms_verification_code));
+        title = findViewById(R.id.phone_number);
+        title.setText(account);
+        customActionbarSet(getResources().getString(R.string.sms_verification_code));
         timeCount = new TimeCount(60000, 1000);
         timeCount.start();
         
@@ -68,12 +71,12 @@ public class VerificationCodeJoin extends BaseAppCompatActivity {
         /*+Begin: added by xuchunping 2018.7.19*/
        // resend.setEnabled(false);
 
-
+        requstVerificationCode();
         resend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 timeCount.start();
-                requst_verification_code();
+                requstVerificationCode();
             }
         });
 
@@ -84,7 +87,7 @@ public class VerificationCodeJoin extends BaseAppCompatActivity {
                 if(TextUtils.isEmpty(mVerificationCode)){
                     mVerifyCodeInputLayout.setError(getResources().getString(R.string.request_verification_code));
                 }else {
-                    if(verify_verification_code()){
+                    if(verifyVerificationCode()){
                         checkRigister(account);
                     }else{
                         mVerifyCodeInputLayout.setError(getResources().getString(R.string.verify_verification_code_failed));
@@ -95,14 +98,23 @@ public class VerificationCodeJoin extends BaseAppCompatActivity {
 
     }
 
-    private void requst_verification_code(){
+    private void requstVerificationCode(){
+        final int numcode = (int) ((Math.random() * 9 + 1) * 100000);
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mVerificationCodeEdit.setText(String.valueOf(numcode));
+            }
+        }, 3000);
+
 
     }
     
-    private boolean verify_verification_code(){
+    private boolean verifyVerificationCode(){
         return true;
     }
-    private void custom_actionbar_set(String titleContent){
+    private void customActionbarSet(String titleContent){
         TextView back = findViewById(R.id.left_back);
         TextView title = findViewById(R.id.title);
         title.setText(titleContent);
@@ -166,12 +178,18 @@ public class VerificationCodeJoin extends BaseAppCompatActivity {
         intent.putExtra("account", account);
         intent.putExtra("name", name);
         startActivity(intent);
+        
+        finish();
+        
     }
 
     private void createNewUser(String account){
         Intent intent = new Intent(VerificationCodeJoin.this, CreateNewUser.class);
         intent.putExtra("account", account);
         startActivity(intent);
+        
+        finish();
+        
     }
 
     class TimeCount extends CountDownTimer {
