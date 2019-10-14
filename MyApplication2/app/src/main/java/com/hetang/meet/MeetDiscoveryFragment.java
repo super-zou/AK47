@@ -1,6 +1,9 @@
 package com.hetang.meet;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -11,16 +14,22 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
-import com.jcodecraeer.xrecyclerview.ProgressStyle;
-import com.jcodecraeer.xrecyclerview.XRecyclerView;
-import com.hetang.R;
-import com.hetang.adapter.MeetRecommendListAdapter;
+import com.hetang.common.DynamicsInteractDetailsActivity;
+import com.hetang.common.HandlerTemp;
+import com.hetang.home.HomeFragment;
 import com.hetang.util.BaseFragment;
 import com.hetang.util.HttpUtil;
+import com.hetang.util.InterActInterface;
+import com.hetang.common.MyApplication;
 import com.hetang.util.ParseUtils;
 import com.hetang.util.SharedPreferencesUtils;
 import com.hetang.util.Slog;
+import com.jcodecraeer.xrecyclerview.ProgressStyle;
+import com.jcodecraeer.xrecyclerview.XRecyclerView;
+import com.hetang.R;
+import com.hetang.adapter.MeetDiscoveryListAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -49,79 +58,75 @@ public class MeetDiscoveryFragment extends BaseFragment {
     //+Begin add by xuchunping for use XRecyclerView support loadmore
     //private RecyclerView recyclerView;
     private static final int PAGE_SIZE = 6;
-    private static final int DONE = 1;
-    private static final int UPDATE = 2;
-    private static final String domain = "http://112.126.83.127:88/";
-    private static final String get_discovery_url = HttpUtil.DOMAIN + "?q=meet/discovery/get";
+    //private static final int DONE = 1;
+    private static final int UPDATE_DONE = 3;
+    private static final int LOAD_MORE_DONE = 1;
+    private static final int NO_MORE = 0;
+    private static final int LOAD_MORE_END = 2;
+    
+    private static final String GET_DISCOVERY_URL = HttpUtil.DOMAIN + "?q=meet/discovery/get";
     private static String responseText;
     JSONObject discovery_response;
     JSONArray discovery;
     private View viewContent;
     private int mType = 0;
     private String mTitle;
-    private List<MeetMemberInfo> meetMemberList = new ArrayList<>();
-    private MeetMemberInfo meetMemberInfo;
+    private List<UserMeetInfo> meetMemberList = new ArrayList<>();
+    private UserMeetInfo userMeetInfo;
     private XRecyclerView recyclerView;
     private int mTempSize;
     //-End add by xuchunping for use XRecyclerView support loadmore
-    private MeetRecommendListAdapter meetListAdapter;
+    private MeetDiscoveryListAdapter meetDiscoveryListAdapter;
     // private String realname;
     private int uid;
     private Boolean loaded = false;
     private Context mContext;
-    private Handler handler;
+    private Handler handler = new MyHandler(this);
+    ImageView progressImageView;
+    AnimationDrawable animationDrawable;
+    
+    @Override
+    protected void initView(View view) {}
 
     @Override
-    protected void initView(View view) {
-
-    }
-
-    @Override
-    protected void loadData() {
-
-    }
+    protected void loadData() {}
 
     @Override
     protected int getLayoutId() {
         return 0;
     }
-
+    
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         if (debug) Slog.d(TAG, "=================onCreateView===================");
-        mContext = getActivity().getApplicationContext();
+        mContext = getContext();
         initContentView();
-        meetListAdapter = new MeetRecommendListAdapter(getContext());
+        meetDiscoveryListAdapter = new MeetDiscoveryListAdapter(getContext());
         viewContent = inflater.inflate(R.layout.meet_discovery, container, false);
         recyclerView = (XRecyclerView) viewContent.findViewById(R.id.recyclerview);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
+        
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 if (newState == SCROLL_STATE_IDLE) {
-                    meetListAdapter.setScrolling(false);
-                    meetListAdapter.notifyDataSetChanged();
+                    meetDiscoveryListAdapter.setScrolling(false);
+                    meetDiscoveryListAdapter.notifyDataSetChanged();
                 } else {
-                    meetListAdapter.setScrolling(true);
+                    meetDiscoveryListAdapter.setScrolling(true);
                 }
                 super.onScrollStateChanged(recyclerView, newState);
             }
         });
 
-        //+Begin added by xuchunping
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(linearLayoutManager);
-
+        
         recyclerView.setRefreshProgressStyle(BallSpinFadeLoader);
         recyclerView.setLoadingMoreProgressStyle(ProgressStyle.BallRotate);
-//        mRecyclerView.setArrowImageView(R.drawable.);
-
-        recyclerView
-                .getDefaultRefreshHeaderView()
-                .setRefreshTimeVisible(true);
-
+        recyclerView.getDefaultRefreshHeaderView().setRefreshTimeVisible(true);
         recyclerView.getDefaultFootView().setLoadingHint(getString(R.string.loading_pull_up_tip));
         recyclerView.getDefaultFootView().setNoMoreHint(getString(R.string.loading_no_more));
         final int itemLimit = 5;
@@ -130,7 +135,7 @@ public class MeetDiscoveryFragment extends BaseFragment {
         recyclerView.setLimitNumberToCallLoadMore(4);
         recyclerView.setRefreshProgressStyle(ProgressStyle.BallBeat);
         recyclerView.setLoadingMoreProgressStyle(ProgressStyle.SquareSpin);
-
+        
         recyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
             @Override
             public void onRefresh() {
@@ -142,10 +147,51 @@ public class MeetDiscoveryFragment extends BaseFragment {
                 initContentView();
             }
         });
-        //-End added by xuchunping
-        recyclerView.setAdapter(meetListAdapter);
+        recyclerView.setAdapter(meetDiscoveryListAdapter);
+        
+        meetDiscoveryListAdapter.setItemClickListener(new MeetDiscoveryListAdapter.MyItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Intent intent = new Intent(MyApplication.getContext(), MeetArchiveActivity.class);
+                intent.putExtra("meet", meetMemberList.get(position));
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                startActivity(intent);
+            }
+        }, new InterActInterface(){
+            @Override
+            public void onCommentClick(View view, int position) {
+                //createCommentDetails(meetList.get(position).getDid(), meetList.get(position).getCommentCount());
+                //currentPosition = position;
+                createCommentDetails(mContext, meetMemberList.get(position), DynamicsInteractDetailsActivity.MEET_RECOMMEND_COMMENT);
+            }
+            @Override
+            public void onPraiseClick(View view, int position){
+            }
+            @Override
+            public void onDynamicPictureClick(View view, int position, String[] pictureUrlArray, int index){
+            }
+        });
+        
+        //show progressImage before loading done
+        progressImageView = viewContent.findViewById(R.id.animal_progress);
+        animationDrawable = (AnimationDrawable)progressImageView.getDrawable();
+        progressImageView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                animationDrawable.start();
+            }
+        },50);
+
         return viewContent;
 
+    }
+    
+    public void createCommentDetails(Context context, UserMeetInfo meetRecommend, int type) {
+        Intent intent = new Intent(context, DynamicsInteractDetailsActivity.class);
+        intent.putExtra("type", type);
+        intent.putExtra("meetRecommend", meetRecommend);
+        //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+        startActivityForResult(intent, Activity.RESULT_FIRST_USER);
     }
 
     @Override
@@ -154,7 +200,7 @@ public class MeetDiscoveryFragment extends BaseFragment {
         if (debug) Slog.d(TAG, "=================onViewCreated===================");
         // initConentView();
     }
-
+    
     public void initContentView() {
         if (debug) Slog.d(TAG, "===============initConentView==============");
 
@@ -164,10 +210,10 @@ public class MeetDiscoveryFragment extends BaseFragment {
                 .add("page", String.valueOf(page))
                 .build();
         Log.d(TAG, "initContentView requestBody:" + requestBody.toString() + " page:" + page);
-        HttpUtil.sendOkHttpRequest(getContext(), get_discovery_url, requestBody, new Callback() {
+        HttpUtil.sendOkHttpRequest(getContext(), GET_DISCOVERY_URL, requestBody, new Callback() {
             int check_login_user = 0;
             String user_name;
-
+            
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
@@ -180,44 +226,54 @@ public class MeetDiscoveryFragment extends BaseFragment {
             }
         });
 
-        handler = new Handler() {
-            @Override
-            public void handleMessage(Message message) {
-                if (message.what == DONE) {
-                    meetListAdapter.setData(meetMemberList);
-                    meetListAdapter.notifyDataSetChanged();
-                    recyclerView.refreshComplete();
-
-                    if (mTempSize < PAGE_SIZE) {
-                        //loading finished
-                        recyclerView.setNoMore(true);
-                        recyclerView.setLoadingMoreEnabled(false);
-                    }
-                } else if (message.what == UPDATE) {
-                    //save last update timemills
-                    SharedPreferencesUtils.setDiscoveryLast(getContext(), String.valueOf(System.currentTimeMillis() / 1000));
-
-                    meetListAdapter.setData(meetMemberList);
-                    meetListAdapter.notifyDataSetChanged();
-                    recyclerView.refreshComplete();
-                }
-            }
-        };
     }
-
+    
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Slog.d(TAG, "===================onActivityResult requestCode: "+requestCode+" resultCode: "+resultCode);
+        if (requestCode == Activity.RESULT_FIRST_USER){
+            switch (resultCode){
+                case HomeFragment.COMMENT_UPDATE_RESULT:
+                    int commentCount = data.getIntExtra("commentCount", 0);
+                    Slog.d(TAG, "==========commentCount: "+commentCount);
+                    Message msg = new Message();
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("commentCount", commentCount);
+                    msg.setData(bundle);
+                    msg.what = MeetDynamicsFragment.COMMENT_COUNT_UPDATE;
+                    handler.sendMessage(msg);
+                    break;
+                    
+                    case HomeFragment.PRAISE_UPDATE_RESULT:
+                    handler.sendEmptyMessage(MeetDynamicsFragment.PRAISE_UPDATE);
+                    break;
+                case HomeFragment.LOVE_UPDATE_RESULT:
+                    handler.sendEmptyMessage(MeetDynamicsFragment.LOVE_UPDATE);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+    
     public void getResponseText(String responseText) {
         if (debug) Slog.d(TAG, "====================getResponseText====================");
         //+Begin added by xuchunping
-        List<MeetMemberInfo> tempList = ParseUtils.getMeetDiscoveryList(responseText);
-        mTempSize = 0;
-        if (null != tempList) {
-            mTempSize = tempList.size();
+        List<UserMeetInfo> tempList = ParseUtils.getMeetDiscoveryList(responseText);
+        mTempSize = tempList.size();
+        if (null != tempList && mTempSize > 0) {
             meetMemberList.addAll(tempList);
             Log.d(TAG, "getResponseText list.size:" + tempList.size());
+            if (mTempSize < PAGE_SIZE){
+                handler.sendEmptyMessage(LOAD_MORE_END);
+            }else {
+                handler.sendEmptyMessage(LOAD_MORE_DONE);
+            }
+        }else {
+            handler.sendEmptyMessage(NO_MORE);
         }
-        handler.sendEmptyMessage(DONE);
     }
-
+    
     private void updateData() {
         String last = SharedPreferencesUtils.getDiscoveryLast(getContext());
         RequestBody requestBody = new FormBody.Builder().add("last", last)
@@ -225,31 +281,89 @@ public class MeetDiscoveryFragment extends BaseFragment {
                 .add("page", String.valueOf(0))
                 .build();
         Log.d(TAG, "updateData requestBody:" + requestBody.toString() + " last:" + last);
-        HttpUtil.sendOkHttpRequest(getContext(), get_discovery_url, requestBody, new Callback() {
+        HttpUtil.sendOkHttpRequest(getContext(), GET_DISCOVERY_URL, requestBody, new Callback() {
             int check_login_user = 0;
             String user_name;
-
+            
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
                 if (debug) Slog.d(TAG, "response : " + responseText);
                 Log.d(TAG, "response : " + responseText);
                 if (responseText != null) {
-                    List<MeetMemberInfo> tempList = ParseUtils.getMeetDiscoveryList(responseText);
+                    List<UserMeetInfo> tempList = ParseUtils.getMeetDiscoveryList(responseText);
                     if (null != tempList && tempList.size() != 0) {
                         mTempSize = tempList.size();
                         meetMemberList.clear();
                         meetMemberList.addAll(tempList);
                         Log.d(TAG, "getResponseText list.size:" + tempList.size());
                     }
-                    handler.sendEmptyMessage(UPDATE);
+                    handler.sendEmptyMessage(UPDATE_DONE);
                 }
             }
-
+            
             @Override
             public void onFailure(Call call, IOException e) {
             }
         });
     }
-    //-End added by xuchunping
+
+    private void stopLoadProgress(){
+        if (progressImageView.getVisibility() == View.VISIBLE){
+            animationDrawable.stop();
+            progressImageView.setVisibility(View.GONE);
+        }
+    }
+    
+    private void handleMessage(Message message){
+        switch (message.what){
+            case LOAD_MORE_DONE:
+                meetDiscoveryListAdapter.setData(meetMemberList);
+                meetDiscoveryListAdapter.notifyDataSetChanged();
+                recyclerView.refreshComplete();
+               // recyclerView.loadMoreComplete();
+                stopLoadProgress();
+
+                break;
+                case NO_MORE:
+                recyclerView.setNoMore(true);
+                recyclerView.loadMoreComplete();
+                //recyclerView.setLoadingMoreEnabled(false);
+                stopLoadProgress();
+                break;
+            case LOAD_MORE_END:
+                meetDiscoveryListAdapter.setData(meetMemberList);
+                meetDiscoveryListAdapter.notifyDataSetChanged();
+                recyclerView.refreshComplete();
+                recyclerView.loadMoreComplete();
+                recyclerView.setNoMore(true);
+               // recyclerView.setLoadingMoreEnabled(false);
+                stopLoadProgress();
+                break;
+                case UPDATE_DONE:
+                SharedPreferencesUtils.setDiscoveryLast(getContext(), String.valueOf(System.currentTimeMillis() / 1000));
+                meetDiscoveryListAdapter.setData(meetMemberList);
+                meetDiscoveryListAdapter.notifyDataSetChanged();
+                recyclerView.refreshComplete();
+                break;
+                default:
+                    break;
+        }
+    }
+    
+    static class MyHandler extends HandlerTemp<MeetDiscoveryFragment> {
+
+        public MyHandler(MeetDiscoveryFragment cls){
+            super(cls);
+        }
+
+        @Override
+        public void handleMessage(Message message) {
+            super.handleMessage(message);
+            MeetDiscoveryFragment meetDiscoveryFragment = ref.get();
+            if (meetDiscoveryFragment != null) {
+                meetDiscoveryFragment.handleMessage(message);
+            }
+        }
+    }
 }
