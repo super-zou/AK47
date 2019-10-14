@@ -1,6 +1,7 @@
 package com.hetang.util;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -47,6 +48,10 @@ public class ReferenceWriteDialogFragment extends DialogFragment {
     private static final int RESPONSE_FAILED = 0;
     private static final int RESPONSE_SUCCESS = 1;
     TextView save;
+    private CommonDialogFragmentInterface commonDialogFragmentInterface;
+    private ProgressDialog progressDialog;
+    private boolean writeDone = false;
+    private static int TYPE_REFERENCE = 1;
     
         @Override
     public void onAttach(Context context) {
@@ -67,6 +72,13 @@ public class ReferenceWriteDialogFragment extends DialogFragment {
                 super.handleMessage(msg);
             }
         };
+        
+        try {
+            //evaluateDialogFragmentListener = (EvaluateDialogFragmentListener) context;
+            commonDialogFragmentInterface = (CommonDialogFragmentInterface) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString() + "must implement commonDialogFragmentInterface");
+        }
     }
     
         @Override
@@ -80,7 +92,7 @@ public class ReferenceWriteDialogFragment extends DialogFragment {
             name = bundle.getString("name");
         }
         
-                inflater = LayoutInflater.from(mContext);
+        inflater = LayoutInflater.from(mContext);
         mDialog = new Dialog(mContext, android.R.style.Theme_Light_NoTitleBar);
         mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         view = inflater.inflate(R.layout.reference_write_dialog, null);
@@ -185,7 +197,7 @@ public class ReferenceWriteDialogFragment extends DialogFragment {
     }
     
         private void uploadToServer(String input, int uid, String relation) {
-
+        showProgress(mContext);
         RequestBody requestBody = new FormBody.Builder()
                 .add("uid", String.valueOf(uid))
                 .add("relation", relation)
@@ -199,10 +211,9 @@ public class ReferenceWriteDialogFragment extends DialogFragment {
                 try {
                     JSONObject statusObj = new JSONObject(responseText);
                     if (statusObj.optInt("response") != 1) {
-                        Slog.d(TAG, "==============================1");
                         handler.sendEmptyMessage(RESPONSE_FAILED);
                     } else {
-                        Slog.d(TAG, "==============================2");
+                        writeDone = true;
                         handler.sendEmptyMessage(RESPONSE_SUCCESS);
                         mDialog.dismiss();
                     }
@@ -222,6 +233,11 @@ public class ReferenceWriteDialogFragment extends DialogFragment {
     public void onDestroy() {
         super.onDestroy();
         //KeyboardUtils.hideSoftInput(getContext());
+         if (commonDialogFragmentInterface != null) {//callback from ArchivesActivity class
+            commonDialogFragmentInterface.onBackFromDialog(ParseUtils.TYPE_REFERENCE,0, writeDone);
+        }
+
+        closeProgressDialog();
         if (mDialog != null) {
             mDialog.dismiss();
             mDialog = null;
@@ -236,6 +252,21 @@ public class ReferenceWriteDialogFragment extends DialogFragment {
     @Override
     public void onCancel(DialogInterface dialogInterface) {
         super.onCancel(dialogInterface);
+    }
+    
+        private void showProgress(Context context) {
+        if (progressDialog == null) {
+            progressDialog = new ProgressDialog(context);
+            progressDialog.setMessage(context.getResources().getString(R.string.saving_progress));
+            progressDialog.setCanceledOnTouchOutside(false);
+        }
+        progressDialog.show();
+    }
+
+    private void closeProgressDialog() {
+        if (progressDialog != null) {
+            progressDialog.dismiss();
+        }
     }
 
 }
