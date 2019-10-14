@@ -1,53 +1,50 @@
 package com.hetang.meet;
 
-import android.Manifest;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Typeface;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.util.Log;
-import android.widget.GridView;
-import android.widget.TextView;
-import com.luck.picture.lib.PictureSelector;
-import com.luck.picture.lib.config.PictureConfig;
-import com.luck.picture.lib.config.PictureMimeType;
-import com.luck.picture.lib.entity.LocalMedia;
-import com.luck.picture.lib.permissions.RxPermissions;
-import com.luck.picture.lib.tools.PictureFileUtils;
-import com.hetang.adapter.GridImageAdapter;
-import com.hetang.util.FontManager;
-import com.hetang.util.Slog;
-
-import java.io.File;
-import java.util.ArrayList;
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
-
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
+
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.bigkoo.pickerview.builder.OptionsPickerBuilder;
+import com.bigkoo.pickerview.listener.OnOptionsSelectListener;
+import com.bigkoo.pickerview.view.OptionsPickerView;
+import com.hetang.common.AddPictureActivity;
 import com.hetang.R;
-import com.hetang.region.activity.RegionSelectionActivity;
+import com.hetang.util.CommonPickerView;
+import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
+import com.hetang.util.CommonBean;
+import com.hetang.common.MyApplication;
+import com.hetang.util.Slog;
+import com.hetang.util.UserProfile;
+import com.hetang.util.SharedPreferencesUtils;
 
 import org.angmarch.views.NiceSpinner;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -55,257 +52,238 @@ import java.util.List;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
-import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-//import com.google.gson.JsonSerializer;
-
 public class FillMeetInfoActivity extends AppCompatActivity {
-        private static final String TAG = "FillMeetInfoActivity";
-    public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-    private final static int SELFREQUEST = 1;
-    private final static int REQUIREREQUEST = 2;
-    private static final String fillMeetInfoUrl = HttpUtil.DOMAIN +"?q=meet/look_friend";
+    private static final String TAG = "FillMeetInfoActivity";
+    private static final String FILL_MEET_INFO_URL = HttpUtil.DOMAIN +"?q=meet/look_friend";
+
+    private int mSituation = -1;
+    private int mSex = -1;
+    private String selfHometown = "";
     Resources res;
     String[] years;
-    String[] months;
-    String[] days;
+    String[] constellations;
+    String[] hometown;
+    String[] nations;
+    String[] religions;
     String[] heights;
     String[] degrees;
     String[] ages;
-    MeetMemberInfo meetMemberInfo;
+
     SelfCondition selfCondition;
     PartnerRequirement partnerRequirement;
-    boolean SELFSEXCHECKED = false;
-    boolean BIRTHYEARSELECTED = false;
-    boolean BIRTHMONTHSELECTED = false;
-    boolean BIRTHDAYSELECTED = false;
+        
+        boolean BIRTHYEARSELECTED = false;
+    boolean CONSTELLATIONSELECTED = false;
+    boolean HOMETOWNSELECTED = false;
+    boolean NATIONSELECTED = false;
+    boolean RELIGIONSELECTED = false;
     boolean HEIGHTSELECTED = false;
     boolean DEGREESELECTED = false;
-    boolean SELFLIVESELECTED = false;
-    boolean REQUIRESEXCHECKED = false;
+    boolean INDUSTRYSELECTED = false;
     boolean LOWERAGESELECTED = false;
     boolean UPPERAGESELECTED = false;
     boolean REQUIREHEIGHTSELECTED = false;
     boolean REQUIREDEGREESELECTED = false;
     boolean REQUIRELIVESELECTED = false;
+    boolean SITUATIONSELECTED = false;
     String selfConditionJson;
     String partnerRequirementJson;
-    
-        LinearLayout uploadPicture;
+    int currentPageIndex = 1;
+    int defaultPageCount = 2;
+        
+        ConstraintLayout fillMeetInfoLayout;
+    ConstraintLayout customActionBar;
+    LinearLayout setAvatar;
     LinearLayout pageIndicator;
-    GridView morePicture;
-    Button addAvatar;
-    TextView addMorePicture;
-    TextView pageLeft;
-    TextView pageMiddle;
-    TextView pageRight;
-    private int themeId;
-    private Context mContext;
-    
-        private List<LocalMedia> selectList = new ArrayList<>();
-    private List<LocalMedia> avatarSelectList = new ArrayList<>();
-    private GridImageAdapter adapter;
-    private List<File> selectFileList = new ArrayList<>();
-    private List<File> avatarSelectFileList = new ArrayList<>();
+    LinearLayout situationLayout;
+    RadioGroup situationSelect;
+    LinearLayout studentLayout;
+    LinearLayout workLayout;
+    TextInputLayout majorInputLayout;
+    TextInputEditText majorEditText;
+    TextInputLayout universityInputLayout;
+    TextInputEditText universityEditText;
+    TextInputLayout positionInputLayout;
+    TextInputEditText positionEditText;
+    TextInputLayout industryInputLayout;
+    TextInputEditText industryEditText;
+    Button requireRegionSelection;
+        
+        TextView leftBack;
+    TextView title;
+    Button prev;
+    Button next;
+
+    private ArrayList<CommonBean> industryMainItems = new ArrayList<>();
+    private ArrayList<ArrayList<String>> industrySubItems = new ArrayList<>();
+    private ArrayList<CommonBean> provinceItems = new ArrayList<>();
+    private ArrayList<ArrayList<String>> cityItems = new ArrayList<>();
+    //private ArrayList<ArrayList<ArrayList<String>>> options3Items = new ArrayList<>();
+    private Thread threadIndustry;
+    private Thread threadCity;
+    private static final int MSG_LOAD_INDUSTRY_DATA = 0x0001;
+    private static final int MSG_LOAD_CITY_DATA = 0x0002;
+    private static final int MSG_LOAD_SUCCESS = 0x0003;
+    private static final int MSG_LOAD_FAILED = 0x0004;
+        
+        private Handler handler;
+    boolean isHometownSet = false;
+    boolean isEndPage = false;
+
+    private UserProfile userProfile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fill_meet_info);
-        mContext = this;
-        boolean avatarSet = getIntent().getBooleanExtra("avatarSet", false);
+        //if avatar is set, avatarSet will be set true
+        userProfile = (UserProfile) getIntent().getSerializableExtra("userProfile");
+            
+            if(userProfile != null){
+            mSituation = userProfile.getSituation();
+            mSex = userProfile.getSex();
+            selfHometown = userProfile.getHometown();
+        }
 
-        initView();
+        if (mSex == -1){
+            mSex = SharedPreferencesUtils.getLoginedAccountSex(MyApplication.getContext());
+        }
 
-        uploadPicture(avatarSet);   
+        if(!TextUtils.isEmpty(selfHometown)){
+            isHometownSet = true;
+        }
+            
+            initView();
+
+        setSelfCondition();
+
+        setRequirement();
+
+        pageNavigator();
+
+
     }
-    
+
     private void  initView(){
-        addAvatar = findViewById(R.id.add_avatar);
-        addMorePicture = findViewById(R.id.add_more_picture);
-        morePicture = findViewById(R.id.more_picture);
-        pageLeft = findViewById(R.id.page_left);
-        pageMiddle = findViewById(R.id.page_middle);
-        pageRight = findViewById(R.id.page_right);
-        uploadPicture = findViewById(R.id.upload_picture);
+        leftBack = findViewById(R.id.left_back);
+        customActionBar = findViewById(R.id.custom_actionbar_id);
+        title = findViewById(R.id.title);
+        fillMeetInfoLayout = findViewById(R.id.fill_meet_info);
+            
+            situationLayout = findViewById(R.id.situationWrap);
+        situationSelect = findViewById(R.id.situationRG);
+        studentLayout = findViewById(R.id.student);
+        workLayout = findViewById(R.id.work);
+        majorInputLayout = findViewById(R.id.major_input_layout);
+        majorEditText = findViewById(R.id.major_edittext);
+        universityInputLayout = findViewById(R.id.university_input_layout);
+        universityEditText = findViewById(R.id.university_edittext);
+        positionInputLayout = findViewById(R.id.position_input_layout);
+        positionEditText = findViewById(R.id.position_edittext);
+        industryInputLayout = findViewById(R.id.industry_input_layout);
+        industryEditText = findViewById(R.id.industry_edittext);
+        requireRegionSelection = findViewById(R.id.require_region);
+            
+            setAvatar = findViewById(R.id.set_avatar);
         pageIndicator = findViewById(R.id.page_indicator);
+        prev = findViewById(R.id.prev);
+        next = findViewById(R.id.next);
+
+        //add indicator
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        for (int i=0; i<defaultPageCount; i++){
+            TextView textView = new TextView(this);
+                
+                if(i != 0){
+                layoutParams.setMarginStart(8);
+                textView.setText(R.string.circle_o);
+            }else {
+                textView.setText(R.string.circle);
+            }
+            textView.setTextColor(getResources().getColor(R.color.white));
+            textView.setLayoutParams(layoutParams);
+
+            pageIndicator.addView(textView);
+        }
+
+        if(mSituation != -1){
+            situationLayout.setVisibility(View.INVISIBLE);
+        }
+            
+            leftBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         Typeface font = Typeface.createFromAsset(getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
         FontManager.markAsIconContainer(findViewById(R.id.fill_meet_info), font);
     }
-    
-        private void uploadPicture(boolean avatarSet){
-        if(avatarSet == false){
-
-            RxPermissions permissions = new RxPermissions(this);
-            permissions.request(Manifest.permission.WRITE_EXTERNAL_STORAGE).subscribe(new Observer<Boolean>() {
-                @Override
-                public void onSubscribe(Disposable d) {
-                }
-                @Override
-                public void onNext(Boolean aBoolean) {
-                    if (aBoolean) {
-                        PictureFileUtils.deleteCacheDirFile(mContext);
-                    } else {
-                        Toast.makeText(mContext,
-                                getString(R.string.picture_jurisdiction), Toast.LENGTH_SHORT).show();
-                    }
-                }
-                
-                @Override
-                public void onError(Throwable e) {
-                }
-
-                @Override
-                public void onComplete() {
-                }
-            });
-            
-            if(uploadPicture.getVisibility() == View.GONE){
-                uploadPicture.setVisibility(View.VISIBLE);
-            }
-
-            if(pageMiddle.getVisibility() == View.GONE){
-                pageMiddle.setVisibility(View.VISIBLE);
-            }
-            
-            themeId = R.style.picture_default_style;
-
-            addAvatar.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    PictureSelector.create(FillMeetInfoActivity.this)
-                            .openGallery(PictureMimeType.ofImage())// 全部.PictureMimeType.ofAll()、图片.ofImage()、视频.ofVideo()、音频.ofAudio()
-                            .theme(themeId)// 主题样式设置 具体参考 values/styles   用法：R.style.picture.white.style
-                            .maxSelectNum(1)// 最大图片选择数量
-                            .minSelectNum(1)// 最小选择数量
-                            .selectionMode(PictureConfig.SINGLE)// 多选 or 单选
-                            .previewImage(true)// 是否可预览图片
-                            .isCamera(true)// 是否显示拍照按钮
-                            .isZoomAnim(true)// 图片列表点击 缩放效果 默认true
-                        .enableCrop(true)// 是否裁剪
-                            .compress(true)// 是否压缩
-                            .synOrAsy(true)//同步true或异步false 压缩 默认同步
-                            .glideOverride(180, 180)// glide 加载宽高，越小图片列表越流畅，但会影响列表图片浏览的清晰度
-                            .withAspectRatio(1, 1)// 裁剪比例 如16:9 3:2 3:4 1:1 可自定义
-                        .isGif(true)// 是否显示gif图片
-                            .freeStyleCropEnabled(false)// 裁剪框是否可拖拽
-                            .showCropFrame(false)// 是否显示裁剪矩形边框 圆形裁剪时建议设为false
-                            .showCropGrid(true)// 是否显示裁剪矩形网格 圆形裁剪时建议设为false
-                            .openClickSound(true)// 是否开启点击声音
-                            .cropCompressQuality(90)// 裁剪压缩质量 默认100
-                            .minimumCompressSize(100)// 小于100kb的图片不压缩
-                            .cropWH(160, 160)// 裁剪宽高比，设置如果大于图片本身宽高则无效
-                            .rotateEnabled(true) // 裁剪是否可旋转图片
-                            .scaleEnabled(true)// 裁剪是否可放大缩小图片
-                            .forResult(PictureConfig.SINGLE);//结果回调onActivityResult code
-                    }
-            });
-        }
-    }
-    
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        Slog.d(TAG, "=======uri: "+data.getData());
-        if (resultCode == RESULT_OK) {
-            switch (requestCode) {
-                case PictureConfig.SINGLE:
-                    // 图片选择结果回调
-                    avatarSelectList = PictureSelector.obtainMultipleResult(data);
-                    // 例如 LocalMedia 里面返回三种path
-                    // 1.media.getPath(); 为原图path
-                    // 2.media.getCutPath();为裁剪后path，需判断media.isCut();是否为true
-                    // 3.media.getCompressPath();为压缩后path，需判断media.isCompressed();是否为true
-                    // 如果裁剪并压缩了，已取压缩路径为准，因为是先裁剪后压缩的
-                    Slog.d(TAG, "Selected pictures: " + avatarSelectList.size());
-                    //activity_picture_array = new String[selectList.size()];
-                    for (LocalMedia media : avatarSelectList) {
-
-                        Log.i("图片-----》", media.getPath());
-                        Log.d("压缩图片------->>", media.getCompressPath());
-                        Slog.d(TAG, "===========num: " + media.getNum());
-                        //activity_picture_array[media.getNum() - 1] = media.getCompressPath();
-                        avatarSelectFileList.add(new File(media.getCompressPath()));
-
-                        Bitmap bitmap = BitmapFactory.decodeFile(media.getCompressPath());
-                        Drawable drawable = new BitmapDrawable(getResources(),bitmap);
-                        addAvatar.setBackground(drawable);
-                    }
-
-                    break;
-                    case PictureConfig.CHOOSE_REQUEST:
-                    // 图片选择结果回调
-                    selectList = PictureSelector.obtainMultipleResult(data);
-                    // 例如 LocalMedia 里面返回三种path
-                    // 1.media.getPath(); 为原图path
-                    // 2.media.getCutPath();为裁剪后path，需判断media.isCut();是否为true
-                    // 3.media.getCompressPath();为压缩后path，需判断media.isCompressed();是否为true
-                    // 如果裁剪并压缩了，已取压缩路径为准，因为是先裁剪后压缩的
-                    Slog.d(TAG, "Selected pictures: " + selectList.size());
-                    //activity_picture_array = new String[selectList.size()];
-                    for (LocalMedia media : selectList) {
-
-                        Log.i("图片-----》", media.getPath());
-                        Log.d("压缩图片------->>", media.getCompressPath());
-                        Slog.d(TAG, "===========num: " + media.getNum());
-                        //activity_picture_array[media.getNum() - 1] = media.getCompressPath();
-                        selectFileList.add(new File(media.getCompressPath()));
-
-                        /*
-                        Bitmap bitmap = BitmapFactory.decodeFile(media.getCompressPath());
-                        Drawable drawable = new BitmapDrawable(getResources(),bitmap);
-                        addAvatar.setBackground(drawable);
-                        */
-                    }
-                    if(false){
-                        adapter.setList(selectList);
-                        adapter.notifyDataSetChanged();
-                    }
-                    break;
-            }
-        }
         
-        if (resultCode == 2) {
-            String SelectedResult = data.getStringExtra("SelectedResult");
-            if (requestCode == SELFREQUEST) {
-                //设置结果显示框的显示数值
-                Button button = (Button) findViewById(R.id.self_region);
-                button.setText(SelectedResult);
-                selfCondition.setLives(SelectedResult);
-                SELFLIVESELECTED = true;
+        private void setSelfCondition(){
 
-            } else {
-                //设置结果显示框的显示数值
-                Button button = (Button) findViewById(R.id.require_region);
-                button.setText(SelectedResult);
-                partnerRequirement.setRequirementLives(SelectedResult);
-                REQUIRELIVESELECTED = true;
-            }
-        }
-    }
-    
-    
-        private void fillMeetInfo(){
-
+        title.setText(getResources().getText(R.string.self_info));
         res = getResources();
         years = res.getStringArray(R.array.years);
-        months = res.getStringArray(R.array.months);
-        days = res.getStringArray(R.array.days);
+        constellations = res.getStringArray(R.array.constellations);
+        hometown = res.getStringArray(R.array.hometown);
+        nations = res.getStringArray(R.array.nations);
+        religions = res.getStringArray(R.array.religions);
         heights = res.getStringArray(R.array.heights);
         degrees = res.getStringArray(R.array.degrees);
         ages = res.getStringArray(R.array.ages);
 
-        meetMemberInfo = new MeetMemberInfo();
         selfCondition = new SelfCondition();
         partnerRequirement = new PartnerRequirement();
+                
+                handler = new Handler() {
+            public void handleMessage(Message msg) {
+                switch (msg.what) {
+                    case MSG_LOAD_INDUSTRY_DATA:
+                        if (threadIndustry == null){
+                            Slog.i(TAG,"行业数据开始解析");
+                            threadIndustry = new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    initJsondata("industry.json", true);
+                                        
+                                        }
+                            });
+                            threadIndustry.start();
+                        }
+                        break;
 
-        final LinearLayout selfLayout = (LinearLayout) findViewById(R.id.self);
-        final LinearLayout requireLayout = (LinearLayout) findViewById(R.id.requirement);
+                    case MSG_LOAD_CITY_DATA:
+                        if (threadCity == null){
+                            Slog.i(TAG,"city数据开始解析");
+                            threadCity = new Thread(new Runnable() {
+                                
+                                    @Override
+                                    public void run() {
+                                    initJsondata("city.json", false);
+                                }
+                            });
+                            threadCity.start();
+                        }
+                        break;
+                                case MSG_LOAD_SUCCESS:
+                        Slog.i(TAG,"数据获取成功");
+                        //isLoaded = true;
+                        break;
 
-        NiceSpinner niceSpinnerYears = (NiceSpinner) findViewById(R.id.nice_spinner_years);
+                    case MSG_LOAD_FAILED:
+                        Log.i(TAG,"数据获取失败");
+                        break;
+
+                }
+            }
+        };
+                
+                NiceSpinner niceSpinnerYears = (NiceSpinner) findViewById(R.id.nice_spinner_years);
         final List<String> yearList = new LinkedList<>(Arrays.asList(years));
         niceSpinnerYears.attachDataSource(yearList);
         niceSpinnerYears.addOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -318,36 +296,74 @@ public class FillMeetInfoActivity extends AppCompatActivity {
             }
 
         });
-
-        NiceSpinner niceSpinnerMonths = (NiceSpinner) findViewById(R.id.nice_spinner_months);
-        final List<String> monthList = new LinkedList<>(Arrays.asList(months));
-        niceSpinnerMonths.attachDataSource(monthList);
-        niceSpinnerMonths.addOnItemClickListener(new AdapterView.OnItemClickListener() {
+                
+                NiceSpinner niceSpinnerConstellation = findViewById(R.id.nice_spinner_constellations);
+        final List<String> constellationList = new LinkedList<>(Arrays.asList(constellations));
+        niceSpinnerConstellation.attachDataSource(constellationList);
+        niceSpinnerConstellation.addOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 //Slog.e("什么数据",String.valueOf(yearList.get(i)));
                 //Toast.makeText(FillMeetInfoActivity.this, String.valueOf(monthList.get(i)), Toast.LENGTH_SHORT).show();
-                selfCondition.setBirthMonth(Integer.parseInt(monthList.get(i)));
-                BIRTHMONTHSELECTED = true;
+                selfCondition.setConstellation(String.valueOf(constellationList.get(i)));
+                CONSTELLATIONSELECTED = true;
+
             }
 
         });
+                
+                 NiceSpinner niceSpinnerHometown = (NiceSpinner) findViewById(R.id.nice_spinner_hometown);
 
-        NiceSpinner niceSpinnerDays = (NiceSpinner) findViewById(R.id.nice_spinner_days);
-        final List<String> dayList = new LinkedList<>(Arrays.asList(days));
-        niceSpinnerDays.attachDataSource(dayList);
-        niceSpinnerDays.addOnItemClickListener(new AdapterView.OnItemClickListener() {
+        final List<String> hometownList = new LinkedList<>(Arrays.asList(hometown));
+        niceSpinnerHometown.attachDataSource(hometownList);
+        niceSpinnerHometown.addOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 //Slog.e("什么数据",String.valueOf(yearList.get(i)));
                 //Toast.makeText(FillMeetInfoActivity.this, String.valueOf(dayList.get(i)), Toast.LENGTH_SHORT).show();
-                selfCondition.setBirthDay(Integer.parseInt(dayList.get(i)));
-                BIRTHDAYSELECTED = true;
+                selfCondition.setHometown(String.valueOf(hometownList.get(i)));
+                HOMETOWNSELECTED = true;
             }
 
         });
 
-        NiceSpinner niceSpinnerHeight = (NiceSpinner) findViewById(R.id.nice_spinner_height);
+        if(isHometownSet == true){
+            niceSpinnerHometown.setText(selfHometown);
+            selfCondition.setHometown(selfHometown);
+            HOMETOWNSELECTED = true;
+        }
+                
+                NiceSpinner niceSpinnerNation = (NiceSpinner) findViewById(R.id.nice_spinner_nation);
+        final List<String> nationList = new LinkedList<>(Arrays.asList(nations));
+        niceSpinnerNation.attachDataSource(nationList);
+        selfCondition.setNation(String.valueOf(nationList.get(0)));
+        niceSpinnerNation.addOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                //Slog.e("什么数据",String.valueOf(yearList.get(i)));
+                //Toast.makeText(FillMeetInfoActivity.this, String.valueOf(dayList.get(i)), Toast.LENGTH_SHORT).show();
+                selfCondition.setNation(String.valueOf(nationList.get(i)));
+                NATIONSELECTED = true;
+            }
+
+        });
+                
+                 NiceSpinner niceSpinnerReligion = (NiceSpinner) findViewById(R.id.nice_spinner_religion);
+        final List<String> religionList = new LinkedList<>(Arrays.asList(religions));
+        niceSpinnerReligion.attachDataSource(religionList);
+        selfCondition.setReligion(String.valueOf(religionList.get(0)));
+        niceSpinnerReligion.addOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                //Slog.e("什么数据",String.valueOf(yearList.get(i)));
+                //Toast.makeText(FillMeetInfoActivity.this, String.valueOf(dayList.get(i)), Toast.LENGTH_SHORT).show();
+                selfCondition.setReligion(String.valueOf(religionList.get(i)));
+                RELIGIONSELECTED = true;
+            }
+
+        });
+                
+                NiceSpinner niceSpinnerHeight = (NiceSpinner) findViewById(R.id.nice_spinner_height);
         final List<String> heightList = new LinkedList<>(Arrays.asList(heights));
         niceSpinnerHeight.attachDataSource(heightList);
         niceSpinnerHeight.addOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -358,10 +374,10 @@ public class FillMeetInfoActivity extends AppCompatActivity {
                 selfCondition.setHeight(Integer.parseInt(heightList.get(i)));
                 HEIGHTSELECTED = true;
             }
-
         });
-
-        NiceSpinner niceSpinnerDegree = (NiceSpinner) findViewById(R.id.nice_spinner_degree);
+                
+                
+                NiceSpinner niceSpinnerDegree = (NiceSpinner) findViewById(R.id.nice_spinner_degree);
         final List<String> degreeList = new LinkedList<>(Arrays.asList(degrees));
         niceSpinnerDegree.attachDataSource(degreeList);
         niceSpinnerDegree.addOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -374,106 +390,293 @@ public class FillMeetInfoActivity extends AppCompatActivity {
             }
 
         });
-        Button selfRegionSelection = (Button) findViewById(R.id.self_region);
-        selfRegionSelection.setOnClickListener(new View.OnClickListener() {
+                
+                situationSelect.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(FillMeetInfoActivity.this, RegionSelectionActivity.class);
-                startActivityForResult(intent, SELFREQUEST);
-            }
-        });
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                int id = group.getCheckedRadioButtonId();
+                if(id == R.id.radioStudent){
+                    mSituation = 0;
+                    if(studentLayout.getVisibility() == View.GONE){
+                        studentLayout.setVisibility(View.VISIBLE);
+                    }
 
-        final Button preButton = (Button) findViewById(R.id.prev);
-        final Button nextButton = (Button) findViewById(R.id.next);
-        final Button doneButton = (Button) findViewById(R.id.done);
-        nextButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (checkSelfInfo()) {
-                    selfLayout.setVisibility(View.GONE);
-                    requireLayout.setVisibility(View.VISIBLE);
-                    createRequiredView();
-                    v.setVisibility(View.GONE);
-                    preButton.setVisibility(View.VISIBLE);
-                    doneButton.setVisibility(View.VISIBLE);
-                    selfConditionJson = getSelfConditionJsonObject().toString();
+                    if(workLayout.getVisibility() != View.GONE){
+                        workLayout.setVisibility(View.GONE);
+                    }
+                }else {
+                    mSituation = 1;
+                        
+                        if(workLayout.getVisibility() == View.GONE){
+                        workLayout.setVisibility(View.VISIBLE);
+                    }
 
+                    if(studentLayout.getVisibility() != View.GONE){
+                        studentLayout.setVisibility(View.GONE);
+                    }
+
+                    handler.sendEmptyMessage(MSG_LOAD_INDUSTRY_DATA);
                 }
+
+                SITUATIONSELECTED = true;
             }
         });
-
-        preButton.setOnClickListener(new View.OnClickListener() {
+                
+                industryEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
-            public void onClick(View v) {
-                selfLayout.setVisibility(View.VISIBLE);
-                requireLayout.setVisibility(View.INVISIBLE);
-                v.setVisibility(View.GONE);
-                nextButton.setVisibility(View.VISIBLE);
-                doneButton.setVisibility(View.GONE);
-            }
-        });
-
-        doneButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                EditText editText = (EditText) findViewById(R.id.illustration);
-                partnerRequirement.setIllustration(editText.getText().toString());
-                partnerRequirementJson = getPartnerRequirementJsonObject().toString();
-                ObjectMapper mapper = new ObjectMapper();
-                if (checkRequiredInfo()) {
-                    RequestBody requestBody = new FormBody.Builder()
-                            .add("self_condition", selfConditionJson)
-                            .add("partner_requirement", partnerRequirementJson)
-                            .build();
-
-                    HttpUtil.sendOkHttpRequest(FillMeetInfoActivity.this, fillMeetInfoUrl, requestBody, new Callback() {
-                        @Override
-                        public void onResponse(Call call, Response response) throws IOException {
-                            String responseText = response.body().string();
-                            //Slog.d(TAG, "response : "+responseText);
-                            //getResponseText(responseText);
-                            finish();
-                        }
-
-                        @Override
-                        public void onFailure(Call call, IOException e) {
-
-                        }
-                    });
+            public void onFocusChange(View view, boolean b) {
+                if(b){
+                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(industryEditText.getWindowToken(),0);
+                    ShowPickerView(true);
                 }
             }
         });
 
     }
+        
+        private void pageNavigator(){
+        next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //customActionBar.setVisibility(View.INVISIBLE);
 
-    private JSONObject getSelfConditionJsonObject() {
+                if(currentPageIndex == defaultPageCount){
+                    if(checkRequiredInfo()){
+                        saveMeetInfo();
+                    }
+                    return;
+                }
+                    
+                    if(currentPageIndex == defaultPageCount - 1){
+                    if(!checkSelfInfo()) {
+                        return;
+                    }else {
+                        selfCondition.setUniversity(universityEditText.getText().toString().replaceAll(" ",""));
+                        selfCondition.setSituation(mSituation);
+                        if(mSituation == 0){
+                            selfCondition.setMajor(majorEditText.getText().toString().replaceAll(" ",""));
+                        }else {
+                            selfCondition.setPosition(positionEditText.getText().toString().replaceAll(" ",""));
+                            selfCondition.setIndustry(industryEditText.getText().toString().replaceAll(" ",""));
+                        }
+                    }
+                }
+                    
+                    leftBack.setVisibility(View.INVISIBLE);
+
+                fillMeetInfoLayout.getChildAt(currentPageIndex).setVisibility(View.GONE);
+                TextView preIndicator = (TextView)pageIndicator.getChildAt(currentPageIndex-1);
+                preIndicator.setText(R.string.circle_o);
+                //if (checkSelfInfo()) {
+                ++currentPageIndex;
+                Slog.d(TAG, "==================currentPageIndex: "+currentPageIndex);
+                fillMeetInfoLayout.getChildAt(currentPageIndex).setVisibility(View.VISIBLE);
+                TextView indicator = (TextView)pageIndicator.getChildAt(currentPageIndex-1);
+                indicator.setText(R.string.circle);
+                    
+                    if(prev.getVisibility() == View.INVISIBLE){
+                    prev.setVisibility(View.VISIBLE);
+                }
+
+                if(currentPageIndex == defaultPageCount){
+                    title.setText(getResources().getText(R.string.requirement));
+                    next.setText(R.string.done);
+                    isEndPage = true;
+                }
+                    
+                     }
+
+        });
+
+        prev.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fillMeetInfoLayout.getChildAt(currentPageIndex).setVisibility(View.GONE);
+                TextView nextIndicator = (TextView)pageIndicator.getChildAt(currentPageIndex-1);
+                nextIndicator.setText(R.string.circle_o);
+                --currentPageIndex;
+                Slog.d(TAG, "==================currentPageIndex: "+currentPageIndex);
+                fillMeetInfoLayout.getChildAt(currentPageIndex).setVisibility(View.VISIBLE);
+                    
+                    TextView indicator = (TextView)pageIndicator.getChildAt(currentPageIndex-1);
+                indicator.setText(R.string.circle);
+
+                next.setText(R.string.next);
+                title.setText(getResources().getText(R.string.self_info));
+
+                if(currentPageIndex == 1){
+                    prev.setVisibility(View.INVISIBLE);
+                    if(customActionBar.getVisibility() == View.INVISIBLE){
+                        customActionBar.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+        });
+    }
+        
+        private void setRequirement() {
+
+        RadioGroup require_sex = findViewById(R.id.require_sex);
+        RadioButton sexRadioButton;
+        if (mSex != -1){
+            if(mSex == 0){
+                sexRadioButton = (RadioButton) require_sex.getChildAt(1);
+                partnerRequirement.setRequirementSex(1);
+            }else {
+                sexRadioButton = (RadioButton) require_sex.getChildAt(0);
+                partnerRequirement.setRequirementSex(0);
+            }
+                
+                sexRadioButton.setChecked(true);
+        }
+
+
+        require_sex.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (checkedId == R.id.require_sex_male) {
+                    //Toast.makeText(FillMeetInfoActivity.this,"male", Toast.LENGTH_SHORT).show();
+                    partnerRequirement.setRequirementSex(0);
+                } else {
+                    //Toast.makeText(FillMeetInfoActivity.this,"female", Toast.LENGTH_SHORT).show();
+                    partnerRequirement.setRequirementSex(1);
+                }
+            }
+        });
+                
+                final List<String> ageList = new LinkedList<>(Arrays.asList(ages));
+        NiceSpinner niceSpinnerAgeLower = (NiceSpinner) findViewById(R.id.nice_spinner_require_age_lower);
+        niceSpinnerAgeLower.attachDataSource(ageList);
+        niceSpinnerAgeLower.addOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                //Slog.e("什么数据",String.valueOf(yearList.get(i)));
+                //Toast.makeText(FillMeetInfoActivity.this, String.valueOf(ageList.get(i)), Toast.LENGTH_SHORT).show();
+                partnerRequirement.setAgeLower(Integer.parseInt(ageList.get(i)));
+                LOWERAGESELECTED = true;
+            }
+
+        });
+                
+                NiceSpinner niceSpinnerAgeUpper = (NiceSpinner) findViewById(R.id.nice_spinner_require_age_upper);
+        niceSpinnerAgeUpper.attachDataSource(ageList);
+        niceSpinnerAgeUpper.addOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                //Slog.e("什么数据",String.valueOf(yearList.get(i)));
+                //Toast.makeText(FillMeetInfoActivity.this, String.valueOf(ageList.get(i)), Toast.LENGTH_SHORT).show();
+                partnerRequirement.setAgeUpper(Integer.parseInt(ageList.get(i)));
+                UPPERAGESELECTED = true;
+            }
+
+        });
+                
+                 NiceSpinner niceSpinnerHeight = (NiceSpinner) findViewById(R.id.nice_spinner_require_height);
+        final List<String> heightList = new LinkedList<>(Arrays.asList(heights));
+        niceSpinnerHeight.attachDataSource(heightList);
+        niceSpinnerHeight.addOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                //Slog.e("什么数据",String.valueOf(yearList.get(i)));
+                //Toast.makeText(FillMeetInfoActivity.this, String.valueOf(heightList.get(i)), Toast.LENGTH_SHORT).show();
+                partnerRequirement.setRequirementHeight(Integer.parseInt(heightList.get(i)));
+                REQUIREHEIGHTSELECTED = true;
+            }
+
+        });
+                
+                NiceSpinner niceSpinnerDegree = (NiceSpinner) findViewById(R.id.nice_spinner_require_degree);
+        final List<String> degreeList = new LinkedList<>(Arrays.asList(degrees));
+        niceSpinnerDegree.attachDataSource(degreeList);
+        niceSpinnerDegree.addOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                //Slog.e("什么数据",String.valueOf(yearList.get(i)));
+                //Toast.makeText(FillMeetInfoActivity.this, String.valueOf(degreeList.get(i)), Toast.LENGTH_SHORT).show();
+                partnerRequirement.setRequirementDegree(String.valueOf(degreeList.get(i)));
+                REQUIREDEGREESELECTED = true;
+            }
+
+        });
+                
+                requireRegionSelection.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Intent intent = new Intent(FillMeetInfoActivity.this, RegionSelectionActivity.class);
+                //startActivityForResult(intent, REQUIREREQUEST);
+                //if(isLoaded){
+                    ShowPickerView(false);
+                //}
+            }
+        });
+
+        handler.sendEmptyMessage(MSG_LOAD_CITY_DATA);
+    }
+        
+        private void saveMeetInfo(){
+
+        EditText editText = findViewById(R.id.illustration);
+        if(!TextUtils.isEmpty(editText.getText().toString())){
+            partnerRequirement.setIllustration(editText.getText().toString());
+        }
+
+        selfConditionJson = getSelfConditionJsonObject().toString();
+        Slog.d(TAG, "=====================selfConditionJson: "+selfConditionJson);
+        partnerRequirementJson = getPartnerRequirementJsonObject().toString();
+
+        RequestBody requestBody = new FormBody.Builder()
+                .add("self_condition", selfConditionJson)
+                .add("partner_requirement", partnerRequirementJson)
+                .build();
+                
+                HttpUtil.sendOkHttpRequest(FillMeetInfoActivity.this, FILL_MEET_INFO_URL, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String responseText = response.body().string();
+                Intent intent = new Intent(getApplicationContext(), AddPictureActivity.class);
+                intent.putExtra("uid", userProfile.getUid());
+                startActivity(intent);
+                finish();
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+        });
+
+    }
+        
+        private JSONObject getSelfConditionJsonObject() {
         JSONObject jsonObject = new JSONObject();
-        JSONArray jsonArray = new JSONArray();
         try {
-            jsonObject.put("sex", selfCondition.getSelfSex());
+            //jsonObject.put("sex", selfCondition.getSelfSex());
             jsonObject.put("birth_year", selfCondition.getBirthYear());
-            jsonObject.put("birth_month", selfCondition.getBirthMonth());
-            jsonObject.put("birth_day", selfCondition.getBirthDay());
+            jsonObject.put("constellation", selfCondition.getConstellation());
             jsonObject.put("height", selfCondition.getHeight());
             jsonObject.put("degree", selfCondition.getDegreeIndex());
-            jsonObject.put("lives", selfCondition.getLives());
+            jsonObject.put("university", selfCondition.getUniversity());
+            jsonObject.put("hometown", selfCondition.getHometown());
+            jsonObject.put("nation", selfCondition.getNation());
+            jsonObject.put("religion", selfCondition.getReligion());
+            jsonObject.put("situation", selfCondition.getSituation());
+                
+                if(selfCondition.getSituation() == 0){
+                jsonObject.put("major", selfCondition.getMajor());
+            }else {
+                jsonObject.put("position", selfCondition.getPosition());
+                jsonObject.put("industry", selfCondition.getIndustry());
+            }
 
-            jsonObject.put("sex", selfCondition.getSelfSex());
-            jsonObject.put("birth_year", selfCondition.getBirthYear());
-            jsonObject.put("birth_month", selfCondition.getBirthMonth());
-            jsonObject.put("birth_day", selfCondition.getBirthDay());
-            jsonObject.put("height", selfCondition.getHeight());
-            jsonObject.put("degree", selfCondition.getDegreeIndex());
-            jsonObject.put("lives", selfCondition.getLives());
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-
         return jsonObject;
     }
-
-    private JSONObject getPartnerRequirementJsonObject() {
+        
+        private JSONObject getPartnerRequirementJsonObject() {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("sex", partnerRequirement.getRequirementSex());
@@ -481,34 +684,33 @@ public class FillMeetInfoActivity extends AppCompatActivity {
             jsonObject.put("age_upper", partnerRequirement.getAgeUpper());
             jsonObject.put("height", partnerRequirement.getRequirementHeight());
             jsonObject.put("degree", partnerRequirement.getDegreeIndex());
-            jsonObject.put("lives", partnerRequirement.getRequirementLives());
+            jsonObject.put("living", partnerRequirement.getRequirementLiving());
             jsonObject.put("illustration", partnerRequirement.getIllustration());
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-
         return jsonObject;
     }
-
-    private boolean checkSelfInfo() {
+        
+         private boolean checkSelfInfo() {
 
         if (BIRTHYEARSELECTED == false) {
             Toast.makeText(FillMeetInfoActivity.this, "请选择出生年份", Toast.LENGTH_LONG).show();
             return false;
         }
 
-        if (BIRTHMONTHSELECTED == false) {
-            Toast.makeText(FillMeetInfoActivity.this, "请选择出生月份", Toast.LENGTH_LONG).show();
+        if (CONSTELLATIONSELECTED == false) {
+            Toast.makeText(FillMeetInfoActivity.this, "请选择星座", Toast.LENGTH_LONG).show();
             return false;
         }
 
-        if (BIRTHDAYSELECTED == false) {
-            Toast.makeText(FillMeetInfoActivity.this, "请选择出生日", Toast.LENGTH_LONG).show();
+        if (HOMETOWNSELECTED == false) {
+            Toast.makeText(FillMeetInfoActivity.this, "请选择家乡", Toast.LENGTH_LONG).show();
             return false;
         }
-
-        if (HEIGHTSELECTED == false) {
+                 
+                 if (HEIGHTSELECTED == false) {
             Toast.makeText(FillMeetInfoActivity.this, "请选择身高", Toast.LENGTH_LONG).show();
             return false;
         }
@@ -518,20 +720,41 @@ public class FillMeetInfoActivity extends AppCompatActivity {
             return false;
         }
 
-        if (SELFLIVESELECTED == false) {
-            Toast.makeText(FillMeetInfoActivity.this, "请选择居住地", Toast.LENGTH_LONG).show();
+        if(TextUtils.isEmpty(universityEditText.getText().toString())){
+            universityInputLayout.setError(getResources().getString(R.string.university_empty));
             return false;
+        }
+                 
+                 if(mSituation == -1){
+            if(SITUATIONSELECTED == true){
+                if(mSituation == 0){
+                    if(TextUtils.isEmpty(majorEditText.getText().toString())){
+                        majorInputLayout.setError(getResources().getString(R.string.major_empty));
+                        return false;
+                    }
+                }else {
+                    if(TextUtils.isEmpty(positionEditText.getText().toString())){
+                        positionInputLayout.setError(getResources().getString(R.string.profession_empty));
+                        return false;
+                    }
+                        
+                        if(TextUtils.isEmpty(industryEditText.getText().toString())){
+                        industryInputLayout.setError(getResources().getString(R.string.industry_empty));
+                        return false;
+                    }
+                }
+            }else {
+
+                Toast.makeText(FillMeetInfoActivity.this, "请选择当前状态", Toast.LENGTH_LONG).show();
+                return false;
+
+            }
         }
 
         return true;
     }
-
-    private boolean checkRequiredInfo() {
-
-        if (REQUIRESEXCHECKED == false) {
-            Toast.makeText(FillMeetInfoActivity.this, "请选择性别", Toast.LENGTH_LONG).show();
-            return false;
-        }
+        
+        private boolean checkRequiredInfo() {
 
         if (LOWERAGESELECTED == false) {
             Toast.makeText(FillMeetInfoActivity.this, "请选择年龄下限", Toast.LENGTH_LONG).show();
@@ -547,8 +770,8 @@ public class FillMeetInfoActivity extends AppCompatActivity {
             Toast.makeText(FillMeetInfoActivity.this, "请选择身高", Toast.LENGTH_LONG).show();
             return false;
         }
-
-        if (REQUIREDEGREESELECTED == false) {
+                
+                if (REQUIREDEGREESELECTED == false) {
             Toast.makeText(FillMeetInfoActivity.this, "请选择学历", Toast.LENGTH_LONG).show();
             return false;
         }
@@ -560,87 +783,64 @@ public class FillMeetInfoActivity extends AppCompatActivity {
 
         return true;
     }
+        
+        private void initJsondata(String jsonFile, boolean isIndustry){
+        CommonPickerView commonPickerView = new CommonPickerView();
+        if(isIndustry == true){
+            Slog.d(TAG, "=========industry json file: "+jsonFile);
+            industryMainItems = commonPickerView.getOptionsMainItem(this, jsonFile);
+            industrySubItems = commonPickerView.getOptionsSubItems(industryMainItems);
+        }else {
+            Slog.d(TAG, "=========city json file: "+jsonFile);
+            provinceItems = commonPickerView.getOptionsMainItem(this, jsonFile);
+            cityItems = commonPickerView.getOptionsSubItems(provinceItems);
+        }
 
-    private void createRequiredView() {
+        handler.sendEmptyMessage(MSG_LOAD_SUCCESS);
+    }
+        
+         private void ShowPickerView(boolean isIndustry) {// 弹出行业选择器
 
-        RadioGroup require_sex = (RadioGroup) findViewById(R.id.require_sex);
-        require_sex.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (checkedId == R.id.require_sex_male) {
-                    //Toast.makeText(FillMeetInfoActivity.this,"male", Toast.LENGTH_SHORT).show();
-                    partnerRequirement.setRequirementSex(0);
-                } else {
-                    //Toast.makeText(FillMeetInfoActivity.this,"female", Toast.LENGTH_SHORT).show();
-                    partnerRequirement.setRequirementSex(1);
-                }
-                REQUIRESEXCHECKED = true;
-            }
-        });
+        //条件选择器
+        OptionsPickerView pvOptions;
+        if(isIndustry){
+            pvOptions= new OptionsPickerBuilder(FillMeetInfoActivity.this, new OnOptionsSelectListener() {
 
-        final List<String> ageList = new LinkedList<>(Arrays.asList(ages));
-        NiceSpinner niceSpinnerAgeLower = (NiceSpinner) findViewById(R.id.nice_spinner_require_age_lower);
-        niceSpinnerAgeLower.attachDataSource(ageList);
-        niceSpinnerAgeLower.addOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                //Slog.e("什么数据",String.valueOf(yearList.get(i)));
-                //Toast.makeText(FillMeetInfoActivity.this, String.valueOf(ageList.get(i)), Toast.LENGTH_SHORT).show();
-                partnerRequirement.setAgeLower(Integer.parseInt(ageList.get(i)));
-                LOWERAGESELECTED = true;
-            }
+                @Override
+                public void onOptionsSelect(int options1, int option2, int options3 ,View v) {
+                    //返回的分别是二个级别的选中位置
+                    String tx = industryMainItems.get(options1).getPickerViewText()
+                            + industrySubItems.get(options1).get(option2);
+                    industryEditText.setText(industrySubItems.get(options1).get(option2));
+                    selfCondition.setIndustry(industrySubItems.get(options1).get(option2));
 
-        });
+                    INDUSTRYSELECTED = true;
+                        
+                        }
+            }).build();
 
-        NiceSpinner niceSpinnerAgeUpper = (NiceSpinner) findViewById(R.id.nice_spinner_require_age_upper);
-        niceSpinnerAgeUpper.attachDataSource(ageList);
-        niceSpinnerAgeUpper.addOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                //Slog.e("什么数据",String.valueOf(yearList.get(i)));
-                //Toast.makeText(FillMeetInfoActivity.this, String.valueOf(ageList.get(i)), Toast.LENGTH_SHORT).show();
-                partnerRequirement.setAgeUpper(Integer.parseInt(ageList.get(i)));
-                UPPERAGESELECTED = true;
-            }
+            pvOptions.setPicker(industryMainItems, industrySubItems);
+        }else {
+            pvOptions= new OptionsPickerBuilder(this, new OnOptionsSelectListener() {
 
-        });
+                @Override
+                public void onOptionsSelect(int options1, int option2, int options3 ,View v) {
+                    //返回的分别是二个级别的选中位置
+                    String tx = provinceItems.get(options1).getPickerViewText()+" · "
+                            + cityItems.get(options1).get(option2);
+                    requireRegionSelection.setText(tx);
+                    String city = cityItems.get(options1).get(option2);
+                    partnerRequirement.setRequirementLiving(city);
+                    REQUIRELIVESELECTED = true;
+                        
+                        }
+            }).build();
 
-        NiceSpinner niceSpinnerHeight = (NiceSpinner) findViewById(R.id.nice_spinner_require_height);
-        final List<String> heightList = new LinkedList<>(Arrays.asList(heights));
-        niceSpinnerHeight.attachDataSource(heightList);
-        niceSpinnerHeight.addOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                //Slog.e("什么数据",String.valueOf(yearList.get(i)));
-                //Toast.makeText(FillMeetInfoActivity.this, String.valueOf(heightList.get(i)), Toast.LENGTH_SHORT).show();
-                partnerRequirement.setRequirementHeight(Integer.parseInt(heightList.get(i)));
-                REQUIREHEIGHTSELECTED = true;
-            }
+            pvOptions.setPicker(provinceItems, cityItems);
+        }
 
-        });
+        pvOptions.show();
 
-        NiceSpinner niceSpinnerDegree = (NiceSpinner) findViewById(R.id.nice_spinner_require_degree);
-        final List<String> degreeList = new LinkedList<>(Arrays.asList(degrees));
-        niceSpinnerDegree.attachDataSource(degreeList);
-        niceSpinnerDegree.addOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                //Slog.e("什么数据",String.valueOf(yearList.get(i)));
-                //Toast.makeText(FillMeetInfoActivity.this, String.valueOf(degreeList.get(i)), Toast.LENGTH_SHORT).show();
-                partnerRequirement.setRequirementDegree(String.valueOf(degreeList.get(i)));
-                REQUIREDEGREESELECTED = true;
-            }
-
-        });
-
-        Button requireRegionSelection = (Button) findViewById(R.id.require_region);
-        requireRegionSelection.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(FillMeetInfoActivity.this, RegionSelectionActivity.class);
-                startActivityForResult(intent, REQUIREREQUEST);
-            }
-        });
     }
 
 }
