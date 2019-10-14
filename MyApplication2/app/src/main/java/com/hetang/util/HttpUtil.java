@@ -2,20 +2,22 @@ package com.hetang.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.widget.ImageView;
+import android.text.TextUtils;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
 import com.hetang.R;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.FormBody;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -26,35 +28,53 @@ import static android.content.Context.MODE_PRIVATE;
 /**
  * Created by haichao.zou on 2017/8/22.
  */
-
 public class HttpUtil {
     public static final String TAG = "HttpUtil";
     /*+Begin: added by xuchunping 2018.7.19*/
     public static final String DOMAIN = "http://112.126.83.127:81/";
     /*-End: added by xuchunping 2018.7.19*/
-    private static String Cookie;
+    public static final String CHECK_YUNXIN_ACCOUNT_EXIST = HttpUtil.DOMAIN + "?q=chat/check_yunxin_account";
+    public static final String CREATE_YUNXIN_USER = HttpUtil.DOMAIN + "?q=chat/create_user";
+    public static final String CHECK_VERSION_UPDATE = HttpUtil.DOMAIN + "?q=version_update/check";
+    public static final String GET_DOWNLOAD_QR = HttpUtil.DOMAIN + "?q=version_update/get_download_qr";
+    public static final String GET_PASSWORD_HASH = HttpUtil.DOMAIN + "?q=account_manager/get_password_hash";
+    private static final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/jpeg");
+    private static String mCookie;
+    static Request request;
+    
+    public static OkHttpClient.Builder builder = new OkHttpClient.Builder()
+            .connectTimeout(300, TimeUnit.SECONDS)
+            .writeTimeout(300, TimeUnit.SECONDS)
+            .readTimeout(300, TimeUnit.SECONDS);
+    static OkHttpClient client = builder.build();
 
     public static String getCookie(Context context) {
+        String cookie = "";
+        String sessionName;
+        String sessionId;
         SharedPreferences preferences = context.getSharedPreferences("session", MODE_PRIVATE);
-        Cookie = preferences.getString("sessionName", "") + "=" + preferences.getString("sessionId", "");
+        sessionName = preferences.getString("sessionName", "");
+        sessionId = preferences.getString("sessionId", "");
 
-        return Cookie;
+        if(!TextUtils.isEmpty(sessionName) && !TextUtils.isEmpty(sessionId)){
+            cookie = sessionName + "=" + sessionId;
+        }
+
+        return cookie;
     }
-
+    
     public static void sendOkHttpRequest(Context context, String address, RequestBody requestBody, okhttp3.Callback callback) {
-        OkHttpClient client = new OkHttpClient();
-        Request request = null;
-        String cookie = getCookie(context);
+
+        mCookie = getCookie(context);
         if (requestBody != null) {
-            if (cookie != null) {
-                request = new Request.Builder().url(address).addHeader("cookie", cookie).post(requestBody).build();
+            if (mCookie != null && !TextUtils.isEmpty(mCookie)) {
+                request = new Request.Builder().url(address).addHeader("cookie", mCookie).post(requestBody).build();
             } else {
                 request = new Request.Builder().url(address).post(requestBody).build();
             }
-
-        } else {
-            if (cookie != null) {
-                request = new Request.Builder().url(address).addHeader("cookie", cookie).build();
+            } else {
+            if (mCookie != null && !TextUtils.isEmpty(mCookie)) {
+                request = new Request.Builder().url(address).addHeader("cookie", mCookie).build();
             } else {
                 request = new Request.Builder().url(address).build();
             }
@@ -64,34 +84,20 @@ public class HttpUtil {
         client.newCall(request).enqueue(callback);
     }
     
-    public static void loginOkHttpRequest(Context context, String token, String address, RequestBody requestBody, okhttp3.Callback callback) {
-        OkHttpClient client = new OkHttpClient();
-        Request request;
-
-        if (requestBody != null) {
-            request = new Request.Builder().url(address).addHeader("X-CSRF-Token", token).post(requestBody).build();
-        } else {
-            request = new Request.Builder().url(address).addHeader("X-CSRF-Token", token).build();
-        }
-
-        client.newCall(request).enqueue(callback);
-    }
-
     public static Response sendOkHttpRequestSync(Context context, String address, RequestBody requestBody, okhttp3.Callback callback) {
-        OkHttpClient client = new OkHttpClient();
         Response response = null;
-        Request request = null;
-        String cookie = getCookie(context);
+        mCookie = getCookie(context);
+
         if (requestBody != null) {
-            if (cookie != null) {
-                request = new Request.Builder().url(address).addHeader("cookie", cookie).post(requestBody).build();
+            if (mCookie != null && !TextUtils.isEmpty(mCookie)) {
+                request = new Request.Builder().url(address).addHeader("cookie", mCookie).post(requestBody).build();
             } else {
                 request = new Request.Builder().url(address).post(requestBody).build();
             }
-
-        } else {
-            if (cookie != null) {
-                request = new Request.Builder().url(address).addHeader("cookie", cookie).build();
+            
+            } else {
+            if (mCookie != null && !TextUtils.isEmpty(mCookie)) {
+                request = new Request.Builder().url(address).addHeader("cookie", mCookie).build();
             } else {
                 request = new Request.Builder().url(address).build();
             }
@@ -106,59 +112,72 @@ public class HttpUtil {
 
         return response;
     }
-
-    public static Bitmap getHttpBitmap(String url) {
-        URL myFileURL;
-        Bitmap bitmap = null;
-        try {
-            myFileURL = new URL(url);
-            //获得连接
-            HttpURLConnection conn = (HttpURLConnection) myFileURL.openConnection();
-            //设置超时时间为6000毫秒，conn.setConnectionTiem(0);表示没有时间限制
-            conn.setConnectTimeout(0);
-            //连接设置获得数据流
-            conn.setDoInput(true);
-            //不使用缓存
-            conn.setUseCaches(false);
-            //这句可有可无，没有影响
-            conn.connect();
-            //得到数据流
-            InputStream is = conn.getInputStream();
-            //解析得到图片
-            bitmap = BitmapFactory.decodeStream(is);
-            //关闭数据流
-            is.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+    
+     public static void loginOkHttpRequest(Context context, String token, String address, RequestBody requestBody, okhttp3.Callback callback) {
+        //OkHttpClient client = new OkHttpClient();
+        if (requestBody != null) {
+            request = new Request.Builder().url(address).addHeader("X-CSRF-Token", token).post(requestBody).build();
+        } else {
+            request = new Request.Builder().url(address).addHeader("X-CSRF-Token", token).build();
         }
 
-        return bitmap;
-
+        client.newCall(request).enqueue(callback);
     }
+    
+    public static void uploadPictureHttpRequest(Context context, Map<String, String> params, String picKey, List<File> files, String address, okhttp3.Callback callback) {
+        //OkHttpClient client = new OkHttpClient();
+        mCookie = getCookie(context);
 
-    public static void loadByImageLoader(RequestQueue queue, ImageView imageView, String url, int width, int height) {
-
-        if (url != null) {
-            //创建ImageLoader对象，参数（加入请求队列，自定义缓存机制）
-            ImageLoader imageLoader = new ImageLoader(queue, BitmapCache.instance());
-            if (url.equals(imageView.getTag())) {
-                if (imageView instanceof NetworkImageView) {
-                    //Slog.d(TAG, "================NetworkImageView  instance============");
-                    ((NetworkImageView) imageView).setDefaultImageResId(R.drawable.main_bottom_attention_press);
-                    ((NetworkImageView) imageView).setErrorImageResId(android.R.drawable.stat_notify_error);
-                    //imageView.setLayoutParams(layoutParams);
-                    ((NetworkImageView) imageView).setImageUrl(url, imageLoader);
-                } else {
-                    //获取图片监听器 参数（要显示的ImageView控件，默认显示的图片，加载错误显示的图片）
-                    ImageLoader.ImageListener listener = ImageLoader.getImageListener(imageView,
-                            R.drawable.main_bottom_attention_press,
-                            R.drawable.error);
-
-                    imageLoader.get(url, listener, width, height);
-                }
+        MultipartBody.Builder multipartBodyBuilder = new MultipartBody.Builder();
+        multipartBodyBuilder.setType(MultipartBody.FORM);
+        //遍历map中所有参数到builder
+        if (params != null) {
+            for (String key : params.keySet()) {
+                multipartBodyBuilder.addFormDataPart(key, params.get(key));
+            }
+        }
+        
+        if (files != null && files.size() > 0) {
+            //遍历paths中所有图片绝对路径到builder，并约定key如“upload”作为后台接受多张图片的key
+            int i = 0;
+            for (File file : files) {
+                Slog.d(TAG, "file name: " + file.getName());
+                multipartBodyBuilder.addFormDataPart(picKey + i, file.getName(), RequestBody.create(MEDIA_TYPE_PNG, file));
+                i++;
             }
         }
 
+        RequestBody requestBody = multipartBodyBuilder.build();
+        
+         if (mCookie != null && !TextUtils.isEmpty(mCookie)) {
+            request = new Request.Builder().url(address).addHeader("cookie", mCookie).post(requestBody).build();
+        } else {
+            request = new Request.Builder().url(address).post(requestBody).build();
+        }
+
+        client.newCall(request).enqueue(callback);
+    }
+    
+    public static int getYunXinAccountExist(Context context, String account){
+        int exist = 0;
+        RequestBody requestBody = new FormBody.Builder().add("uid", account).build();
+        Response response = sendOkHttpRequestSync(context, CHECK_YUNXIN_ACCOUNT_EXIST, requestBody, null);
+        if (response != null && response.body() != null) {
+            try {
+            String responseText = response.body().string();
+            Slog.d(TAG, "==========load response text : " + responseText);
+                if (responseText != null && !TextUtils.isEmpty(responseText)) {
+                    exist = new JSONObject(responseText).optInt("exist");
+                    Slog.d(TAG, "----------------->yunxin account exist: "+exist);
+                }
+               }catch (JSONException e){
+                e.printStackTrace();
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+        }
+
+        return exist;
     }
 
-}
+} 
