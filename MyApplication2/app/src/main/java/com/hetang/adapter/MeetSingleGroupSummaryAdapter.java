@@ -48,7 +48,7 @@ public class MeetSingleGroupSummaryAdapter extends RecyclerView.Adapter<MeetSing
         mContext = context;
     }
 
-    public void setData(List<MeetSingleGroupFragment.SingleGroup> singleGroupList, final int parentWidth) {
+    public void setData(List<MeetSingleGroupFragment.SingleGroup> singleGroupList, int parentWidth) {
         mSingleGroupList = singleGroupList;
         width = parentWidth;
     }
@@ -62,7 +62,8 @@ public class MeetSingleGroupSummaryAdapter extends RecyclerView.Adapter<MeetSing
     }
     
     @Override
-    public void onBindViewHolder(@NonNull MeetSingleGroupSummaryAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MeetSingleGroupSummaryAdapter.ViewHolder holder, final int position) {
+         final MeetSingleGroupFragment.SingleGroup singleGroup = mSingleGroupList.get(position);
         setContentView(holder, singleGroup);
 
         holder.itemLayout.setOnClickListener(new View.OnClickListener() {
