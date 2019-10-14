@@ -1,6 +1,7 @@
 package com.hetang.util;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -38,23 +39,43 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class PersonalityEditDialogFragment extends DialogFragment {
-    private static final String TAG = "PersonalityDialogFragment";
+    private static final String TAG = "PersonalityEditDialogFragment";
     private static final String SET_PERSONALITY_URL = HttpUtil.DOMAIN + "?q=meet/personality/set";
     private static final String CREATE_HOBBY_URL = HttpUtil.DOMAIN + "?q=personal_archive/hobby/create";
-    private static final int TYPE_HOBBY = 0;
-    private static final int TYPE_PERSONALITY = 1;
     private Context mContext;
     private Dialog mDialog;
     private View view;
     private int totalWord = 0;
     private LayoutInflater inflater;
-    private int type = TYPE_PERSONALITY;
+    
+    private int type = ParseUtils.TYPE_PERSONALITY;
+    private TextView title;
+    private FlowLayout personalityFL;
+    private EditText editText;
+    private TextView save;
+    private TextView remainWord;
+    private TextView cancel;
+    private CommonDialogFragmentInterface commonDialogFragmentInterface;
+    private ProgressDialog progressDialog;
+    private boolean writeDone = false;
+    private MyHandler handler;
+
+    private static final int RESPONSE_FAILED = 0;
+    private static final int RESPONSE_SUCCESS = 1;
+    
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         mContext = context;
+        try {
+            //evaluateDialogFragmentListener = (EvaluateDialogFragmentListener) context;
+            commonDialogFragmentInterface = (CommonDialogFragmentInterface) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString() + "must implement commonDialogFragmentInterface");
+        }
 
+        handler = new MyHandler(this);
     }
 
     @Override
@@ -84,26 +105,33 @@ public class PersonalityEditDialogFragment extends DialogFragment {
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         window.setAttributes(layoutParams);
 
-        TextView title = view.findViewById(R.id.add_hobby_title);
-        if (type == TYPE_HOBBY) {
-            title.setText("添加兴趣爱好");
-        }
-
         initView(uid);
         return mDialog;
     }
 
     private void initView(final int uid) {
+        title = view.findViewById(R.id.add_hobby_title);
+        personalityFL = view.findViewById(R.id.personality_flow_layout);
+        editText = view.findViewById(R.id.personality_edit_text);
+        save = view.findViewById(R.id.save);
+        remainWord = view.findViewById(R.id.word_remain);
+        cancel = view.findViewById(R.id.cancel);
+        if (type == ParseUtils.TYPE_HOBBY) {
+            title.setText("添加兴趣爱好");
+            editText.setHint("输入兴趣爱好");
+        }else {
+            title.setText("添加个性标签");
+        }
+        
+        editText.setFocusable(true);
+        editText.setFocusableInTouchMode(true);
+        editText.requestFocus();
+        mDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        
         addPersonalityAction(uid);
     }
 
     private void addPersonalityAction(final int uid) {
-        final FlowLayout personalityFL = view.findViewById(R.id.personality_flow_layout);
-        final EditText editText = view.findViewById(R.id.personality_edit_text);
-        final TextView save = view.findViewById(R.id.save);
-        final TextView remainWord = view.findViewById(R.id.word_remain);
-        TextView cancel = view.findViewById(R.id.cancel);
-
         editText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -207,7 +235,8 @@ public class PersonalityEditDialogFragment extends DialogFragment {
     }
 
     private void uploadToServer(String input, int uid) {
-        if (type == TYPE_PERSONALITY) {//for personality
+        showProgress(mContext);
+        if (type == ParseUtils.TYPE_PERSONALITY) {//for personality
             RequestBody requestBody = new FormBody.Builder()
                     .add("uid", String.valueOf(uid))
                     .add("personality", input).build();
@@ -219,8 +248,10 @@ public class PersonalityEditDialogFragment extends DialogFragment {
                     try {
                         JSONObject statusObj = new JSONObject(responseText);
                         if (statusObj.optBoolean("status") != true) {
-                            Toast.makeText(mContext, "保存失败，请稍后再试", Toast.LENGTH_LONG).show();
+                            handler.sendEmptyMessage(RESPONSE_FAILED);
                         } else {
+                            writeDone = true;
+                            handler.sendEmptyMessage(RESPONSE_SUCCESS);
                             mDialog.dismiss();
                         }
 
@@ -247,6 +278,7 @@ public class PersonalityEditDialogFragment extends DialogFragment {
                         if (statusObj.optBoolean("status") != true) {
                             Toast.makeText(mContext, "保存失败，请稍后再试", Toast.LENGTH_LONG).show();
                         } else {
+                            writeDone = true;
                             mDialog.dismiss();
                         }
                     } catch (JSONException e) {
@@ -265,6 +297,12 @@ public class PersonalityEditDialogFragment extends DialogFragment {
 
     public void handleMessage(Message message) {
         switch (message.what) {
+            case RESPONSE_FAILED:
+                Toast.makeText(mContext, "保存失败，请稍后再试", Toast.LENGTH_LONG).show();
+                break;
+            case RESPONSE_SUCCESS:
+                save.setEnabled(false);
+                break;
             default:
                 break;
         }
@@ -273,6 +311,20 @@ public class PersonalityEditDialogFragment extends DialogFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        
+        if (commonDialogFragmentInterface != null) {//callback from ArchivesActivity class
+            if(type == ParseUtils.TYPE_PERSONALITY){
+                commonDialogFragmentInterface.onBackFromDialog(ParseUtils.TYPE_PERSONALITY,0, writeDone);
+            }
+
+            if (type == ParseUtils.TYPE_HOBBY){
+                commonDialogFragmentInterface.onBackFromDialog(ParseUtils.TYPE_HOBBY,0, writeDone);
+            }
+
+        }
+
+        closeProgressDialog();
+        
         //KeyboardUtils.hideSoftInput(getContext());
         if (mDialog != null) {
             mDialog.dismiss();
@@ -288,6 +340,21 @@ public class PersonalityEditDialogFragment extends DialogFragment {
     @Override
     public void onCancel(DialogInterface dialogInterface) {
         super.onCancel(dialogInterface);
+    }
+    
+    private void showProgress(Context context) {
+        if (progressDialog == null) {
+            progressDialog = new ProgressDialog(context);
+            progressDialog.setMessage(context.getResources().getString(R.string.saving_progress));
+            progressDialog.setCanceledOnTouchOutside(false);
+        }
+        progressDialog.show();
+    }
+
+    private void closeProgressDialog() {
+        if (progressDialog != null) {
+            progressDialog.dismiss();
+        }
     }
 
     static class MyHandler extends Handler {
