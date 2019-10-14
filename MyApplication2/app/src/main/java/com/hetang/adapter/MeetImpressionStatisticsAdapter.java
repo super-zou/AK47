@@ -97,9 +97,7 @@ public class MeetImpressionStatisticsAdapter extends RecyclerView.Adapter<MeetIm
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private MyItemClickListener mListener;
         TextView feature;
-        ImageView headPicture1;
-        ImageView headPicture2;
-        ImageView headPicture3;
+        LinearLayout avatarAbstractLL;
         TextView approvedUsers;
 
 
