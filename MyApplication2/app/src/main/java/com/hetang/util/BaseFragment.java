@@ -3,6 +3,8 @@ package com.hetang.util;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.SparseArray;
@@ -10,12 +12,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.hetang.common.MyApplication;
+
 /**
  * Created by super-zou on 18-1-20.
  */
 
 public abstract class BaseFragment extends Fragment {
     private static final String TAG = "BaseFragment";
+    private static final boolean isDebug = false;
     private Activity activity;
     private boolean isVisible = false;//当前Fragment是否可见
     private boolean isInitView = false;//是否与View建立起映射关系
@@ -27,7 +32,7 @@ public abstract class BaseFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Slog.d(TAG, "   " + this.getClass().getSimpleName() + "====onCreateView========================================");
+        if(isDebug) Slog.d(TAG, "   " + this.getClass().getSimpleName() + "====onCreateView========================================");
         convertView = inflater.inflate(getLayoutId(), container, false);
         mViews = new SparseArray<>();
         initView(convertView);
@@ -51,7 +56,7 @@ public abstract class BaseFragment extends Fragment {
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
-        Slog.d(TAG, "isVisibleToUser " + isVisibleToUser + "   " + this.getClass().getSimpleName());
+        if(isDebug) Slog.d(TAG, "isVisibleToUser " + isVisibleToUser + "   " + this.getClass().getSimpleName());
         if (isVisibleToUser) {
             isVisible = true;
             lazyLoadData();
@@ -78,19 +83,19 @@ public abstract class BaseFragment extends Fragment {
 
     private void lazyLoadData() {
         if (isFirstLoad) {
-            Slog.d(TAG, "第一次加载 " + "  isVisible  " + isVisible + "   " + this.getClass().getSimpleName());
+            if(isDebug) Slog.d(TAG, "第一次加载 " + "  isVisible  " + isVisible + "   " + this.getClass().getSimpleName());
         } else {
-            Slog.d(TAG, "不是第一次加载" + "  isVisible  " + isVisible + "   " + this.getClass().getSimpleName());
+            if(isDebug) Slog.d(TAG, "不是第一次加载" + "  isVisible  " + isVisible + "   " + this.getClass().getSimpleName());
         }
 
         if (isVisible) {//only visible
             if (isFirstLoad) {//only first load
-                Slog.d(TAG, "========完成数据第一次加载");
+                if(isDebug) Slog.d(TAG, "========完成数据第一次加载");
                 loadData();
                 isFirstLoad = false;
             }
         } else {
-            Slog.d(TAG, "=======不加载" + "   " + this.getClass().getSimpleName());
+            if(isDebug) Slog.d(TAG, "=======不加载" + "   " + this.getClass().getSimpleName());
             return;
         }
 
