@@ -3,6 +3,7 @@ package com.hetang.join;
 import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.os.Build;
@@ -29,21 +30,34 @@ import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
+import com.bigkoo.pickerview.builder.OptionsPickerBuilder;
+import com.bigkoo.pickerview.listener.OnOptionsSelectListener;
+import com.bigkoo.pickerview.view.OptionsPickerView;
 import com.hetang.R;
+import com.hetang.util.CommonBean;
+import com.hetang.util.CommonPickerView;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
+import com.hetang.common.MyApplication;
 import com.hetang.util.Slog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+
+import static com.hetang.util.SharedPreferencesUtils.setAccount;
+import static com.hetang.util.SharedPreferencesUtils.setAccountType;
+import static com.hetang.util.SharedPreferencesUtils.setLoginedAccountSex;
+import static com.hetang.util.SharedPreferencesUtils.setName;
+import static com.hetang.util.SharedPreferencesUtils.setPassWord;
 
 public class CreateNewUser extends AppCompatActivity {
     private static final String TAG = "UpdatePassword";
@@ -90,15 +104,18 @@ public class CreateNewUser extends AppCompatActivity {
     public AMapLocationListener mLocationListener;
     //声明AMapLocationClientOption对象
     public AMapLocationClientOption mLocationOption = null;
-
+    private ArrayList<CommonBean> provinceItems = new ArrayList<>();
+    private ArrayList<ArrayList<String>> cityItems = new ArrayList<>();
+    private Thread threadCity;
     private String[] permissions = { Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_WIFI_STATE};
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_new_user);
-        custom_actionbar_set();
-        requestAllPermissions();
+        setCustomActionbar();
+        //requestAllPermissions();
+        startRequestPermission();
 
         mContext = this;
         account = getIntent().getStringExtra("account");//phone number
@@ -135,7 +152,7 @@ public class CreateNewUser extends AppCompatActivity {
                         createNextLayout.setVisibility(View.VISIBLE);
                         actionBtn.setText(getResources().getText(R.string.done));
                         actionBtn.setBackground(getDrawable(R.drawable.btn_stress));
-                        actionBtn.setTextColor(R.color.white);
+                        actionBtn.setTextColor(getResources().getColor(R.color.white));
                         actionDone = true;
                         
                         sexSelect.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -172,7 +189,7 @@ public class CreateNewUser extends AppCompatActivity {
                 createNextLayout.setVisibility(View.GONE);
                 actionBtn.setText(getResources().getText(R.string.next));
                 actionBtn.setBackground(getDrawable(R.drawable.btn_default));
-                actionBtn.setTextColor(R.color.background);
+                actionBtn.setTextColor(getResources().getColor(R.color.background));
                 actionDone = false;
 
                 if(statusBarBack.getVisibility() == View.INVISIBLE){
@@ -188,8 +205,14 @@ public class CreateNewUser extends AppCompatActivity {
             public void handleMessage(Message message) {
                 if (message.what == USER_CREATE_DONE) {
                     Slog.d(TAG, "============handle message");
-                    launchActivity.getUsernameByPhoneNumber(mContext,null, null, account, password);
-                    //finish();
+                    setAccount(MyApplication.getContext(), account);
+                    setName(MyApplication.getContext(), nickName);
+                    setPassWord(MyApplication.getContext(), password);
+                    setAccountType(MyApplication.getContext(), 0);
+                    setLoginedAccountSex(MyApplication.getContext(), sex);
+                    Intent intent = new Intent(CreateNewUser.this, LoginSplash.class);
+                    startActivity(intent);
+                    finish();
                 }
             }
         };
@@ -231,8 +254,8 @@ public class CreateNewUser extends AppCompatActivity {
                 if (aMapLocation != null) {
                     if (aMapLocation.getErrorCode() == 0) {
                         Slog.d(TAG, "LocationType: "+aMapLocation.getLocationType()+"Province: "+aMapLocation.getProvince()+" city: "+aMapLocation.getCity()+ " district: "+aMapLocation.getDistrict());
-                        living = aMapLocation.getProvince()+getResources().getString(R.string.dot)+aMapLocation.getCity()+getResources().getString(R.string.dot)+aMapLocation.getDistrict();
-                        livingTextView.setText(living);
+                        living = aMapLocation.getCity();
+                        livingTextView.setText(living.substring(0, living.length()-1));
                         isLocated = true;
                         locatingProgressBar.setVisibility(View.GONE);
                         manualSelectBtn.setText(getResources().getString(R.string.correction));
@@ -267,7 +290,47 @@ public class CreateNewUser extends AppCompatActivity {
         mLocationClient.setLocationOption(mLocationOption);
         //启动定位
         mLocationClient.startLocation();
+        
+        if (threadCity == null){
+            Slog.i(TAG,"city数据开始解析");
+            threadCity = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    initJsondata("city.json");
+                }
+            });
+            threadCity.start();
+        }
+
+        manualSelectBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showPickerView();
+            }
+        });
     }
+    
+   private void initJsondata(String jsonFile){
+        CommonPickerView commonPickerView = new CommonPickerView();
+        provinceItems = commonPickerView.getOptionsMainItem(this, jsonFile);
+        cityItems = commonPickerView.getOptionsSubItems(provinceItems);
+    }
+
+    private void showPickerView() {// 弹出行业选择器
+        //条件选择器
+        OptionsPickerView pvOptions= new OptionsPickerBuilder(this, new OnOptionsSelectListener() {
+                @Override
+                public void onOptionsSelect(int options1, int option2, int options3 ,View v) {
+                    //返回的分别是二个级别的选中位置
+                    isLocated = true;
+                    String city = cityItems.get(options1).get(option2);
+                    livingTextView.setText(city);
+                }
+            }).build();
+        pvOptions.setPicker(provinceItems, cityItems);
+        pvOptions.show();
+    }
+    
     
     private void completeCreate(){
         if(isLocated == false){
@@ -321,7 +384,7 @@ public class CreateNewUser extends AppCompatActivity {
             }
             jsonObject.put("password", password);
             jsonObject.put("sex", sex);
-            jsonObject.put("living", living);
+            jsonObject.put("living", livingTextView.getText().toString());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -386,7 +449,7 @@ public class CreateNewUser extends AppCompatActivity {
          }
     }
     
-    private void custom_actionbar_set(){
+    private void setCustomActionbar(){
         statusBarBack = findViewById(R.id.left_back);
         statusBarBack.setOnClickListener(new View.OnClickListener() {
             @Override
