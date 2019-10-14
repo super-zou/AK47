@@ -18,10 +18,15 @@ public class SelfCondition {
     public int birthYear;
     public int birthMonth;
     public int birthDay;
+    public String constellation;
+    public String hometown;
+    public String nation;
+    public String religion;
     public int height;
     public String university;
     public String degree;
-    public String jobTitle;
+    public String position;
+    public String industry;
     public String lives;
     public int situation;
     public int self;
@@ -35,6 +40,7 @@ public class SelfCondition {
     public int requirementSet = -1;
     private int selfSex = -1;
     private String selfCondition;
+    public String major;
 
     public int getUid() {
         return uid;
@@ -85,6 +91,9 @@ public class SelfCondition {
     }
 
     public int getDegreeIndex() {
+         if (degree.equals("其它")) {
+            return -1;
+        }
         if (degree.equals("大专")) {
             return 0;
         }
@@ -97,7 +106,7 @@ public class SelfCondition {
         if (degree.equals("博士")) {
             return 3;
         }
-        return 4;
+        return -1;
     }
 
     public String getDegreeName(int degree) {
@@ -122,12 +131,25 @@ public class SelfCondition {
         return Degree;
     }
 
-    public String getJobTitle() {
-        return jobTitle;
+    public String getMajor(){
+        return major;
+    }
+    public void setMajor(String major){
+        this.major = major;
+    }
+    public String getPosition() {
+        return position;
     }
 
-    public void setJobTitle(String jobTitle) {
-        this.jobTitle = jobTitle;
+    public void setPosition(String position) {
+        this.position = position;
+    }
+    
+    public String getIndustry(){
+        return industry;
+    }
+    public void setIndustry(String industry){
+        this.industry = industry;
     }
 
     public String getLives() {
@@ -255,9 +277,37 @@ public class SelfCondition {
         if (situation == 0) {//for student
             selfCondition += "/" + university;
         } else {//for worker
-            selfCondition += "/" + jobTitle;
+            selfCondition += "/" + position;
         }
         return selfCondition;
+    }
+    
+    public String getConstellation(){
+        return constellation;
+    }
+    public void setConstellation(String constellation){
+        this.constellation = constellation;
+    }
+
+    public String getHometown(){
+        return hometown;
+    }
+    public void setHometown(String hometown){
+        this.hometown = hometown;
+    }
+
+    public String getNation(){
+        return nation;
+    }
+    public void setNation(String nation){
+        this.nation = nation;
+    }
+
+    public String getReligion(){
+        return religion;
+    }
+    public void setReligion(String religion){
+        this.religion = religion;
     }
 
 }
