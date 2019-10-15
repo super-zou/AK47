@@ -398,8 +398,9 @@ import okhttp3.Response;
             industry = view.findViewById(R.id.industry);
             selfcondition = (TextView) view.findViewById(R.id.self_condition);
             requirement = (TextView) view.findViewById(R.id.partner_requirement);
-           
-           lovedView = (TextView) view.findViewById(R.id.loved_statistics);
+            illustration = (TextView) view.findViewById(R.id.illustration);
+            visitRecord = view.findViewById(R.id.visit_record);
+            lovedView = (TextView) view.findViewById(R.id.loved_statistics);
             lovedIcon = (TextView) view.findViewById(R.id.loved_icon);
             thumbsView = (TextView) view.findViewById(R.id.thumbs_up_statistics);
             thumbsIcon = (TextView) view.findViewById(R.id.thumbs_up_icon);
