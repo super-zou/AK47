@@ -126,7 +126,7 @@ public class CommonUserListDialogFragment extends DialogFragment {
                 uid = bundle.getInt("uid");
                 title = bundle.getString("title");
                 titleText.setText(title);
-                setFollowUserView(type, uid);
+                setUserView(type, uid);
                 break;
             case PRAISED:
                 uid = bundle.getInt("uid");
@@ -251,11 +251,11 @@ public class CommonUserListDialogFragment extends DialogFragment {
         });
     }
 
-    private void setFollowUserView(int type, int uid) {
-        getUserList(type, uid, -1);
+    private void setUserView(int type, int id) {
+        getUserList(type, id, -1);
     }
 
-    private void getUserList(final int type, int uid, int pid) {
+    private void getUserList(final int type, int id, int pid) {
         RequestBody requestBody = null;
         String url = "";
         switch (type) {
@@ -300,7 +300,7 @@ public class CommonUserListDialogFragment extends DialogFragment {
                 if (response.body() != null) {
                     try {
                         String responseText = response.body().string();
-                        Slog.d(TAG, "==========getPersonality  response text : " + responseText);
+                        Slog.d(TAG, "==========getUserList  response text : " + responseText);
                         JSONObject responseObj = new JSONObject(responseText);
                         JSONArray responseArray = responseObj.optJSONArray("users");
                         int guestUid = -1;
