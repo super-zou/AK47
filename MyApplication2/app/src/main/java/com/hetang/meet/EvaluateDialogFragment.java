@@ -195,9 +195,6 @@ public class EvaluateDialogFragment extends DialogFragment {
         });
     }
     
-    
-    }
-
     private void uploadToServer(String features, float rating, int uid) {
 
         showProgress(mContext);
