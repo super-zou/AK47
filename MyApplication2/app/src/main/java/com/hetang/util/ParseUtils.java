@@ -41,7 +41,8 @@ public class ParseUtils {
     public static final String GET_SPECIFIC_WORK_EXPERIENCE_URL = HttpUtil.DOMAIN + "?q=personal_archive/get_specific_work_experience";
     public static final String GET_SPECIFIC_PRIZE_URL = HttpUtil.DOMAIN + "?q=personal_archive/get_specific_prize";
     public static final String GET_SPECIFIC_PAPER_URL = HttpUtil.DOMAIN + "?q=personal_archive/get_specific_paper";
-public static final String GET_SPECIFIC_VOLUNTEER_URL = HttpUtil.DOMAIN + "?q=personal_archive/get_specific_volunteer";
+    public static final String GET_SPECIFIC_VOLUNTEER_URL = HttpUtil.DOMAIN + "?q=personal_archive/get_specific_volunteer";
+    public static final String GET_SPECIFIC_BLOG_URL = HttpUtil.DOMAIN + "?q=personal_archive/get_specific_blog";
 
     public static final int TYPE_EVALUATE = 0;
     public static final int TYPE_REFERENCE = 1;
