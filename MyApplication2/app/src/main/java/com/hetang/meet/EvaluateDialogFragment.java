@@ -106,7 +106,7 @@ public class EvaluateDialogFragment extends DialogFragment {
         return mDialog;
     }
 
-    private void setImpressions(final int uid, final int sex) {
+    private void setImpressions(final int uid, final int sex, final float rating) {
         ScaleRatingBar scaleRatingBar = view.findViewById(R.id.charm_rating_bar);
         final TextView charmRating = view.findViewById(R.id.charm_rating);
         final FlowLayout featuresFL = view.findViewById(R.id.features_demo);
