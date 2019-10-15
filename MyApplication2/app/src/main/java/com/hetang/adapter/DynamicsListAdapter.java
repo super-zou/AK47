@@ -829,6 +829,7 @@ import static com.hetang.util.ParseUtils.startMeetArchiveActivity;
             recommendViewHolder = new MeetRecommendListAdapter.ViewHolder(view, null);
             Typeface font = Typeface.createFromAsset(mContext.getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
             FontManager.markAsIconContainer(view.findViewById(R.id.meet_action_item), font);
+            FontManager.markAsIconContainer(view.findViewById(R.id.base_profile), font);
 }
     }
 
