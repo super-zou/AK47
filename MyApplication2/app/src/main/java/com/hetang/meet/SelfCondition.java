@@ -36,7 +36,7 @@ public class SelfCondition {
     public int praisedCount;
     public String pictureChain;
     public int browseCount;
-
+    public String major;
     public int requirementSet = -1;
     private int selfSex = -1;
     private String selfCondition;
