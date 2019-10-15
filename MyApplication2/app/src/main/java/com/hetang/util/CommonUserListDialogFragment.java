@@ -23,7 +23,7 @@ import android.widget.Toast;
 
 import com.hetang.R;
 import com.hetang.adapter.PersonalityApprovedAdapter;
-import com.hetang.meet.MeetMemberInfo;
+//import com.hetang.meet.MeetMemberInfo;
 
 import org.json.JSONArray;
 import org.json.JSONException;
