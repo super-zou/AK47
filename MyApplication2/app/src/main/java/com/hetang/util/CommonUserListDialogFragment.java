@@ -219,7 +219,7 @@ public class CommonUserListDialogFragment extends DialogFragment {
         approve.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                、、Slog.d(TAG, "=======================approve click");
+                Slog.d(TAG, "=======================approve click");
                 showProgress(getContext().getResources().getString(R.string.saving_progress));
                 RequestBody requestBody = new FormBody.Builder()
                         .add("pid", String.valueOf(pid)).build();
