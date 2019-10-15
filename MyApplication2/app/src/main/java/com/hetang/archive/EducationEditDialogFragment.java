@@ -1,3 +1,5 @@
+package com.hetang.archive;
+
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
