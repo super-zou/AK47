@@ -19,7 +19,7 @@ import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.hetang.R;
-import com.hetang.meet.MeetMemberInfo;
+//import com.hetang.meet.MeetMemberInfo;
 
 import org.json.JSONArray;
 import org.json.JSONException;
