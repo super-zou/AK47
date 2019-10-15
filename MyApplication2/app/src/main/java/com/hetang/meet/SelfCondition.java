@@ -40,7 +40,6 @@ public class SelfCondition {
     public int requirementSet = -1;
     private int selfSex = -1;
     private String selfCondition;
-    public String major;
 
     public int getUid() {
         return uid;
