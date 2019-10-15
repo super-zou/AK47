@@ -85,7 +85,7 @@ public class EvaluatorDetailsActivity extends BaseAppCompatActivity {
 
         // When the item number of the screen number is list.size-2,we call the onLoadMore
         mEvaluatorDetailsListRV.setLimitNumberToCallLoadMore(2);
-        mEvaluatorDetailsListRV.setRefreshProgressStyle(ProgressStyle.BallBeat)
+        mEvaluatorDetailsListRV.setRefreshProgressStyle(ProgressStyle.BallBeat);
             
             mEvaluatorDetailsListRV.setLoadingListener(new XRecyclerView.LoadingListener() {
             @Override
