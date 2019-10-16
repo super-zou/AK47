@@ -1076,7 +1076,7 @@ public class HomeFragment extends BaseFragment {
                     xRecyclerView.setNoMore(true);
                     xRecyclerView.loadMoreComplete();
                     // recyclerView.refreshComplete();
-                    //xRecyclerView.setLoadingMoreEnabled(false);
+                    xRecyclerView.setLoadingMoreEnabled(false);
                 }
                 break;
                 
@@ -1132,6 +1132,11 @@ public class HomeFragment extends BaseFragment {
     public void onDestroy() {
         super.onDestroy();
         unRegisterLoginBroadcast();
+        
+        if(xRecyclerView != null){
+            xRecyclerView.destroy();
+            xRecyclerView = null;
+        }
     }
     
     static class MyHandler extends HandlerTemp<HomeFragment> {
