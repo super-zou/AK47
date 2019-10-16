@@ -9,6 +9,7 @@ import android.content.Intent;
 
 import android.content.IntentFilter;
 import android.graphics.drawable.AnimationDrawable;
+import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.os.Handler;
 import android.os.Message;
@@ -56,6 +57,7 @@ import okhttp3.Response;
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static com.hetang.main.ArchiveFragment.SET_AVATAR_RESULT_OK;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
+import static com.hetang.meet.SingleGroupDetailsActivity.GET_SINGLE_GROUP_BY_GID;
 
 public class MeetSingleGroupFragment extends BaseFragment {
     private static final boolean isDebug = true;
@@ -87,7 +89,6 @@ public class MeetSingleGroupFragment extends BaseFragment {
     private MeetSingleGroupSummaryAdapter meetSingleGroupSummaryAdapter;
     private XRecyclerView  recyclerView;
     private List<SingleGroup> mSingleGroupList = new ArrayList<>();
-    private List<SingleGroup> mSingleGroupUpdateList = new ArrayList<>();
     ImageView progressImageView;
     AnimationDrawable animationDrawable;
     
@@ -247,7 +248,7 @@ public class MeetSingleGroupFragment extends BaseFragment {
     }
     
     private int processUpdateResponse(JSONObject SingleGroupResponse){
-
+        List<SingleGroup> mSingleGroupUpdateList = new ArrayList<>();
         JSONArray SingleGroupArray = null;
         if(SingleGroupResponse != null){
             SingleGroupArray = SingleGroupResponse.optJSONArray("single_group");
@@ -264,12 +265,38 @@ public class MeetSingleGroupFragment extends BaseFragment {
                     }
                 }
                 mSingleGroupList.addAll(0, mSingleGroupUpdateList);
+                Message message = new Message();
+                message.what = UPDATE_ALL;
+                Bundle bundle = new Bundle();
+                bundle.putInt("update_size", mSingleGroupUpdateList.size());
+                message.setData(bundle);
+                handler.sendMessage(message);
             }else {
                 handler.sendEmptyMessage(GET_ALL_END);
             }
         }
 
         return SingleGroupArray != null ?  SingleGroupArray.length():0;
+    }
+    
+    private void processNewAddResponse(JSONObject SingleGroupResponse){
+        List<SingleGroup> mSingleGroupUpdateList = new ArrayList<>();
+        JSONObject SingleGroupObject = null;
+        if(SingleGroupResponse != null){
+            SingleGroupObject = SingleGroupResponse.optJSONObject("single_group");
+        }
+
+        if(SingleGroupObject != null){
+            SingleGroup singleGroup = getSingleGroup(SingleGroupObject);
+            mSingleGroupUpdateList.add(singleGroup);
+            mSingleGroupList.addAll(0, mSingleGroupUpdateList);
+            Message message = new Message();
+            message.what = UPDATE_ALL;
+            Bundle bundle = new Bundle();
+            bundle.putInt("update_size", mSingleGroupUpdateList.size());
+            message.setData(bundle);
+            handler.sendMessage(message);
+        }
     }
     
     public static SingleGroup getSingleGroup(JSONObject group){
@@ -425,13 +452,13 @@ public class MeetSingleGroupFragment extends BaseFragment {
                 recyclerView.loadMoreComplete();
                 stopLoadProgress();
                 break;
-                case UPDATE_ALL:
-                //meetDynamicsListAdapter.setScrolling(false);
+            case UPDATE_ALL:
+                Bundle bundle = message.getData();
+                int updateSize = bundle.getInt("update_size");
                 meetSingleGroupSummaryAdapter.setData(mSingleGroupList, recyclerView.getWidth());
-                meetSingleGroupSummaryAdapter.notifyItemRangeInserted(0, mUpdateSize);
+                meetSingleGroupSummaryAdapter.notifyItemRangeInserted(0, updateSize);
                 meetSingleGroupSummaryAdapter.notifyDataSetChanged();
                 recyclerView.refreshComplete();
-                mUpdateSize = 0;
                 break;
             case NO_UPDATE:
                 recyclerView.refreshComplete();
@@ -544,13 +571,50 @@ public class MeetSingleGroupFragment extends BaseFragment {
             switch (intent.getAction()){
                 case GROUP_ADD_BROADCAST:
                     Slog.d(TAG, "==========GROUP_ADD_BROADCAST");
-                    mSingleGroupList.clear();
-                    loadData();
+                    int gid = intent.getIntExtra("gid", 0);
+                    if (gid > 0){
+                        getMyNewAddedGroup(gid);
+                    }
                     break;
             }
 
         }
     }
+    
+    private void getMyNewAddedGroup(int gid){
+        RequestBody requestBody = new FormBody.Builder()
+                .add("gid", String.valueOf(gid))
+                .build();
+
+        HttpUtil.sendOkHttpRequest(getContext(), GET_SINGLE_GROUP_BY_GID, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if(isDebug) Slog.d(TAG, "==========response body : " + response.body());
+
+                if (response.body() != null) {
+                    String responseText = response.body().string();
+                    if(isDebug) Slog.d(TAG, "==========response text : " + responseText);
+                    if (responseText != null && !TextUtils.isEmpty(responseText)) {
+                        JSONObject singleGroupResponse = null;
+                        try {
+                            singleGroupResponse = new JSONObject(responseText);
+                            if(singleGroupResponse != null){
+                                processNewAddResponse(singleGroupResponse);
+                            }
+                        }catch (JSONException e){
+                            e.printStackTrace();
+                        }
+                    }
+                }
+              }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+        });
+    }
+ 
 
     @Override
     public void onDestroy() {
