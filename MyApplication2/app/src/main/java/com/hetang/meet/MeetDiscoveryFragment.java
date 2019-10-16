@@ -366,4 +366,14 @@ public class MeetDiscoveryFragment extends BaseFragment {
             }
         }
     }
+    
+   @Override
+    public void onDestroy() {
+        super.onDestroy();
+        
+        if (recyclerView != null){
+            recyclerView.destroy();
+            recyclerView = null;
+        }
+    }
 }
