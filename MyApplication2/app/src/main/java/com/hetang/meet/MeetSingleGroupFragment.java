@@ -620,6 +620,11 @@ public class MeetSingleGroupFragment extends BaseFragment {
     public void onDestroy() {
         super.onDestroy();
         unRegisterLoginBroadcast();
+        
+        if (recyclerView != null){
+            recyclerView.destroy();
+            recyclerView = null;
+        }
     }
     
     
