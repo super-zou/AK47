@@ -121,7 +121,8 @@ import static com.hetang.meet.MeetSingleGroupFragment.GROUP_ADD_BROADCAST;
                             if (responseObj != null){
                                 int gid = responseObj.optInt("gid");
                                 if (gid > 0){
-                                    startSingleGroupDetailsActivity(gid);
+                                    sendBroadcast(gid);
+                                    //startSingleGroupDetailsActivity(gid);
                                 }
                             }
                         }catch (JSONException e){
@@ -147,8 +148,10 @@ import static com.hetang.meet.MeetSingleGroupFragment.GROUP_ADD_BROADCAST;
         startActivity(intent);
     }
 
-    private void sendBroadcast() {
-        LocalBroadcastManager.getInstance(getContext()).sendBroadcast(new Intent(GROUP_ADD_BROADCAST));
+    private void sendBroadcast(int gid) {
+      Intent intent = new Intent(GROUP_ADD_BROADCAST);
+      intent.putExtra("gid", gid);
+      LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
     }
     
     @Override
