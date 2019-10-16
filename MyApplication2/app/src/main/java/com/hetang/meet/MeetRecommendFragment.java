@@ -680,6 +680,11 @@ public class MeetRecommendFragment extends BaseFragment {
     public void onDestroy() {
         super.onDestroy();
         unRegisterLoginBroadcast();
+        
+        if (recyclerView != null){
+            recyclerView.destroy();
+            recyclerView = null;
+        }
     }
     
     private void stopLoadProgress(){
