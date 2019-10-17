@@ -48,10 +48,7 @@ dependencies {
     implementation 'com.mcxiaoke.volley:library:1.0.19'
     testImplementation 'junit:junit:4.12'
     implementation 'com.android.support.constraint:constraint-layout:+'
-    implementation ('com.jcodecraeer:xrecyclerview:1.5.9', {
-        exclude group: 'com.android.support:design:23.4.0',
-                module: 'com.android.support:appcompat-v7:23.4.0'
-    })
+    implementation 'com.jcodecraeer:xrecyclerview:1.6.0'
     implementation 'com.github.bumptech.glide:glide:4.5.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.5.0'
     
