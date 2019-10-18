@@ -71,6 +71,7 @@ import static com.hetang.meet.MeetArchiveActivity.GET_PRAISE_STATISTICS_URL;
 import static com.hetang.meet.MeetArchiveActivity.GET_PRAISE_STATISTICS_URL_DONE;
 import static com.hetang.meet.MeetArchiveActivity.PRAISED;
 import static com.hetang.util.ParseUtils.startMeetArchiveActivity;
+import static com.hetang.meet.MeetDynamicsFragment.REQUEST_CODE;
 
 /**
  * Created by super-zou on 17-9-11.
@@ -482,6 +483,7 @@ public class ArchiveFragment extends BaseFragment {
             @Override
             public void onClick(View view) {
                 PrizeEditDialogFragment prizeEditDialogFragment = new PrizeEditDialogFragment();
+                prizeEditDialogFragment.setTargetFragment(ArchiveFragment.this, REQUESTCODE);
                 prizeEditDialogFragment.show(getFragmentManager(), "PrizeEditDialogFragment");
             }
         });
@@ -490,6 +492,7 @@ public class ArchiveFragment extends BaseFragment {
             @Override
             public void onClick(View view) {
                 PaperEditDialogFragment paperEditDialogFragment = new PaperEditDialogFragment();
+                paperEditDialogFragment.setTargetFragment(ArchiveFragment.this, REQUESTCODE);
                 paperEditDialogFragment.show(getFragmentManager(), "PaperEditDialogFragment");
             }
         });
@@ -498,6 +501,7 @@ public class ArchiveFragment extends BaseFragment {
             @Override
             public void onClick(View view) {
                 BlogEditDialogFragment blogEditDialogFragment = new BlogEditDialogFragment();
+                blogEditDialogFragment.setTargetFragment(ArchiveFragment.this, REQUESTCODE);
                 blogEditDialogFragment.show(getFragmentManager(), "BlogEditDialogFragment");
             }
         });
@@ -506,6 +510,7 @@ public class ArchiveFragment extends BaseFragment {
             @Override
             public void onClick(View view) {
                 VolunteerEditDialogFragment volunteerEditDialogFragment = new VolunteerEditDialogFragment();
+                volunteerEditDialogFragment.setTargetFragment(ArchiveFragment.this, REQUESTCODE);
                 volunteerEditDialogFragment.show(getFragmentManager(), "VolunteerEditDialogFragment");
             }
         });
@@ -968,15 +973,17 @@ public class ArchiveFragment extends BaseFragment {
         TextView addPrize = mView.findViewById(R.id.add_new_prize);
         RelativeLayout addPrizeWrapper = mView.findViewById(R.id.prize_add_wrapper);
         addPrizeWrapper.setVisibility(View.GONE);
-        addPrize.setVisibility(View.VISIBLE);
-        addPrize.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                PrizeEditDialogFragment prizeEditDialogFragment = new PrizeEditDialogFragment();
-                prizeEditDialogFragment.setTargetFragment(ArchiveFragment.this, REQUESTCODE);
-                prizeEditDialogFragment.show(getFragmentManager(), "PrizeEditDialogFragment");
-            }
-        });
+        if (authorUid == uid){
+            addPrize.setVisibility(View.VISIBLE);
+            addPrize.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    PrizeEditDialogFragment prizeEditDialogFragment = new PrizeEditDialogFragment();
+                    prizeEditDialogFragment.setTargetFragment(ArchiveFragment.this, REQUESTCODE);
+                    prizeEditDialogFragment.show(getFragmentManager(), "PrizeEditDialogFragment");
+                }
+            });
+        }
         
         if(mPrizeListView.getChildCount() > 0){
             mPrizeListView.removeAllViews();
@@ -1090,15 +1097,17 @@ public class ArchiveFragment extends BaseFragment {
         TextView addBlog = mView.findViewById(R.id.add_new_blog);
         RelativeLayout addBlogWrapper = mView.findViewById(R.id.blog_add_wrapper);
         addBlogWrapper.setVisibility(View.GONE);
-        addBlog.setVisibility(View.VISIBLE);
-        addBlog.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                BlogEditDialogFragment blogEditDialogFragment = new BlogEditDialogFragment();
-                blogEditDialogFragment.setTargetFragment(ArchiveFragment.this, REQUESTCODE);
-                blogEditDialogFragment.show(getFragmentManager(), "BlogEditDialogFragment");
-            }
-        });
+        if (authorUid == uid){
+            addBlog.setVisibility(View.VISIBLE);
+            addBlog.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    BlogEditDialogFragment blogEditDialogFragment = new BlogEditDialogFragment();
+                    blogEditDialogFragment.setTargetFragment(ArchiveFragment.this, REQUESTCODE);
+                    blogEditDialogFragment.show(getFragmentManager(), "BlogEditDialogFragment");
+                }
+            });
+        }
         
         if(mBlogListView.getChildCount() > 0){
             mBlogListView.removeAllViews();
@@ -1164,16 +1173,18 @@ public class ArchiveFragment extends BaseFragment {
         TextView addVolunteer = mView.findViewById(R.id.add_new_volunteer);
         RelativeLayout addVolunteerWrapper = mView.findViewById(R.id.volunteer_add_wrapper);
         addVolunteerWrapper.setVisibility(View.GONE);
-        addVolunteer.setVisibility(View.VISIBLE);
-        addVolunteer.setOnClickListener(new View.OnClickListener() {
         
-        @Override
-            public void onClick(View view) {
-                VolunteerEditDialogFragment volunteerEditDialogFragment = new VolunteerEditDialogFragment();
-                volunteerEditDialogFragment.setTargetFragment(ArchiveFragment.this, REQUESTCODE);
-                volunteerEditDialogFragment.show(getFragmentManager(), "VolunteerEditDialogFragment");
-            }
-        });
+        if (authorUid == uid){
+            addVolunteer.setVisibility(View.VISIBLE);
+            addVolunteer.setOnClickListener(new View.OnClickListener() {
+            @Override
+                public void onClick(View view) {
+                    VolunteerEditDialogFragment volunteerEditDialogFragment = new VolunteerEditDialogFragment();
+                    volunteerEditDialogFragment.setTargetFragment(ArchiveFragment.this, REQUESTCODE);
+                    volunteerEditDialogFragment.show(getFragmentManager(), "VolunteerEditDialogFragment");
+                }
+            });
+        }
 
         if(mVolunteerListView.getChildCount() > 0){
             mVolunteerListView.removeAllViews();
