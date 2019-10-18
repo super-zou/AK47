@@ -31,7 +31,7 @@ import static android.content.Context.MODE_PRIVATE;
 public class HttpUtil {
     public static final String TAG = "HttpUtil";
     /*+Begin: added by xuchunping 2018.7.19*/
-    public static final String DOMAIN = "http://112.126.83.127:81/";
+    public static final String DOMAIN = getDomain();
     /*-End: added by xuchunping 2018.7.19*/
     public static final String CHECK_YUNXIN_ACCOUNT_EXIST = HttpUtil.DOMAIN + "?q=chat/check_yunxin_account";
     public static final String CREATE_YUNXIN_USER = HttpUtil.DOMAIN + "?q=chat/create_user";
@@ -47,6 +47,17 @@ public class HttpUtil {
             .writeTimeout(300, TimeUnit.SECONDS)
             .readTimeout(300, TimeUnit.SECONDS);
     static OkHttpClient client = builder.build();
+    
+    public static String getDomain(){
+        String domain = "";
+        if (isApkInDebug(MyApplication.getContext()) == true){
+            domain = "http://112.126.83.127:81/";
+        }else {
+            domain = "http://112.126.83.127:81/";
+        }
+
+        return domain;
+    }
 
     public static String getCookie(Context context) {
         String cookie = "";
