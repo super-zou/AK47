@@ -104,6 +104,7 @@ public class HomeFragment extends BaseFragment {
     
     private static final int GET_RECOMMEND_MEMBER_DONE = 6;
     private static final int GET_RECOMMEND_SINGLE_GROUP_DONE = 7;
+    private static final int NO_RECOMMEND_MEMBER_DONE = 8;
     public static final int GET_MY_NEW_ADD_DONE = 11;
 
     RequestBody requestBody = null;
@@ -243,7 +244,7 @@ public class HomeFragment extends BaseFragment {
             }
         },50);
         
-        getRecommendInfo();
+        //getRecommendInfo();
 
         registerLoginBroadcast();
 
@@ -265,6 +266,8 @@ public class HomeFragment extends BaseFragment {
                 }
                 if(contactsList.size() > 0){
                     handler.sendEmptyMessage(GET_RECOMMEND_MEMBER_DONE);
+                }else {
+                    handler.sendEmptyMessage(NO_RECOMMEND_MEMBER_DONE);
                 }
             }
             
@@ -272,14 +275,16 @@ public class HomeFragment extends BaseFragment {
             public void onFailure(Call call, IOException e) {
             }
         });
+    }
 
+    private void getRecommendSingleGroup(){
         int page = mSingleGroupList.size() / 16;
         requestBody = new FormBody.Builder()
                 .add("step", String.valueOf(16))
                 .add("page", String.valueOf(page))
                 .build();
-                
-                HttpUtil.sendOkHttpRequest(getContext(), GET_RECOMMEND_SINGLE_GROUP_URL, requestBody, new Callback() {
+
+        HttpUtil.sendOkHttpRequest(getContext(), GET_RECOMMEND_SINGLE_GROUP_URL, requestBody, new Callback() {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
@@ -293,8 +298,8 @@ public class HomeFragment extends BaseFragment {
                         if(SingleGroupResponse != null){
                             mLoadSize = processSingleGroupResponse(SingleGroupResponse);
                         }
-                        
-                        }catch (JSONException e){
+
+                    }catch (JSONException e){
                         e.printStackTrace();
                     }
 
@@ -307,9 +312,7 @@ public class HomeFragment extends BaseFragment {
             @Override
             public void onFailure(Call call, IOException e) { }
         });
-
     }
-
 
 @Override
     protected void loadData() {
@@ -1046,6 +1049,10 @@ public class HomeFragment extends BaseFragment {
         switch (message.what){
             case GET_RECOMMEND_MEMBER_DONE:
                 setRecommendContactsView();
+                getRecommendSingleGroup();
+                break;
+           case NO_RECOMMEND_MEMBER_DONE:
+                getRecommendSingleGroup();
                 break;
             case GET_RECOMMEND_SINGLE_GROUP_DONE:
                 setRecommendSingleGroupView();
