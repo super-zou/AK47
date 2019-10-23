@@ -32,7 +32,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:text="@string/location"
         app:layout_constraintStart_toEndOf="@+id/author_name"
         app:layout_constraintTop_toTopOf="@+id/author_name" />
         
