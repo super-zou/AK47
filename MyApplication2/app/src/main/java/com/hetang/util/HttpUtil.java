@@ -24,6 +24,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static android.content.Context.MODE_PRIVATE;
+import static com.hetang.util.Utility.isApkInDebug;
 
 /**
  * Created by haichao.zou on 2017/8/22.
