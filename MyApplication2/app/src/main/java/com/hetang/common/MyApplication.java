@@ -2,13 +2,17 @@ package com.hetang.common;
 
 import android.app.ActivityManager;
 import android.app.Application;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.os.Process;
 import android.support.text.emoji.EmojiCompat;
 import android.support.text.emoji.bundled.BundledEmojiCompatConfig;
@@ -16,6 +20,8 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.hetang.util.HttpUtil;
+import com.hetang.util.ParseUtils;
 import com.hetang.util.Slog;
 import com.netease.nim.uikit.api.NimUIKit;
 import com.netease.nim.uikit.api.model.session.SessionEventListener;
@@ -41,12 +47,24 @@ import com.xuexiang.xupdate.entity.UpdateError;
 import com.xuexiang.xupdate.listener.OnUpdateFailureListener;
 import com.xuexiang.xupdate.utils.UpdateUtils;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
 
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
+import static com.hetang.util.HttpUtil.GET_USERINFO_WITH_ACCOUNT;
+import static com.hetang.util.ParseUtils.startArchiveActivity;
+import static com.hetang.util.ParseUtils.startMeetArchiveActivity;
 import static com.netease.nimlib.sdk.StatusCode.LOGINED;
 import static com.hetang.util.SharedPreferencesUtils.getYunXinAccount;
 import static com.hetang.util.SharedPreferencesUtils.getYunXinToken;
@@ -66,6 +84,7 @@ public class MyApplication extends Application {
     //-End added by xuchunping for MI push
 
     private static Context mContext;
+    private Handler handler;
 
     public static Context getContext() {
         return mContext;
@@ -81,28 +100,6 @@ public class MyApplication extends Application {
             NIMClient.initSDK();
             NimUIKit.init(mContext);
             
-            SessionEventListener listener = new SessionEventListener() {
-                @Override
-                public void onAvatarClicked(Context context, IMMessage message) {
-                    // 一般用于打开用户资料页面
-                    Intent intent = new Intent(context, MeetArchiveActivity.class);
-                    Slog.d(TAG, "#####################id: "+message.getSessionId()+"############name: "+message.getFromNick()+
-                            "###getFromAccount: "+message.getFromAccount());
-                    intent.putExtra("uid", Integer.parseInt(message.getFromAccount()));
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-                    context.startActivity(intent);
-                }
-
-                @Override
-                public void onAvatarLongClicked(Context context, IMMessage message) {
-                    // 一般用于群组@功能，或者弹出菜单，做拉黑，加好友等功能
-                }
-                @Override
-             public void onAckMsgClicked(Context context, IMMessage message){}
-            };
-
-            NimUIKit.setSessionListener(listener);
-
             final String token = getYunXinToken(MyApplication.getContext());
             String account = getYunXinAccount(MyApplication.getContext());
             
