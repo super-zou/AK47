@@ -71,6 +71,7 @@ import static com.hetang.meet.MeetArchiveActivity.GET_PRAISE_STATISTICS_URL;
 import static com.hetang.meet.MeetArchiveActivity.GET_PRAISE_STATISTICS_URL_DONE;
 import static com.hetang.meet.MeetArchiveActivity.PRAISED;
 import static com.hetang.util.ParseUtils.startMeetArchiveActivity;
+import static com.hetang.util.SharedPreferencesUtils.getYunXinAccount;
 import static com.hetang.meet.MeetDynamicsFragment.REQUEST_CODE;
 
 /**
@@ -1371,7 +1372,7 @@ public class ArchiveFragment extends BaseFragment {
             chatBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    chat.processChat(getActivity(), authorUid, uid);
+                    chat.processChat(getActivity(), getYunXinAccount(getActivity()), userProfile.getInit());
                 }
             });
         }
