@@ -2,6 +2,9 @@ package com.hetang.util;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -22,6 +25,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.Call;
+import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
@@ -29,6 +34,7 @@ import okhttp3.Response;
 import static com.hetang.common.DynamicsInteractDetailsActivity.DYNAMIC_COMMENT;
 import static com.hetang.common.DynamicsInteractDetailsActivity.MEET_RECOMMEND_COMMENT;
 import static com.hetang.meet.MeetRecommendFragment.student;
+import static com.hetang.util.HttpUtil.GET_USERINFO_WITH_ACCOUNT;
 
 /*added by xuchunping 2018.8.2 for Json data parse*/
 public class ParseUtils {
@@ -213,6 +219,7 @@ public class ParseUtils {
         userMeetInfo.setRealname(member.optString("realname"));
         userMeetInfo.setUid(member.optInt("uid"));
         userMeetInfo.setSex(member.optInt("sex"));
+        userMeetInfo.setInit(member.optString("init"));
         if (!member.optString("avatar").equals("null")){
             userMeetInfo.setAvatar(member.optString("avatar"));
         }
