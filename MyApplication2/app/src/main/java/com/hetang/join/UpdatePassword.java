@@ -31,6 +31,8 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static com.hetang.util.SharedPreferencesUtils.setYunXinToken;
+
 public class UpdatePassword extends BaseAppCompatActivity {
     private static final String TAG = "UpdatePassword";
     private TextInputLayout enterPassword;
@@ -162,7 +164,9 @@ public class UpdatePassword extends BaseAppCompatActivity {
                     try {
                         JSONObject checkResponse = new JSONObject(responseText);
                         boolean status = checkResponse.getBoolean("status");
+                        String yunxinToken = checkResponse.optString("token");
 
+                        setYunXinToken(mContext, yunxinToken);
                         Slog.d(TAG, "resetPassword checkResponse : " + checkResponse + " status: "+status);
                         if(status == true){
                             Slog.d(TAG, "=====send message");
