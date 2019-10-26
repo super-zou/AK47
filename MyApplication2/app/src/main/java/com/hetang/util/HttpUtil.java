@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.text.TextUtils;
 
 import com.hetang.R;
+import com.hetang.common.MyApplication;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,6 +40,7 @@ public class HttpUtil {
     public static final String CHECK_VERSION_UPDATE = HttpUtil.DOMAIN + "?q=version_update/check";
     public static final String GET_DOWNLOAD_QR = HttpUtil.DOMAIN + "?q=version_update/get_download_qr";
     public static final String GET_PASSWORD_HASH = HttpUtil.DOMAIN + "?q=account_manager/get_password_hash";
+    public static final String GET_USERINFO_WITH_ACCOUNT = HttpUtil.DOMAIN + "?q=account_manager/get_userinfo_with_account";
     private static final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/jpeg");
     private static String mCookie;
     static Request request;
@@ -54,7 +56,7 @@ public class HttpUtil {
         if (isApkInDebug(MyApplication.getContext()) == true){
             domain = "http://112.126.83.127:81/";
         }else {
-            domain = "http://112.126.83.127:81/";
+            domain = "http://112.126.83.127:80/";
         }
 
         return domain;
@@ -170,9 +172,9 @@ public class HttpUtil {
         client.newCall(request).enqueue(callback);
     }
     
-    public static int getYunXinAccountExist(Context context, String account){
+    public static int getYunXinAccountExist(Context context, String accid){
         int exist = 0;
-        RequestBody requestBody = new FormBody.Builder().add("uid", account).build();
+        RequestBody requestBody = new FormBody.Builder().add("accid", accid).build();
         Response response = sendOkHttpRequestSync(context, CHECK_YUNXIN_ACCOUNT_EXIST, requestBody, null);
         if (response != null && response.body() != null) {
             try {
