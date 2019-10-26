@@ -96,8 +96,10 @@ public class SharedPreferencesUtils {
         return getSharePreferences(context, YUNXIN_ACCOUNT_SHARED_NAME).getString(YUNXIN_ACCOUNT, "");
     }
 
-    public static void setYunXinAccount(Context context, String account) {
-        getSharePreferences(context, YUNXIN_ACCOUNT_SHARED_NAME).edit().putString(YUNXIN_ACCOUNT, account).apply();
+    public static void setYunXinAccount(Context context, String accid) {//accid is phone number
+        if (!accid.equals(getYunXinAccount(context))){
+            getSharePreferences(context, YUNXIN_ACCOUNT_SHARED_NAME).edit().putString(YUNXIN_ACCOUNT, account).apply();
+        }
     }
     //End: for yunxin account
 
