@@ -11,7 +11,8 @@ import com.hetang.common.BaseAppCompatActivity;
 import com.hetang.main.MainActivity;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.Slog;
-
+import com.hetang.common.MyApplication;
+import com.hetang.util.SharedPreferencesUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
