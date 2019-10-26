@@ -58,6 +58,7 @@ import static com.hetang.util.SharedPreferencesUtils.setAccountType;
 import static com.hetang.util.SharedPreferencesUtils.setLoginedAccountSex;
 import static com.hetang.util.SharedPreferencesUtils.setName;
 import static com.hetang.util.SharedPreferencesUtils.setPassWord;
+import static com.hetang.util.SharedPreferencesUtils.setYunXinAccount;
 
 public class CreateNewUser extends AppCompatActivity {
     private static final String TAG = "UpdatePassword";
@@ -210,6 +211,7 @@ public class CreateNewUser extends AppCompatActivity {
                     setPassWord(MyApplication.getContext(), password);
                     setAccountType(MyApplication.getContext(), 0);
                     setLoginedAccountSex(MyApplication.getContext(), sex);
+                    setYunXinAccount(MyApplication.getContext(), account);
                     Intent intent = new Intent(CreateNewUser.this, LoginSplash.class);
                     startActivity(intent);
                     finish();
