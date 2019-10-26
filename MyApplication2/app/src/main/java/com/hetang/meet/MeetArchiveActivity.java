@@ -85,6 +85,8 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static com.hetang.util.SharedPreferencesUtils.getYunXinAccount;
+
 public class MeetArchiveActivity extends BaseAppCompatActivity implements CommonDialogFragmentInterface, ViewSwitcher.ViewFactory, View.OnTouchListener {
     private static final String TAG = "MeetArchiveActivity";
     private static final boolean isDebug = true;
@@ -525,7 +527,7 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
             chatBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    chat.processChat(context, authorUid, uid);
+                    chat.processChat(context, getYunXinAccount(context), mMeetMember.getInit());
                 }
             });
         }
