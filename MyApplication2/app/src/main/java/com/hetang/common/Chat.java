@@ -24,6 +24,7 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static com.hetang.util.HttpUtil.getDomain;
 import static com.netease.nim.uikit.common.ui.dialog.DialogMaker.showProgressDialog;
 import static com.netease.nimlib.sdk.StatusCode.LOGINED;
 
@@ -33,7 +34,7 @@ public class Chat{
     private static Runnable needLoginRunnable;
     private ProgressDialog mProgressDialog;
 
-    public void processChat(final Context context, final long authorUid, final long uid){
+    public void processChat(final Context context, final String authorAccid, final String accid){
         //showProgressDialog(context, "正在建立会话...");
         showProgressDialog(context,"正在建立会话...");
 
@@ -41,39 +42,39 @@ public class Chat{
         @Override
             public void run() {
                 Slog.d(TAG, "----------------------->not loginned, needLoginRunnable");
-                int exist  = HttpUtil.getYunXinAccountExist(MyApplication.getContext(), String.valueOf(authorUid));
+                int exist  = HttpUtil.getYunXinAccountExist(MyApplication.getContext(), authorAccid);
                 if (exist > 0){
-                    Slog.d(TAG, "------------------->had exist with authorUid: "+authorUid);
-                    if (HttpUtil.getYunXinAccountExist(MyApplication.getContext(), String.valueOf(uid)) > 0){
-                        Slog.d(TAG, "------------------->had exist with uid: "+uid);
-                        loginAndStartSession(String.valueOf(authorUid), uid);
+                    Slog.d(TAG, "------------------->had exist with authorAccid: "+authorAccid);
+                    if (HttpUtil.getYunXinAccountExist(MyApplication.getContext(), accid) > 0){
+                        Slog.d(TAG, "------------------->had exist with accid: "+accid);
+                        loginAndStartSession(authorAccid, accid);
                     }else {
-                        Slog.d(TAG, "------------------->not exist with uid: "+uid);
-                        Slog.d(TAG, "------------------->begin to create with uid: "+uid);
-                        if(createYunXinUser(uid) > 0){
-                            Slog.d(TAG, "------------------->create sucess with uid: "+uid);
-                            loginAndStartSession(String.valueOf(authorUid), uid);
+                        Slog.d(TAG, "------------------->not exist with accid: "+accid);
+                        Slog.d(TAG, "------------------->begin to create with accid: "+accid);
+                        if(createYunXinUser(accid) > 0){
+                            Slog.d(TAG, "------------------->create sucess with uid: "+accid);
+                            loginAndStartSession(authorAccid, accid);
                         }
                     }
 
                 }else {
-                    Slog.d(TAG, "------------------->not exist: "+exist + "with authorUid: "+authorUid);
-                    Slog.d(TAG, "------------------->begin to create with authorUid: " + authorUid);
-                    if (createYunXinUser(authorUid) > 0){
-                    Slog.d(TAG, "------------------->create sucess with authorUid: "+authorUid);
-                        if (HttpUtil.getYunXinAccountExist(MyApplication.getContext(), String.valueOf(uid)) > 0){
-                            Slog.d(TAG, "------------------->had exist with uid: "+uid);
-                            loginAndStartSession(String.valueOf(authorUid), uid);
+                    Slog.d(TAG, "------------------->not exist: "+exist + "with authorAccid: "+authorAccid);
+                    Slog.d(TAG, "------------------->begin to create with authorAccid: " + authorAccid);
+                    if (createYunXinUser(authorAccid) > 0){
+                    Slog.d(TAG, "------------------->create sucess with authorAccid: "+authorAccid);
+                        if (HttpUtil.getYunXinAccountExist(MyApplication.getContext(), accid) > 0){
+                            Slog.d(TAG, "------------------->had exist with uid: "+accid);
+                            loginAndStartSession(authorAccid, accid);
                         }else {
-                            Slog.d(TAG, "------------------->not exist with uid: "+uid);
-                            Slog.d(TAG, "------------------->begin to create with uid: "+uid);
-                            if(createYunXinUser(uid) > 0){
-                                Slog.d(TAG, "------------------->create sucess with uid: "+uid);
-                                loginAndStartSession(String.valueOf(authorUid), uid);
+                            Slog.d(TAG, "------------------->not exist with uid: "+accid);
+                            Slog.d(TAG, "------------------->begin to create with uid: "+accid);
+                            if(createYunXinUser(accid) > 0){
+                                Slog.d(TAG, "------------------->create sucess with uid: "+accid);
+                                loginAndStartSession(authorAccid, accid);
                             }
                         }
                     }else {
-                        Slog.e(TAG, "create YunXin user fail with authorUid: "+authorUid);
+                        Slog.e(TAG, "create YunXin user fail with authorAccid: "+authorAccid);
                     }
                 }
 
@@ -86,14 +87,14 @@ public class Chat{
             public void run() {
 
                 Slog.d(TAG, "----------------------->loginRunnable");
-                int exist  = HttpUtil.getYunXinAccountExist(context, String.valueOf(uid));
-                Slog.d(TAG, "------------->exist: "+exist+"   with uid: "+uid);
+                int exist  = HttpUtil.getYunXinAccountExist(context, accid);
+                Slog.d(TAG, "------------->exist: "+exist+"   with accid: "+accid);
                 if (exist > 0){
                     Slog.d(TAG, "------------->startP2PSession");
-                    NimUIKit.startP2PSession(context, String.valueOf(uid));
+                    NimUIKit.startP2PSession(context, accid);
                 }else {
-                    if (createYunXinUser(uid) > 0){
-                        NimUIKit.startP2PSession(context, String.valueOf(uid));
+                    if (createYunXinUser(accid) > 0){
+                        NimUIKit.startP2PSession(context, accid);
                     }
                 }
 
@@ -115,7 +116,7 @@ public class Chat{
 
     }
     
-    private static void loginAndStartSession(String account, final long uid){
+    private static void loginAndStartSession(final String account, final String accid){
         Slog.d(TAG, "---------------->loginAndStartSession");
         final String token = SharedPreferencesUtils.getYunXinToken(MyApplication.getContext());
         NimUIKit.login(new LoginInfo(account, token), new RequestCallback<LoginInfo>() {
@@ -126,8 +127,13 @@ public class Chat{
                     Slog.d(TAG, "-------->token error, rewrite by LoginInfo  param.getToken()");
                     SharedPreferencesUtils.setYunXinToken(MyApplication.getContext(), param.getToken());
                 }
+                
+                if (!account.equals(param.getAccount())){
+                    Slog.d(TAG, "-------->account error, rewrite by LoginInfo  param.getAccount()");
+                    SharedPreferencesUtils.setYunXinAccount(MyApplication.getContext(), param.getAccount());
+                }
 
-                NimUIKit.startP2PSession(MyApplication.getContext(), String.valueOf(uid));
+                NimUIKit.startP2PSession(MyApplication.getContext(), accid);
             }
 
             @Override
@@ -148,16 +154,17 @@ public class Chat{
         });
     }
     
-    public static int createYunXinUser(final long uid){
+    public static int createYunXinUser(final String accid){
         int result = 0;
         RequestBody requestBody = new FormBody.Builder()
-                .add("uid", String.valueOf(uid))
+                .add("domain", getDomain())
+                .add("accid", accid)
                 .build();
         Response response = HttpUtil.sendOkHttpRequestSync(MyApplication.getContext(), HttpUtil.CREATE_YUNXIN_USER, requestBody, null);
         try {
             if (response.body() != null) {
                 String responseText = response.body().string();
-                Slog.d(TAG, "==========createYunXinUser response text : " + responseText + "with uid: "+uid);
+        
                 if (responseText != null && !TextUtils.isEmpty(responseText)) {
                     result = new JSONObject(responseText).optInt("result");
                 }
