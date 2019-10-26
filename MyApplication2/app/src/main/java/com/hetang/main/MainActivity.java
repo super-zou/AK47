@@ -1,5 +1,6 @@
 package com.hetang.main;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hetang.adapter.MainFragmentAdapter;
+import com.hetang.common.BaseAppCompatActivity;
 import com.hetang.common.ReminderManager;
 import com.hetang.home.HomeFragment;
 import com.hetang.update.UpdateParser;
@@ -27,6 +29,7 @@ import com.hetang.util.SharedPreferencesUtils;
 import com.hetang.util.Slog;
 
 import com.netease.nim.uikit.api.NimUIKit;
+import com.netease.nim.uikit.api.model.session.SessionEventListener;
 import com.netease.nim.uikit.api.model.main.LoginSyncDataStatusObserver;
 import com.netease.nim.uikit.common.ui.dialog.DialogMaker;
 import com.netease.nimlib.sdk.NIMClient;
@@ -54,14 +57,17 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static com.hetang.common.Chat.createYunXinUser;
+import static com.hetang.util.HttpUtil.GET_USERINFO_WITH_ACCOUNT;
 import static com.hetang.util.HttpUtil.GET_PASSWORD_HASH;
+import static com.hetang.util.ParseUtils.startArchiveActivity;
+import static com.hetang.util.ParseUtils.startMeetArchiveActivity;
 import static com.hetang.util.HttpUtil.getYunXinAccountExist;
 import static com.hetang.util.SharedPreferencesUtils.getYunXinAccount;
 import static com.hetang.util.SharedPreferencesUtils.getYunXinToken;
 import static com.hetang.util.SharedPreferencesUtils.setYunXinAccount;
 import static com.hetang.util.SharedPreferencesUtils.setYunXinToken;
 
-public class MainActivity extends AppCompatActivity implements CommonDialogFragmentInterface, ReminderManager.UnreadNumChangedCallback {
+public class MainActivity extends BaseAppCompatActivity implements CommonDialogFragmentInterface, ReminderManager.UnreadNumChangedCallback {
 
     private static final String TAG = "MainActivity";
     private final static boolean isDebug = false;
@@ -81,6 +87,8 @@ public class MainActivity extends AppCompatActivity implements CommonDialogFragm
     private static MyHandler handler;
     private boolean hasUnreadMessage = false;
     private boolean hasUnreadSessions = false;
+    private static final int START_MEET_ARCHIVE_ACTIVITY = 2;
+    private static final int START_ARCHIVE_ACTIVITY = 3;
     public static final int HAVA_NEW_VERSION = 2;
     private static final int REQUEST_CODE_INSTALL_PERMISSION = 107;
 
@@ -256,9 +264,66 @@ public class MainActivity extends AppCompatActivity implements CommonDialogFragm
     }
 
     private void initMessage(){
+         SessionEventListener listener = new SessionEventListener() {
+            @Override
+            public void onAvatarClicked(Context context, IMMessage message) {
+                // 一般用于打开用户资料页面
+                startArchiveActivityWithAccount(MyApplication.getContext(), message.getFromAccount());
+            }
+
+            @Override
+            public void onAvatarLongClicked(Context context, IMMessage message) {
+                // 一般用于群组@功能，或者弹出菜单，做拉黑，加好友等功能
+            }
+            @Override
+            public void onAckMsgClicked(Context context, IMMessage message){}
+        };
+
+        NimUIKit.setSessionListener(listener);
+        
         initSessionMessageObserver();
         MessageFragment.getUnreadNotification(handler);
     }
+    
+    //the account is user's phone number
+    private void startArchiveActivityWithAccount(final Context context, String account){
+        showProgressDialog("");
+
+        final RequestBody requestBody = new FormBody.Builder().add("account", String.valueOf(account)).build();
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                Response response = HttpUtil.sendOkHttpRequestSync(context, GET_USERINFO_WITH_ACCOUNT, requestBody, null);
+                if (response.body() != null) {
+                    try {
+                        String responseText = response.body().string();
+                        int uid = new JSONObject(responseText).optInt("uid");
+                        int cid = new JSONObject(responseText).optInt("cid");
+                        Message message = new Message();
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("uid", uid);
+                        if (cid > 0){
+                            message.what = START_MEET_ARCHIVE_ACTIVITY;
+                        }else {
+                            message.what = START_ARCHIVE_ACTIVITY;
+                        }
+                        message.setData(bundle);
+                        handler.sendMessage(message);
+                        dismissProgressDialog();
+                        } catch (JSONException e) {
+                        e.printStackTrace();
+                    } catch (IOException i){
+                        i.printStackTrace();
+                    }
+                }
+
+            }
+        };
+
+        Thread startArchiveThread = new Thread(runnable);
+        startArchiveThread.start();
+    }
+            
     
     //未读消息数量观察者实现
     @Override
@@ -289,25 +354,25 @@ public class MainActivity extends AppCompatActivity implements CommonDialogFragm
     }
     
     private void loginYunXinServer(){
-        final int authorUid = SharedPreferencesUtils.getSessionUid(MyApplication.getContext());
+       // final int authorUid = SharedPreferencesUtils.getSessionUid(MyApplication.getContext());
         Runnable loginRunnable = new Runnable() {
             @Override
             public void run() {
                 //1.check account registered? only registered account will execute login, not registered will do register when establish chatting
-                final String account = getYunXinAccount(MyApplication.getContext());
+                final String accid = getYunXinAccount(MyApplication.getContext());
                 final String token = getYunXinToken(MyApplication.getContext());
-                Slog.d(TAG, "------------------------------------>loginYunXinServer with account: "+ account+"   token: "+token);
+                Slog.d(TAG, "------------------------------------>loginYunXinServer with accid: "+ accid+"   token: "+token);
                 
-                if (!TextUtils.isEmpty(account) && !TextUtils.isEmpty(token)){
-                    loginYunXin(account, token);
+                if (!TextUtils.isEmpty(accid) && !TextUtils.isEmpty(token)){
+                    loginYunXin(accid, token);
                 }else {
-                    int exist = getYunXinAccountExist(MyApplication.getContext(), String.valueOf(authorUid));
+                    int exist = getYunXinAccountExist(MyApplication.getContext(), accid);
                     if (exist > 0){//yunxin account exist
                         //loginYunXin(account, token);
-                        getPassWordHashToLogin(authorUid);
+                        getPassWordHashToLogin(accid);
                     }else {//not existed, need create here
-                        if (createYunXinUser(authorUid) > 0){
-                            getPassWordHashToLogin(authorUid);
+                        if (createYunXinUser(accid) > 0){
+                            getPassWordHashToLogin(accid);
                         }
                     }
                 }
@@ -341,12 +406,12 @@ public class MainActivity extends AppCompatActivity implements CommonDialogFragm
 
             @Override
             public void onException(Throwable exception) {
-                Toast.makeText(MyApplication.getContext(), "yunxin login error", Toast.LENGTH_LONG).show();
+                Toast.makeText(MyApplication.getContext(), "云信登录异常", Toast.LENGTH_LONG).show();
             }
         });
     }
     
-    private void getPassWordHashToLogin(final int uid){
+    private void getPassWordHashToLogin(final String accid){
         RequestBody requestBody = new FormBody.Builder().build();
         HttpUtil.sendOkHttpRequest(MyApplication.getContext(), GET_PASSWORD_HASH, requestBody, new Callback() {
             @Override
@@ -359,7 +424,7 @@ public class MainActivity extends AppCompatActivity implements CommonDialogFragm
                         String passwordHash = loginResponse.getString("password_hash");
                         Slog.d(TAG, "------------------------------------------->passwordHash: "+passwordHash);
                         if (!TextUtils.isEmpty(passwordHash)){
-                            loginYunXin(String.valueOf(uid), passwordHash);
+                            loginYunXin(accid, passwordHash);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -410,6 +475,11 @@ public class MainActivity extends AppCompatActivity implements CommonDialogFragm
 
     public void handleMessage(Message message) {
         TextView unRead = mTabLayout.getTabAt(2).getCustomView().findViewById(R.id.unread);
+        Bundle bundle = message.getData();
+        int uid = 0;
+        if (bundle != null){
+            uid = bundle.getInt("uid");
+        }
         switch (message.what){
             case MessageFragment.HAVE_UNREAD_MESSAGE:
                 hasUnreadMessage = true;
@@ -417,13 +487,18 @@ public class MainActivity extends AppCompatActivity implements CommonDialogFragm
                     unRead.setVisibility(View.VISIBLE);
                 }
                 break;
-                case MessageFragment.HAVE_NO_UNREAD_MESSAGE:
+            case MessageFragment.HAVE_NO_UNREAD_MESSAGE:
                 hasUnreadMessage = false;
                 if (hasUnreadSessions == false && unRead.getVisibility() != View.GONE){
                     unRead.setVisibility(View.GONE);
                 }
                 break;
-
+            case START_MEET_ARCHIVE_ACTIVITY:
+                startMeetArchiveActivity(this, uid);
+                break;
+            case START_ARCHIVE_ACTIVITY:
+                startArchiveActivity(this, uid);
+                break;
             default:
                 break;
         }
