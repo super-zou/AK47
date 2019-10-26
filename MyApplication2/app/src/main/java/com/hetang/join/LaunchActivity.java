@@ -30,6 +30,10 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static com.hetang.util.SharedPreferencesUtils.getYunXinToken;
+import static com.hetang.util.SharedPreferencesUtils.setYunXinAccount;
+import static com.hetang.util.SharedPreferencesUtils.setYunXinToken;
+
 public class LaunchActivity extends AppCompatActivity {
     private static final String TAG = "LaunchActivity";
     //private static final String domain = "http://112.126.83.127:81";
@@ -178,6 +182,10 @@ public class LaunchActivity extends AppCompatActivity {
 
         //showProgress(context);
         Slog.d(TAG, "====account: "+account+ "password: "+password);
+        
+        
+        setYunXinAccount(context, account);
+        
         RequestBody requestBody = new FormBody.Builder()
                 .add("type", "0")
                 .add("account", account)
@@ -252,6 +260,11 @@ public class LaunchActivity extends AppCompatActivity {
         editor.putInt("type", 0);
         editor.apply();
 
+        
+        if (!yunxinToken.equals(getYunXinToken(context))){
+            setYunXinToken(context, yunxinToken);
+        }
+        
         //accessToken(context, userName, password);
         Intent intent = new Intent(context, LoginSplash.class);
         context.startActivity(intent);
