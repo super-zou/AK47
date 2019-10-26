@@ -260,14 +260,17 @@ public class MeetDiscoveryFragment extends BaseFragment {
         if (debug) Slog.d(TAG, "====================getResponseText====================");
         //+Begin added by xuchunping
         List<UserMeetInfo> tempList = ParseUtils.getMeetDiscoveryList(responseText);
-        mTempSize = tempList.size();
-        if (null != tempList && mTempSize > 0) {
-            meetMemberList.addAll(tempList);
-            Log.d(TAG, "getResponseText list.size:" + tempList.size());
-            if (mTempSize < PAGE_SIZE){
-                handler.sendEmptyMessage(LOAD_MORE_END);
-            }else {
-                handler.sendEmptyMessage(LOAD_MORE_DONE);
+        
+        if (null != tempList) {
+            mTempSize = tempList.size();
+            if(mTempSize > 0){
+                meetMemberList.addAll(tempList);
+                Log.d(TAG, "getResponseText list.size:" + tempList.size());
+                if (mTempSize < PAGE_SIZE){
+                    handler.sendEmptyMessage(LOAD_MORE_END);
+                }else {
+                    handler.sendEmptyMessage(LOAD_MORE_DONE);
+                }
             }
         }else {
             handler.sendEmptyMessage(NO_MORE);
