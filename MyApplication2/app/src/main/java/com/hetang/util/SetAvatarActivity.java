@@ -92,6 +92,7 @@ public class SetAvatarActivity extends BaseAppCompatActivity {
             if(avatarSelectFileList.size() > 0){
                     showProgressDialog("正在保存");
                     params.put("type", "avatar");
+                    params.put("domain", HttpUtil.DOMAIN);
                     uploadPictures(params, "picture", avatarSelectFileList);
                 }else {
                     Toast.makeText(getApplicationContext(), "请设置头像", Toast.LENGTH_LONG).show();
