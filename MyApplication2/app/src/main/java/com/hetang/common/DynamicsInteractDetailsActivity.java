@@ -472,6 +472,7 @@ public class DynamicsInteractDetailsActivity extends BaseAppCompatActivity imple
 
         Typeface font = Typeface.createFromAsset(mContext.getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
         FontManager.markAsIconContainer(headerView.findViewById(R.id.dynamics_content_meta), font);
+        FontManager.markAsIconContainer(view.findViewById(R.id.living_icon), font);
 
     }
     
