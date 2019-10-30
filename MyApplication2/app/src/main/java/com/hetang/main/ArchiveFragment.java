@@ -410,10 +410,7 @@ public class ArchiveFragment extends BaseFragment {
             }
         });
 
-        if(userProfile.getSituation() == 1){
-            getWorkExperience();
-        }
-        
+        getWorkExperience();        
         getPrize();
         getPaper();
         getBlog();
@@ -781,12 +778,7 @@ public class ArchiveFragment extends BaseFragment {
     }
     
     public void getWorkExperience(){
-        ConstraintLayout workExperienceWrapper = mView.findViewById(R.id.work_experience_wrapper);
-        if (userProfile.getSituation() == 1){
-            if (workExperienceWrapper.getVisibility() == View.GONE){
-                workExperienceWrapper.setVisibility(View.VISIBLE);
-            }
-        }
+        
         RequestBody requestBody = new FormBody.Builder()
                 .add("uid", String.valueOf(uid)).build();
                 
