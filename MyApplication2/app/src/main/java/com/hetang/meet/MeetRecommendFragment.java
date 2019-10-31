@@ -60,6 +60,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
+import static com.hetang.util.SetAvatarActivity.AVATAR_SET_ACTION_BROADCAST;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
 import static com.hetang.common.AddPictureActivity.ADD_PICTURE_BROADCAST;
@@ -649,6 +650,9 @@ public class MeetRecommendFragment extends BaseFragment {
                     meetList.clear();
                     getRecommendContent();
                     break;
+                case AVATAR_SET_ACTION_BROADCAST:
+                    avatarSet = true;
+                    break;
                 default:
                     break;
             }
@@ -660,6 +664,7 @@ public class MeetRecommendFragment extends BaseFragment {
         mReceiver = new PictureAddBroadcastReceiver();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ADD_PICTURE_BROADCAST);
+        intentFilter.addAction(AVATAR_SET_ACTION_BROADCAST);
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, intentFilter);
     }
     
