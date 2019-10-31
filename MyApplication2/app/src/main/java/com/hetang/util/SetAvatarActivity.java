@@ -62,6 +62,8 @@ public class SetAvatarActivity extends BaseAppCompatActivity {
     private TextView title;
     private static final int SET_AVATAR_RESULT_OK = 2;
     
+    public static final String AVATAR_SET_ACTION_BROADCAST = "com.hetang.action.AVATAR_SET";
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -239,7 +241,8 @@ public class SetAvatarActivity extends BaseAppCompatActivity {
 
                                finish();
                            }
-
+                            
+                            sendBroadcast();
                             dismissProgressDialog();
 
                         }catch (JSONException e){
@@ -260,5 +263,9 @@ public class SetAvatarActivity extends BaseAppCompatActivity {
             }
         });
 
+    }
+    
+    private void sendBroadcast() {
+        LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(AVATAR_SET_ACTION_BROADCAST));
     }
 }
