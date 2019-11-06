@@ -10,11 +10,12 @@ import android.widget.TextView;
 import com.hetang.R;
 import com.hetang.common.BaseAppCompatActivity;
 import com.hetang.main.ArchiveFragment;
+import com.hetang.util.CommonDialogFragmentInterface;
 import com.hetang.util.FontManager;
 
 import static com.hetang.util.ParseUtils.startMeetArchiveActivity;
 
-public class ArchiveActivity extends BaseAppCompatActivity{
+public class ArchiveActivity extends BaseAppCompatActivity implements CommonDialogFragmentInterface{
     private static final String TAG = "ArchiveActivity";
     private static final boolean isDebug = true;
 
@@ -55,6 +56,9 @@ public class ArchiveActivity extends BaseAppCompatActivity{
         Typeface font = Typeface.createFromAsset(getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
         FontManager.markAsIconContainer(findViewById(R.id.custom_actionbar), font);
     }
+    
+    @Override
+    public void onBackFromDialog(int type, int result, boolean status) { }
     
     @Override
     public void onBackPressed(){
