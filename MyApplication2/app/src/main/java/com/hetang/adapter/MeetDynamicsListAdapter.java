@@ -91,6 +91,9 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
     public MeetDynamicsListAdapter(Context context, FragmentManager fragmentManager, boolean specificUser) {
         //Slog.d(TAG, "==============MeetRecommendListAdapter init=================");
         mContext = context;
+        if (mContext == null){
+            mContext = MyApplication.getContext();
+        }
         mMeetList = new ArrayList<Dynamic>();
         Resources resources = mContext.getResources();
         DisplayMetrics dm = resources.getDisplayMetrics();
