@@ -18,7 +18,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
     
-    <LinearLayout
+   <LinearLayout
         android:id="@+id/self"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -28,7 +28,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/custom_actionbar_id">
       <!--birthday&constellation-->
-        <LinearLayout
+      <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="18dp"
@@ -45,7 +45,7 @@
                 android:layout_weight="3"
                 android:layout_height="wrap_content"
                 android:entries="@array/years"/>
-            <TextView
+          <TextView
                 android:text="@string/constellation"
                 android:textColor="@color/white"
                 android:layout_marginLeft="18dp"
@@ -59,7 +59,8 @@
                 android:layout_height="wrap_content"
                 android:entries="@array/constellations"/>
         </LinearLayout>
-        <!--height&degree-->
+       
+       <!--height&degree-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -71,6 +72,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content" />
+            
             <org.angmarch.views.NiceSpinner
                 android:id="@+id/nice_spinner_height"
                 android:layout_weight="3"
@@ -78,18 +80,19 @@
                 android:layout_height="wrap_content"
                 android:entries="@array/heights"/>
             <TextView
-                android:text="@string/degree"
+                android:text="@string/hometown"
                 android:textColor="@color/white"
                 android:layout_marginLeft="18dp"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content" />
+            
             <org.angmarch.views.NiceSpinner
-                android:id="@+id/nice_spinner_degree"
+                android:id="@+id/nice_spinner_hometown"
                 android:layout_weight="3"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:entries="@array/degrees"/>
+                android:entries="@array/hometown"/>
         </LinearLayout>
         <!--university && hometown-->
         <LinearLayout
@@ -99,192 +102,37 @@
             android:focusableInTouchMode="true"
             android:layout_marginTop="8dp"
             android:orientation="horizontal">
-            <TextView
-                android:text="@string/hometown"
-                android:textColor="@color/white"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content" />
-            <org.angmarch.views.NiceSpinner
-                android:id="@+id/nice_spinner_hometown"
-                android:layout_weight="3"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:entries="@array/hometown"/>
+            
             <TextView
                 android:text="@string/nation"
                 android:textColor="@color/white"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_marginLeft="18dp"
                 android:layout_height="wrap_content" />
+            
             <org.angmarch.views.NiceSpinner
                 android:id="@+id/nice_spinner_nation"
                 android:layout_weight="3"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:entries="@array/nations"/>
-        </LinearLayout>
-        
-        <!--nation && religions-->
-        <LinearLayout
-            android:gravity="center"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
-            android:orientation="horizontal">
-
             <TextView
                 android:text="@string/religion"
                 android:textColor="@color/white"
                 android:layout_width="0dp"
                 android:layout_weight="1"
+                android:layout_marginLeft="18dp"
                 android:layout_height="wrap_content" />
+            
             <org.angmarch.views.NiceSpinner
                 android:id="@+id/nice_spinner_religion"
                 android:layout_width="0dp"
                 android:layout_weight="3"
                 android:layout_height="wrap_content"
                 android:entries="@array/religions"/>
-            <TextView
-                android:text="@string/university"
-                android:textColor="@color/white"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_marginLeft="18dp"
-                android:layout_height="wrap_content" />
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/university_input_layout"
-                android:layout_weight="3"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:errorEnabled="true"
-                app:errorTextAppearance="@style/TextErrorAppearance"
-                app:hintTextAppearance="@style/HintAppearance">
-                <android.support.design.widget.TextInputEditText
-                    android:id="@+id/university_edittext"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:hint="@string/graduate_university"
-                    android:textColor="@color/white"
-                    android:textCursorDrawable="@drawable/cursor_color"
-                    android:theme="@style/MyEditText" />
-            </android.support.design.widget.TextInputLayout>
-        </LinearLayout>
-        <!--situation-->
-        <LinearLayout
-            android:id="@+id/situationWrap"
-            android:orientation="vertical"
-            android:layout_marginTop="36dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:id="@+id/situationText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:textColor="@color/white"
-                    android:text="@string/situation" />
-                <RadioGroup
-                    android:id="@+id/situationRG"
-                    android:layout_marginLeft="18dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <RadioButton
-                        android:id="@+id/radioStudent"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/white"
-                        android:text="@string/student"
-                        android:theme="@style/MyRadioButton"/>
-                    <RadioButton
-                        android:id="@+id/radioWork"
-                        android:layout_marginLeft="28dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/white"
-                        android:text="@string/incumbency"
-                        android:theme="@style/MyRadioButton"/>
-                </RadioGroup>
-            </LinearLayout>
-            <LinearLayout
-                android:visibility="gone"
-                android:orientation="vertical"
-                android:id="@+id/student"
-                android:layout_marginTop="18dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <android.support.design.widget.TextInputLayout
-                    android:id="@+id/major_input_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"
-                    app:errorEnabled="true"
-                    app:errorTextAppearance="@style/TextErrorAppearance"
-                    app:hintTextAppearance="@style/HintAppearance">
-                    <android.support.design.widget.TextInputEditText
-                        android:id="@+id/major_edittext"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/major"
-                        android:textColor="@color/white"
-                        android:textCursorDrawable="@drawable/cursor_color"
-                        android:theme="@style/MyEditText" />
-                </android.support.design.widget.TextInputLayout>
-            </LinearLayout>
-            <LinearLayout
-                android:visibility="gone"
-                android:orientation="vertical"
-                android:id="@+id/work"
-                android:layout_marginTop="18dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <android.support.design.widget.TextInputLayout
-                    android:id="@+id/position_input_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"
-                    app:errorEnabled="true"
-                    app:errorTextAppearance="@style/TextErrorAppearance"
-                    app:hintTextAppearance="@style/HintAppearance">
-                     <android.support.design.widget.TextInputEditText
-                        android:id="@+id/position_edittext"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/position_hint"
-                        android:textColor="@color/white"
-                        android:textCursorDrawable="@drawable/cursor_color"
-                        android:theme="@style/MyEditText" />
-                </android.support.design.widget.TextInputLayout>
-                <android.support.design.widget.TextInputLayout
-                    android:id="@+id/industry_input_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"
-                    app:errorEnabled="true"
-                    app:errorTextAppearance="@style/TextErrorAppearance"
-                    app:hintTextAppearance="@style/HintAppearance">
-                    <android.support.design.widget.TextInputEditText
-                        android:id="@+id/industry_edittext"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/industry"
-                        android:textColor="@color/white"
-                        android:textCursorDrawable="@drawable/cursor_color"
-                        android:theme="@style/MyEditText" />
-                </android.support.design.widget.TextInputLayout>
-            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
+    <!-------requirement-->
     <LinearLayout
         android:orientation="vertical"
         android:id="@+id/requirement"
