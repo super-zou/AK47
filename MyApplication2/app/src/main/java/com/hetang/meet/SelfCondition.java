@@ -107,6 +107,25 @@ public class SelfCondition {
         }
         return -1;
     }
+    
+    public static int getDegreeIndex(String degree) {
+        if (degree.equals("其它")) {
+            return -1;
+        }
+        if (degree.equals("大专")) {
+            return 0;
+        }
+        if (degree.equals("本科")) {
+            return 1;
+        }
+        if (degree.equals("硕士")) {
+            return 2;
+        }
+        if (degree.equals("博士")) {
+            return 3;
+        }
+        return -1;
+    }
 
     public String getDegreeName(int degree) {
         String Degree;
