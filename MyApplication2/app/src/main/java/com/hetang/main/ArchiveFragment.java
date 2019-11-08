@@ -268,7 +268,6 @@ public class ArchiveFragment extends BaseFragment {
         headUri = mView.findViewById(R.id.head_uri);
         TextView degree = mView.findViewById(R.id.degree);
         TextView university = mView.findViewById(R.id.university);
-        LinearLayout majorWrap = mView.findViewById(R.id.major_wrap);
         LinearLayout work = mView.findViewById(R.id.work);
         TextView major = mView.findViewById(R.id.major);
         TextView position = mView.findViewById(R.id.position);
@@ -345,22 +344,19 @@ public class ArchiveFragment extends BaseFragment {
             summary.setText(userProfile.getSummary());
         }
         
-        if (userProfile.getSituation() != -1){
+        if(userProfile.getSituation() == 0){
             educationWrapper.setVisibility(View.VISIBLE);
             degree.setText(userProfile.getDegreeName(userProfile.getDegree()));
             university.setText(userProfile.getUniversity());
-
-            if(userProfile.getSituation() == 0){
-                majorWrap.setVisibility(View.VISIBLE);
-                major.setText(userProfile.getMajor());
-            }else {
-                if(work.getVisibility() == View.GONE){
-                    work.setVisibility(View.VISIBLE);
-                }
-                position.setText(userProfile.getPosition());
-                industry.setText(userProfile.getIndustry());
+            major.setText(userProfile.getMajor());
+        }else {
+            if(work.getVisibility() == View.GONE){
+                work.setVisibility(View.VISIBLE);
             }
+            position.setText(userProfile.getPosition());
+            industry.setText(userProfile.getIndustry());
         }
+        
         
         if(!"".equals(userProfile.getHometown())){
             hometown.setText(getResources().getText(R.string.hometown)+":"+userProfile.getHometown());
