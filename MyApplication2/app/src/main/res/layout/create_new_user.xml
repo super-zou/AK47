@@ -15,9 +15,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-        
-        <LinearLayout
-        android:visibility="visible"
+    
+    <LinearLayout
         android:id="@+id/create_init"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -40,30 +39,43 @@
                 android:id="@+id/nickname_edittext"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/nickname"
+                android:hint="@string/name"
                 android:textColor="@color/white"
                 android:textCursorDrawable="@drawable/cursor_color"
                 android:theme="@style/MyEditText" />
         </android.support.design.widget.TextInputLayout>
-
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/realname_input_layout"
+        <RadioGroup
+            android:id="@+id/sexRG"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="16dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            app:errorEnabled="true"
-            app:errorTextAppearance="@style/TextErrorAppearance"
-            app:hintTextAppearance="@style/HintAppearance">
-            <android.support.design.widget.TextInputEditText
-                android:id="@+id/realname_edittext"
-                android:layout_width="match_parent"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/sexTextView"
+                android:layout_marginRight="16dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="@string/name_option"
                 android:textColor="@color/white"
-                android:textCursorDrawable="@drawable/cursor_color"
-                android:theme="@style/MyEditText" />
-        </android.support.design.widget.TextInputLayout>
+                android:text="@string/sex" />
+            <RadioButton
+                android:id="@+id/radioMale"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:checked="true"
+                android:text="@string/male"
+                android:theme="@style/MyRadioButton"/>
+
+            <RadioButton
+                android:id="@+id/radioFemale"
+                android:layout_marginLeft="16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:text="@string/female"
+                android:theme="@style/MyRadioButton"/>
+        </RadioGroup>
         
         <android.support.design.widget.TextInputLayout
             android:id="@+id/password_input_layout"
@@ -97,7 +109,7 @@
             app:passwordToggleEnabled="true"
             app:errorTextAppearance="@style/TextErrorAppearance"
             app:hintTextAppearance="@style/HintAppearance">
-
+            
             <android.support.design.widget.TextInputEditText
                 android:id="@+id/repeat_password_edittext"
                 android:layout_width="match_parent"
@@ -115,7 +127,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="26dp"
         android:layout_marginEnd="16dp"
         android:orientation="vertical"
         android:visibility="gone"
@@ -123,59 +134,157 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/create_init">
         
-        <TextView
-            android:id="@+id/sexTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/white"
-            android:text="@string/sex" />
-
-        <RadioGroup
-            android:id="@+id/sexRG"
-            android:layout_marginTop="8dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            
-            <RadioButton
-                android:id="@+id/radioMale"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:checked="true"
-                android:text="@string/male"
-                android:theme="@style/MyRadioButton"/>
-
-            <RadioButton
-                android:id="@+id/radioFemale"
-                android:layout_marginLeft="16dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:text="@string/female"
-                android:theme="@style/MyRadioButton"/>
-        </RadioGroup>
-        
-        <TextView
-            android:id="@+id/livingTextView"
-            android:layout_marginTop="18dp"
-            android:textColor="@color/white"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/living" />
-
+        <!--situation-->
         <LinearLayout
-            android:layout_marginTop="8dp"
+            android:id="@+id/situationWrap"
+            android:orientation="vertical"
+            android:layout_marginTop="36dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/situationText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textColor="@color/white"
+                    android:text="@string/situation" />
+                
+                <RadioGroup
+                    android:id="@+id/situationRG"
+                    android:layout_marginLeft="18dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/radioStudent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:text="@string/student"
+                        android:theme="@style/MyRadioButton"/>
+                    
+                    <RadioButton
+                        android:id="@+id/radioWork"
+                        android:layout_marginLeft="28dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:text="@string/incumbency"
+                        android:theme="@style/MyRadioButton"/>
+                </RadioGroup>
+            </LinearLayout>
+            
+            <LinearLayout
+                android:visibility="gone"
+                android:orientation="vertical"
+                android:id="@+id/student"
+                android:layout_marginTop="18dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/university_input_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:errorEnabled="true"
+                    app:errorTextAppearance="@style/TextErrorAppearance"
+                    app:hintTextAppearance="@style/HintAppearance">
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/university_edittext"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:hint="@string/university"
+                        android:textColor="@color/white"
+                        android:textCursorDrawable="@drawable/cursor_color"
+                        android:theme="@style/MyEditText" />
+                </android.support.design.widget.TextInputLayout>
+                
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/major_input_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:errorEnabled="true"
+                    app:errorTextAppearance="@style/TextErrorAppearance"
+                    app:hintTextAppearance="@style/HintAppearance">
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/major_edittext"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/major"
+                        android:textColor="@color/white"
+                        android:textCursorDrawable="@drawable/cursor_color"
+                        android:theme="@style/MyEditText" />
+                </android.support.design.widget.TextInputLayout>
+                
+                <org.angmarch.views.NiceSpinner
+                    android:id="@+id/nice_spinner_degree"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/degrees"/>
+            </LinearLayout>
+            <!--work-->
+            <LinearLayout
+                android:visibility="gone"
+                android:orientation="vertical"
+                android:id="@+id/work"
+                android:layout_marginTop="18dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/position_input_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    app:errorEnabled="true"
+                    app:errorTextAppearance="@style/TextErrorAppearance"
+                    app:hintTextAppearance="@style/HintAppearance">
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/position_edittext"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/position_hint"
+                        android:textColor="@color/white"
+                        android:textCursorDrawable="@drawable/cursor_color"
+                        android:theme="@style/MyEditText" />
+                </android.support.design.widget.TextInputLayout>
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/industry_input_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    app:errorEnabled="true"
+                    app:errorTextAppearance="@style/TextErrorAppearance"
+                    app:hintTextAppearance="@style/HintAppearance">
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/industry_edittext"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/industry"
+                        android:textColor="@color/white"
+                        android:textCursorDrawable="@drawable/cursor_color"
+                        android:theme="@style/MyEditText" />
+                </android.support.design.widget.TextInputLayout>
+            </LinearLayout>
+        </LinearLayout>
+        
+        <!--living-->
+        <LinearLayout
+            android:layout_marginTop="16dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-            
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/location"
                 android:textColor="@color/white" />
-
             <TextView
                 android:id="@+id/living"
                 android:layout_width="wrap_content"
@@ -191,8 +300,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 style="@android:style/Widget.ProgressBar.Small" />
-                
-                <Button
+            
+            <Button
                 android:id="@+id/manual_select"
                 android:layout_marginLeft="16dp"
                 android:layout_width="wrap_content"
@@ -222,8 +331,8 @@
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/create_next" />
-        
-        <Button
+    
+    <Button
         android:id="@+id/action_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -235,6 +344,5 @@
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/create_next" />
-
 
 </android.support.constraint.ConstraintLayout>
