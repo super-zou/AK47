@@ -115,6 +115,7 @@
     <string name="prev">上一步</string>
     <string name="next">下一步</string>
     <string name="nickname">昵称</string>
+    <string name="name">姓名</string>
     <string name="name_option">姓名(可选)</string>
     <string name="sex">性别</string>
     <string name="male">男士</string>
@@ -122,7 +123,7 @@
     <string name="living">居住地</string>
     <string name="locating">正在定位</string>
     <string name="select_living">选择居住地</string>
-    <string name="nickname_is_empty">请输入昵称</string>
+    <string name="nickname_is_empty">请输入姓名</string>
     <string name="location_service_not_available">定位功能申请</string>
     <string name="location_permission_request">荷塘将使用手机的定位功能，帮您定位地址信息；\n如果禁用则部分功能不可用</string>
     <string name="open_now">立即开启</string>
