@@ -134,28 +134,21 @@
                     android:paddingBottom="5dp"
                     android:text="university"
                     android:textColor="@color/white" />
-                    
-                    <LinearLayout
-                    android:id="@+id/major_wrap"
+
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:visibility="gone">
+                    android:text="·"
+                    android:textColor="@color/white" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="·"
-                        android:textColor="@color/white" />
-                        
-                        <TextView
-                        android:id="@+id/major"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingBottom="5dp"
-                        android:text="major"
-                        android:textColor="@color/white" />
-                </LinearLayout>
+                <TextView
+                    android:id="@+id/major"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="5dp"
+                    android:text="major"
+                    android:textColor="@color/white" />
+                
 
             </LinearLayout>
             <LinearLayout
