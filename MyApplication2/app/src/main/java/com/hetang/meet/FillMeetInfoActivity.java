@@ -59,7 +59,7 @@ public class FillMeetInfoActivity extends AppCompatActivity {
     private static final String TAG = "FillMeetInfoActivity";
     private static final String FILL_MEET_INFO_URL = HttpUtil.DOMAIN +"?q=meet/look_friend";
 
-    private int mSituation = -1;
+
     private int mSex = -1;
     private String selfHometown = "";
     Resources res;
@@ -69,7 +69,7 @@ public class FillMeetInfoActivity extends AppCompatActivity {
     String[] nations;
     String[] religions;
     String[] heights;
-    String[] degrees;
+    
     String[] ages;
 
     SelfCondition selfCondition;
@@ -81,14 +81,12 @@ public class FillMeetInfoActivity extends AppCompatActivity {
     boolean NATIONSELECTED = false;
     boolean RELIGIONSELECTED = false;
     boolean HEIGHTSELECTED = false;
-    boolean DEGREESELECTED = false;
     boolean INDUSTRYSELECTED = false;
     boolean LOWERAGESELECTED = false;
     boolean UPPERAGESELECTED = false;
     boolean REQUIREHEIGHTSELECTED = false;
     boolean REQUIREDEGREESELECTED = false;
     boolean REQUIRELIVESELECTED = false;
-    boolean SITUATIONSELECTED = false;
     String selfConditionJson;
     String partnerRequirementJson;
     int currentPageIndex = 1;
@@ -99,20 +97,10 @@ public class FillMeetInfoActivity extends AppCompatActivity {
     LinearLayout setAvatar;
     LinearLayout pageIndicator;
     LinearLayout situationLayout;
-    RadioGroup situationSelect;
-    LinearLayout studentLayout;
-    LinearLayout workLayout;
-    TextInputLayout majorInputLayout;
-    TextInputEditText majorEditText;
-    TextInputLayout universityInputLayout;
-    TextInputEditText universityEditText;
-    TextInputLayout positionInputLayout;
-    TextInputEditText positionEditText;
-    TextInputLayout industryInputLayout;
-    TextInputEditText industryEditText;
+    
     Button requireRegionSelection;
         
-        TextView leftBack;
+    TextView leftBack;
     TextView title;
     Button prev;
     Button next;
@@ -122,18 +110,12 @@ public class FillMeetInfoActivity extends AppCompatActivity {
     private ArrayList<CommonBean> provinceItems = new ArrayList<>();
     private ArrayList<ArrayList<String>> cityItems = new ArrayList<>();
     //private ArrayList<ArrayList<ArrayList<String>>> options3Items = new ArrayList<>();
-    private Thread threadIndustry;
-    private Thread threadCity;
-    private static final int MSG_LOAD_INDUSTRY_DATA = 0x0001;
-    private static final int MSG_LOAD_CITY_DATA = 0x0002;
-    private static final int MSG_LOAD_SUCCESS = 0x0003;
-    private static final int MSG_LOAD_FAILED = 0x0004;
-        
-        private Handler handler;
+    
     boolean isHometownSet = false;
     boolean isEndPage = false;
 
     private UserProfile userProfile;
+    private Thread threadCity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,8 +124,7 @@ public class FillMeetInfoActivity extends AppCompatActivity {
         //if avatar is set, avatarSet will be set true
         userProfile = (UserProfile) getIntent().getSerializableExtra("userProfile");
             
-            if(userProfile != null){
-            mSituation = userProfile.getSituation();
+        if(userProfile != null){
             mSex = userProfile.getSex();
             selfHometown = userProfile.getHometown();
         }
@@ -173,21 +154,9 @@ public class FillMeetInfoActivity extends AppCompatActivity {
         title = findViewById(R.id.title);
         fillMeetInfoLayout = findViewById(R.id.fill_meet_info);
             
-            situationLayout = findViewById(R.id.situationWrap);
-        situationSelect = findViewById(R.id.situationRG);
-        studentLayout = findViewById(R.id.student);
-        workLayout = findViewById(R.id.work);
-        majorInputLayout = findViewById(R.id.major_input_layout);
-        majorEditText = findViewById(R.id.major_edittext);
-        universityInputLayout = findViewById(R.id.university_input_layout);
-        universityEditText = findViewById(R.id.university_edittext);
-        positionInputLayout = findViewById(R.id.position_input_layout);
-        positionEditText = findViewById(R.id.position_edittext);
-        industryInputLayout = findViewById(R.id.industry_input_layout);
-        industryEditText = findViewById(R.id.industry_edittext);
         requireRegionSelection = findViewById(R.id.require_region);
             
-            setAvatar = findViewById(R.id.set_avatar);
+        setAvatar = findViewById(R.id.set_avatar);
         pageIndicator = findViewById(R.id.page_indicator);
         prev = findViewById(R.id.prev);
         next = findViewById(R.id.next);
@@ -197,7 +166,7 @@ public class FillMeetInfoActivity extends AppCompatActivity {
         for (int i=0; i<defaultPageCount; i++){
             TextView textView = new TextView(this);
                 
-                if(i != 0){
+            if(i != 0){
                 layoutParams.setMarginStart(8);
                 textView.setText(R.string.circle_o);
             }else {
@@ -209,11 +178,8 @@ public class FillMeetInfoActivity extends AppCompatActivity {
             pageIndicator.addView(textView);
         }
 
-        if(mSituation != -1){
-            situationLayout.setVisibility(View.INVISIBLE);
-        }
-            
-            leftBack.setOnClickListener(new View.OnClickListener() {
+          
+        leftBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
@@ -239,51 +205,8 @@ public class FillMeetInfoActivity extends AppCompatActivity {
 
         selfCondition = new SelfCondition();
         partnerRequirement = new PartnerRequirement();
-                
-                handler = new Handler() {
-            public void handleMessage(Message msg) {
-                switch (msg.what) {
-                    case MSG_LOAD_INDUSTRY_DATA:
-                        if (threadIndustry == null){
-                            Slog.i(TAG,"行业数据开始解析");
-                            threadIndustry = new Thread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    initJsondata("industry.json", true);
-                                        
-                                        }
-                            });
-                            threadIndustry.start();
-                        }
-                        break;
-
-                    case MSG_LOAD_CITY_DATA:
-                        if (threadCity == null){
-                            Slog.i(TAG,"city数据开始解析");
-                            threadCity = new Thread(new Runnable() {
-                                
-                                    @Override
-                                    public void run() {
-                                    initJsondata("city.json", false);
-                                }
-                            });
-                            threadCity.start();
-                        }
-                        break;
-                                case MSG_LOAD_SUCCESS:
-                        Slog.i(TAG,"数据获取成功");
-                        //isLoaded = true;
-                        break;
-
-                    case MSG_LOAD_FAILED:
-                        Log.i(TAG,"数据获取失败");
-                        break;
-
-                }
-            }
-        };
-                
-                NiceSpinner niceSpinnerYears = (NiceSpinner) findViewById(R.id.nice_spinner_years);
+                        
+        NiceSpinner niceSpinnerYears = (NiceSpinner) findViewById(R.id.nice_spinner_years);
         final List<String> yearList = new LinkedList<>(Arrays.asList(years));
         niceSpinnerYears.attachDataSource(yearList);
         niceSpinnerYears.addOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -375,65 +298,8 @@ public class FillMeetInfoActivity extends AppCompatActivity {
                 HEIGHTSELECTED = true;
             }
         });
-                
-                
-                NiceSpinner niceSpinnerDegree = (NiceSpinner) findViewById(R.id.nice_spinner_degree);
-        final List<String> degreeList = new LinkedList<>(Arrays.asList(degrees));
-        niceSpinnerDegree.attachDataSource(degreeList);
-        niceSpinnerDegree.addOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                //Slog.e("什么数据",String.valueOf(yearList.get(i)));
-                //Toast.makeText(FillMeetInfoActivity.this, String.valueOf(degreeList.get(i)), Toast.LENGTH_SHORT).show();
-                selfCondition.setDegree(String.valueOf(degreeList.get(i)));
-                DEGREESELECTED = true;
-            }
-
-        });
-                
-                situationSelect.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                int id = group.getCheckedRadioButtonId();
-                if(id == R.id.radioStudent){
-                    mSituation = 0;
-                    if(studentLayout.getVisibility() == View.GONE){
-                        studentLayout.setVisibility(View.VISIBLE);
-                    }
-
-                    if(workLayout.getVisibility() != View.GONE){
-                        workLayout.setVisibility(View.GONE);
-                    }
-                }else {
-                    mSituation = 1;
-                        
-                        if(workLayout.getVisibility() == View.GONE){
-                        workLayout.setVisibility(View.VISIBLE);
-                    }
-
-                    if(studentLayout.getVisibility() != View.GONE){
-                        studentLayout.setVisibility(View.GONE);
-                    }
-
-                    handler.sendEmptyMessage(MSG_LOAD_INDUSTRY_DATA);
-                }
-
-                SITUATIONSELECTED = true;
-            }
-        });
-                
-                industryEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean b) {
-                if(b){
-                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(industryEditText.getWindowToken(),0);
-                    ShowPickerView(true);
-                }
-            }
-        });
-
-    }
+                                     
+       }
         
         private void pageNavigator(){
         next.setOnClickListener(new View.OnClickListener() {
@@ -448,18 +314,9 @@ public class FillMeetInfoActivity extends AppCompatActivity {
                     return;
                 }
                     
-                    if(currentPageIndex == defaultPageCount - 1){
+                if(currentPageIndex == defaultPageCount - 1){
                     if(!checkSelfInfo()) {
                         return;
-                    }else {
-                        selfCondition.setUniversity(universityEditText.getText().toString().replaceAll(" ",""));
-                        selfCondition.setSituation(mSituation);
-                        if(mSituation == 0){
-                            selfCondition.setMajor(majorEditText.getText().toString().replaceAll(" ",""));
-                        }else {
-                            selfCondition.setPosition(positionEditText.getText().toString().replaceAll(" ",""));
-                            selfCondition.setIndustry(industryEditText.getText().toString().replaceAll(" ",""));
-                        }
                     }
                 }
                     
@@ -470,7 +327,7 @@ public class FillMeetInfoActivity extends AppCompatActivity {
                 preIndicator.setText(R.string.circle_o);
                 //if (checkSelfInfo()) {
                 ++currentPageIndex;
-                Slog.d(TAG, "==================currentPageIndex: "+currentPageIndex);
+       
                 fillMeetInfoLayout.getChildAt(currentPageIndex).setVisibility(View.VISIBLE);
                 TextView indicator = (TextView)pageIndicator.getChildAt(currentPageIndex-1);
                 indicator.setText(R.string.circle);
@@ -485,7 +342,7 @@ public class FillMeetInfoActivity extends AppCompatActivity {
                     isEndPage = true;
                 }
                     
-                     }
+            }
 
         });
 
@@ -496,7 +353,7 @@ public class FillMeetInfoActivity extends AppCompatActivity {
                 TextView nextIndicator = (TextView)pageIndicator.getChildAt(currentPageIndex-1);
                 nextIndicator.setText(R.string.circle_o);
                 --currentPageIndex;
-                Slog.d(TAG, "==================currentPageIndex: "+currentPageIndex);
+                
                 fillMeetInfoLayout.getChildAt(currentPageIndex).setVisibility(View.VISIBLE);
                     
                     TextView indicator = (TextView)pageIndicator.getChildAt(currentPageIndex-1);
@@ -599,22 +456,55 @@ public class FillMeetInfoActivity extends AppCompatActivity {
             }
 
         });
+            
+        if (threadCity == null){
+            Slog.i(TAG,"city数据开始解析");
+            threadCity = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    initJsondata("city.json");
+                }
+            });
+            threadCity.start();
+        }
                 
-                requireRegionSelection.setOnClickListener(new View.OnClickListener() {
+        requireRegionSelection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Intent intent = new Intent(FillMeetInfoActivity.this, RegionSelectionActivity.class);
-                //startActivityForResult(intent, REQUIREREQUEST);
-                //if(isLoaded){
-                    ShowPickerView(false);
-                //}
+                showPickerView();
             }
         });
-
-        handler.sendEmptyMessage(MSG_LOAD_CITY_DATA);
     }
+    
+    private void initJsondata(String jsonFile){
+        CommonPickerView commonPickerView = new CommonPickerView();
+        provinceItems = commonPickerView.getOptionsMainItem(this, jsonFile);
+        cityItems = commonPickerView.getOptionsSubItems(provinceItems);
+    }
+    
+    private void showPickerView() {// 弹出行业选择器
+        //条件选择器
+        OptionsPickerView pvOptions= new OptionsPickerBuilder(this, new OnOptionsSelectListener() {
+
+            @Override
+            public void onOptionsSelect(int options1, int option2, int options3 ,View v) {
+                //返回的分别是二个级别的选中位置
+                String tx = provinceItems.get(options1).getPickerViewText()+" · "
+                        + cityItems.get(options1).get(option2);
+                requireRegionSelection.setText(tx);
+                String city = cityItems.get(options1).get(option2);
+                partnerRequirement.setRequirementLiving(city);
+                REQUIRELIVESELECTED = true;
+
+            }
+        }).build();
+
+        pvOptions.setPicker(provinceItems, cityItems);
+        pvOptions.show();
+    }
+    
         
-        private void saveMeetInfo(){
+    private void saveMeetInfo(){
 
         EditText editText = findViewById(R.id.illustration);
         if(!TextUtils.isEmpty(editText.getText().toString())){
@@ -648,27 +538,18 @@ public class FillMeetInfoActivity extends AppCompatActivity {
 
     }
         
-        private JSONObject getSelfConditionJsonObject() {
+    private JSONObject getSelfConditionJsonObject() {
         JSONObject jsonObject = new JSONObject();
         try {
             //jsonObject.put("sex", selfCondition.getSelfSex());
             jsonObject.put("birth_year", selfCondition.getBirthYear());
             jsonObject.put("constellation", selfCondition.getConstellation());
             jsonObject.put("height", selfCondition.getHeight());
-            jsonObject.put("degree", selfCondition.getDegreeIndex());
-            jsonObject.put("university", selfCondition.getUniversity());
+           
             jsonObject.put("hometown", selfCondition.getHometown());
             jsonObject.put("nation", selfCondition.getNation());
             jsonObject.put("religion", selfCondition.getReligion());
-            jsonObject.put("situation", selfCondition.getSituation());
-                
-                if(selfCondition.getSituation() == 0){
-                jsonObject.put("major", selfCondition.getMajor());
-            }else {
-                jsonObject.put("position", selfCondition.getPosition());
-                jsonObject.put("industry", selfCondition.getIndustry());
-            }
-
+                    
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -676,7 +557,7 @@ public class FillMeetInfoActivity extends AppCompatActivity {
         return jsonObject;
     }
         
-        private JSONObject getPartnerRequirementJsonObject() {
+    private JSONObject getPartnerRequirementJsonObject() {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("sex", partnerRequirement.getRequirementSex());
@@ -715,42 +596,6 @@ public class FillMeetInfoActivity extends AppCompatActivity {
             return false;
         }
 
-        if (DEGREESELECTED == false) {
-            Toast.makeText(FillMeetInfoActivity.this, "请选择学历", Toast.LENGTH_LONG).show();
-            return false;
-        }
-
-        if(TextUtils.isEmpty(universityEditText.getText().toString())){
-            universityInputLayout.setError(getResources().getString(R.string.university_empty));
-            return false;
-        }
-                 
-                 if(mSituation == -1){
-            if(SITUATIONSELECTED == true){
-                if(mSituation == 0){
-                    if(TextUtils.isEmpty(majorEditText.getText().toString())){
-                        majorInputLayout.setError(getResources().getString(R.string.major_empty));
-                        return false;
-                    }
-                }else {
-                    if(TextUtils.isEmpty(positionEditText.getText().toString())){
-                        positionInputLayout.setError(getResources().getString(R.string.profession_empty));
-                        return false;
-                    }
-                        
-                        if(TextUtils.isEmpty(industryEditText.getText().toString())){
-                        industryInputLayout.setError(getResources().getString(R.string.industry_empty));
-                        return false;
-                    }
-                }
-            }else {
-
-                Toast.makeText(FillMeetInfoActivity.this, "请选择当前状态", Toast.LENGTH_LONG).show();
-                return false;
-
-            }
-        }
-
         return true;
     }
         
@@ -783,64 +628,5 @@ public class FillMeetInfoActivity extends AppCompatActivity {
 
         return true;
     }
-        
-        private void initJsondata(String jsonFile, boolean isIndustry){
-        CommonPickerView commonPickerView = new CommonPickerView();
-        if(isIndustry == true){
-            Slog.d(TAG, "=========industry json file: "+jsonFile);
-            industryMainItems = commonPickerView.getOptionsMainItem(this, jsonFile);
-            industrySubItems = commonPickerView.getOptionsSubItems(industryMainItems);
-        }else {
-            Slog.d(TAG, "=========city json file: "+jsonFile);
-            provinceItems = commonPickerView.getOptionsMainItem(this, jsonFile);
-            cityItems = commonPickerView.getOptionsSubItems(provinceItems);
-        }
-
-        handler.sendEmptyMessage(MSG_LOAD_SUCCESS);
-    }
-        
-         private void ShowPickerView(boolean isIndustry) {// 弹出行业选择器
-
-        //条件选择器
-        OptionsPickerView pvOptions;
-        if(isIndustry){
-            pvOptions= new OptionsPickerBuilder(FillMeetInfoActivity.this, new OnOptionsSelectListener() {
-
-                @Override
-                public void onOptionsSelect(int options1, int option2, int options3 ,View v) {
-                    //返回的分别是二个级别的选中位置
-                    String tx = industryMainItems.get(options1).getPickerViewText()
-                            + industrySubItems.get(options1).get(option2);
-                    industryEditText.setText(industrySubItems.get(options1).get(option2));
-                    selfCondition.setIndustry(industrySubItems.get(options1).get(option2));
-
-                    INDUSTRYSELECTED = true;
-                        
-                        }
-            }).build();
-
-            pvOptions.setPicker(industryMainItems, industrySubItems);
-        }else {
-            pvOptions= new OptionsPickerBuilder(this, new OnOptionsSelectListener() {
-
-                @Override
-                public void onOptionsSelect(int options1, int option2, int options3 ,View v) {
-                    //返回的分别是二个级别的选中位置
-                    String tx = provinceItems.get(options1).getPickerViewText()+" · "
-                            + cityItems.get(options1).get(option2);
-                    requireRegionSelection.setText(tx);
-                    String city = cityItems.get(options1).get(option2);
-                    partnerRequirement.setRequirementLiving(city);
-                    REQUIRELIVESELECTED = true;
-                        
-                        }
-            }).build();
-
-            pvOptions.setPicker(provinceItems, cityItems);
-        }
-
-        pvOptions.show();
-
-    }
-
+      
 }
