@@ -69,6 +69,7 @@ public class FillMeetInfoActivity extends AppCompatActivity {
     String[] nations;
     String[] religions;
     String[] heights;
+    String[] degrees;
     
     String[] ages;
 
