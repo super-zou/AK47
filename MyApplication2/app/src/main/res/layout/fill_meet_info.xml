@@ -132,7 +132,7 @@
                 android:entries="@array/religions"/>
         </LinearLayout>
     </LinearLayout>
-    <!-------requirement-->
+    <!--requirement-->
     <LinearLayout
         android:orientation="vertical"
         android:id="@+id/requirement"
