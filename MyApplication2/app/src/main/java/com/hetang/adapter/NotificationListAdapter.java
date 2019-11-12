@@ -78,7 +78,8 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
     private static final int PROCESSED = 1;
     private static final int IGNORED = -1;
     private static final int UPDATE_PROCESS_BUTTON_STATUS = 0;
-
+    private static final int NOT_SHOWED = 0;
+    private static final int SHOWED = 1;
     private Handler mHandler;
     
     public NotificationListAdapter(Context context) {
@@ -129,7 +130,9 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
                 case APPROVE_IMPRESSION_ACTION:
                 case APPROVE_PERSONALITY_ACTION:
                 case JOIN_CHEERING_GROUP_ACTION:
-                    showNotification(notification);
+                    if (notification.showed == NOT_SHOWED){
+                        showNotification(notification);
+                    }
                     break;
             }
         }else {
@@ -355,6 +358,28 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
                     .build();
             notificationManager.notify(1, notification);
         }
+        
+        markNotificationShowed(NF.nid);
+    }
+    
+    private void markNotificationShowed(int nid){
+        RequestBody requestBody = new FormBody.Builder()
+                .add("nid", String.valueOf(nid))
+                .add("showed", String.valueOf(SHOWED))
+                .build();
+        HttpUtil.sendOkHttpRequest(MyApplication.getContext(), NotificationFragment.NOTICE_PROCESS_URL, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if(response != null){
+                    String responseText = response.body().string();
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Slog.e(TAG, "onFailure e:" + e);
+            }
+        });
     }
     
     private void approveAction(NotificationFragment.Notification notification){
