@@ -114,6 +114,7 @@ private Context mContext;
         public long timeStamp;
         public int id;
         public int processed;//default 0 unprocessed, 1 processed, -1 ignored
+        public int showed;//default 0 not show notification, 1 had showed
     }
     
     @Nullable
@@ -138,8 +139,6 @@ private Context mContext;
         runnable = new Runnable() {
             @Override
             public void run() {
-                i++;
-                //Slog.d(TAG, "-------------------------------->run: "+i);
                 updateData();
                 //要执行的事件
                 handler.postDelayed(this, 60*1000);
@@ -379,7 +378,7 @@ private Context mContext;
         notification.timeStamp = noticeObject.optInt("timestamp");
         notification.id = noticeObject.optInt("id");
         notification.processed = noticeObject.optInt("processed");
-
+        notification.showed = noticeObject.optInt("showed");
         return notification;
     }
 
