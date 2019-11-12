@@ -84,7 +84,8 @@ public class HomeFragment extends BaseFragment {
     private static final boolean isDebug = true;
     private static final String TAG = "HomeFragment";
     private static final int PAGE_SIZE = 6;
-    private static final String GET_HOME_RECOMMEND_PERSON_URL = HttpUtil.DOMAIN + "?q=contacts/home_recommend_person";
+    public static final int DEFAULT_RECOMMEND_COUNT = 8;
+    public static final String GET_HOME_RECOMMEND_PERSON_URL = HttpUtil.DOMAIN + "?q=contacts/home_recommend_person";
     private static final String GET_RECOMMEND_SINGLE_GROUP_URL = HttpUtil.DOMAIN + "?q=single_group/get_all";
     public static final String LOAD_CONCERNED_DYNAMICS_URL = HttpUtil.DOMAIN + "?q=dynamic/load_concerned";
     public static final String GET_UPDATE_CONCERNED_DYNAMICS_URL = HttpUtil.DOMAIN + "?q=dynamic/get_update_concerned";
@@ -102,9 +103,9 @@ public class HomeFragment extends BaseFragment {
     private List<UserProfile> contactsList = new ArrayList<>();
     private List<MeetSingleGroupFragment.SingleGroup> mSingleGroupList = new ArrayList<>();
     
-    private static final int GET_RECOMMEND_MEMBER_DONE = 6;
+    public static final int GET_RECOMMEND_MEMBER_DONE = 6;
     private static final int GET_RECOMMEND_SINGLE_GROUP_DONE = 7;
-    private static final int NO_RECOMMEND_MEMBER_DONE = 8;
+    public static final int NO_RECOMMEND_MEMBER_DONE = 8;
     public static final int GET_MY_NEW_ADD_DONE = 11;
 
     RequestBody requestBody = null;
@@ -244,7 +245,7 @@ public class HomeFragment extends BaseFragment {
             }
         },50);
         
-        //getRecommendInfo();
+        getRecommendInfo();
 
         registerLoginBroadcast();
 
@@ -254,7 +255,9 @@ public class HomeFragment extends BaseFragment {
     }
     
     private void getRecommendInfo(){
-        RequestBody requestBody = new FormBody.Builder().build();
+        RequestBody requestBody = new FormBody.Builder()            
+                .add("step", String.valueOf(DEFAULT_RECOMMEND_COUNT))
+                .add("page", String.valueOf(0)).build();;
         HttpUtil.sendOkHttpRequest(getContext(), GET_HOME_RECOMMEND_PERSON_URL, requestBody, new Callback() {
 
             @Override
@@ -649,9 +652,11 @@ public class HomeFragment extends BaseFragment {
             LinearLayout work = view.findViewById(R.id.work);
             if (userProfile.getSituation() == 0){
                 TextView degree = view.findViewById(R.id.degree);
+                TextView major = view.findViewById(R.id.major);
                 TextView university = view.findViewById(R.id.university);
 
                 degree.setText(userProfile.getDegreeName(userProfile.getDegree()));
+                 major.setText(userProfile.getMajor());
                 university.setText(userProfile.getUniversity());
                 }else {
                 if (education.getVisibility() == View.VISIBLE){
@@ -1049,10 +1054,10 @@ public class HomeFragment extends BaseFragment {
         switch (message.what){
             case GET_RECOMMEND_MEMBER_DONE:
                 setRecommendContactsView();
-                getRecommendSingleGroup();
+                //getRecommendSingleGroup();
                 break;
            case NO_RECOMMEND_MEMBER_DONE:
-                getRecommendSingleGroup();
+                //getRecommendSingleGroup();
                 break;
             case GET_RECOMMEND_SINGLE_GROUP_DONE:
                 setRecommendSingleGroupView();
