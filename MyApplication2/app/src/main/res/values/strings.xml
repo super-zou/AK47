@@ -35,8 +35,8 @@
     <string name="approve">认可</string>
     <string name="approved">已同意</string>
     <string name="back">返回</string>
-    <string name="look_friend">+我要征友</string>
-    <string name="look_friend_notice">发布征友信息，平台优先、精准推荐</string>
+    <string name="look_friend">+我要脱单</string>
+    <string name="look_friend_notice">写下你的要求，为你推荐合适人选</string>
 
     <!--+Begin: relations, add by zouhaichao 2018.11.27-->
     <string name="classmate">同学</string>
