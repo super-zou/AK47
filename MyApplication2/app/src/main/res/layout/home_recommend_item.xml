@@ -30,7 +30,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:text="name"
             app:layout_constraintEnd_toEndOf="parent"
@@ -42,7 +42,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:orientation="vertical"
@@ -60,17 +60,28 @@
                 android:gravity="center_horizontal"
                 android:maxEms="10"
                 android:singleLine="true"
-                android:text="education" />
+                android:text="degree" />
                 
-                 <TextView
+            <TextView
+                android:id="@+id/major"
+                style="@style/TextAppearance.AppCompat.Body1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:gravity="center_horizontal"
+                android:maxEms="10"
+                android:singleLine="true"
+                android:text="major" />
+                
+            <TextView
                 android:id="@+id/university"
                 style="@style/TextAppearance.AppCompat.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
                 android:ellipsize="end"
                 android:gravity="center_horizontal"
                 android:maxEms="10"
+                android:text="university"
                 android:singleLine="true" />
         </LinearLayout>
         
