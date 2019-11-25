@@ -35,8 +35,8 @@
     <string name="approve">认可</string>
     <string name="approved">已同意</string>
     <string name="back">返回</string>
-    <string name="look_friend">+我要脱单</string>
-    <string name="look_friend_notice">写下你的要求，为你推荐合适人选</string>
+    <string name="look_friend">+我要交友</string>
+    <string name="look_friend_notice">写下你的交友要求</string>
 
     <!--+Begin: relations, add by zouhaichao 2018.11.27-->
     <string name="classmate">同学</string>
@@ -66,15 +66,15 @@
     <!--+Begin: add for archive, by zouhaichao 2018.12.6-->
     <string name="recommend">推荐</string>
     <string name="dynamics">动态</string>
-    <string name="single_group">单身团</string>
+    <string name="single_group">交友团</string>
     <string name="discovery">发现</string>
     <string name="interesting_person">推荐感兴趣的人</string>
-    <string name="interesting_group">推荐单身团</string>
-    <string name="create_single_group">创建单身团</string>
+    <string name="interesting_group">推荐交友团</string>
+    <string name="create_single_group">创建交友团</string>
     <string name="single_group_name_label">团名</string>
-    <string name="single_group_name_hint">单身团名字</string>
+    <string name="single_group_name_hint">交友团名字</string>
     <string name="introduction_label">简介</string>
-    <string name="introduction_hint">介绍一下你创建的单身团</string>
+    <string name="introduction_hint">介绍一下你创建的交友团</string>
     <string name="org_label">组织</string>
     <string name="org_hint">你所在的组织名称</string>
     <!--+End: add for archive, by zouhaichao 2018.12.6-->
