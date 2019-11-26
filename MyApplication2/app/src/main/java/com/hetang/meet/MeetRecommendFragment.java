@@ -200,6 +200,9 @@ public class MeetRecommendFragment extends BaseFragment {
             @Override
             public void onDynamicPictureClick(View view, int position, String[] pictureUrlArray, int index){
             }
+            
+            @Override
+            public void onOperationClick(View view, int position){}
         });
         
         recyclerView.setAdapter(meetRecommendListAdapter);
