@@ -62,7 +62,7 @@ public class AddPictureActivity extends BaseAppCompatActivity {
     private Map<String, String> dynamicsText = new HashMap<>();
     private GridImageAdapter.onAddPicClickListener onAddPicClickListener;
     
-    public static final String ADD_PICTURE_BROADCAST = "com.tongmenhui.action.PICTURE_ADD";
+    public static final String ADD_PICTURE_BROADCAST = "com.hetang.action.PICTURE_ADD";
     //private ProgressDialog progressDialog;
 
     @Override
