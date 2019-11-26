@@ -36,7 +36,7 @@
     <string name="approved">已同意</string>
     <string name="back">返回</string>
     <string name="look_friend">+我要交友</string>
-    <string name="look_friend_notice">写下你的交友要求</string>
+    <string name="look_friend_notice">写下你的交友要求，为你推荐合适人选</string>
 
     <!--+Begin: relations, add by zouhaichao 2018.11.27-->
     <string name="classmate">同学</string>
@@ -79,6 +79,7 @@
     <string name="org_hint">你所在的组织名称</string>
     <!--+End: add for archive, by zouhaichao 2018.12.6-->
     <string name="dot">" · "</string>
+    <string name="operation">"···"</string>
     <string name="dot_student">" · 学生"</string>
     <string name="group_leader">团长</string>
     <string name="join_group">+申请加入</string>
@@ -224,4 +225,5 @@
     <string name="no_new_version">当前已是最新版本</string>
     <string name="checking">正在检查新版本</string>
     <string name="beta">Beta版本</string>
+    <string name="delete_query_text">确认删除该动态吗？</string>
 </resources>
