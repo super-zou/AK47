@@ -177,6 +177,13 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
                 mContext.startActivity(intent);
             }
         });
+        
+        holder.operation.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View view) {
+                interActInterface.onOperationClick(view, position);
+             }
+         });
     }
 
     public static void setDynamicContent(MeetDynamicsViewHolder holder, Dynamic dynamic, int position){
@@ -402,6 +409,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
         TextView dynamicsPraiseCount;
         TextView dynamicsPraise;
         TextView dynamicsComment;
+        TextView operation;
         GridLayout dynamicsGrid;
         LinearLayout commentList;
         LinearLayout contentMeta;
@@ -420,6 +428,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
             dynamicsPraise = (TextView) view.findViewById(R.id.dynamic_praise);
             dynamicsComment = (TextView) view.findViewById(R.id.dynamic_comment);
             contentMeta = view.findViewById(R.id.dynamics_content_meta);
+            operation = view.findViewById(R.id.operation);
 
             Typeface font = Typeface.createFromAsset(mContext.getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
             FontManager.markAsIconContainer(view.findViewById(R.id.meet_dynamics_item), font);
