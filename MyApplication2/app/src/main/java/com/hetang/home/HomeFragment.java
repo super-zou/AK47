@@ -221,6 +221,9 @@ public class HomeFragment extends BaseFragment {
                 pictureReviewDialogFragment.setArguments(bundle);
                 pictureReviewDialogFragment.show(getFragmentManager(), "PictureReviewDialogFragment");
             }
+            
+            @Override
+            public void onOperationClick(View view, int position){}
 
         });
 
