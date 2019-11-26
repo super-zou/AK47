@@ -178,12 +178,17 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
             }
         });
         
-        holder.operation.setOnClickListener(new View.OnClickListener() {
-             @Override
-             public void onClick(View view) {
-                interActInterface.onOperationClick(view, position);
-             }
-         });
+         if (dynamic.getAuthorSelf() == true){
+             holder.operation.setVisibility(View.VISIBLE);
+             holder.operation.setOnClickListener(new View.OnClickListener() {
+                 @Override
+                 public void onClick(View view) {
+                     interActInterface.onOperationClick(view, position);
+                 }
+             });
+         }else {
+             holder.operation.setVisibility(View.GONE);
+         }
     }
 
     public static void setDynamicContent(MeetDynamicsViewHolder holder, Dynamic dynamic, int position){
