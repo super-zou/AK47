@@ -25,6 +25,7 @@ import com.hetang.common.DynamicsInteractDetailsActivity;
 import com.hetang.home.HomeFragment;
 import com.hetang.util.BaseFragment;
 import com.hetang.util.CommonUserListDialogFragment;
+import com.hetang.util.DynamicOperationDialogFragment;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.InterActInterface;
 import com.hetang.common.MyApplication;
@@ -76,9 +77,10 @@ public class MeetDynamicsFragment extends BaseFragment {
     public static final int PRAISE_UPDATE = 6;
     public static final int LOVE_UPDATE = 7;
     public static final int MY_COMMENT_COUNT_UPDATE = 8;
-    public static final int MY_PRAISE_UPDATE = 9;
+    public static final int DYNAMICS_DELETE = 9;
     public static final int MY_LOVE_UPDATE = 10;
     
+    public static final String DYNAMICS_DELETE_BROADCAST = "com.hetang.action.DYNAMICS_DELETE";
     public static final String GET_DYNAMICS_URL = HttpUtil.DOMAIN + "?q=dynamic/action/get";
     public static final String GET_DYNAMICS_UPDATE_URL = HttpUtil.DOMAIN + "?q=dynamic/action/update";
     public static final String REQUEST_INTERACT_URL = HttpUtil.DOMAIN + "?q=dynamic/interact/get";
@@ -200,6 +202,16 @@ public class MeetDynamicsFragment extends BaseFragment {
                 PictureReviewDialogFragment pictureReviewDialogFragment = new PictureReviewDialogFragment();
                 pictureReviewDialogFragment.setArguments(bundle);
                 pictureReviewDialogFragment.show(getFragmentManager(), "PictureReviewDialogFragment");
+            }
+            
+            @Override
+            public void onOperationClick(View view, int position){
+                Bundle bundle = new Bundle();
+                bundle.putLong("did", meetList.get(position).getDid());
+                currentPos = position;
+                DynamicOperationDialogFragment dynamicOperationDialogFragment = new DynamicOperationDialogFragment();
+                dynamicOperationDialogFragment.setArguments(bundle);
+                dynamicOperationDialogFragment.show(getFragmentManager(), "DynamicOperationDialogFragment");
             }
 
         });
@@ -558,6 +570,12 @@ public class MeetDynamicsFragment extends BaseFragment {
                 meetDynamicsListAdapter.notifyDataSetChanged();
                 recyclerView.refreshComplete();
                 break;
+            case DYNAMICS_DELETE:
+                meetList.remove(currentPos);
+                meetDynamicsListAdapter.setData(meetList);
+                meetDynamicsListAdapter.notifyItemRemoved(currentPos);
+                meetDynamicsListAdapter.notifyDataSetChanged();
+                break;
             default:
                 break;
         }
@@ -643,6 +661,7 @@ public class MeetDynamicsFragment extends BaseFragment {
     private void registerLoginBroadcast() {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(AddDynamicsActivity.DYNAMICS_ADD_BROADCAST);
+        intentFilter.addAction(DYNAMICS_DELETE_BROADCAST);
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, intentFilter);
     }
 
@@ -675,6 +694,9 @@ public class MeetDynamicsFragment extends BaseFragment {
                 case AddDynamicsActivity.DYNAMICS_ADD_BROADCAST:
                     if (isDebug)  Slog.d(TAG, "==========DYNAMICS_ADD_BROADCAST");
                     updateData();
+                    break;
+                case DYNAMICS_DELETE_BROADCAST:
+                    handler.sendEmptyMessage(DYNAMICS_DELETE);
                     break;
                 default:
                     break;
