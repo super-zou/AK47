@@ -370,7 +370,12 @@ public class MeetDynamicsFragment extends BaseFragment {
         dynamic.setUid(dynamicJSONObject.optInt("uid"));
 
         dynamic.setAvatar(dynamicJSONObject.optString("avatar"));
-
+        
+        int authorUid = SharedPreferencesUtils.getSessionUid(MyApplication.getContext());
+        if (authorUid == dynamicJSONObject.optInt("uid")){
+            dynamic.setAuthorSelf(true);
+        }
+        
         if (!dynamicJSONObject.isNull("sex")){
             dynamic.setSex(dynamicJSONObject.optInt("sex"));
         }
