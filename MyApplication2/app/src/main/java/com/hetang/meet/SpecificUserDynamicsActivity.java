@@ -192,6 +192,9 @@ public class SpecificUserDynamicsActivity extends BaseAppCompatActivity implemen
                 pictureReviewDialogFragment.setArguments(bundle);
                 pictureReviewDialogFragment.show(getSupportFragmentManager(), "PictureReviewDialogFragment");
             }
+            
+            @Override
+            public void onOperationClick(View view, int position){}
 
         });
 
