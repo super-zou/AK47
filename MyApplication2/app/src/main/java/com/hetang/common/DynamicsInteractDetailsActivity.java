@@ -278,6 +278,9 @@ public class DynamicsInteractDetailsActivity extends BaseAppCompatActivity imple
 
                     @Override
                     public void onDynamicPictureClick(View view, int position, String[] pictureUrlArray, int index){}
+            
+                    @Override
+                    public void onOperationClick(View view, int position){}
 
                 });
 
