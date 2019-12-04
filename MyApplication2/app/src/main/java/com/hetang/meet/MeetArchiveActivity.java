@@ -1909,7 +1909,7 @@ private void updateLovedCount() {
         if (praisedCount.getText().toString().length() == 0) {
             newPraisedCount = 1;
         } else {
-            newPraisedCount = Integer.parseInt(praisedCount.getText().toString()) + 1;
+            newPraisedCount = Integer.parseInt(praisedCount.getText().toString());
         }
         praisedCount.setText(String.valueOf(newPraisedCount));
         praisedIcon.setText(getResources().getText(R.string.fa_thumbs_up));

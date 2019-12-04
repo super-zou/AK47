@@ -204,8 +204,8 @@ public class SingleGroupDetailsActivity extends BaseAppCompatActivity implements
 
         living.setText(singleGroup.leader.getLiving().toString().trim());
 
-        TextView groupName = findViewById(R.id.group_name);
-        groupName.setText(singleGroup.groupName);
+        //TextView groupName = findViewById(R.id.group_name);
+        //groupName.setText(singleGroup.groupName);
         
         TextView memberCountView = findViewById(R.id.member_count);
 
