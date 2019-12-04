@@ -11,6 +11,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 import android.widget.TextView;
 
+import com.hetang.common.BaseAppCompatActivity;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.UserProfile;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
@@ -38,7 +39,7 @@ import okhttp3.Response;
 import static com.hetang.main.ContactsFragment.CONTACTS_DEFAULT;
 import static com.hetang.main.ContactsFragment.CONTACTS_NEW_APPLY;
 
-public class ContactsApplyListActivity extends AppCompatActivity {
+public class ContactsApplyListActivity extends BaseAppCompatActivity {
 
     private static final String TAG = "ContactsApplyListActivity";
     MeetArchiveActivity.ImpressionStatistics impressionStatistics = null;

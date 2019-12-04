@@ -4,8 +4,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.hetang.R;
+import com.hetang.common.BaseAppCompatActivity;
 
-public class CitySelectActivity extends AppCompatActivity {
+public class CitySelectActivity extends BaseAppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

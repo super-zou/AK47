@@ -37,6 +37,7 @@ import com.bigkoo.pickerview.builder.OptionsPickerBuilder;
 import com.bigkoo.pickerview.listener.OnOptionsSelectListener;
 import com.bigkoo.pickerview.view.OptionsPickerView;
 import com.hetang.R;
+import com.hetang.common.BaseAppCompatActivity;
 import com.hetang.common.HandlerTemp;
 import com.hetang.util.CommonBean;
 import com.hetang.util.CommonPickerView;
@@ -69,7 +70,7 @@ import static com.hetang.util.SharedPreferencesUtils.setName;
 import static com.hetang.util.SharedPreferencesUtils.setPassWord;
 import static com.hetang.util.SharedPreferencesUtils.setYunXinAccount;
 
-public class CreateNewUser extends AppCompatActivity {
+public class CreateNewUser extends BaseAppCompatActivity {
     private static final String TAG = "CreateNewUser";
 
     private static final String CREATE_USER_URL = HttpUtil.DOMAIN + "?q=account_manager/create_user";

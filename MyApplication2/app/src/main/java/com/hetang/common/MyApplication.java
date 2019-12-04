@@ -39,6 +39,8 @@ import com.hetang.R;
 import com.hetang.main.MainActivity;
 import com.hetang.meet.MeetArchiveActivity;
 import com.hetang.update.OkHttpUpdateService;
+import com.umeng.analytics.MobclickAgent;
+import com.umeng.commonsdk.UMConfigure;
 import com.xiaomi.channel.commonutils.logger.LoggerInterface;
 import com.xiaomi.mipush.sdk.Logger;
 import com.xiaomi.mipush.sdk.MiPushClient;
@@ -82,6 +84,9 @@ public class MyApplication extends Application {
     public static final String APP_ID = "2882303761517916663";
     public static final String APP_KEY = "5261791687663";
     //-End added by xuchunping for MI push
+
+    //umeng
+    private static final String UMENG_APPKEY = "5de7c0350cafb2d526000a93";
 
     private static Context mContext;
     private Handler handler;
@@ -179,6 +184,10 @@ public class MyApplication extends Application {
 
         EmojiCompat.Config config = new BundledEmojiCompatConfig(this);
         EmojiCompat.init(config);
+
+        //umeng
+        UMConfigure.init(this, UMENG_APPKEY, "Umeng", UMConfigure.DEVICE_TYPE_PHONE, null);
+        MobclickAgent.setPageCollectionMode(MobclickAgent.PageMode.LEGACY_AUTO);
     }
     
     //+Begin added by xuchunping for MI push

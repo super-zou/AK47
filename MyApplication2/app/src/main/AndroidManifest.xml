@@ -9,7 +9,7 @@
     <uses-permission android:name="android.permission.CAMERA" /> <!-- Begin: MI push -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- 用于访问GPS定位 -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission." />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.GET_TASKS" />
@@ -22,6 +22,9 @@
     <uses-permission android:name="android.permission.DOWNLOAD_WITH_NOTIFICATION"/>
     <!--DownloadManager-->
     <uses-permission android:name="android.permission.ACCESS_DOWNLOAD_MANAGER"/>
+
+    <!-- umeng -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <permission
         android:name="com.hetang.permission.MIPUSH_RECEIVE"

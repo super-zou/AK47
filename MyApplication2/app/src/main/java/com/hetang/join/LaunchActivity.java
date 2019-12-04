@@ -16,6 +16,7 @@ import android.widget.Toast;
 import android.view.WindowManager;
 
 import com.hetang.R;
+import com.hetang.common.BaseAppCompatActivity;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.Slog;
 
@@ -34,7 +35,7 @@ import static com.hetang.util.SharedPreferencesUtils.getYunXinToken;
 import static com.hetang.util.SharedPreferencesUtils.setYunXinAccount;
 import static com.hetang.util.SharedPreferencesUtils.setYunXinToken;
 
-public class LaunchActivity extends AppCompatActivity {
+public class LaunchActivity extends BaseAppCompatActivity {
     private static final String TAG = "LaunchActivity";
     //private static final String domain = "http://112.126.83.127:81";
     private static final String TOKEN_URL = HttpUtil.DOMAIN + "?q=rest_services/user/token";

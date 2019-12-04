@@ -30,6 +30,7 @@ import com.bigkoo.pickerview.listener.OnOptionsSelectListener;
 import com.bigkoo.pickerview.view.OptionsPickerView;
 import com.hetang.common.AddPictureActivity;
 import com.hetang.R;
+import com.hetang.common.BaseAppCompatActivity;
 import com.hetang.util.CommonPickerView;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
@@ -55,7 +56,7 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class FillMeetInfoActivity extends AppCompatActivity {
+public class FillMeetInfoActivity extends BaseAppCompatActivity {
     private static final String TAG = "FillMeetInfoActivity";
     private static final String FILL_MEET_INFO_URL = HttpUtil.DOMAIN +"?q=meet/look_friend";
 

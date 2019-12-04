@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
+import com.umeng.analytics.MobclickAgent;
+
 /**
  * added by xuchunping 2018.7.19
  * 处理公共操作，如全局对话框、进度条、Toast等
@@ -21,11 +23,15 @@ import android.widget.Toast;
     @Override
     protected void onResume() {
         super.onResume();
+        //umeng
+        MobclickAgent.onResume(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        //umeng
+        MobclickAgent.onPause(this);
     }
     
     @Override

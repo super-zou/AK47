@@ -3,6 +3,7 @@ package com.hetang.region.activity;
 import android.content.res.AssetManager;
 import android.support.v7.app.AppCompatActivity;
 
+import com.hetang.common.BaseAppCompatActivity;
 import com.hetang.region.model.CityModel;
 import com.hetang.region.model.DistrictModel;
 import com.hetang.region.model.ProvinceModel;
@@ -16,7 +17,7 @@ import java.util.Map;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-public class BaseActivity extends AppCompatActivity {
+public class BaseActivity extends BaseAppCompatActivity {
 
     /**
      * 所有省
