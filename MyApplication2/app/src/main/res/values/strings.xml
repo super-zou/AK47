@@ -7,7 +7,7 @@
     <string name="title_activity_login">Login</string>
     <string name="app_name">荷塘</string>
     <string name="logo_name">荷塘</string>
-    <string name="slogan">爱如初见 · 怦然心动</string>
+    <string name="slogan">荷你相遇 · 美好开始</string>
     <string name="meet_text">遇见</string>
     <string name="activity_text">活动</string>
     <string name="archive_text">我</string>
@@ -104,8 +104,7 @@
     <string name="login_failed">密码失败</string>
     <string name="logining_progress">正在登陆…</string>
     <string name="saving_progress">正在保存…</string>
-    <string name="hetang_introduction">了解一个人，光有眼缘是不够的，才华、品格、性情等内在素养更重要。
-        荷塘能让你由外至内全方位地了解一个人，也能让你充分展示自己，遇见对的人。</string>
+    <string name="hetang_introduction">各种有趣的联盟，各种新奇的联谊．遇见爱，遇见更好的自己。</string>
     <string name="join">加入</string>
     <string name="confirm">确认</string>
     <string name="or">或</string>

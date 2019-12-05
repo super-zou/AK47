@@ -64,7 +64,7 @@ import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 public class MeetDynamicsFragment extends BaseFragment {
 
     public static final int REQUEST_CODE = 1;
-    private static final boolean isDebug = false;
+    private static final boolean isDebug = true;
     private static final String TAG = "MeetDynamicsFragment";
     public static final int MEET_DYNAMICS = 0;
     private static final int PAGE_SIZE = 6;
@@ -352,9 +352,12 @@ public class MeetDynamicsFragment extends BaseFragment {
 
         for (int i = 0; i < length; i++) {
             JSONObject dynamicJSONObject = dynamicsArray.optJSONObject(i);
-            Dynamic dynamic = setMeetDynamics(dynamicJSONObject);
-            setDynamicsInteract(dynamic, handler);
-            tempList.add(dynamic);
+            if (dynamicJSONObject != null){
+                Dynamic dynamic = setMeetDynamics(dynamicJSONObject);
+                setDynamicsInteract(dynamic, handler);
+                tempList.add(dynamic);
+            }
+
         }
 
         return tempList;
@@ -643,11 +646,13 @@ public class MeetDynamicsFragment extends BaseFragment {
                             }catch (JSONException e){
                             e.printStackTrace();
                         }
-                        Dynamic dynamic = setMeetDynamics(dynamicJSONObject);
-                        if (null != dynamic) {
-                            //dynamicList.clear();
-                            meetList.add(0, dynamic);
-                            handler.sendEmptyMessage(GET_MY_NEW_ADD_DONE);
+                        if (dynamicJSONObject != null){
+                            Dynamic dynamic = setMeetDynamics(dynamicJSONObject);
+                            if (null != dynamic) {
+                                //dynamicList.clear();
+                                meetList.add(0, dynamic);
+                                handler.sendEmptyMessage(GET_MY_NEW_ADD_DONE);
+                            }
                         }
                     }
                 }

@@ -394,8 +394,12 @@ public class HomeFragment extends BaseFragment {
             if (meetDynamicsFragment == null){
                 meetDynamicsFragment = new MeetDynamicsFragment();
             }
-            
-            Dynamic dynamic = meetDynamicsFragment.setMeetDynamics(dynamicJSONObject);
+            Dynamic dynamic;
+            if (dynamicJSONObject != null){
+                 dynamic = meetDynamicsFragment.setMeetDynamics(dynamicJSONObject);
+            }else {
+                return null;
+            }
 
             switch (dynamic.getType()){
                 case ParseUtils.PRAISE_DYNAMIC_ACTION:
@@ -524,12 +528,15 @@ public class HomeFragment extends BaseFragment {
                         }catch (JSONException e){
                             e.printStackTrace();
                         }
-                        Dynamic dynamic = meetDynamicsFragment.setMeetDynamics(dynamicJSONObject);
-                        if (null != dynamic) {
-                            //dynamicList.clear();
-                            dynamicList.add(0, dynamic);
-                            handler.sendEmptyMessage(GET_MY_NEW_ADD_DONE);
+                        if (dynamicJSONObject != null){
+                            Dynamic dynamic = meetDynamicsFragment.setMeetDynamics(dynamicJSONObject);
+                            if (null != dynamic) {
+                                //dynamicList.clear();
+                                dynamicList.add(0, dynamic);
+                                handler.sendEmptyMessage(GET_MY_NEW_ADD_DONE);
+                            }
                         }
+
                     }
                 }
             }
@@ -785,9 +792,11 @@ public class HomeFragment extends BaseFragment {
                 String responseText = response.body().string();
                 if (!TextUtils.isEmpty(responseText)) {
                     JSONObject relatedContentJSONObject = new JSONObject(responseText).optJSONObject("dynamic");
-                    dynamic.relatedContent = new Dynamic();
-                    dynamic.relatedContent = meetDynamicsFragment.setMeetDynamics(relatedContentJSONObject);
-                    meetDynamicsFragment.setDynamicsInteract(dynamic.relatedContent);
+                    if (relatedContentJSONObject != null){
+                        dynamic.relatedContent = new Dynamic();
+                        dynamic.relatedContent = meetDynamicsFragment.setMeetDynamics(relatedContentJSONObject);
+                        meetDynamicsFragment.setDynamicsInteract(dynamic.relatedContent);
+                    }
                 }
             } catch (JSONException e) {
                 e.printStackTrace();

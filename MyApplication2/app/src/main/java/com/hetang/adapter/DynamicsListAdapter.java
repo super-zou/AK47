@@ -187,12 +187,14 @@ import static com.hetang.util.ParseUtils.startMeetArchiveActivity;
         if (isDebug) Slog.d(TAG, "-------->onBindViewHolder position: "+position);
         
         final Dynamic dynamic = dynamicList.get(position);
-        setAuthorProfile(holder.authorProfileVH, dynamic);
-        setRelatedContentView(holder, dynamic, position);
-        holder.relativeContentWrapper.setBackgroundColor(mContext.getResources().getColor(R.color.color_disabled));
-        holder.dynamicViewHolder.meetDynamicsViewHolder.contentMeta.setVisibility(View.GONE);
-        setDynamicItemInterAct(holder.dynamicsInterActVH, dynamic, position);
-        onDynamicsItemElementClick(holder.baseProfile, dynamic);
+        if (dynamic != null){
+            setAuthorProfile(holder.authorProfileVH, dynamic);
+            setRelatedContentView(holder, dynamic, position);
+            holder.relativeContentWrapper.setBackgroundColor(mContext.getResources().getColor(R.color.color_disabled));
+            holder.dynamicViewHolder.meetDynamicsViewHolder.contentMeta.setVisibility(View.GONE);
+            setDynamicItemInterAct(holder.dynamicsInterActVH, dynamic, position);
+            onDynamicsItemElementClick(holder.baseProfile, dynamic);
+        }
 
         holder.relativeContentWrapper.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -281,7 +283,9 @@ import static com.hetang.util.ParseUtils.startMeetArchiveActivity;
     }
     
     private void setRelatedContentView(CommonViewHolder holder, Dynamic dynamic, int position){
-        MeetDynamicsListAdapter.setDynamicContent(holder.dynamicViewHolder.meetDynamicsViewHolder, dynamic.relatedContent, position);
+        if (dynamic != null && dynamic.relatedContent != null){
+            MeetDynamicsListAdapter.setDynamicContent(holder.dynamicViewHolder.meetDynamicsViewHolder, dynamic.relatedContent, position);
+        }
     }
 
     public void onDynamicBindViewHolder(final DynamicViewHolder holder, final int position) {

@@ -192,6 +192,9 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
     }
 
     public static void setDynamicContent(MeetDynamicsViewHolder holder, Dynamic dynamic, int position){
+        if (dynamic == null){
+            return;
+        }
         holder.name.setText(dynamic.getName());
         holder.living.setText(dynamic.getLiving());
 
