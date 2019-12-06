@@ -38,6 +38,8 @@ public abstract class BaseFragment extends Fragment {
         initView(convertView);
         //isInitView = true;
         //lazyLoadData();
+        //to load data(first page)
+        loadData();
         return convertView;
     }
 
@@ -56,14 +58,15 @@ public abstract class BaseFragment extends Fragment {
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
-        if(isDebug) Slog.d(TAG, "isVisibleToUser " + isVisibleToUser + "   " + this.getClass().getSimpleName());
+        //Fixed nullpoint exception,this method excu before onCreateView
+        /*if(isDebug) Slog.d(TAG, "isVisibleToUser " + isVisibleToUser + "   " + this.getClass().getSimpleName());
         if (isVisibleToUser) {
             isVisible = true;
             lazyLoadData();
 
         } else {
             isVisible = false;
-        }
+        }*/
         super.setUserVisibleHint(isVisibleToUser);
     }
 
