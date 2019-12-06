@@ -246,7 +246,7 @@ public class MeetDynamicsFragment extends BaseFragment {
     protected void loadData() {
          if (isDebug) Slog.d(TAG, "===============loadData==============");
 
-        int page = meetList.size() / PAGE_SIZE;
+        final int page = meetList.size() / PAGE_SIZE;
         RequestBody requestBody = new FormBody.Builder()
                             .add("type", String.valueOf(ParseUtils.ADD_MEET_DYNAMIC_ACTION))
                             .add("step", String.valueOf(PAGE_SIZE))
@@ -266,7 +266,13 @@ public class MeetDynamicsFragment extends BaseFragment {
                         if (null != tempList && tempList.size() > 0) {
                            // meetList.clear();
                             mTempSize = tempList.size();
-                            meetList.addAll(tempList);
+                            if (page == 0) {
+                                //load first page,so remove cache data
+                                meetList.clear();
+                                meetList.addAll(tempList);
+                            } else {
+                                meetList.addAll(tempList);
+                            }
                             Log.d(TAG, "getResponseText list.size:" + tempList.size());
                             handler.sendEmptyMessage(LOAD_DYNAMICS_DONE);
                         }else {
@@ -305,7 +311,8 @@ public class MeetDynamicsFragment extends BaseFragment {
                         if (null != tempList && tempList.size() > 0) {
                             mTempSize = 0;
                             mTempSize = tempList.size();
-                            meetList.addAll(0, tempList);
+                            meetList.clear();
+                            meetList.addAll(tempList);
                             Log.d(TAG, "========updateData getResponseText list.size:" + tempList.size());
                             handler.sendEmptyMessage(HAVE_UPDATE);
                         }else {
