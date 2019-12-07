@@ -91,6 +91,7 @@ public class MeetSingleGroupFragment extends BaseFragment {
     private List<SingleGroup> mSingleGroupList = new ArrayList<>();
     ImageView progressImageView;
     AnimationDrawable animationDrawable;
+    View mMyGroupView;
     
     @Override
     protected void initView(View convertView) {
@@ -220,6 +221,10 @@ public class MeetSingleGroupFragment extends BaseFragment {
 
             }
         });
+    }
+    
+    private void getMyGroup(){
+
     }
     
     private int processResponse(JSONObject SingleGroupResponse){
