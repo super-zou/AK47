@@ -35,11 +35,11 @@ import static com.hetang.meet.MeetSingleGroupFragment.GROUP_ADD_BROADCAST;
  * Created by super-zou on 18-9-9.
  */
  
- public class CreateSingleGroupDialogFragment extends BaseDialogFragment {
+ public class CreateSubGroupDialogFragment extends BaseDialogFragment {
     private Dialog mDialog;
     private static final boolean isDebug = true;
-    private static final String TAG = "CreateSingleGroupDialogFragment";
-    private static final String SINGLE_GROUP_CREATE = HttpUtil.DOMAIN + "?q=single_group/create";
+    private static final String TAG = "CreateSubGroupDialogFragment";
+    private static final String SUBGROUP_CREATE = HttpUtil.DOMAIN + "?q=subgroup/create";
 
     @Override
     public void onAttach(Context context) {
@@ -51,7 +51,7 @@ import static com.hetang.meet.MeetSingleGroupFragment.GROUP_ADD_BROADCAST;
 
         mDialog = new Dialog(getActivity(), R.style.Theme_Design_BottomSheetDialog);
         mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        mDialog.setContentView(R.layout.create_single_group);
+        mDialog.setContentView(R.layout.create_subgroup);
 
         Typeface font = Typeface.createFromAsset(MyApplication.getContext().getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
         FontManager.markAsIconContainer(mDialog.findViewById(R.id.custom_actionbar), font);
@@ -67,7 +67,7 @@ import static com.hetang.meet.MeetSingleGroupFragment.GROUP_ADD_BROADCAST;
         save.setVisibility(View.VISIBLE);
 
         TextView title = mDialog.findViewById(R.id.title);
-        title.setText(getString(R.string.create_single_group));
+        title.setText(getString(R.string.create_group));
         
         save.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,10 +91,12 @@ import static com.hetang.meet.MeetSingleGroupFragment.GROUP_ADD_BROADCAST;
         EditText name = mDialog.findViewById(R.id.editTextName);
         EditText profile = mDialog.findViewById(R.id.editTextProfile);
         EditText org = mDialog.findViewById(R.id.editTextOrg);
+        EditText city = mDialog.findViewById(R.id.editTextOrgCity);
 
         String groupName = name.getText().toString();
         String groupProfile = profile.getText().toString();
         String groupOrg = org.getText().toString();
+        String groupCity = city.getText().toString();
 
         if(TextUtils.isEmpty(groupName)){
             return;
@@ -104,9 +106,10 @@ import static com.hetang.meet.MeetSingleGroupFragment.GROUP_ADD_BROADCAST;
                 .add("group_name", groupName)
                 .add("group_profile", groupProfile)
                 .add("group_org", groupOrg)
+                .add("group_city", groupCity)
                 .build();
                 
-                HttpUtil.sendOkHttpRequest(getContext(), SINGLE_GROUP_CREATE, requestBody, new Callback() {
+        HttpUtil.sendOkHttpRequest(getContext(), SUBGROUP_CREATE, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if(isDebug) Slog.d(TAG, "==========response body : " + response.body());
@@ -122,7 +125,6 @@ import static com.hetang.meet.MeetSingleGroupFragment.GROUP_ADD_BROADCAST;
                                 int gid = responseObj.optInt("gid");
                                 if (gid > 0){
                                     sendBroadcast(gid);
-                                    //startSingleGroupDetailsActivity(gid);
                                 }
                             }
                         }catch (JSONException e){
@@ -139,13 +141,6 @@ import static com.hetang.meet.MeetSingleGroupFragment.GROUP_ADD_BROADCAST;
 
             }
         });
-    }
-  
-    private void startSingleGroupDetailsActivity(int gid){
-        Intent intent = new Intent(MyApplication.getContext(), SingleGroupDetailsActivity.class);
-        intent.putExtra("gid", gid);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-        startActivity(intent);
     }
 
     private void sendBroadcast(int gid) {

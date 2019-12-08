@@ -8,6 +8,7 @@ import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.hetang.meet.GroupFragment;
 import com.hetang.meet.MeetSingleGroupFragment;
 import com.hetang.meet.MeetDiscoveryFragment;
 import com.hetang.meet.MeetDynamicsFragment;
@@ -39,7 +40,7 @@ public class MeetFragmentAdapter extends FragmentStatePagerAdapter {
                 fragment = new MeetRecommendFragment();
                 break;
             case 1:
-                fragment = new MeetSingleGroupFragment();
+                fragment = new GroupFragment();
                 break;
             case 2:
                  fragment = new MeetDynamicsFragment();
@@ -79,7 +80,7 @@ public class MeetFragmentAdapter extends FragmentStatePagerAdapter {
                 baseFragment = (MeetRecommendFragment) super.instantiateItem(container, position);
                 break;
             case 1:
-                baseFragment = (MeetSingleGroupFragment) super.instantiateItem(container, position);
+                baseFragment = (GroupFragment) super.instantiateItem(container, position);
                 break;
 
             case 2:

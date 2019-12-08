@@ -58,4 +58,9 @@
     <string name="fa_refresh">&#xf021;</string>
     <string name="fa_share_alt">&#xf1e0;</string>
     <string name="fa_search">&#xf002;</string>
+    <string name="fa_organization">&#xf0e8;</string>
+    <string name="fa_users">&#xf0c0;</string>
+    <string name="fa_book">&#xf02d;</string>
+    <string name="fa_fire">&#xf06d;</string>
+    <string name="fa_coffee">&#xf0f4;</string>
 </resources>

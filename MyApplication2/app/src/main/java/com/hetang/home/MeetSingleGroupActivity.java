@@ -18,7 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.hetang.adapter.MeetSingleGroupSummaryAdapter;
-import com.hetang.util.CreateSingleGroupDialogFragment;
+import com.hetang.util.CreateSubGroupDialogFragment;
 import com.hetang.util.HttpUtil;
 import com.hetang.common.MyApplication;
 import com.hetang.util.MyLinearLayoutManager;
@@ -160,9 +160,9 @@ public class MeetSingleGroupActivity extends BaseAppCompatActivity {
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                CreateSingleGroupDialogFragment createSingleGroupDialogFragment = new CreateSingleGroupDialogFragment();
+                CreateSubGroupDialogFragment createSingleGroupDialogFragment = new CreateSubGroupDialogFragment();
                 //createSingleGroupDialogFragment.setTargetFragment(MeetSingleGroupFragment.this, REQUEST_CODE);
-                createSingleGroupDialogFragment.show(getSupportFragmentManager(), "CreateSingleGroupDialogFragment");
+                createSingleGroupDialogFragment.show(getSupportFragmentManager(), "CreateSubGroupDialogFragment");
             }
         });
 

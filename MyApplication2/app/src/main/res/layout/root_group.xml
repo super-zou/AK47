@@ -1,0 +1,559 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:id="@+id/root_group">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:orientation="vertical"
+            android:paddingBottom="16dp"
+            android:id="@+id/root_group_wrapper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <!--association_group-->
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/association_group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:padding="16dp"
+                android:background="@color/white">
+
+                <TextView
+                    android:id="@+id/association_group_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/fa_organization"
+                    android:textColor="#2196F3"
+                    android:textSize="28sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/association_group_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    android:textSize="28sp"
+                    android:layout_marginStart="8dp"
+                    android:text="社团联盟"
+                    app:layout_constraintStart_toEndOf="@+id/association_group_icon"
+                    app:layout_constraintTop_toTopOf="@+id/association_group_icon" />
+
+                <TextView
+                    android:id="@+id/university_amount_of_association"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    android:text="university number"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/association_group_icon" />
+
+                <TextView
+                    android:id="@+id/subGroup_amount_of_association"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="sub group number"
+                    app:layout_constraintStart_toEndOf="@+id/university_amount_of_association"
+                    app:layout_constraintTop_toTopOf="@+id/university_amount_of_association" />
+
+                <TextView
+                    android:id="@+id/people_amount_of_association"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="people number"
+                    app:layout_constraintStart_toEndOf="@+id/subGroup_amount_of_association"
+                    app:layout_constraintTop_toTopOf="@+id/subGroup_amount_of_association" />
+
+                <TextView
+                    android:id="@+id/association_group_desc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="description"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/subGroup_amount_of_association" />
+
+            </android.support.constraint.ConstraintLayout>
+            <!--public_good_group-->
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/public_good_group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:padding="16dp"
+                android:background="@color/white">
+
+                <TextView
+                    android:id="@+id/public_good_group_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/fa_heart"
+                    android:textColor="@color/color_red"
+                    android:textStyle="bold"
+                    android:textSize="28sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/public_good_group_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textSize="28sp"
+                    android:textColor="@color/black"
+                    android:layout_marginStart="8dp"
+                    android:text="公益组织"
+                    app:layout_constraintStart_toEndOf="@+id/public_good_group_icon"
+                    app:layout_constraintTop_toTopOf="@+id/public_good_group_icon" />
+
+                <TextView
+                    android:id="@+id/university_amount_of_public_good"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    android:text="university number"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/public_good_group_icon" />
+
+                <TextView
+                    android:id="@+id/subGroup_number_of_public_good"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="sub group number"
+                    app:layout_constraintStart_toEndOf="@+id/university_amount_of_public_good"
+                    app:layout_constraintTop_toTopOf="@+id/university_amount_of_public_good" />
+
+                <TextView
+                    android:id="@+id/people__amount_of_public_good"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="people number"
+                    app:layout_constraintStart_toEndOf="@+id/subGroup_number_of_public_good"
+                    app:layout_constraintTop_toTopOf="@+id/subGroup_number_of_public_good" />
+
+                <TextView
+                    android:id="@+id/public_good_group_desc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="description"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/subGroup_number_of_public_good" />
+
+            </android.support.constraint.ConstraintLayout>
+            <!--fraternity_group-->
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/fraternity_group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:padding="16dp"
+                android:background="@color/white">
+
+                <TextView
+                    android:id="@+id/fraternity_group_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/fa_users"
+                    android:textColor="@color/color_green"
+                    android:textStyle="bold"
+                    android:textSize="28sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/fraternity_group_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textSize="28sp"
+                    android:textColor="@color/black"
+                    android:layout_marginStart="8dp"
+                    android:text="11#俱乐部"
+                    app:layout_constraintStart_toEndOf="@+id/fraternity_group_icon"
+                    app:layout_constraintTop_toTopOf="@+id/fraternity_group_icon" />
+
+                <TextView
+                    android:id="@+id/university_amount_of_fraternity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    android:text="university number"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/fraternity_group_icon" />
+
+                <TextView
+                    android:id="@+id/subGroup_amount_of_fraternity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="sub group number"
+                    app:layout_constraintStart_toEndOf="@+id/university_amount_of_fraternity"
+                    app:layout_constraintTop_toTopOf="@+id/university_amount_of_fraternity" />
+
+                <TextView
+                    android:id="@+id/people_amount_of_fraternity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="people number"
+                    app:layout_constraintStart_toEndOf="@+id/subGroup_amount_of_fraternity"
+                    app:layout_constraintTop_toTopOf="@+id/subGroup_amount_of_fraternity" />
+
+                <TextView
+                    android:id="@+id/fraternity_group_desc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="description"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/subGroup_amount_of_fraternity" />
+
+            </android.support.constraint.ConstraintLayout>
+            <!--hobby_group-->
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/hobby_group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:padding="16dp"
+                android:background="@color/white">
+
+                <TextView
+                    android:id="@+id/hobby_group_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/hobby"
+                    android:textStyle="bold"
+                    android:textSize="28sp"
+                    android:textColor="@color/blue_dark"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/hobby_group_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textSize="28sp"
+                    android:textColor="@color/black"
+                    android:layout_marginStart="8dp"
+                    android:text="兴趣爱好"
+                    app:layout_constraintStart_toEndOf="@+id/hobby_group_icon"
+                    app:layout_constraintTop_toTopOf="@+id/hobby_group_icon" />
+
+                <TextView
+                    android:id="@+id/university_amount_of_hobby"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    android:text="university number"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/hobby_group_icon" />
+
+                <TextView
+                    android:id="@+id/subGroup_amount_of_hobby"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="sub group number"
+                    app:layout_constraintStart_toEndOf="@+id/university_amount_of_hobby"
+                    app:layout_constraintTop_toTopOf="@+id/university_amount_of_hobby" />
+
+                <TextView
+                    android:id="@+id/people_amount_of_hobby"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="people number"
+                    app:layout_constraintStart_toEndOf="@+id/subGroup_amount_of_hobby"
+                    app:layout_constraintTop_toTopOf="@+id/subGroup_amount_of_hobby" />
+
+                <TextView
+                    android:id="@+id/hobby_group_desc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="description"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/subGroup_amount_of_hobby" />
+
+            </android.support.constraint.ConstraintLayout>
+            <!--growUp_group-->
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/growUp_group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:padding="16dp"
+                android:background="@color/white">
+
+                <TextView
+                    android:id="@+id/growUp_group_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/fa_book"
+                    android:textColor="@color/background"
+                    android:textStyle="bold"
+                    android:textSize="28sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/growUp_group_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textSize="28sp"
+                    android:textColor="@color/black"
+                    android:layout_marginStart="8dp"
+                    android:text="成长学习"
+                    app:layout_constraintStart_toEndOf="@+id/growUp_group_icon"
+                    app:layout_constraintTop_toTopOf="@+id/growUp_group_icon" />
+
+                <TextView
+                    android:id="@+id/university_amount_of_growUp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    android:text="university number"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/growUp_group_icon" />
+
+                <TextView
+                    android:id="@+id/subGroup_amount_of_growUp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="sub group number"
+                    app:layout_constraintStart_toEndOf="@+id/university_amount_of_growUp"
+                    app:layout_constraintTop_toTopOf="@+id/university_amount_of_growUp" />
+
+                <TextView
+                    android:id="@+id/people_amount_of_growUp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="people number"
+                    app:layout_constraintStart_toEndOf="@+id/subGroup_amount_of_growUp"
+                    app:layout_constraintTop_toTopOf="@+id/subGroup_amount_of_growUp" />
+
+                <TextView
+                    android:id="@+id/growUp_group_desc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="description"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/subGroup_amount_of_growUp" />
+
+            </android.support.constraint.ConstraintLayout>
+            <!--activity_group-->
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/activity_group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:padding="16dp"
+                android:background="@color/white">
+
+                <TextView
+                    android:id="@+id/activity_group_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/fa_fire"
+                    android:textColor="#673AB7"
+                    android:textSize="28sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/activity_group_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textSize="28sp"
+                    android:textColor="@color/black"
+                    android:layout_marginStart="8dp"
+                    android:text="精彩活动"
+                    app:layout_constraintStart_toEndOf="@+id/activity_group_icon"
+                    app:layout_constraintTop_toTopOf="@+id/activity_group_icon" />
+
+                <TextView
+                    android:id="@+id/university_amount_of_activity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    android:text="university number"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/activity_group_icon" />
+
+                <TextView
+                    android:id="@+id/subGroup_amount_of_activity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="sub group number"
+                    app:layout_constraintStart_toEndOf="@+id/university_amount_of_activity"
+                    app:layout_constraintTop_toTopOf="@+id/university_amount_of_activity" />
+
+                <TextView
+                    android:id="@+id/people_amount_of_activity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="people number"
+                    app:layout_constraintStart_toEndOf="@+id/subGroup_amount_of_activity"
+                    app:layout_constraintTop_toTopOf="@+id/subGroup_amount_of_activity" />
+
+                <TextView
+                    android:id="@+id/activity_group_desc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="description"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/people_amount_of_activity" />
+
+            </android.support.constraint.ConstraintLayout>
+            <!--foreign_friend_group-->
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/foreign_friend_group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:padding="16dp"
+                android:background="@color/white">
+
+                <TextView
+                    android:id="@+id/foreign_friend_group_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/fa_coffee"
+                    android:textColor="#613232"
+                    android:textSize="28sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/foreign_friend_group_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textSize="28sp"
+                    android:textColor="@color/black"
+                    android:layout_marginStart="8dp"
+                    android:text="国际友人"
+                    app:layout_constraintStart_toEndOf="@+id/foreign_friend_group_icon"
+                    app:layout_constraintTop_toTopOf="@+id/foreign_friend_group_icon" />
+
+                <TextView
+                    android:id="@+id/university_amount_of_foreign_friend"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    android:text="university amount"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/foreign_friend_group_icon" />
+
+                <TextView
+                    android:id="@+id/subGroup_amount_of_foreign_friend"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="region amount"
+                    app:layout_constraintStart_toEndOf="@+id/university_amount_of_foreign_friend"
+                    app:layout_constraintTop_toTopOf="@+id/university_amount_of_foreign_friend" />
+
+                <TextView
+                    android:id="@+id/people_amount_of_foreign_friend"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="people number"
+                    app:layout_constraintStart_toEndOf="@+id/subGroup_amount_of_foreign_friend"
+                    app:layout_constraintTop_toTopOf="@+id/subGroup_amount_of_foreign_friend" />
+
+                <TextView
+                    android:id="@+id/foreign_friend_desc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="description"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/subGroup_amount_of_foreign_friend" />
+
+            </android.support.constraint.ConstraintLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

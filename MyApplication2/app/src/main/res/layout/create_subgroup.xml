@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/create_subgroup"
+    android:background="@color/white"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <include
+        android:id="@+id/custom_actionbar"
+        layout="@layout/custom_actionbar_common"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+    
+    <TextView
+        android:id="@+id/name_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="13dp"
+        android:text="@string/single_group_name_label"
+        android:textColor="@color/blue_dark"
+        app:layout_constraintBottom_toBottomOf="@+id/editTextName"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/editTextName" />
+
+    <EditText
+        android:id="@+id/editTextName"
+        style="@style/EditTextCustom"
+        android:layout_width="305dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:ems="10"
+        android:hint="@string/single_group_name_label"
+        android:inputType="textPersonName"
+        android:textColor="@color/blue_dark"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/name_label"
+        app:layout_constraintTop_toBottomOf="@+id/custom_actionbar" />
+    
+     <TextView
+        android:id="@+id/profile_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/introduction_label"
+        android:textColor="@color/blue_dark"
+        app:layout_constraintBottom_toBottomOf="@+id/editTextProfile"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/editTextProfile" />
+    
+    <EditText
+        android:id="@+id/editTextProfile"
+        style="@style/EditTextCustom"
+        android:layout_width="305dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:ems="10"
+        android:hint="@string/introduction_hint"
+        android:inputType="textMultiLine"
+        android:lines="3"
+        android:minLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:textColor="@color/blue_dark"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/profile_label"
+        app:layout_constraintTop_toBottomOf="@+id/editTextName" />
+    
+    <TextView
+        android:id="@+id/org_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/org_label"
+        android:textColor="@color/blue_dark"
+        app:layout_constraintBottom_toBottomOf="@+id/editTextOrg"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/editTextOrg" />
+
+    <EditText
+        android:id="@+id/editTextOrg"
+        style="@style/EditTextCustom"
+        android:layout_width="305dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:ems="10"
+        android:hint="@string/org_hint"
+        android:inputType="textShortMessage"
+        android:textColor="@color/blue_dark"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/org_label"
+        app:layout_constraintTop_toBottomOf="@+id/editTextProfile" />
+
+    <TextView
+        android:id="@+id/org_city_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/org_city"
+        android:textColor="@color/blue_dark"
+        app:layout_constraintBottom_toBottomOf="@+id/editTextOrgCity"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/editTextOrgCity" />
+
+    <EditText
+        android:id="@+id/editTextOrgCity"
+        style="@style/EditTextCustom"
+        android:layout_width="305dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="16dp"
+        android:ems="10"
+        android:hint="@string/org_city_hint"
+        android:inputType="textShortMessage"
+        android:textColor="@color/blue_dark"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/org_city_label"
+        app:layout_constraintTop_toBottomOf="@+id/editTextOrg" />
+
+    <TextView
+        android:id="@+id/group_logo_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="32dp"
+        android:text="@string/group_logo"
+        android:textColor="@color/blue_dark"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextOrgCity" />
+
+    <com.hetang.util.RoundImageView
+        android:id="@+id/group_logo"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="32dp"
+        android:background="@drawable/addimg_1x"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/group_logo_label" />
+
+
+</android.support.constraint.ConstraintLayout>
+    
+    

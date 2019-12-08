@@ -6,14 +6,14 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-
 import android.content.IntentFilter;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.os.Handler;
 import android.os.Message;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -21,13 +21,12 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.hetang.adapter.MeetSingleGroupSummaryAdapter;
+import com.hetang.R;
+import com.hetang.adapter.SubGroupSummaryAdapter;
+import com.hetang.common.BaseAppCompatActivity;
 import com.hetang.util.CreateSubGroupDialogFragment;
-import com.hetang.util.MyLinearLayoutManager;
-
-import com.hetang.util.BaseFragment;
 import com.hetang.util.HttpUtil;
-import com.hetang.common.MyApplication;
+import com.hetang.util.MyLinearLayoutManager;
 import com.hetang.util.ParseUtils;
 import com.hetang.util.SetAvatarActivity;
 import com.hetang.util.SharedPreferencesUtils;
@@ -36,7 +35,6 @@ import com.hetang.util.UserProfile;
 import com.hetang.util.Utility;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
-import com.hetang.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -55,13 +53,14 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
+import static com.hetang.common.MyApplication.getContext;
 import static com.hetang.main.ArchiveFragment.SET_AVATAR_RESULT_OK;
-import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 import static com.hetang.meet.SingleGroupDetailsActivity.GET_SINGLE_GROUP_BY_GID;
+import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
-public class MeetSingleGroupFragment extends BaseFragment {
+public class SubGroupActivity extends BaseAppCompatActivity {
     private static final boolean isDebug = true;
-    private static final String TAG = "MeetSingleGroupFragment";
+    private static final String TAG = "SubGroupActivity";
     final int itemLimit = 3;
     private int mLoadSize = 0;
     private int mUpdateSize = 0;
@@ -73,7 +72,7 @@ public class MeetSingleGroupFragment extends BaseFragment {
     private static final String SINGLE_GROUP_GET_BY_UID = HttpUtil.DOMAIN + "?q=single_group/get_by_uid";
     private static final String SINGLE_GROUP_GET_BY_ORG = HttpUtil.DOMAIN + "?q=single_group/get_by_org";
     private static final String SINGLE_GROUP_GET_MY = HttpUtil.DOMAIN + "?q=single_group/get_my";
-    private static final String SINGLE_GROUP_GET_ALL = HttpUtil.DOMAIN + "?q=single_group/get_all";
+    private static final String SUBGROUP_GET_ALL = HttpUtil.DOMAIN + "?q=subgroup/get_all";
     private static final String SINGLE_GROUP_UPDATE = HttpUtil.DOMAIN + "?q=single_group/update";
 
     private static final int GET_ALL_DONE = 1;
@@ -85,19 +84,35 @@ public class MeetSingleGroupFragment extends BaseFragment {
 
     public static final String GROUP_ADD_BROADCAST = "com.hetang.action.GROUP_ADD";
     private SingleGroupReceiver mReceiver = new SingleGroupReceiver();
-    
-    private MeetSingleGroupSummaryAdapter meetSingleGroupSummaryAdapter;
+
+    private SubGroupSummaryAdapter subGroupSummaryAdapter;
     private XRecyclerView  recyclerView;
     private List<SingleGroup> mSingleGroupList = new ArrayList<>();
     ImageView progressImageView;
     AnimationDrawable animationDrawable;
-    View mMyGroupView;
-    
+
     @Override
-    protected void initView(View convertView) {
-        handler = new MeetSingleGroupFragment.MyHandler(this);
-        recyclerView = convertView.findViewById(R.id.single_group_summary_list);
-        meetSingleGroupSummaryAdapter = new MeetSingleGroupSummaryAdapter(MyApplication.getContext());
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.sub_group_summary);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.hide();
+        }
+
+        handler = new SubGroupActivity.MyHandler(this);
+
+        int type = getIntent().getIntExtra("type", 0);
+
+        initView(type);
+
+        loadData(type);
+    }
+
+    private void initView(int type) {
+        handler = new SubGroupActivity.MyHandler(this);
+        recyclerView = findViewById(R.id.sub_group_summary_list);
+        subGroupSummaryAdapter = new SubGroupSummaryAdapter(getContext());
         MyLinearLayoutManager linearLayoutManager = new MyLinearLayoutManager(getContext());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(linearLayoutManager);
@@ -119,10 +134,10 @@ public class MeetSingleGroupFragment extends BaseFragment {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 if (newState == SCROLL_STATE_IDLE) {
-                    meetSingleGroupSummaryAdapter.setScrolling(false);
-                    meetSingleGroupSummaryAdapter.notifyDataSetChanged();
+                    subGroupSummaryAdapter.setScrolling(false);
+                    subGroupSummaryAdapter.notifyDataSetChanged();
                 } else {
-                    meetSingleGroupSummaryAdapter.setScrolling(true);
+                    subGroupSummaryAdapter.setScrolling(true);
                 }
                 super.onScrollStateChanged(recyclerView, newState);
             }
@@ -140,20 +155,20 @@ public class MeetSingleGroupFragment extends BaseFragment {
             }
         });
         
-        meetSingleGroupSummaryAdapter.setItemClickListener(new MeetSingleGroupSummaryAdapter.MyItemClickListener() {
+        subGroupSummaryAdapter.setItemClickListener(new SubGroupSummaryAdapter.MyItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
                 Slog.d(TAG, "==========click : " + position);
-                Intent intent = new Intent(MyApplication.getContext(), SingleGroupDetailsActivity.class);
+                Intent intent = new Intent(getContext(), SingleGroupDetailsActivity.class);
                 intent.putExtra("gid", mSingleGroupList.get(position).gid);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
                 startActivity(intent);
             }
         });
 
-        recyclerView.setAdapter(meetSingleGroupSummaryAdapter);
+        recyclerView.setAdapter(subGroupSummaryAdapter);
         
-        FloatingActionButton floatingActionButton = findView(R.id.create_single_group);
+        FloatingActionButton floatingActionButton = findViewById(R.id.create_single_group);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -164,7 +179,7 @@ public class MeetSingleGroupFragment extends BaseFragment {
         registerLoginBroadcast();
 
         //show progressImage before loading done
-        progressImageView = convertView.findViewById(R.id.animal_progress);
+        progressImageView = findViewById(R.id.animal_progress);
         animationDrawable = (AnimationDrawable)progressImageView.getDrawable();
         progressImageView.postDelayed(new Runnable() {
             @Override
@@ -173,17 +188,17 @@ public class MeetSingleGroupFragment extends BaseFragment {
             }
         },50);
     }
-    
-    @Override
-    protected void loadData() {
+
+    private void loadData(int type) {
 
         final int page = mSingleGroupList.size() / PAGE_SIZE;
         RequestBody requestBody = new FormBody.Builder()
                                                .add("step", String.valueOf(PAGE_SIZE))
                                                .add("page", String.valueOf(page))
+                                               .add("type", String.valueOf(type))
                                                .build();
         
-        HttpUtil.sendOkHttpRequest(getContext(), SINGLE_GROUP_GET_ALL, requestBody, new Callback() {
+        HttpUtil.sendOkHttpRequest(getContext(), SUBGROUP_GET_ALL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
@@ -203,7 +218,7 @@ public class MeetSingleGroupFragment extends BaseFragment {
                                         handler.sendEmptyMessage(GET_ALL_END);
                                     }else {
                                         handler.sendEmptyMessage(NO_MORE);
-             }
+                                    }
                                 }
                             }else {
                                 handler.sendEmptyMessage(NO_MORE);
@@ -342,7 +357,7 @@ public class MeetSingleGroupFragment extends BaseFragment {
     
     private void checkAvatarSet(){
         RequestBody requestBody = new FormBody.Builder().build();
-        HttpUtil.sendOkHttpRequest(MyApplication.getContext(), ParseUtils.GET_USER_PROFILE_URL, requestBody, new Callback() {
+        HttpUtil.sendOkHttpRequest(getContext(), ParseUtils.GET_USER_PROFILE_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
@@ -382,7 +397,7 @@ public class MeetSingleGroupFragment extends BaseFragment {
     private void showSingleGroupDialog(){
         CreateSubGroupDialogFragment createSingleGroupDialogFragment = new CreateSubGroupDialogFragment();
         //createSingleGroupDialogFragment.setTargetFragment(MeetSingleGroupFragment.this, REQUEST_CODE);
-        createSingleGroupDialogFragment.show(getFragmentManager(), "CreateSubGroupDialogFragment");
+        createSingleGroupDialogFragment.show(getSupportFragmentManager(), "CreateSubGroupDialogFragment");
     }
     
      public void updateData(){
@@ -429,24 +444,18 @@ public class MeetSingleGroupFragment extends BaseFragment {
          });
     }
 
-    @Override
-    protected int getLayoutId() {
-        int layoutId = R.layout.meet_single_group_summary;
-        return layoutId;
-    }
-    
     public void handleMessage(Message message) {
         switch (message.what) {
             case GET_ALL_DONE:
-                meetSingleGroupSummaryAdapter.setData(mSingleGroupList, recyclerView.getWidth());
-                meetSingleGroupSummaryAdapter.notifyDataSetChanged();
+                subGroupSummaryAdapter.setData(mSingleGroupList, recyclerView.getWidth());
+                subGroupSummaryAdapter.notifyDataSetChanged();
                 recyclerView.refreshComplete();
                // recyclerView.loadMoreComplete();
                 stopLoadProgress();
                 break;
                 case GET_ALL_END:
-                meetSingleGroupSummaryAdapter.setData(mSingleGroupList, recyclerView.getWidth());
-                meetSingleGroupSummaryAdapter.notifyDataSetChanged();
+                subGroupSummaryAdapter.setData(mSingleGroupList, recyclerView.getWidth());
+                subGroupSummaryAdapter.notifyDataSetChanged();
                 recyclerView.refreshComplete();
                 recyclerView.loadMoreComplete();
                 recyclerView.setNoMore(true);
@@ -460,9 +469,9 @@ public class MeetSingleGroupFragment extends BaseFragment {
             case UPDATE_ALL:
                 Bundle bundle = message.getData();
                 int updateSize = bundle.getInt("update_size");
-                meetSingleGroupSummaryAdapter.setData(mSingleGroupList, recyclerView.getWidth());
-                meetSingleGroupSummaryAdapter.notifyItemRangeInserted(0, updateSize);
-                meetSingleGroupSummaryAdapter.notifyDataSetChanged();
+                subGroupSummaryAdapter.setData(mSingleGroupList, recyclerView.getWidth());
+                subGroupSummaryAdapter.notifyItemRangeInserted(0, updateSize);
+                subGroupSummaryAdapter.notifyDataSetChanged();
                 recyclerView.refreshComplete();
                 break;
             case NO_UPDATE:
@@ -486,7 +495,7 @@ public class MeetSingleGroupFragment extends BaseFragment {
     
     private void startAvatarSetActivity(){
         final AlertDialog.Builder normalDialogBuilder =
-                new AlertDialog.Builder(getActivity());
+                new AlertDialog.Builder(this);
         normalDialogBuilder.setTitle(getResources().getString(R.string.avatar_set_request_title));
         normalDialogBuilder.setMessage(getResources().getString(R.string.avatar_set_request_content));
         normalDialogBuilder.setPositiveButton("去设置->",
@@ -548,6 +557,7 @@ public class MeetSingleGroupFragment extends BaseFragment {
         public String groupName;
         public String groupProfile;
         public String org;
+        public String city;
         public String groupMarkUri;
         public int memberCountRemain = 0;
         public String created;
@@ -634,17 +644,17 @@ public class MeetSingleGroupFragment extends BaseFragment {
     
     
     static class MyHandler extends Handler {
-        WeakReference<MeetSingleGroupFragment> meetSingleGroupFragmentWeakReference;
+        WeakReference<SubGroupActivity> subGroupActivityWeakReference;
 
-        MyHandler(MeetSingleGroupFragment meetSingleGroupFragment) {
-            meetSingleGroupFragmentWeakReference = new WeakReference<MeetSingleGroupFragment>(meetSingleGroupFragment);
+        MyHandler(SubGroupActivity subGroupActivity) {
+            subGroupActivityWeakReference = new WeakReference<SubGroupActivity>(subGroupActivity);
         }
 
         @Override
         public void handleMessage(Message message) {
-            MeetSingleGroupFragment meetSingleGroupFragment = meetSingleGroupFragmentWeakReference.get();
-            if (meetSingleGroupFragment != null) {
-                meetSingleGroupFragment.handleMessage(message);
+            SubGroupActivity subGroupActivity = subGroupActivityWeakReference.get();
+            if (subGroupActivity != null) {
+                subGroupActivity.handleMessage(message);
             }
         }
     }
