@@ -140,9 +140,11 @@ import static com.hetang.util.ParseUtils.startMeetArchiveActivity;
                 case ParseUtils.CREATE_SINGLE_GROUP_ACTION:
             case ParseUtils.JOIN_SINGLE_GROUP_ACTION:
             case ParseUtils.INVITE_SINGLE_GROUP_MEMBER_ACTION:
+                /*
                 View viewSingleGroup = LayoutInflater.from(MyApplication.getContext())
                         .inflate(R.layout.single_group_action_item, parent, false);
                 holder = new SingleGroupViewHolder(viewSingleGroup);
+                */
                 break;
             case ParseUtils.SET_AVATAR_ACTION:
             case ParseUtils.ADD_INTRODUCTION_ACTION:
