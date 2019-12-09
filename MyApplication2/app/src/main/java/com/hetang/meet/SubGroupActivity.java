@@ -66,12 +66,8 @@ public class SubGroupActivity extends BaseAppCompatActivity {
     private int mUpdateSize = 0;
     private static final int PAGE_SIZE = 8;
     private Handler handler;
-    private static final String SINGLE_GROUP_ADD = HttpUtil.DOMAIN + "?q=single_group/add";
-    private static final String SINGLE_GROUP_APPLY = HttpUtil.DOMAIN + "?q=single_group/apply";
-    private static final String SINGLE_GROUP_APPROVE = HttpUtil.DOMAIN + "?q=single_group/approve";
-    private static final String SINGLE_GROUP_GET_BY_UID = HttpUtil.DOMAIN + "?q=single_group/get_by_uid";
-    private static final String SINGLE_GROUP_GET_BY_ORG = HttpUtil.DOMAIN + "?q=single_group/get_by_org";
-    private static final String SINGLE_GROUP_GET_MY = HttpUtil.DOMAIN + "?q=single_group/get_my";
+    private int type = 0;
+
     private static final String SUBGROUP_GET_ALL = HttpUtil.DOMAIN + "?q=subgroup/get_all";
     private static final String SINGLE_GROUP_UPDATE = HttpUtil.DOMAIN + "?q=single_group/update";
 
@@ -102,11 +98,11 @@ public class SubGroupActivity extends BaseAppCompatActivity {
 
         handler = new SubGroupActivity.MyHandler(this);
 
-        int type = getIntent().getIntExtra("type", 0);
+        type = getIntent().getIntExtra("type", 0);
 
-        initView(type);
+        initView();
 
-        loadData(type);
+        loadData();
     }
 
     private void initView(int type) {
@@ -189,7 +185,7 @@ public class SubGroupActivity extends BaseAppCompatActivity {
         },50);
     }
 
-    private void loadData(int type) {
+    private void loadData() {
 
         final int page = mSingleGroupList.size() / PAGE_SIZE;
         RequestBody requestBody = new FormBody.Builder()
@@ -397,6 +393,9 @@ public class SubGroupActivity extends BaseAppCompatActivity {
     private void showSingleGroupDialog(){
         CreateSubGroupDialogFragment createSingleGroupDialogFragment = new CreateSubGroupDialogFragment();
         //createSingleGroupDialogFragment.setTargetFragment(MeetSingleGroupFragment.this, REQUEST_CODE);
+        Bundle bundle = new Bundle();
+        bundle.putInt("type", type);
+        createSingleGroupDialogFragment.setArguments(bundle);
         createSingleGroupDialogFragment.show(getSupportFragmentManager(), "CreateSubGroupDialogFragment");
     }
     
