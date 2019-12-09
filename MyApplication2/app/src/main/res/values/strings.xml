@@ -80,7 +80,8 @@
     <string name="org_hint">此团所属高校</string>
     <string name="org_city">城市</string>
     <string name="org_city_hint">学校或组织所在地</string>
-    <string name="group_logo">设置团标（可选）</string>
+    <string name="set_group_logo">+为你的团设置徽标（可选）</string>
+    <string name="group_logo">团标</string>
     <!--+End: add for archive, by zouhaichao 2018.12.6-->
     <string name="dot">" · "</string>
     <string name="operation">"···"</string>
