@@ -136,24 +136,36 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="32dp"
         android:text="@string/group_logo"
         android:textColor="@color/blue_dark"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/set_logo"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/set_logo" />
+    
+    <Button
+        android:id="@+id/set_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:padding="8dp"
+        android:text="@string/set_group_logo"
+        android:textColor="@color/white"
+        android:background="@color/color_green"
+        app:layout_constraintStart_toStartOf="@+id/editTextOrgCity"
         app:layout_constraintTop_toBottomOf="@+id/editTextOrgCity" />
 
     <com.hetang.util.RoundImageView
         android:id="@+id/group_logo"
+        android:visibility="invisible"
         android:layout_width="180dp"
         android:layout_height="180dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:layout_marginBottom="32dp"
         android:background="@drawable/addimg_1x"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/group_logo_label" />
+        app:layout_constraintTop_toBottomOf="@+id/set_logo" />
 
 
 </android.support.constraint.ConstraintLayout>
