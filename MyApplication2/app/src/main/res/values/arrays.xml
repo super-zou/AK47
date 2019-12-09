@@ -74,6 +74,16 @@
         <item>1956</item><item>1955</item><item>1954</item><item>1953</item><item>1952</item>
         <item>1951</item><item>1950</item>
     </string-array>
+
+    <string-array name="university">
+        <item>选择所在的学校</item>
+        <item>西安建筑科技大学</item>
+        <item>西安外国语大学</item>
+        <item>西安电子科技大学</item>
+        <item>西北工业大学</item>
+        <item>陕西师范大学</item>
+        <item>西北大学</item>
+    </string-array>
     
     <string-array name="entrance_years">
         <item>年份</item>

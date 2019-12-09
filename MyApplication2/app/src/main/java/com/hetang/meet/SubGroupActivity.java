@@ -105,7 +105,7 @@ public class SubGroupActivity extends BaseAppCompatActivity {
         loadData();
     }
 
-    private void initView(int type) {
+    private void initView() {
         handler = new SubGroupActivity.MyHandler(this);
         recyclerView = findViewById(R.id.sub_group_summary_list);
         subGroupSummaryAdapter = new SubGroupSummaryAdapter(getContext());
@@ -539,6 +539,7 @@ public class SubGroupActivity extends BaseAppCompatActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode,resultCode,data);
         if (isDebug) Slog.d(TAG, "===================onActivityResult requestCode: "+requestCode+" resultCode: "+resultCode);
         if (requestCode == Activity.RESULT_FIRST_USER){
             switch (resultCode){

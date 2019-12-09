@@ -32,16 +32,14 @@
     <EditText
         android:id="@+id/editTextName"
         style="@style/EditTextCustom"
-        android:layout_width="305dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
-        android:ems="10"
+        android:ems="18"
         android:hint="@string/single_group_name_label"
         android:inputType="textPersonName"
         android:textColor="@color/blue_dark"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/name_label"
         app:layout_constraintTop_toBottomOf="@+id/custom_actionbar" />
     
@@ -55,24 +53,22 @@
         app:layout_constraintBottom_toBottomOf="@+id/editTextProfile"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/editTextProfile" />
-    
+
     <EditText
         android:id="@+id/editTextProfile"
         style="@style/EditTextCustom"
-        android:layout_width="305dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:ems="10"
+        android:ems="18"
         android:hint="@string/introduction_hint"
         android:inputType="textMultiLine"
-        android:lines="3"
+        android:lines="5"
         android:minLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
         android:textColor="@color/blue_dark"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/profile_label"
         app:layout_constraintTop_toBottomOf="@+id/editTextName" />
     
@@ -83,10 +79,22 @@
         android:layout_marginStart="8dp"
         android:text="@string/org_label"
         android:textColor="@color/blue_dark"
-        app:layout_constraintBottom_toBottomOf="@+id/editTextOrg"
+        app:layout_constraintBottom_toBottomOf="@+id/university_spinner"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/editTextOrg" />
+        app:layout_constraintTop_toTopOf="@+id/university_spinner" />
 
+    <org.angmarch.views.NiceSpinner
+        android:id="@+id/university_spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:arrowTint="@color/background"
+        app:layout_constraintStart_toEndOf="@+id/org_label"
+        app:layout_constraintTop_toBottomOf="@+id/editTextProfile"
+        app:textTint="@color/black" />
+
+    <!--
     <EditText
         android:id="@+id/editTextOrg"
         style="@style/EditTextCustom"
@@ -102,6 +110,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/org_label"
         app:layout_constraintTop_toBottomOf="@+id/editTextProfile" />
+    -->
 
     <TextView
         android:id="@+id/org_city_label"
@@ -114,22 +123,33 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/editTextOrgCity" />
 
+    <Button
+        android:id="@+id/editTextOrgCity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/btn_default"
+        android:padding="6dp"
+        android:text="西安"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toEndOf="@+id/org_city_label"
+        app:layout_constraintTop_toBottomOf="@+id/university_spinner" />
+    <!--
     <EditText
         android:id="@+id/editTextOrgCity"
         style="@style/EditTextCustom"
-        android:layout_width="305dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="16dp"
-        android:ems="10"
+        android:ems="18"
         android:hint="@string/org_city_hint"
         android:inputType="textShortMessage"
         android:textColor="@color/blue_dark"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/org_city_label"
-        app:layout_constraintTop_toBottomOf="@+id/editTextOrg" />
+        app:layout_constraintTop_toBottomOf="@+id/university_spinner" />
+        -->
 
     <TextView
         android:id="@+id/group_logo_label"
@@ -149,8 +169,8 @@
         android:layout_marginTop="8dp"
         android:padding="8dp"
         android:text="@string/set_group_logo"
-        android:textColor="@color/white"
-        android:background="@color/color_green"
+        android:textColor="@color/black"
+        android:background="@drawable/btn_default"
         app:layout_constraintStart_toStartOf="@+id/editTextOrgCity"
         app:layout_constraintTop_toBottomOf="@+id/editTextOrgCity" />
 

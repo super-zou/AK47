@@ -342,6 +342,7 @@ public class HomeFragment extends BaseFragment {
                     //Slog.d(TAG, "==========response : "+response.body());
                     Slog.d(TAG, "==========response text : " + responseText);
                     if (responseText != null) {
+                        /*
                         List<Dynamic> tempList = getDynamicsResponse(responseText, false, handler);
 
                         mTempSize = 0;
@@ -357,7 +358,7 @@ public class HomeFragment extends BaseFragment {
                             }
                             handler.sendEmptyMessage(NO_MORE_DYNAMICS);
                         }
-
+                    */
                     }
                 }
             }
@@ -426,7 +427,7 @@ public class HomeFragment extends BaseFragment {
                     dynamic = getRelateSingleGroupContent(dynamic);
                     break;
                     
-                    case ParseUtils.ADD_EDUCATION_ACTION:
+                case ParseUtils.ADD_EDUCATION_ACTION:
                 case ParseUtils.ADD_WORK_ACTION:
                 case ParseUtils.ADD_BLOG_ACTION:
                 case ParseUtils.ADD_PAPER_ACTION:
