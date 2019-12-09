@@ -37,6 +37,7 @@ import static com.hetang.meet.MeetSingleGroupFragment.GROUP_ADD_BROADCAST;
  
  public class CreateSubGroupDialogFragment extends BaseDialogFragment {
     private Dialog mDialog;
+    private int type = 0;
     private static final boolean isDebug = true;
     private static final String TAG = "CreateSubGroupDialogFragment";
     private static final String SUBGROUP_CREATE = HttpUtil.DOMAIN + "?q=subgroup/create";
@@ -68,6 +69,11 @@ import static com.hetang.meet.MeetSingleGroupFragment.GROUP_ADD_BROADCAST;
 
         TextView title = mDialog.findViewById(R.id.title);
         title.setText(getString(R.string.create_group));
+     
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            type = bundle.getInt("type", 0);
+        }
         
         save.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,22 +97,23 @@ import static com.hetang.meet.MeetSingleGroupFragment.GROUP_ADD_BROADCAST;
         EditText name = mDialog.findViewById(R.id.editTextName);
         EditText profile = mDialog.findViewById(R.id.editTextProfile);
         EditText org = mDialog.findViewById(R.id.editTextOrg);
-        EditText city = mDialog.findViewById(R.id.editTextOrgCity);
+        EditText region = mDialog.findViewById(R.id.editTextOrgCity);
 
         String groupName = name.getText().toString();
         String groupProfile = profile.getText().toString();
         String groupOrg = org.getText().toString();
-        String groupCity = city.getText().toString();
+        String groupRegion = region.getText().toString();
 
         if(TextUtils.isEmpty(groupName)){
             return;
         }
         showProgressDialog("正在保存");
         final RequestBody requestBody = new FormBody.Builder()
+                .add("type", String.valueOf(type))
                 .add("group_name", groupName)
                 .add("group_profile", groupProfile)
                 .add("group_org", groupOrg)
-                .add("group_city", groupCity)
+                .add("region", groupRegion)
                 .build();
                 
         HttpUtil.sendOkHttpRequest(getContext(), SUBGROUP_CREATE, requestBody, new Callback() {
