@@ -70,7 +70,7 @@ import static com.hetang.meet.MeetSingleGroupFragment.GROUP_ADD_BROADCAST;
       private EditText nameEditText;
     private EditText profileEditText;
     private TextView regionEditText;
-    private String org;
+    private String org = "";
 
     @Override
     public void onAttach(Context context) {
@@ -255,7 +255,7 @@ import static com.hetang.meet.MeetSingleGroupFragment.GROUP_ADD_BROADCAST;
         }
      
         Slog.d(TAG, "---------------->groupOrg: "+groupOrg+" default university: "+defaultUniversity);
-        if (groupOrg.equals(defaultUniversity)){
+        if (TextUtils.isEmpty(groupOrg) || groupOrg.equals(defaultUniversity)){
             Toast.makeText(MyApplication.getContext(), "请选择该团所属高校", Toast.LENGTH_LONG).show();
             return;
         }

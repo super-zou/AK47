@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/subgroup_summary_item"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="6dp"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp"
+    android:elevation="8dp"
+    android:background="@color/white">
+
+    <TextView
+        android:id="@+id/group_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:paddingRight="8dp"
+        android:text="name"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.hetang.util.RoundImageView
+        android:id="@+id/leader_head_uri"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:scaleType="centerCrop"
+        app:layout_constraintStart_toStartOf="@+id/group_name"
+        app:layout_constraintTop_toBottomOf="@+id/group_name" />
+
+    <TextView
+        android:id="@+id/leader_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:gravity="center"
+        android:text="leader name"
+        android:textColor="@color/blue_dark"
+        android:textSize="15sp"
+        android:textStyle="normal|bold"
+        app:layout_constraintBottom_toBottomOf="@+id/leader_head_uri"
+        app:layout_constraintStart_toEndOf="@+id/leader_head_uri"
+        app:layout_constraintTop_toBottomOf="@+id/group_name" />
+
+    <TextView
+        android:id="@+id/profile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/group_name"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="66dp"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:paddingRight="8dp"
+        android:text="profile"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/leader_head_uri" />
+
+    <com.hetang.util.RoundImageView
+        android:id="@+id/logo"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:gravity="center"
+        android:scaleType="centerCrop"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/leader_head_uri" />
+
+    <TextView
+        android:id="@+id/org"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/profile"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:paddingRight="8dp"
+        android:text="org"
+        android:textColor="@color/color_dark_disabled"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profile" />
+
+    <TextView
+        android:id="@+id/region"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/profile"
+        android:layout_marginStart="8dp"
+        android:paddingRight="8dp"
+        android:text="region"
+        android:textColor="@color/color_dark_disabled"
+        app:layout_constraintBottom_toBottomOf="@+id/org"
+        app:layout_constraintStart_toEndOf="@+id/org"
+        app:layout_constraintTop_toTopOf="@+id/org" />
+
+    <TextView
+        android:id="@+id/created"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/org"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
+        android:text="created"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/org" />
+
+    <TextView
+        android:id="@+id/member_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="member_count"
+        app:layout_constraintBottom_toBottomOf="@+id/created"
+        app:layout_constraintStart_toEndOf="@+id/created"
+        app:layout_constraintTop_toTopOf="@+id/created" />
+    <!--
+    <LinearLayout
+        android:id="@+id/leader_profile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginStart="8dp"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.hetang.util.RoundImageView
+            android:id="@+id/leader_head_uri"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:gravity="center"
+            android:scaleType="centerCrop" />
+        
+         <TextView
+            android:id="@+id/leader_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="leader name"
+            android:textColor="@color/blue_dark"
+            android:textSize="15sp"
+            android:textStyle="normal|bold" />
+    </LinearLayout>
+    
+     <RelativeLayout
+        android:id="@+id/group_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="68dp"
+        android:layout_marginStart="8dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/leader_profile"
+        app:layout_constraintTop_toTopOf="@+id/leader_profile">
+         
+         <TextView
+            android:id="@+id/group_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="8dp"
+             android:text="name"
+            android:textColor="@color/black" />
+
+        <TextView
+            android:id="@+id/member_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="member_count"
+            android:layout_marginLeft="8dp"
+            android:layout_toRightOf="@+id/group_name" />
+         
+         <TextView
+            android:id="@+id/profile"
+            android:maxLines="2"
+            android:ellipsize="end"
+             android:text="profile"
+             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/group_name"
+            android:layout_marginTop="5dp"
+            android:paddingRight="8dp" />
+
+        <TextView
+            android:id="@+id/org"
+            android:text="org"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/profile"
+            android:layout_marginTop="8dp"
+            android:paddingRight="8dp"
+            android:textColor="@color/color_dark_disabled" />
+         
+         <TextView
+            android:id="@+id/created"
+             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/org"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="12dp"
+            android:text="created"
+            android:visibility="visible" />
+
+    </RelativeLayout>
+    -->
+</android.support.constraint.ConstraintLayout>

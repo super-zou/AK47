@@ -83,7 +83,7 @@ public class SubGroupActivity extends BaseAppCompatActivity {
 
     private SubGroupSummaryAdapter subGroupSummaryAdapter;
     private XRecyclerView  recyclerView;
-    private List<SingleGroup> mSingleGroupList = new ArrayList<>();
+    private List<SubGroup> mSubGroupList = new ArrayList<>();
     ImageView progressImageView;
     AnimationDrawable animationDrawable;
 
@@ -156,7 +156,7 @@ public class SubGroupActivity extends BaseAppCompatActivity {
             public void onItemClick(View view, int position) {
                 Slog.d(TAG, "==========click : " + position);
                 Intent intent = new Intent(getContext(), SingleGroupDetailsActivity.class);
-                intent.putExtra("gid", mSingleGroupList.get(position).gid);
+                intent.putExtra("gid", mSubGroupList.get(position).gid);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
                 startActivity(intent);
             }
@@ -188,7 +188,7 @@ public class SubGroupActivity extends BaseAppCompatActivity {
 
     private void loadData() {
 
-        final int page = mSingleGroupList.size() / PAGE_SIZE;
+        final int page = mSubGroupList.size() / PAGE_SIZE;
         RequestBody requestBody = new FormBody.Builder()
                                                .add("step", String.valueOf(PAGE_SIZE))
                                                .add("page", String.valueOf(page))
@@ -202,11 +202,11 @@ public class SubGroupActivity extends BaseAppCompatActivity {
                     String responseText = response.body().string();
                     if(isDebug) Slog.d(TAG, "==========response text : " + responseText);
                     if (responseText != null && !TextUtils.isEmpty(responseText)) {
-                        JSONObject SingleGroupResponse = null;
+                        JSONObject subGroupResponse = null;
                         try {
-                            SingleGroupResponse = new JSONObject(responseText);
-                            if(SingleGroupResponse != null){
-                                mLoadSize = processResponse(SingleGroupResponse);
+                            subGroupResponse = new JSONObject(responseText);
+                            if(subGroupResponse != null){
+                                mLoadSize = processResponse(subGroupResponse);
 
                                 if (mLoadSize == PAGE_SIZE){
                                     handler.sendEmptyMessage(GET_ALL_DONE);
@@ -239,33 +239,33 @@ public class SubGroupActivity extends BaseAppCompatActivity {
 
     }
     
-    private int processResponse(JSONObject SingleGroupResponse){
+    private int processResponse(JSONObject subGroupResponse){
 
-        int singGroupSize = 0;
-        JSONArray SingleGroupArray = null;
+        int subGroupSize = 0;
+        JSONArray subGroupArray = null;
 
-        if(SingleGroupResponse != null){
-            SingleGroupArray = SingleGroupResponse.optJSONArray("single_group");
+        if(subGroupResponse != null){
+            subGroupArray = subGroupResponse.optJSONArray("subgroup");
         }
 
-        if(SingleGroupArray != null){
-            singGroupSize = SingleGroupArray.length();
-            if( singGroupSize > 0){
-                for (int i=0; i<SingleGroupArray.length(); i++){
-                    JSONObject group = SingleGroupArray.optJSONObject(i);
+        if(subGroupArray != null){
+            subGroupSize = subGroupArray.length();
+            if( subGroupSize > 0){
+                for (int i=0; i<subGroupArray.length(); i++){
+                    JSONObject group = subGroupArray.optJSONObject(i);
                     if (group != null){
-                        SingleGroup singleGroup = getSingleGroup(group);
-                        mSingleGroupList.add(singleGroup);
+                        SubGroup subGroup = getSubGroup(group);
+                        mSubGroupList.add(subGroup);
                     }
                 }
             }
         }
 
-        return singGroupSize;
+        return subGroupSize;
     }
     
     private int processUpdateResponse(JSONObject SingleGroupResponse){
-        List<SingleGroup> mSingleGroupUpdateList = new ArrayList<>();
+        List<SubGroup> mSubGroupUpdateList = new ArrayList<>();
         JSONArray SingleGroupArray = null;
         if(SingleGroupResponse != null){
             SingleGroupArray = SingleGroupResponse.optJSONArray("single_group");
@@ -273,19 +273,19 @@ public class SubGroupActivity extends BaseAppCompatActivity {
 
         if(SingleGroupArray != null){
             if(SingleGroupArray.length() > 0){
-                mSingleGroupUpdateList.clear();
+                mSubGroupUpdateList.clear();
                 for (int i=0; i<SingleGroupArray.length(); i++){
                     JSONObject group = SingleGroupArray.optJSONObject(i);
                     if (group != null){
-                        SingleGroup singleGroup = getSingleGroup(group);
-                        mSingleGroupUpdateList.add(singleGroup);
+                        SubGroup singleGroup = getSubGroup(group);
+                        mSubGroupUpdateList.add(singleGroup);
                     }
                 }
-                mSingleGroupList.addAll(0, mSingleGroupUpdateList);
+                mSubGroupList.addAll(0, mSubGroupUpdateList);
                 Message message = new Message();
                 message.what = UPDATE_ALL;
                 Bundle bundle = new Bundle();
-                bundle.putInt("update_size", mSingleGroupUpdateList.size());
+                bundle.putInt("update_size", mSubGroupUpdateList.size());
                 message.setData(bundle);
                 handler.sendMessage(message);
             }else {
@@ -297,16 +297,16 @@ public class SubGroupActivity extends BaseAppCompatActivity {
     }
     
     private void processNewAddResponse(JSONObject SingleGroupResponse){
-        List<SingleGroup> mSingleGroupUpdateList = new ArrayList<>();
+        List<SubGroup> mSingleGroupUpdateList = new ArrayList<>();
         JSONObject SingleGroupObject = null;
         if(SingleGroupResponse != null){
             SingleGroupObject = SingleGroupResponse.optJSONObject("single_group");
         }
 
         if(SingleGroupObject != null){
-            SingleGroup singleGroup = getSingleGroup(SingleGroupObject);
+            SubGroup singleGroup = getSubGroup(SingleGroupObject);
             mSingleGroupUpdateList.add(singleGroup);
-            mSingleGroupList.addAll(0, mSingleGroupUpdateList);
+            mSubGroupList.addAll(0, mSingleGroupUpdateList);
             Message message = new Message();
             message.what = UPDATE_ALL;
             Bundle bundle = new Bundle();
@@ -316,37 +316,25 @@ public class SubGroupActivity extends BaseAppCompatActivity {
         }
     }
     
-    public static SingleGroup getSingleGroup(JSONObject group){
-        SingleGroup singleGroup = new SingleGroup();
+    public static SubGroup getSubGroup(JSONObject group){
+        SubGroup subGroup = new SubGroup();
         if (group != null){
-            singleGroup.gid = group.optInt("gid");
-            singleGroup.groupName = group.optString("group_name");
-            singleGroup.groupProfile = group.optString("group_profile");
-            singleGroup.groupMarkUri = group.optString("group_mark_uri");
-            singleGroup.org = group.optString("group_org");
-            singleGroup.created = Utility.timeStampToDay(group.optInt("created"));
-            JSONArray memberArray = group.optJSONArray("members");
-            
-            if(memberArray != null && memberArray.length() > 0){
-                int count = 0;
-                if(memberArray.length() > 3){
-                    singleGroup.memberCountRemain = memberArray.length() - 3;
-                    count = 3;
-                }else {
-                    count = memberArray.length();
-                }
-                singleGroup.headUrlList = new ArrayList<>();
-                for (int n=0; n<count; n++){
-                    singleGroup.headUrlList.add(memberArray.optJSONObject(n).optString("avatar"));
-                }
-            }
-            
-            singleGroup.leader = new UserMeetInfo();
+            subGroup.gid = group.optInt("gid");
+            subGroup.type = group.optInt("type");
+            subGroup.groupName = group.optString("group_name");
+            subGroup.groupProfile = group.optString("group_profile");
+            subGroup.groupLogoUri = group.optString("logo_uri");
+            subGroup.org = group.optString("group_org");
+            subGroup.region = group.optString("region");
+            subGroup.memberCount = group.optInt("member_count");
+            subGroup.created = Utility.timeStampToDay(group.optInt("created"));
+
+            subGroup.leader = new UserMeetInfo();
             if (group.optJSONObject("leader") != null){
-                ParseUtils.setBaseProfile(singleGroup.leader, group.optJSONObject("leader"));
+                ParseUtils.setBaseProfile(subGroup.leader, group.optJSONObject("leader"));
             }
 
-            return singleGroup;
+            return subGroup;
         }
 
         return null;
@@ -447,14 +435,16 @@ public class SubGroupActivity extends BaseAppCompatActivity {
     public void handleMessage(Message message) {
         switch (message.what) {
             case GET_ALL_DONE:
-                subGroupSummaryAdapter.setData(mSingleGroupList, recyclerView.getWidth());
+                Slog.d(TAG, "-------------->GET_ALL_DONE");
+                subGroupSummaryAdapter.setData(mSubGroupList);
                 subGroupSummaryAdapter.notifyDataSetChanged();
                 recyclerView.refreshComplete();
                // recyclerView.loadMoreComplete();
                 stopLoadProgress();
                 break;
                 case GET_ALL_END:
-                subGroupSummaryAdapter.setData(mSingleGroupList, recyclerView.getWidth());
+                    Slog.d(TAG, "-------------->GET_ALL_END");
+                subGroupSummaryAdapter.setData(mSubGroupList);
                 subGroupSummaryAdapter.notifyDataSetChanged();
                 recyclerView.refreshComplete();
                 recyclerView.loadMoreComplete();
@@ -469,7 +459,7 @@ public class SubGroupActivity extends BaseAppCompatActivity {
             case UPDATE_ALL:
                 Bundle bundle = message.getData();
                 int updateSize = bundle.getInt("update_size");
-                subGroupSummaryAdapter.setData(mSingleGroupList, recyclerView.getWidth());
+                subGroupSummaryAdapter.setData(mSubGroupList);
                 subGroupSummaryAdapter.notifyItemRangeInserted(0, updateSize);
                 subGroupSummaryAdapter.notifyDataSetChanged();
                 recyclerView.refreshComplete();
@@ -553,21 +543,22 @@ public class SubGroupActivity extends BaseAppCompatActivity {
         }
     }
     
-    public static class SingleGroup {
+    public static class SubGroup {
         public int gid;
+        public int type;
         public String groupName;
         public String groupProfile;
         public String org;
-        public String city;
-        public String groupMarkUri;
-        public int memberCountRemain = 0;
+        public String region;
+        public String groupLogoUri;
+        public int memberCount = 0;
         public String created;
         public UserMeetInfo leader;
         
-        public List<String> headUrlList;
+        //public List<String> headUrlList;
         public int authorStatus = -1;
         public boolean isLeader = false;
-        public List<UserMeetInfo> memberInfoList;
+        //public List<UserMeetInfo> memberInfoList;
     }
 
     private void registerLoginBroadcast() {
