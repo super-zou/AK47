@@ -69,7 +69,7 @@ public class SubGroupActivity extends BaseAppCompatActivity {
     private int type = 0;
 
     private static final String SUBGROUP_GET_ALL = HttpUtil.DOMAIN + "?q=subgroup/get_all";
-    private static final String SINGLE_GROUP_UPDATE = HttpUtil.DOMAIN + "?q=single_group/update";
+    private static final String SUBGROUP_UPDATE = HttpUtil.DOMAIN + "?q=subgroup/update";
 
     private static final int GET_ALL_DONE = 1;
     private static final int UPDATE_ALL = 2;
@@ -168,7 +168,8 @@ public class SubGroupActivity extends BaseAppCompatActivity {
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                checkAvatarSet();
+                //checkAvatarSet();
+                showSingleGroupDialog();
             }
         });
         
@@ -407,7 +408,7 @@ public class SubGroupActivity extends BaseAppCompatActivity {
                 .add("page", String.valueOf(0))
                 .build();
          
-         HttpUtil.sendOkHttpRequest(getContext(), SINGLE_GROUP_UPDATE, requestBody, new Callback() {
+         HttpUtil.sendOkHttpRequest(getContext(), SUBGROUP_UPDATE, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
