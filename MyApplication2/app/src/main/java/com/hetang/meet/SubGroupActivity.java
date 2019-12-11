@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,7 +25,9 @@ import android.widget.TextView;
 import com.hetang.R;
 import com.hetang.adapter.SubGroupSummaryAdapter;
 import com.hetang.common.BaseAppCompatActivity;
+import com.hetang.common.MyApplication;
 import com.hetang.util.CreateSubGroupDialogFragment;
+import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.MyLinearLayoutManager;
 import com.hetang.util.ParseUtils;
@@ -106,6 +109,9 @@ public class SubGroupActivity extends BaseAppCompatActivity {
     }
 
     private void initView() {
+        Typeface font = Typeface.createFromAsset(MyApplication.getContext().getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
+        FontManager.markAsIconContainer(findViewById(R.id.custom_actionbar), font);
+        
         handler = new SubGroupActivity.MyHandler(this);
         recyclerView = findViewById(R.id.sub_group_summary_list);
         subGroupSummaryAdapter = new SubGroupSummaryAdapter(getContext());
@@ -155,7 +161,7 @@ public class SubGroupActivity extends BaseAppCompatActivity {
             @Override
             public void onItemClick(View view, int position) {
                 Slog.d(TAG, "==========click : " + position);
-                Intent intent = new Intent(getContext(), SingleGroupDetailsActivity.class);
+                Intent intent = new Intent(getContext(), SubGroupDetailsActivity.class);
                 intent.putExtra("gid", mSubGroupList.get(position).gid);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
                 startActivity(intent);
@@ -174,6 +180,14 @@ public class SubGroupActivity extends BaseAppCompatActivity {
         });
         
         registerLoginBroadcast();
+        
+                TextView back = findViewById(R.id.back);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
 
         //show progressImage before loading done
         progressImageView = findViewById(R.id.animal_progress);
