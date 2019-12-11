@@ -127,6 +127,8 @@
             android:launchMode="singleTask" />
         <activity android:name=".meet.SubGroupActivity"
             android:launchMode="singleTask" />
+        <activity android:name=".meet.SubGroupDetailsActivity"
+            android:launchMode="singleTask" />
         <provider android:name="android.support.v4.content.FileProvider"
             android:authorities="com.hetang.fileprovider"
             android:exported="false" android:grantUriPermissions="true">

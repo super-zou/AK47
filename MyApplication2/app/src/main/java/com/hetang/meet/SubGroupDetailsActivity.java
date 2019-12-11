@@ -283,6 +283,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
         TextView browseAmount = mGroupHeaderView.findViewById(R.id.browse_amount);
         TextView activityAmount = mGroupHeaderView.findViewById(R.id.activity_amount);
         TextView followAmount = mGroupHeaderView.findViewById(R.id.follow_amount);
+        TextView memberAmount = mGroupHeaderView.findViewById(R.id.member_amout);
      
      if (subGroup.groupLogoUri != null && !"".equals(subGroup.groupLogoUri)) {
             Glide.with(mContext).load(HttpUtil.DOMAIN + subGroup.groupLogoUri).into(logoImage);
@@ -301,7 +302,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
         }
         
          groupDesc.setText(subGroup.groupProfile);
-        memberAmout.setText(String.valueOf(subGroup.memberCount));
+        memberAmount.setText(String.valueOf(subGroup.memberCount));
         /*
         TextView back = mGroupHeaderView.findViewById(R.id.back);
         back.setOnClickListener(new View.OnClickListener() {
