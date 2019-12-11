@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/subgroup_details_header">
+    <LinearLayout
+        android:id="@+id/custom_actionbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/background"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+    
+    <TextView
+            android:id="@+id/back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="@string/left_angle"
+            android:textColor="@color/white"
+            android:textSize="28sp" />
+    </LinearLayout>
+    
+    <com.hetang.util.RoundImageView
+        android:id="@+id/logo"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/custom_actionbar" />
+        
+    <TextView
+        android:id="@+id/group_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="group_name"
+        app:layout_constraintStart_toEndOf="@+id/logo"
+        app:layout_constraintTop_toTopOf="@+id/logo" />
+        
+    <TextView
+        android:id="@+id/org"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="org of group"
+        app:layout_constraintStart_toEndOf="@+id/logo"
+        app:layout_constraintTop_toBottomOf="@+id/group_name" />
+
+    <TextView
+        android:id="@+id/region"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="org of group"
+        app:layout_constraintStart_toEndOf="@+id/org"
+        app:layout_constraintTop_toTopOf="@+id/org" />
+    
+    <com.hetang.util.RoundImageView
+        android:id="@+id/leader_avatar"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toEndOf="@+id/logo"
+        app:layout_constraintTop_toBottomOf="@+id/org" />
+
+    <TextView
+        android:id="@+id/leader_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="name"
+        app:layout_constraintStart_toEndOf="@+id/leader_avatar"
+        app:layout_constraintTop_toTopOf="@+id/leader_avatar" />
+        
+    <View
+        android:id="@+id/group_info_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/color_disabled"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/logo" />
+    
+        <TextView
+        android:id="@+id/group_desc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:ellipsize="end"
+        android:maxLines="5"
+        android:text="dhdhdhdhdhdhdhdhdhdhdhdhdhdhdhdhdhdhdhdhdhdhdhdhdhdhdhdhddhdhdhdhdhdhdhdhhdffgffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/group_info_divider" />
+        
+    <View
+        android:id="@+id/group_interact_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/color_disabled"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/group_desc" />
+
+    <TextView
+        android:id="@+id/browse_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/fa_fire"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/group_interact_divider" />
+<TextView
+        android:id="@+id/browse_amount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="amount"
+        app:layout_constraintStart_toStartOf="@+id/browse_icon"
+        app:layout_constraintTop_toBottomOf="@+id/browse_icon" />
+
+    <TextView
+        android:id="@+id/activity_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/fa_camera"
+        app:layout_constraintStart_toEndOf="@+id/browse_amount"
+        app:layout_constraintTop_toTopOf="@+id/browse_icon" />
+        
+    <TextView
+        android:id="@+id/activity_amount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="amount"
+        app:layout_constraintStart_toStartOf="@+id/activity_icon"
+        app:layout_constraintTop_toBottomOf="@+id/activity_icon" />
+
+    <TextView
+        android:id="@+id/follow_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/fa_quote"
+        app:layout_constraintStart_toEndOf="@+id/activity_amount"
+        app:layout_constraintTop_toTopOf="@+id/activity_icon" />
+        
+    <TextView
+        android:id="@+id/follow_amount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="amount"
+        app:layout_constraintStart_toStartOf="@+id/follow_icon"
+        app:layout_constraintTop_toBottomOf="@+id/follow_icon" />
+
+    <TextView
+        android:id="@+id/member_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/fa_key"
+        app:layout_constraintStart_toEndOf="@+id/follow_amount"
+        app:layout_constraintTop_toTopOf="@+id/follow_icon" />
+        
+    <TextView
+        android:id="@+id/member_amout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="amout"
+        app:layout_constraintStart_toStartOf="@+id/member_icon"
+        app:layout_constraintTop_toBottomOf="@+id/member_icon" />
+
+    <TextView
+        android:id="@+id/right_arrow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/chevron_right"
+        app:layout_constraintBottom_toBottomOf="@+id/member_amout"
+        app:layout_constraintStart_toEndOf="@+id/member_amout"
+        app:layout_constraintTop_toTopOf="@+id/member_icon" />
+
+</android.support.constraint.ConstraintLayout>
