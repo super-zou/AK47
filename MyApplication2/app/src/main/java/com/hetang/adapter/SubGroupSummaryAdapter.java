@@ -106,6 +106,8 @@ public class SubGroupSummaryAdapter extends RecyclerView.Adapter<SubGroupSummary
 
         if (subGroup.groupLogoUri != null && !"".equals(subGroup.groupLogoUri)) {
             Glide.with(mContext).load(HttpUtil.DOMAIN + subGroup.groupLogoUri).into(holder.logo);
+        }else {
+            holder.logo.setImageDrawable(mContext.getDrawable(R.drawable.icon));
         }
 
     }
