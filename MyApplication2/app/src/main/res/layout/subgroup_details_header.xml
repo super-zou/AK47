@@ -89,7 +89,34 @@
         android:text="创建于 2019-10-12"
         app:layout_constraintStart_toEndOf="@+id/leader_avatar"
         app:layout_constraintTop_toBottomOf="@+id/leader_name" />
-
+    <Button
+        android:id="@+id/follow"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toStartOf="@+id/join"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/logo" />
+    
+   <Button
+        android:id="@+id/join"
+        android:visibility="visible"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="32dp"
+        android:textSize="16sp"
+        android:background="@drawable/btn_primary"
+        android:text="@string/join_action"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/follow"
+        app:layout_constraintTop_toTopOf="@+id/follow" />
+    
     <View
         android:id="@+id/group_info_divider"
         android:layout_width="match_parent"
@@ -101,7 +128,7 @@
         android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/logo" />
+        app:layout_constraintTop_toBottomOf="@+id/follow" />
 
     <TextView
         android:id="@+id/group_desc"
@@ -143,13 +170,34 @@
 
     <TextView
         android:id="@+id/browse_amount"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/follow_amount"
+        app:layout_constraintTop_toBottomOf="@+id/browse_icon" />
+
+    <TextView
+        android:id="@+id/follow_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:text="@string/follow"
+        app:layout_constraintStart_toStartOf="@+id/follow_amount"
+        app:layout_constraintEnd_toEndOf="@+id/follow_amount"
+        app:layout_constraintTop_toTopOf="@+id/browse_icon" />
+
+    <TextView
+        android:id="@+id/follow_amount"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="amount"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/browse_icon" />
+        android:gravity="center"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintEnd_toStartOf="@+id/activity_amount"
+        app:layout_constraintStart_toEndOf="@+id/browse_amount"
+        app:layout_constraintTop_toBottomOf="@+id/follow_icon" />
 
     <TextView
         android:id="@+id/activity_icon"
@@ -158,36 +206,18 @@
         android:text="@string/dynamics"
         app:layout_constraintEnd_toEndOf="@+id/activity_amount"
         app:layout_constraintStart_toStartOf="@+id/activity_amount"
-        app:layout_constraintTop_toTopOf="@+id/browse_icon" />
+        app:layout_constraintTop_toTopOf="@+id/follow_icon" />
 
     <TextView
         android:id="@+id/activity_amount"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
-        android:text="amount"
-        app:layout_constraintStart_toEndOf="@+id/browse_amount"
+        android:gravity="center"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintEnd_toStartOf="@+id/member_amout"
+        app:layout_constraintStart_toEndOf="@+id/follow_amount"
         app:layout_constraintTop_toBottomOf="@+id/activity_icon" />
-
-    <TextView
-        android:id="@+id/follow_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/follow"
-        app:layout_constraintEnd_toEndOf="@+id/follow_amount"
-        app:layout_constraintStart_toStartOf="@+id/follow_amount"
-        app:layout_constraintTop_toTopOf="@+id/activity_icon" />
-
-    <TextView
-        android:id="@+id/follow_amount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="8dp"
-        android:text="amount"
-        app:layout_constraintStart_toEndOf="@+id/activity_amount"
-        app:layout_constraintTop_toBottomOf="@+id/follow_icon" />
 
     <TextView
         android:id="@+id/member_icon"
@@ -200,54 +230,23 @@
 
     <TextView
         android:id="@+id/member_amout"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:text="amout"
-        app:layout_constraintEnd_toStartOf="@+id/right_arrow"
+        android:gravity="center"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/activity_amount"
         app:layout_constraintTop_toBottomOf="@+id/member_icon" />
-
-    <TextView
-        android:id="@+id/right_arrow"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:padding="8dp"
-        android:text="@string/chevron_right"
-        app:layout_constraintBottom_toBottomOf="@+id/member_amout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/member_icon" />
-
-    <Button
-        android:id="@+id/follow"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:textSize="18sp"
-        android:background="@drawable/btn_default"
-        android:text="@string/follow_action"
-        android:textColor="@color/blue_dark"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/join"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/browse_amount" />
-
-    <Button
-        android:id="@+id/join"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+     <View
+        android:id="@+id/group_activity_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
         android:layout_marginStart="16dp"
-        android:layout_marginEnd="32dp"
-        android:textSize="18sp"
-        android:background="@drawable/btn_primary"
-        android:text="@string/join_action"
-        android:textColor="@color/white"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:background="@color/color_disabled"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/follow"
-        app:layout_constraintTop_toTopOf="@+id/follow" />
-
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/member_amout" />
 </android.support.constraint.ConstraintLayout>
