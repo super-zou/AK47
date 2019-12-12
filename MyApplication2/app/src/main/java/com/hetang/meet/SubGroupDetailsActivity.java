@@ -1,5 +1,6 @@
 package com.hetang.meet;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,6 +18,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -26,6 +28,7 @@ import com.hetang.R;
 import com.hetang.adapter.SubGroupDetailsListAdapter;
 import com.hetang.adapter.SubGroupSummaryAdapter;
 import com.hetang.archive.ArchiveActivity;
+import com.hetang.common.AddDynamicsActivity;
 import com.hetang.common.BaseAppCompatActivity;
 import com.hetang.common.MyApplication;
 import com.hetang.util.CommonDialogFragmentInterface;
@@ -62,14 +65,14 @@ import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 //import android.widget.GridLayout;
 
 
-public class SubGroupDetailsActivity extends BaseAppCompatActivity implements CommonDialogFragmentInterface {
+public class SubGroupDetailsActivity extends BaseAppCompatActivity {
     private static final String TAG = "subGroupDetailsActivity";
     private static final boolean isDebug = true;
     private Context mContext;
     public static final String GET_SUBGROUP_BY_GID = HttpUtil.DOMAIN + "?q=subgroup/get_by_gid";
-    private static final String APPLY_JOIN_SINGLE_GROUP = HttpUtil.DOMAIN + "?q=single_group/apply";
-    public static final String ACCEPT_JOIN_SINGLE_GROUP = HttpUtil.DOMAIN + "?q=single_group/accept";
-    public static final String APPROVE_JOIN_SINGLE_GROUP = HttpUtil.DOMAIN + "?q=single_group/approve";
+    private static final String APPLY_JOIN_SUBGROUP = HttpUtil.DOMAIN + "?q=subgroup/apply";
+    public static final String ACCEPT_JOIN_SUBGROUP = HttpUtil.DOMAIN + "?q=subgroup/accept";
+    public static final String APPROVE_JOIN_SUBGROUP = HttpUtil.DOMAIN + "?q=subgroup/approve";
     
     //MeetsubGroupFragment.subGroup subGroup;
     SubGroupActivity.SubGroup subGroup;
@@ -91,7 +94,11 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
     ImageView progressImageView;
     AnimationDrawable animationDrawable;
     View mGroupHeaderView;
+    Button joinBtn;
+    Button followBtn;
+    boolean followed = false;
     private SubGroupDetailsListAdapter subGroupDetailsListAdapter;
+    public static final String FOLLOW_GROUP_ACTION_URL = HttpUtil.DOMAIN + "?q=follow/group_action/";
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -174,17 +181,25 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
 
         recyclerView.setAdapter(subGroupDetailsListAdapter);
 
-        /*
-        FloatingActionButton floatingActionButton = findViewById(R.id.create_single_group);
+        FloatingActionButton floatingActionButton = findViewById(R.id.create_activity);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //checkAvatarSet();
-                //showsubGroupDialog();
+                if (subGroup.authorStatus > 0 || subGroup.followed > 0){
+                    Intent intent = new Intent(MyApplication.getContext(), AddDynamicsActivity.class);
+                    intent.putExtra("type", ParseUtils.ADD_SUBGROUP_ACTIVITY_ACTION);
+                    intent.putExtra("gid", gid);
+                    startActivityForResult(intent, Activity.RESULT_FIRST_USER);
+                }else {
+                    showNoticeDialog();
+                }
+
             }
         });
 
-         */
+        joinBtn = mGroupHeaderView.findViewById(R.id.join);
+
+        followBtn = mGroupHeaderView.findViewById(R.id.follow);
          
          // registerLoginBroadcast();
         TextView back = mGroupHeaderView.findViewById(R.id.back);
@@ -260,7 +275,12 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
             subGroup.region = group.optString("region");
             subGroup.memberCount = group.optInt("member_count");
             subGroup.created = Utility.timeStampToDay(group.optInt("created"));
-
+            subGroup.followCount = group.optInt("follow_count");
+            subGroup.activityCount = group.optInt("activity_count");
+            subGroup.browseCount = group.optInt("browse_count");
+            subGroup.authorStatus = group.optInt("status");
+            subGroup.isLeader = group.optBoolean("isLeader");
+            subGroup.followed = group.optInt("followed");
             subGroup.leader = new UserMeetInfo();
             if (group.optJSONObject("leader") != null){
                 ParseUtils.setBaseProfile(subGroup.leader, group.optJSONObject("leader"));
@@ -282,7 +302,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
         TextView groupDesc = mGroupHeaderView.findViewById(R.id.group_desc);
         TextView browseAmount = mGroupHeaderView.findViewById(R.id.browse_amount);
         TextView activityAmount = mGroupHeaderView.findViewById(R.id.activity_amount);
-        TextView followAmount = mGroupHeaderView.findViewById(R.id.follow_amount);
+        final TextView followAmount = mGroupHeaderView.findViewById(R.id.follow_amount);
         TextView memberAmount = mGroupHeaderView.findViewById(R.id.member_amout);
      
      if (subGroup.groupLogoUri != null && !"".equals(subGroup.groupLogoUri)) {
@@ -295,25 +315,111 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
         groupOrg.setText(subGroup.org);
         groupRegion.setText(subGroup.region);
         leaderName.setText(subGroup.leader.getName());
+        
+        if (subGroup.browseCount != 0){
+            browseAmount.setText(String.valueOf(subGroup.browseCount));
+        }
+
+        if (subGroup.activityCount != 0){
+            activityAmount.setText(String.valueOf(subGroup.activityCount));
+        }
+
+        if (subGroup.followCount != 0){
+            followAmount.setText(String.valueOf(subGroup.followCount));
+        }
+
+        memberAmount.setText(String.valueOf(subGroup.memberCount));
 
         String avatar = subGroup.leader.getAvatar();
         if (avatar != null && !"".equals(avatar)) {
             Glide.with(mContext).load(HttpUtil.DOMAIN + avatar).into(leaderAvatar);
         }
         
-         groupDesc.setText(subGroup.groupProfile);
-        memberAmount.setText(String.valueOf(subGroup.memberCount));
-        /*
-        TextView back = mGroupHeaderView.findViewById(R.id.back);
-        back.setOnClickListener(new View.OnClickListener() {
+        groupDesc.setText(subGroup.groupProfile);
+        if (subGroup.authorStatus != -1){
+            if(subGroup.authorStatus == 0){
+                joinBtn.setVisibility(View.VISIBLE);
+                joinBtn.setText(getResources().getString(R.string.applying));
+                joinBtn.setClickable(false);
+            }else {
+                joinBtn.setText(getResources().getString(R.string.invite_friend));
+                joinBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        invite();
+                    }
+                });
+            }
+        }else {
+            joinBtn.setVisibility(View.VISIBLE);
+            joinBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    applyJoinGroup();
+                }
+            });
+        }
+        
+        if (subGroup.followed == 1){
+            followed = true;
+            followBtn.setText("已关注");
+            followBtn.setBackground(MyApplication.getContext().getDrawable(R.drawable.btn_disable));
+            followBtn.setTextColor(getResources().getColor(R.color.color_dark_grey));
+        }else {
+            followed = false;
+            followBtn.setText("+关注");
+            followBtn.setTextColor(getResources().getColor(R.color.blue_dark));
+            followBtn.setBackground(MyApplication.getContext().getDrawable(R.drawable.btn_default));
+        }
+        
+        followBtn.setOnClickListener(new View.OnClickListener() {
+            RequestBody requestBody = new FormBody.Builder()
+                    .add("gid", String.valueOf(gid))
+                    .add("uid", String.valueOf(uid))
+                    .build();
             @Override
             public void onClick(View view) {
-                finish();
+                String followUrl = "";
+                if (followed == true) {
+                    followed = false;
+                    followUrl = FOLLOW_GROUP_ACTION_URL + "cancel";
+                    followBtn.setText("+关注");
+                    followBtn.setTextColor(getResources().getColor(R.color.blue_dark));
+                    followBtn.setBackground(MyApplication.getContext().getDrawable(R.drawable.btn_default));
+                    int currentCount = Integer.parseInt(followAmount.getText().toString());
+                    followAmount.setText(String.valueOf(currentCount - 1));
+                    subGroup.followed = 0;
+                } else {
+                    followed = true;
+                    followUrl = FOLLOW_GROUP_ACTION_URL + "add";
+                    followBtn.setText("已关注");
+                    followBtn.setBackground(MyApplication.getContext().getDrawable(R.drawable.btn_disable));
+                    followBtn.setTextColor(getResources().getColor(R.color.color_dark_grey));
+                    String amount = followAmount.getText().toString();
+                    int currentCount = 0;
+                    if(amount != null && !TextUtils.isEmpty(amount)){
+                        currentCount = Integer.parseInt(amount);
+                    }
+                    followAmount.setText(String.valueOf(currentCount + 1));
+                    subGroup.followed = 1;
+                }
+                
+                HttpUtil.sendOkHttpRequest(MyApplication.getContext(), followUrl, requestBody, new Callback() {
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        if (response.body() != null) {
+                            String responseText = response.body().string();
+                            if (isDebug)
+                                Slog.d(TAG, "==========get follow response text : " + responseText);
+                        }
+                    }
+                    
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                    }
+                });
             }
         });
-
-         */
-
     }
     
     private void setSubGroupView(){
@@ -329,57 +435,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
                 startActivity(intent);
             }
         });
-        
-        LinearLayout joinWrap = findViewById(R.id.join_wrap);
-        TextView join = findViewById(R.id.join);
-        
-        if(!subGroup.isLeader){
-            switch (subGroup.authorStatus){
-                case nonMEMBER:
-                    join.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            checkMeetConditionSet();
-                        }
-                    });
-                    break;
-                    case APPLYING:
-                    join.setText(getResources().getString(R.string.applied_wait));
-                    join.setClickable(false);
-                    break;
-                    case INVITTED:
-                    join.setText(getResources().getString(R.string.approvied));
-                    join.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            accept();
-                        }
-                    });
-                    break;
-                    
-                    case JOINED:
-                    join.setText(getResources().getString(R.string.invite_friend));
-                    join.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            invite();
-                        }
-                    });
-
-                    break;
-                    default:
-                        break;
-            }
-            }else {
-            join.setText(getResources().getString(R.string.invite_member));
-            join.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    invite();
-                }
-            });
-        }
-        
+                
         TextView title = findViewById(R.id.title);
         title.setText(subGroup.groupName);
         
@@ -417,51 +473,8 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
         FontManager.markAsIconContainer(findViewById(R.id.group_details_layout), font);
     }
     
-    private void addMemberView(final UserMeetInfo userMeetInfo, boolean isNew){
-        View view = LayoutInflater.from(this).inflate(R.layout.group_member, null);
-        TextView memberName = view.findViewById(R.id.name);
-        memberName.setText(userMeetInfo.getName());
-        RoundImageView memberHead = view.findViewById(R.id.member_head);
-        
-        GridLayout.Spec rowSpec = GridLayout.spec(GridLayout.UNDEFINED, 1, 1.0f);
-        GridLayout.Spec columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1, 1.0f);
-        GridLayout.LayoutParams layoutParams = new GridLayout.LayoutParams(rowSpec, columnSpec);
-        
-        if (isNew){
-            gridLayout.addView(view, 0, layoutParams);
-        }else {
-            gridLayout.addView(view, layoutParams);
-        }
-
-
-        Glide.with(this).load(HttpUtil.DOMAIN + userMeetInfo.getAvatar()).into(memberHead);
-        TextView birthYear = view.findViewById(R.id.age);
-        birthYear.setText(String.valueOf(userMeetInfo.getAge()));
-        
-        TextView height = view.findViewById(R.id.height);
-        height.setText(String.valueOf(userMeetInfo.getHeight()));
-        
-        TextView degree = view.findViewById(R.id.degree);
-        degree.setText(userMeetInfo.getDegreeName(userMeetInfo.getDegree()));
-
-        TextView memberLiving = view.findViewById(R.id.living);
-        memberLiving.setText(userMeetInfo.getLiving());
-        
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (userMeetInfo.getCid() > 0){
-                    ParseUtils.startMeetArchiveActivity(mContext, userMeetInfo.getUid());
-                }else {
-                    ParseUtils.startArchiveActivity(mContext, userMeetInfo.getUid());
-                }
-               // ParseUtils.startMeetArchiveActivity(subGroupDetailsActivity.this, userMeetInfo.getUid());
-            }
-        });
-        
-        }
-        
-        private void applyJoinGroup(){
+      
+    private void applyJoinGroup(){
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -473,7 +486,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
                 .add("gid", String.valueOf(gid))
                 .build();
                 
-        HttpUtil.sendOkHttpRequest(this, APPLY_JOIN_SINGLE_GROUP, requestBody, new Callback() {
+        HttpUtil.sendOkHttpRequest(this, APPLY_JOIN_SUBGROUP, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if(isDebug) Slog.d(TAG, "==========response body : " + response.body());
@@ -482,13 +495,14 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
                     if(isDebug) Slog.d(TAG, "==========response text : " + responseText);
                     if (responseText != null && !TextUtils.isEmpty(responseText)) {
                     try {
-                            memberJSONObject = new JSONObject(responseText).optJSONObject("response");
+                            memberJSONObject = new JSONObject(responseText).optJSONObject("member");
                         }catch (JSONException e){
                             e.printStackTrace();
                         }
                         
                         dismissProgressDialog();
                         handler.sendEmptyMessage(JOIN_DONE);
+                        subGroup.authorStatus = 0;
                     }
                 }
             }
@@ -500,73 +514,20 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
         });
     }
     
-    private void checkMeetConditionSet(){
-        RequestBody requestBody = new FormBody.Builder().build();
-        HttpUtil.sendOkHttpRequest(this, ParseUtils.GET_USER_PROFILE_URL, requestBody, new Callback() {
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (response.body() != null) {
-                    String responseText = response.body().string();
-                    if(isDebug) Slog.d(TAG, "==========get archive response text : " + responseText);
-                    if (responseText != null) {
-                        if (!TextUtils.isEmpty(responseText)) {
-                        try {
-                                JSONObject jsonObject = new JSONObject(responseText).optJSONObject("user");
-                                if(isDebug) Slog.d(TAG, "==============user profile object: "+jsonObject);
-                                if(jsonObject != null){
-                                    UserProfile userProfile = ParseUtils.getUserProfileFromJSONObject(jsonObject);
-                                    final boolean isAvatarSet;
-                                    if(!TextUtils.isEmpty(userProfile.getAvatar())){
-                                        isAvatarSet = true;
-                                    }else {
-                                        isAvatarSet = false;
-                                    }
-                                    if(userProfile.getCid() == 0){//meet condition not set
-                                        runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                showMeetConditionSetDialog(isAvatarSet);
-                                            }
-                                        });
-
-                                    }else {
-                                        applyJoinGroup();
-                                    }
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                            }
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call call, IOException e) {
-            }
-        });
-    }
-    
-    private void showMeetConditionSetDialog(final boolean isAvatarSet){
+    private void showNoticeDialog(final boolean isAvatarSet){
         final AlertDialog.Builder normalDialog =
                 new AlertDialog.Builder(this, R.style.Theme_MaterialComponents_Light_Dialog_Alert);
-        normalDialog.setTitle("请设置交友信息");
-        normalDialog.setMessage("需要先设置真实头像和交友信息");
+        normalDialog.setTitle("请先关注或加入");
+        normalDialog.setMessage("需要先关注或加入团，才能发布信息");
+        /*
         normalDialog.setPositiveButton("去设置",
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                    Intent intent;
-                        if(isAvatarSet == false){
-                            intent = new Intent(getContext(), SetAvatarActivity.class);
-                            intent.putExtra("look_friend", true);
-                        }else {
-                            intent = new Intent(getContext(), FillMeetInfoActivity.class);
-                        }
-                        startActivity(intent);
                     }
                 });
-        normalDialog.setNegativeButton("关闭",
+                */
+        normalDialog.setNegativeButton("确定",
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -587,39 +548,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
         invitationDialogFragment.setArguments(bundle);
         invitationDialogFragment.show(getSupportFragmentManager(), "InvitationDialogFragment");
     }
-    
-    private void accept(){
-        Slog.d(TAG, "=============accept");
-        RequestBody requestBody = new FormBody.Builder()
-                .add("gid", String.valueOf(gid))
-                .build();
-        HttpUtil.sendOkHttpRequest(this, ACCEPT_JOIN_SINGLE_GROUP, requestBody, new Callback() {
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-            if(isDebug) Slog.d(TAG, "==========response body : " + response.body());
-                if (response.body() != null) {
-                    String responseText = response.body().string();
-                    if(isDebug) Slog.d(TAG, "==========response text : " + responseText);
-                    if (responseText != null && !TextUtils.isEmpty(responseText)) {
-                        handler.sendEmptyMessage(ACCEPT_DONE);
-                        //refresh();
-                    }
-                }
-            }
-            @Override
-            public void onFailure(Call call, IOException e) {
-
-            }
-        });
-    }
-    
-    
-     private void approve(){
-        RequestBody requestBody = new FormBody.Builder()
-                .add("gid", String.valueOf(gid))
-                .build();
-    }
-    
+       
      public void handleMessage(Message message) {
         switch (message.what) {
             case GET_GROUP_HEADER_DONE:
@@ -630,33 +559,14 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
                 break;
             case JOIN_DONE:
             case ACCEPT_DONE:
-                UserMeetInfo userMeetInfo = new UserMeetInfo();
-                ParseUtils.setBaseProfile(userMeetInfo, memberJSONObject);
-                addMemberView(userMeetInfo, true);
-                TextView memberCountView = findViewById(R.id.member_count);
-                TextView join = findViewById(R.id.join);
-                join.setText(getResources().getString(R.string.applied_wait));
-                join.setClickable(false);
-
+                joinBtn.setText(getResources().getString(R.string.applying));
+                joinBtn.setClickable(false);
                 break;
             default:
                 break;
         }
     }
-    
-    @Override
-    public void onBackFromDialog(int type, int result, boolean status) {
-        switch (type){
-            case ParseUtils.TYPE_SINGLE_GROUP://For EvaluateDialogFragment back
-                if(status == true){
-                    //todo
-                }
-                break;
-            default:
-                break;
-        }
-    }
-    
+       
     static class MyHandler extends Handler {
         WeakReference<SubGroupDetailsActivity> subGroupDetailsActivityWeakReference;
 
