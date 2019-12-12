@@ -18,24 +18,24 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.hetang.R;
 import com.hetang.adapter.MeetDynamicsListAdapter;
 import com.hetang.common.AddDynamicsActivity;
 import com.hetang.common.Dynamic;
 import com.hetang.common.DynamicsInteractDetailsActivity;
+import com.hetang.common.MyApplication;
 import com.hetang.home.HomeFragment;
 import com.hetang.util.BaseFragment;
 import com.hetang.util.CommonUserListDialogFragment;
 import com.hetang.util.DynamicOperationDialogFragment;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.InterActInterface;
-import com.hetang.common.MyApplication;
 import com.hetang.util.ParseUtils;
 import com.hetang.util.PictureReviewDialogFragment;
 import com.hetang.util.SharedPreferencesUtils;
 import com.hetang.util.Slog;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
-import com.hetang.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -55,6 +55,7 @@ import okhttp3.Response;
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static com.hetang.home.HomeFragment.GET_MY_NEW_ADD_DONE;
 import static com.hetang.home.HomeFragment.GET_MY_NEW_ADD_DYNAMICS_URL;
+import static com.hetang.util.ParseUtils.ADD_SUBGROUP_ACTIVITY_ACTION;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
 /**
@@ -79,7 +80,7 @@ public class MeetDynamicsFragment extends BaseFragment {
     public static final int MY_COMMENT_COUNT_UPDATE = 8;
     public static final int DYNAMICS_DELETE = 9;
     public static final int MY_LOVE_UPDATE = 10;
-    
+
     public static final String DYNAMICS_DELETE_BROADCAST = "com.hetang.action.DYNAMICS_DELETE";
     public static final String GET_DYNAMICS_URL = HttpUtil.DOMAIN + "?q=dynamic/action/get";
     public static final String GET_DYNAMICS_UPDATE_URL = HttpUtil.DOMAIN + "?q=dynamic/action/update";
@@ -100,7 +101,7 @@ public class MeetDynamicsFragment extends BaseFragment {
     private int mTempSize;
     private XRecyclerView recyclerView;
     //-End add by xuchunping for use XRecyclerView support loadmore
-    
+
     private MeetDynamicsListAdapter meetDynamicsListAdapter;
     private Handler handler;
     private DynamicsAddBroadcastReceiver mReceiver = new DynamicsAddBroadcastReceiver();
@@ -114,7 +115,7 @@ public class MeetDynamicsFragment extends BaseFragment {
         int layoutId = R.layout.meet_dynamics;
         return layoutId;
     }
-    
+
     @Override
     protected void initView(View convertView) {
         mContext = getContext();
@@ -145,7 +146,7 @@ public class MeetDynamicsFragment extends BaseFragment {
         recyclerView.setRefreshProgressStyle(BallSpinFadeLoader);
         recyclerView.setLoadingMoreProgressStyle(ProgressStyle.BallRotate);
         //mRecyclerView.setArrowImageView(R.drawable.);
-        
+
         recyclerView.getDefaultRefreshHeaderView().setRefreshTimeVisible(true);
 
         recyclerView.getDefaultFootView().setLoadingHint(getString(R.string.loading_pull_up_tip));
@@ -156,7 +157,7 @@ public class MeetDynamicsFragment extends BaseFragment {
         recyclerView.setLimitNumberToCallLoadMore(PAGE_SIZE - 2);
         recyclerView.setRefreshProgressStyle(ProgressStyle.BallBeat);
         recyclerView.setLoadingMoreProgressStyle(ProgressStyle.SquareSpin);
-        
+
         recyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
 
             @Override
@@ -171,7 +172,7 @@ public class MeetDynamicsFragment extends BaseFragment {
         });
 
         recyclerView.scrollToPosition(0);
-        
+
         //callback from meetDynamicsListAdapter, when comment icon touched, will show comment input dialog
         meetDynamicsListAdapter.setOnCommentClickListener(new InterActInterface() {
             @Override
@@ -181,8 +182,9 @@ public class MeetDynamicsFragment extends BaseFragment {
                 createCommentDetails(meetList.get(position));
 
             }
+
             @Override
-            public void onPraiseClick(View view, int position){
+            public void onPraiseClick(View view, int position) {
 
                 Bundle bundle = new Bundle();
                 bundle.putInt("type", DYNAMICS_PRAISED);
@@ -193,8 +195,9 @@ public class MeetDynamicsFragment extends BaseFragment {
                 commonUserListDialogFragment.show(getFragmentManager(), "CommonUserListDialogFragment");
 
             }
+
             @Override
-            public void onDynamicPictureClick(View view, int position, String[] pictureUrlArray, int index){
+            public void onDynamicPictureClick(View view, int position, String[] pictureUrlArray, int index) {
                 Bundle bundle = new Bundle();
                 bundle.putInt("index", index);
                 bundle.putStringArray("pictureUrlArray", pictureUrlArray);
@@ -203,9 +206,9 @@ public class MeetDynamicsFragment extends BaseFragment {
                 pictureReviewDialogFragment.setArguments(bundle);
                 pictureReviewDialogFragment.show(getFragmentManager(), "PictureReviewDialogFragment");
             }
-            
+
             @Override
-            public void onOperationClick(View view, int position){
+            public void onOperationClick(View view, int position) {
                 Bundle bundle = new Bundle();
                 bundle.putLong("did", meetList.get(position).getDid());
                 currentPos = position;
@@ -215,7 +218,7 @@ public class MeetDynamicsFragment extends BaseFragment {
             }
 
         });
-        
+
         recyclerView.setAdapter(meetDynamicsListAdapter);
 
         final FloatingActionButton dynamicCreate = convertView.findViewById(R.id.dynamic_create);
@@ -228,31 +231,31 @@ public class MeetDynamicsFragment extends BaseFragment {
                 startActivityForResult(intent, Activity.RESULT_FIRST_USER);
             }
         });
-        
+
         registerLoginBroadcast();
 
         //show progressImage before loading done
         progressImageView = convertView.findViewById(R.id.animal_progress);
-        animationDrawable = (AnimationDrawable)progressImageView.getDrawable();
+        animationDrawable = (AnimationDrawable) progressImageView.getDrawable();
         progressImageView.postDelayed(new Runnable() {
             @Override
             public void run() {
                 animationDrawable.start();
             }
-        },50);
+        }, 50);
     }
-    
+
     @Override
     protected void loadData() {
-         if (isDebug) Slog.d(TAG, "===============loadData==============");
+        if (isDebug) Slog.d(TAG, "===============loadData==============");
 
         final int page = meetList.size() / PAGE_SIZE;
         RequestBody requestBody = new FormBody.Builder()
-                            .add("type", String.valueOf(ParseUtils.ADD_MEET_DYNAMIC_ACTION))
-                            .add("step", String.valueOf(PAGE_SIZE))
-                            .add("page", String.valueOf(page))
-                            .build();
-        
+                .add("type", String.valueOf(ParseUtils.ADD_MEET_DYNAMIC_ACTION))
+                .add("step", String.valueOf(PAGE_SIZE))
+                .add("page", String.valueOf(page))
+                .build();
+
         HttpUtil.sendOkHttpRequest(MyApplication.getContext(), GET_DYNAMICS_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
@@ -264,7 +267,7 @@ public class MeetDynamicsFragment extends BaseFragment {
                         List<Dynamic> tempList = getDynamicsResponse(responseText, false, handler);
                         mTempSize = 0;
                         if (null != tempList && tempList.size() > 0) {
-                           // meetList.clear();
+                            // meetList.clear();
                             mTempSize = tempList.size();
                             if (page == 0) {
                                 //load first page,so remove cache data
@@ -275,7 +278,7 @@ public class MeetDynamicsFragment extends BaseFragment {
                             }
                             Log.d(TAG, "getResponseText list.size:" + tempList.size());
                             handler.sendEmptyMessage(LOAD_DYNAMICS_DONE);
-                        }else {
+                        } else {
                             handler.sendEmptyMessage(NO_MORE_DYNAMICS);
                         }
 
@@ -284,10 +287,11 @@ public class MeetDynamicsFragment extends BaseFragment {
             }
 
             @Override
-            public void onFailure(Call call, IOException e) {}
+            public void onFailure(Call call, IOException e) {
+            }
         });
     }
-    
+
     private void updateData() {
 
         String last = SharedPreferencesUtils.getDynamicsLast(getContext());
@@ -298,13 +302,14 @@ public class MeetDynamicsFragment extends BaseFragment {
                 .add("step", String.valueOf(PAGE_SIZE))
                 .add("page", String.valueOf(0))
                 .build();
-        
+
         HttpUtil.sendOkHttpRequest(getContext(), GET_DYNAMICS_UPDATE_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
                     String responseText = response.body().string();
-                    if (isDebug) Slog.d(TAG, "==========updateData response text : " + responseText);
+                    if (isDebug)
+                        Slog.d(TAG, "==========updateData response text : " + responseText);
                     if (responseText != null) {
                         //save last update timemills
                         List<Dynamic> tempList = getDynamicsResponse(responseText, true, handler);
@@ -315,7 +320,7 @@ public class MeetDynamicsFragment extends BaseFragment {
                             meetList.addAll(tempList);
                             Log.d(TAG, "========updateData getResponseText list.size:" + tempList.size());
                             handler.sendEmptyMessage(HAVE_UPDATE);
-                        }else {
+                        } else {
                             handler.sendEmptyMessage(NO_UPDATE);
                         }
                     }
@@ -323,21 +328,22 @@ public class MeetDynamicsFragment extends BaseFragment {
             }
 
             @Override
-            public void onFailure(Call call, IOException e) {}
+            public void onFailure(Call call, IOException e) {
+            }
         });
 
         recyclerView.scrollToPosition(0);
     }
-    
+
     public List<Dynamic> getDynamicsResponse(String responseText, boolean isUpdate, Handler handler) {
 
         if (!TextUtils.isEmpty(responseText)) {
             try {
                 dynamics_response = new JSONObject(responseText);
                 //dynamics = dynamics_response.getJSONArray("activity");
-                if(isUpdate == true){
+                if (isUpdate == true) {
                     int current = dynamics_response.optInt("current");
-                    if (isDebug) Slog.d(TAG, "----------------->current: "+current);
+                    if (isDebug) Slog.d(TAG, "----------------->current: " + current);
                     SharedPreferencesUtils.setDynamicsLast(getContext(), String.valueOf(current));
                 }
                 dynamics = dynamics_response.optJSONArray("dynamic");
@@ -351,7 +357,7 @@ public class MeetDynamicsFragment extends BaseFragment {
         return null;
     }
 
-    
+
     public List<Dynamic> setDynamicInfo(JSONArray dynamicsArray, Handler handler) {
         List<Dynamic> tempList = new ArrayList<Dynamic>();
         int length = dynamicsArray.length();
@@ -359,7 +365,7 @@ public class MeetDynamicsFragment extends BaseFragment {
 
         for (int i = 0; i < length; i++) {
             JSONObject dynamicJSONObject = dynamicsArray.optJSONObject(i);
-            if (dynamicJSONObject != null){
+            if (dynamicJSONObject != null) {
                 Dynamic dynamic = setMeetDynamics(dynamicJSONObject);
                 setDynamicsInteract(dynamic, handler);
                 tempList.add(dynamic);
@@ -370,8 +376,8 @@ public class MeetDynamicsFragment extends BaseFragment {
         return tempList;
 
     }
-    
-    public Dynamic setMeetDynamics(JSONObject dynamicJSONObject){
+
+    public Dynamic setMeetDynamics(JSONObject dynamicJSONObject) {
         Dynamic dynamic = new Dynamic();
 
         if (isDebug) Slog.d(TAG, "==========dynamicsArray.getJSONObject: " + dynamicJSONObject);
@@ -379,17 +385,21 @@ public class MeetDynamicsFragment extends BaseFragment {
         dynamic.setName(dynamicJSONObject.optString("name"));
         dynamic.setUid(dynamicJSONObject.optInt("uid"));
 
+        if(dynamicJSONObject.optInt("type") == ADD_SUBGROUP_ACTIVITY_ACTION){
+            dynamic.setPid(dynamicJSONObject.optInt("pid"));
+        }
+
         dynamic.setAvatar(dynamicJSONObject.optString("avatar"));
-        
+
         int authorUid = SharedPreferencesUtils.getSessionUid(MyApplication.getContext());
-        if (authorUid == dynamicJSONObject.optInt("uid")){
+        if (authorUid == dynamicJSONObject.optInt("uid")) {
             dynamic.setAuthorSelf(true);
         }
-        
-        if (!dynamicJSONObject.isNull("sex")){
+
+        if (!dynamicJSONObject.isNull("sex")) {
             dynamic.setSex(dynamicJSONObject.optInt("sex"));
         }
-        
+
         if (!dynamicJSONObject.isNull("situation")) {
             dynamic.setSituation(dynamicJSONObject.optInt("situation"));
         }
@@ -406,7 +416,7 @@ public class MeetDynamicsFragment extends BaseFragment {
         if (!dynamicJSONObject.isNull("position")) {
             dynamic.setPosition(dynamicJSONObject.optString("position"));
         }
-        
+
         if (!dynamicJSONObject.isNull("industry")) {
             dynamic.setIndustry(dynamicJSONObject.optString("industry"));
         }
@@ -423,7 +433,7 @@ public class MeetDynamicsFragment extends BaseFragment {
         if (!dynamicJSONObject.isNull("created")) {
             dynamic.setCreatedString(dynamicJSONObject.optLong("created"));
         }
-        
+
         String content = dynamicJSONObject.optString("content");
         if (content != null && content.length() != 0) {
             dynamic.setContent(content);
@@ -434,7 +444,7 @@ public class MeetDynamicsFragment extends BaseFragment {
                 dynamic.setDynamicPicture(dynamics_pictures);
             }
         }
-        if(!dynamicJSONObject.isNull("cid")){
+        if (!dynamicJSONObject.isNull("cid")) {
             dynamic.setCid(dynamicJSONObject.optInt("cid"));
         }
 
@@ -442,7 +452,7 @@ public class MeetDynamicsFragment extends BaseFragment {
     }
 
     public void setDynamicsInteract(final Dynamic dynamic, final Handler handler) {
-        if (dynamic == null){
+        if (dynamic == null) {
             return;
         }
         RequestBody requestBody = new FormBody.Builder().add("did", String.valueOf(dynamic.getDid())).build();
@@ -451,7 +461,7 @@ public class MeetDynamicsFragment extends BaseFragment {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
-                Slog.d(TAG, "-------> setDynamicsInteract response: "+responseText);
+                Slog.d(TAG, "-------> setDynamicsInteract response: " + responseText);
                 int commentCount = 0;
                 if (!TextUtils.isEmpty(responseText)) {
                     try {
@@ -462,7 +472,7 @@ public class MeetDynamicsFragment extends BaseFragment {
                         e.printStackTrace();
                     }
 
-                    if(commentCount > 0){
+                    if (commentCount > 0) {
                         dynamic.setCommentCount(commentCount);
                     }
                     dynamic.setPraisedDynamics(commentResponse.optInt("praised"));
@@ -472,7 +482,7 @@ public class MeetDynamicsFragment extends BaseFragment {
                         dynamic.setPraisedDynamicsCount(praiseArray.length());
                         //Log.d(TAG, "setDynamicsInteract +++++++++++++++ praiseArray.length(): " + praiseArray.length());
                     }
-                   handler.sendEmptyMessage(UPDATE_COMMENT);
+                    handler.sendEmptyMessage(UPDATE_COMMENT);
                 }
             }
 
@@ -482,7 +492,7 @@ public class MeetDynamicsFragment extends BaseFragment {
             }
         });
     }
-    
+
     public void setDynamicsInteract(final Dynamic dynamic) {
         RequestBody requestBody = new FormBody.Builder().add("did", String.valueOf(dynamic.getDid())).build();
         HttpUtil.sendOkHttpRequest(getContext(), REQUEST_INTERACT_URL, requestBody, new Callback() {
@@ -490,9 +500,9 @@ public class MeetDynamicsFragment extends BaseFragment {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
-                Slog.d(TAG, "-------> setDynamicsInteract response: "+responseText);
+                Slog.d(TAG, "-------> setDynamicsInteract response: " + responseText);
                 int commentCount = 0;
-                
+
                 if (!TextUtils.isEmpty(responseText)) {
                     try {
                         commentResponse = new JSONObject(responseText);
@@ -502,7 +512,7 @@ public class MeetDynamicsFragment extends BaseFragment {
                         e.printStackTrace();
                     }
 
-                    if(commentCount > 0){
+                    if (commentCount > 0) {
                         dynamic.setCommentCount(commentCount);
                     }
                     dynamic.setPraisedDynamics(commentResponse.optInt("praised"));
@@ -512,7 +522,7 @@ public class MeetDynamicsFragment extends BaseFragment {
                     }
                 }
             }
-            
+
             @Override
             public void onFailure(Call call, IOException e) {
 
@@ -520,12 +530,12 @@ public class MeetDynamicsFragment extends BaseFragment {
         });
     }
 
-    private void stopLoadProgress(){
-        if (progressImageView.getVisibility() == View.VISIBLE){
+    private void stopLoadProgress() {
+        if (progressImageView.getVisibility() == View.VISIBLE) {
             animationDrawable.stop();
             progressImageView.setVisibility(View.GONE);
-            
-            }
+
+        }
     }
 
     public void handleMessage(Message message) {
@@ -535,8 +545,7 @@ public class MeetDynamicsFragment extends BaseFragment {
                 recyclerView.loadMoreComplete();
                 stopLoadProgress();
                 break;
-                
-                case LOAD_DYNAMICS_DONE:
+            case LOAD_DYNAMICS_DONE:
                 meetDynamicsListAdapter.setData(meetList);
                 meetDynamicsListAdapter.notifyDataSetChanged();
                 recyclerView.refreshComplete();
@@ -555,8 +564,8 @@ public class MeetDynamicsFragment extends BaseFragment {
                 recyclerView.refreshComplete();
                 mTempSize = 0;
                 break;
-                
-                case NO_UPDATE:
+
+            case NO_UPDATE:
                 mTempSize = 0;
                 recyclerView.refreshComplete();
                 break;
@@ -567,14 +576,15 @@ public class MeetDynamicsFragment extends BaseFragment {
             case COMMENT_COUNT_UPDATE:
                 Bundle bundle = message.getData();
                 int commentCount = bundle.getInt("commentCount");
-                if (isDebug) Slog.d(TAG, "------------------>COMMENT_COUNT_UPDATE: position: "+currentPos+ " commentCount: "+commentCount);
+                if (isDebug)
+                    Slog.d(TAG, "------------------>COMMENT_COUNT_UPDATE: position: " + currentPos + " commentCount: " + commentCount);
                 meetList.get(currentPos).setCommentCount(commentCount);
                 meetDynamicsListAdapter.setData(meetList);
                 meetDynamicsListAdapter.notifyDataSetChanged();
                 break;
-                
-                case PRAISE_UPDATE:
-                meetList.get(currentPos).setPraisedDynamicsCount(meetList.get(currentPos).getPraisedDynamicsCount()+1);
+
+            case PRAISE_UPDATE:
+                meetList.get(currentPos).setPraisedDynamicsCount(meetList.get(currentPos).getPraisedDynamicsCount() + 1);
                 meetList.get(currentPos).setPraisedDynamics(1);
                 meetDynamicsListAdapter.setData(meetList);
                 meetDynamicsListAdapter.notifyDataSetChanged();
@@ -595,22 +605,22 @@ public class MeetDynamicsFragment extends BaseFragment {
                 break;
         }
     }
-    
-     public void createCommentDetails(Dynamic dynamic) {
+
+    public void createCommentDetails(Dynamic dynamic) {
         Intent intent = new Intent(MyApplication.getContext(), DynamicsInteractDetailsActivity.class);
         intent.putExtra("type", DynamicsInteractDetailsActivity.DYNAMIC_COMMENT);
         intent.putExtra("dynamic", dynamic);
         //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
         startActivityForResult(intent, Activity.RESULT_FIRST_USER);
     }
-    
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == Activity.RESULT_FIRST_USER){
-            switch (resultCode){
+        if (requestCode == Activity.RESULT_FIRST_USER) {
+            switch (resultCode) {
                 case HomeFragment.COMMENT_UPDATE_RESULT:
                     int commentCount = data.getIntExtra("commentCount", 0);
-                    if (isDebug) Slog.d(TAG, "==========commentCount: "+commentCount);
+                    if (isDebug) Slog.d(TAG, "==========commentCount: " + commentCount);
                     Message msg = new Message();
                     Bundle bundle = new Bundle();
                     bundle.putInt("commentCount", commentCount);
@@ -618,8 +628,8 @@ public class MeetDynamicsFragment extends BaseFragment {
                     msg.what = COMMENT_COUNT_UPDATE;
                     handler.sendMessage(msg);
                     break;
-                    
-                    case HomeFragment.PRAISE_UPDATE_RESULT:
+
+                case HomeFragment.PRAISE_UPDATE_RESULT:
                     handler.sendEmptyMessage(PRAISE_UPDATE);
                     break;
                 case HomeFragment.DYNAMICS_UPDATE_RESULT:
@@ -631,13 +641,13 @@ public class MeetDynamicsFragment extends BaseFragment {
         }
     }
 
-    private void getMyNewActivity(){
+    private void getMyNewActivity() {
         requestBody = new FormBody.Builder()
                 .add("type", String.valueOf(ParseUtils.ADD_MEET_DYNAMIC_ACTION))
                 .add("step", String.valueOf(PAGE_SIZE))
                 .add("page", String.valueOf(0))
                 .build();
-        
+
         HttpUtil.sendOkHttpRequest(getContext(), GET_MY_NEW_ADD_DYNAMICS_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
@@ -649,11 +659,11 @@ public class MeetDynamicsFragment extends BaseFragment {
                         //save last update timemills
                         try {
                             dynamicJSONObject = new JSONObject(responseText).optJSONObject("dynamic");
-                            
-                            }catch (JSONException e){
+
+                        } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        if (dynamicJSONObject != null){
+                        if (dynamicJSONObject != null) {
                             Dynamic dynamic = setMeetDynamics(dynamicJSONObject);
                             if (null != dynamic) {
                                 //dynamicList.clear();
@@ -673,8 +683,8 @@ public class MeetDynamicsFragment extends BaseFragment {
 
         recyclerView.scrollToPosition(0);
     }
-    
-     //register local broadcast to receive DYNAMICS_ADD_BROADCAST
+
+    //register local broadcast to receive DYNAMICS_ADD_BROADCAST
     private void registerLoginBroadcast() {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(AddDynamicsActivity.DYNAMICS_ADD_BROADCAST);
@@ -687,7 +697,7 @@ public class MeetDynamicsFragment extends BaseFragment {
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
     }
 
-    
+
     static class MyHandler extends Handler {
         WeakReference<MeetDynamicsFragment> meetDynamicsFragmentWeakReference;
 
@@ -703,13 +713,13 @@ public class MeetDynamicsFragment extends BaseFragment {
             }
         }
     }
-    
+
     private class DynamicsAddBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            switch (intent.getAction()){
+            switch (intent.getAction()) {
                 case AddDynamicsActivity.DYNAMICS_ADD_BROADCAST:
-                    if (isDebug)  Slog.d(TAG, "==========DYNAMICS_ADD_BROADCAST");
+                    if (isDebug) Slog.d(TAG, "==========DYNAMICS_ADD_BROADCAST");
                     updateData();
                     break;
                 case DYNAMICS_DELETE_BROADCAST:
@@ -720,11 +730,11 @@ public class MeetDynamicsFragment extends BaseFragment {
             }
         }
     }
-    
+
     @Override
     public void onResume() {
         super.onResume();
-        if (isDebug)  Slog.d(TAG, "=============onResume");
+        if (isDebug) Slog.d(TAG, "=============onResume");
         //updateData();
     }
 
@@ -732,8 +742,8 @@ public class MeetDynamicsFragment extends BaseFragment {
     public void onDestroy() {
         super.onDestroy();
         unRegisterLoginBroadcast();
-        
-        if (recyclerView != null){
+
+        if (recyclerView != null) {
             recyclerView.destroy();
             recyclerView = null;
         }

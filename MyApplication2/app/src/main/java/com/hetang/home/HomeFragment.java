@@ -106,7 +106,7 @@ public class HomeFragment extends BaseFragment {
     public static final int GET_RECOMMEND_MEMBER_DONE = 6;
     private static final int GET_RECOMMEND_SINGLE_GROUP_DONE = 7;
     public static final int NO_RECOMMEND_MEMBER_DONE = 8;
-    public static final int GET_MY_NEW_ADD_DONE = 11;
+    public static final int GET_MY_NEW_ADD_DONE = 15;
 
     RequestBody requestBody = null;
     private List<Dynamic> dynamicList = new ArrayList<>();

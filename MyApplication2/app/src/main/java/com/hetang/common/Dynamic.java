@@ -17,6 +17,7 @@ import java.util.Date;
 
     private long did;
     private int type;
+    private int pid;
     private int relatedId;
     private String action;
     private long created;
@@ -38,6 +39,9 @@ import java.util.Date;
     public void setDid(long did) {
         this.did = did;
     }
+
+    public int getPid() {return pid;}
+    public void setPid(int pid) { this.pid = pid; }
 
     public int getType() { return type;}
     public void setType(int type){ this.type = type; }

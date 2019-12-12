@@ -194,7 +194,7 @@ public class AddDynamicsActivity extends BaseAppCompatActivity {
             public void onClick(View v) {
                 showProgressDialog("正在保存...");
                 String dynamics_input = editText.getText().toString();
-                Slog.d(TAG, "---->dynamics_input: "+dynamics_input);
+                Slog.d(TAG, "---->dynamics_input: "+dynamics_input+" type: "+type+" gid: "+gid);
                 // Toast.makeText(AddDynamicsActivity.this, editText.getText().toString(), Toast.LENGTH_SHORT).show();
                 dynamicsText = new HashMap<>();
                 if (dynamics_input.length() > 0) {

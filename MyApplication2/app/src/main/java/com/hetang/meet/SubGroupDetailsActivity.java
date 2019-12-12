@@ -15,42 +15,45 @@ import android.support.v7.widget.GridLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.hetang.R;
 import com.hetang.adapter.SubGroupDetailsListAdapter;
-import com.hetang.adapter.SubGroupSummaryAdapter;
 import com.hetang.archive.ArchiveActivity;
 import com.hetang.common.AddDynamicsActivity;
 import com.hetang.common.BaseAppCompatActivity;
+import com.hetang.common.Dynamic;
+import com.hetang.common.DynamicsInteractDetailsActivity;
 import com.hetang.common.MyApplication;
-import com.hetang.util.CommonDialogFragmentInterface;
+import com.hetang.util.CommonUserListDialogFragment;
+import com.hetang.util.DynamicOperationDialogFragment;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
+import com.hetang.util.InterActInterface;
 import com.hetang.util.InvitationDialogFragment;
 import com.hetang.util.MyLinearLayoutManager;
 import com.hetang.util.ParseUtils;
+import com.hetang.util.PictureReviewDialogFragment;
 import com.hetang.util.RoundImageView;
-import com.hetang.util.SetAvatarActivity;
 import com.hetang.util.Slog;
-import com.hetang.util.UserProfile;
 import com.hetang.util.Utility;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -60,6 +63,17 @@ import okhttp3.Response;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static com.hetang.common.MyApplication.getContext;
+import static com.hetang.home.HomeFragment.GET_MY_NEW_ADD_DONE;
+import static com.hetang.meet.MeetDynamicsFragment.COMMENT_COUNT_UPDATE;
+import static com.hetang.meet.MeetDynamicsFragment.DYNAMICS_DELETE;
+import static com.hetang.meet.MeetDynamicsFragment.DYNAMICS_PRAISED;
+import static com.hetang.meet.MeetDynamicsFragment.GET_DYNAMICS_URL;
+import static com.hetang.meet.MeetDynamicsFragment.HAVE_UPDATE;
+import static com.hetang.meet.MeetDynamicsFragment.LOAD_DYNAMICS_DONE;
+import static com.hetang.meet.MeetDynamicsFragment.NO_MORE_DYNAMICS;
+import static com.hetang.meet.MeetDynamicsFragment.NO_UPDATE;
+import static com.hetang.meet.MeetDynamicsFragment.PRAISE_UPDATE;
+import static com.hetang.meet.MeetDynamicsFragment.UPDATE_COMMENT;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
 //import android.widget.GridLayout;
@@ -73,16 +87,17 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity {
     private static final String APPLY_JOIN_SUBGROUP = HttpUtil.DOMAIN + "?q=subgroup/apply";
     public static final String ACCEPT_JOIN_SUBGROUP = HttpUtil.DOMAIN + "?q=subgroup/accept";
     public static final String APPROVE_JOIN_SUBGROUP = HttpUtil.DOMAIN + "?q=subgroup/approve";
-    
+
     //MeetsubGroupFragment.subGroup subGroup;
     SubGroupActivity.SubGroup subGroup;
     private Handler handler = null;
-    private static final int GET_DONE = 0;
-    private static final int JOIN_DONE = 1;
-    private static final int ACCEPT_DONE = 2;
-    private static final int GET_GROUP_HEADER_DONE = 3;
+    private static final int JOIN_DONE = 10;
+    private static final int ACCEPT_DONE = 11;
+    private static final int GET_GROUP_HEADER_DONE = 12;
     private int uid = -1;
     private int gid = -1;
+    private static final int PAGE_SIZE = 6;
+    private int currentPos = 0;
     private Bundle savedInstanceState;
     private GridLayout gridLayout;
     private JSONObject memberJSONObject = new JSONObject();
@@ -97,9 +112,12 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity {
     Button joinBtn;
     Button followBtn;
     boolean followed = false;
+    private int mTempSize;
+    MeetDynamicsFragment dynamicsFragment;
+    private List<Dynamic> dynamicList = new ArrayList<>();
     private SubGroupDetailsListAdapter subGroupDetailsListAdapter;
     public static final String FOLLOW_GROUP_ACTION_URL = HttpUtil.DOMAIN + "?q=follow/group_action/";
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         mContext = this;
@@ -112,11 +130,14 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity {
 
         gid = getIntent().getIntExtra("gid", -1);
         handler = new MyHandler(this);
+        if (dynamicsFragment == null){
+            dynamicsFragment = new MeetDynamicsFragment();
+        }
         //getSubGroupByGid();
         initView();
 
     }
-    
+
     private void initView() {
 
         recyclerView = findViewById(R.id.subgroup_activity_list);
@@ -132,7 +153,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity {
         recyclerView.getDefaultRefreshHeaderView().setRefreshTimeVisible(true);
         recyclerView.getDefaultFootView().setLoadingHint(getString(R.string.loading_pull_up_tip));
         recyclerView.getDefaultFootView().setNoMoreHint(getString(R.string.no_more));
-        
+
         // When the item number of the screen number is list.size-2,we call the onLoadMore
         recyclerView.setLimitNumberToCallLoadMore(2);
         recyclerView.setRefreshProgressStyle(ProgressStyle.BallBeat);
@@ -150,7 +171,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity {
                 super.onScrollStateChanged(recyclerView, newState);
             }
         });
-        
+
         recyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
             @Override
             public void onRefresh() {
@@ -159,25 +180,56 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity {
 
             @Override
             public void onLoadMore() {
-                //loadData();
+                loadData();
             }
         });
-        
-        /*
-        subGroupDetailsListAdapter.setItemClickListener(new SubGroupSummaryAdapter.MyItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                Slog.d(TAG, "==========click : " + position);
-                Intent intent = new Intent(getContext(), SubGroupDetailsActivity.class);
-                intent.putExtra("gid", mSubGroupList.get(position).gid);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-                startActivity(intent);
-            }
-        });
-        
- */
- mGroupHeaderView = LayoutInflater.from(mContext).inflate(R.layout.subgroup_details_header, (ViewGroup) findViewById(android.R.id.content), false);
+
+        mGroupHeaderView = LayoutInflater.from(mContext).inflate(R.layout.subgroup_details_header, (ViewGroup) findViewById(android.R.id.content), false);
         recyclerView.addHeaderView(mGroupHeaderView);
+
+        //callback from meetDynamicsListAdapter, when comment icon touched, will show comment input dialog
+        subGroupDetailsListAdapter.setOnCommentClickListener(new InterActInterface() {
+            @Override
+            public void onCommentClick(View view, int position) {
+                currentPos = position;
+                //createCommentDetails(meetList.get(position).getDid(), meetList.get(position).getCommentCount());
+                createCommentDetails(dynamicList.get(position));
+
+            }
+            @Override
+            public void onPraiseClick(View view, int position){
+
+                Bundle bundle = new Bundle();
+                bundle.putInt("type", DYNAMICS_PRAISED);
+                bundle.putLong("did", dynamicList.get(position).getDid());
+                bundle.putString("title", "赞了该动态");
+                CommonUserListDialogFragment commonUserListDialogFragment = new CommonUserListDialogFragment();
+                commonUserListDialogFragment.setArguments(bundle);
+                commonUserListDialogFragment.show(getSupportFragmentManager(), "CommonUserListDialogFragment");
+
+            }
+            @Override
+            public void onDynamicPictureClick(View view, int position, String[] pictureUrlArray, int index){
+                Bundle bundle = new Bundle();
+                bundle.putInt("index", index);
+                bundle.putStringArray("pictureUrlArray", pictureUrlArray);
+
+                PictureReviewDialogFragment pictureReviewDialogFragment = new PictureReviewDialogFragment();
+                pictureReviewDialogFragment.setArguments(bundle);
+                pictureReviewDialogFragment.show(getSupportFragmentManager(), "PictureReviewDialogFragment");
+            }
+
+            @Override
+            public void onOperationClick(View view, int position){
+                Bundle bundle = new Bundle();
+                bundle.putLong("did", dynamicList.get(position).getDid());
+                currentPos = position;
+                DynamicOperationDialogFragment dynamicOperationDialogFragment = new DynamicOperationDialogFragment();
+                dynamicOperationDialogFragment.setArguments(bundle);
+                dynamicOperationDialogFragment.show(getSupportFragmentManager(), "DynamicOperationDialogFragment");
+            }
+
+        });
 
         recyclerView.setAdapter(subGroupDetailsListAdapter);
 
@@ -185,12 +237,12 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity {
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (subGroup.authorStatus > 0 || subGroup.followed > 0){
+                if (subGroup.authorStatus > 0 || subGroup.followed > 0) {
                     Intent intent = new Intent(MyApplication.getContext(), AddDynamicsActivity.class);
                     intent.putExtra("type", ParseUtils.ADD_SUBGROUP_ACTIVITY_ACTION);
                     intent.putExtra("gid", gid);
                     startActivityForResult(intent, Activity.RESULT_FIRST_USER);
-                }else {
+                } else {
                     showNoticeDialog();
                 }
 
@@ -200,8 +252,8 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity {
         joinBtn = mGroupHeaderView.findViewById(R.id.join);
 
         followBtn = mGroupHeaderView.findViewById(R.id.follow);
-         
-         // registerLoginBroadcast();
+
+        // registerLoginBroadcast();
         TextView back = mGroupHeaderView.findViewById(R.id.back);
         back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -213,21 +265,31 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity {
         Typeface font = Typeface.createFromAsset(getContext().getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
         FontManager.markAsIconContainer(mGroupHeaderView.findViewById(R.id.custom_actionbar), font);
         FontManager.markAsIconContainer(mGroupHeaderView.findViewById(R.id.subgroup_details_header), font);
-        
+
         //show progressImage before loading done
         progressImageView = findViewById(R.id.animal_progress);
-        animationDrawable = (AnimationDrawable)progressImageView.getDrawable();
+        animationDrawable = (AnimationDrawable) progressImageView.getDrawable();
         progressImageView.postDelayed(new Runnable() {
             @Override
             public void run() {
                 animationDrawable.start();
             }
-        },50);
+        }, 50);
 
         getSubGroupByGid();
+
+        loadData();
     }
-    
-    private void getSubGroupByGid(){
+
+    public void createCommentDetails(Dynamic dynamic) {
+        Intent intent = new Intent(MyApplication.getContext(), DynamicsInteractDetailsActivity.class);
+        intent.putExtra("type", DynamicsInteractDetailsActivity.DYNAMIC_COMMENT);
+        intent.putExtra("dynamic", dynamic);
+        //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+        startActivityForResult(intent, Activity.RESULT_FIRST_USER);
+    }
+
+    private void getSubGroupByGid() {
         RequestBody requestBody = new FormBody.Builder()
                 .add("gid", String.valueOf(gid))
                 .build();
@@ -235,17 +297,17 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity {
         HttpUtil.sendOkHttpRequest(this, GET_SUBGROUP_BY_GID, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                if(isDebug) Slog.d(TAG, "==========response body : " + response.body());
+                if (isDebug) Slog.d(TAG, "==========response body : " + response.body());
 
                 if (response.body() != null) {
                     String responseText = response.body().string();
-                    if(isDebug) Slog.d(TAG, "==========response text : " + responseText);
+                    if (isDebug) Slog.d(TAG, "==========response text : " + responseText);
                     if (responseText != null && !TextUtils.isEmpty(responseText)) {
                         processResponse(responseText);
                     }
                 }
             }
-            
+
             @Override
             public void onFailure(Call call, IOException e) {
 
@@ -253,18 +315,18 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity {
         });
     }
 
-    private void processResponse(String response){
+    private void processResponse(String response) {
         JSONObject subGroupResponse = null;
 
         try {
             subGroupResponse = new JSONObject(response);
-        }catch (JSONException e){
+        } catch (JSONException e) {
             e.printStackTrace();
         }
-        
+
         subGroup = new SubGroupActivity.SubGroup();
 
-        if(subGroupResponse != null){
+        if (subGroupResponse != null) {
             JSONObject group = subGroupResponse.optJSONObject("group");
             subGroup.gid = group.optInt("gid");
             subGroup.type = group.optInt("type");
@@ -282,7 +344,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity {
             subGroup.isLeader = group.optBoolean("isLeader");
             subGroup.followed = group.optInt("followed");
             subGroup.leader = new UserMeetInfo();
-            if (group.optJSONObject("leader") != null){
+            if (group.optJSONObject("leader") != null) {
                 ParseUtils.setBaseProfile(subGroup.leader, group.optJSONObject("leader"));
             }
 
@@ -291,7 +353,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity {
 
     }
 
-    private void setSubGroupHeaderView(){
+    private void setSubGroupHeaderView() {
         Slog.d(TAG, "-------------------------->setSubGroupHeaderView");
         RoundImageView logoImage = mGroupHeaderView.findViewById(R.id.logo);
         TextView groupName = mGroupHeaderView.findViewById(R.id.group_name);
@@ -304,10 +366,10 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity {
         TextView activityAmount = mGroupHeaderView.findViewById(R.id.activity_amount);
         final TextView followAmount = mGroupHeaderView.findViewById(R.id.follow_amount);
         TextView memberAmount = mGroupHeaderView.findViewById(R.id.member_amout);
-     
-     if (subGroup.groupLogoUri != null && !"".equals(subGroup.groupLogoUri)) {
+
+        if (subGroup.groupLogoUri != null && !"".equals(subGroup.groupLogoUri)) {
             Glide.with(mContext).load(HttpUtil.DOMAIN + subGroup.groupLogoUri).into(logoImage);
-        }else {
+        } else {
             logoImage.setImageDrawable(mContext.getDrawable(R.drawable.icon));
         }
 
@@ -315,16 +377,16 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity {
         groupOrg.setText(subGroup.org);
         groupRegion.setText(subGroup.region);
         leaderName.setText(subGroup.leader.getName());
-        
-        if (subGroup.browseCount != 0){
+
+        if (subGroup.browseCount != 0) {
             browseAmount.setText(String.valueOf(subGroup.browseCount));
         }
 
-        if (subGroup.activityCount != 0){
+        if (subGroup.activityCount != 0) {
             activityAmount.setText(String.valueOf(subGroup.activityCount));
         }
 
-        if (subGroup.followCount != 0){
+        if (subGroup.followCount != 0) {
             followAmount.setText(String.valueOf(subGroup.followCount));
         }
 
@@ -334,14 +396,14 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity {
         if (avatar != null && !"".equals(avatar)) {
             Glide.with(mContext).load(HttpUtil.DOMAIN + avatar).into(leaderAvatar);
         }
-        
+
         groupDesc.setText(subGroup.groupProfile);
-        if (subGroup.authorStatus != -1){
-            if(subGroup.authorStatus == 0){
+        if (subGroup.authorStatus != -1) {
+            if (subGroup.authorStatus == 0) {
                 joinBtn.setVisibility(View.VISIBLE);
                 joinBtn.setText(getResources().getString(R.string.applying));
                 joinBtn.setClickable(false);
-            }else {
+            } else {
                 joinBtn.setText(getResources().getString(R.string.invite_friend));
                 joinBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -350,7 +412,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity {
                     }
                 });
             }
-        }else {
+        } else {
             joinBtn.setVisibility(View.VISIBLE);
             joinBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -359,24 +421,25 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity {
                 }
             });
         }
-        
-        if (subGroup.followed == 1){
+
+        if (subGroup.followed == 1) {
             followed = true;
             followBtn.setText("已关注");
             followBtn.setBackground(MyApplication.getContext().getDrawable(R.drawable.btn_disable));
             followBtn.setTextColor(getResources().getColor(R.color.color_dark_grey));
-        }else {
+        } else {
             followed = false;
             followBtn.setText("+关注");
             followBtn.setTextColor(getResources().getColor(R.color.blue_dark));
             followBtn.setBackground(MyApplication.getContext().getDrawable(R.drawable.btn_default));
         }
-        
+
         followBtn.setOnClickListener(new View.OnClickListener() {
             RequestBody requestBody = new FormBody.Builder()
                     .add("gid", String.valueOf(gid))
                     .add("uid", String.valueOf(uid))
                     .build();
+
             @Override
             public void onClick(View view) {
                 String followUrl = "";
@@ -397,13 +460,13 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity {
                     followBtn.setTextColor(getResources().getColor(R.color.color_dark_grey));
                     String amount = followAmount.getText().toString();
                     int currentCount = 0;
-                    if(amount != null && !TextUtils.isEmpty(amount)){
+                    if (amount != null && !TextUtils.isEmpty(amount)) {
                         currentCount = Integer.parseInt(amount);
                     }
                     followAmount.setText(String.valueOf(currentCount + 1));
                     subGroup.followed = 1;
                 }
-                
+
                 HttpUtil.sendOkHttpRequest(MyApplication.getContext(), followUrl, requestBody, new Callback() {
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
@@ -413,7 +476,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity {
                                 Slog.d(TAG, "==========get follow response text : " + responseText);
                         }
                     }
-                    
+
                     @Override
                     public void onFailure(Call call, IOException e) {
                     }
@@ -421,60 +484,8 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity {
             }
         });
     }
-    
-    private void setSubGroupView(){
 
-        uid = subGroup.leader.getUid();
-        TextView leaderProfileDetails = findViewById(R.id.leader_profile_detail);
-        leaderProfileDetails.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(SubGroupDetailsActivity.this, ArchiveActivity.class);
-                intent.putExtra("uid", uid);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-                startActivity(intent);
-            }
-        });
-                
-        TextView title = findViewById(R.id.title);
-        title.setText(subGroup.groupName);
-        
-        RoundImageView leaderHead = findViewById(R.id.head_uri);
-        Glide.with(getContext()).load(HttpUtil.DOMAIN + subGroup.leader.getAvatar()).into(leaderHead);
-        TextView leaderName = findViewById(R.id.leader_name);
-        leaderName.setText(subGroup.leader.getName());
-        TextView leaderProfile = findViewById(R.id.leader_profile);
-        TextView leaderBaseProfile = findViewById(R.id.base_profile);
-        TextView living = findViewById(R.id.living);
-
-        if(subGroup.leader.getProfile() != null){
-            leaderProfile.setText(subGroup.leader.getProfile());
-        }
-        
-        if(subGroup.leader.getBaseProfile() != null){
-            leaderBaseProfile.setText(subGroup.leader.getBaseProfile());
-        }
-
-        living.setText(subGroup.leader.getLiving().toString().trim());
-
-        //TextView groupName = findViewById(R.id.group_name);
-        //groupName.setText(subGroup.groupName);
-        
-        TextView memberCountView = findViewById(R.id.member_count);
-
-        TextView groupOrg = findViewById(R.id.org);
-        groupOrg.setText(subGroup.org);
-        
-        TextView groupProfile = findViewById(R.id.profile_detail);
-        groupProfile.setText(subGroup.groupProfile);
-
-
-        Typeface font = Typeface.createFromAsset(getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
-        FontManager.markAsIconContainer(findViewById(R.id.group_details_layout), font);
-    }
-    
-      
-    private void applyJoinGroup(){
+    private void applyJoinGroup() {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -485,21 +496,21 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity {
         RequestBody requestBody = new FormBody.Builder()
                 .add("gid", String.valueOf(gid))
                 .build();
-                
+
         HttpUtil.sendOkHttpRequest(this, APPLY_JOIN_SUBGROUP, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                if(isDebug) Slog.d(TAG, "==========response body : " + response.body());
+                if (isDebug) Slog.d(TAG, "==========response body : " + response.body());
                 if (response.body() != null) {
                     String responseText = response.body().string();
-                    if(isDebug) Slog.d(TAG, "==========response text : " + responseText);
+                    if (isDebug) Slog.d(TAG, "==========response text : " + responseText);
                     if (responseText != null && !TextUtils.isEmpty(responseText)) {
-                    try {
+                        try {
                             memberJSONObject = new JSONObject(responseText).optJSONObject("member");
-                        }catch (JSONException e){
+                        } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        
+
                         dismissProgressDialog();
                         handler.sendEmptyMessage(JOIN_DONE);
                         subGroup.authorStatus = 0;
@@ -513,8 +524,8 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity {
             }
         });
     }
-    
-    private void showNoticeDialog(final boolean isAvatarSet){
+
+    private void showNoticeDialog() {
         final AlertDialog.Builder normalDialog =
                 new AlertDialog.Builder(this, R.style.Theme_MaterialComponents_Light_Dialog_Alert);
         normalDialog.setTitle("请先关注或加入");
@@ -534,39 +545,150 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity {
                         //...To-do
                     }
                 });
-        
+
         normalDialog.show();
     }
-    
-    private void invite(){
+
+    private void invite() {
         InvitationDialogFragment invitationDialogFragment = new InvitationDialogFragment();
         Bundle bundle = new Bundle();
         bundle.putInt("gid", gid);
-        Slog.d(TAG, "---------------------->invite gid: "+gid);
+        Slog.d(TAG, "---------------------->invite gid: " + gid);
         bundle.putInt("type", ParseUtils.TYPE_SINGLE_GROUP);
 
         invitationDialogFragment.setArguments(bundle);
         invitationDialogFragment.show(getSupportFragmentManager(), "InvitationDialogFragment");
     }
-       
-     public void handleMessage(Message message) {
+
+    private void loadData() {
+
+        final int page = dynamicList.size() / PAGE_SIZE;
+        RequestBody requestBody = new FormBody.Builder()
+                .add("type", String.valueOf(ParseUtils.ADD_SUBGROUP_ACTIVITY_ACTION))
+                .add("gid", String.valueOf(gid))
+                .add("step", String.valueOf(PAGE_SIZE))
+                .add("page", String.valueOf(page))
+                .build();
+
+        HttpUtil.sendOkHttpRequest(MyApplication.getContext(), GET_DYNAMICS_URL, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.body() != null) {
+                    String responseText = response.body().string();
+                    //Slog.d(TAG, "==========response : "+response.body());
+                    if (isDebug) Slog.d(TAG, "==========response text : " + responseText);
+                    if (responseText != null) {
+                        List<Dynamic> tempList = dynamicsFragment.getDynamicsResponse(responseText, false, handler);
+
+                        mTempSize = 0;
+                        if (null != tempList && tempList.size() > 0) {
+                            // meetList.clear();
+                            mTempSize = tempList.size();
+                            if (page == 0) {
+                                //load first page,so remove cache data
+                                dynamicList.clear();
+                                dynamicList.addAll(tempList);
+                            } else {
+                                dynamicList.addAll(tempList);
+                            }
+                            Log.d(TAG, "getResponseText list.size:" + tempList.size());
+                            handler.sendEmptyMessage(LOAD_DYNAMICS_DONE);
+                        }else {
+                            handler.sendEmptyMessage(NO_MORE_DYNAMICS);
+                        }
+
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {}
+        });
+    }
+
+
+    public void handleMessage(Message message) {
         switch (message.what) {
             case GET_GROUP_HEADER_DONE:
                 setSubGroupHeaderView();
-                break;
-                case GET_DONE:
-                setSubGroupView();
                 break;
             case JOIN_DONE:
             case ACCEPT_DONE:
                 joinBtn.setText(getResources().getString(R.string.applying));
                 joinBtn.setClickable(false);
                 break;
+            case NO_MORE_DYNAMICS:
+                recyclerView.setNoMore(true);
+                recyclerView.loadMoreComplete();
+                stopLoadProgress();
+                break;
+            case LOAD_DYNAMICS_DONE:
+                subGroupDetailsListAdapter.setData(dynamicList);
+                subGroupDetailsListAdapter.notifyDataSetChanged();
+                recyclerView.refreshComplete();
+                if (mTempSize < PAGE_SIZE) {
+                    //loading finished
+                    recyclerView.loadMoreComplete();
+                    recyclerView.setNoMore(true);
+                }
+                stopLoadProgress();
+                break;
+            case HAVE_UPDATE:
+                //meetDynamicsListAdapter.setScrolling(false);
+                subGroupDetailsListAdapter.setData(dynamicList);
+                subGroupDetailsListAdapter.notifyItemRangeInserted(0, mTempSize);
+                subGroupDetailsListAdapter.notifyDataSetChanged();
+                recyclerView.refreshComplete();
+                mTempSize = 0;
+                break;
+            case NO_UPDATE:
+                mTempSize = 0;
+                recyclerView.refreshComplete();
+                break;
+            case UPDATE_COMMENT:
+                subGroupDetailsListAdapter.setData(dynamicList);
+                subGroupDetailsListAdapter.notifyDataSetChanged();
+                break;
+            case COMMENT_COUNT_UPDATE:
+                Bundle bundle = message.getData();
+                int commentCount = bundle.getInt("commentCount");
+                if (isDebug)
+                    Slog.d(TAG, "------------------>COMMENT_COUNT_UPDATE: position: " + currentPos + " commentCount: " + commentCount);
+                dynamicList.get(currentPos).setCommentCount(commentCount);
+                subGroupDetailsListAdapter.setData(dynamicList);
+                subGroupDetailsListAdapter.notifyDataSetChanged();
+                break;
+            case PRAISE_UPDATE:
+                dynamicList.get(currentPos).setPraisedDynamicsCount(dynamicList.get(currentPos).getPraisedDynamicsCount() + 1);
+                dynamicList.get(currentPos).setPraisedDynamics(1);
+                subGroupDetailsListAdapter.setData(dynamicList);
+                subGroupDetailsListAdapter.notifyDataSetChanged();
+                break;
+            case GET_MY_NEW_ADD_DONE:
+                subGroupDetailsListAdapter.setData(dynamicList);
+                subGroupDetailsListAdapter.notifyItemRangeInserted(0, 1);
+                subGroupDetailsListAdapter.notifyDataSetChanged();
+                recyclerView.refreshComplete();
+                break;
+            case DYNAMICS_DELETE:
+                dynamicList.remove(currentPos);
+                subGroupDetailsListAdapter.setData(dynamicList);
+                subGroupDetailsListAdapter.notifyItemRemoved(currentPos);
+                subGroupDetailsListAdapter.notifyDataSetChanged();
+                break;
             default:
                 break;
         }
     }
-       
+
+    private void stopLoadProgress(){
+        if (progressImageView.getVisibility() == View.VISIBLE){
+            animationDrawable.stop();
+            progressImageView.setVisibility(View.GONE);
+
+        }
+    }
+
     static class MyHandler extends Handler {
         WeakReference<SubGroupDetailsActivity> subGroupDetailsActivityWeakReference;
 
