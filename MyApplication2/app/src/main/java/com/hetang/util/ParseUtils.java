@@ -86,6 +86,7 @@ public class ParseUtils {
     public static final int ADD_PAPER_ACTION = 21;
     public static final int ADD_PRIZE_ACTION = 22;
     public static final int ADD_VOLUNTEER_ACTION = 23;
+    public static final int ADD_SUBGROUP_ACTIVITY_ACTION = 24;
     
     //here only for notification, other notification reused with dynamic
     public static final int APPLY_CONTACTS_NF = 50;
