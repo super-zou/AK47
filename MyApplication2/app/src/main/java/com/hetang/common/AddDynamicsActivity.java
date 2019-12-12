@@ -46,6 +46,8 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
+import static com.hetang.util.ParseUtils.ADD_SUBGROUP_ACTIVITY_ACTION;
+
 public class AddDynamicsActivity extends BaseAppCompatActivity {
 
     public static final String DYNAMICS_ADD_BROADCAST = "com.hetang.action.DYNAMICS_ADD";
@@ -53,6 +55,7 @@ public class AddDynamicsActivity extends BaseAppCompatActivity {
     private int maxSelectNum = 9;
     private int themeId;
     private int type = 0;
+    private int gid = 0;
     private TextView publishBtn;
     private TextView backLeft;
     private EditText editText;
@@ -74,6 +77,10 @@ public class AddDynamicsActivity extends BaseAppCompatActivity {
             actionBar.hide();
         }
         type = getIntent().getIntExtra("type", ParseUtils.ADD_MEET_DYNAMIC_ACTION);
+        
+        if (type == ADD_SUBGROUP_ACTIVITY_ACTION){
+            gid = getIntent().getIntExtra("gid", 0);
+        }
         myHandler = new MyHandler(this);
         editText = findViewById(R.id.dynamics_input);
         publishBtn = findViewById(R.id.dynamic_publish);
@@ -194,6 +201,9 @@ public class AddDynamicsActivity extends BaseAppCompatActivity {
                     dynamicsText.put("text", dynamics_input);
                 }
                 dynamicsText.put("type", String.valueOf(type));
+                if (type == ADD_SUBGROUP_ACTIVITY_ACTION){
+                    dynamicsText.put("gid", String.valueOf(gid));
+                }
                 uploadPictures(dynamicsText, "picture", selectFileList);
             }
         });
