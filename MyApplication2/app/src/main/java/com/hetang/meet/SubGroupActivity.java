@@ -566,11 +566,15 @@ public class SubGroupActivity extends BaseAppCompatActivity {
         public String region;
         public String groupLogoUri;
         public int memberCount = 0;
+        public int followCount = 0;
+        public int browseCount = 0;
+        public int activityCount = 0;
         public String created;
         public UserMeetInfo leader;
         
         //public List<String> headUrlList;
         public int authorStatus = -1;
+        public int followed = -1;
         public boolean isLeader = false;
         //public List<UserMeetInfo> memberInfoList;
     }
