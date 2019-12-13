@@ -6,7 +6,7 @@
     android:id="@+id/subgroup_summary_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="6dp"
+    android:layout_marginBottom="10dp"
     android:paddingTop="8dp"
     android:paddingBottom="8dp"
     android:elevation="8dp"
@@ -102,117 +102,81 @@
         app:layout_constraintTop_toTopOf="@+id/org" />
 
     <TextView
-        android:id="@+id/created"
+        android:id="@+id/visit_record"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/org"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="16dp"
-        android:text="created"
-        android:visibility="visible"
+        android:layout_marginBottom="8dp"
+        android:gravity="center"
+        android:text=""
+        android:textColor="@color/color_dark_disabled"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/org" />
-
+    <TextView
+        android:id="@+id/visit_activity_dot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/org"
+        android:gravity="center"
+        android:text="@string/dot"
+        app:layout_constraintBottom_toBottomOf="@+id/visit_record"
+        app:layout_constraintStart_toEndOf="@+id/visit_record"
+        app:layout_constraintTop_toTopOf="@+id/visit_record" />
+    <TextView
+        android:id="@+id/activity_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/org"
+        android:gravity="center"
+        android:text=""
+        android:textColor="@color/color_dark_disabled"
+        app:layout_constraintBottom_toBottomOf="@+id/visit_record"
+        app:layout_constraintStart_toEndOf="@+id/visit_activity_dot"
+        app:layout_constraintTop_toTopOf="@+id/visit_record" />
+    <TextView
+        android:id="@+id/follow_activity_dot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/org"
+        android:gravity="center"
+        android:text="@string/dot"
+        app:layout_constraintBottom_toBottomOf="@+id/visit_record"
+        app:layout_constraintStart_toEndOf="@+id/activity_count"
+        app:layout_constraintTop_toTopOf="@+id/visit_record" />
+    <TextView
+        android:id="@+id/follow_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/org"
+        android:gravity="center"
+        android:text=""
+        android:textColor="@color/color_dark_disabled"
+        app:layout_constraintBottom_toBottomOf="@+id/activity_count"
+        app:layout_constraintStart_toEndOf="@+id/follow_activity_dot"
+        app:layout_constraintTop_toTopOf="@+id/activity_count" />
+    
+    <TextView
+        android:id="@+id/follow_member_dot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/org"
+        android:gravity="center"
+        android:text="@string/dot"
+        app:layout_constraintBottom_toBottomOf="@+id/visit_record"
+        app:layout_constraintStart_toEndOf="@+id/follow_count"
+        app:layout_constraintTop_toTopOf="@+id/visit_record" />
     <TextView
         android:id="@+id/member_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:text="member_count"
-        app:layout_constraintBottom_toBottomOf="@+id/created"
-        app:layout_constraintStart_toEndOf="@+id/created"
-        app:layout_constraintTop_toTopOf="@+id/created" />
-    <!--
-    <LinearLayout
-        android:id="@+id/leader_profile"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginStart="8dp"
-        android:orientation="vertical"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <com.hetang.util.RoundImageView
-            android:id="@+id/leader_head_uri"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:gravity="center"
-            android:scaleType="centerCrop" />
-        
-         <TextView
-            android:id="@+id/leader_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:gravity="center"
-            android:text="leader name"
-            android:textColor="@color/blue_dark"
-            android:textSize="15sp"
-            android:textStyle="normal|bold" />
-    </LinearLayout>
-    
-     <RelativeLayout
-        android:id="@+id/group_info"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="68dp"
-        android:layout_marginStart="8dp"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/leader_profile"
-        app:layout_constraintTop_toTopOf="@+id/leader_profile">
-         
-         <TextView
-            android:id="@+id/group_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingRight="8dp"
-             android:text="name"
-            android:textColor="@color/black" />
-
-        <TextView
-            android:id="@+id/member_count"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="member_count"
-            android:layout_marginLeft="8dp"
-            android:layout_toRightOf="@+id/group_name" />
-         
-         <TextView
-            android:id="@+id/profile"
-            android:maxLines="2"
-            android:ellipsize="end"
-             android:text="profile"
-             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/group_name"
-            android:layout_marginTop="5dp"
-            android:paddingRight="8dp" />
-
-        <TextView
-            android:id="@+id/org"
-            android:text="org"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/profile"
-            android:layout_marginTop="8dp"
-            android:paddingRight="8dp"
-            android:textColor="@color/color_dark_disabled" />
-         
-         <TextView
-            android:id="@+id/created"
-             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/org"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="12dp"
-            android:text="created"
-            android:visibility="visible" />
-
-    </RelativeLayout>
-    -->
+        android:gravity="center"
+        android:text=""
+        android:textColor="@color/color_dark_disabled"
+        app:layout_constraintBottom_toBottomOf="@+id/follow_count"
+        app:layout_constraintStart_toEndOf="@+id/follow_member_dot"
+        app:layout_constraintTop_toTopOf="@+id/follow_count" />
+     
 </android.support.constraint.ConstraintLayout>
