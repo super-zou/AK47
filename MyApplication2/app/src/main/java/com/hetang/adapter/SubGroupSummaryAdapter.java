@@ -96,13 +96,16 @@ public class SubGroupSummaryAdapter extends RecyclerView.Adapter<SubGroupSummary
             holder.region.setText(subGroup.region.trim());
         }
 
+        /*
         if (!TextUtils.isEmpty(subGroup.created)){
             holder.created.setText(subGroup.created);
         }
+        */
 
-        if (subGroup.memberCount != 0){
-            holder.memberCount.setText(String.valueOf(subGroup.memberCount));
-        }
+        holder.visitRecord.setText(mContext.getResources().getString(R.string.visit)+" "+subGroup.visitRecord);
+        holder.followCount.setText(mContext.getResources().getString(R.string.follow)+" "+subGroup.followCount);
+        holder.activityCount.setText(mContext.getResources().getString(R.string.dynamics)+" "+subGroup.activityCount);
+        holder.memberCount.setText(mContext.getResources().getString(R.string.member)+" "+subGroup.memberCount);
 
         if (subGroup.groupLogoUri != null && !"".equals(subGroup.groupLogoUri)) {
             Glide.with(mContext).load(HttpUtil.DOMAIN + subGroup.groupLogoUri).into(holder.logo);
@@ -138,6 +141,9 @@ public class SubGroupSummaryAdapter extends RecyclerView.Adapter<SubGroupSummary
         RoundImageView logo;
         TextView region;
         TextView memberCount;
+        TextView visitRecord;
+        TextView activityCount;
+        TextView followCount;
 
 
         LinearLayout leaderProfile;
@@ -152,12 +158,15 @@ public class SubGroupSummaryAdapter extends RecyclerView.Adapter<SubGroupSummary
             //baseProfle = view.findViewById(R.id.base_profile);
             groupName = view.findViewById(R.id.group_name);
             org = view.findViewById(R.id.org);
-            created = view.findViewById(R.id.created);
+            //created = view.findViewById(R.id.created);
             groupProfile = view.findViewById(R.id.profile);
             leaderProfile = view.findViewById(R.id.leader_profile);
             logo = view.findViewById(R.id.logo);
             region = view.findViewById(R.id.region);
             memberCount = view.findViewById(R.id.member_count);
+            visitRecord = view.findViewById(R.id.visit_record);
+            activityCount = view.findViewById(R.id.activity_count);
+            followCount = view.findViewById(R.id.follow_count);
             //将全局的监听赋值给接口
             this.mListener = myItemClickListener;
             Typeface font = Typeface.createFromAsset(mContext.getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
