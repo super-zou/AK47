@@ -26,12 +26,13 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.hetang.R;
 import com.hetang.adapter.SubGroupDetailsListAdapter;
-import com.hetang.archive.ArchiveActivity;
 import com.hetang.common.AddDynamicsActivity;
 import com.hetang.common.BaseAppCompatActivity;
 import com.hetang.common.Dynamic;
 import com.hetang.common.DynamicsInteractDetailsActivity;
 import com.hetang.common.MyApplication;
+import com.hetang.home.HomeFragment;
+import com.hetang.util.CommonDialogFragmentInterface;
 import com.hetang.util.CommonUserListDialogFragment;
 import com.hetang.util.DynamicOperationDialogFragment;
 import com.hetang.util.FontManager;
@@ -43,6 +44,7 @@ import com.hetang.util.ParseUtils;
 import com.hetang.util.PictureReviewDialogFragment;
 import com.hetang.util.RoundImageView;
 import com.hetang.util.Slog;
+import com.hetang.util.SubGroupOperationDialogFragment;
 import com.hetang.util.Utility;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
@@ -64,6 +66,7 @@ import okhttp3.Response;
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static com.hetang.common.MyApplication.getContext;
 import static com.hetang.home.HomeFragment.GET_MY_NEW_ADD_DONE;
+import static com.hetang.home.HomeFragment.GET_MY_NEW_ADD_DYNAMICS_URL;
 import static com.hetang.meet.MeetDynamicsFragment.COMMENT_COUNT_UPDATE;
 import static com.hetang.meet.MeetDynamicsFragment.DYNAMICS_DELETE;
 import static com.hetang.meet.MeetDynamicsFragment.DYNAMICS_PRAISED;
@@ -79,7 +82,7 @@ import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 //import android.widget.GridLayout;
 
 
-public class SubGroupDetailsActivity extends BaseAppCompatActivity {
+public class SubGroupDetailsActivity extends BaseAppCompatActivity implements CommonDialogFragmentInterface{
     private static final String TAG = "subGroupDetailsActivity";
     private static final boolean isDebug = true;
     private Context mContext;
@@ -114,6 +117,10 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity {
     boolean followed = false;
     private int mTempSize;
     MeetDynamicsFragment dynamicsFragment;
+    TextView visitRecordTV;
+    TextView activityAmount;
+    TextView followAmount;
+    TextView memberAmount;
     private List<Dynamic> dynamicList = new ArrayList<>();
     private SubGroupDetailsListAdapter subGroupDetailsListAdapter;
     public static final String FOLLOW_GROUP_ACTION_URL = HttpUtil.DOMAIN + "?q=follow/group_action/";
@@ -139,6 +146,26 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity {
     }
 
     private void initView() {
+        
+        TextView back = findViewById(R.id.back);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                exit();
+            }
+        });
+
+        TextView operation = findViewById(R.id.group_operation);
+        operation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("subGroup", subGroup);
+                SubGroupOperationDialogFragment subGroupOperationDialogFragment = new SubGroupOperationDialogFragment();
+                subGroupOperationDialogFragment.setArguments(bundle);
+                subGroupOperationDialogFragment.show(getSupportFragmentManager(), "SubGroupOperationDialogFragment");
+            }
+        });
 
         recyclerView = findViewById(R.id.subgroup_activity_list);
         subGroupDetailsListAdapter = new SubGroupDetailsListAdapter(getContext());
@@ -254,16 +281,8 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity {
         followBtn = mGroupHeaderView.findViewById(R.id.follow);
 
         // registerLoginBroadcast();
-        TextView back = mGroupHeaderView.findViewById(R.id.back);
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
-
         Typeface font = Typeface.createFromAsset(getContext().getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
-        FontManager.markAsIconContainer(mGroupHeaderView.findViewById(R.id.custom_actionbar), font);
+        FontManager.markAsIconContainer(findViewById(R.id.custom_actionbar), font);
         FontManager.markAsIconContainer(mGroupHeaderView.findViewById(R.id.subgroup_details_header), font);
 
         //show progressImage before loading done
@@ -339,7 +358,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity {
             subGroup.created = Utility.timeStampToDay(group.optInt("created"));
             subGroup.followCount = group.optInt("follow_count");
             subGroup.activityCount = group.optInt("activity_count");
-            subGroup.browseCount = group.optInt("browse_count");
+            subGroup.visitRecord = group.optInt("visit_record");
             subGroup.authorStatus = group.optInt("status");
             subGroup.isLeader = group.optBoolean("isLeader");
             subGroup.followed = group.optInt("followed");
@@ -362,10 +381,10 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity {
         TextView leaderName = mGroupHeaderView.findViewById(R.id.leader_name);
         RoundImageView leaderAvatar = mGroupHeaderView.findViewById(R.id.leader_avatar);
         TextView groupDesc = mGroupHeaderView.findViewById(R.id.group_desc);
-        TextView browseAmount = mGroupHeaderView.findViewById(R.id.browse_amount);
-        TextView activityAmount = mGroupHeaderView.findViewById(R.id.activity_amount);
-        final TextView followAmount = mGroupHeaderView.findViewById(R.id.follow_amount);
-        TextView memberAmount = mGroupHeaderView.findViewById(R.id.member_amout);
+        visitRecordTV = mGroupHeaderView.findViewById(R.id.visit_record);
+        activityAmount = mGroupHeaderView.findViewById(R.id.activity_amount);
+        followAmount = mGroupHeaderView.findViewById(R.id.follow_amount);
+        memberAmount = mGroupHeaderView.findViewById(R.id.member_amout);
 
         if (subGroup.groupLogoUri != null && !"".equals(subGroup.groupLogoUri)) {
             Glide.with(mContext).load(HttpUtil.DOMAIN + subGroup.groupLogoUri).into(logoImage);
@@ -378,8 +397,8 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity {
         groupRegion.setText(subGroup.region);
         leaderName.setText(subGroup.leader.getName());
 
-        if (subGroup.browseCount != 0) {
-            browseAmount.setText(String.valueOf(subGroup.browseCount));
+        if (subGroup.visitRecord != 0) {
+            visitRecordTV.setText(String.valueOf(subGroup.visitRecord));
         }
 
         if (subGroup.activityCount != 0) {
@@ -669,12 +688,20 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity {
                 subGroupDetailsListAdapter.notifyItemRangeInserted(0, 1);
                 subGroupDetailsListAdapter.notifyDataSetChanged();
                 recyclerView.refreshComplete();
+                //update activity amount
+                String amount = activityAmount.getText().toString();
+                int currentCount = 0;
+                if (amount != null && !TextUtils.isEmpty(amount)) {
+                    currentCount = Integer.parseInt(amount);
+                }
+                activityAmount.setText(String.valueOf(currentCount + 1));
                 break;
             case DYNAMICS_DELETE:
                 dynamicList.remove(currentPos);
                 subGroupDetailsListAdapter.setData(dynamicList);
                 subGroupDetailsListAdapter.notifyItemRemoved(currentPos);
                 subGroupDetailsListAdapter.notifyDataSetChanged();
+                recyclerView.refreshComplete();
                 break;
             default:
                 break;
@@ -687,6 +714,92 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity {
             progressImageView.setVisibility(View.GONE);
 
         }
+    }
+    
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == Activity.RESULT_FIRST_USER) {
+            switch (resultCode) {
+                case HomeFragment.COMMENT_UPDATE_RESULT:
+                    int commentCount = data.getIntExtra("commentCount", 0);
+                    if (isDebug) Slog.d(TAG, "==========commentCount: " + commentCount);
+                    Message msg = new Message();
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("commentCount", commentCount);
+                    msg.setData(bundle);
+                    msg.what = COMMENT_COUNT_UPDATE;
+                    handler.sendMessage(msg);
+                    break;
+                    
+                case HomeFragment.PRAISE_UPDATE_RESULT:
+                    handler.sendEmptyMessage(PRAISE_UPDATE);
+                    break;
+                case HomeFragment.DYNAMICS_UPDATE_RESULT:
+                    getMyNewActivity();
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+    
+    @Override
+    public void onBackFromDialog(int type, int result, boolean status) { }
+
+    private void getMyNewActivity() {
+        RequestBody requestBody = new FormBody.Builder()
+                .add("type", String.valueOf(ParseUtils.ADD_SUBGROUP_ACTIVITY_ACTION))
+                .add("pid", String.valueOf(gid))
+                .add("step", String.valueOf(PAGE_SIZE))
+                .add("page", String.valueOf(0))
+                .build();
+        HttpUtil.sendOkHttpRequest(getContext(), GET_MY_NEW_ADD_DYNAMICS_URL, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.body() != null) {
+                    String responseText = response.body().string();
+                    JSONObject dynamicJSONObject = null;
+                    Slog.d(TAG, "==========updateData response text : " + responseText);
+                    if (responseText != null) {
+                        //save last update timemills
+                        try {
+                            dynamicJSONObject = new JSONObject(responseText).optJSONObject("dynamic");
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        if (dynamicJSONObject != null) {
+                            Dynamic dynamic = dynamicsFragment.setMeetDynamics(dynamicJSONObject);
+                            if (null != dynamic) {
+                                //dynamicList.clear();
+                                dynamicList.add(0, dynamic);
+                                handler.sendEmptyMessage(GET_MY_NEW_ADD_DONE);
+                            }
+                        }
+                        
+                        }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+        });
+
+        recyclerView.scrollToPosition(0);
+    }
+    
+    @Override
+    public void onBackPressed(){
+        exit();
+    }
+
+    private void exit(){
+        Intent intent = new Intent();
+        intent.putExtra("approved", true);
+        setResult(RESULT_OK, intent);
+        finish();
     }
 
     static class MyHandler extends Handler {
