@@ -8,6 +8,40 @@
     android:id="@+id/group_details_layout"
     android:fitsSystemWindows="true"
     android:orientation="vertical">
+    <LinearLayout
+        android:id="@+id/custom_actionbar"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:background="@color/blue_dark"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/back"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingLeft="10dp"
+            android:paddingRight="8dp"
+            android:gravity="left|center_vertical"
+            android:layout_weight="1"
+            android:text="@string/left_angle"
+            android:textColor="@color/white"
+            android:textSize="26sp" />
+        
+        <TextView
+            android:id="@+id/group_operation"
+            android:textColor="@color/white"
+            android:paddingRight="10dp"
+            android:gravity="right|center_vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="@string/operation"
+            android:textSize="18sp" />
+    </LinearLayout>
+    
     <ImageView
         android:id="@+id/animal_progress"
         android:layout_width="match_parent"
@@ -16,26 +50,28 @@
         android:src="@drawable/animal_progress"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/custom_actionbar" />
     
     <com.jcodecraeer.xrecyclerview.XRecyclerView
         android:id="@+id/subgroup_activity_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginTop="42dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"></com.jcodecraeer.xrecyclerview.XRecyclerView>
+        app:layout_constraintTop_toBottomOf="@+id/custom_actionbar"></com.jcodecraeer.xrecyclerview.XRecyclerView>
         
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/create_activity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        android:alpha="0.8"
+        android:alpha="0.6"
         android:background="@color/blue_dark"
         android:src="@drawable/ic_plus"
         app:backgroundTint="@color/blue_dark"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"></android.support.design.widget.FloatingActionButton>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"></android.support.design.widget.FloatingActionButton>
 
 </android.support.constraint.ConstraintLayout>
