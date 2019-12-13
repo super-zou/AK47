@@ -111,6 +111,7 @@
     <string name="saving_progress">正在保存…</string>
     <string name="hetang_introduction">开启精彩的校园生活</string>
     <string name="join">加入</string>
+    <string name="exit">退出</string>
     <string name="join_action">+加入</string>
     <string name="confirm">确认</string>
     <string name="or">或</string>
@@ -232,8 +233,9 @@
     <string name="checking">正在检查新版本</string>
     <string name="beta">Beta版本</string>
     <string name="delete_query_text">确认删除该动态吗？</string>
-    <string name="browse">来访</string>
+    <string name="visit">访问</string>
     <string name="follow">关注</string>
     <string name="member">成员</string>
     <string name="follow_action">+关注</string>
+    <string name="setting">设置</string>
 </resources>
