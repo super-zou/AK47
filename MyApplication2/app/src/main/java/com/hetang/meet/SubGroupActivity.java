@@ -44,6 +44,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -73,6 +74,7 @@ public class SubGroupActivity extends BaseAppCompatActivity {
 
     private static final String SUBGROUP_GET_ALL = HttpUtil.DOMAIN + "?q=subgroup/get_all";
     private static final String SUBGROUP_UPDATE = HttpUtil.DOMAIN + "?q=subgroup/update";
+    private static final String ADD_SUBGROUP_VISITOR_RECORD = HttpUtil.DOMAIN + "?q=visitor_record/add_group_visit_record";
 
     private static final int GET_ALL_DONE = 1;
     private static final int UPDATE_ALL = 2;
@@ -80,6 +82,7 @@ public class SubGroupActivity extends BaseAppCompatActivity {
     private static final int NO_UPDATE = 4;
     private static final int SET_AVATAR = 5;
     private static final int NO_MORE = 6;
+    private static final int ADD_VISITOR_RECORD_DONE = 7;
 
     public static final String GROUP_ADD_BROADCAST = "com.hetang.action.GROUP_ADD";
     private SingleGroupReceiver mReceiver = new SingleGroupReceiver();
@@ -161,11 +164,11 @@ public class SubGroupActivity extends BaseAppCompatActivity {
             @Override
             public void onItemClick(View view, int position) {
                 Slog.d(TAG, "==========click : " + position);
+                updateVisitorRecord(position);
                 Intent intent = new Intent(getContext(), SubGroupDetailsActivity.class);
                 intent.putExtra("gid", mSubGroupList.get(position).gid);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-                startActivity(intent);
-            }
+                startActivityForResult(intent, RESULT_FIRST_USER);            }
         });
 
         recyclerView.setAdapter(subGroupSummaryAdapter);
@@ -198,6 +201,28 @@ public class SubGroupActivity extends BaseAppCompatActivity {
                 animationDrawable.start();
             }
         },50);
+    }
+    
+    private void updateVisitorRecord(int position){
+        int gid = mSubGroupList.get(position).gid;
+        RequestBody requestBody = new FormBody.Builder()
+                .add("gid", String.valueOf(gid))
+                .build();
+
+        HttpUtil.sendOkHttpRequest(getContext(), ADD_SUBGROUP_VISITOR_RECORD, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if(isDebug) Slog.d(TAG, "==========updateVisitorRecord response body : " + response.body());
+                if (response.body() != null) {
+                    //todo
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+        });
     }
 
     private void loadData() {
@@ -341,6 +366,9 @@ public class SubGroupActivity extends BaseAppCompatActivity {
             subGroup.org = group.optString("group_org");
             subGroup.region = group.optString("region");
             subGroup.memberCount = group.optInt("member_count");
+            subGroup.visitRecord = group.optInt("visit_record");
+            subGroup.followCount = group.optInt("follow_count");
+            subGroup.activityCount = group.optInt("activity_count");
             subGroup.created = Utility.timeStampToDay(group.optInt("created"));
 
             subGroup.leader = new UserMeetInfo();
@@ -548,8 +576,8 @@ public class SubGroupActivity extends BaseAppCompatActivity {
         if (isDebug) Slog.d(TAG, "===================onActivityResult requestCode: "+requestCode+" resultCode: "+resultCode);
         if (requestCode == Activity.RESULT_FIRST_USER){
             switch (resultCode){
-                case SET_AVATAR_RESULT_OK:
-                    showSingleGroupDialog();
+                case RESULT_OK:
+                    
                     break;
                 default:
                     break;
@@ -557,7 +585,7 @@ public class SubGroupActivity extends BaseAppCompatActivity {
         }
     }
     
-    public static class SubGroup {
+    public static class SubGroup implements Serializable{
         public int gid;
         public int type;
         public String groupName;
@@ -567,7 +595,7 @@ public class SubGroupActivity extends BaseAppCompatActivity {
         public String groupLogoUri;
         public int memberCount = 0;
         public int followCount = 0;
-        public int browseCount = 0;
+        public int visitRecord = 0;
         public int activityCount = 0;
         public String created;
         public UserMeetInfo leader;
