@@ -82,7 +82,7 @@ import static com.hetang.meet.MeetDynamicsFragment.PRAISE_UPDATE;
  */
 
 public class MeetRecommendFragment extends BaseFragment {
-    private static final boolean isDebug = false;
+    private static final boolean isDebug = true;
     private static final String TAG = "MeetRecommendFragment";
     private static final int PAGE_SIZE = 8;//page size
     private static final int GET_RECOMMEND_DONE = 1;
@@ -168,13 +168,12 @@ public class MeetRecommendFragment extends BaseFragment {
         recyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
             @Override
             public void onRefresh() {
-                updateData();
+                requestData(false);
             }
 
             @Override
             public void onLoadMore() {
-                //getRecommendContent();
-                loadData();
+                requestData(true);
             }
         });
         //-End added by xuchunping
@@ -241,56 +240,8 @@ public class MeetRecommendFragment extends BaseFragment {
 
     @Override
     protected void loadData() {
-        getRecommendContent();
-    }
-    
-    public void getRecommendContent(){
-
-        int page = meetList.size() / PAGE_SIZE;
-        currentPage = page;
-
-        RequestBody requestBody = new FormBody.Builder()
-                                            .add("step", String.valueOf(PAGE_SIZE))
-                                            .add("page", String.valueOf(page))
-                                            .build();
-        
-        if(isDebug) Log.d(TAG, "initContentView requestBody:" + requestBody.toString() + " page:" + page);
-        HttpUtil.sendOkHttpRequest(getContext(), GET_RECOMMEND_URL, requestBody, new Callback() {
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if(response != null){
-                    String responseText = response.body().string();
-                    if(isDebug) Slog.d(TAG, "getRecommendContent response : "+responseText);
-                    int loadSize = getResponseText(responseText, false);
-                    if (loadSize > 0){
-                        handler.sendEmptyMessage(GET_RECOMMEND_DONE);
-                    }else {
-                        handler.sendEmptyMessage(NO_MORE_RECOMMEND);
-                        Slog.d(TAG, "-------------------------->NO_MORE_RECOMMEND");
-                    }
-                }
-            }
-            
-            @Override
-            public void onFailure(Call call, IOException e) {
-                Log.e(TAG, "onFailure e:" + e);
-            }
-        });
-    }
-
-    public int  getResponseText(String responseText , boolean isUpdate) {
-
-        List<UserMeetInfo> tempList = ParseUtils.getRecommendMeetList(responseText, isUpdate);
-        mResponseSize = 0;
-        if (null != tempList && tempList.size() != 0) {
-            mResponseSize = tempList.size();
-            if(isUpdate){
-                meetList.clear();
-            }
-            meetList.addAll(tempList);
-            return tempList.size();
-        }
-        return 0;
+        //TODO  first load data, ths "last" not used ?  need sure
+        requestData(true);
     }
     
     private void getMyCondition(){
@@ -334,41 +285,6 @@ public class MeetRecommendFragment extends BaseFragment {
             @Override
             public void onFailure(Call call, IOException e) {
             }
-        });
-    }
-
-    
-    private void updateData() {
-        String last = SharedPreferencesUtils.getRecommendLast(getContext());
-        if (isDebug) Slog.d(TAG, "=======last:" + last);
-
-        int page = 0;
-        RequestBody requestBody = new FormBody.Builder()
-                .add("last", last)
-                .add("step", String.valueOf(PAGE_SIZE))
-                .add("page", String.valueOf(0))
-                .build();
-
-        
-        HttpUtil.sendOkHttpRequest(getContext(), GET_RECOMMEND_URL, requestBody, new Callback() {
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (response != null && response.body() != null) {
-                    String responseText = response.body().string();
-                    if(isDebug) Slog.d(TAG, "========== updateData response text : " + responseText);
-                    if (responseText != null) {
-                        int loadSize = getResponseText(responseText, true);
-                        if (loadSize > 0){
-                            handler.sendEmptyMessage(GET_RECOMMEND_UPDATE);
-                        }else {
-                            handler.sendEmptyMessage(NO_UPDATE_RECOMMEND);
-                        }
-                    }
-                }
-            }
-            
-            @Override
-            public void onFailure(Call call, IOException e) { }
         });
     }
 
@@ -651,7 +567,9 @@ public class MeetRecommendFragment extends BaseFragment {
                     if (isDebug)  Slog.d(TAG, "==========ADD_PICTURE_BROADCAST");
                     getMyCondition();
                     meetList.clear();
-                    getRecommendContent();
+                    //getRecommendContent();
+                    //force update data
+                    requestData(false);
                     break;
                 case AVATAR_SET_ACTION_BROADCAST:
                     avatarSet = true;
@@ -682,6 +600,8 @@ public class MeetRecommendFragment extends BaseFragment {
         if(isDebug) Slog.d(TAG, "=============onResume");
         //getUserProfile();
         //updateData();
+        meetRecommendListAdapter.setData(meetList);
+        meetRecommendListAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -844,4 +764,65 @@ public class MeetRecommendFragment extends BaseFragment {
         }
     }
 
+    /******* added by chunping.xu for load data opt, 2019/12/13 ***********/
+    private void requestData(final boolean isLoadMore) {
+        RequestBody requestBody = null;
+        int page = 0;
+        if (isLoadMore) {
+            page = meetList.size() / PAGE_SIZE;
+            requestBody = new FormBody.Builder()
+                    .add("step", String.valueOf(PAGE_SIZE))
+                    .add("page", String.valueOf(page))
+                    .build();
+        } else {
+            String last = SharedPreferencesUtils.getRecommendLast(getContext());
+            if (isDebug) Slog.d(TAG, "=======last:" + last);
+            requestBody = new FormBody.Builder()
+                    .add("last", last)
+                    .add("step", String.valueOf(PAGE_SIZE))
+                    .add("page", String.valueOf(0))
+                    .build();
+        }
+        if(isDebug) Log.d(TAG, "requestData page:" + page +" isLoadMore:"+ isLoadMore + " requestBody:" + requestBody.toString());
+        HttpUtil.sendOkHttpRequest(getContext(), GET_RECOMMEND_URL, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response == null || response.body() == null) {
+                    return;
+                }
+                parseResponse(response.body().string(), isLoadMore);
+            }
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.e(TAG, "onFailure e:" + e);
+            }
+        });
+    }
+    private void parseResponse(String responseText, final boolean isLoadMore) {
+        if(isDebug) Slog.d(TAG, "parseResponse responseText: " + responseText);
+        if (null == responseText) {
+            return;
+        }
+        //isLoadMore true keep last load data
+        int loadSize = getResponseText(responseText, isLoadMore ? false : true);
+        if (loadSize > 0){
+            handler.sendEmptyMessage(isLoadMore ? GET_RECOMMEND_DONE : GET_RECOMMEND_UPDATE);
+        }else {
+            handler.sendEmptyMessage(isLoadMore ? NO_MORE_RECOMMEND : NO_UPDATE_RECOMMEND);
+        }
+    }
+
+    private int  getResponseText(String responseText , boolean isUpdate) {
+        List<UserMeetInfo> tempList = ParseUtils.getRecommendMeetList(responseText, isUpdate);
+        mResponseSize = 0;
+        if (null != tempList && tempList.size() != 0) {
+            mResponseSize = tempList.size();
+            if(isUpdate){
+                meetList.clear();
+            }
+            meetList.addAll(tempList);
+            return tempList.size();
+        }
+        return 0;
+    }
 }
