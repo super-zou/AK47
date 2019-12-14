@@ -9,6 +9,12 @@
       layout="@layout/custom_actionbar_common"
       android:layout_width="match_parent"
       android:layout_height="wrap_content" />
+  <ImageView
+      android:id="@+id/animal_progress"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="128dp"
+      android:src="@drawable/animal_progress" />
   <com.jcodecraeer.xrecyclerview.XRecyclerView
       android:id="@+id/contacts_recyclerview"
       android:layout_width="match_parent"

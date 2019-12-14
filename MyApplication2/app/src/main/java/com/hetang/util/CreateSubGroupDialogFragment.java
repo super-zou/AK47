@@ -54,6 +54,7 @@ import okhttp3.Response;
 
 import static android.app.Activity.RESULT_OK;
 import static com.hetang.meet.MeetSingleGroupFragment.GROUP_ADD_BROADCAST;
+import static com.hetang.meet.SubGroupDetailsActivity.GROUP_MODIFY_BROADCAST;
 
 /**
  * Created by super-zou on 18-9-9.
@@ -68,9 +69,11 @@ public class CreateSubGroupDialogFragment extends BaseDialogFragment {
     private static final boolean isDebug = true;
     private static final String TAG = "CreateSubGroupDialogFragment";
     private static final String SUBGROUP_CREATE = HttpUtil.DOMAIN + "?q=subgroup/create";
+    private static final String SUBGROUP_MODIFY = HttpUtil.DOMAIN + "?q=subgroup/modify";
     private EditText nameEditText;
     private EditText profileEditText;
     private TextView regionEditText;
+    private TextView logoLabel;
     private RoundImageView groupLogo;
     private String org = "";
     private boolean isModify = false;
@@ -134,6 +137,7 @@ public class CreateSubGroupDialogFragment extends BaseDialogFragment {
         nameEditText = mDialog.findViewById(R.id.editTextName);
         profileEditText = mDialog.findViewById(R.id.editTextProfile);
         regionEditText = mDialog.findViewById(R.id.editTextOrgCity);
+        logoLabel = mDialog.findViewById(R.id.group_logo_label);
         groupLogo = mDialog.findViewById(R.id.group_logo);
 
         initView();
@@ -160,7 +164,9 @@ public class CreateSubGroupDialogFragment extends BaseDialogFragment {
         setLogo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setLogo();
+                if (!isModify){
+                    setLogo();
+                }
             }
         });
 
@@ -181,11 +187,9 @@ public class CreateSubGroupDialogFragment extends BaseDialogFragment {
                 }
             }
             org = subGroup.org;
-
-            if (!TextUtils.isEmpty(subGroup.groupLogoUri)){
-                groupLogo.setVisibility(View.VISIBLE);
-                Glide.with(getContext()).load(HttpUtil.DOMAIN + subGroup.groupLogoUri).into(groupLogo);
-            }
+            logoLabel.setVisibility(View.GONE);
+            setLogo.setVisibility(View.GONE);
+            groupLogo.setVisibility(View.GONE);
         }
     }
 
@@ -319,12 +323,16 @@ public class CreateSubGroupDialogFragment extends BaseDialogFragment {
                     .add("group_profile", groupProfile)
                     .add("group_org", groupOrg)
                     .add("region", groupRegion);
+            String uri;
             if (isModify){
                 builder.add("gid", String.valueOf(subGroup.gid));
+                uri = SUBGROUP_MODIFY;
+            }else {
+                uri = SUBGROUP_CREATE;
             }
 
             final RequestBody requestBody = builder.build();
-            HttpUtil.sendOkHttpRequest(getContext(), SUBGROUP_CREATE, requestBody, new Callback() {
+            HttpUtil.sendOkHttpRequest(getContext(), uri, requestBody, new Callback() {
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
                     if (isDebug) Slog.d(TAG, "==========response body : " + response.body());
@@ -333,14 +341,23 @@ public class CreateSubGroupDialogFragment extends BaseDialogFragment {
                         String responseText = response.body().string();
                         if (isDebug) Slog.d(TAG, "==========response text : " + responseText);
                         if (responseText != null && !TextUtils.isEmpty(responseText)) {
-                            if (isDebug) Slog.d(TAG, "==========response text 1: " + responseText);
+                            //if (isDebug) Slog.d(TAG, "==========response text 1: " + responseText);
                             try {
                                 JSONObject responseObj = new JSONObject(responseText);
                                 if (responseObj != null) {
-                                    int gid = responseObj.optInt("gid");
-                                    if (gid > 0) {
-                                        sendBroadcast(gid);
+                                    if(!isModify){
+                                        int gid = responseObj.optInt("gid");
+                                        if (gid > 0) {
+                                            sendBroadcast(gid);
+                                        }
+                                    }else {
+                                        int status = responseObj.optInt("status");
+                                        Slog.d(TAG, "--------------------------------->status: "+status);
+                                        if (status == 1){
+                                            sendModifyBroadcast();
+                                        }
                                     }
+
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -403,6 +420,11 @@ public class CreateSubGroupDialogFragment extends BaseDialogFragment {
     private void sendBroadcast(int gid) {
         Intent intent = new Intent(GROUP_ADD_BROADCAST);
         intent.putExtra("gid", gid);
+        LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
+    }
+
+    private void sendModifyBroadcast() {
+        Intent intent = new Intent(GROUP_MODIFY_BROADCAST);
         LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
     }
 

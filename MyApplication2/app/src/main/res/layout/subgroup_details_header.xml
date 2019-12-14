@@ -2,6 +2,7 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_marginBottom="8dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/subgroup_details_header">
@@ -140,94 +141,80 @@
         app:layout_constraintTop_toBottomOf="@+id/group_desc" />
 
     <TextView
-        android:id="@+id/browse_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="@string/visit"
-        app:layout_constraintEnd_toEndOf="@+id/visit_record"
-        app:layout_constraintStart_toStartOf="@+id/visit_record"
-        app:layout_constraintTop_toBottomOf="@+id/group_interact_divider" />
-
-    <TextView
         android:id="@+id/visit_record"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:gravity="center"
-        app:layout_constraintHorizontal_weight="1"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/follow_amount"
-        app:layout_constraintTop_toBottomOf="@+id/browse_icon" />
-
-    <TextView
-        android:id="@+id/follow_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/follow"
-        app:layout_constraintStart_toStartOf="@+id/follow_amount"
-        app:layout_constraintEnd_toEndOf="@+id/follow_amount"
-        app:layout_constraintTop_toTopOf="@+id/browse_icon" />
-
-    <TextView
-        android:id="@+id/follow_amount"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:gravity="center"
-        app:layout_constraintHorizontal_weight="1"
-        app:layout_constraintEnd_toStartOf="@+id/activity_amount"
-        app:layout_constraintStart_toEndOf="@+id/visit_record"
-        app:layout_constraintTop_toBottomOf="@+id/follow_icon" />
-
-    <TextView
-        android:id="@+id/activity_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/dynamics"
-        app:layout_constraintEnd_toEndOf="@+id/activity_amount"
-        app:layout_constraintStart_toStartOf="@+id/activity_amount"
-        app:layout_constraintTop_toTopOf="@+id/follow_icon" />
-
-    <TextView
-        android:id="@+id/activity_amount"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:gravity="center"
-        app:layout_constraintHorizontal_weight="1"
-        app:layout_constraintEnd_toStartOf="@+id/member_amout"
-        app:layout_constraintStart_toEndOf="@+id/follow_amount"
-        app:layout_constraintTop_toBottomOf="@+id/activity_icon" />
-
-    <TextView
-        android:id="@+id/member_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/member"
-        app:layout_constraintEnd_toEndOf="@+id/member_amout"
-        app:layout_constraintStart_toStartOf="@+id/member_amout"
-        app:layout_constraintTop_toTopOf="@+id/follow_icon" />
-
-    <TextView
-        android:id="@+id/member_amout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:gravity="center"
-        app:layout_constraintHorizontal_weight="1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/activity_amount"
-        app:layout_constraintTop_toBottomOf="@+id/member_icon" />
-     <View
-        android:id="@+id/group_activity_divider"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_below="@+id/org"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:background="@color/color_disabled"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="center"
+        android:text=""
+        android:textColor="@color/color_dark_disabled"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/member_amout" />
+        app:layout_constraintTop_toBottomOf="@+id/group_interact_divider" />
+    <TextView
+        android:id="@+id/visit_activity_dot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/org"
+        android:gravity="center"
+        android:text="@string/dot"
+        app:layout_constraintBottom_toBottomOf="@+id/visit_record"
+        app:layout_constraintStart_toEndOf="@+id/visit_record"
+        app:layout_constraintTop_toTopOf="@+id/visit_record" />
+    <TextView
+        android:id="@+id/activity_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/org"
+        android:gravity="center"
+        android:text=""
+        android:textColor="@color/color_dark_disabled"
+        app:layout_constraintBottom_toBottomOf="@+id/visit_record"
+        app:layout_constraintStart_toEndOf="@+id/visit_activity_dot"
+        app:layout_constraintTop_toTopOf="@+id/visit_record" />
+    <TextView
+        android:id="@+id/follow_activity_dot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/org"
+        android:gravity="center"
+        android:text="@string/dot"
+        app:layout_constraintBottom_toBottomOf="@+id/visit_record"
+        app:layout_constraintStart_toEndOf="@+id/activity_count"
+        app:layout_constraintTop_toTopOf="@+id/visit_record" />
+    <TextView
+        android:id="@+id/follow_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/org"
+        android:gravity="center"
+        android:text=""
+        android:textColor="@color/color_dark_disabled"
+        app:layout_constraintBottom_toBottomOf="@+id/activity_count"
+        app:layout_constraintStart_toEndOf="@+id/follow_activity_dot"
+        app:layout_constraintTop_toTopOf="@+id/activity_count" />
+
+    <TextView
+        android:id="@+id/follow_member_dot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/org"
+        android:gravity="center"
+        android:text="@string/dot"
+        app:layout_constraintBottom_toBottomOf="@+id/visit_record"
+        app:layout_constraintStart_toEndOf="@+id/follow_count"
+        app:layout_constraintTop_toTopOf="@+id/visit_record" />
+    <TextView
+        android:id="@+id/member_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text=""
+        android:textColor="@color/blue_dark"
+        app:layout_constraintBottom_toBottomOf="@+id/follow_count"
+        app:layout_constraintStart_toEndOf="@+id/follow_member_dot"
+        app:layout_constraintTop_toTopOf="@+id/follow_count" />
 </android.support.constraint.ConstraintLayout>

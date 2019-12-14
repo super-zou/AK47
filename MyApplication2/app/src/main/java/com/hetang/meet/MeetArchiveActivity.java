@@ -19,7 +19,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -37,8 +36,10 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
+import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.hetang.R;
 import com.hetang.adapter.CheeringGroupAdapter;
 import com.hetang.adapter.MeetImpressionStatisticsAdapter;
 import com.hetang.adapter.MeetReferenceAdapter;
@@ -47,25 +48,22 @@ import com.hetang.common.BaseAppCompatActivity;
 import com.hetang.common.Chat;
 import com.hetang.common.Dynamic;
 import com.hetang.common.HandlerTemp;
+import com.hetang.common.MyApplication;
 import com.hetang.main.ArchiveFragment;
 import com.hetang.util.CommonDialogFragmentInterface;
-import com.hetang.util.HtGridView;
-import com.hetang.common.MyApplication;
-import com.hetang.util.ReferenceWriteDialogFragment;
-import com.bumptech.glide.Glide;
 import com.hetang.util.CommonUserListDialogFragment;
 import com.hetang.util.FontManager;
+import com.hetang.util.HtGridView;
 import com.hetang.util.HttpUtil;
-
 import com.hetang.util.InvitationDialogFragment;
 import com.hetang.util.ParseUtils;
 import com.hetang.util.PersonalityEditDialogFragment;
+import com.hetang.util.ReferenceWriteDialogFragment;
 import com.hetang.util.SharedPreferencesUtils;
 import com.hetang.util.Slog;
 import com.hetang.util.UserProfile;
 import com.hetang.util.Utility;
 import com.nex3z.flowlayout.FlowLayout;
-import com.hetang.R;
 import com.willy.ratingbar.BaseRatingBar;
 import com.willy.ratingbar.ScaleRatingBar;
 
@@ -106,7 +104,7 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
     public static final String GET_FOLLOW_STATUS_URL = HttpUtil.DOMAIN + "?q=follow/isFollowed";
     private static final String GET_LOVE_STATISTICS_URL = HttpUtil.DOMAIN + "?q=meet/love/statistics";
     public static final String GET_PRAISE_STATISTICS_URL = HttpUtil.DOMAIN + "?q=meet/praise/statistics";
-    
+
     private static final String LOVE_ADD_URL = HttpUtil.DOMAIN + "?q=meet/love/add";
     private static final String PRAISE_ADD_URL = HttpUtil.DOMAIN + "?q=meet/praise/add";
     private static final String GET_PROFILE_PICTURES_URL = HttpUtil.DOMAIN + "?q=meet/get_pictures_url";
@@ -115,7 +113,7 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
     public static final String GET_LOGGEDIN_ACCOUNT = HttpUtil.DOMAIN + "?q=account_manager/get_loggedin_account";
     public static final String CHECK_YUNXIN_USER = HttpUtil.DOMAIN + "?q=chat/check_yunxin_user";
     private static final String JOIN_CHEERING_GROUP_URL = HttpUtil.DOMAIN + "?q=meet/cheering_group/join";
-    
+
     private static final int DONE = 1;
     private static final int UPDATE = 2;
     private static final int UPDATE_COMMENT = 3;
@@ -129,7 +127,7 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
     private static final int GET_FOLLOW_STATISTICS_URL_DONE = 11;
     public static final int GET_PRAISE_STATISTICS_URL_DONE = 12;
     private static final int GET_LOVE_STATISTICS_URL_DONE = 13;
-    
+
     private static final int UPDATE_LOVED_COUNT = 14;
     private static final int UPDATE_PRAISED_COUNT = 15;
     private static final int GET_CHEERING_GROUP_DONE = 16;
@@ -148,7 +146,7 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
     private static final int PAGE_SIZE = 6;
     public static final int APPLIED = 0;
     public static final int ESTABLISHED = 1;
-    
+
     public List<UserProfile> mCheeringGroupMemberList = new ArrayList<>();
     View mHeaderEvaluation;
     private List<Dynamic> mMeetList = new ArrayList<>();
@@ -160,7 +158,7 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
     private boolean isFollowed = false;
     private int contactStatus = -1;
     private View mArchiveProfile;
-    
+
     private MeetReferenceAdapter mMeetReferenceAdapter;
     private MeetImpressionStatisticsAdapter mMeetImpressionStatisticsAdapter;
     private CheeringGroupAdapter mCheeringGroupAdapter;
@@ -172,8 +170,8 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
     private TextView backLeft;
     private UserMeetInfo mMeetMember;
     private JSONArray personalityResponseArray;
-    
-    private TextView praisedIcon ;
+
+    private TextView praisedIcon;
     private TextView praisedCount;
     private TextView lovedStatistics;
     private TextView lovedCount;
@@ -182,7 +180,7 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
     private RelativeLayout ratingBarWrapper;
     private ScaleRatingBar scaleRatingBar;
     private ConstraintLayout dynamicsCount;
-    
+
     private final static int REQUESTCODE = 1;//for impression approve detail
     private final static int RESULT_OK = 2;
     private ImageSwitcher mImageSwitcher;
@@ -196,7 +194,7 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
     private static int uid = -1;
     private static int authorUid = -1;
     private boolean isSelf = false;
-    
+
     int mTempSize = 0;
     Chat chat;
 
@@ -211,7 +209,7 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
         if (actionBar != null) {
             actionBar.hide();
         }
-        
+
         handler = new MeetArchiveActivity.MyHandler(this);
         mMeetMember = (UserMeetInfo) getIntent().getSerializableExtra("meet");
         //initView();
@@ -221,8 +219,8 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
         getLoggedinAccount();
 
     }
-    
-    private void setView(){
+
+    private void setView() {
         Typeface font = Typeface.createFromAsset(getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
         FontManager.markAsIconContainer(findViewById(R.id.custom_actionbar), font);
         backLeft = findViewById(R.id.left_back);
@@ -232,7 +230,7 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
                 exit();
             }
         });
-        
+
         ScrollView meetArchiveWrapper = findViewById(R.id.meet_archive_wrapper);
         mArchiveProfile = findViewById(R.id.meet_archive_profile);
         FontManager.markAsIconContainer(mArchiveProfile.findViewById(R.id.meet_archive_profile), font);
@@ -240,33 +238,34 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
         FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_relatives_reference), font);
     }
 
-    private void getLoggedinAccount(){
+    private void getLoggedinAccount() {
 
         authorUid = SharedPreferencesUtils.getSessionUid(MyApplication.getContext());
-        
-        if (authorUid > 0){
-            if (mMeetMember == null){
+
+        if (authorUid > 0) {
+            if (mMeetMember == null) {
                 uid = getIntent().getIntExtra("uid", -1);
                 getMeetArchive(this, uid);
-            }else {
+            } else {
                 uid = mMeetMember.getUid();
                 processSubModules();
             }
-        }else {
+        } else {
             getLoggedinAccountFromServer();
         }
 
-        Slog.d(TAG, "------------>authorUid: "+authorUid+"    uid: "+uid);
+        Slog.d(TAG, "------------>authorUid: " + authorUid + "    uid: " + uid);
     }
-    
-    public void getLoggedinAccountFromServer(){
+
+    public void getLoggedinAccountFromServer() {
         RequestBody requestBody = new FormBody.Builder().build();
-        HttpUtil.sendOkHttpRequest(MyApplication.getContext(), GET_LOGGEDIN_ACCOUNT, requestBody, new Callback(){
+        HttpUtil.sendOkHttpRequest(MyApplication.getContext(), GET_LOGGEDIN_ACCOUNT, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
                     String responseText = response.body().string();
-                    if (isDebug) Slog.d(TAG, "==========getLoggedinAccountFromServer : " + responseText);
+                    if (isDebug)
+                        Slog.d(TAG, "==========getLoggedinAccountFromServer : " + responseText);
                     try {
                         //String responseText = response.body().string();
                         if (responseText != null && !TextUtils.isEmpty(responseText)) {
@@ -274,7 +273,7 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
                             authorUid = account.optInt("uid");
                             handler.sendEmptyMessage(GET_LOGGEDIN_UID_DONE);
                         }
-                     } catch (JSONException e) {
+                    } catch (JSONException e) {
                         e.printStackTrace();
                     }
 
@@ -286,28 +285,28 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
             }
         });
     }
-    
+
     @Override
-    public void onBackPressed(){
+    public void onBackPressed() {
         exit();
     }
 
-    private void exit(){
+    private void exit() {
         Fragment fragment = getSupportFragmentManager().findFragmentByTag("Archive");
 
-        if(fragment != null && fragment.isVisible()){
+        if (fragment != null && fragment.isVisible()) {
             getSupportFragmentManager().popBackStack();
-        }else {
+        } else {
             finish();
         }
     }
-    
-    private void processSubModules(){
 
-        if(authorUid == uid){
+    private void processSubModules() {
+
+        if (authorUid == uid) {
             isSelf = true;
         }
-        if(isDebug) Slog.d(TAG, "==========isSelf : " + isSelf);
+        if (isDebug) Slog.d(TAG, "==========isSelf : " + isSelf);
 
         setArchiveProfile();
 
@@ -316,7 +315,7 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
         loadImpressionStatistics();
 
         processReferences();
-        
+
         processPersonality();
 
         processHobby();
@@ -337,8 +336,8 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
         getLoveStatistics();
 
     }
-    
-    private void loadProfilePictures(){
+
+    private void loadProfilePictures() {
         RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
         HttpUtil.sendOkHttpRequest(MeetArchiveActivity.this, GET_PROFILE_PICTURES_URL, requestBody, new Callback() {
             @Override
@@ -361,33 +360,33 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
             }
         });
     }
-    
-    private void setPictureIndicator(int pos, int direction){
+
+    private void setPictureIndicator(int pos, int direction) {
         TextView preIndicator = null;
         TextView nextIndicator = null;
-        if(pos >= 1){
-            preIndicator = (TextView)navLayout.getChildAt(pos-1);
+        if (pos >= 1) {
+            preIndicator = (TextView) navLayout.getChildAt(pos - 1);
         }
 
-        if(pos <= pictureArray.length()){
-            nextIndicator = (TextView)navLayout.getChildAt(pos+1);
+        if (pos <= pictureArray.length()) {
+            nextIndicator = (TextView) navLayout.getChildAt(pos + 1);
         }
-        
-        TextView curIndicator = (TextView)navLayout.getChildAt(pos);
-        if(curIndicator != null){
+
+        TextView curIndicator = (TextView) navLayout.getChildAt(pos);
+        if (curIndicator != null) {
             curIndicator.setText(R.string.circle);
         }
-        if(direction == 0){//touch move left
+        if (direction == 0) {//touch move left
             preIndicator.setText(R.string.circle_o);
-        }else {//touch move right
+        } else {//touch move right
             nextIndicator.setText(R.string.circle_o);
         }
     }
-    
+
     private void setMeetProfile() {
         TextView name = mArchiveProfile.findViewById(R.id.name);
         TextView sex = mArchiveProfile.findViewById(R.id.sex);
-    
+
         mImageSwitcher = mArchiveProfile.findViewById(R.id.image_switcher);
         mImageSwitcher.requestFocus();
         mImageSwitcher.setFactory(this);
@@ -396,14 +395,14 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
         navLayout = mArchiveProfile.findViewById(R.id.page_indicator);
         FlowLayout baseProfile = mArchiveProfile.findViewById(R.id.meet_profile);
         LinearLayout interactWrapper = mArchiveProfile.findViewById(R.id.interaction_wrap);
-        if (isSelf){
+        if (isSelf) {
             interactWrapper.setVisibility(View.GONE);
         }
-        
-         LinearLayout livingWrap = mArchiveProfile.findViewById(R.id.living_wrap);
+
+        LinearLayout livingWrap = mArchiveProfile.findViewById(R.id.living_wrap);
         LinearLayout illustrationWrap = mArchiveProfile.findViewById(R.id.illustration_wrap);
         TextView profileDetail = mArchiveProfile.findViewById(R.id.profile_detail);
-        
+
         TextView age = baseProfile.findViewById(R.id.age);
         TextView height = baseProfile.findViewById(R.id.height);
         TextView constellation = baseProfile.findViewById(R.id.constellation);
@@ -411,7 +410,7 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
         TextView nation = baseProfile.findViewById(R.id.nation);
         TextView religion = baseProfile.findViewById(R.id.religion);
         TextView living = livingWrap.findViewById(R.id.living);
-        
+
         TextView degree = baseProfile.findViewById(R.id.degree);
         TextView major = baseProfile.findViewById(R.id.major);
         TextView university = baseProfile.findViewById(R.id.university);
@@ -423,14 +422,14 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
         TextView degreeRequirement = mArchiveProfile.findViewById(R.id.degree_require);
         TextView livesRequirement = mArchiveProfile.findViewById(R.id.lives_require);
         TextView sexRequirement = mArchiveProfile.findViewById(R.id.sex_require);
-        
-         TextView illustration = mArchiveProfile.findViewById(R.id.illustration);
+
+        TextView illustration = mArchiveProfile.findViewById(R.id.illustration);
         TextView eyeView = mArchiveProfile.findViewById(R.id.visit_record);
 
         name.setText(mMeetMember.getName());
 
         if (!"".equals(mMeetMember.getAvatar())) {
-           // Glide.with(this).load(HttpUtil.DOMAIN + mMeetMember.userProfile.getAvatar()).into(headUri);
+            // Glide.with(this).load(HttpUtil.DOMAIN + mMeetMember.userProfile.getAvatar()).into(headUri);
             String url = HttpUtil.DOMAIN + mMeetMember.getAvatar();
             SimpleTarget<Drawable> simpleTarget = new SimpleTarget<Drawable>() {
                 @Override
@@ -438,35 +437,35 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
                     mImageSwitcher.setImageDrawable(resource);
                     drawableList.add(resource);
                 }
-                
-                };
+
+            };
 
             Glide.with(getApplicationContext()).load(url).into(simpleTarget);
 
         } else {
-           // headUri.setImageDrawable(getDrawable(R.mipmap.ic_launcher));
+            // headUri.setImageDrawable(getDrawable(R.mipmap.ic_launcher));
         }
 
         age.setText(String.valueOf(mMeetMember.getAge()) + "岁");
         height.setText(String.valueOf(mMeetMember.getHeight()) + "cm");
         constellation.setText(mMeetMember.getConstellation());
-        hometown.setText(getResources().getString(R.string.hometown)+":"+mMeetMember.getHometown());
+        hometown.setText(getResources().getString(R.string.hometown) + ":" + mMeetMember.getHometown());
         nation.setText(mMeetMember.getNation());
-        
-        if(!"无".equals(mMeetMember.getReligion())){
+
+        if (!"无".equals(mMeetMember.getReligion())) {
             religion.setText(mMeetMember.getReligion());
-        }else {
+        } else {
             religion.setVisibility(View.GONE);
         }
 
-        if(mMeetMember.getSex() == 0){
+        if (mMeetMember.getSex() == 0) {
             sex.setText(R.string.mars);
-        }else {
+        } else {
             sex.setText(R.string.venus);
         }
         //sex.setText(String.valueOf(mMeetMember.userProfile.getSex()));
-        living.setText("现居"+mMeetMember.getLiving());
-        
+        living.setText("现居" + mMeetMember.getLiving());
+
         degree.setText(mMeetMember.getDegreeName(mMeetMember.getDegree()));
         university.setText(mMeetMember.getUniversity());
         if (mMeetMember.getSituation() == 0) {
@@ -478,21 +477,21 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
             position.setText(mMeetMember.getPosition());
             industry.setText(mMeetMember.getIndustry());
         }
-        
+
         ageRequirement.setText(mMeetMember.getAgeLower() + "~" + mMeetMember.getAgeUpper() + "岁");
         heightRequirement.setText(String.valueOf(mMeetMember.getRequirementHeight()) + "cm");
         degreeRequirement.setText(mMeetMember.getDegreeName(mMeetMember.getRequirementDegree()) + "学历");
         livesRequirement.setText(mMeetMember.getRequirementLiving());
         sexRequirement.setText(mMeetMember.getRequirementSex());
 
-        if(mMeetMember.getIllustration() != null && !TextUtils.isEmpty(mMeetMember.getIllustration())){
+        if (mMeetMember.getIllustration() != null && !TextUtils.isEmpty(mMeetMember.getIllustration())) {
             illustrationWrap.setVisibility(View.VISIBLE);
-            illustration.setText("“"+mMeetMember.getIllustration()+"”");
+            illustration.setText("“" + mMeetMember.getIllustration() + "”");
         }
-        if(mMeetMember.getVisitCount() > 0){
+        if (mMeetMember.getVisitCount() > 0) {
             eyeView.setText(String.valueOf(mMeetMember.getVisitCount()));
         }
-        
+
         profileDetail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -509,9 +508,9 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
         });
 
     }
-    
+
     public void processContactsAction(final Context context, final Handler handler, int contactStatus,
-                                             final Button contactBtn, final Button followBtn, Button chatBtn) {
+                                      final Button contactBtn, final Button followBtn, Button chatBtn) {
         if (contactStatus == APPLIED) {
             contactBtn.setEnabled(false);
             contactBtn.setText("已申请添加好友");
@@ -519,8 +518,8 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
         } else if (contactStatus == ESTABLISHED) {
             contactBtn.setVisibility(View.GONE);
             followBtn.setVisibility(View.GONE);
-            
-            if (null == chat){
+
+            if (null == chat) {
                 chat = new Chat();
             }
             chatBtn.setVisibility(View.VISIBLE);
@@ -531,14 +530,14 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
                 }
             });
         }
-        
+
         contactBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 View editView = LayoutInflater.from(context).inflate(R.layout.edit_dialog, null);
                 final TextInputEditText editText = editView.findViewById(R.id.edit_text);
                 new AlertDialog.Builder(context)
-                .setTitle("添加好友申请")
+                        .setTitle("添加好友申请")
                         .setView(editView)
                         .setPositiveButton("确定",//提示框的两个按钮
                                 new android.content.DialogInterface.OnClickListener() {
@@ -548,29 +547,29 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
                                         RequestBody requestBody = new FormBody.Builder()
                                                 .add("uid", String.valueOf(uid))
                                                 .add("content", editText.getText().toString()).build();
-                                                
-                                                Slog.d(TAG, "------------------>edit edit edit text: "+editText.getText().toString());
+
+                                        Slog.d(TAG, "------------------>edit edit edit text: " + editText.getText().toString());
                                         HttpUtil.sendOkHttpRequest(context, CONTACTS_ADD_URL, requestBody, new Callback() {
                                             @Override
                                             public void onResponse(Call call, Response response) throws IOException {
                                                 if (response.body() != null) {
                                                     String responseText = response.body().string();
-                                                    if(isDebug)
+                                                    if (isDebug)
                                                         Slog.d(TAG, "==========processContactsAction : " + responseText);
-                                                        
-                                                        try {
+
+                                                    try {
                                                         JSONObject status = new JSONObject(responseText);
                                                         boolean addContacts = status.optBoolean("add_contacts");
-                                                        if(addContacts == true){
+                                                        if (addContacts == true) {
                                                             getContactsStatus(context, handler, uid);
                                                         }
-                                                    }catch (JSONException e){
+                                                    } catch (JSONException e) {
                                                         e.printStackTrace();
                                                     }
 
                                                 }
                                             }
-                                            
+
                                             @Override
                                             public void onFailure(Call call, IOException e) {
                                             }
@@ -587,8 +586,8 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
 
 
     }
-    
-    private void getDynamicsCount(){
+
+    private void getDynamicsCount() {
         dynamicsCount = mArchiveProfile.findViewById(R.id.dynamics_count);
         dynamicsCount.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -599,7 +598,7 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
                 startActivity(intent);
             }
         });
-        
+
         RequestBody requestBody = new FormBody.Builder()
                 .add("uid", String.valueOf(uid))
                 .build();
@@ -608,15 +607,15 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
-                
-                String responseText = response.body().string();
+
+                    String responseText = response.body().string();
                     //Slog.d(TAG, "==========response : "+response.body());
                     Slog.d(TAG, "==========getDynamicsCount response text : " + responseText);
                     if (responseText != null && !TextUtils.isEmpty(responseText)) {
                         try {
                             int count = new JSONObject(responseText).optInt("count");
                             Slog.d(TAG, "==========getDynamicsCount response count : " + count);
-                            if(count > 0){
+                            if (count > 0) {
                                 Message msg = new Message();
                                 Bundle bundle = new Bundle();
                                 bundle.putInt("count", count);
@@ -624,8 +623,8 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
                                 msg.what = GET_ACTIVITIES_COUNT_DONE;
                                 handler.sendMessage(msg);
                             }
-                            
-                            }catch (JSONException e){
+
+                        } catch (JSONException e) {
                             e.printStackTrace();
                         }
 
@@ -640,11 +639,11 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
         });
 
     }
-    
-     private void setActivitiesCountView(int count){
-        Slog.d(TAG, "====================setActivitiesCountView count: "+count);
+
+    private void setActivitiesCountView(int count) {
+        Slog.d(TAG, "====================setActivitiesCountView count: " + count);
         dynamicsCount.setVisibility(View.VISIBLE);
-        TextView activityCount = mArchiveProfile.findViewById(R.id.dynamics_count_text );
+        TextView activityCount = mArchiveProfile.findViewById(R.id.dynamics_count_text);
         activityCount.setText(String.valueOf(count));
     }
 
@@ -653,7 +652,7 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
         getContactsStatus(MeetArchiveActivity.this, handler, uid);
         //for follow status
         RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
-        
+
         HttpUtil.sendOkHttpRequest(MeetArchiveActivity.this, GET_FOLLOW_STATUS_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
@@ -670,31 +669,31 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
 
                 }
             }
-            
+
             @Override
             public void onFailure(Call call, IOException e) {
             }
         });
     }
 
-    public static void getContactsStatus(Context context, final Handler handler,int uid){
+    public static void getContactsStatus(Context context, final Handler handler, int uid) {
         RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
         //for contacts
         HttpUtil.sendOkHttpRequest(context, GET_CONTACTS_STATUS_URL, requestBody, new Callback() {
-        
-        @Override
+
+            @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
                     String responseText = response.body().string();
-                   // if(isDebug)
-                        Slog.d(TAG, "==========getContacts Status : " + responseText);
+                    // if(isDebug)
+                    Slog.d(TAG, "==========getContacts Status : " + responseText);
                     try {
                         JSONObject status = new JSONObject(responseText);
                         int contactStatus = status.optInt("status");
                         Message message = new Message();
                         Bundle bundle = new Bundle();
                         bundle.putInt("status", contactStatus);
-                        
+
                         message.setData(bundle);
                         message.what = GET_CONTACTS_STATUS_DONE;
                         //handler.sendEmptyMessage(GET_CONTACTS_STATUS_DONE);
@@ -710,7 +709,7 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
             }
         });
     }
-    
+
     private void getFollowStatistics() {
 
         //for follow
@@ -721,7 +720,7 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
         final TextView followedCount = mArchiveProfile.findViewById(R.id.followed_count);
         final TextView followingCount = mArchiveProfile.findViewById(R.id.following_count);
         followedCountWrap.setOnClickListener(new View.OnClickListener() {
-        @Override
+            @Override
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
                 bundle.putInt("type", FOLLOWED);
@@ -732,7 +731,7 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
                 commonUserListDialogFragment.show(getSupportFragmentManager(), "CommonUserListDialogFragment");
             }
         });
-        
+
         followingCountWrap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -748,19 +747,19 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
 
 
     }
-    
-    private void getFollowStatisticsCount(){
+
+    private void getFollowStatisticsCount() {
         RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
         HttpUtil.sendOkHttpRequest(MeetArchiveActivity.this, GET_FOLLOW_STATISTICS_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
                     String responseText = response.body().string();
-                    if(isDebug)
+                    if (isDebug)
                         Slog.d(TAG, "==========getFollow statistics : " + responseText);
                     try {
                         JSONObject followObject = new JSONObject(responseText);
-                        
+
                         int following_count = followObject.optInt("following_count");
                         int followed_count = followObject.optInt("followed_count");
                         if (following_count != 0 || followed_count != 0) {
@@ -777,7 +776,7 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
                     }
                 }
             }
-            
+
             @Override
             public void onFailure(Call call, IOException e) {
             }
@@ -791,9 +790,9 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
                     String responseText = response.body().string();
-                    
-                    if(isDebug)
-                    Slog.d(TAG, "==========getPraiseStatistics statistics : " + responseText);
+
+                    if (isDebug)
+                        Slog.d(TAG, "==========getPraiseStatistics statistics : " + responseText);
                     try {
                         JSONObject praiseObject = new JSONObject(responseText);
                         int praise_count = praiseObject.optInt("praise_count");
@@ -811,7 +810,7 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-      }
+                }
             }
 
             @Override
@@ -823,7 +822,7 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
         LinearLayout praisedCountWrap = mArchiveProfile.findViewById(R.id.praised_count_wrap);
         final TextView praisedCount = mArchiveProfile.findViewById(R.id.praised_count);
         final TextView praiseCount = mArchiveProfile.findViewById(R.id.praise_count);
-        
+
         praisedCountWrap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -836,7 +835,7 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
                 commonUserListDialogFragment.show(getSupportFragmentManager(), "CommonUserListDialogFragment");
             }
         });
-        
+
         praiseCountWrap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -850,7 +849,7 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
             }
         });
     }
-    
+
     private void getLoveStatistics() {
         RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
         HttpUtil.sendOkHttpRequest(MeetArchiveActivity.this, GET_LOVE_STATISTICS_URL, requestBody, new Callback() {
@@ -858,11 +857,11 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
                     String responseText = response.body().string();
-                    if(isDebug)
-                    Slog.d(TAG, "==========getLoveStatistics statistics : " + responseText);
+                    if (isDebug)
+                        Slog.d(TAG, "==========getLoveStatistics statistics : " + responseText);
                     try {
-                    
-                    JSONObject loveObject = new JSONObject(responseText);
+
+                        JSONObject loveObject = new JSONObject(responseText);
                         int loveCount = loveObject.optInt("love_count");
                         int lovedCount = loveObject.optInt("loved_count");
                         isLoved = loveObject.optBoolean("isLoved");
@@ -880,8 +879,8 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
                     }
                 }
             }
-            
-             @Override
+
+            @Override
             public void onFailure(Call call, IOException e) {
             }
         });
@@ -892,7 +891,7 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
         TextView lovedTitle = mArchiveProfile.findViewById(R.id.loved_count_title);
         lovedCount = mArchiveProfile.findViewById(R.id.loved_count);
         final TextView loveCount = mArchiveProfile.findViewById(R.id.love_count);
-        
+
         lovedCountWrap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -905,8 +904,8 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
                 commonUserListDialogFragment.show(getSupportFragmentManager(), "CommonUserListDialogFragment");
             }
         });
-        
-        if (authorUid == uid){//only self can see love statistics
+
+        if (authorUid == uid) {//only self can see love statistics
             loveCountWrap.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -919,8 +918,8 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
                     commonUserListDialogFragment.show(getSupportFragmentManager(), "CommonUserListDialogFragment");
                 }
             });
-            
-            }else {
+
+        } else {
             lovedTitle.setText(getResources().getString(R.string.loved));
             loveDivider.setVisibility(View.GONE);
             loveCountWrap.setVisibility(View.GONE);
@@ -934,7 +933,7 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
             followBtn.setBackground(getDrawable(R.drawable.btn_disable));
             followBtn.setTextColor(getResources().getColor(R.color.color_dark_grey));
         }
-        
+
         followBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -946,8 +945,8 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
                     followBtn.setText("+关注");
                     followBtn.setTextColor(getResources().getColor(R.color.color_blue));
                     followBtn.setBackground(getDrawable(R.drawable.btn_default));
-                    
-                    } else {
+
+                } else {
                     isFollowed = true;
                     followUrl = FOLLOW_ACTION_URL + "add";
                     followBtn.setText("已关注");
@@ -956,8 +955,8 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
                 }
 
                 HttpUtil.sendOkHttpRequest(MeetArchiveActivity.this, followUrl, requestBody, new Callback() {
-                
-                @Override
+
+                    @Override
                     public void onResponse(Call call, Response response) throws IOException {
                         if (response.body() != null) {
                             String responseText = response.body().string();
@@ -974,7 +973,7 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
             }
         });
     }
-    
+
     private void setFollowStatistics(Bundle bundle) {
         TextView followedCount = mArchiveProfile.findViewById(R.id.followed_count);
         TextView followingCount = mArchiveProfile.findViewById(R.id.following_count);
@@ -986,8 +985,8 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
             followingCount.setText(String.valueOf(bundle.getInt("following_count")));
         }
     }
-    
-     private void setPraiseStatistics(Bundle bundle) {
+
+    private void setPraiseStatistics(Bundle bundle) {
 
         TextView praisedCount = mArchiveProfile.findViewById(R.id.praised_count);
         TextView praiseCount = mArchiveProfile.findViewById(R.id.praise_count);
@@ -1004,8 +1003,8 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
 
         processPraiseAction();
     }
-    
-     private void setLoveStatistics(Bundle bundle) {
+
+    private void setLoveStatistics(Bundle bundle) {
         lovedCount = mArchiveProfile.findViewById(R.id.loved_count);
         TextView loveCount = mArchiveProfile.findViewById(R.id.love_count);
         lovedStatistics = mArchiveProfile.findViewById(R.id.loved_statistics);
@@ -1022,8 +1021,8 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
 
         processLoveAction();//process love or praise action();
     }
-    
-     private void processLoveAction() {
+
+    private void processLoveAction() {
 
         lovedIcon = mArchiveProfile.findViewById(R.id.loved_icon);
         final TextView lovedCount = mArchiveProfile.findViewById(R.id.loved_statistics);
@@ -1037,7 +1036,7 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
             lovedIcon.setText(getResources().getText(R.string.fa_heart_o));
         }
         final RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
-        
+
         lovedIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1046,11 +1045,11 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
                     public void onResponse(Call call, Response response) throws IOException {
                         if (response.body() != null) {
                             String responseText = response.body().string();
-                            if(isDebug)
-                            Slog.d(TAG, "==========love add response text : " + responseText);
+                            if (isDebug)
+                                Slog.d(TAG, "==========love add response text : " + responseText);
                         }
                     }
-                    
+
                     @Override
                     public void onFailure(Call call, IOException e) {
                     }
@@ -1065,14 +1064,14 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
         lovedCount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            
-            HttpUtil.sendOkHttpRequest(MeetArchiveActivity.this, LOVE_ADD_URL, requestBody, new Callback() {
+
+                HttpUtil.sendOkHttpRequest(MeetArchiveActivity.this, LOVE_ADD_URL, requestBody, new Callback() {
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
                         if (response.body() != null) {
                             String responseText = response.body().string();
-                            if(isDebug)
-                            Slog.d(TAG, "==========love add response text : " + responseText);
+                            if (isDebug)
+                                Slog.d(TAG, "==========love add response text : " + responseText);
                         }
                     }
 
@@ -1088,8 +1087,8 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
         });
 
     }
-    
-     private void processPraiseAction() {
+
+    private void processPraiseAction() {
         praisedIcon = mArchiveProfile.findViewById(R.id.praised_icon);
         praisedCount = mArchiveProfile.findViewById(R.id.praised_statistics);
         if (isPraised) {
@@ -1101,7 +1100,7 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
             praisedIcon.setEnabled(true);
             praisedIcon.setText(getResources().getText(R.string.fa_thumbs_O_up));
         }
-        
+
         final RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
         praisedIcon.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1115,7 +1114,7 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
                                 Slog.d(TAG, "==========praise add response text : " + responseText);
                         }
                     }
-                    
+
                     @Override
                     public void onFailure(Call call, IOException e) {
                     }
@@ -1126,7 +1125,7 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
                 handler.sendEmptyMessage(UPDATE_PRAISED_COUNT);
             }
         });
-        
+
         praisedCount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1139,7 +1138,7 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
                                 Slog.d(TAG, "==========praise add response text : " + responseText);
                         }
                     }
-                    
+
                     @Override
                     public void onFailure(Call call, IOException e) {
                     }
@@ -1152,23 +1151,23 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
         });
 
     }
-    
+
     private void setReferenceView(List<MeetReferenceInfo> meetReferenceInfoList) {
 
         RecyclerView recyclerView = mHeaderEvaluation.findViewById(R.id.reference_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         mMeetReferenceAdapter = new MeetReferenceAdapter(this);
         recyclerView.setAdapter(mMeetReferenceAdapter);
-        
-        if(meetReferenceInfoList.size() > 0){
+
+        if (meetReferenceInfoList.size() > 0) {
             recyclerView.setVisibility(View.VISIBLE);
         }
-        
+
         Typeface font = Typeface.createFromAsset(getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
         FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.meet_item_id), font);
 
     }
-    
+
     private void setRatingBarView() {
         JSONArray ratingArray = mRatingObj.optJSONArray("rating");
         TextView ratingMemberCount = mHeaderEvaluation.findViewById(R.id.rating_member_count);
@@ -1183,7 +1182,7 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
                 }
                 ratingCount += ratingObj.optDouble("rating");
             }
-            
+
             float ratingAverage = ratingCount / ratingArray.length();
             float ratingAverageRoundUp = 0;
             BigDecimal b = new BigDecimal(ratingAverage);
@@ -1194,11 +1193,11 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
             ScaleRatingBar scaleRatingBarCount = mHeaderEvaluation.findViewById(R.id.charm_synthesized_rating);
             scaleRatingBarCount.setRating(ratingAverageRoundUp);
 
-        }else {
+        } else {
             ratingMemberCount.setText("暂无评价");
         }
     }
-    
+
     private void loadRating() {
         RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
         HttpUtil.sendOkHttpRequest(this, GET_RATING_URL, requestBody, new Callback() {
@@ -1211,8 +1210,8 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
                     if (responseText != null) {
                         if (!TextUtils.isEmpty(responseText)) {
                             try {
-                            
-                            mRatingObj = new JSONObject(responseText);
+
+                                mRatingObj = new JSONObject(responseText);
                                 if (mRatingObj != null) {
                                     handler.sendEmptyMessage(LOAD_RATING_DONE);
                                 }
@@ -1228,7 +1227,7 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
             public void onFailure(Call call, IOException e) {
             }
         });
-        
+
         ratingBarWrapper = mHeaderEvaluation.findViewById(R.id.rating_bar_wrapper);
 
         scaleRatingBar = mHeaderEvaluation.findViewById(R.id.charm_rating_bar);
@@ -1243,11 +1242,11 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
             }
 
         });
-        
+
         scaleRatingBar.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                if (motionEvent.getAction() == MotionEvent.ACTION_UP){
+                if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
                     FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                     Fragment prev = getSupportFragmentManager().findFragmentByTag("EvaluateDialogFragment");
                     if (prev != null) {
@@ -1257,15 +1256,15 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
                     if (evaluateDialogFragment == null) {
                         evaluateDialogFragment = new EvaluateDialogFragment();
                     }
-                    
+
                     Bundle bundle = new Bundle();
                     bundle.putInt("uid", uid);
                     bundle.putInt("sex", mMeetMember.getSex());
                     String rating = ratingScoreView.getText().toString();
-                    if (!"".equals(rating)){
+                    if (!"".equals(rating)) {
                         try {
                             bundle.putFloat("rating", Float.parseFloat(ratingScoreView.getText().toString()));
-                        }catch (NumberFormatException e){
+                        } catch (NumberFormatException e) {
                             e.printStackTrace();
                         }
                     }
@@ -1277,7 +1276,7 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
                 return false;
             }
         });
-        
+
         evaluatorDetails = mHeaderEvaluation.findViewById(R.id.rating_member_details);
         evaluatorDetails.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1289,7 +1288,7 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
             }
         });
     }
-    
+
     private void loadImpressionStatistics() {
 
         RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
@@ -1298,7 +1297,8 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
                     String responseText = response.body().string();
-                    if(isDebug) Slog.d(TAG, "==========loadImpressionStatistics response text : " + responseText);
+                    if (isDebug)
+                        Slog.d(TAG, "==========loadImpressionStatistics response text : " + responseText);
 
                     if (responseText != null) {
                         if (!TextUtils.isEmpty(responseText)) {
@@ -1308,7 +1308,7 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
 
                 }
             }
-            
+
             @Override
             public void onFailure(Call call, IOException e) {
 
@@ -1321,7 +1321,7 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
         impressionStatisticsWrap.setLayoutManager(new LinearLayoutManager(this));
         mMeetImpressionStatisticsAdapter = new MeetImpressionStatisticsAdapter(this, getSupportFragmentManager());
         impressionStatisticsWrap.setAdapter(mMeetImpressionStatisticsAdapter);
-        
+
         mMeetImpressionStatisticsAdapter.setItemClickListener(new MeetImpressionStatisticsAdapter.MyItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
@@ -1336,13 +1336,13 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    
-    super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == REQUESTCODE){
-            if(resultCode == RESULT_OK){
+
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUESTCODE) {
+            if (resultCode == RESULT_OK) {
                 boolean hasApproved = data.getBooleanExtra("approved", false);
-                if(isDebug) Slog.d(TAG, "----------------->approved: "+hasApproved);
-                if(hasApproved){
+                if (isDebug) Slog.d(TAG, "----------------->approved: " + hasApproved);
+                if (hasApproved) {
                     loadImpressionStatistics();
                 }
             }
@@ -1357,7 +1357,7 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        
+
         if (responseObj != null) {
             JSONObject impressionStatisticsObj = responseObj.optJSONObject("features_statistics");
             if (impressionStatisticsObj != null) {
@@ -1373,7 +1373,7 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
                     impressionStatistics.impressionCount = value;
                     impressionStatistics.meetMemberList = getImpressionUser(key, uid);
                     mImpressionStatisticsList.add(impressionStatistics);
-                    
+
                     if (index == 5) {
                         break;
                     }
@@ -1390,17 +1390,17 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
         RequestBody requestBody = new FormBody.Builder()
                 .add("impression", impression)
                 .add("uid", String.valueOf(uid)).build();
-        if(isDebug) Slog.d(TAG, "impression: " + impression + " uid: " + uid);
+        if (isDebug) Slog.d(TAG, "impression: " + impression + " uid: " + uid);
         Response response = HttpUtil.sendOkHttpRequestSync(this, GET_IMPRESSION_USERS_URL, requestBody, null);
-        
-        if(response != null){          
+
+        if (response != null) {
             try {
                 String responseText = response.body().string();
                 JSONObject responseObj = new JSONObject(responseText);
                 JSONArray responseArray = responseObj.optJSONArray("users");
                 if (responseArray != null && responseArray.length() > 0) {
-                
-                for (int i = 0; i < responseArray.length(); i++) {
+
+                    for (int i = 0; i < responseArray.length(); i++) {
                         UserMeetInfo userMeetInfo = new UserMeetInfo();
                         JSONObject member = responseArray.optJSONObject(i);
                         userMeetInfo.setUid(member.optInt("uid"));
@@ -1422,27 +1422,27 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
-            }catch (IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
-        
+
         }
 
         return memberInfoList;
     }
-    
-    private void processReferences(){
+
+    private void processReferences() {
         loadReferences(uid);
 
         View inviteReference = mHeaderEvaluation.findViewById(R.id.invite_reference);
         LinearLayout writeReferenceWrapper = mHeaderEvaluation.findViewById(R.id.write_reference_wrapper);
-        if(isSelf){
+        if (isSelf) {
             inviteReference.setVisibility(View.VISIBLE);
             inviteReference.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                
-                InvitationDialogFragment invitationDialogFragment = new InvitationDialogFragment();
+
+                    InvitationDialogFragment invitationDialogFragment = new InvitationDialogFragment();
                     Bundle bundle = new Bundle();
                     bundle.putInt("uid", uid);
                     bundle.putInt("type", ParseUtils.TYPE_REFERENCE);
@@ -1451,9 +1451,9 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
                     invitationDialogFragment.show(getSupportFragmentManager(), "InvitationDialogFragment");
                 }
             });
-        }else {
+        } else {
             writeReferenceWrapper.setVisibility(View.VISIBLE);
-            
+
             TextView writeReference = mHeaderEvaluation.findViewById(R.id.write_reference);
             writeReference.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -1470,7 +1470,7 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
 
         }
     }
-    
+
     private void loadReferences(int uid) {
         RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
         HttpUtil.sendOkHttpRequest(this, LOAD_REFERENCE_URL, requestBody, new Callback() {
@@ -1498,10 +1498,10 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
             }
         });
     }
-    
-     private void processPersonality() {
+
+    private void processPersonality() {
         getPersonality();
-        if (isSelf){
+        if (isSelf) {
             addPersonality();
         }
     }
@@ -1511,17 +1511,17 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
         RequestBody requestBody = new FormBody.Builder()
                 .add("uid", String.valueOf(uid))
                 .build();
-                HttpUtil.sendOkHttpRequest(this, GET_PERSONALITY_URL, requestBody, new Callback() {
+        HttpUtil.sendOkHttpRequest(this, GET_PERSONALITY_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
                 //if(isDebug)
-                    Slog.d(TAG, "================getPersonalityDetail response:" + responseText);
+                Slog.d(TAG, "================getPersonalityDetail response:" + responseText);
                 if (responseText != null && !TextUtils.isEmpty(responseText)) {
                     try {
                         personalityResponseArray = new JSONObject(responseText).optJSONArray("personality_detail");
                         if (personalityResponseArray.length() > 0) {
-                        sortPersonalityWithCount(personalityResponseArray);
+                            sortPersonalityWithCount(personalityResponseArray);
                             if (isDebug)
                                 Slog.d(TAG, "====================after sort: " + personalityResponseArray);
                             //Message msg = new Message();
@@ -1540,7 +1540,7 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
             }
         });
     }
-    
+
     public static void sortPersonalityWithCount(JSONArray jsonArray) {
         JSONObject temp = null;
         int size = jsonArray.length();
@@ -1560,7 +1560,7 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
         }
 
     }
-    
+
     private void setPersonalityFlow() {
         FlowLayout personalityFlow = mHeaderEvaluation.findViewById(R.id.personality_flow);
         personalityFlow.removeAllViews();
@@ -1597,7 +1597,7 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
             });
         }
     }
-    
+
     private void addPersonality() {
         TextView addPersonality = mHeaderEvaluation.findViewById(R.id.add_personality);
         addPersonality.setVisibility(View.VISIBLE);
@@ -1616,49 +1616,49 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
 
     private void processHobby() {
         getHobbies();
-        if (isSelf){
+        if (isSelf) {
             addHobbies();
         }
     }
-    
-     private void processCheeringGroup(){
+
+    private void processCheeringGroup() {
         getCheeringGroup();
-        if(isSelf){
+        if (isSelf) {
             addCheeringGroupMember();
         }
     }
 
-    private void getCheeringGroup(){
+    private void getCheeringGroup() {
 
         RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
         HttpUtil.sendOkHttpRequest(this, GET_CHEERING_GROUP_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-            if (response.body() != null) {
+                if (response.body() != null) {
                     boolean hasJoined = false;
                     String responseText = response.body().string();
                     //if (isDebug)
-                        Slog.d(TAG, "==========getCheeringGroup response text : " + responseText);
+                    Slog.d(TAG, "==========getCheeringGroup response text : " + responseText);
                     if (responseText != null) {
                         try {
                             JSONArray jsonArray = new JSONObject(responseText).getJSONArray("response");
-                            if(jsonArray != null && jsonArray.length() > 0){
+                            if (jsonArray != null && jsonArray.length() > 0) {
                                 mCheeringGroupMemberList.clear();
-                                for (int i=0; i<jsonArray.length(); i++){
+                                for (int i = 0; i < jsonArray.length(); i++) {
                                     UserProfile userProfile = ParseUtils.getUserProfileFromJSONObject(jsonArray.getJSONObject(i));
-                                    if(userProfile.getUid() == authorUid){
+                                    if (userProfile.getUid() == authorUid) {
                                         hasJoined = true;
                                     }
                                     mCheeringGroupMemberList.add(userProfile);
                                 }
 
-                                if (!hasJoined & !isSelf){
+                                if (!hasJoined & !isSelf) {
                                     joinCheeringGroup();
                                 }
 
                                 handler.sendEmptyMessage(GET_CHEERING_GROUP_DONE);
-                                }else {
-                                if(!isSelf){
+                            } else {
+                                if (!isSelf) {
                                     joinCheeringGroup();
                                 }
                             }
@@ -1666,12 +1666,12 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                    }else {
-                        if(!isSelf){
+                    } else {
+                        if (!isSelf) {
                             joinCheeringGroup();
                         }
                     }
-                    }
+                }
             }
 
             @Override
@@ -1681,9 +1681,9 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
         });
     }
 
-    private void addCheeringGroupMember(){
+    private void addCheeringGroupMember() {
         final TextView addMember = mHeaderEvaluation.findViewById(R.id.add_cheering_group);
-        
+
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -1703,8 +1703,8 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
             }
         });
     }
-    
-    private void joinCheeringGroup(){
+
+    private void joinCheeringGroup() {
         final TextView join = mHeaderEvaluation.findViewById(R.id.join_cheering_group);
 
         runOnUiThread(new Runnable() {
@@ -1715,8 +1715,8 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
         });
 
         join.setOnClickListener(new View.OnClickListener() {
-        
-        @Override
+
+            @Override
             public void onClick(View view) {
                 join.setVisibility(View.GONE);
                 showProgressDialog("正在加入");
@@ -1732,7 +1732,7 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
                         }
 
                     }
-                    
+
                     @Override
                     public void onFailure(Call call, IOException e) {
 
@@ -1741,10 +1741,10 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
             }
         });
     }
-    
-    private void setCheeringGroupView(){
+
+    private void setCheeringGroupView() {
         HtGridView cheeringGroupList = mHeaderEvaluation.findViewById(R.id.cheering_group_list);
-        
+
         mCheeringGroupAdapter = new CheeringGroupAdapter(this, mWidth);
         mCheeringGroupAdapter.setCheeringGroupList(mCheeringGroupMemberList);
         cheeringGroupList.setAdapter(mCheeringGroupAdapter);
@@ -1756,10 +1756,10 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
                 startActivity(intent);
             }
         });
-        
-        }
-        
-        private void getHobbies() {
+
+    }
+
+    private void getHobbies() {
         RequestBody requestBody = new FormBody.Builder()
                 .add("uid", String.valueOf(uid))
                 .build();
@@ -1770,8 +1770,8 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
                 Slog.d(TAG, "================get hobbies response:" + responseText);
                 if (responseText != null && !TextUtils.isEmpty(responseText)) {
                     try {
-                    
-                    JSONArray hobbyJSONArray = new JSONObject(responseText).optJSONArray("hobby");
+
+                        JSONArray hobbyJSONArray = new JSONObject(responseText).optJSONArray("hobby");
                         String[] hobbyArray = new String[hobbyJSONArray.length()];
                         for (int i = 0; i < hobbyJSONArray.length(); i++) {
                             hobbyArray[i] = hobbyJSONArray.optJSONObject(i).optString("hobby");
@@ -1788,8 +1788,8 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
                         e.printStackTrace();
                     }
                 }
-                
-                }
+
+            }
 
             @Override
             public void onFailure(Call call, IOException e) {
@@ -1802,8 +1802,8 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
         TextView add = mHeaderEvaluation.findViewById(R.id.add_hobby);
         add.setVisibility(View.VISIBLE);
         add.setOnClickListener(new View.OnClickListener() {
-        
-        @Override
+
+            @Override
             public void onClick(View v) {
                 PersonalityEditDialogFragment personalityEditDialogFragment = new PersonalityEditDialogFragment();
                 Bundle bundle = new Bundle();
@@ -1819,7 +1819,7 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
     private void setHobbyFlow(String[] hobbyArray) {
         FlowLayout hobbyFlow = mHeaderEvaluation.findViewById(R.id.hobby_flow);
         hobbyFlow.removeAllViews();
-        
+
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         layoutParams.setMargins((int) Utility.dpToPx(this, 3), (int) Utility.dpToPx(this, 3),
                 (int) Utility.dpToPx(this, 3), (int) Utility.dpToPx(this, 3));
@@ -1833,36 +1833,36 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
                 hobbyView.setLayoutParams(layoutParams);
                 hobbyView.setText(hobbyArray[i]);
                 hobbyFlow.addView(hobbyView);
-}
+            }
         }
     }
 
     @Override
     public void onBackFromDialog(int type, int result, boolean status) {
-    switch (type){
+        switch (type) {
             case ParseUtils.TYPE_EVALUATE://For EvaluateDialogFragment back
-                if(status == true){
+                if (status == true) {
                     loadRating();
                     loadImpressionStatistics();
                 }
                 break;
             case ParseUtils.TYPE_REFERENCE://For ReferenceWriteDialogFrament back
-                if (status == true){
+                if (status == true) {
                     processReferences();
                 }
                 break;
-                case ParseUtils.TYPE_PERSONALITY://For PersonalityEditDialogFrament back
-                if (status == true){
+            case ParseUtils.TYPE_PERSONALITY://For PersonalityEditDialogFrament back
+                if (status == true) {
                     processPersonality();
                 }
                 break;
             case ParseUtils.TYPE_HOBBY://For PersonalityEditDialogFrament back
-                if (status == true){
+                if (status == true) {
                     processHobby();
                 }
                 break;
             case ParseUtils.TYPE_CHEERING_GROUP://For PersonalityEditDialogFrament back
-                if (status == true){
+                if (status == true) {
                     processCheeringGroup();
                 }
                 break;
@@ -1872,7 +1872,7 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
     }
 
 
-private void updateLovedCount() {
+    private void updateLovedCount() {
         lovedStatistics = mArchiveProfile.findViewById(R.id.loved_statistics);
         lovedCount = mArchiveProfile.findViewById(R.id.loved_count);
         int newLovedStatistics = 0;
@@ -1882,7 +1882,7 @@ private void updateLovedCount() {
         } else {
             newLovedStatistics = Integer.parseInt(lovedStatistics.getText().toString()) + 1;
         }
-        
+
         lovedStatistics.setText(String.valueOf(newLovedStatistics));
 
         if (lovedCount.getText().toString().length() == 0) {
@@ -1893,7 +1893,7 @@ private void updateLovedCount() {
         lovedCount.setText(String.valueOf(newLovedCount));
         lovedIcon.setText(getResources().getText(R.string.fa_heart));
     }
-    
+
     private void updatePraisedCount() {
         TextView praisedStatistics = mArchiveProfile.findViewById(R.id.praised_statistics);
         //TextView praisedCount = mArchiveProfile.findViewById(R.id.praised_count);
@@ -1905,7 +1905,7 @@ private void updateLovedCount() {
             newPraisedStatistics = Integer.parseInt(praisedStatistics.getText().toString()) + 1;
         }
         praisedStatistics.setText(String.valueOf(newPraisedStatistics));
-        
+
         if (praisedCount.getText().toString().length() == 0) {
             newPraisedCount = 1;
         } else {
@@ -1914,8 +1914,8 @@ private void updateLovedCount() {
         praisedCount.setText(String.valueOf(newPraisedCount));
         praisedIcon.setText(getResources().getText(R.string.fa_thumbs_up));
     }
-    
-    public void processVisitRecord(){
+
+    public void processVisitRecord() {
         RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
 
         //Add visit record
@@ -1932,7 +1932,7 @@ private void updateLovedCount() {
 
             }
         });
-        
+
         //Get visit record
         HttpUtil.sendOkHttpRequest(this, GET_VISIT_RECORD_URL, requestBody, new Callback() {
             @Override
@@ -1944,22 +1944,22 @@ private void updateLovedCount() {
                     if (responseText != null) {
                         try {
                             int visitRecord = new JSONObject(responseText).optInt("visit_record");
-                            if(visitRecord > 0){
-                            Message msg = new Message();
+                            if (visitRecord > 0) {
+                                Message msg = new Message();
                                 Bundle bundle = new Bundle();
                                 bundle.putInt("visitRecord", visitRecord);
                                 msg.setData(bundle);
                                 msg.what = GET_VISIT_RECORD_DONE;
                                 handler.sendMessage(msg);
                             }
-                        }catch (JSONException e){
+                        } catch (JSONException e) {
                             e.printStackTrace();
                         }
 
                     }
                 }
             }
-            
+
             @Override
             public void onFailure(Call call, IOException e) {
 
@@ -1967,11 +1967,11 @@ private void updateLovedCount() {
         });
     }
 
-    public void setVisitRecordView(int recordCount){
+    public void setVisitRecordView(int recordCount) {
         TextView visitCountView = mArchiveProfile.findViewById(R.id.visit_record);
         visitCountView.setText(String.valueOf(recordCount));
     }
-    
+
     public static class ImpressionStatistics implements Parcelable {
         public static final Parcelable.Creator<ImpressionStatistics> CREATOR = new Creator<ImpressionStatistics>() {
 
@@ -1991,7 +1991,7 @@ private void updateLovedCount() {
                 return new ImpressionStatistics[size];
             }
         };
-        
+
         public String impression;
         public int impressionCount;
         public List<UserMeetInfo> meetMemberList = new ArrayList<>();
@@ -2009,44 +2009,45 @@ private void updateLovedCount() {
             dest.writeList(meetMemberList);
         }
     }
-    
+
     public void handleMessage(Message message) {
         Bundle bundle = message.getData();
         switch (message.what) {
             case GET_LOGGEDIN_UID_DONE:
-                if (mMeetMember == null){
+                if (mMeetMember == null) {
                     uid = getIntent().getIntExtra("uid", -1);
                     getMeetArchive(this, uid);
-                }else {
+                } else {
                     uid = mMeetMember.getUid();
                     processSubModules();
                 }
                 break;
-                
-                case GET_MEET_ARCHIVE_DONE:
+
+            case GET_MEET_ARCHIVE_DONE:
                 processSubModules();
                 break;
             case GET_PICTURES_URL_DONE:
-                if(pictureArray.length() > 0){
-                    for (int i=0; i< pictureArray.length(); i++){
+                if (pictureArray.length() > 0) {
+                    for (int i = 0; i < pictureArray.length(); i++) {
                         JSONObject pictureObj = pictureArray.optJSONObject(i);
                         final String url = HttpUtil.DOMAIN + pictureObj.optString("uri") + pictureObj.optString("filename");
                         //Slog.d(TAG, "****************url: "+url);
                         SimpleTarget<Drawable> simpleTarget = new SimpleTarget<Drawable>() {
-                        @Override
+                            @Override
                             public void onResourceReady(Drawable resource, Transition<? super Drawable> transition) {
                                 // imageView.setImageDrawable(resource);
                                 drawableList.add(resource);
-                                if(isDebug) Slog.d(TAG, "****************pictureArray length: "+pictureArray.length()+" drawableList size: "+drawableList.size());
-                                if(pictureArray.length() == drawableList.size() - 1){
+                                if (isDebug)
+                                    Slog.d(TAG, "****************pictureArray length: " + pictureArray.length() + " drawableList size: " + drawableList.size());
+                                if (pictureArray.length() == drawableList.size() - 1) {
                                     //add indicator
                                     LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                                    for (int i=0; i<pictureArray.length()+1; i++){
+                                    for (int i = 0; i < pictureArray.length() + 1; i++) {
                                         TextView textView = new TextView(getApplicationContext());
-                                        if(i != 0){
-                                          layoutParams.setMarginStart(16);
+                                        if (i != 0) {
+                                            layoutParams.setMarginStart(16);
                                             textView.setText(R.string.circle_o);
-                                        }else {
+                                        } else {
                                             textView.setText(R.string.circle);
                                         }
                                         textView.setTextColor(getResources().getColor(R.color.white));
@@ -2060,7 +2061,7 @@ private void updateLovedCount() {
                                 }
                             }
                         };
-                        
+
                         Glide.with(getApplicationContext()).load(url).into(simpleTarget);
                     }
                 }
@@ -2070,8 +2071,8 @@ private void updateLovedCount() {
                 mMeetReferenceAdapter.setReferenceList(mReferenceList);
                 mMeetReferenceAdapter.notifyDataSetChanged();
                 break;
-                
-                case LOAD_RATING_DONE:
+
+            case LOAD_RATING_DONE:
                 setRatingBarView();
                 break;
             case LOAD_IMPRESSION_DONE:
@@ -2086,7 +2087,7 @@ private void updateLovedCount() {
                 String[] hobby = bundle.getStringArray("hobby");
                 setHobbyFlow(hobby);
                 break;
-                case GET_CONTACTS_STATUS_DONE:
+            case GET_CONTACTS_STATUS_DONE:
                 int contactStatus = bundle.getInt("status");
                 final Button contacts = mArchiveProfile.findViewById(R.id.contacts);
                 final Button follow = mArchiveProfile.findViewById(R.id.follow);
@@ -2102,8 +2103,8 @@ private void updateLovedCount() {
             case GET_PRAISE_STATISTICS_URL_DONE:
                 setPraiseStatistics(bundle);
                 break;
-                
-                case GET_LOVE_STATISTICS_URL_DONE:
+
+            case GET_LOVE_STATISTICS_URL_DONE:
                 setLoveStatistics(bundle);
                 break;
             case UPDATE_LOVED_COUNT:
@@ -2115,8 +2116,8 @@ private void updateLovedCount() {
             case GET_CHEERING_GROUP_DONE:
                 setCheeringGroupView();
                 break;
-                
-                case JOIN_CHEERING_GROUP_DONE:
+
+            case JOIN_CHEERING_GROUP_DONE:
                 processCheeringGroup();
                 break;
             case GET_VISIT_RECORD_DONE:
@@ -2131,7 +2132,7 @@ private void updateLovedCount() {
                 break;
         }
     }
-    
+
     public void getMeetArchive(final Context context, final int uid) {
         RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
         HttpUtil.sendOkHttpRequest(context, ParseUtils.GET_MEET_ARCHIVE_URL, requestBody, new Callback() {
@@ -2139,16 +2140,17 @@ private void updateLovedCount() {
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
                     String responseText = response.body().string();
-                    if(isDebug) Slog.d(TAG, "==========get archive response text : " + responseText);
+                    if (isDebug)
+                        Slog.d(TAG, "==========get archive response text : " + responseText);
                     if (responseText != null) {
                         if (!TextUtils.isEmpty(responseText)) {
                             try {
-                            
-                            JSONObject jsonObject = new JSONObject(responseText).optJSONObject("archive");
-                                if (jsonObject != null){
+
+                                JSONObject jsonObject = new JSONObject(responseText).optJSONObject("archive");
+                                if (jsonObject != null) {
                                     mMeetMember = ParseUtils.setMeetMemberInfo(jsonObject);
                                     handler.sendEmptyMessage(GET_MEET_ARCHIVE_DONE);
-                                }else {
+                                } else {
                                     ParseUtils.startArchiveActivity(MeetArchiveActivity.this, uid);
                                 }
                             } catch (JSONException e) {
@@ -2164,9 +2166,9 @@ private void updateLovedCount() {
             }
         });
     }
-    
+
     @Override
-    public View makeView(){
+    public View makeView() {
         Resources resources = this.getResources();
         DisplayMetrics dm = resources.getDisplayMetrics();
         float density = dm.density;
@@ -2177,17 +2179,17 @@ private void updateLovedCount() {
         //i.setBackgroundColor(0xff000000);
         i.setScaleType(ImageView.ScaleType.CENTER_CROP);
         i.setLayoutParams(new ImageSwitcher.LayoutParams(width, screenHeight));
-        return i ;
+        return i;
     }
-    
+
     @Override
-    public boolean onTouch(View view, MotionEvent event){
+    public boolean onTouch(View view, MotionEvent event) {
         //在触发时回去到起始坐标
         String action = "";
-        float x= event.getX();
+        float x = event.getX();
         float y = event.getY();
 
-        switch (event.getAction()){
+        switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 direction = 0;
                 view.getParent().requestDisallowInterceptTouchEvent(true);
@@ -2197,17 +2199,17 @@ private void updateLovedCount() {
                 downY = y;
 
                 break;
-                
-                case MotionEvent.ACTION_MOVE:
+
+            case MotionEvent.ACTION_MOVE:
                 //获取到距离差
-                float dx= x-downX;
-                float dy = y-downY;
+                float dx = x - downX;
+                float dy = y - downY;
                 //防止是按下也判断
-                if (Math.abs(dx)>10&&Math.abs(dy)>10) {
+                if (Math.abs(dx) > 10 && Math.abs(dy) > 10) {
                     //通过距离差判断方向
                     int orientation = getOrientation(dx, dy);
                     switch (orientation) {
-                    case 'r':
+                        case 'r':
                             action = "右";
                             direction = 1;
 
@@ -2229,24 +2231,24 @@ private void updateLovedCount() {
                 }
 
                 break;
-                
-                case MotionEvent.ACTION_UP:
-                if(direction == 0){
-                    if(currentPosition < drawableList.size() - 1){
+
+            case MotionEvent.ACTION_UP:
+                if (direction == 0) {
+                    if (currentPosition < drawableList.size() - 1) {
                         mImageSwitcher.setInAnimation(AnimationUtils.loadAnimation(getApplication(), R.anim.fade_in));
                         mImageSwitcher.setOutAnimation(AnimationUtils.loadAnimation(getApplication(), R.anim.fade_out));
-                        currentPosition ++ ;
+                        currentPosition++;
                         mImageSwitcher.setImageDrawable(drawableList.get(currentPosition));
                         //Toast.makeText(getApplication(), "currentPosition: "+currentPosition, Toast.LENGTH_SHORT).show();
                         setPictureIndicator(currentPosition, direction);
                     }
-                    
-                    }else if (direction == 1){
-                    if(currentPosition > 0){
+
+                } else if (direction == 1) {
+                    if (currentPosition > 0) {
                         //设置动画，这里的动画比较简单，不明白的去网上看看相关内容
                         mImageSwitcher.setInAnimation(AnimationUtils.loadAnimation(getApplication(), R.anim.fade_in));
                         mImageSwitcher.setOutAnimation(AnimationUtils.loadAnimation(getApplication(), R.anim.fade_out));
-                        currentPosition --;
+                        currentPosition--;
                         mImageSwitcher.setImageDrawable(drawableList.get(currentPosition));
                         //Toast.makeText(getApplication(), "currentPosition: "+currentPosition, Toast.LENGTH_SHORT).show();
                         setPictureIndicator(currentPosition, direction);
@@ -2257,26 +2259,27 @@ private void updateLovedCount() {
         }
         return true;
     }
-    
+
     /**
      * 根据距离差判断 滑动方向
+     *
      * @param dx X轴的距离差
      * @param dy Y轴的距离差
      * @return 滑动的方向
      */
     private int getOrientation(float dx, float dy) {
 
-        if (Math.abs(dx) >= Math.abs(dy)-10){
+        if (Math.abs(dx) >= Math.abs(dy) - 10) {
             //X轴移动
-            return dx>0 ? 'r' : 'l';
-        }else{
+            return dx > 0 ? 'r' : 'l';
+        } else {
             //Y轴移动
-            return dy>0 ? 'b' : 't';
+            return dy > 0 ? 'b' : 't';
         }
     }
-    
+
     static class MyHandler extends HandlerTemp<MeetArchiveActivity> {
-        public MyHandler(MeetArchiveActivity cls){
+        public MyHandler(MeetArchiveActivity cls) {
             super(cls);
         }
 

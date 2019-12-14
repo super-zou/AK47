@@ -58,8 +58,8 @@ import okhttp3.Response;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static com.hetang.common.MyApplication.getContext;
-import static com.hetang.main.ArchiveFragment.SET_AVATAR_RESULT_OK;
 import static com.hetang.meet.SingleGroupDetailsActivity.GET_SINGLE_GROUP_BY_GID;
+import static com.hetang.meet.SubGroupDetailsActivity.GET_SUBGROUP_BY_GID;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
 public class SubGroupActivity extends BaseAppCompatActivity {
@@ -83,12 +83,13 @@ public class SubGroupActivity extends BaseAppCompatActivity {
     private static final int SET_AVATAR = 5;
     private static final int NO_MORE = 6;
     private static final int ADD_VISITOR_RECORD_DONE = 7;
+    private static final int ADD_NEW_SUBGROUP_DONE = 8;
 
     public static final String GROUP_ADD_BROADCAST = "com.hetang.action.GROUP_ADD";
     private SingleGroupReceiver mReceiver = new SingleGroupReceiver();
 
     private SubGroupSummaryAdapter subGroupSummaryAdapter;
-    private XRecyclerView  recyclerView;
+    private XRecyclerView recyclerView;
     private List<SubGroup> mSubGroupList = new ArrayList<>();
     ImageView progressImageView;
     AnimationDrawable animationDrawable;
@@ -114,17 +115,17 @@ public class SubGroupActivity extends BaseAppCompatActivity {
     private void initView() {
         Typeface font = Typeface.createFromAsset(MyApplication.getContext().getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
         FontManager.markAsIconContainer(findViewById(R.id.custom_actionbar), font);
-        
+
         handler = new SubGroupActivity.MyHandler(this);
         recyclerView = findViewById(R.id.sub_group_summary_list);
         subGroupSummaryAdapter = new SubGroupSummaryAdapter(getContext());
         MyLinearLayoutManager linearLayoutManager = new MyLinearLayoutManager(getContext());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(linearLayoutManager);
-        
+
         recyclerView.setRefreshProgressStyle(BallSpinFadeLoader);
         recyclerView.setLoadingMoreProgressStyle(ProgressStyle.BallRotate);
-        
+
         recyclerView.setPullRefreshEnabled(false);
         recyclerView.getDefaultRefreshHeaderView().setRefreshTimeVisible(true);
         recyclerView.getDefaultFootView().setLoadingHint(getString(R.string.loading_pull_up_tip));
@@ -134,7 +135,7 @@ public class SubGroupActivity extends BaseAppCompatActivity {
         recyclerView.setLimitNumberToCallLoadMore(itemLimit);
         recyclerView.setRefreshProgressStyle(ProgressStyle.BallBeat);
         recyclerView.setLoadingMoreProgressStyle(ProgressStyle.SquareSpin);
-        
+
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -147,7 +148,7 @@ public class SubGroupActivity extends BaseAppCompatActivity {
                 super.onScrollStateChanged(recyclerView, newState);
             }
         });
-        
+
         recyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
             @Override
             public void onRefresh() {
@@ -159,7 +160,7 @@ public class SubGroupActivity extends BaseAppCompatActivity {
                 loadData();
             }
         });
-        
+
         subGroupSummaryAdapter.setItemClickListener(new SubGroupSummaryAdapter.MyItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
@@ -168,23 +169,24 @@ public class SubGroupActivity extends BaseAppCompatActivity {
                 Intent intent = new Intent(getContext(), SubGroupDetailsActivity.class);
                 intent.putExtra("gid", mSubGroupList.get(position).gid);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-                startActivityForResult(intent, RESULT_FIRST_USER);            }
+                startActivityForResult(intent, RESULT_FIRST_USER);
+            }
         });
 
         recyclerView.setAdapter(subGroupSummaryAdapter);
-        
+
         FloatingActionButton floatingActionButton = findViewById(R.id.create_single_group);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //checkAvatarSet();
-                showSingleGroupDialog();
+                showSubGroupDialog();
             }
         });
-        
+
         registerLoginBroadcast();
-        
-                TextView back = findViewById(R.id.back);
+
+        TextView back = findViewById(R.id.back);
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -194,16 +196,16 @@ public class SubGroupActivity extends BaseAppCompatActivity {
 
         //show progressImage before loading done
         progressImageView = findViewById(R.id.animal_progress);
-        animationDrawable = (AnimationDrawable)progressImageView.getDrawable();
+        animationDrawable = (AnimationDrawable) progressImageView.getDrawable();
         progressImageView.postDelayed(new Runnable() {
             @Override
             public void run() {
                 animationDrawable.start();
             }
-        },50);
+        }, 50);
     }
-    
-    private void updateVisitorRecord(int position){
+
+    private void updateVisitorRecord(int position) {
         int gid = mSubGroupList.get(position).gid;
         RequestBody requestBody = new FormBody.Builder()
                 .add("gid", String.valueOf(gid))
@@ -212,7 +214,8 @@ public class SubGroupActivity extends BaseAppCompatActivity {
         HttpUtil.sendOkHttpRequest(getContext(), ADD_SUBGROUP_VISITOR_RECORD, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                if(isDebug) Slog.d(TAG, "==========updateVisitorRecord response body : " + response.body());
+                if (isDebug)
+                    Slog.d(TAG, "==========updateVisitorRecord response body : " + response.body());
                 if (response.body() != null) {
                     //todo
                 }
@@ -229,70 +232,71 @@ public class SubGroupActivity extends BaseAppCompatActivity {
 
         final int page = mSubGroupList.size() / PAGE_SIZE;
         RequestBody requestBody = new FormBody.Builder()
-                                               .add("step", String.valueOf(PAGE_SIZE))
-                                               .add("page", String.valueOf(page))
-                                               .add("type", String.valueOf(type))
-                                               .build();
-        
+                .add("step", String.valueOf(PAGE_SIZE))
+                .add("page", String.valueOf(page))
+                .add("type", String.valueOf(type))
+                .build();
+
         HttpUtil.sendOkHttpRequest(getContext(), SUBGROUP_GET_ALL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
                     String responseText = response.body().string();
-                    if(isDebug) Slog.d(TAG, "==========response text : " + responseText);
+                    if (isDebug) Slog.d(TAG, "==========response text : " + responseText);
                     if (responseText != null && !TextUtils.isEmpty(responseText)) {
                         JSONObject subGroupResponse = null;
                         try {
                             subGroupResponse = new JSONObject(responseText);
-                            if(subGroupResponse != null){
+                            if (subGroupResponse != null) {
                                 mLoadSize = processResponse(subGroupResponse);
 
-                                if (mLoadSize == PAGE_SIZE){
+                                if (mLoadSize == PAGE_SIZE) {
                                     handler.sendEmptyMessage(GET_ALL_DONE);
-                                }else {
-                                    if (mLoadSize != 0){
+                                } else {
+                                    if (mLoadSize != 0) {
                                         handler.sendEmptyMessage(GET_ALL_END);
-                                    }else {
+                                    } else {
                                         handler.sendEmptyMessage(NO_MORE);
                                     }
                                 }
-                            }else {
+                            } else {
                                 handler.sendEmptyMessage(NO_MORE);
                             }
 
-                        }catch (JSONException e){
+                        } catch (JSONException e) {
                             e.printStackTrace();
                         }
 
                     }
                 }
             }
+
             @Override
             public void onFailure(Call call, IOException e) {
 
             }
         });
     }
-    
-    private void getMyGroup(){
+
+    private void getMyGroup() {
 
     }
-    
-    private int processResponse(JSONObject subGroupResponse){
+
+    private int processResponse(JSONObject subGroupResponse) {
 
         int subGroupSize = 0;
         JSONArray subGroupArray = null;
 
-        if(subGroupResponse != null){
+        if (subGroupResponse != null) {
             subGroupArray = subGroupResponse.optJSONArray("subgroup");
         }
 
-        if(subGroupArray != null){
+        if (subGroupArray != null) {
             subGroupSize = subGroupArray.length();
-            if( subGroupSize > 0){
-                for (int i=0; i<subGroupArray.length(); i++){
+            if (subGroupSize > 0) {
+                for (int i = 0; i < subGroupArray.length(); i++) {
                     JSONObject group = subGroupArray.optJSONObject(i);
-                    if (group != null){
+                    if (group != null) {
                         SubGroup subGroup = getSubGroup(group);
                         mSubGroupList.add(subGroup);
                     }
@@ -302,20 +306,20 @@ public class SubGroupActivity extends BaseAppCompatActivity {
 
         return subGroupSize;
     }
-    
-    private int processUpdateResponse(JSONObject SingleGroupResponse){
+
+    private int processUpdateResponse(JSONObject SingleGroupResponse) {
         List<SubGroup> mSubGroupUpdateList = new ArrayList<>();
         JSONArray SingleGroupArray = null;
-        if(SingleGroupResponse != null){
+        if (SingleGroupResponse != null) {
             SingleGroupArray = SingleGroupResponse.optJSONArray("single_group");
         }
 
-        if(SingleGroupArray != null){
-            if(SingleGroupArray.length() > 0){
+        if (SingleGroupArray != null) {
+            if (SingleGroupArray.length() > 0) {
                 mSubGroupUpdateList.clear();
-                for (int i=0; i<SingleGroupArray.length(); i++){
+                for (int i = 0; i < SingleGroupArray.length(); i++) {
                     JSONObject group = SingleGroupArray.optJSONObject(i);
-                    if (group != null){
+                    if (group != null) {
                         SubGroup singleGroup = getSubGroup(group);
                         mSubGroupUpdateList.add(singleGroup);
                     }
@@ -327,37 +331,30 @@ public class SubGroupActivity extends BaseAppCompatActivity {
                 bundle.putInt("update_size", mSubGroupUpdateList.size());
                 message.setData(bundle);
                 handler.sendMessage(message);
-            }else {
+            } else {
                 handler.sendEmptyMessage(GET_ALL_END);
             }
         }
 
-        return SingleGroupArray != null ?  SingleGroupArray.length():0;
+        return SingleGroupArray != null ? SingleGroupArray.length() : 0;
     }
-    
-    private void processNewAddResponse(JSONObject SingleGroupResponse){
-        List<SubGroup> mSingleGroupUpdateList = new ArrayList<>();
-        JSONObject SingleGroupObject = null;
-        if(SingleGroupResponse != null){
-            SingleGroupObject = SingleGroupResponse.optJSONObject("single_group");
+
+    private void processNewAddResponse(JSONObject subGroupResponse) {
+        JSONObject subGroupObject = null;
+        if (subGroupResponse != null) {
+            subGroupObject = subGroupResponse.optJSONObject("group");
         }
 
-        if(SingleGroupObject != null){
-            SubGroup singleGroup = getSubGroup(SingleGroupObject);
-            mSingleGroupUpdateList.add(singleGroup);
-            mSubGroupList.addAll(0, mSingleGroupUpdateList);
-            Message message = new Message();
-            message.what = UPDATE_ALL;
-            Bundle bundle = new Bundle();
-            bundle.putInt("update_size", mSingleGroupUpdateList.size());
-            message.setData(bundle);
-            handler.sendMessage(message);
+        if (subGroupObject != null) {
+            SubGroup singleGroup = getSubGroup(subGroupObject);
+            mSubGroupList.add(0, singleGroup);
+            handler.sendEmptyMessage(ADD_NEW_SUBGROUP_DONE);
         }
     }
-    
-    public static SubGroup getSubGroup(JSONObject group){
+
+    public static SubGroup getSubGroup(JSONObject group) {
         SubGroup subGroup = new SubGroup();
-        if (group != null){
+        if (group != null) {
             subGroup.gid = group.optInt("gid");
             subGroup.type = group.optInt("type");
             subGroup.groupName = group.optString("group_name");
@@ -372,7 +369,7 @@ public class SubGroupActivity extends BaseAppCompatActivity {
             subGroup.created = Utility.timeStampToDay(group.optInt("created"));
 
             subGroup.leader = new UserMeetInfo();
-            if (group.optJSONObject("leader") != null){
+            if (group.optJSONObject("leader") != null) {
                 ParseUtils.setBaseProfile(subGroup.leader, group.optJSONObject("leader"));
             }
 
@@ -381,27 +378,29 @@ public class SubGroupActivity extends BaseAppCompatActivity {
 
         return null;
     }
-    
-    private void checkAvatarSet(){
+
+    private void checkAvatarSet() {
         RequestBody requestBody = new FormBody.Builder().build();
         HttpUtil.sendOkHttpRequest(getContext(), ParseUtils.GET_USER_PROFILE_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
                     String responseText = response.body().string();
-                    if(isDebug) Slog.d(TAG, "==========get archive response text : " + responseText);
+                    if (isDebug)
+                        Slog.d(TAG, "==========get archive response text : " + responseText);
                     if (responseText != null) {
                         if (!TextUtils.isEmpty(responseText)) {
                             try {
                                 JSONObject jsonObject = new JSONObject(responseText).optJSONObject("user");
-                                if(isDebug) Slog.d(TAG, "==============user profile object: "+jsonObject);
-                                if(jsonObject != null){
+                                if (isDebug)
+                                    Slog.d(TAG, "==============user profile object: " + jsonObject);
+                                if (jsonObject != null) {
                                     UserProfile userProfile = ParseUtils.getUserProfileFromJSONObject(jsonObject);
                                     final boolean isAvatarSet;
-                                    if(!TextUtils.isEmpty(userProfile.getAvatar())){
+                                    if (!TextUtils.isEmpty(userProfile.getAvatar())) {
                                         //avatar is set up
-                                        showSingleGroupDialog();
-                                    }else {
+                                        showSubGroupDialog();
+                                    } else {
                                         //avatar is not set up
                                         handler.sendEmptyMessage(SET_AVATAR);
                                     }
@@ -410,7 +409,7 @@ public class SubGroupActivity extends BaseAppCompatActivity {
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
-                            }
+                        }
                     }
                 }
             }
@@ -420,8 +419,8 @@ public class SubGroupActivity extends BaseAppCompatActivity {
             }
         });
     }
-    
-    private void showSingleGroupDialog(){
+
+    private void showSubGroupDialog() {
         CreateSubGroupDialogFragment createSingleGroupDialogFragment = new CreateSubGroupDialogFragment();
         //createSingleGroupDialogFragment.setTargetFragment(MeetSingleGroupFragment.this, REQUEST_CODE);
         Bundle bundle = new Bundle();
@@ -429,38 +428,38 @@ public class SubGroupActivity extends BaseAppCompatActivity {
         createSingleGroupDialogFragment.setArguments(bundle);
         createSingleGroupDialogFragment.show(getSupportFragmentManager(), "CreateSubGroupDialogFragment");
     }
-    
-     public void updateData(){
+
+    public void updateData() {
         String last = SharedPreferencesUtils.getSingleGroupLast(getContext());
         RequestBody requestBody = new FormBody.Builder()
                 .add("last", last)
                 .add("step", String.valueOf(PAGE_SIZE))
                 .add("page", String.valueOf(0))
                 .build();
-         
-         HttpUtil.sendOkHttpRequest(getContext(), SUBGROUP_UPDATE, requestBody, new Callback() {
+
+        HttpUtil.sendOkHttpRequest(getContext(), SUBGROUP_UPDATE, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
                     String responseText = response.body().string();
-                    if(isDebug) Slog.d(TAG, "==========response text : " + responseText);
+                    if (isDebug) Slog.d(TAG, "==========response text : " + responseText);
                     if (responseText != null && !TextUtils.isEmpty(responseText)) {
                         JSONObject singleGroupResponse = null;
                         try {
                             singleGroupResponse = new JSONObject(responseText);
-                            if(singleGroupResponse != null){
+                            if (singleGroupResponse != null) {
                                 int current = singleGroupResponse.optInt("current");
-                                Slog.d(TAG, "----------------->current: "+current);
+                                Slog.d(TAG, "----------------->current: " + current);
                                 SharedPreferencesUtils.setSingleGroupLast(getContext(), String.valueOf(current));
 
                                 mUpdateSize = processUpdateResponse(singleGroupResponse);
                             }
-                        }catch (JSONException e){
+                        } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                         if(mUpdateSize > 0){
+                        if (mUpdateSize > 0) {
                             handler.sendEmptyMessage(UPDATE_ALL);
-                        }else {
+                        } else {
                             handler.sendEmptyMessage(NO_UPDATE);
                         }
                     }
@@ -471,7 +470,7 @@ public class SubGroupActivity extends BaseAppCompatActivity {
             public void onFailure(Call call, IOException e) {
 
             }
-         });
+        });
     }
 
     public void handleMessage(Message message) {
@@ -481,11 +480,11 @@ public class SubGroupActivity extends BaseAppCompatActivity {
                 subGroupSummaryAdapter.setData(mSubGroupList);
                 subGroupSummaryAdapter.notifyDataSetChanged();
                 recyclerView.refreshComplete();
-               // recyclerView.loadMoreComplete();
+                // recyclerView.loadMoreComplete();
                 stopLoadProgress();
                 break;
-                case GET_ALL_END:
-                    Slog.d(TAG, "-------------->GET_ALL_END");
+            case GET_ALL_END:
+                Slog.d(TAG, "-------------->GET_ALL_END");
                 subGroupSummaryAdapter.setData(mSubGroupList);
                 subGroupSummaryAdapter.notifyDataSetChanged();
                 recyclerView.refreshComplete();
@@ -510,82 +509,42 @@ public class SubGroupActivity extends BaseAppCompatActivity {
                 recyclerView.refreshComplete();
                 mUpdateSize = 0;
                 break;
-                case SET_AVATAR:
-                startAvatarSetActivity();
+            case ADD_NEW_SUBGROUP_DONE:
+                subGroupSummaryAdapter.setData(mSubGroupList);
+                subGroupSummaryAdapter.notifyItemRangeInserted(0, 1);
+                subGroupSummaryAdapter.notifyDataSetChanged();
+                recyclerView.refreshComplete();
                 break;
             default:
                 break;
         }
     }
 
-    private void stopLoadProgress(){
-        if (progressImageView.getVisibility() == View.VISIBLE){
+    private void stopLoadProgress() {
+        if (progressImageView.getVisibility() == View.VISIBLE) {
             animationDrawable.stop();
             progressImageView.setVisibility(View.GONE);
         }
     }
-    
-    private void startAvatarSetActivity(){
-        final AlertDialog.Builder normalDialogBuilder =
-                new AlertDialog.Builder(this);
-        normalDialogBuilder.setTitle(getResources().getString(R.string.avatar_set_request_title));
-        normalDialogBuilder.setMessage(getResources().getString(R.string.avatar_set_request_content));
-        normalDialogBuilder.setPositiveButton("去设置->",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent(getContext(), SetAvatarActivity.class);
-                        startActivityForResult(intent, Activity.RESULT_FIRST_USER);
-                    }
-                });
-        
-        normalDialogBuilder.setNegativeButton("关闭",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        //...To-do
-                    }
-                });
-        AlertDialog normalDialog = normalDialogBuilder.create();
-        normalDialog.show();
-        
-        try {
-            Field mAlert = AlertDialog.class.getDeclaredField("mAlert");
-            mAlert.setAccessible(true);
-            Object mAlertController = mAlert.get(normalDialog);
-            Field mMessage = mAlertController.getClass().getDeclaredField("mMessageView");
-            mMessage.setAccessible(true);
-            TextView mMessageView = (TextView) mMessage.get(mAlertController);
-            mMessageView.setTextColor(getResources().getColor(R.color.background));
-            mMessageView.setTextSize(16);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        }
-        
-        normalDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.color_disabled));
-        normalDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.color_blue));
-        normalDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextSize(18);
 
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode,resultCode,data);
-        if (isDebug) Slog.d(TAG, "===================onActivityResult requestCode: "+requestCode+" resultCode: "+resultCode);
-        if (requestCode == Activity.RESULT_FIRST_USER){
-            switch (resultCode){
+        super.onActivityResult(requestCode, resultCode, data);
+        if (isDebug)
+            Slog.d(TAG, "===================onActivityResult requestCode: " + requestCode + " resultCode: " + resultCode);
+        if (requestCode == Activity.RESULT_FIRST_USER) {
+            switch (resultCode) {
                 case RESULT_OK:
-                    
+
                     break;
                 default:
                     break;
             }
         }
     }
-    
-    public static class SubGroup implements Serializable{
+
+    public static class SubGroup implements Serializable {
         public int gid;
         public int type;
         public String groupName;
@@ -599,7 +558,7 @@ public class SubGroupActivity extends BaseAppCompatActivity {
         public int activityCount = 0;
         public String created;
         public UserMeetInfo leader;
-        
+
         //public List<String> headUrlList;
         public int authorStatus = -1;
         public int followed = -1;
@@ -617,15 +576,15 @@ public class SubGroupActivity extends BaseAppCompatActivity {
     private void unRegisterLoginBroadcast() {
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
     }
-    
-     private class SingleGroupReceiver extends BroadcastReceiver {
+
+    private class SingleGroupReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            switch (intent.getAction()){
+            switch (intent.getAction()) {
                 case GROUP_ADD_BROADCAST:
                     Slog.d(TAG, "==========GROUP_ADD_BROADCAST");
                     int gid = intent.getIntExtra("gid", 0);
-                    if (gid > 0){
+                    if (gid > 0) {
                         getMyNewAddedGroup(gid);
                     }
                     break;
@@ -633,33 +592,33 @@ public class SubGroupActivity extends BaseAppCompatActivity {
 
         }
     }
-    
-    private void getMyNewAddedGroup(int gid){
+
+    private void getMyNewAddedGroup(int gid) {
         RequestBody requestBody = new FormBody.Builder()
                 .add("gid", String.valueOf(gid))
                 .build();
 
-        HttpUtil.sendOkHttpRequest(getContext(), GET_SINGLE_GROUP_BY_GID, requestBody, new Callback() {
+        HttpUtil.sendOkHttpRequest(getContext(), GET_SUBGROUP_BY_GID, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                if(isDebug) Slog.d(TAG, "==========response body : " + response.body());
+                if (isDebug) Slog.d(TAG, "==========response body : " + response.body());
 
                 if (response.body() != null) {
                     String responseText = response.body().string();
-                    if(isDebug) Slog.d(TAG, "==========response text : " + responseText);
+                    if (isDebug) Slog.d(TAG, "==========response text : " + responseText);
                     if (responseText != null && !TextUtils.isEmpty(responseText)) {
-                        JSONObject singleGroupResponse = null;
+                        JSONObject subGroupResponse = null;
                         try {
-                            singleGroupResponse = new JSONObject(responseText);
-                            if(singleGroupResponse != null){
-                                processNewAddResponse(singleGroupResponse);
+                            subGroupResponse = new JSONObject(responseText);
+                            if (subGroupResponse != null) {
+                                processNewAddResponse(subGroupResponse);
                             }
-                        }catch (JSONException e){
+                        } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
                 }
-              }
+            }
 
             @Override
             public void onFailure(Call call, IOException e) {
@@ -667,20 +626,20 @@ public class SubGroupActivity extends BaseAppCompatActivity {
             }
         });
     }
- 
+
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         unRegisterLoginBroadcast();
-        
-        if (recyclerView != null){
+
+        if (recyclerView != null) {
             recyclerView.destroy();
             recyclerView = null;
         }
     }
-    
-    
+
+
     static class MyHandler extends Handler {
         WeakReference<SubGroupActivity> subGroupActivityWeakReference;
 
@@ -696,6 +655,6 @@ public class SubGroupActivity extends BaseAppCompatActivity {
             }
         }
     }
-    
- }
+
+}
              

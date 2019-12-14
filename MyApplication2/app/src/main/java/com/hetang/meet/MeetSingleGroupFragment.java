@@ -6,13 +6,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-
 import android.content.IntentFilter;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.os.Handler;
 import android.os.Message;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,13 +20,13 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.hetang.R;
 import com.hetang.adapter.MeetSingleGroupSummaryAdapter;
-import com.hetang.util.CreateSubGroupDialogFragment;
-import com.hetang.util.MyLinearLayoutManager;
-
-import com.hetang.util.BaseFragment;
-import com.hetang.util.HttpUtil;
 import com.hetang.common.MyApplication;
+import com.hetang.util.BaseFragment;
+import com.hetang.util.CreateSubGroupDialogFragment;
+import com.hetang.util.HttpUtil;
+import com.hetang.util.MyLinearLayoutManager;
 import com.hetang.util.ParseUtils;
 import com.hetang.util.SetAvatarActivity;
 import com.hetang.util.SharedPreferencesUtils;
@@ -36,7 +35,6 @@ import com.hetang.util.UserProfile;
 import com.hetang.util.Utility;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
-import com.hetang.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -56,8 +54,8 @@ import okhttp3.Response;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static com.hetang.main.ArchiveFragment.SET_AVATAR_RESULT_OK;
-import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 import static com.hetang.meet.SingleGroupDetailsActivity.GET_SINGLE_GROUP_BY_GID;
+import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
 public class MeetSingleGroupFragment extends BaseFragment {
     private static final boolean isDebug = true;
@@ -85,14 +83,14 @@ public class MeetSingleGroupFragment extends BaseFragment {
 
     public static final String GROUP_ADD_BROADCAST = "com.hetang.action.GROUP_ADD";
     private SingleGroupReceiver mReceiver = new SingleGroupReceiver();
-    
+
     private MeetSingleGroupSummaryAdapter meetSingleGroupSummaryAdapter;
-    private XRecyclerView  recyclerView;
+    private XRecyclerView recyclerView;
     private List<SingleGroup> mSingleGroupList = new ArrayList<>();
     ImageView progressImageView;
     AnimationDrawable animationDrawable;
     View mMyGroupView;
-    
+
     @Override
     protected void initView(View convertView) {
         handler = new MeetSingleGroupFragment.MyHandler(this);
@@ -101,10 +99,10 @@ public class MeetSingleGroupFragment extends BaseFragment {
         MyLinearLayoutManager linearLayoutManager = new MyLinearLayoutManager(getContext());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(linearLayoutManager);
-        
+
         recyclerView.setRefreshProgressStyle(BallSpinFadeLoader);
         recyclerView.setLoadingMoreProgressStyle(ProgressStyle.BallRotate);
-        
+
         recyclerView.setPullRefreshEnabled(false);
         recyclerView.getDefaultRefreshHeaderView().setRefreshTimeVisible(true);
         recyclerView.getDefaultFootView().setLoadingHint(getString(R.string.loading_pull_up_tip));
@@ -114,7 +112,7 @@ public class MeetSingleGroupFragment extends BaseFragment {
         recyclerView.setLimitNumberToCallLoadMore(itemLimit);
         recyclerView.setRefreshProgressStyle(ProgressStyle.BallBeat);
         recyclerView.setLoadingMoreProgressStyle(ProgressStyle.SquareSpin);
-        
+
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -127,7 +125,7 @@ public class MeetSingleGroupFragment extends BaseFragment {
                 super.onScrollStateChanged(recyclerView, newState);
             }
         });
-        
+
         recyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
             @Override
             public void onRefresh() {
@@ -139,7 +137,7 @@ public class MeetSingleGroupFragment extends BaseFragment {
                 loadData();
             }
         });
-        
+
         meetSingleGroupSummaryAdapter.setItemClickListener(new MeetSingleGroupSummaryAdapter.MyItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
@@ -152,7 +150,7 @@ public class MeetSingleGroupFragment extends BaseFragment {
         });
 
         recyclerView.setAdapter(meetSingleGroupSummaryAdapter);
-        
+
         FloatingActionButton floatingActionButton = findView(R.id.create_single_group);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -160,88 +158,89 @@ public class MeetSingleGroupFragment extends BaseFragment {
                 checkAvatarSet();
             }
         });
-        
+
         registerLoginBroadcast();
 
         //show progressImage before loading done
         progressImageView = convertView.findViewById(R.id.animal_progress);
-        animationDrawable = (AnimationDrawable)progressImageView.getDrawable();
+        animationDrawable = (AnimationDrawable) progressImageView.getDrawable();
         progressImageView.postDelayed(new Runnable() {
             @Override
             public void run() {
                 animationDrawable.start();
             }
-        },50);
+        }, 50);
     }
-    
+
     @Override
     protected void loadData() {
 
         final int page = mSingleGroupList.size() / PAGE_SIZE;
         RequestBody requestBody = new FormBody.Builder()
-                                               .add("step", String.valueOf(PAGE_SIZE))
-                                               .add("page", String.valueOf(page))
-                                               .build();
-        
+                .add("step", String.valueOf(PAGE_SIZE))
+                .add("page", String.valueOf(page))
+                .build();
+
         HttpUtil.sendOkHttpRequest(getContext(), SINGLE_GROUP_GET_ALL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
                     String responseText = response.body().string();
-                    if(isDebug) Slog.d(TAG, "==========response text : " + responseText);
+                    if (isDebug) Slog.d(TAG, "==========response text : " + responseText);
                     if (responseText != null && !TextUtils.isEmpty(responseText)) {
                         JSONObject SingleGroupResponse = null;
                         try {
                             SingleGroupResponse = new JSONObject(responseText);
-                            if(SingleGroupResponse != null){
+                            if (SingleGroupResponse != null) {
                                 mLoadSize = processResponse(SingleGroupResponse);
 
-                                if (mLoadSize == PAGE_SIZE){
+                                if (mLoadSize == PAGE_SIZE) {
                                     handler.sendEmptyMessage(GET_ALL_DONE);
-                                }else {
-                                    if (mLoadSize != 0){
+                                } else {
+                                    if (mLoadSize != 0) {
                                         handler.sendEmptyMessage(GET_ALL_END);
-                                    }else {
+                                    } else {
                                         handler.sendEmptyMessage(NO_MORE);
-             }
+                                    }
                                 }
-                            }else {
+                            } else {
                                 handler.sendEmptyMessage(NO_MORE);
                             }
 
-                        }catch (JSONException e){
+                        } catch (JSONException e) {
                             e.printStackTrace();
                         }
 
                     }
                 }
             }
+
             @Override
             public void onFailure(Call call, IOException e) {
 
             }
         });
     }
-    
-    private void getMyGroup(){
+
+    private void getMyGroup() {
 
     }
-    
-    private int processResponse(JSONObject SingleGroupResponse){
+
+    private int processResponse(JSONObject SingleGroupResponse) {
 
         int singGroupSize = 0;
         JSONArray SingleGroupArray = null;
 
-        if(SingleGroupResponse != null){
+        if (SingleGroupResponse != null) {
             SingleGroupArray = SingleGroupResponse.optJSONArray("single_group");
         }
 
-        if(SingleGroupArray != null){
+        if (SingleGroupArray != null) {
             singGroupSize = SingleGroupArray.length();
-            if( singGroupSize > 0){
-                for (int i=0; i<SingleGroupArray.length(); i++){
+            if (singGroupSize > 0) {
+                for (int i = 0; i < SingleGroupArray.length(); i++) {
                     JSONObject group = SingleGroupArray.optJSONObject(i);
-                    if (group != null){
+                    if (group != null) {
                         SingleGroup singleGroup = getSingleGroup(group);
                         mSingleGroupList.add(singleGroup);
                     }
@@ -251,20 +250,20 @@ public class MeetSingleGroupFragment extends BaseFragment {
 
         return singGroupSize;
     }
-    
-    private int processUpdateResponse(JSONObject SingleGroupResponse){
+
+    private int processUpdateResponse(JSONObject SingleGroupResponse) {
         List<SingleGroup> mSingleGroupUpdateList = new ArrayList<>();
         JSONArray SingleGroupArray = null;
-        if(SingleGroupResponse != null){
+        if (SingleGroupResponse != null) {
             SingleGroupArray = SingleGroupResponse.optJSONArray("single_group");
         }
 
-        if(SingleGroupArray != null){
-            if(SingleGroupArray.length() > 0){
+        if (SingleGroupArray != null) {
+            if (SingleGroupArray.length() > 0) {
                 mSingleGroupUpdateList.clear();
-                for (int i=0; i<SingleGroupArray.length(); i++){
+                for (int i = 0; i < SingleGroupArray.length(); i++) {
                     JSONObject group = SingleGroupArray.optJSONObject(i);
-                    if (group != null){
+                    if (group != null) {
                         SingleGroup singleGroup = getSingleGroup(group);
                         mSingleGroupUpdateList.add(singleGroup);
                     }
@@ -276,22 +275,22 @@ public class MeetSingleGroupFragment extends BaseFragment {
                 bundle.putInt("update_size", mSingleGroupUpdateList.size());
                 message.setData(bundle);
                 handler.sendMessage(message);
-            }else {
+            } else {
                 handler.sendEmptyMessage(GET_ALL_END);
             }
         }
 
-        return SingleGroupArray != null ?  SingleGroupArray.length():0;
+        return SingleGroupArray != null ? SingleGroupArray.length() : 0;
     }
-    
-    private void processNewAddResponse(JSONObject SingleGroupResponse){
+
+    private void processNewAddResponse(JSONObject SingleGroupResponse) {
         List<SingleGroup> mSingleGroupUpdateList = new ArrayList<>();
         JSONObject SingleGroupObject = null;
-        if(SingleGroupResponse != null){
+        if (SingleGroupResponse != null) {
             SingleGroupObject = SingleGroupResponse.optJSONObject("single_group");
         }
 
-        if(SingleGroupObject != null){
+        if (SingleGroupObject != null) {
             SingleGroup singleGroup = getSingleGroup(SingleGroupObject);
             mSingleGroupUpdateList.add(singleGroup);
             mSingleGroupList.addAll(0, mSingleGroupUpdateList);
@@ -303,10 +302,10 @@ public class MeetSingleGroupFragment extends BaseFragment {
             handler.sendMessage(message);
         }
     }
-    
-    public static SingleGroup getSingleGroup(JSONObject group){
+
+    public static SingleGroup getSingleGroup(JSONObject group) {
         SingleGroup singleGroup = new SingleGroup();
-        if (group != null){
+        if (group != null) {
             singleGroup.gid = group.optInt("gid");
             singleGroup.groupName = group.optString("group_name");
             singleGroup.groupProfile = group.optString("group_profile");
@@ -314,23 +313,23 @@ public class MeetSingleGroupFragment extends BaseFragment {
             singleGroup.org = group.optString("group_org");
             singleGroup.created = Utility.timeStampToDay(group.optInt("created"));
             JSONArray memberArray = group.optJSONArray("members");
-            
-            if(memberArray != null && memberArray.length() > 0){
+
+            if (memberArray != null && memberArray.length() > 0) {
                 int count = 0;
-                if(memberArray.length() > 3){
+                if (memberArray.length() > 3) {
                     singleGroup.memberCountRemain = memberArray.length() - 3;
                     count = 3;
-                }else {
+                } else {
                     count = memberArray.length();
                 }
                 singleGroup.headUrlList = new ArrayList<>();
-                for (int n=0; n<count; n++){
+                for (int n = 0; n < count; n++) {
                     singleGroup.headUrlList.add(memberArray.optJSONObject(n).optString("avatar"));
                 }
             }
-            
+
             singleGroup.leader = new UserMeetInfo();
-            if (group.optJSONObject("leader") != null){
+            if (group.optJSONObject("leader") != null) {
                 ParseUtils.setBaseProfile(singleGroup.leader, group.optJSONObject("leader"));
             }
 
@@ -339,27 +338,29 @@ public class MeetSingleGroupFragment extends BaseFragment {
 
         return null;
     }
-    
-    private void checkAvatarSet(){
+
+    private void checkAvatarSet() {
         RequestBody requestBody = new FormBody.Builder().build();
         HttpUtil.sendOkHttpRequest(MyApplication.getContext(), ParseUtils.GET_USER_PROFILE_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
                     String responseText = response.body().string();
-                    if(isDebug) Slog.d(TAG, "==========get archive response text : " + responseText);
+                    if (isDebug)
+                        Slog.d(TAG, "==========get archive response text : " + responseText);
                     if (responseText != null) {
                         if (!TextUtils.isEmpty(responseText)) {
                             try {
                                 JSONObject jsonObject = new JSONObject(responseText).optJSONObject("user");
-                                if(isDebug) Slog.d(TAG, "==============user profile object: "+jsonObject);
-                                if(jsonObject != null){
+                                if (isDebug)
+                                    Slog.d(TAG, "==============user profile object: " + jsonObject);
+                                if (jsonObject != null) {
                                     UserProfile userProfile = ParseUtils.getUserProfileFromJSONObject(jsonObject);
                                     final boolean isAvatarSet;
-                                    if(!TextUtils.isEmpty(userProfile.getAvatar())){
+                                    if (!TextUtils.isEmpty(userProfile.getAvatar())) {
                                         //avatar is set up
                                         showSingleGroupDialog();
-                                    }else {
+                                    } else {
                                         //avatar is not set up
                                         handler.sendEmptyMessage(SET_AVATAR);
                                     }
@@ -368,7 +369,7 @@ public class MeetSingleGroupFragment extends BaseFragment {
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
-                            }
+                        }
                     }
                 }
             }
@@ -378,44 +379,44 @@ public class MeetSingleGroupFragment extends BaseFragment {
             }
         });
     }
-    
-    private void showSingleGroupDialog(){
+
+    private void showSingleGroupDialog() {
         CreateSubGroupDialogFragment createSingleGroupDialogFragment = new CreateSubGroupDialogFragment();
         //createSingleGroupDialogFragment.setTargetFragment(MeetSingleGroupFragment.this, REQUEST_CODE);
         createSingleGroupDialogFragment.show(getFragmentManager(), "CreateSubGroupDialogFragment");
     }
-    
-     public void updateData(){
+
+    public void updateData() {
         String last = SharedPreferencesUtils.getSingleGroupLast(getContext());
         RequestBody requestBody = new FormBody.Builder()
                 .add("last", last)
                 .add("step", String.valueOf(PAGE_SIZE))
                 .add("page", String.valueOf(0))
                 .build();
-         
-         HttpUtil.sendOkHttpRequest(getContext(), SINGLE_GROUP_UPDATE, requestBody, new Callback() {
+
+        HttpUtil.sendOkHttpRequest(getContext(), SINGLE_GROUP_UPDATE, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
                     String responseText = response.body().string();
-                    if(isDebug) Slog.d(TAG, "==========response text : " + responseText);
+                    if (isDebug) Slog.d(TAG, "==========response text : " + responseText);
                     if (responseText != null && !TextUtils.isEmpty(responseText)) {
                         JSONObject singleGroupResponse = null;
                         try {
                             singleGroupResponse = new JSONObject(responseText);
-                            if(singleGroupResponse != null){
+                            if (singleGroupResponse != null) {
                                 int current = singleGroupResponse.optInt("current");
-                                Slog.d(TAG, "----------------->current: "+current);
+                                Slog.d(TAG, "----------------->current: " + current);
                                 SharedPreferencesUtils.setSingleGroupLast(getContext(), String.valueOf(current));
 
                                 mUpdateSize = processUpdateResponse(singleGroupResponse);
                             }
-                        }catch (JSONException e){
+                        } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                         if(mUpdateSize > 0){
+                        if (mUpdateSize > 0) {
                             handler.sendEmptyMessage(UPDATE_ALL);
-                        }else {
+                        } else {
                             handler.sendEmptyMessage(NO_UPDATE);
                         }
                     }
@@ -426,7 +427,7 @@ public class MeetSingleGroupFragment extends BaseFragment {
             public void onFailure(Call call, IOException e) {
 
             }
-         });
+        });
     }
 
     @Override
@@ -434,17 +435,17 @@ public class MeetSingleGroupFragment extends BaseFragment {
         int layoutId = R.layout.meet_single_group_summary;
         return layoutId;
     }
-    
+
     public void handleMessage(Message message) {
         switch (message.what) {
             case GET_ALL_DONE:
                 meetSingleGroupSummaryAdapter.setData(mSingleGroupList, recyclerView.getWidth());
                 meetSingleGroupSummaryAdapter.notifyDataSetChanged();
                 recyclerView.refreshComplete();
-               // recyclerView.loadMoreComplete();
+                // recyclerView.loadMoreComplete();
                 stopLoadProgress();
                 break;
-                case GET_ALL_END:
+            case GET_ALL_END:
                 meetSingleGroupSummaryAdapter.setData(mSingleGroupList, recyclerView.getWidth());
                 meetSingleGroupSummaryAdapter.notifyDataSetChanged();
                 recyclerView.refreshComplete();
@@ -469,7 +470,7 @@ public class MeetSingleGroupFragment extends BaseFragment {
                 recyclerView.refreshComplete();
                 mUpdateSize = 0;
                 break;
-                case SET_AVATAR:
+            case SET_AVATAR:
                 startAvatarSetActivity();
                 break;
             default:
@@ -477,14 +478,14 @@ public class MeetSingleGroupFragment extends BaseFragment {
         }
     }
 
-    private void stopLoadProgress(){
-        if (progressImageView.getVisibility() == View.VISIBLE){
+    private void stopLoadProgress() {
+        if (progressImageView.getVisibility() == View.VISIBLE) {
             animationDrawable.stop();
             progressImageView.setVisibility(View.GONE);
         }
     }
-    
-    private void startAvatarSetActivity(){
+
+    private void startAvatarSetActivity() {
         final AlertDialog.Builder normalDialogBuilder =
                 new AlertDialog.Builder(getActivity());
         normalDialogBuilder.setTitle(getResources().getString(R.string.avatar_set_request_title));
@@ -497,7 +498,7 @@ public class MeetSingleGroupFragment extends BaseFragment {
                         startActivityForResult(intent, Activity.RESULT_FIRST_USER);
                     }
                 });
-        
+
         normalDialogBuilder.setNegativeButton("关闭",
                 new DialogInterface.OnClickListener() {
                     @Override
@@ -507,7 +508,7 @@ public class MeetSingleGroupFragment extends BaseFragment {
                 });
         AlertDialog normalDialog = normalDialogBuilder.create();
         normalDialog.show();
-        
+
         try {
             Field mAlert = AlertDialog.class.getDeclaredField("mAlert");
             mAlert.setAccessible(true);
@@ -522,7 +523,7 @@ public class MeetSingleGroupFragment extends BaseFragment {
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }
-        
+
         normalDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.color_disabled));
         normalDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.color_blue));
         normalDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextSize(18);
@@ -531,9 +532,10 @@ public class MeetSingleGroupFragment extends BaseFragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (isDebug) Slog.d(TAG, "===================onActivityResult requestCode: "+requestCode+" resultCode: "+resultCode);
-        if (requestCode == Activity.RESULT_FIRST_USER){
-            switch (resultCode){
+        if (isDebug)
+            Slog.d(TAG, "===================onActivityResult requestCode: " + requestCode + " resultCode: " + resultCode);
+        if (requestCode == Activity.RESULT_FIRST_USER) {
+            switch (resultCode) {
                 case SET_AVATAR_RESULT_OK:
                     showSingleGroupDialog();
                     break;
@@ -542,7 +544,7 @@ public class MeetSingleGroupFragment extends BaseFragment {
             }
         }
     }
-    
+
     public static class SingleGroup {
         public int gid;
         public String groupName;
@@ -552,7 +554,7 @@ public class MeetSingleGroupFragment extends BaseFragment {
         public int memberCountRemain = 0;
         public String created;
         public UserMeetInfo leader;
-        
+
         public List<String> headUrlList;
         public int authorStatus = -1;
         public boolean isLeader = false;
@@ -569,15 +571,15 @@ public class MeetSingleGroupFragment extends BaseFragment {
     private void unRegisterLoginBroadcast() {
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
     }
-    
-     private class SingleGroupReceiver extends BroadcastReceiver {
+
+    private class SingleGroupReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            switch (intent.getAction()){
+            switch (intent.getAction()) {
                 case GROUP_ADD_BROADCAST:
                     Slog.d(TAG, "==========GROUP_ADD_BROADCAST");
                     int gid = intent.getIntExtra("gid", 0);
-                    if (gid > 0){
+                    if (gid > 0) {
                         getMyNewAddedGroup(gid);
                     }
                     break;
@@ -585,8 +587,8 @@ public class MeetSingleGroupFragment extends BaseFragment {
 
         }
     }
-    
-    private void getMyNewAddedGroup(int gid){
+
+    private void getMyNewAddedGroup(int gid) {
         RequestBody requestBody = new FormBody.Builder()
                 .add("gid", String.valueOf(gid))
                 .build();
@@ -594,24 +596,24 @@ public class MeetSingleGroupFragment extends BaseFragment {
         HttpUtil.sendOkHttpRequest(getContext(), GET_SINGLE_GROUP_BY_GID, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                if(isDebug) Slog.d(TAG, "==========response body : " + response.body());
+                if (isDebug) Slog.d(TAG, "==========response body : " + response.body());
 
                 if (response.body() != null) {
                     String responseText = response.body().string();
-                    if(isDebug) Slog.d(TAG, "==========response text : " + responseText);
+                    if (isDebug) Slog.d(TAG, "==========response text : " + responseText);
                     if (responseText != null && !TextUtils.isEmpty(responseText)) {
                         JSONObject singleGroupResponse = null;
                         try {
                             singleGroupResponse = new JSONObject(responseText);
-                            if(singleGroupResponse != null){
+                            if (singleGroupResponse != null) {
                                 processNewAddResponse(singleGroupResponse);
                             }
-                        }catch (JSONException e){
+                        } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
                 }
-              }
+            }
 
             @Override
             public void onFailure(Call call, IOException e) {
@@ -619,20 +621,20 @@ public class MeetSingleGroupFragment extends BaseFragment {
             }
         });
     }
- 
+
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         unRegisterLoginBroadcast();
-        
-        if (recyclerView != null){
+
+        if (recyclerView != null) {
             recyclerView.destroy();
             recyclerView = null;
         }
     }
-    
-    
+
+
     static class MyHandler extends Handler {
         WeakReference<MeetSingleGroupFragment> meetSingleGroupFragmentWeakReference;
 
@@ -648,6 +650,6 @@ public class MeetSingleGroupFragment extends BaseFragment {
             }
         }
     }
-    
- }
+
+}
              

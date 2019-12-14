@@ -119,7 +119,7 @@
             android:launchMode="singleTask" />
         <activity android:name=".archive.WorkEditActivity"
             android:launchMode="singleTask" />
-        <activity android:name=".home.MoreRecommendActivity"
+        <activity android:name=".home.CommonContactsActivity"
             android:launchMode="singleTask" />
         <activity android:name=".home.MeetSingleGroupActivity"
             android:launchMode="singleTask" />

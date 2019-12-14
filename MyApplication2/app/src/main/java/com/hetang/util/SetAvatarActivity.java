@@ -51,6 +51,7 @@ import static com.hetang.meet.SubGroupDetailsActivity.MODIFY_LOGO;
 public class SetAvatarActivity extends BaseAppCompatActivity {
     private static final String TAG = "SetAvatarActivity";
     private static final String UPLOAD_PICTURE_URL = HttpUtil.DOMAIN + "?q=meet/upload_picture";
+    private static final String MODIFY_SUBGROUP_LOGO_URL = HttpUtil.DOMAIN + "?q=subgroup/modify_logo";
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     private Button done;
     private List<LocalMedia> avatarSelectList = new ArrayList<>();
@@ -64,9 +65,9 @@ public class SetAvatarActivity extends BaseAppCompatActivity {
     private TextView leftBack;
     private TextView title;
     private static final int SET_AVATAR_RESULT_OK = 2;
+    public static final int MODIFY_SUBGROUP_LOGO_RESULT_OK = 5;
     private int gid;
     private int type = 0;
-    private String logoUri;
 
     public static final String AVATAR_SET_ACTION_BROADCAST = "com.hetang.action.AVATAR_SET";
 
@@ -105,7 +106,13 @@ public class SetAvatarActivity extends BaseAppCompatActivity {
             public void onClick(View view) {
                 if (avatarSelectFileList.size() > 0) {
                     showProgressDialog("正在保存");
-                    params.put("type", "avatar");
+                    if (type == MODIFY_LOGO){
+                        params.put("type", "group_logo");
+                        params.put("gid", String.valueOf(gid));
+                    }else {
+                        params.put("type", "avatar");
+                    }
+
                     params.put("domain", HttpUtil.DOMAIN);
                     uploadPictures(params, "picture", avatarSelectFileList);
                 } else {
@@ -229,8 +236,13 @@ public class SetAvatarActivity extends BaseAppCompatActivity {
     }
 
     private void uploadPictures(Map<String, String> params, String picKey, List<File> files) {
-
-        HttpUtil.uploadPictureHttpRequest(this, params, picKey, files, UPLOAD_PICTURE_URL, new Callback() {
+        String uri;
+        if (type == MODIFY_LOGO){
+            uri = MODIFY_SUBGROUP_LOGO_URL;
+        }else {
+            uri = UPLOAD_PICTURE_URL;
+        }
+        HttpUtil.uploadPictureHttpRequest(this, params, picKey, files, uri, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
@@ -238,24 +250,31 @@ public class SetAvatarActivity extends BaseAppCompatActivity {
                     if (!TextUtils.isEmpty(responseText)) {
                         try {
                             Slog.d(TAG, "----------------------->responseText: " + responseText);
-                            int status = new JSONObject(responseText).optInt("response");
-                            if (status == 1) {
-                                if (isLookFriend) {
-                                    Intent intent = new Intent(getApplicationContext(), FillMeetInfoActivity.class);
-                                    intent.putExtra("userProfile", userProfile);
-                                    startActivity(intent);
-                                } else {
-                                    String avatarUri = new JSONObject(responseText).optString("avatar");
-                                    Slog.d(TAG, "------------------------>avatar: " + avatarUri);
-                                    Intent intent = getIntent();
-                                    intent.putExtra("avatar", avatarUri);
-                                    setResult(SET_AVATAR_RESULT_OK, intent);
+                            if (type == MODIFY_LOGO){
+                                String logoUri = new JSONObject(responseText).optString("logo_uri");
+                                Intent intent = getIntent();
+                                intent.putExtra("logoUri", logoUri);
+                                setResult(MODIFY_SUBGROUP_LOGO_RESULT_OK, intent);
+                                finish();
+                            }else {
+                                int status = new JSONObject(responseText).optInt("response");
+                                if (status == 1) {
+                                    if (isLookFriend) {
+                                        Intent intent = new Intent(getApplicationContext(), FillMeetInfoActivity.class);
+                                        intent.putExtra("userProfile", userProfile);
+                                        startActivity(intent);
+                                    } else {
+                                        String avatarUri = new JSONObject(responseText).optString("avatar");
+                                        Slog.d(TAG, "------------------------>avatar: " + avatarUri);
+                                        Intent intent = getIntent();
+                                        intent.putExtra("avatar", avatarUri);
+                                        setResult(SET_AVATAR_RESULT_OK, intent);
+                                    }
+                                    finish();
                                 }
 
-                                finish();
+                                sendBroadcast();
                             }
-
-                            sendBroadcast();
                             dismissProgressDialog();
 
                         } catch (JSONException e) {

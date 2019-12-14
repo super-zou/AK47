@@ -1,15 +1,18 @@
 package com.hetang.meet;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,6 +25,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.hetang.R;
@@ -32,6 +36,7 @@ import com.hetang.common.BaseAppCompatActivity;
 import com.hetang.common.Dynamic;
 import com.hetang.common.DynamicsInteractDetailsActivity;
 import com.hetang.common.MyApplication;
+import com.hetang.home.CommonContactsActivity;
 import com.hetang.home.HomeFragment;
 import com.hetang.util.CommonDialogFragmentInterface;
 import com.hetang.util.CommonUserListDialogFragment;
@@ -44,6 +49,7 @@ import com.hetang.util.MyLinearLayoutManager;
 import com.hetang.util.ParseUtils;
 import com.hetang.util.PictureReviewDialogFragment;
 import com.hetang.util.RoundImageView;
+import com.hetang.util.SetAvatarActivity;
 import com.hetang.util.Slog;
 import com.hetang.util.SubGroupOperationDialogFragment;
 import com.hetang.util.Utility;
@@ -66,8 +72,10 @@ import okhttp3.Response;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static com.hetang.common.MyApplication.getContext;
+import static com.hetang.home.CommonContactsActivity.GROUP_MEMBER;
 import static com.hetang.home.HomeFragment.GET_MY_NEW_ADD_DONE;
 import static com.hetang.home.HomeFragment.GET_MY_NEW_ADD_DYNAMICS_URL;
+import static com.hetang.main.ArchiveFragment.REQUESTCODE;
 import static com.hetang.meet.MeetDynamicsFragment.COMMENT_COUNT_UPDATE;
 import static com.hetang.meet.MeetDynamicsFragment.DYNAMICS_DELETE;
 import static com.hetang.meet.MeetDynamicsFragment.DYNAMICS_PRAISED;
@@ -78,6 +86,7 @@ import static com.hetang.meet.MeetDynamicsFragment.NO_MORE_DYNAMICS;
 import static com.hetang.meet.MeetDynamicsFragment.NO_UPDATE;
 import static com.hetang.meet.MeetDynamicsFragment.PRAISE_UPDATE;
 import static com.hetang.meet.MeetDynamicsFragment.UPDATE_COMMENT;
+import static com.hetang.util.SetAvatarActivity.MODIFY_SUBGROUP_LOGO_RESULT_OK;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
 //import android.widget.GridLayout;
@@ -91,6 +100,8 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
     private static final String APPLY_JOIN_SUBGROUP = HttpUtil.DOMAIN + "?q=subgroup/apply";
     public static final String ACCEPT_JOIN_SUBGROUP = HttpUtil.DOMAIN + "?q=subgroup/accept";
     public static final String APPROVE_JOIN_SUBGROUP = HttpUtil.DOMAIN + "?q=subgroup/approve";
+    public static final String GROUP_MODIFY_BROADCAST = "com.hetang.action.GROUP_MODIFY";
+    public static final String EXIT_GROUP_BROADCAST = "com.hetang.action.EXIT_GROUP";
 
     //MeetsubGroupFragment.subGroup subGroup;
     SubGroupActivity.SubGroup subGroup;
@@ -123,8 +134,10 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
     TextView activityAmount;
     TextView followAmount;
     TextView memberAmount;
+    RoundImageView logoImage;
     private List<Dynamic> dynamicList = new ArrayList<>();
     private SubGroupDetailsListAdapter subGroupDetailsListAdapter;
+    SubGroupDetailsReceiver subGroupDetailsReceiver = new SubGroupDetailsReceiver();
     public static final String FOLLOW_GROUP_ACTION_URL = HttpUtil.DOMAIN + "?q=follow/group_action/";
 
     @Override
@@ -282,7 +295,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
 
         followBtn = mGroupHeaderView.findViewById(R.id.follow);
 
-        // registerLoginBroadcast();
+        registerLoginBroadcast();
         Typeface font = Typeface.createFromAsset(getContext().getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
         FontManager.markAsIconContainer(findViewById(R.id.custom_actionbar), font);
         FontManager.markAsIconContainer(mGroupHeaderView.findViewById(R.id.subgroup_details_header), font);
@@ -376,7 +389,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
 
     private void setSubGroupHeaderView() {
         Slog.d(TAG, "-------------------------->setSubGroupHeaderView");
-        RoundImageView logoImage = mGroupHeaderView.findViewById(R.id.logo);
+        logoImage = mGroupHeaderView.findViewById(R.id.logo);
         TextView groupName = mGroupHeaderView.findViewById(R.id.group_name);
         TextView groupOrg = mGroupHeaderView.findViewById(R.id.org);
         TextView groupRegion = mGroupHeaderView.findViewById(R.id.region);
@@ -384,9 +397,9 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
         RoundImageView leaderAvatar = mGroupHeaderView.findViewById(R.id.leader_avatar);
         TextView groupDesc = mGroupHeaderView.findViewById(R.id.group_desc);
         visitRecordTV = mGroupHeaderView.findViewById(R.id.visit_record);
-        activityAmount = mGroupHeaderView.findViewById(R.id.activity_amount);
-        followAmount = mGroupHeaderView.findViewById(R.id.follow_amount);
-        memberAmount = mGroupHeaderView.findViewById(R.id.member_amout);
+        activityAmount = mGroupHeaderView.findViewById(R.id.activity_count);
+        followAmount = mGroupHeaderView.findViewById(R.id.follow_count);
+        memberAmount = mGroupHeaderView.findViewById(R.id.member_count);
 
         if (subGroup.groupLogoUri != null && !"".equals(subGroup.groupLogoUri)) {
             Glide.with(mContext).load(HttpUtil.DOMAIN + subGroup.groupLogoUri).into(logoImage);
@@ -399,19 +412,10 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
         groupRegion.setText(subGroup.region);
         leaderName.setText(subGroup.leader.getName());
 
-        if (subGroup.visitRecord != 0) {
-            visitRecordTV.setText(String.valueOf(subGroup.visitRecord));
-        }
-
-        if (subGroup.activityCount != 0) {
-            activityAmount.setText(String.valueOf(subGroup.activityCount));
-        }
-
-        if (subGroup.followCount != 0) {
-            followAmount.setText(String.valueOf(subGroup.followCount));
-        }
-
-        memberAmount.setText(String.valueOf(subGroup.memberCount));
+        visitRecordTV.setText(mContext.getResources().getString(R.string.visit)+" "+subGroup.visitRecord);
+        activityAmount.setText(mContext.getResources().getString(R.string.dynamics)+" "+subGroup.activityCount);
+        followAmount.setText(mContext.getResources().getString(R.string.follow)+" "+subGroup.followCount);
+        memberAmount.setText(mContext.getResources().getString(R.string.member)+" "+subGroup.memberCount);
 
         String avatar = subGroup.leader.getAvatar();
         if (avatar != null && !"".equals(avatar)) {
@@ -505,14 +509,26 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
             }
         });
 
+        memberAmount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), CommonContactsActivity.class);
+                intent.putExtra("type", GROUP_MEMBER);
+                intent.putExtra("gid", gid);
+                intent.putExtra("isLeader", subGroup.isLeader);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                startActivityForResult(intent, RESULT_FIRST_USER);
+            }
+        });
+
         logoImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (subGroup.isLeader){
-                    Intent intent = new Intent(getContext(), AddPictureActivity.class);
+                    Intent intent = new Intent(getContext(), SetAvatarActivity.class);
                     intent.putExtra("type", MODIFY_LOGO);
                     intent.putExtra("gid", subGroup.gid);
-                    startActivity(intent);
+                    startActivityForResult(intent, RESULT_FIRST_USER);
                 }
             }
         });
@@ -751,6 +767,12 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
                 case HomeFragment.DYNAMICS_UPDATE_RESULT:
                     getMyNewActivity();
                     break;
+                case MODIFY_SUBGROUP_LOGO_RESULT_OK:
+                    String logoUri = data.getStringExtra("logoUri");
+                    if (!TextUtils.isEmpty(logoUri)){
+                        Glide.with(this).load(HttpUtil.DOMAIN + logoUri).into(logoImage);
+                    }
+                    break;
                 default:
                     break;
             }
@@ -803,6 +825,34 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
 
         recyclerView.scrollToPosition(0);
     }
+
+    private void registerLoginBroadcast() {
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(GROUP_MODIFY_BROADCAST);
+        intentFilter.addAction(EXIT_GROUP_BROADCAST);
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(subGroupDetailsReceiver, intentFilter);
+    }
+
+    //unregister local broadcast
+    private void unRegisterLoginBroadcast() {
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(subGroupDetailsReceiver);
+    }
+
+    private class SubGroupDetailsReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()) {
+                case GROUP_MODIFY_BROADCAST:
+                    getSubGroupByGid();
+                    break;
+                case EXIT_GROUP_BROADCAST:
+                    getSubGroupByGid();
+                    Toast.makeText(mContext, "成功退出", Toast.LENGTH_LONG).show();
+                    break;
+            }
+
+        }
+    }
     
     @Override
     public void onBackPressed(){
@@ -814,6 +864,17 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
         intent.putExtra("approved", true);
         setResult(RESULT_OK, intent);
         finish();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        unRegisterLoginBroadcast();
+
+        if (recyclerView != null) {
+            recyclerView.destroy();
+            recyclerView = null;
+        }
     }
 
     static class MyHandler extends Handler {

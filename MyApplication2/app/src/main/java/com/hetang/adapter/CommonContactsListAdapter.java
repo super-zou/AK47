@@ -4,48 +4,38 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.hetang.R;
 import com.hetang.common.MyApplication;
-import com.hetang.contacts.ContactsApplyListActivity;
 import com.hetang.util.HttpUtil;
+import com.hetang.util.InterActInterface;
 import com.hetang.util.ParseUtils;
 import com.hetang.util.RoundImageView;
 import com.hetang.util.Slog;
 import com.hetang.util.UserProfile;
 
-import java.io.IOException;
 import java.util.List;
 
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.FormBody;
-import okhttp3.RequestBody;
-import okhttp3.Response;
+import static com.hetang.home.CommonContactsActivity.GROUP_MEMBER;
 
-import static com.hetang.main.ContactsFragment.ACCEPT_CONTACTS_APPLY_URL;
-import static com.hetang.main.ContactsFragment.CONTACTS_DEFAULT;
-import static com.hetang.main.ContactsFragment.CONTACTS_MY_APPLY;
-import static com.hetang.main.ContactsFragment.CONTACTS_NEW_APPLY;
-
-public class RecommendContactsListAdapter extends RecyclerView.Adapter<RecommendContactsListAdapter.ContactsViewHolder> {
+public class CommonContactsListAdapter extends RecyclerView.Adapter<CommonContactsListAdapter.ContactsViewHolder> {
     private static final String TAG = "ContactsListAdapter";
     private static final boolean isDebug = true;
     private List<UserProfile> contactsList;
     private Context mContext;
     private boolean isScrolling = false;
     private int type = 0;
+    static InterActInterface interActInterface;
 
-    public RecommendContactsListAdapter(Context context) {
+    public CommonContactsListAdapter(Context context, int type) {
+
         mContext = context;
+        this.type = type;
     }
     
     public void setScrolling(boolean isScrolling) {
@@ -99,11 +89,33 @@ public class RecommendContactsListAdapter extends RecyclerView.Adapter<Recommend
 
             }
         });
+
+        if (type == GROUP_MEMBER){
+            if (contacts.getAuthorSelf()){
+                holder.operation.setVisibility(View.VISIBLE);
+                holder.operation.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                    }
+                });
+            }else {
+                holder.operation.setVisibility(View.GONE);
+            }
+
+        }else {
+            holder.operation.setVisibility(View.GONE);
+        }
     }
     
     @Override
     public int getItemCount() {
         return contactsList != null ? contactsList.size() : 0;
+    }
+
+    //register the interActInterface callback, add by zouhaichao 2018/9/16
+    public void setOnItemClickListener(InterActInterface commentDialogFragmentListener) {
+        this.interActInterface = commentDialogFragmentListener;
     }
     
     public static class ContactsViewHolder extends RecyclerView.ViewHolder {
@@ -114,6 +126,7 @@ public class RecommendContactsListAdapter extends RecyclerView.Adapter<Recommend
         public TextView major;
         public TextView degree;
         public TextView university;
+        public TextView operation;
         
         public ContactsViewHolder(View view) {
             super(view);
@@ -123,6 +136,7 @@ public class RecommendContactsListAdapter extends RecyclerView.Adapter<Recommend
             major = view.findViewById(R.id.major);
             degree = view.findViewById(R.id.degree);
             university = view.findViewById(R.id.university);
+            operation = view.findViewById(R.id.member_operation);
         }
     }
 }

@@ -31,16 +31,17 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static com.hetang.meet.MeetDynamicsFragment.DYNAMICS_DELETE_BROADCAST;
+import static com.hetang.meet.SubGroupDetailsActivity.EXIT_GROUP_BROADCAST;
 
 /**
  * Created by super-zou on 18-9-9.
  */
- 
- public class SubGroupOperationDialogFragment extends BaseDialogFragment {
+
+public class SubGroupOperationDialogFragment extends BaseDialogFragment {
     private Dialog mDialog;
     private static final boolean isDebug = true;
     private static final String TAG = "DynamicOperationDialogFragment";
-    private static final String DELETE_DYNAMIC = HttpUtil.DOMAIN + "?q=dynamic/action/delete";
+    private static final String EXIT_GROUP = HttpUtil.DOMAIN + "?q=subgroup/exit";
     private Context mContext;
     private SubGroupActivity.SubGroup subGroup;
 
@@ -49,7 +50,7 @@ import static com.hetang.meet.MeetDynamicsFragment.DYNAMICS_DELETE_BROADCAST;
         super.onAttach(context);
         mContext = context;
     }
-    
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
@@ -66,82 +67,90 @@ import static com.hetang.meet.MeetDynamicsFragment.DYNAMICS_DELETE_BROADCAST;
         layoutParams.gravity = Gravity.CENTER;
         layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
         window.setAttributes(layoutParams);
-        
+
         final Bundle bundle = getArguments();
-        subGroup = (SubGroupActivity.SubGroup)bundle.getSerializable("subGroup");
+        subGroup = (SubGroupActivity.SubGroup) bundle.getSerializable("subGroup");
 
         TextView setting = mDialog.findViewById(R.id.setting);
-        setting.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Bundle bundleModify = new Bundle();
-                bundleModify.putSerializable("subgroup", subGroup);
-                bundleModify.putBoolean("isModify", true);
-                CreateSubGroupDialogFragment createSubGroupDialogFragment = new CreateSubGroupDialogFragment();
-                createSubGroupDialogFragment.setArguments(bundleModify);
-                createSubGroupDialogFragment.show(getFragmentManager(), "CreateSubGroupDialogFragment");
-                mDialog.dismiss();
-            }
-        });
+        if (subGroup.isLeader){
+            setting.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Bundle bundleModify = new Bundle();
+                    bundleModify.putSerializable("subgroup", subGroup);
+                    bundleModify.putBoolean("isModify", true);
+                    CreateSubGroupDialogFragment createSubGroupDialogFragment = new CreateSubGroupDialogFragment();
+                    createSubGroupDialogFragment.setArguments(bundleModify);
+                    createSubGroupDialogFragment.show(getFragmentManager(), "CreateSubGroupDialogFragment");
+                    mDialog.dismiss();
+                }
+            });
+        }else {
+            setting.setClickable(false);
+            setting.setTextColor(mContext.getResources().getColor(R.color.color_disabled));
+        }
+
         TextView exit = mDialog.findViewById(R.id.exit);
-        
-        exit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                new AlertDialog.Builder(mContext)
-                        .setMessage(mContext.getResources().getString(R.string.delete_query_text))
-                        .setPositiveButton("确认", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                deleteDynamic(bundle.getLong("did"));
-                            }
-                        }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                        
+        if (subGroup.authorStatus == 1){
+            exit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    new AlertDialog.Builder(mContext)
+                            .setMessage(mContext.getResources().getString(R.string.exit_group_query_text))
+                            .setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    exitGroup(subGroup.gid);
+                                }
+                            }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
                         @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mDialog.dismiss();
-                    }
-                })
-                        .create().show();
-            }
-        });
+                        public void onClick(DialogInterface dialog, int which) {
+                            mDialog.dismiss();
+                        }
+                    }).create().show();
+                }
+            });
+        }else {
+            exit.setClickable(false);
+            exit.setTextColor(mContext.getResources().getColor(R.color.color_disabled));
+        }
 
         return mDialog;
     }
-    
-    public void deleteDynamic(long did){
 
-        showProgressDialog("正在删除");
+    public void exitGroup(int gid) {
+
+        showProgressDialog("正在退出");
         final RequestBody requestBody = new FormBody.Builder()
-                .add("did", String.valueOf(did))
+                .add("gid", String.valueOf(gid))
                 .build();
-                
-                HttpUtil.sendOkHttpRequest(getContext(), DELETE_DYNAMIC, requestBody, new Callback() {
+
+        HttpUtil.sendOkHttpRequest(getContext(), EXIT_GROUP, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                if(isDebug) Slog.d(TAG, "==========response body : " + response.body());
+                if (isDebug) Slog.d(TAG, "==========response body : " + response.body());
                 if (response.body() != null) {
                     String responseText = response.body().string();
-                    if(isDebug) Slog.d(TAG, "==========response text : " + responseText);
-                    
+                    if (isDebug) Slog.d(TAG, "==========response text : " + responseText);
+
                     if (responseText != null && !TextUtils.isEmpty(responseText)) {
-                     try {
-                         JSONObject responseObj = new JSONObject(responseText);
-                         if (responseObj != null){
-                             int result = responseObj.optInt("result");
-                             if (result > 0){
-                                 sendBroadcast();
-                                 dismissProgressDialog();
-                             }
-                         }
-                        }catch (JSONException e){
+                        try {
+                            JSONObject responseObj = new JSONObject(responseText);
+                            if (responseObj != null) {
+                                int result = responseObj.optInt("result");
+                                if (result > 0) {
+                                    sendBroadcast();
+                                    dismissProgressDialog();
+                                }
+                            }
+                        } catch (JSONException e) {
                             e.printStackTrace();
                         }
                         mDialog.dismiss();
                     }
                 }
             }
-            
+
             @Override
             public void onFailure(Call call, IOException e) {
 
@@ -151,15 +160,15 @@ import static com.hetang.meet.MeetDynamicsFragment.DYNAMICS_DELETE_BROADCAST;
     }
 
     private void sendBroadcast() {
-        Intent intent = new Intent(DYNAMICS_DELETE_BROADCAST);
+        Intent intent = new Intent(EXIT_GROUP_BROADCAST);
         LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
     }
-    
+
     @Override
     public void onDismiss(DialogInterface dialogInterface) {
         super.onDismiss(dialogInterface);
     }
-    
+
     @Override
     public void onCancel(DialogInterface dialogInterface) {
         super.onCancel(dialogInterface);

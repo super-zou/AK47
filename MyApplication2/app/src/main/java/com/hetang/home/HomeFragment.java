@@ -637,7 +637,7 @@ public class HomeFragment extends BaseFragment {
                 findMore.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Intent intent = new Intent(MyApplication.getContext(), MoreRecommendActivity.class);
+                        Intent intent = new Intent(MyApplication.getContext(), CommonContactsActivity.class);
                         startActivity(intent);
                     }
                 });
