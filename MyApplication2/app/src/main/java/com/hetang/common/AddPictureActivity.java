@@ -43,6 +43,7 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
+import static com.hetang.meet.SubGroupDetailsActivity.MODIFY_LOGO;
 import static com.hetang.util.ParseUtils.startMeetArchiveActivity;
 
 public class AddPictureActivity extends BaseAppCompatActivity {
@@ -52,6 +53,7 @@ public class AddPictureActivity extends BaseAppCompatActivity {
     private int maxSelectNum = 9;
     private int uid;
     private int themeId;
+    private TextView title;
     private TextView publishBtn;
     private TextView backLeft;
     private RecyclerView recyclerView;
@@ -73,8 +75,10 @@ public class AddPictureActivity extends BaseAppCompatActivity {
         if (actionBar != null) {
             actionBar.hide();
         }
-        
+
+        title = findViewById(R.id.title);
         uid = getIntent().getIntExtra("uid", 0);
+
         publishBtn = findViewById(R.id.dynamic_publish);
         backLeft = findViewById(R.id.left_back);
         themeId = R.style.picture_default_style;

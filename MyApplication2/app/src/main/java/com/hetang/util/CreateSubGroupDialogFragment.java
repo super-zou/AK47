@@ -20,14 +20,14 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.hetang.R;
 import com.hetang.common.MyApplication;
-import com.hetang.meet.SingleGroupDetailsActivity;
+import com.hetang.meet.SubGroupActivity;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
@@ -54,29 +54,33 @@ import okhttp3.Response;
 
 import static android.app.Activity.RESULT_OK;
 import static com.hetang.meet.MeetSingleGroupFragment.GROUP_ADD_BROADCAST;
+
 /**
  * Created by super-zou on 18-9-9.
  */
- 
- public class CreateSubGroupDialogFragment extends BaseDialogFragment {
+
+public class CreateSubGroupDialogFragment extends BaseDialogFragment {
     private Dialog mDialog;
     private int type = 0;
-  private String defaultUniversity = "";
+    private String defaultUniversity = "";
     private List<LocalMedia> logoSelectList = new ArrayList<>();
     private List<File> logoSelectFileList = new ArrayList<>();
     private static final boolean isDebug = true;
     private static final String TAG = "CreateSubGroupDialogFragment";
     private static final String SUBGROUP_CREATE = HttpUtil.DOMAIN + "?q=subgroup/create";
-      private EditText nameEditText;
+    private EditText nameEditText;
     private EditText profileEditText;
     private TextView regionEditText;
+    private RoundImageView groupLogo;
     private String org = "";
+    private boolean isModify = false;
+    private SubGroupActivity.SubGroup subGroup;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
     }
-    
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
@@ -86,14 +90,14 @@ import static com.hetang.meet.MeetSingleGroupFragment.GROUP_ADD_BROADCAST;
 
         Typeface font = Typeface.createFromAsset(MyApplication.getContext().getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
         FontManager.markAsIconContainer(mDialog.findViewById(R.id.custom_actionbar), font);
-     FontManager.markAsIconContainer(mDialog.findViewById(R.id.create_subgroup), font);
+        FontManager.markAsIconContainer(mDialog.findViewById(R.id.create_subgroup), font);
         mDialog.setCanceledOnTouchOutside(true);
         Window window = mDialog.getWindow();
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         WindowManager.LayoutParams layoutParams = window.getAttributes();
         layoutParams.gravity = Gravity.CENTER;
         layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
-     layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT;
+        layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT;
         window.setAttributes(layoutParams);
 
         TextView save = mDialog.findViewById(R.id.save);
@@ -101,12 +105,17 @@ import static com.hetang.meet.MeetSingleGroupFragment.GROUP_ADD_BROADCAST;
 
         TextView title = mDialog.findViewById(R.id.title);
         title.setText(getString(R.string.create_group));
-     
+
         Bundle bundle = getArguments();
         if (bundle != null) {
             type = bundle.getInt("type", 0);
+            isModify = bundle.getBoolean("isModify", false);
+            if (isModify){
+                title.setText("修改团信息");
+                subGroup = (SubGroupActivity.SubGroup)bundle.getSerializable("subgroup");
+            }
         }
-        
+
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -121,17 +130,18 @@ import static com.hetang.meet.MeetSingleGroupFragment.GROUP_ADD_BROADCAST;
                 mDialog.dismiss();
             }
         });
-     
-             nameEditText = mDialog.findViewById(R.id.editTextName);
+
+        nameEditText = mDialog.findViewById(R.id.editTextName);
         profileEditText = mDialog.findViewById(R.id.editTextProfile);
         regionEditText = mDialog.findViewById(R.id.editTextOrgCity);
+        groupLogo = mDialog.findViewById(R.id.group_logo);
 
         initView();
 
         return mDialog;
     }
 
-    private void initView(){
+    private void initView() {
         String[] universityArray = getResources().getStringArray(R.array.university);
         NiceSpinner niceSpinnerUniversity = mDialog.findViewById(R.id.university_spinner);
         final List<String> universityList = new LinkedList<>(Arrays.asList(universityArray));
@@ -153,9 +163,33 @@ import static com.hetang.meet.MeetSingleGroupFragment.GROUP_ADD_BROADCAST;
                 setLogo();
             }
         });
+
+        groupLogo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setLogo();
+            }
+        });
+
+        if (isModify){
+            nameEditText.setText(subGroup.groupName);
+            profileEditText.setText(subGroup.groupProfile);
+            for (int i=0;i<universityList.size();i++){
+                if (subGroup.org.equals(universityList.get(i))){
+                    niceSpinnerUniversity.setSelectedIndex(i);
+                    break;
+                }
+            }
+            org = subGroup.org;
+
+            if (!TextUtils.isEmpty(subGroup.groupLogoUri)){
+                groupLogo.setVisibility(View.VISIBLE);
+                Glide.with(getContext()).load(HttpUtil.DOMAIN + subGroup.groupLogoUri).into(groupLogo);
+            }
+        }
     }
 
-    private void setLogo(){
+    private void setLogo() {
         Resources resources = this.getResources();
         DisplayMetrics dm = resources.getDisplayMetrics();
         final int width = dm.widthPixels;
@@ -163,7 +197,7 @@ import static com.hetang.meet.MeetSingleGroupFragment.GROUP_ADD_BROADCAST;
 
         int themeId = R.style.picture_default_style;
 
-        PictureSelector.create(CreateSubGroupDialogFragment.this)
+        PictureSelector.create(this)
                 .openGallery(PictureMimeType.ofImage())// 全部.PictureMimeType.ofAll()、图片.ofImage()、视频.ofVideo()、音频.ofAudio()
                 .theme(themeId)// 主题样式设置 具体参考 values/styles   用法：R.style.picture.white.style
                 .maxSelectNum(1)// 最大图片选择数量
@@ -191,21 +225,20 @@ import static com.hetang.meet.MeetSingleGroupFragment.GROUP_ADD_BROADCAST;
                 .rotateEnabled(true) // 裁剪是否可旋转图片
                 .scaleEnabled(true)// 裁剪是否可放大缩小图片
                 .forResult(PictureConfig.SINGLE);//结果回调onActivityResult code
-   }
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        //super.onActivityResult(requestCode, resultCode, data);
-        RoundImageView groupLogo = mDialog.findViewById(R.id.group_logo);
-        Slog.d(TAG, "------------------------------>onActivityResult resultCode: "+resultCode+" requestCode: "+requestCode);
+        super.onActivityResult(requestCode, resultCode, data);
+        Slog.d(TAG, "------------------------------>onActivityResult resultCode: " + resultCode + " requestCode: " + requestCode);
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case PictureConfig.SINGLE:
                     // 图片选择结果回调
                     logoSelectList = PictureSelector.obtainMultipleResult(data);
-                    if(logoSelectList.size() > 0){
+                    if (logoSelectList.size() > 0) {
 
-                        if(logoSelectFileList.size() > 0){
+                        if (logoSelectFileList.size() > 0) {
                             logoSelectFileList.clear();
                         }
                         // 例如 LocalMedia 里面返回三种path
@@ -224,9 +257,10 @@ import static com.hetang.meet.MeetSingleGroupFragment.GROUP_ADD_BROADCAST;
                             logoSelectFileList.add(new File(media.getCompressPath()));
 
                             Bitmap bitmap = BitmapFactory.decodeFile(media.getCompressPath());
-                            Drawable drawable = new BitmapDrawable(getResources(),bitmap);
+                            Drawable drawable = new BitmapDrawable(getResources(), bitmap);
                             groupLogo.setVisibility(View.VISIBLE);
-                            groupLogo.setBackground(drawable);
+                            groupLogo.setImageDrawable(null);
+                            groupLogo.setImageDrawable(drawable);
                         }
                     }
                     break;
@@ -236,120 +270,125 @@ import static com.hetang.meet.MeetSingleGroupFragment.GROUP_ADD_BROADCAST;
             }
         }
     }
-    
-    public void saveSingleGroup(){
+
+    public void saveSingleGroup() {
 
         String groupName = nameEditText.getText().toString();
         String groupProfile = profileEditText.getText().toString();
         String groupOrg = org;
         String groupRegion = regionEditText.getText().toString();
 
-        if (TextUtils.isEmpty(groupName)){
+        if (TextUtils.isEmpty(groupName)) {
             Toast.makeText(MyApplication.getContext(), "请输入团名", Toast.LENGTH_LONG).show();
             return;
         }
 
-        if (TextUtils.isEmpty(groupProfile)){
+        if (TextUtils.isEmpty(groupProfile)) {
             Toast.makeText(MyApplication.getContext(), "请介绍一下你创建的团", Toast.LENGTH_LONG).show();
             return;
         }
-     
-        Slog.d(TAG, "---------------->groupOrg: "+groupOrg+" default university: "+defaultUniversity);
-        if (TextUtils.isEmpty(groupOrg) || groupOrg.equals(defaultUniversity)){
+
+        Slog.d(TAG, "---------------->groupOrg: " + groupOrg + " default university: " + defaultUniversity);
+        if (TextUtils.isEmpty(groupOrg) || groupOrg.equals(defaultUniversity)) {
             Toast.makeText(MyApplication.getContext(), "请选择该团所属高校", Toast.LENGTH_LONG).show();
             return;
         }
 
-        if (TextUtils.isEmpty(groupRegion)){
+        if (TextUtils.isEmpty(groupRegion)) {
             Toast.makeText(MyApplication.getContext(), "请选择所在城市或地区", Toast.LENGTH_LONG).show();
             return;
         }
-     
+
         showProgressDialog("正在保存");
-     if (logoSelectFileList.size() > 0){//with logo picture
+        if (logoSelectFileList.size() > 0) {//with logo picture
             Map<String, String> groupInfoText = new HashMap<>();
             groupInfoText.put("type", String.valueOf(type));
             groupInfoText.put("group_name", groupName);
             groupInfoText.put("group_profile", groupProfile);
             groupInfoText.put("group_org", org);
             groupInfoText.put("region", groupRegion);
+            if (isModify){
+                groupInfoText.put("gid", String.valueOf(subGroup.gid));
+            }
 
             uploadPictures(groupInfoText, "picture", logoSelectFileList);
-     }else{//without logo picture
-      
-        final RequestBody requestBody = new FormBody.Builder()
-                .add("type", String.valueOf(type))
-                .add("group_name", groupName)
-                .add("group_profile", groupProfile)
-                .add("group_org", groupOrg)
-                .add("region", groupRegion)
-                .build();
-                
-        HttpUtil.sendOkHttpRequest(getContext(), SUBGROUP_CREATE, requestBody, new Callback() {
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if(isDebug) Slog.d(TAG, "==========response body : " + response.body());
+        } else {//without logo picture
+            FormBody.Builder builder = new FormBody.Builder();
+            builder.add("type", String.valueOf(type))
+                    .add("group_name", groupName)
+                    .add("group_profile", groupProfile)
+                    .add("group_org", groupOrg)
+                    .add("region", groupRegion);
+            if (isModify){
+                builder.add("gid", String.valueOf(subGroup.gid));
+            }
 
-                if (response.body() != null) {
-                    String responseText = response.body().string();
-                    if(isDebug) Slog.d(TAG, "==========response text : " + responseText);
-                    if (responseText != null && !TextUtils.isEmpty(responseText)) {
-                        if(isDebug) Slog.d(TAG, "==========response text 1: " + responseText);
-                     try {
-                            JSONObject responseObj = new JSONObject(responseText);
-                            if (responseObj != null){
-                                int gid = responseObj.optInt("gid");
-                                if (gid > 0){
-                                    sendBroadcast(gid);
+            final RequestBody requestBody = builder.build();
+            HttpUtil.sendOkHttpRequest(getContext(), SUBGROUP_CREATE, requestBody, new Callback() {
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    if (isDebug) Slog.d(TAG, "==========response body : " + response.body());
+
+                    if (response.body() != null) {
+                        String responseText = response.body().string();
+                        if (isDebug) Slog.d(TAG, "==========response text : " + responseText);
+                        if (responseText != null && !TextUtils.isEmpty(responseText)) {
+                            if (isDebug) Slog.d(TAG, "==========response text 1: " + responseText);
+                            try {
+                                JSONObject responseObj = new JSONObject(responseText);
+                                if (responseObj != null) {
+                                    int gid = responseObj.optInt("gid");
+                                    if (gid > 0) {
+                                        sendBroadcast(gid);
+                                    }
                                 }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
-                        }catch (JSONException e){
-                            e.printStackTrace();
+                            dismissProgressDialog();
+                            mDialog.dismiss();
                         }
-                        dismissProgressDialog();
-                        mDialog.dismiss();
                     }
                 }
-            }
 
-            @Override
-            public void onFailure(Call call, IOException e) {
+                @Override
+                public void onFailure(Call call, IOException e) {
 
-            }
-        });
-     }
+                }
+            });
+        }
     }
-  
-  private void uploadPictures(Map<String, String> params, String picKey, List<File> files) {
+
+    private void uploadPictures(Map<String, String> params, String picKey, List<File> files) {
         HttpUtil.uploadPictureHttpRequest(getContext(), params, picKey, files, SUBGROUP_CREATE, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
                     try {
-                     String responseText = response.body().string();
-                        Slog.d(TAG, "---------------->response: "+responseText);
+                        String responseText = response.body().string();
+                        Slog.d(TAG, "---------------->response: " + responseText);
 
                         int gid = new JSONObject(responseText).optInt("gid");
-                        Slog.d(TAG, "-------------->create group gid: "+gid);
-                     
-                     if(gid > 0){
+                        Slog.d(TAG, "-------------->create group gid: " + gid);
+
+                        if (gid > 0) {
                             logoSelectFileList.clear();
                             //sendBroadcast();//send broadcast to meetdynamicsfragment notify  meet dynamics to update
                             //setCommentUpdateResult();
-                           // myHandler.sendEmptyMessage(HomeFragment.DYNAMICS_UPDATE_RESULT);
+                            // myHandler.sendEmptyMessage(HomeFragment.DYNAMICS_UPDATE_RESULT);
                             dismissProgressDialog();
                             sendBroadcast(gid);
                             mDialog.dismiss();
                             // finish();
                         }
-                     }catch (JSONException e){
+                    } catch (JSONException e) {
                         e.printStackTrace();
                     }
 
                 }
             }
-         
-         @Override
+
+            @Override
             public void onFailure(Call call, IOException e) {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
@@ -360,14 +399,14 @@ import static com.hetang.meet.MeetSingleGroupFragment.GROUP_ADD_BROADCAST;
             }
         });
     }
-  
+
     private void sendBroadcast(int gid) {
-      Intent intent = new Intent(GROUP_ADD_BROADCAST);
-      intent.putExtra("gid", gid);
-      LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
+        Intent intent = new Intent(GROUP_ADD_BROADCAST);
+        intent.putExtra("gid", gid);
+        LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
     }
-  
-      @Override
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
 
@@ -376,7 +415,7 @@ import static com.hetang.meet.MeetSingleGroupFragment.GROUP_ADD_BROADCAST;
             mDialog = null;
         }
     }
-    
+
     @Override
     public void onDismiss(DialogInterface dialogInterface) {
         super.onDismiss(dialogInterface);

@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
-    android:fitsSystemWindows="true">
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
     <RelativeLayout
         android:id="@+id/add_dynamics_statusbar"
         android:layout_width="match_parent"
-        android:layout_marginBottom="18dp"
         android:layout_height="48dp"
+        android:layout_marginBottom="18dp"
         android:background="@color/background">
-        
-        <TextView
-            android:id="@+id/left_back"
-            android:text="@string/left_angle"
-            android:textColor="@color/white"
-            android:textSize="26sp"
-            android:gravity="center"
-            android:layout_width="50dp"
-            android:layout_height="match_parent" />
 
         <TextView
-            android:id="@+id/add_picture_title"
+            android:id="@+id/left_back"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/left_angle"
+            android:textColor="@color/white"
+            android:textSize="26sp" />
+
+        <TextView
+            android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_centerInParent="true"
@@ -31,7 +31,8 @@
             android:text="上传近照"
             android:textColor="@color/white"
             android:textSize="16sp" />
-            <TextView
+
+        <TextView
             android:id="@+id/dynamic_publish"
             android:layout_width="48dp"
             android:layout_height="match_parent"
@@ -44,18 +45,18 @@
     </RelativeLayout>
 
     <TextView
-        android:text="@string/set_more_picture"
-        android:textColor="@color/white"
-        android:layout_marginTop="8dp"
-        android:layout_marginLeft="8dp"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-        
-        <android.support.v7.widget.RecyclerView
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/set_more_picture"
+        android:textColor="@color/white" />
+
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
         android:overScrollMode="never" />
 </LinearLayout>

@@ -27,6 +27,7 @@ import com.bumptech.glide.Glide;
 import com.hetang.R;
 import com.hetang.adapter.SubGroupDetailsListAdapter;
 import com.hetang.common.AddDynamicsActivity;
+import com.hetang.common.AddPictureActivity;
 import com.hetang.common.BaseAppCompatActivity;
 import com.hetang.common.Dynamic;
 import com.hetang.common.DynamicsInteractDetailsActivity;
@@ -108,6 +109,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
     private static final int APPLYING = 0;
     private static final int INVITTED = 1;
     private static final int JOINED = 2;
+    public static final int MODIFY_LOGO = 3;
     private XRecyclerView recyclerView;
     ImageView progressImageView;
     AnimationDrawable animationDrawable;
@@ -500,6 +502,18 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
                     public void onFailure(Call call, IOException e) {
                     }
                 });
+            }
+        });
+
+        logoImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (subGroup.isLeader){
+                    Intent intent = new Intent(getContext(), AddPictureActivity.class);
+                    intent.putExtra("type", MODIFY_LOGO);
+                    intent.putExtra("gid", subGroup.gid);
+                    startActivity(intent);
+                }
             }
         });
     }

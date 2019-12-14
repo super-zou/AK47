@@ -71,6 +71,18 @@ import static com.hetang.meet.MeetDynamicsFragment.DYNAMICS_DELETE_BROADCAST;
         subGroup = (SubGroupActivity.SubGroup)bundle.getSerializable("subGroup");
 
         TextView setting = mDialog.findViewById(R.id.setting);
+        setting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Bundle bundleModify = new Bundle();
+                bundleModify.putSerializable("subgroup", subGroup);
+                bundleModify.putBoolean("isModify", true);
+                CreateSubGroupDialogFragment createSubGroupDialogFragment = new CreateSubGroupDialogFragment();
+                createSubGroupDialogFragment.setArguments(bundleModify);
+                createSubGroupDialogFragment.show(getFragmentManager(), "CreateSubGroupDialogFragment");
+                mDialog.dismiss();
+            }
+        });
         TextView exit = mDialog.findViewById(R.id.exit);
         
         exit.setOnClickListener(new View.OnClickListener() {
@@ -137,7 +149,7 @@ import static com.hetang.meet.MeetDynamicsFragment.DYNAMICS_DELETE_BROADCAST;
         });
 
     }
-    
+
     private void sendBroadcast() {
         Intent intent = new Intent(DYNAMICS_DELETE_BROADCAST);
         LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);

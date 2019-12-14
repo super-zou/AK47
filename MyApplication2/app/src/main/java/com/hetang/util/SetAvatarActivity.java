@@ -19,15 +19,15 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.hetang.R;
+import com.hetang.common.BaseAppCompatActivity;
+import com.hetang.meet.FillMeetInfoActivity;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
 import com.luck.picture.lib.permissions.RxPermissions;
 import com.luck.picture.lib.tools.PictureFileUtils;
-import com.hetang.R;
-import com.hetang.common.BaseAppCompatActivity;
-import com.hetang.meet.FillMeetInfoActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,9 +46,11 @@ import okhttp3.Callback;
 import okhttp3.MediaType;
 import okhttp3.Response;
 
+import static com.hetang.meet.SubGroupDetailsActivity.MODIFY_LOGO;
+
 public class SetAvatarActivity extends BaseAppCompatActivity {
     private static final String TAG = "SetAvatarActivity";
-    private static final String UPLOAD_PICTURE_URL = HttpUtil.DOMAIN +"?q=meet/upload_picture";
+    private static final String UPLOAD_PICTURE_URL = HttpUtil.DOMAIN + "?q=meet/upload_picture";
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     private Button done;
     private List<LocalMedia> avatarSelectList = new ArrayList<>();
@@ -62,9 +64,12 @@ public class SetAvatarActivity extends BaseAppCompatActivity {
     private TextView leftBack;
     private TextView title;
     private static final int SET_AVATAR_RESULT_OK = 2;
-    
+    private int gid;
+    private int type = 0;
+    private String logoUri;
+
     public static final String AVATAR_SET_ACTION_BROADCAST = "com.hetang.action.AVATAR_SET";
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,7 +84,13 @@ public class SetAvatarActivity extends BaseAppCompatActivity {
         leftBack = findViewById(R.id.left_back);
         title = findViewById(R.id.title);
         title.setText(getResources().getString(R.string.set_avatar));
-        
+
+        type = getIntent().getIntExtra("type", 0);
+        if (type == MODIFY_LOGO) {
+            gid = getIntent().getIntExtra("gid", 0);
+            title.setText("修改团标");
+        }
+
         leftBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -92,12 +103,12 @@ public class SetAvatarActivity extends BaseAppCompatActivity {
         done.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            if(avatarSelectFileList.size() > 0){
+                if (avatarSelectFileList.size() > 0) {
                     showProgressDialog("正在保存");
                     params.put("type", "avatar");
                     params.put("domain", HttpUtil.DOMAIN);
                     uploadPictures(params, "picture", avatarSelectFileList);
-                }else {
+                } else {
                     Toast.makeText(getApplicationContext(), "请设置头像", Toast.LENGTH_LONG).show();
                 }
             }
@@ -106,8 +117,8 @@ public class SetAvatarActivity extends BaseAppCompatActivity {
         Typeface font = Typeface.createFromAsset(getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
         FontManager.markAsIconContainer(findViewById(R.id.set_avatar_wrapper), font);
     }
-    
-    private void selectPicture(){
+
+    private void selectPicture() {
         RxPermissions permissions = new RxPermissions(this);
         permissions.request(Manifest.permission.WRITE_EXTERNAL_STORAGE).subscribe(new Observer<Boolean>() {
             @Override
@@ -123,6 +134,7 @@ public class SetAvatarActivity extends BaseAppCompatActivity {
                             getString(R.string.picture_jurisdiction), Toast.LENGTH_SHORT).show();
                 }
             }
+
             @Override
             public void onError(Throwable e) {
             }
@@ -137,14 +149,14 @@ public class SetAvatarActivity extends BaseAppCompatActivity {
         float density = dm.density;
         final int width = dm.widthPixels;
         final int screenHeight = width;
-        
+
         themeId = R.style.picture_default_style;
 
         addAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 PictureSelector.create(SetAvatarActivity.this)
-                .openGallery(PictureMimeType.ofImage())// 全部.PictureMimeType.ofAll()、图片.ofImage()、视频.ofVideo()、音频.ofAudio()
+                        .openGallery(PictureMimeType.ofImage())// 全部.PictureMimeType.ofAll()、图片.ofImage()、视频.ofVideo()、音频.ofAudio()
                         .theme(themeId)// 主题样式设置 具体参考 values/styles   用法：R.style.picture.white.style
                         .maxSelectNum(1)// 最大图片选择数量
                         .minSelectNum(1)// 最小选择数量
@@ -171,7 +183,7 @@ public class SetAvatarActivity extends BaseAppCompatActivity {
                         .rotateEnabled(true) // 裁剪是否可旋转图片
                         .scaleEnabled(true)// 裁剪是否可放大缩小图片
                         .forResult(PictureConfig.SINGLE);//结果回调onActivityResult code
-                        }
+            }
         });
     }
 
@@ -183,9 +195,9 @@ public class SetAvatarActivity extends BaseAppCompatActivity {
                 case PictureConfig.SINGLE:
                     // 图片选择结果回调
                     avatarSelectList = PictureSelector.obtainMultipleResult(data);
-                    if(avatarSelectList.size() > 0){
+                    if (avatarSelectList.size() > 0) {
 
-                        if(avatarSelectFileList.size() > 0){
+                        if (avatarSelectFileList.size() > 0) {
                             avatarSelectFileList.clear();
                         }
                         // 例如 LocalMedia 里面返回三种path
@@ -203,8 +215,8 @@ public class SetAvatarActivity extends BaseAppCompatActivity {
                             //activity_picture_array[media.getNum() - 1] = media.getCompressPath();
                             avatarSelectFileList.add(new File(media.getCompressPath()));
 
-                         Bitmap bitmap = BitmapFactory.decodeFile(media.getCompressPath());
-                            Drawable drawable = new BitmapDrawable(getResources(),bitmap);
+                            Bitmap bitmap = BitmapFactory.decodeFile(media.getCompressPath());
+                            Drawable drawable = new BitmapDrawable(getResources(), bitmap);
                             addAvatar.setBackground(drawable);
                         }
                     }
@@ -215,7 +227,7 @@ public class SetAvatarActivity extends BaseAppCompatActivity {
             }
         }
     }
-    
+
     private void uploadPictures(Map<String, String> params, String picKey, List<File> files) {
 
         HttpUtil.uploadPictureHttpRequest(this, params, picKey, files, UPLOAD_PICTURE_URL, new Callback() {
@@ -223,36 +235,36 @@ public class SetAvatarActivity extends BaseAppCompatActivity {
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
                     String responseText = response.body().string();
-                    if(!TextUtils.isEmpty(responseText)){
+                    if (!TextUtils.isEmpty(responseText)) {
                         try {
-                        Slog.d(TAG, "----------------------->responseText: "+responseText);
-                           int status = new JSONObject(responseText).optInt("response");
-                           if (status == 1){
-                               if(isLookFriend){
-                                   Intent intent = new Intent(getApplicationContext(), FillMeetInfoActivity.class);
-                                   intent.putExtra("userProfile", userProfile);
-                                   startActivity(intent);
-                               }else {
-                                   String avatarUri = new JSONObject(responseText).optString("avatar");
-                                   Slog.d(TAG, "------------------------>avatar: "+avatarUri);
-                                   Intent intent = getIntent();
-                                   intent.putExtra("avatar", avatarUri);
-                                   setResult(SET_AVATAR_RESULT_OK, intent);
-                                   }
+                            Slog.d(TAG, "----------------------->responseText: " + responseText);
+                            int status = new JSONObject(responseText).optInt("response");
+                            if (status == 1) {
+                                if (isLookFriend) {
+                                    Intent intent = new Intent(getApplicationContext(), FillMeetInfoActivity.class);
+                                    intent.putExtra("userProfile", userProfile);
+                                    startActivity(intent);
+                                } else {
+                                    String avatarUri = new JSONObject(responseText).optString("avatar");
+                                    Slog.d(TAG, "------------------------>avatar: " + avatarUri);
+                                    Intent intent = getIntent();
+                                    intent.putExtra("avatar", avatarUri);
+                                    setResult(SET_AVATAR_RESULT_OK, intent);
+                                }
 
-                               finish();
-                           }
-                            
+                                finish();
+                            }
+
                             sendBroadcast();
                             dismissProgressDialog();
 
-                        }catch (JSONException e){
+                        } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
                 }
             }
-            
+
             @Override
             public void onFailure(Call call, IOException e) {
                 runOnUiThread(new Runnable() {
@@ -265,7 +277,7 @@ public class SetAvatarActivity extends BaseAppCompatActivity {
         });
 
     }
-    
+
     private void sendBroadcast() {
         LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(AVATAR_SET_ACTION_BROADCAST));
     }
