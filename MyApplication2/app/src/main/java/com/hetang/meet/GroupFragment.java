@@ -61,6 +61,7 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
     private View mView;
     ImageView progressImageView;
     AnimationDrawable animationDrawable;
+    GroupSummary groupSummary;
 
     @Override
     protected int getLayoutId() {
@@ -83,6 +84,9 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
             }
         },50);
          */
+        if (groupSummary == null){
+            groupSummary = new GroupSummary();
+        }
 
         associationGroup = convertView.findViewById(R.id.association_group);
         associationGroup.setOnClickListener(this);
@@ -133,6 +137,14 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
             public void onFailure(Call call, IOException e) {
             }
         });
+    }
+
+    public class GroupSummary{
+        int subgroupAmount;
+        int visitRecord;
+        int memberAmount;
+        int followAmount;
+        int activityAmount;
     }
 
     private void setGroupSummaryView(int type){
