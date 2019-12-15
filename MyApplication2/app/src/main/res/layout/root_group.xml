@@ -57,7 +57,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="16dp"
-                    android:text="university number"
+                    android:text="university"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/association_group_icon" />
 
@@ -66,17 +66,26 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="sub group number"
+                    android:text="subgroup"
                     app:layout_constraintStart_toEndOf="@+id/university_amount_of_association"
                     app:layout_constraintTop_toTopOf="@+id/university_amount_of_association" />
 
                 <TextView
-                    android:id="@+id/people_amount_of_association"
+                    android:id="@+id/member_amount_of_association"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="people number"
+                    android:text="member"
                     app:layout_constraintStart_toEndOf="@+id/subGroup_amount_of_association"
+                    app:layout_constraintTop_toTopOf="@+id/subGroup_amount_of_association" />
+
+                <TextView
+                    android:id="@+id/visit_record_of_association"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="visit"
+                    app:layout_constraintStart_toEndOf="@+id/member_amount_of_association"
                     app:layout_constraintTop_toTopOf="@+id/subGroup_amount_of_association" />
 
                 <TextView
@@ -134,27 +143,36 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="16dp"
-                    android:text="university number"
+                    android:text="university"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/public_good_group_icon" />
 
                 <TextView
-                    android:id="@+id/subGroup_number_of_public_good"
+                    android:id="@+id/subGroup_amount_of_public_good"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="sub group number"
+                    android:text="subgroup"
                     app:layout_constraintStart_toEndOf="@+id/university_amount_of_public_good"
                     app:layout_constraintTop_toTopOf="@+id/university_amount_of_public_good" />
 
                 <TextView
-                    android:id="@+id/people__amount_of_public_good"
+                    android:id="@+id/member_amount_of_public_good"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="people number"
-                    app:layout_constraintStart_toEndOf="@+id/subGroup_number_of_public_good"
-                    app:layout_constraintTop_toTopOf="@+id/subGroup_number_of_public_good" />
+                    android:text="member"
+                    app:layout_constraintStart_toEndOf="@+id/subGroup_amount_of_public_good"
+                    app:layout_constraintTop_toTopOf="@+id/subGroup_amount_of_public_good" />
+
+                <TextView
+                    android:id="@+id/visit_record_of_public_good"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="visit"
+                    app:layout_constraintStart_toEndOf="@+id/member_amount_of_public_good"
+                    app:layout_constraintTop_toTopOf="@+id/subGroup_amount_of_public_good" />
 
                 <TextView
                     android:id="@+id/public_good_group_desc"
@@ -166,7 +184,7 @@
                     android:text="description"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/subGroup_number_of_public_good" />
+                    app:layout_constraintTop_toBottomOf="@+id/subGroup_amount_of_public_good" />
 
             </android.support.constraint.ConstraintLayout>
             <!--fraternity_group-->
@@ -211,7 +229,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="16dp"
-                    android:text="university number"
+                    android:text="university"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/fraternity_group_icon" />
 
@@ -220,17 +238,26 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="sub group number"
+                    android:text="subgroup"
                     app:layout_constraintStart_toEndOf="@+id/university_amount_of_fraternity"
                     app:layout_constraintTop_toTopOf="@+id/university_amount_of_fraternity" />
 
                 <TextView
-                    android:id="@+id/people_amount_of_fraternity"
+                    android:id="@+id/member_amount_of_fraternity"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="people number"
+                    android:text="people"
                     app:layout_constraintStart_toEndOf="@+id/subGroup_amount_of_fraternity"
+                    app:layout_constraintTop_toTopOf="@+id/subGroup_amount_of_fraternity" />
+
+                <TextView
+                    android:id="@+id/visit_record_of_fraternity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="visit"
+                    app:layout_constraintStart_toEndOf="@+id/member_amount_of_fraternity"
                     app:layout_constraintTop_toTopOf="@+id/subGroup_amount_of_fraternity" />
 
                 <TextView
@@ -288,7 +315,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="16dp"
-                    android:text="university number"
+                    android:text="university"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/hobby_group_icon" />
 
@@ -297,17 +324,26 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="sub group number"
+                    android:text="subgroup"
                     app:layout_constraintStart_toEndOf="@+id/university_amount_of_hobby"
                     app:layout_constraintTop_toTopOf="@+id/university_amount_of_hobby" />
 
                 <TextView
-                    android:id="@+id/people_amount_of_hobby"
+                    android:id="@+id/member_amount_of_hobby"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="people number"
+                    android:text="member"
                     app:layout_constraintStart_toEndOf="@+id/subGroup_amount_of_hobby"
+                    app:layout_constraintTop_toTopOf="@+id/subGroup_amount_of_hobby" />
+
+                <TextView
+                    android:id="@+id/visit_record_of_hobby"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="visit"
+                    app:layout_constraintStart_toEndOf="@+id/member_amount_of_hobby"
                     app:layout_constraintTop_toTopOf="@+id/subGroup_amount_of_hobby" />
 
                 <TextView
@@ -365,7 +401,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="16dp"
-                    android:text="university number"
+                    android:text="university"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/growUp_group_icon" />
 
@@ -374,17 +410,26 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="sub group number"
+                    android:text="subgroup"
                     app:layout_constraintStart_toEndOf="@+id/university_amount_of_growUp"
                     app:layout_constraintTop_toTopOf="@+id/university_amount_of_growUp" />
 
                 <TextView
-                    android:id="@+id/people_amount_of_growUp"
+                    android:id="@+id/member_amount_of_growUp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="people number"
+                    android:text="people"
                     app:layout_constraintStart_toEndOf="@+id/subGroup_amount_of_growUp"
+                    app:layout_constraintTop_toTopOf="@+id/subGroup_amount_of_growUp" />
+
+                <TextView
+                    android:id="@+id/visit_record_of_growUp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="visit"
+                    app:layout_constraintStart_toEndOf="@+id/member_amount_of_growUp"
                     app:layout_constraintTop_toTopOf="@+id/subGroup_amount_of_growUp" />
 
                 <TextView
@@ -442,7 +487,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="16dp"
-                    android:text="university number"
+                    android:text="university"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/activity_group_icon" />
 
@@ -451,17 +496,26 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="sub group number"
+                    android:text="subgroup"
                     app:layout_constraintStart_toEndOf="@+id/university_amount_of_activity"
                     app:layout_constraintTop_toTopOf="@+id/university_amount_of_activity" />
 
                 <TextView
-                    android:id="@+id/people_amount_of_activity"
+                    android:id="@+id/member_amount_of_activity"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="people number"
+                    android:text="member"
                     app:layout_constraintStart_toEndOf="@+id/subGroup_amount_of_activity"
+                    app:layout_constraintTop_toTopOf="@+id/subGroup_amount_of_activity" />
+
+                <TextView
+                    android:id="@+id/visit_record_of_activity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="visit"
+                    app:layout_constraintStart_toEndOf="@+id/member_amount_of_activity"
                     app:layout_constraintTop_toTopOf="@+id/subGroup_amount_of_activity" />
 
                 <TextView
@@ -519,7 +573,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="16dp"
-                    android:text="university amount"
+                    android:text="university"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/foreign_friend_group_icon" />
 
@@ -528,17 +582,26 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="region amount"
+                    android:text="region"
                     app:layout_constraintStart_toEndOf="@+id/university_amount_of_foreign_friend"
                     app:layout_constraintTop_toTopOf="@+id/university_amount_of_foreign_friend" />
 
                 <TextView
-                    android:id="@+id/people_amount_of_foreign_friend"
+                    android:id="@+id/member_amount_of_foreign_friend"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="people number"
+                    android:text="member"
                     app:layout_constraintStart_toEndOf="@+id/subGroup_amount_of_foreign_friend"
+                    app:layout_constraintTop_toTopOf="@+id/subGroup_amount_of_foreign_friend" />
+
+                <TextView
+                    android:id="@+id/visit_record_of_foreign_friend"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="visit"
+                    app:layout_constraintStart_toEndOf="@+id/member_amount_of_foreign_friend"
                     app:layout_constraintTop_toTopOf="@+id/subGroup_amount_of_foreign_friend" />
 
                 <TextView
