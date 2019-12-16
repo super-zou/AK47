@@ -18,11 +18,19 @@
         
     <TextView
         android:id="@+id/group_name"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:text="group_name"
-        app:layout_constraintStart_toEndOf="@+id/logo"
+        android:layout_marginStart="124dp"
+        android:layout_marginEnd="8dp"
+        android:text=""
+        android:typeface="sans"
+        android:fontFamily="sans-serif"
+        android:ellipsize="end"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:maxLines="2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/logo" />
         
     <TextView
@@ -31,7 +39,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="org of group"
+        android:text=""
+        android:textColor="@color/color_dark_disabled"
         app:layout_constraintStart_toEndOf="@+id/logo"
         app:layout_constraintTop_toBottomOf="@+id/group_name" />
 
@@ -40,7 +49,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:text="org of group"
+        android:text=""
+        android:textColor="@color/color_dark_disabled"
         app:layout_constraintStart_toEndOf="@+id/org"
         app:layout_constraintTop_toTopOf="@+id/org" />
     
@@ -58,7 +68,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:text="name"
+        android:text=""
+                      android:textColor="@color/blue_dark"
+        android:textSize="15sp"
+        android:textStyle="normal|bold"
         app:layout_constraintStart_toEndOf="@+id/leader_avatar"
         app:layout_constraintTop_toTopOf="@+id/leader_avatar" />
 
@@ -66,10 +79,10 @@
         android:id="@+id/created"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
         android:layout_marginTop="8dp"
-        android:text="创建于 2019-10-12"
-        app:layout_constraintStart_toEndOf="@+id/leader_avatar"
+        android:layout_marginEnd="16dp"
+        android:textColor="@color/color_dark_disabled"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/leader_name" />
     <Button
         android:id="@+id/follow"
@@ -82,7 +95,7 @@
         android:textSize="16sp"
         app:layout_constraintEnd_toStartOf="@+id/join"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/logo" />
+        app:layout_constraintTop_toBottomOf="@+id/leader_avatar" />
     
    <Button
         android:id="@+id/join"
@@ -123,7 +136,9 @@
         android:lineSpacingMultiplier="1.2"
         android:maxLines="5"
         android:padding="10dp"
-        android:text=""
+                      android:typeface="sans"
+        android:fontFamily="sans-serif"
+        android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/group_info_divider" />
