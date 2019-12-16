@@ -23,8 +23,13 @@ import com.hetang.util.HttpUtil;
 import com.hetang.util.ParseUtils;
 import com.hetang.util.Slog;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
+import java.io.Serializable;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.Call;
@@ -61,7 +66,8 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
     private View mView;
     ImageView progressImageView;
     AnimationDrawable animationDrawable;
-    GroupSummary groupSummary;
+
+    List<GroupSummary> groupSummaryList = new ArrayList<>();
 
     @Override
     protected int getLayoutId() {
@@ -84,9 +90,6 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
             }
         },50);
          */
-        if (groupSummary == null){
-            groupSummary = new GroupSummary();
-        }
 
         associationGroup = convertView.findViewById(R.id.association_group);
         associationGroup.setOnClickListener(this);
@@ -123,15 +126,27 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
                     String responseText = response.body().string();
                     //Slog.d(TAG, "==========response : "+response.body());
                     if (isDebug) Slog.d(TAG, "==========response text : " + responseText);
-                    if (responseText != null) {
-                            Message message = new Message();
-                            Bundle bundle = new Bundle();
-                            bundle.putInt("type", type);
-                            message.setData(bundle);
-                            message.what = LOAD_DATA_DONE;
-                            handler.sendMessage(message);
-                        }
+                    try {
+                        GroupSummary groupSummary = new GroupSummary();
+                        JSONObject summaryObject = new JSONObject(responseText).optJSONObject("result");
+                        groupSummary.subgroupAmount = summaryObject.optInt("subgroup_count");
+                        groupSummary.memberAmount = summaryObject.optInt("member_count");
+                        groupSummary.visitRecord = summaryObject.optInt("visit_record");
+                        groupSummary.followAmount = summaryObject.optInt("follow_count");
+                        groupSummary.activityAmount = summaryObject.optInt("activity_count");
+
+                        Message message = new Message();
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("type", type);
+                        bundle.putSerializable("summary", groupSummary);
+                        message.setData(bundle);
+                        message.what = LOAD_DATA_DONE;
+                        handler.sendMessage(message);
+
+                    }catch (JSONException e){
+                        e.printStackTrace();
                     }
+                }
             }
             @Override
             public void onFailure(Call call, IOException e) {
@@ -139,7 +154,7 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
         });
     }
 
-    public class GroupSummary{
+    public class GroupSummary implements Serializable {
         int subgroupAmount;
         int visitRecord;
         int memberAmount;
@@ -147,55 +162,77 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
         int activityAmount;
     }
 
-    private void setGroupSummaryView(int type){
+    private void setGroupSummaryView(int type, GroupSummary groupSummary){
         switch (type) {
             case association_group:
-                TextView universityAmountOfAssociation = mView.findViewById(R.id.university_amount_of_association);
+                //TextView universityAmountOfAssociation = mView.findViewById(R.id.university_amount_of_association);
                 TextView subgroupAmountOfAssociation = mView.findViewById(R.id.subGroup_amount_of_association);
+                subgroupAmountOfAssociation.setText(String.valueOf(groupSummary.subgroupAmount));
                 TextView memberAmountOfAssociation = mView.findViewById(R.id.member_amount_of_association);
+                memberAmountOfAssociation.setText(String.valueOf(groupSummary.memberAmount));
                 TextView visitAmountOfAssociation = mView.findViewById(R.id.visit_record_of_association);
+                visitAmountOfAssociation.setText(String.valueOf(groupSummary.visitRecord));
                 TextView descOfAssociation = mView.findViewById(R.id.association_group_desc);
+
                 break;
             case public_good_group:
-                TextView universityAmountOfPublicGood = mView.findViewById(R.id.university_amount_of_public_good);
+                //TextView universityAmountOfPublicGood = mView.findViewById(R.id.university_amount_of_public_good);
                 TextView subgroupAmountOfPublicGood = mView.findViewById(R.id.subGroup_amount_of_public_good);
+                subgroupAmountOfPublicGood.setText(String.valueOf(groupSummary.subgroupAmount));
                 TextView memberAmountOfPublicGood = mView.findViewById(R.id.member_amount_of_public_good);
+                memberAmountOfPublicGood.setText(String.valueOf(groupSummary.memberAmount));
                 TextView visitAmountOfPublicGood = mView.findViewById(R.id.visit_record_of_public_good);
+                visitAmountOfPublicGood.setText(String.valueOf(groupSummary.visitRecord));
                 TextView descOfPublicGood = mView.findViewById(R.id.public_good_group_desc);
                 break;
             case fraternity_group:
-                TextView universityAmountOfFraternity = mView.findViewById(R.id.university_amount_of_fraternity);
+                //TextView universityAmountOfFraternity = mView.findViewById(R.id.university_amount_of_fraternity);
                 TextView subgroupAmountOfFraternity = mView.findViewById(R.id.subGroup_amount_of_fraternity);
+                subgroupAmountOfFraternity.setText(String.valueOf(groupSummary.subgroupAmount));
                 TextView memberAmountOfFraternity = mView.findViewById(R.id.member_amount_of_fraternity);
+                memberAmountOfFraternity.setText(String.valueOf(groupSummary.memberAmount));
                 TextView visitAmountOfFraternity = mView.findViewById(R.id.visit_record_of_fraternity);
+                visitAmountOfFraternity.setText(String.valueOf(groupSummary.visitRecord));
                 TextView descOfFraternity = mView.findViewById(R.id.fraternity_group_desc);
                 break;
             case hobby_group:
-                TextView universityAmountOfHobby = mView.findViewById(R.id.university_amount_of_hobby);
+                //TextView universityAmountOfHobby = mView.findViewById(R.id.university_amount_of_hobby);
                 TextView subgroupAmountOfHobby = mView.findViewById(R.id.subGroup_amount_of_hobby);
+                subgroupAmountOfHobby.setText(String.valueOf(groupSummary.subgroupAmount));
                 TextView memberAmountOfHobby = mView.findViewById(R.id.member_amount_of_hobby);
+                memberAmountOfHobby.setText(String.valueOf(groupSummary.memberAmount));
                 TextView visitAmountOfHobby = mView.findViewById(R.id.visit_record_of_hobby);
+                visitAmountOfHobby.setText(String.valueOf(groupSummary.visitRecord));
                 TextView descOfHobby = mView.findViewById(R.id.hobby_group_desc);
                 break;
             case growUp_group:
-                TextView universityAmountOfGrowUp = mView.findViewById(R.id.university_amount_of_growUp);
+                //TextView universityAmountOfGrowUp = mView.findViewById(R.id.university_amount_of_growUp);
                 TextView subgroupAmountOfGrowUp = mView.findViewById(R.id.subGroup_amount_of_growUp);
+                subgroupAmountOfGrowUp.setText(String.valueOf(groupSummary.subgroupAmount));
                 TextView memberAmountOfGrowUp = mView.findViewById(R.id.member_amount_of_growUp);
+                memberAmountOfGrowUp.setText(String.valueOf(groupSummary.memberAmount));
                 TextView visitAmountOfGrowUp = mView.findViewById(R.id.visit_record_of_growUp);
+                visitAmountOfGrowUp.setText(String.valueOf(groupSummary.visitRecord));
                 TextView descOfGrowUp = mView.findViewById(R.id.growUp_group_desc);
                 break;
             case activity_group:
-                TextView universityAmount = mView.findViewById(R.id.university_amount_of_activity);
+                //TextView universityAmount = mView.findViewById(R.id.university_amount_of_activity);
                 TextView subgroupAmount = mView.findViewById(R.id.subGroup_amount_of_activity);
+                subgroupAmount.setText(String.valueOf(groupSummary.subgroupAmount));
                 TextView memberAmount = mView.findViewById(R.id.member_amount_of_activity);
+                memberAmount.setText(String.valueOf(groupSummary.memberAmount));
                 TextView visitAmount = mView.findViewById(R.id.visit_record_of_activity);
+                visitAmount.setText(String.valueOf(groupSummary.visitRecord));
                 TextView desc = mView.findViewById(R.id.activity_group_desc);
                 break;
             case foreign_friend_group:
-                TextView universityAmountOfForeignFriend = mView.findViewById(R.id.university_amount_of_foreign_friend);
+                //TextView universityAmountOfForeignFriend = mView.findViewById(R.id.university_amount_of_foreign_friend);
                 TextView subgroupAmountForeignFriend = mView.findViewById(R.id.subGroup_amount_of_foreign_friend);
+                subgroupAmountForeignFriend.setText(String.valueOf(groupSummary.subgroupAmount));
                 TextView memberAmountForeignFriend = mView.findViewById(R.id.member_amount_of_foreign_friend);
+                memberAmountForeignFriend.setText(String.valueOf(groupSummary.memberAmount));
                 TextView visitAmountForeignFriend = mView.findViewById(R.id.visit_record_of_foreign_friend);
+                visitAmountForeignFriend.setText(String.valueOf(groupSummary.visitRecord));
                 TextView descForeignFriend = mView.findViewById(R.id.foreign_friend_desc);
                 break;
             default:
@@ -245,8 +282,9 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
     public void handleMessage(Message message) {
         Bundle bundle = message.getData();
         int type = bundle.getInt("type");
+        GroupSummary groupSummary = (GroupSummary)bundle.getSerializable("summary");
         if (message.what == LOAD_DATA_DONE){
-            setGroupSummaryView(type);
+            setGroupSummaryView(type, groupSummary);
         }
     }
 
