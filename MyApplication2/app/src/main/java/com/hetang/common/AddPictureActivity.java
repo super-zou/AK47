@@ -201,6 +201,13 @@ public class AddPictureActivity extends BaseAppCompatActivity {
             public void onClick(View v) {
                 //showProgress(AddPictureActivity.this);
                 showProgressDialog(getResources().getString(R.string.saving_progress));
+                                if (selectList.size() > 0){
+                    for (LocalMedia media : selectList) {
+                        //activity_picture_array[media.getNum() - 1] = media.getCompressPath();
+                        selectFileList.add(new File(media.getCompressPath()));
+                        Slog.d(TAG, "===========selectFileList: "+selectFileList.size());
+                    }
+                }
                 uploadPictures("picture", selectFileList);
                 //finish();
             }
@@ -275,11 +282,7 @@ public class AddPictureActivity extends BaseAppCompatActivity {
                     Slog.d(TAG, "Selected pictures: " + selectList.size());
                     //activity_picture_array = new String[selectList.size()];
                     if(selectList.size() > 0){
-                        for (LocalMedia media : selectList) {
-                            //activity_picture_array[media.getNum() - 1] = media.getCompressPath();
-                            selectFileList.add(new File(media.getCompressPath()));
-                            Slog.d(TAG, "===========selectFileList: "+selectFileList.size());
-                        }
+                       
                         adapter.setList(selectList);
                         adapter.notifyDataSetChanged();
                     }
