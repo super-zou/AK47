@@ -44,19 +44,19 @@ public class Utility {
     }
     
      public static String timeStampToMinute(int created) {
-        Date date = new Date(created * 1000);
+        Date date = new Date(created * 1000L);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         return simpleDateFormat.format(date);
     }
 
     public static String timeStampToHour(int created) {
-        Date date = new Date(created * 1000);
+        Date date = new Date(created * 1000L);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH");
         return simpleDateFormat.format(date);
     }
     
      public static String timeStampToDay(int created) {
-        Date date = new Date(created * 1000);
+        Date date = new Date(created * 1000L);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         return simpleDateFormat.format(date);
     }
