@@ -2,11 +2,16 @@ package com.hetang.home;
 
 //import android.app.Fragment;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -22,6 +27,7 @@ import com.hetang.common.MyApplication;
 import com.hetang.meet.UserMeetInfo;
 import com.hetang.util.DynamicOperationDialogFragment;
 import com.hetang.util.FontManager;
+import com.hetang.util.GroupMemberOperationDialogFragment;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.InterActInterface;
 import com.hetang.util.Slog;
@@ -42,7 +48,7 @@ import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-
+import static com.hetang.common.MyApplication.getContext;
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static com.hetang.home.HomeFragment.DEFAULT_RECOMMEND_COUNT;
 import static com.hetang.home.HomeFragment.GET_HOME_RECOMMEND_PERSON_URL;
@@ -68,7 +74,13 @@ public class CommonContactsActivity extends BaseAppCompatActivity {
     private static final int GET_ALL_DONE = 1;
     private static final int GET_ALL_END = 2;
     private static final int NO_MORE = 3;
+        private static final int MEMBER_DELETE = 4;
+    private static final int MEMBER_BLOCKED = 5;
+    private static final int MEMBER_UNBLOCKED = 6;
     public static final String GET_ALL_MEMBERS_URL = HttpUtil.DOMAIN + "?q=subgroup/get_all_members";
+        public static final String DELETE_MEMBER_BROADCAST = "com.hetang.action.DELETE_MEMBER";
+    public static final String BLOCK_MEMBER_BROADCAST = "com.hetang.action.BLOCK_MEMBER";
+    public static final String UNBLOCK_MEMBER_BROADCAST = "com.hetang.action.UNBLOCK_MEMBER";
 
     private XRecyclerView recyclerView;
     private int mTempSize;
@@ -76,9 +88,11 @@ public class CommonContactsActivity extends BaseAppCompatActivity {
     private Handler handler;
     Typeface font;
     int currentPosition = -1;
+    int status = -1;
     ImageView progressImageView;
     AnimationDrawable animationDrawable;
     private List<UserProfile> contactsList = new ArrayList<>();
+     MemberDeleteBroadcastReceiver receiver = new MemberDeleteBroadcastReceiver();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +100,7 @@ public class CommonContactsActivity extends BaseAppCompatActivity {
         setContentView(R.layout.recommend_contacts);
         font = Typeface.createFromAsset(MyApplication.getContext().getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
         FontManager.markAsIconContainer(findViewById(R.id.custom_actionbar), font);
+        registerLoginBroadcast();
         initView();
     }
 
@@ -104,7 +119,11 @@ public class CommonContactsActivity extends BaseAppCompatActivity {
             }
         });
 
-        commonContactsListAdapter = new CommonContactsListAdapter(MyApplication.getContext(), type);
+        if (type != GROUP_MEMBER){
+            commonContactsListAdapter = new CommonContactsListAdapter(MyApplication.getContext(), type);
+        }else {
+            commonContactsListAdapter = new CommonContactsListAdapter(MyApplication.getContext(), type, gid, isLeader);
+        }
         //viewContent = view.inflate(R.layout.meet_recommend, container, false);
 
         recyclerView = findViewById(R.id.contacts_recyclerview);
@@ -136,12 +155,15 @@ public class CommonContactsActivity extends BaseAppCompatActivity {
 
             @Override
             public void onOperationClick(View view, int position) {
+                currentPosition = position;
                 Bundle bundle = new Bundle();
                 bundle.putInt("uid", contactsList.get(position).getUid());
+                bundle.putInt("gid", gid);
+                bundle.putInt("status", contactsList.get(position).getStatus());
                 //currentPos = position;
-                DynamicOperationDialogFragment dynamicOperationDialogFragment = new DynamicOperationDialogFragment();
-                dynamicOperationDialogFragment.setArguments(bundle);
-                dynamicOperationDialogFragment.show(getSupportFragmentManager(), "DynamicOperationDialogFragment");
+                GroupMemberOperationDialogFragment groupMemberOperationDialogFragment = new GroupMemberOperationDialogFragment();
+                groupMemberOperationDialogFragment.setArguments(bundle);
+                groupMemberOperationDialogFragment.show(getSupportFragmentManager(), "GroupMemberOperationDialogFragment");
             }
 
         });
@@ -156,8 +178,8 @@ public class CommonContactsActivity extends BaseAppCompatActivity {
         recyclerView.getDefaultRefreshHeaderView().setRefreshTimeVisible(false);
         recyclerView.setPullRefreshEnabled(false);
 
-        recyclerView.getDefaultFootView().setLoadingHint(getString(R.string.loading_pull_up_tip));
-        recyclerView.getDefaultFootView().setNoMoreHint(getString(R.string.no_more));
+        、、recyclerView.getDefaultFootView().setLoadingHint(getString(R.string.loading_pull_up_tip));
+        recyclerView.getDefaultFootView().setNoMoreHint("");
         //recyclerView.setArrowImageView(R.drawable.iconfont_downgrey);//TODO set pull down icon
         final int itemLimit = 6;
 
@@ -248,9 +270,7 @@ public class CommonContactsActivity extends BaseAppCompatActivity {
                 contacts.setName(contactsObject.optString("name"));
                 contacts.setSex(contactsObject.optInt("sex"));
                 contacts.setSituation(contactsObject.optInt("situation"));
-                if (type == GROUP_MEMBER){
-                    contacts.setLeader(isLeader);
-                }
+                contacts.setStatus(contactsObject.optInt("status"));
 
                 if (contactsObject.optInt("situation") == 0) {
                     contacts.setMajor(contactsObject.optString("major"));
@@ -293,9 +313,71 @@ public class CommonContactsActivity extends BaseAppCompatActivity {
                 recyclerView.loadMoreComplete();
                 stopLoadProgress();
                 break;
+                case MEMBER_DELETE:
+                contactsList.remove(currentPosition);
+                commonContactsListAdapter.setData(contactsList);
+                commonContactsListAdapter.notifyItemRemoved(currentPosition);
+                commonContactsListAdapter.notifyDataSetChanged();
+                break;
+                case MEMBER_BLOCKED:
+                contactsList.get(currentPosition).setStatus(2);
+                commonContactsListAdapter.setData(contactsList);
+                commonContactsListAdapter.notifyItemChanged(currentPosition);
+                commonContactsListAdapter.notifyDataSetChanged();
+                break;
+            case MEMBER_UNBLOCKED:
+                contactsList.get(currentPosition).setStatus(1);
+                commonContactsListAdapter.setData(contactsList);
+                commonContactsListAdapter.notifyItemChanged(currentPosition);
+                commonContactsListAdapter.notifyDataSetChanged();
+                break;
+                
 
             default:
                 break;
+        }
+    }
+    
+        private void registerLoginBroadcast() {
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(DELETE_MEMBER_BROADCAST);
+        intentFilter.addAction(BLOCK_MEMBER_BROADCAST);
+        intentFilter.addAction(UNBLOCK_MEMBER_BROADCAST);
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(receiver, intentFilter);
+    }
+    
+    //unregister local broadcast
+    private void unRegisterLoginBroadcast() {
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(receiver);
+    }
+    
+    private class MemberDeleteBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()) {
+                case DELETE_MEMBER_BROADCAST:
+                    handler.sendEmptyMessage(MEMBER_DELETE);
+                    break;
+                case BLOCK_MEMBER_BROADCAST:
+                    handler.sendEmptyMessage(MEMBER_BLOCKED);
+                    break;
+                case UNBLOCK_MEMBER_BROADCAST:
+                    handler.sendEmptyMessage(MEMBER_UNBLOCKED);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+    
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        unRegisterLoginBroadcast();
+
+        if (recyclerView != null) {
+            recyclerView.destroy();
+            recyclerView = null;
         }
     }
 
