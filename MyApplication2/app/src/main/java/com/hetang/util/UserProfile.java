@@ -30,6 +30,7 @@ public class UserProfile implements Serializable {
     private int access;
     private int login;
     private boolean isLeader = false;
+    private int status;
 
     private String init;
     private int cid = 0;//this is {meet_condition} table's cid, who has add meet info
@@ -319,5 +320,8 @@ public class UserProfile implements Serializable {
     public boolean getLeader(){
         return isLeader;
     }
+    
+        public void setStatus(int status){ this.status = status; }
+    public int getStatus(){ return status; }
 
 }
