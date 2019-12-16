@@ -27,7 +27,7 @@ import com.hetang.util.HttpUtil;
 import com.hetang.util.RoundImageView;
 
 import java.util.List;
-
+import static com.hetang.util.ParseUtils.startArchiveActivity;
 import static com.hetang.util.Utility.dpToPx;
 
 /**
@@ -75,7 +75,7 @@ public class SubGroupSummaryAdapter extends RecyclerView.Adapter<SubGroupSummary
         });
     }
 
-    public static void setContentView(SubGroupSummaryAdapter.ViewHolder holder, SubGroupActivity.SubGroup subGroup){
+    public static void setContentView(SubGroupSummaryAdapter.ViewHolder holder, final SubGroupActivity.SubGroup subGroup){
         holder.name.setText(subGroup.leader.getName());
 
         if (subGroup.leader.getAvatar() != null && !"".equals(subGroup.leader.getAvatar())) {
@@ -112,6 +112,20 @@ public class SubGroupSummaryAdapter extends RecyclerView.Adapter<SubGroupSummary
         }else {
             holder.logo.setImageDrawable(mContext.getDrawable(R.drawable.icon));
         }
+        
+        holder.name.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startArchiveActivity(mContext, subGroup.leader.getUid());
+            }
+        });
+
+        holder.leaderHeadUri.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startArchiveActivity(mContext, subGroup.leader.getUid());
+            }
+        });
 
     }
 
