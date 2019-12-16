@@ -30,12 +30,20 @@ public class CommonContactsListAdapter extends RecyclerView.Adapter<CommonContac
     private Context mContext;
     private boolean isScrolling = false;
     private int type = 0;
+    private int gid = 0;
+    boolean isLeader = false;
     static InterActInterface interActInterface;
 
     public CommonContactsListAdapter(Context context, int type) {
-
         mContext = context;
         this.type = type;
+    }
+    
+    public CommonContactsListAdapter(Context context, int type, int gid, boolean isLeader) {
+        mContext = context;
+        this.type = type;
+        this.gid = gid;
+        this.isLeader = isLeader;
     }
     
     public void setScrolling(boolean isScrolling) {
@@ -57,7 +65,7 @@ public class CommonContactsListAdapter extends RecyclerView.Adapter<CommonContac
     }
     
     @Override
-    public void onBindViewHolder(@NonNull final ContactsViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final ContactsViewHolder holder, final int position) {
         Slog.d(TAG, "------------------>onDefaultBindViewHolder");
         final UserProfile contacts = contactsList.get(position);
 
@@ -91,12 +99,12 @@ public class CommonContactsListAdapter extends RecyclerView.Adapter<CommonContac
         });
 
         if (type == GROUP_MEMBER){
-            if (contacts.getAuthorSelf()){
+            if (isLeader){
                 holder.operation.setVisibility(View.VISIBLE);
                 holder.operation.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-
+                        interActInterface.onOperationClick(view, position);
                     }
                 });
             }else {
