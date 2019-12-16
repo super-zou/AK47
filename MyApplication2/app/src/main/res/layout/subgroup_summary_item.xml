@@ -12,15 +12,21 @@
     android:elevation="8dp"
     android:background="@color/white">
 
-    <TextView
+        <TextView
         android:id="@+id/group_name"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:typeface="sans"
+        android:fontFamily="sans-serif"
+        android:ellipsize="end"
         android:paddingRight="8dp"
-        android:text="name"
+        android:singleLine="true"
         android:textColor="@color/black"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -40,7 +46,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:gravity="center"
-        android:text="leader name"
         android:textColor="@color/blue_dark"
         android:textSize="15sp"
         android:textStyle="normal|bold"
@@ -57,9 +62,11 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="66dp"
         android:ellipsize="end"
-        android:maxLines="2"
-        android:paddingRight="8dp"
-        android:text="profile"
+                android:maxLines="3"
+        android:typeface="sans"
+        android:fontFamily="sans-serif"
+        android:textColor="@color/black"
+        android:lineSpacingMultiplier="1.2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/leader_head_uri" />
@@ -83,7 +90,6 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:paddingRight="8dp"
-        android:text="org"
         android:textColor="@color/color_dark_disabled"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profile" />
@@ -95,7 +101,6 @@
         android:layout_below="@+id/profile"
         android:layout_marginStart="8dp"
         android:paddingRight="8dp"
-        android:text="region"
         android:textColor="@color/color_dark_disabled"
         app:layout_constraintBottom_toBottomOf="@+id/org"
         app:layout_constraintStart_toEndOf="@+id/org"
