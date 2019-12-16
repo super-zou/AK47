@@ -45,6 +45,7 @@ import io.reactivex.disposables.Disposable;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
+import static com.hetang.common.MyApplication.getContext;
 
 import static com.hetang.util.ParseUtils.ADD_SUBGROUP_ACTIVITY_ACTION;
 
@@ -204,6 +205,14 @@ public class AddDynamicsActivity extends BaseAppCompatActivity {
                 if (type == ADD_SUBGROUP_ACTIVITY_ACTION){
                     dynamicsText.put("gid", String.valueOf(gid));
                 }
+                
+                if (selectList.size() > 0){
+                    for (LocalMedia media : selectList) {
+                        Slog.d(TAG, "===========num: " + media.getNum());
+                        //activity_picture_array[media.getNum() - 1] = media.getCompressPath();
+                        selectFileList.add(new File(media.getCompressPath()));
+                    }
+                }
                 uploadPictures(dynamicsText, "picture", selectFileList);
             }
         });
@@ -234,10 +243,12 @@ public class AddDynamicsActivity extends BaseAppCompatActivity {
                         Slog.d(TAG, "-------------->save status: "+saveStatus);
                         
                         if(saveStatus == 1){
+                            selectList.clear();
                             selectFileList.clear();
                             //sendBroadcast();//send broadcast to meetdynamicsfragment notify  meet dynamics to update
                             //setCommentUpdateResult();
                             myHandler.sendEmptyMessage(HomeFragment.DYNAMICS_UPDATE_RESULT);
+                            PictureFileUtils.deleteCacheDirFile(getContext());
                             //dismissProgressDialog();
                            // finish();
                         }
@@ -276,12 +287,7 @@ public class AddDynamicsActivity extends BaseAppCompatActivity {
                     // Èç¹û²Ã¼ô²¢Ñ¹ËõÁË£¬ÒÑÈ¡Ñ¹ËõÂ·¾¶Îª×¼£¬ÒòÎªÊÇÏÈ²Ã¼ôºóÑ¹ËõµÄ
                     Slog.d(TAG, "Selected pictures: " + selectList.size());
                     
-                    //activity_picture_array = new String[selectList.size()];
-                    for (LocalMedia media : selectList) {
-                        Slog.d(TAG, "===========num: " + media.getNum());
-                        //activity_picture_array[media.getNum() - 1] = media.getCompressPath();
-                        selectFileList.add(new File(media.getCompressPath()));
-                    }
+               
                     adapter.setList(selectList);
                     adapter.notifyDataSetChanged();
                     break;
