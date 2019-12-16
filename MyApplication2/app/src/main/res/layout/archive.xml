@@ -17,21 +17,19 @@
         android:id="@+id/archive_scroll_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/background"
+        android:background="@color/white"
         android:paddingBottom="8dp">
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/activity_archive_wrapper"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/background">
+            android:layout_height="wrap_content">
             <TextView
                 android:id="@+id/settings"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
-                android:textColor="@color/white"
                 android:textSize="18sp"
                 android:text="@string/fa_setting"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -74,7 +72,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:text="name"
-                android:textColor="@color/white"
+
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/head_uri" />
@@ -86,7 +84,7 @@
                 android:layout_marginStart="8dp"
                 android:gravity="center_vertical"
                 android:text="sex"
-                android:textColor="@color/white"
+                
                 app:layout_constraintStart_toEndOf="@+id/name"
                 app:layout_constraintTop_toTopOf="@+id/name" />
 
@@ -96,7 +94,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="18dp"
                 android:gravity="center_horizontal"
-                android:textColor="@color/white"
+
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/name" />
@@ -118,36 +116,33 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingBottom="5dp"
-                    android:text="degree"
-                    android:textColor="@color/white" />
+                     />
                     
                     <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="·"
-                    android:textColor="@color/white" />
+                     />
 
                 <TextView
                     android:id="@+id/university"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingBottom="5dp"
-                    android:text="university"
-                    android:textColor="@color/white" />
+                     />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="·"
-                    android:textColor="@color/white" />
+                     />
 
                 <TextView
                     android:id="@+id/major"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingBottom="5dp"
-                    android:text="major"
-                    android:textColor="@color/white" />
+                     />
                 
 
             </LinearLayout>
@@ -167,22 +162,20 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingBottom="5dp"
-                    android:text="position"
-                    android:textColor="@color/white" />
+                     />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="·"
-                    android:textColor="@color/white" />
+                     />
                     
                     <TextView
                     android:id="@+id/industry"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingBottom="5dp"
-                    android:text="industry"
-                    android:textColor="@color/white" />
+                     />
             </LinearLayout>
             
             <LinearLayout
@@ -200,28 +193,28 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/location"
-                    android:textColor="@color/white" />
+                     />
                     
                     <TextView
                     android:id="@+id/living"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="8dp"
-                    android:textColor="@color/white" />
+                     />
 
                 <TextView
                     android:id="@+id/hometown"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="8dp"
-                    android:textColor="@color/white" />
+                     />
             </LinearLayout>
             
             <LinearLayout
                 android:id="@+id/interaction_wrap"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/background"
+                
                 android:paddingTop="18dp"
                 android:paddingBottom="10dp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -269,113 +262,95 @@
                     android:text="聊天"
                     android:textColor="@color/colorWhite" />
             </LinearLayout>
+         <LinearLayout
+          android:id="@+id/dynamics_count_wrapper"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginStart="16dp"
+          android:gravity="center"
+          android:orientation="horizontal"
+          android:padding="8dp"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toBottomOf="@+id/interaction_wrap">
+       <TextView
+            android:id="@+id/dynamics_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2dp"
+            android:text="0" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="动态" />
+      </LinearLayout>
+            
             <LinearLayout
-                android:id="@+id/archive_nav"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:background="@color/colorWhite"
-                android:gravity="center"
-                android:orientation="horizontal"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/interaction_wrap">
+            android:id="@+id/followed_count_wrap"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="1dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="8dp"
+            app:layout_constraintStart_toEndOf="@+id/dynamics_count_wrapper"
+            app:layout_constraintTop_toTopOf="@+id/dynamics_count_wrapper">
+          <TextView
+              android:id="@+id/followed_count"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_marginBottom="2dp"
+              android:text="0" />
                 
-                <LinearLayout
-                    android:id="@+id/dynamics_count_wrapper"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="1dp"
-                    android:layout_weight="1"
-                    android:background="@color/color_disabled"
+                <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="关注" />
+        </LinearLayout>
+      <LinearLayout
+            android:id="@+id/praised_count_wrap"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="1dp"
                     android:gravity="center"
-                    android:orientation="vertical"
-                    android:padding="8dp">
-
-                    <TextView
-                        android:id="@+id/dynamics_count"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="2dp"
-                        android:text="0" />
-                        <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="动态" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/followed_count_wrap"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="1dp"
-                    android:layout_weight="1"
-                    android:background="@color/color_disabled"
+            android:orientation="horizontal"
+            android:padding="8dp"
+            app:layout_constraintStart_toEndOf="@+id/followed_count_wrap"
+            app:layout_constraintTop_toTopOf="@+id/followed_count_wrap">
+          <TextView
+              android:id="@+id/praised_count"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_marginBottom="2dp"
+              android:text="0" />
+          
+           <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="赞" />
+        </LinearLayout>
+      <LinearLayout
+            android:id="@+id/meet_archive"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:orientation="vertical"
-                    android:padding="8dp">
-                    
-                    <TextView
-                        android:id="@+id/followed_count"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="2dp"
-                        android:text="0" />
+            android:orientation="vertical"
+            android:padding="8dp"
+            android:visibility="invisible"
+            app:layout_constraintStart_toEndOf="@+id/praised_count_wrap"
+            app:layout_constraintTop_toTopOf="@+id/praised_count_wrap">
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_marginBottom="2dp"
+              android:text="@string/fa_heart"
+              android:textColor="@color/color_red" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="关注" />
-                </LinearLayout>
-                
-                 <LinearLayout
-                    android:id="@+id/praised_count_wrap"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="1dp"
-                    android:layout_weight="1"
-                    android:background="@color/color_disabled"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:padding="8dp">
-
-                    <TextView
-                        android:id="@+id/praised_count"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="2dp"
-                        android:text="0" />
-                        
-                        <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="赞" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/meet_archive"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@color/color_disabled"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:padding="8dp"
-                    android:visibility="invisible">
-                   
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="2dp"
-                        android:text="@string/fa_heart"
-                        android:textColor="@color/color_red" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="征友" />
-                </LinearLayout>
-            </LinearLayout>
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="征友" />
+        </LinearLayout>
             
             <LinearLayout
                 android:id="@+id/introduction_title"
@@ -387,7 +362,7 @@
                 android:padding="18dp"
                 app:layout_constraintEnd_toEndOf="@+id/add_introduction"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/archive_nav">
+                app:layout_constraintTop_toBottomOf="@+id/dynamics_count_wrapper">
                  <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
