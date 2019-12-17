@@ -167,72 +167,72 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
             case association_group:
                 //TextView universityAmountOfAssociation = mView.findViewById(R.id.university_amount_of_association);
                 TextView subgroupAmountOfAssociation = mView.findViewById(R.id.subGroup_amount_of_association);
-                subgroupAmountOfAssociation.setText(String.valueOf(groupSummary.subgroupAmount));
+                subgroupAmountOfAssociation.setText("社团 "+groupSummary.subgroupAmount);
                 TextView memberAmountOfAssociation = mView.findViewById(R.id.member_amount_of_association);
-                memberAmountOfAssociation.setText(String.valueOf(groupSummary.memberAmount));
+                memberAmountOfAssociation.setText("成员 "+groupSummary.memberAmount);
                 TextView visitAmountOfAssociation = mView.findViewById(R.id.visit_record_of_association);
-                visitAmountOfAssociation.setText(String.valueOf(groupSummary.visitRecord));
+                visitAmountOfAssociation.setText("访问 "+groupSummary.visitRecord);
                 TextView descOfAssociation = mView.findViewById(R.id.association_group_desc);
 
                 break;
             case public_good_group:
                 //TextView universityAmountOfPublicGood = mView.findViewById(R.id.university_amount_of_public_good);
                 TextView subgroupAmountOfPublicGood = mView.findViewById(R.id.subGroup_amount_of_public_good);
-                subgroupAmountOfPublicGood.setText(String.valueOf(groupSummary.subgroupAmount));
+                subgroupAmountOfPublicGood.setText("组织 "+groupSummary.subgroupAmount);
                 TextView memberAmountOfPublicGood = mView.findViewById(R.id.member_amount_of_public_good);
-                memberAmountOfPublicGood.setText(String.valueOf(groupSummary.memberAmount));
+                memberAmountOfPublicGood.setText("成员 "+groupSummary.memberAmount);
                 TextView visitAmountOfPublicGood = mView.findViewById(R.id.visit_record_of_public_good);
-                visitAmountOfPublicGood.setText(String.valueOf(groupSummary.visitRecord));
+                visitAmountOfPublicGood.setText("访问 "+groupSummary.visitRecord);
                 TextView descOfPublicGood = mView.findViewById(R.id.public_good_group_desc);
                 break;
             case fraternity_group:
                 //TextView universityAmountOfFraternity = mView.findViewById(R.id.university_amount_of_fraternity);
                 TextView subgroupAmountOfFraternity = mView.findViewById(R.id.subGroup_amount_of_fraternity);
-                subgroupAmountOfFraternity.setText(String.valueOf(groupSummary.subgroupAmount));
+                subgroupAmountOfFraternity.setText("群组 "+groupSummary.subgroupAmount);
                 TextView memberAmountOfFraternity = mView.findViewById(R.id.member_amount_of_fraternity);
-                memberAmountOfFraternity.setText(String.valueOf(groupSummary.memberAmount));
+                memberAmountOfFraternity.setText("成员 "+groupSummary.memberAmount);
                 TextView visitAmountOfFraternity = mView.findViewById(R.id.visit_record_of_fraternity);
-                visitAmountOfFraternity.setText(String.valueOf(groupSummary.visitRecord));
+                visitAmountOfFraternity.setText("访问 "+groupSummary.visitRecord);
                 TextView descOfFraternity = mView.findViewById(R.id.fraternity_group_desc);
                 break;
             case hobby_group:
                 //TextView universityAmountOfHobby = mView.findViewById(R.id.university_amount_of_hobby);
                 TextView subgroupAmountOfHobby = mView.findViewById(R.id.subGroup_amount_of_hobby);
-                subgroupAmountOfHobby.setText(String.valueOf(groupSummary.subgroupAmount));
+                subgroupAmountOfHobby.setText("群组 "+String.valueOf(groupSummary.subgroupAmount));
                 TextView memberAmountOfHobby = mView.findViewById(R.id.member_amount_of_hobby);
-                memberAmountOfHobby.setText(String.valueOf(groupSummary.memberAmount));
+                memberAmountOfHobby.setText("成员 "+String.valueOf(groupSummary.memberAmount));
                 TextView visitAmountOfHobby = mView.findViewById(R.id.visit_record_of_hobby);
-                visitAmountOfHobby.setText(String.valueOf(groupSummary.visitRecord));
+                visitAmountOfHobby.setText("访问 "+String.valueOf(groupSummary.visitRecord));
                 TextView descOfHobby = mView.findViewById(R.id.hobby_group_desc);
                 break;
             case growUp_group:
                 //TextView universityAmountOfGrowUp = mView.findViewById(R.id.university_amount_of_growUp);
                 TextView subgroupAmountOfGrowUp = mView.findViewById(R.id.subGroup_amount_of_growUp);
-                subgroupAmountOfGrowUp.setText(String.valueOf(groupSummary.subgroupAmount));
+                subgroupAmountOfGrowUp.setText("群组 "+String.valueOf(groupSummary.subgroupAmount));
                 TextView memberAmountOfGrowUp = mView.findViewById(R.id.member_amount_of_growUp);
-                memberAmountOfGrowUp.setText(String.valueOf(groupSummary.memberAmount));
+                memberAmountOfGrowUp.setText("成员 "+String.valueOf(groupSummary.memberAmount));
                 TextView visitAmountOfGrowUp = mView.findViewById(R.id.visit_record_of_growUp);
-                visitAmountOfGrowUp.setText(String.valueOf(groupSummary.visitRecord));
+                visitAmountOfGrowUp.setText("访问 "+String.valueOf(groupSummary.visitRecord));
                 TextView descOfGrowUp = mView.findViewById(R.id.growUp_group_desc);
                 break;
             case activity_group:
                 //TextView universityAmount = mView.findViewById(R.id.university_amount_of_activity);
                 TextView subgroupAmount = mView.findViewById(R.id.subGroup_amount_of_activity);
-                subgroupAmount.setText(String.valueOf(groupSummary.subgroupAmount));
+                subgroupAmount.setText("群组 "+String.valueOf(groupSummary.subgroupAmount));
                 TextView memberAmount = mView.findViewById(R.id.member_amount_of_activity);
-                memberAmount.setText(String.valueOf(groupSummary.memberAmount));
+                memberAmount.setText("成员 "+String.valueOf(groupSummary.memberAmount));
                 TextView visitAmount = mView.findViewById(R.id.visit_record_of_activity);
-                visitAmount.setText(String.valueOf(groupSummary.visitRecord));
+                visitAmount.setText("访问 "+String.valueOf(groupSummary.visitRecord));
                 TextView desc = mView.findViewById(R.id.activity_group_desc);
                 break;
             case foreign_friend_group:
                 //TextView universityAmountOfForeignFriend = mView.findViewById(R.id.university_amount_of_foreign_friend);
                 TextView subgroupAmountForeignFriend = mView.findViewById(R.id.subGroup_amount_of_foreign_friend);
-                subgroupAmountForeignFriend.setText(String.valueOf(groupSummary.subgroupAmount));
+                subgroupAmountForeignFriend.setText("群组 "+String.valueOf(groupSummary.subgroupAmount));
                 TextView memberAmountForeignFriend = mView.findViewById(R.id.member_amount_of_foreign_friend);
-                memberAmountForeignFriend.setText(String.valueOf(groupSummary.memberAmount));
+                memberAmountForeignFriend.setText("成员 "+String.valueOf(groupSummary.memberAmount));
                 TextView visitAmountForeignFriend = mView.findViewById(R.id.visit_record_of_foreign_friend);
-                visitAmountForeignFriend.setText(String.valueOf(groupSummary.visitRecord));
+                visitAmountForeignFriend.setText("访问 "+String.valueOf(groupSummary.visitRecord));
                 TextView descForeignFriend = mView.findViewById(R.id.foreign_friend_desc);
                 break;
             default:
