@@ -236,10 +236,11 @@
     <string name="delete_query_text">确认删除该动态吗？</string>
     <string name="exit_group_query_text">确认退出此团吗？</string>
     <string name="visit">访问</string>
-     <string name="block_group_member_query_text">禁言后该用户无法在该团发布动态</string>
+    <string name="block_group_member_query_text">禁言后该用户无法在该团发布动态</string>
     <string name="delete_group_member_query_text">将该联系人从此团删除</string>
     <string name="follow">关注</string>
     <string name="member">成员</string>
     <string name="follow_action">+关注</string>
     <string name="setting">设置</string>
+    <string name="title_activity_picture_preview">PicturePreviewActivity</string>
 </resources>

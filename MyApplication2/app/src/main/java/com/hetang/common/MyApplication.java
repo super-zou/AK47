@@ -39,7 +39,6 @@ import com.hetang.R;
 import com.hetang.main.MainActivity;
 import com.hetang.meet.MeetArchiveActivity;
 import com.hetang.update.OkHttpUpdateService;
-import com.previewlibrary.ZoomMediaLoader;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.commonsdk.UMConfigure;
 import com.xiaomi.channel.commonutils.logger.LoggerInterface;
@@ -189,9 +188,6 @@ public class MyApplication extends Application {
         //umeng
         UMConfigure.init(this, UMENG_APPKEY, "Umeng", UMConfigure.DEVICE_TYPE_PHONE, null);
         MobclickAgent.setPageCollectionMode(MobclickAgent.PageMode.LEGACY_AUTO);
-        
-                //init picture zoom view
-        ZoomMediaLoader.getInstance().init(new PictureLoader());
     }
     
     //+Begin added by xuchunping for MI push

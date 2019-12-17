@@ -24,6 +24,7 @@ import com.hetang.common.AddDynamicsActivity;
 import com.hetang.common.Dynamic;
 import com.hetang.common.DynamicsInteractDetailsActivity;
 import com.hetang.common.MyApplication;
+import com.hetang.common.PicturePreviewActivity;
 import com.hetang.home.HomeFragment;
 import com.hetang.util.BaseFragment;
 import com.hetang.util.CommonUserListDialogFragment;
@@ -36,12 +37,18 @@ import com.hetang.util.SharedPreferencesUtils;
 import com.hetang.util.Slog;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
+import com.luck.picture.lib.PictureExternalPreviewActivity;
+import com.luck.picture.lib.PictureSelector;
+import com.luck.picture.lib.config.PictureConfig;
+import com.luck.picture.lib.entity.LocalMedia;
+import com.luck.picture.lib.tools.DoubleUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -96,6 +103,8 @@ public class MeetDynamicsFragment extends BaseFragment {
     RequestBody requestBody = null;
     private View viewContent;
     private List<Dynamic> meetList = new ArrayList<>();
+    List<LocalMedia> localMediaList = new ArrayList<>();
+
 
     private Context mContext;
     private int mTempSize;
@@ -207,6 +216,21 @@ public class MeetDynamicsFragment extends BaseFragment {
                 pictureReviewDialogFragment.setArguments(bundle);
                 pictureReviewDialogFragment.show(getFragmentManager(), "PictureReviewDialogFragment");
                 */
+                localMediaList.clear();
+                for (int i=0; i<pictureUrlArray.length; i++){
+                    LocalMedia localMedia = new LocalMedia();
+                    localMedia.setPath(HttpUtil.getDomain()+pictureUrlArray[i]);
+                    localMediaList.add(localMedia);
+                }
+
+                //PictureSelector.create(MeetDynamicsFragment.this).externalPicturePreview(index, localMediaList);
+                if (!DoubleUtils.isFastDoubleClick()) {
+                    Intent intent = new Intent(getContext(), PicturePreviewActivity.class);
+                    intent.putExtra(PictureConfig.EXTRA_PREVIEW_SELECT_LIST, (Serializable) localMediaList);
+                    intent.putExtra(PictureConfig.EXTRA_POSITION, index);
+                    startActivity(intent);
+                    //getContext().overridePendingTransition(R.anim.a5, 0);
+                }
             }
 
             @Override

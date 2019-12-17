@@ -1,6 +1,5 @@
 package com.hetang.adapter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -9,8 +8,6 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Message;
-import com.bumptech.glide.Glide;
-import android.widget.GridView;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
@@ -26,22 +23,20 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.hetang.R;
-import com.hetang.common.Dynamic;
-
 import com.hetang.archive.ArchiveActivity;
+import com.hetang.common.Dynamic;
 import com.hetang.common.HandlerTemp;
-import com.hetang.util.InterActInterface;
+import com.hetang.common.MyApplication;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
-import com.hetang.common.MyApplication;
+import com.hetang.util.InterActInterface;
 import com.hetang.util.RoundImageView;
 import com.hetang.util.Slog;
-import com.hetang.util.UserViewInfo;
 import com.hetang.util.Utility;
-import com.previewlibrary.GPreviewBuilder;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -49,6 +44,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -60,7 +56,7 @@ import okhttp3.Response;
  */
 
 public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsListAdapter.MeetDynamicsViewHolder> {
-    
+
     private static final boolean isDebug = false;
     private static final String TAG = "MeetDynamicsListAdapter";
 
@@ -78,7 +74,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
 
 
     private static Context mContext;
-    
+
     static InterActInterface interActInterface;
     private List<Dynamic> mMeetList;
 
@@ -91,24 +87,23 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
     private static int innerWidth = 0;
     private boolean specificUser = false;
     private Handler mHandler = new MyHandler(this);
-        private static ArrayList<UserViewInfo> mThumbViewInfoList = new ArrayList<>();
-    
+
     public MeetDynamicsListAdapter(Context context, FragmentManager fragmentManager, boolean specificUser) {
         //Slog.d(TAG, "==============MeetRecommendListAdapter init=================");
         mContext = context;
-        if (mContext == null){
+        if (mContext == null) {
             mContext = MyApplication.getContext();
         }
         mMeetList = new ArrayList<Dynamic>();
         Resources resources = mContext.getResources();
         DisplayMetrics dm = resources.getDisplayMetrics();
-        innerWidth = dm.widthPixels - (int)Utility.dpToPx(mContext, 32f);
+        innerWidth = dm.widthPixels - (int) Utility.dpToPx(mContext, 32f);
         this.specificUser = specificUser;
         this.fragmentManager = fragmentManager;
 
     }
-    
-     public void setScrolling(boolean isScrolling) {
+
+    public void setScrolling(boolean isScrolling) {
         this.isScrolling = isScrolling;
     }
 
@@ -121,8 +116,8 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
         //Slog.d(TAG, "----------------->position: "+position+" type: "+mMeetList.get(position).getType()+" action: "+mMeetList.get(position).getAction());
         return mMeetList.get(position).getType();
     }
-    
-        @Override
+
+    @Override
     public MeetDynamicsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (isDebug) Slog.d(TAG, "===========onCreateViewHolder==============");
         View viewDynamic = LayoutInflater.from(parent.getContext())
@@ -133,15 +128,16 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
 
     @Override
     public void onBindViewHolder(final MeetDynamicsViewHolder holder, final int position) {
-         if (isDebug) Slog.d(TAG, "-------->onBindViewHolder position: "+position+" dynamicsGrid: "+holder.dynamicsGrid.hashCode());
+        if (isDebug)
+            Slog.d(TAG, "-------->onBindViewHolder position: " + position + " dynamicsGrid: " + holder.dynamicsGrid.hashCode());
 
         final Dynamic dynamic = mMeetList.get(position);
 
-        if (specificUser){
+        if (specificUser) {
             holder.baseProfile.setVisibility(View.GONE);
         }
-        
-        if (null != dynamic){
+
+        if (null != dynamic) {
             setDynamicContent(holder, dynamic, position);
         }
 
@@ -156,7 +152,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
                 praiseDynamics(dynamic);
             }
         });
-        
+
         holder.dynamicsPraiseCount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -172,8 +168,8 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
                 interActInterface.onCommentClick(v, position);
             }
         });
-        
-         holder.baseProfile.setOnClickListener(new View.OnClickListener() {
+
+        holder.baseProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(mContext, ArchiveActivity.class);
@@ -182,114 +178,114 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
                 mContext.startActivity(intent);
             }
         });
-        
-         if (dynamic.getAuthorSelf() == true){
-             holder.operation.setVisibility(View.VISIBLE);
-             holder.operation.setOnClickListener(new View.OnClickListener() {
-                 @Override
-                 public void onClick(View view) {
-                     interActInterface.onOperationClick(view, position);
-                 }
-             });
-         }else {
-             holder.operation.setVisibility(View.GONE);
-         }
+
+        if (dynamic.getAuthorSelf() == true) {
+            holder.operation.setVisibility(View.VISIBLE);
+            holder.operation.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    interActInterface.onOperationClick(view, position);
+                }
+            });
+        } else {
+            holder.operation.setVisibility(View.GONE);
+        }
     }
 
-    public static void setDynamicContent(MeetDynamicsViewHolder holder, Dynamic dynamic, int position){
-        if (dynamic == null){
+    public static void setDynamicContent(MeetDynamicsViewHolder holder, Dynamic dynamic, int position) {
+        if (dynamic == null) {
             return;
         }
         holder.name.setText(dynamic.getName());
         holder.living.setText(dynamic.getLiving());
 
-        if (dynamic.getAvatar()!= null && !"".equals(dynamic.getAvatar())) {
-            String picture_url = HttpUtil.DOMAIN  + dynamic.getAvatar();
+        if (dynamic.getAvatar() != null && !"".equals(dynamic.getAvatar())) {
+            String picture_url = HttpUtil.DOMAIN + dynamic.getAvatar();
             Glide.with(mContext).load(picture_url).into(holder.avatar);
         } else {
-            if(dynamic.getSex() == 0){
+            if (dynamic.getSex() == 0) {
                 holder.avatar.setImageDrawable(MyApplication.getContext().getDrawable(R.drawable.male_default_avator));
-            }else {
+            } else {
                 holder.avatar.setImageDrawable(MyApplication.getContext().getDrawable(R.drawable.female_default_avator));
             }
         }
 
         String profile = "";
-        if (dynamic.getSituation() != -1){
-            if(dynamic.getSituation() == 0){
-                profile = dynamic.getMajor()+"·"+ dynamic.getDegreeName(dynamic.getDegree())+"·"+ dynamic.getUniversity();
-            }else {
-                profile = dynamic.getPosition()+"·"+ dynamic.getIndustry();
+        if (dynamic.getSituation() != -1) {
+            if (dynamic.getSituation() == 0) {
+                profile = dynamic.getMajor() + "·" + dynamic.getDegreeName(dynamic.getDegree()) + "·" + dynamic.getUniversity();
+            } else {
+                profile = dynamic.getPosition() + "·" + dynamic.getIndustry();
             }
             holder.profile.setText(profile);
         }
-        
+
         holder.contentView.setText(dynamic.getContent());
 
         String pictures = dynamic.getDynamicPicture();
 
         if (!"".equals(pictures)) {
-            if(holder.dynamicsGrid.getTag() == null){
+            if (holder.dynamicsGrid.getTag() == null) {
                 setContentView(holder, pictures, dynamic, position);
-            }else {
-                if(!dynamic.equals(holder.dynamicsGrid.getTag())){
+            } else {
+                if (!dynamic.equals(holder.dynamicsGrid.getTag())) {
                     holder.dynamicsGrid.removeAllViews();
                     setContentView(holder, pictures, dynamic, position);
                 }
             }
-        }else {
-            if (holder.dynamicsGrid.getChildCount() > 0){
+        } else {
+            if (holder.dynamicsGrid.getChildCount() > 0) {
                 holder.dynamicsGrid.removeAllViews();
             }
         }
-        
-        if(dynamic.getPraisedDynamics() == 1){
+
+        if (dynamic.getPraisedDynamics() == 1) {
             holder.dynamicsPraise.setText(mContext.getResources().getString(R.string.fa_thumbs_up));
-        }else {
+        } else {
             holder.dynamicsPraise.setText(mContext.getResources().getString(R.string.fa_thumbs_O_up));
         }
 
 
-        if(dynamic.getPraisedDynamicsCount() > 0){
+        if (dynamic.getPraisedDynamicsCount() > 0) {
             holder.dynamicsPraiseCount.setText(String.valueOf(dynamic.getPraisedDynamicsCount()));
-        }else {
+        } else {
             holder.dynamicsPraiseCount.setText("");
         }
-        
-        if(dynamic.getCommentCount() > 0){
-            holder.dynamicsComment.setText(mContext.getResources().getString(R.string.fa_comment_o)+" "+String.valueOf(dynamic.getCommentCount()));
-        }else {
+
+        if (dynamic.getCommentCount() > 0) {
+            holder.dynamicsComment.setText(mContext.getResources().getString(R.string.fa_comment_o) + " " + String.valueOf(dynamic.getCommentCount()));
+        } else {
             holder.dynamicsComment.setText("");
             holder.dynamicsComment.setText(mContext.getResources().getString(R.string.fa_comment_o));
         }
     }
-    
-    private static void setContentView(final MeetDynamicsViewHolder holder, String pictures, Dynamic dynamic, final int position){
+
+    private static void setContentView(final MeetDynamicsViewHolder holder, String pictures, Dynamic dynamic, final int position) {
         final String[] picture_array = pictures.split(":");
         final int length = picture_array.length;
         if (length > 0) {
             if (length != 4) {
-                if(length < 4){
+                if (length < 4) {
                     holder.dynamicsGrid.setColumnCount(length);
-                    if(length == 1){
-                        width = innerWidth/2;
+                    if (length == 1) {
+                        width = innerWidth / 2;
                         height = LinearLayout.LayoutParams.WRAP_CONTENT;
-                    }else {
-                        width = (innerWidth - (int)Utility.dpToPx(mContext, 2f)*(length-1))/length;
+                    } else {
+                        width = (innerWidth - (int) Utility.dpToPx(mContext, 2f) * (length - 1)) / length;
                         height = width;
                     }
-                    
-                    }else {
+
+                } else {
                     holder.dynamicsGrid.setColumnCount(3);
-                    width = (innerWidth - (int)Utility.dpToPx(mContext, 2f)*2)/3;
+                    width = (innerWidth - (int) Utility.dpToPx(mContext, 2f) * 2) / 3;
                     height = width;
                 }
             } else {
                 holder.dynamicsGrid.setColumnCount(2);
-                width = (innerWidth)/2;
+                width = (innerWidth) / 2;
                 height = width;
             }
-            
+
             final RequestOptions requestOptions = new RequestOptions()
                     .placeholder(mContext.getDrawable(R.mipmap.hetang_icon))
                     .diskCacheStrategy(DiskCacheStrategy.RESOURCE);
@@ -303,9 +299,9 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
                     //将以上的属性赋给LinearLayout
                     picture.setLayoutParams(layoutParams);
                     picture.setAdjustViewBounds(true);
-                     if(length == 1){
+                    if (length == 1) {
                         picture.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                    }else {
+                    } else {
                         picture.setScaleType(ImageView.ScaleType.CENTER_CROP);
                     }
                     picture.setMaxHeight(2 * width);
@@ -317,44 +313,16 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
                     picture.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            //interActInterface.onDynamicPictureClick(view, position, picture_array, picture.getId());
-                                                        mThumbViewInfoList.clear();
-                            for (int i = 0; i < picture_array.length; i++) {
-                                mThumbViewInfoList.add(new UserViewInfo(HttpUtil.getDomain()+picture_array[i]));
-                            }
-
-                            computeBoundsBackward(1, holder.dynamicsGrid);
-                            GPreviewBuilder.from((Activity) mContext)
-                                    .setData(mThumbViewInfoList)
-                                    .setCurrentIndex(picture.getId())
-                                    .setDrag(true,0.6f)
-                                    .setType(GPreviewBuilder.IndicatorType.Number)
-                                    .setFullscreen(false)
-                                    .start();
+                            interActInterface.onDynamicPictureClick(view, position, picture_array, picture.getId());
                         }
+
+
                     });
-                    
-                    }
+
+                }
             }
 
             holder.dynamicsGrid.setTag(dynamic);
-        }
-    }
-    
-        private static void computeBoundsBackward(int firstCompletelyVisiblePos, GridLayout gridLayout) {
-        for (int i = firstCompletelyVisiblePos; i < mThumbViewInfoList.size(); i++) {
-            RoundImageView itemView = (RoundImageView)gridLayout.getChildAt(i - firstCompletelyVisiblePos);
-            Rect bounds = new Rect();
-            /*
-            if (itemView != null) {
-                RoundImageView thumbView = itemView.findViewById(R.id.iv);
-                thumbView.getGlobalVisibleRect(bounds);
-            }
-             */
-
-            itemView.getGlobalVisibleRect(bounds);
-
-            mThumbViewInfoList.get(i).setBounds(bounds);
         }
     }
 
@@ -362,8 +330,8 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
     public int getItemCount() {
         return mMeetList != null ? mMeetList.size() : 0;
     }
-    
-     private void sendMessage(int what, Object obj) {
+
+    private void sendMessage(int what, Object obj) {
         Message msg = mHandler.obtainMessage();
         msg.what = what;
         msg.obj = obj;
@@ -373,8 +341,8 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
     private void sendMessage(int what) {
         sendMessage(what, null);
     }
-    
-     private void praiseDynamics(final Dynamic dynamic) {
+
+    private void praiseDynamics(final Dynamic dynamic) {
 
         RequestBody requestBody = new FormBody.Builder().add("did", String.valueOf(dynamic.getDid())).build();
         HttpUtil.sendOkHttpRequest(mContext, PRAISED_DYNAMICS_URL, requestBody, new Callback() {
@@ -387,7 +355,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
                         JSONObject commentResponse = new JSONObject(responseText);
                         int status = commentResponse.optInt("status");
                         if (isDebug) Log.d(TAG, "praiseDynamics status:" + status);
-                        
+
                         if (1 == status) {
                             Dynamic tempInfo = getMeetDynamicsById(dynamic.getDid());
                             tempInfo.setPraisedDynamics(1);
@@ -405,7 +373,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
             }
         });
     }
-    
+
     private Dynamic getMeetDynamicsById(long did) {
         if (null == mMeetList) {
             return null;
@@ -417,13 +385,13 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
         }
         return null;
     }
-    
-     //register the interActInterface callback, add by zouhaichao 2018/9/16
+
+    //register the interActInterface callback, add by zouhaichao 2018/9/16
     public void setOnCommentClickListener(InterActInterface commentDialogFragmentListener) {
         this.interActInterface = commentDialogFragmentListener;
     }
 
-    private void handleMessage(Message message){
+    private void handleMessage(Message message) {
         switch (message.what) {
             case UPDATE_LOVE_COUNT:
                 notifyDataSetChanged();
@@ -439,7 +407,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
         }
     }
 
-    public  static class MeetDynamicsViewHolder extends RecyclerView.ViewHolder {
+    public static class MeetDynamicsViewHolder extends RecyclerView.ViewHolder {
 
         TextView name;
         TextView living;
@@ -456,13 +424,13 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
         GridLayout dynamicsGrid;
         LinearLayout commentList;
         LinearLayout contentMeta;
-        
+
         public MeetDynamicsViewHolder(View view) {
             super(view);
             baseProfile = view.findViewById(R.id.base_profile);
             name = (TextView) view.findViewById(R.id.name);
             living = (TextView) view.findViewById(R.id.living);
-            avatar =  view.findViewById(R.id.avatar);
+            avatar = view.findViewById(R.id.avatar);
             profile = (TextView) view.findViewById(R.id.profile);
             contentView = (TextView) view.findViewById(R.id.dynamics_content);
             dynamicsGrid = (GridLayout) view.findViewById(R.id.dynamics_picture_grid);
@@ -479,7 +447,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
     }
 
     static class MyHandler extends HandlerTemp<MeetDynamicsListAdapter> {
-        public MyHandler(MeetDynamicsListAdapter cls){
+        public MyHandler(MeetDynamicsListAdapter cls) {
             super(cls);
         }
 

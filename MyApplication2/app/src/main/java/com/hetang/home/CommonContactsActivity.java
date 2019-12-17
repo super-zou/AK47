@@ -178,7 +178,7 @@ public class CommonContactsActivity extends BaseAppCompatActivity {
         recyclerView.getDefaultRefreshHeaderView().setRefreshTimeVisible(false);
         recyclerView.setPullRefreshEnabled(false);
 
-        、、recyclerView.getDefaultFootView().setLoadingHint(getString(R.string.loading_pull_up_tip));
+        //recyclerView.getDefaultFootView().setLoadingHint(getString(R.string.loading_pull_up_tip));
         recyclerView.getDefaultFootView().setNoMoreHint("");
         //recyclerView.setArrowImageView(R.drawable.iconfont_downgrey);//TODO set pull down icon
         final int itemLimit = 6;
