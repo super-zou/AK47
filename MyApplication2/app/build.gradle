@@ -72,6 +72,9 @@ dependencies {
     
     implementation 'com.github.xuexiangjys:XUpdate:1.0.9'
     implementation 'com.zhy:okhttputils:2.6.2'
+    //picture review
+    implementation 'com.ycjiang:ImagePreview:2.2.8'
+    implementation 'com.android.support:support-fragment:28.0.0'
     //for emoji compat
     implementation 'com.android.support:support-emoji-bundled:28.0.0'
     implementation 'com.android.support:support-emoji-appcompat:28.0.0'
