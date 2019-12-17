@@ -121,7 +121,7 @@ public class MeetDynamicsFragment extends BaseFragment {
         mContext = getContext();
         handler = new MyHandler(this);
         recyclerView = convertView.findViewById(R.id.recyclerview);
-        meetDynamicsListAdapter = new MeetDynamicsListAdapter(getContext(), getFragmentManager(), false);
+        meetDynamicsListAdapter = new MeetDynamicsListAdapter(getActivity(), getFragmentManager(), false);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
 
@@ -198,6 +198,7 @@ public class MeetDynamicsFragment extends BaseFragment {
 
             @Override
             public void onDynamicPictureClick(View view, int position, String[] pictureUrlArray, int index) {
+                /*
                 Bundle bundle = new Bundle();
                 bundle.putInt("index", index);
                 bundle.putStringArray("pictureUrlArray", pictureUrlArray);
@@ -205,6 +206,7 @@ public class MeetDynamicsFragment extends BaseFragment {
                 PictureReviewDialogFragment pictureReviewDialogFragment = new PictureReviewDialogFragment();
                 pictureReviewDialogFragment.setArguments(bundle);
                 pictureReviewDialogFragment.show(getFragmentManager(), "PictureReviewDialogFragment");
+                */
             }
 
             @Override
