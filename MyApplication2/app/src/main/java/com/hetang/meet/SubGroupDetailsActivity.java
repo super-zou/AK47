@@ -86,6 +86,7 @@ import static com.hetang.meet.MeetDynamicsFragment.NO_MORE_DYNAMICS;
 import static com.hetang.meet.MeetDynamicsFragment.NO_UPDATE;
 import static com.hetang.meet.MeetDynamicsFragment.PRAISE_UPDATE;
 import static com.hetang.meet.MeetDynamicsFragment.UPDATE_COMMENT;
+import static com.hetang.util.ParseUtils.startArchiveActivity;
 import static com.hetang.util.SetAvatarActivity.MODIFY_SUBGROUP_LOGO_RESULT_OK;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
@@ -396,6 +397,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
         TextView leaderName = mGroupHeaderView.findViewById(R.id.leader_name);
         RoundImageView leaderAvatar = mGroupHeaderView.findViewById(R.id.leader_avatar);
         TextView groupDesc = mGroupHeaderView.findViewById(R.id.group_desc);
+        TextView created = mGroupHeaderView.findViewById(R.id.created);
         visitRecordTV = mGroupHeaderView.findViewById(R.id.visit_record);
         activityAmount = mGroupHeaderView.findViewById(R.id.activity_count);
         followAmount = mGroupHeaderView.findViewById(R.id.follow_count);
@@ -411,6 +413,8 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
         groupOrg.setText(subGroup.org);
         groupRegion.setText(subGroup.region);
         leaderName.setText(subGroup.leader.getName());
+        
+        created.setText("创建于 "+subGroup.created);
 
         visitRecordTV.setText(mContext.getResources().getString(R.string.visit)+" "+subGroup.visitRecord);
         activityAmount.setText(mContext.getResources().getString(R.string.dynamics)+" "+subGroup.activityCount);
@@ -420,6 +424,12 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
         String avatar = subGroup.leader.getAvatar();
         if (avatar != null && !"".equals(avatar)) {
             Glide.with(mContext).load(HttpUtil.DOMAIN + avatar).into(leaderAvatar);
+        }else {
+            if(subGroup.leader.getSex() == 0){
+                leaderAvatar.setImageDrawable(MyApplication.getContext().getDrawable(R.drawable.male_default_avator));
+            }else {
+                leaderAvatar.setImageDrawable(MyApplication.getContext().getDrawable(R.drawable.female_default_avator));
+            }
         }
 
         groupDesc.setText(subGroup.groupProfile);
@@ -530,6 +540,20 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
                     intent.putExtra("gid", subGroup.gid);
                     startActivityForResult(intent, RESULT_FIRST_USER);
                 }
+            }
+        });
+        
+        leaderName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startArchiveActivity(mContext, subGroup.leader.getUid());
+            }
+        });
+
+        leaderAvatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startArchiveActivity(mContext, subGroup.leader.getUid());
             }
         });
     }
@@ -719,12 +743,8 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
                 subGroupDetailsListAdapter.notifyDataSetChanged();
                 recyclerView.refreshComplete();
                 //update activity amount
-                String amount = activityAmount.getText().toString();
-                int currentCount = 0;
-                if (amount != null && !TextUtils.isEmpty(amount)) {
-                    currentCount = Integer.parseInt(amount);
-                }
-                activityAmount.setText(String.valueOf(currentCount + 1));
+                subGroup.activityCount += 1;
+                activityAmount.setText(mContext.getResources().getString(R.string.dynamics)+" "+subGroup.activityCount);
                 break;
             case DYNAMICS_DELETE:
                 dynamicList.remove(currentPos);
