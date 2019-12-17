@@ -1,14 +1,16 @@
 package com.hetang.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Message;
 import com.bumptech.glide.Glide;
-
+import android.widget.GridView;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
@@ -37,7 +39,9 @@ import com.hetang.util.HttpUtil;
 import com.hetang.common.MyApplication;
 import com.hetang.util.RoundImageView;
 import com.hetang.util.Slog;
+import com.hetang.util.UserViewInfo;
 import com.hetang.util.Utility;
+import com.previewlibrary.GPreviewBuilder;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -87,6 +91,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
     private static int innerWidth = 0;
     private boolean specificUser = false;
     private Handler mHandler = new MyHandler(this);
+        private static ArrayList<UserViewInfo> mThumbViewInfoList = new ArrayList<>();
     
     public MeetDynamicsListAdapter(Context context, FragmentManager fragmentManager, boolean specificUser) {
         //Slog.d(TAG, "==============MeetRecommendListAdapter init=================");
@@ -259,7 +264,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
         }
     }
     
-    private static void setContentView(MeetDynamicsViewHolder holder, String pictures, Dynamic dynamic, final int position){
+    private static void setContentView(final MeetDynamicsViewHolder holder, String pictures, Dynamic dynamic, final int position){
         final String[] picture_array = pictures.split(":");
         final int length = picture_array.length;
         if (length > 0) {
@@ -312,7 +317,20 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
                     picture.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            interActInterface.onDynamicPictureClick(view, position, picture_array, picture.getId());
+                            //interActInterface.onDynamicPictureClick(view, position, picture_array, picture.getId());
+                                                        mThumbViewInfoList.clear();
+                            for (int i = 0; i < picture_array.length; i++) {
+                                mThumbViewInfoList.add(new UserViewInfo(HttpUtil.getDomain()+picture_array[i]));
+                            }
+
+                            computeBoundsBackward(1, holder.dynamicsGrid);
+                            GPreviewBuilder.from((Activity) mContext)
+                                    .setData(mThumbViewInfoList)
+                                    .setCurrentIndex(picture.getId())
+                                    .setDrag(true,0.6f)
+                                    .setType(GPreviewBuilder.IndicatorType.Number)
+                                    .setFullscreen(false)
+                                    .start();
                         }
                     });
                     
@@ -320,6 +338,23 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
             }
 
             holder.dynamicsGrid.setTag(dynamic);
+        }
+    }
+    
+        private static void computeBoundsBackward(int firstCompletelyVisiblePos, GridLayout gridLayout) {
+        for (int i = firstCompletelyVisiblePos; i < mThumbViewInfoList.size(); i++) {
+            RoundImageView itemView = (RoundImageView)gridLayout.getChildAt(i - firstCompletelyVisiblePos);
+            Rect bounds = new Rect();
+            /*
+            if (itemView != null) {
+                RoundImageView thumbView = itemView.findViewById(R.id.iv);
+                thumbView.getGlobalVisibleRect(bounds);
+            }
+             */
+
+            itemView.getGlobalVisibleRect(bounds);
+
+            mThumbViewInfoList.get(i).setBounds(bounds);
         }
     }
 
