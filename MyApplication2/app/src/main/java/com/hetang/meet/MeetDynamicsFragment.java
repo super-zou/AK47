@@ -103,8 +103,6 @@ public class MeetDynamicsFragment extends BaseFragment {
     RequestBody requestBody = null;
     private View viewContent;
     private List<Dynamic> meetList = new ArrayList<>();
-    List<LocalMedia> localMediaList = new ArrayList<>();
-
 
     private Context mContext;
     private int mTempSize;
@@ -207,30 +205,7 @@ public class MeetDynamicsFragment extends BaseFragment {
 
             @Override
             public void onDynamicPictureClick(View view, int position, String[] pictureUrlArray, int index) {
-                /*
-                Bundle bundle = new Bundle();
-                bundle.putInt("index", index);
-                bundle.putStringArray("pictureUrlArray", pictureUrlArray);
-
-                PictureReviewDialogFragment pictureReviewDialogFragment = new PictureReviewDialogFragment();
-                pictureReviewDialogFragment.setArguments(bundle);
-                pictureReviewDialogFragment.show(getFragmentManager(), "PictureReviewDialogFragment");
-                */
-                localMediaList.clear();
-                for (int i=0; i<pictureUrlArray.length; i++){
-                    LocalMedia localMedia = new LocalMedia();
-                    localMedia.setPath(HttpUtil.getDomain()+pictureUrlArray[i]);
-                    localMediaList.add(localMedia);
-                }
-
-                //PictureSelector.create(MeetDynamicsFragment.this).externalPicturePreview(index, localMediaList);
-                if (!DoubleUtils.isFastDoubleClick()) {
-                    Intent intent = new Intent(getContext(), PicturePreviewActivity.class);
-                    intent.putExtra(PictureConfig.EXTRA_PREVIEW_SELECT_LIST, (Serializable) localMediaList);
-                    intent.putExtra(PictureConfig.EXTRA_POSITION, index);
-                    startActivity(intent);
-                    //getContext().overridePendingTransition(R.anim.a5, 0);
-                }
+                startPicturePreview(index, pictureUrlArray);
             }
 
             @Override
@@ -269,6 +244,24 @@ public class MeetDynamicsFragment extends BaseFragment {
                 animationDrawable.start();
             }
         }, 50);
+    }
+
+    public void startPicturePreview(int position, String[] pictureUrlArray){
+        List<LocalMedia> localMediaList = new ArrayList<>();
+        for (int i=0; i<pictureUrlArray.length; i++){
+            LocalMedia localMedia = new LocalMedia();
+            localMedia.setPath(HttpUtil.getDomain()+pictureUrlArray[i]);
+            localMediaList.add(localMedia);
+        }
+
+        //PictureSelector.create(MeetDynamicsFragment.this).externalPicturePreview(index, localMediaList);
+        if (!DoubleUtils.isFastDoubleClick()) {
+            Intent intent = new Intent(getContext(), PicturePreviewActivity.class);
+            intent.putExtra(PictureConfig.EXTRA_PREVIEW_SELECT_LIST, (Serializable) localMediaList);
+            intent.putExtra(PictureConfig.EXTRA_POSITION, position);
+            getContext().startActivity(intent);
+            //getContext().overridePendingTransition(R.anim.a5, 0);
+        }
     }
 
     @Override

@@ -36,6 +36,7 @@ import com.hetang.common.BaseAppCompatActivity;
 import com.hetang.common.Dynamic;
 import com.hetang.common.DynamicsInteractDetailsActivity;
 import com.hetang.common.MyApplication;
+import com.hetang.common.PicturePreviewActivity;
 import com.hetang.home.CommonContactsActivity;
 import com.hetang.home.HomeFragment;
 import com.hetang.util.CommonDialogFragmentInterface;
@@ -55,11 +56,15 @@ import com.hetang.util.SubGroupOperationDialogFragment;
 import com.hetang.util.Utility;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
+import com.luck.picture.lib.config.PictureConfig;
+import com.luck.picture.lib.entity.LocalMedia;
+import com.luck.picture.lib.tools.DoubleUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -253,13 +258,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
             }
             @Override
             public void onDynamicPictureClick(View view, int position, String[] pictureUrlArray, int index){
-                Bundle bundle = new Bundle();
-                bundle.putInt("index", index);
-                bundle.putStringArray("pictureUrlArray", pictureUrlArray);
-
-                PictureReviewDialogFragment pictureReviewDialogFragment = new PictureReviewDialogFragment();
-                pictureReviewDialogFragment.setArguments(bundle);
-                pictureReviewDialogFragment.show(getSupportFragmentManager(), "PictureReviewDialogFragment");
+                dynamicsFragment.startPicturePreview(index, pictureUrlArray);
             }
 
             @Override

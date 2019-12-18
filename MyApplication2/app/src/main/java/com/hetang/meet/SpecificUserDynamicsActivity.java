@@ -15,23 +15,22 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.hetang.R;
 import com.hetang.adapter.DynamicsListAdapter;
 import com.hetang.common.BaseAppCompatActivity;
 import com.hetang.common.Dynamic;
 import com.hetang.common.DynamicsInteractDetailsActivity;
 import com.hetang.common.HandlerTemp;
+import com.hetang.common.MyApplication;
 import com.hetang.home.HomeFragment;
 import com.hetang.util.CommonDialogFragmentInterface;
 import com.hetang.util.CommonUserListDialogFragment;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.InterActInterface;
-import com.hetang.common.MyApplication;
-import com.hetang.util.PictureReviewDialogFragment;
 import com.hetang.util.Slog;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
-import com.hetang.R;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -79,7 +78,7 @@ public class SpecificUserDynamicsActivity extends BaseAppCompatActivity implemen
     HomeFragment homeFragment;
     ImageView progressImageView;
     AnimationDrawable animationDrawable;
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,14 +89,14 @@ public class SpecificUserDynamicsActivity extends BaseAppCompatActivity implemen
         }
         uid = getIntent().getIntExtra("uid", -1);
         handler = new MyHandler(this);
-        if (homeFragment == null){
+        if (homeFragment == null) {
             homeFragment = new HomeFragment();
         }
         initView();
 
     }
-    
-    private void initView(){
+
+    private void initView() {
         TextView backLeft = findViewById(R.id.left_back);
         backLeft.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,7 +109,7 @@ public class SpecificUserDynamicsActivity extends BaseAppCompatActivity implemen
         dynamicsListAdapter = new DynamicsListAdapter(MyApplication.getContext(), true);
 
         meetDynamicsFragment = new MeetDynamicsFragment();
-        
+
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(MyApplication.getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
 
@@ -127,7 +126,7 @@ public class SpecificUserDynamicsActivity extends BaseAppCompatActivity implemen
                 super.onScrollStateChanged(recyclerView, newState);
             }
         });
-        
+
         //+Begin added by xuchunping
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(linearLayoutManager);
@@ -139,10 +138,10 @@ public class SpecificUserDynamicsActivity extends BaseAppCompatActivity implemen
         recyclerView.getDefaultRefreshHeaderView().setRefreshTimeVisible(false);
         recyclerView.setPullRefreshEnabled(false);
 
-       // recyclerView.getDefaultFootView().setLoadingHint(getString(R.string.loading_pull_up_tip));
+        // recyclerView.getDefaultFootView().setLoadingHint(getString(R.string.loading_pull_up_tip));
         recyclerView.getDefaultFootView().setNoMoreHint(getString(R.string.loading_no_more_no_update));
         final int itemLimit = 5;
-        
+
         // When the item number of the screen number is list.size-2,we call the onLoadMore
         recyclerView.setLimitNumberToCallLoadMore(PAGE_SIZE - 2);
         recyclerView.setRefreshProgressStyle(ProgressStyle.BallBeat);
@@ -151,14 +150,15 @@ public class SpecificUserDynamicsActivity extends BaseAppCompatActivity implemen
         recyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
 
             @Override
-            public void onRefresh() { }
+            public void onRefresh() {
+            }
 
             @Override
             public void onLoadMore() {
                 loadData();
             }
         });
-        
+
         recyclerView.scrollToPosition(0);
 
         //callback from dynamicsListAdapter, when comment icon touched, will show comment input dialog
@@ -170,10 +170,11 @@ public class SpecificUserDynamicsActivity extends BaseAppCompatActivity implemen
                 createCommentDetails(meetList.get(position));
 
             }
+
             @Override
-            public void onPraiseClick(View view, int position){
-            
-            Bundle bundle = new Bundle();
+            public void onPraiseClick(View view, int position) {
+
+                Bundle bundle = new Bundle();
                 bundle.putInt("type", DYNAMICS_PRAISED);
                 bundle.putLong("aid", meetList.get(position).getDid());
                 bundle.putString("title", MyApplication.getContext().getResources().getString(R.string.praised_dynamic));
@@ -182,33 +183,29 @@ public class SpecificUserDynamicsActivity extends BaseAppCompatActivity implemen
                 commonUserListDialogFragment.show(getSupportFragmentManager(), "CommonUserListDialogFragment");
 
             }
-            @Override
-            public void onDynamicPictureClick(View view, int position, String[] pictureUrlArray, int index){
-                Bundle bundle = new Bundle();
-                bundle.putInt("index", index);
-                bundle.putStringArray("pictureUrlArray", pictureUrlArray);
 
-                PictureReviewDialogFragment pictureReviewDialogFragment = new PictureReviewDialogFragment();
-                pictureReviewDialogFragment.setArguments(bundle);
-                pictureReviewDialogFragment.show(getSupportFragmentManager(), "PictureReviewDialogFragment");
-            }
-            
             @Override
-            public void onOperationClick(View view, int position){}
+            public void onDynamicPictureClick(View view, int position, String[] pictureUrlArray, int index) {
+                meetDynamicsFragment.startPicturePreview(index, pictureUrlArray);
+            }
+
+            @Override
+            public void onOperationClick(View view, int position) {
+            }
 
         });
 
         recyclerView.setAdapter(dynamicsListAdapter);
 
         progressImageView = findViewById(R.id.animal_progress);
-        animationDrawable = (AnimationDrawable)progressImageView.getDrawable();
-        
+        animationDrawable = (AnimationDrawable) progressImageView.getDrawable();
+
         progressImageView.postDelayed(new Runnable() {
             @Override
             public void run() {
                 animationDrawable.start();
             }
-        },50);
+        }, 50);
 
         Typeface font = Typeface.createFromAsset(getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
         FontManager.markAsIconContainer(findViewById(R.id.custom_actionbar), font);
@@ -217,7 +214,7 @@ public class SpecificUserDynamicsActivity extends BaseAppCompatActivity implemen
 
         loadData();
     }
-    
+
     private void loadData() {
         Slog.d(TAG, "------------------->loadData");
         int page = meetList.size() / PAGE_SIZE;
@@ -229,8 +226,8 @@ public class SpecificUserDynamicsActivity extends BaseAppCompatActivity implemen
         HttpUtil.sendOkHttpRequest(MyApplication.getContext(), GET_DYNAMIC_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-            
-            if (response.body() != null) {
+
+                if (response.body() != null) {
                     String responseText = response.body().string();
                     //Slog.d(TAG, "==========response : "+response.body());
                     Slog.d(TAG, "==========response text : " + responseText);
@@ -243,35 +240,36 @@ public class SpecificUserDynamicsActivity extends BaseAppCompatActivity implemen
                             meetList.addAll(tempList);
                             Log.d(TAG, "getResponseText list.size:" + tempList.size());
                             handler.sendEmptyMessage(LOAD_DYNAMICS_DONE);
-                        }else {
+                        } else {
                             handler.sendEmptyMessage(NO_MORE_DYNAMICS);
                         }
-                   }
+                    }
                 }
             }
+
             @Override
             public void onFailure(Call call, IOException e) {
 
             }
         });
     }
-    
+
     public void handleMessage(Message message) {
-        switch (message.what){
+        switch (message.what) {
             case NO_MORE_DYNAMICS:
                 recyclerView.setNoMore(true);
-                if (progressImageView.getVisibility() == View.VISIBLE){
+                if (progressImageView.getVisibility() == View.VISIBLE) {
                     animationDrawable.stop();
                     progressImageView.setVisibility(View.GONE);
                 }
                 break;
-                
-                case LOAD_DYNAMICS_DONE:
-                if (progressImageView.getVisibility() == View.VISIBLE){
+
+            case LOAD_DYNAMICS_DONE:
+                if (progressImageView.getVisibility() == View.VISIBLE) {
                     animationDrawable.stop();
                     progressImageView.setVisibility(View.GONE);
                 }
-                if(meetList.size() > 0){
+                if (meetList.size() > 0) {
                     dynamicsListAdapter.setData(meetList);
                     dynamicsListAdapter.notifyDataSetChanged();
                     recyclerView.loadMoreComplete();
@@ -284,15 +282,15 @@ public class SpecificUserDynamicsActivity extends BaseAppCompatActivity implemen
                     recyclerView.setLoadingMoreEnabled(false);
                 }
                 break;
-                
-                case UPDATE_COMMENT:
+
+            case UPDATE_COMMENT:
                 dynamicsListAdapter.setData(meetList);
                 dynamicsListAdapter.notifyDataSetChanged();
                 break;
             case COMMENT_COUNT_UPDATE:
                 Bundle bundle = message.getData();
                 int commentCount = bundle.getInt("commentCount");
-                Slog.d(TAG, "------------------>COMMENT_COUNT_UPDATE: position: "+currentPos+ " commentCount: "+commentCount);
+                Slog.d(TAG, "------------------>COMMENT_COUNT_UPDATE: position: " + currentPos + " commentCount: " + commentCount);
                 meetList.get(currentPos).setCommentCount(commentCount);
                 dynamicsListAdapter.setData(meetList);
                 dynamicsListAdapter.notifyDataSetChanged();
@@ -300,7 +298,7 @@ public class SpecificUserDynamicsActivity extends BaseAppCompatActivity implemen
                 break;
         }
     }
-    
+
     public void createCommentDetails(Dynamic dynamic) {
         Intent intent = new Intent(MyApplication.getContext(), DynamicsInteractDetailsActivity.class);
         intent.putExtra("type", DynamicsInteractDetailsActivity.DYNAMIC_COMMENT);
@@ -308,14 +306,14 @@ public class SpecificUserDynamicsActivity extends BaseAppCompatActivity implemen
         //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
         startActivityForResult(intent, Activity.RESULT_FIRST_USER);
     }
-    
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Slog.d(TAG, "===================onActivityResult requestCode: "+requestCode+" resultCode: "+resultCode);
-        if (requestCode == Activity.RESULT_FIRST_USER){
-            if (resultCode == HomeFragment.COMMENT_UPDATE_RESULT){
+        Slog.d(TAG, "===================onActivityResult requestCode: " + requestCode + " resultCode: " + resultCode);
+        if (requestCode == Activity.RESULT_FIRST_USER) {
+            if (resultCode == HomeFragment.COMMENT_UPDATE_RESULT) {
                 int commentCount = data.getIntExtra("commentCount", 0);
-                Slog.d(TAG, "==========commentCount: "+commentCount);
+                Slog.d(TAG, "==========commentCount: " + commentCount);
                 Message msg = new Message();
                 Bundle bundle = new Bundle();
                 bundle.putInt("commentCount", commentCount);
@@ -325,9 +323,10 @@ public class SpecificUserDynamicsActivity extends BaseAppCompatActivity implemen
             }
         }
     }
-    
+
     @Override
-    public void onBackFromDialog(int type, int result, boolean status) { }
+    public void onBackFromDialog(int type, int result, boolean status) {
+    }
 
     @Override
     public void onResume() {
@@ -338,9 +337,9 @@ public class SpecificUserDynamicsActivity extends BaseAppCompatActivity implemen
     public void onDestroy() {
         super.onDestroy();
     }
-    
+
     static class MyHandler extends HandlerTemp<SpecificUserDynamicsActivity> {
-        public MyHandler(SpecificUserDynamicsActivity cls){
+        public MyHandler(SpecificUserDynamicsActivity cls) {
             super(cls);
         }
 
