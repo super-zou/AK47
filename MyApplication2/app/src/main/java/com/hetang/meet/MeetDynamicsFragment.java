@@ -169,12 +169,12 @@ public class MeetDynamicsFragment extends BaseFragment {
 
             @Override
             public void onRefresh() {
-                updateData();
+                requestData(false);
             }
 
             @Override
             public void onLoadMore() {
-                loadData();
+                requestData(true);
             }
         });
 
@@ -266,92 +266,7 @@ public class MeetDynamicsFragment extends BaseFragment {
 
     @Override
     protected void loadData() {
-        if (isDebug) Slog.d(TAG, "===============loadData==============");
-
-        final int page = meetList.size() / PAGE_SIZE;
-        RequestBody requestBody = new FormBody.Builder()
-                .add("type", String.valueOf(ParseUtils.ADD_MEET_DYNAMIC_ACTION))
-                .add("step", String.valueOf(PAGE_SIZE))
-                .add("page", String.valueOf(page))
-                .build();
-
-        HttpUtil.sendOkHttpRequest(MyApplication.getContext(), GET_DYNAMICS_URL, requestBody, new Callback() {
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (response.body() != null) {
-                    String responseText = response.body().string();
-                    //Slog.d(TAG, "==========response : "+response.body());
-                    if (isDebug) Slog.d(TAG, "==========response text : " + responseText);
-                    if (responseText != null) {
-                        List<Dynamic> tempList = getDynamicsResponse(responseText, false, handler);
-                        mTempSize = 0;
-                        if (null != tempList && tempList.size() > 0) {
-                            // meetList.clear();
-                            mTempSize = tempList.size();
-                            if (page == 0) {
-                                //load first page,so remove cache data
-                                meetList.clear();
-                                meetList.addAll(tempList);
-                            } else {
-                                meetList.addAll(tempList);
-                            }
-                            Log.d(TAG, "getResponseText list.size:" + tempList.size());
-                            handler.sendEmptyMessage(LOAD_DYNAMICS_DONE);
-                        } else {
-                            handler.sendEmptyMessage(NO_MORE_DYNAMICS);
-                        }
-
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call call, IOException e) {
-            }
-        });
-    }
-
-    private void updateData() {
-
-        String last = SharedPreferencesUtils.getDynamicsLast(getContext());
-        if (isDebug) Slog.d(TAG, "=======last:" + last);
-
-        requestBody = new FormBody.Builder().add("last", last)
-                .add("type", String.valueOf(ParseUtils.ADD_MEET_DYNAMIC_ACTION))
-                .add("step", String.valueOf(PAGE_SIZE))
-                .add("page", String.valueOf(0))
-                .build();
-
-        HttpUtil.sendOkHttpRequest(getContext(), GET_DYNAMICS_UPDATE_URL, requestBody, new Callback() {
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (response.body() != null) {
-                    String responseText = response.body().string();
-                    if (isDebug)
-                        Slog.d(TAG, "==========updateData response text : " + responseText);
-                    if (responseText != null) {
-                        //save last update timemills
-                        List<Dynamic> tempList = getDynamicsResponse(responseText, true, handler);
-                        if (null != tempList && tempList.size() > 0) {
-                            mTempSize = 0;
-                            mTempSize = tempList.size();
-                            meetList.clear();
-                            meetList.addAll(tempList);
-                            Log.d(TAG, "========updateData getResponseText list.size:" + tempList.size());
-                            handler.sendEmptyMessage(HAVE_UPDATE);
-                        } else {
-                            handler.sendEmptyMessage(NO_UPDATE);
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call call, IOException e) {
-            }
-        });
-
-        recyclerView.scrollToPosition(0);
+        requestData(true);
     }
 
     public List<Dynamic> getDynamicsResponse(String responseText, boolean isUpdate, Handler handler) {
@@ -739,7 +654,7 @@ public class MeetDynamicsFragment extends BaseFragment {
             switch (intent.getAction()) {
                 case AddDynamicsActivity.DYNAMICS_ADD_BROADCAST:
                     if (isDebug) Slog.d(TAG, "==========DYNAMICS_ADD_BROADCAST");
-                    updateData();
+                    requestData(false);
                     break;
                 case DYNAMICS_DELETE_BROADCAST:
                     handler.sendEmptyMessage(DYNAMICS_DELETE);
@@ -753,8 +668,6 @@ public class MeetDynamicsFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (isDebug) Slog.d(TAG, "=============onResume");
-        //updateData();
     }
 
     @Override
@@ -768,7 +681,64 @@ public class MeetDynamicsFragment extends BaseFragment {
         }
     }
 
+    /******* added by chunping.xu for load data opt, 2019/12/15 ***********/
+    private void requestData(final boolean isLoadMore) {
+        RequestBody requestBody = null;
+
+        int page = 0;
+        if (isLoadMore) {
+            page = meetList.size() / PAGE_SIZE;
+            requestBody = new FormBody.Builder()
+                    .add("type", String.valueOf(ParseUtils.ADD_MEET_DYNAMIC_ACTION))
+                    .add("step", String.valueOf(PAGE_SIZE))
+                    .add("page", String.valueOf(page))
+                    .build();
+        } else {
+            String last = SharedPreferencesUtils.getDynamicsLast(getContext());
+            if (isDebug) Slog.d(TAG, "requestData last:" + last);
+            requestBody = new FormBody.Builder()
+                    .add("last", last)
+                    .add("type", String.valueOf(ParseUtils.ADD_MEET_DYNAMIC_ACTION))
+                    .add("step", String.valueOf(PAGE_SIZE))
+                    .add("page", String.valueOf(0))
+                    .build();
+        }
+
+        HttpUtil.sendOkHttpRequest(MyApplication.getContext(), GET_DYNAMICS_URL, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response == null || response.body() == null) {
+                    return;
+                }
+                parseResponse(response.body().string(), isLoadMore);
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.e(TAG, "onFailure e:" + e);
+            }
+        });
+    }
+
+    private void parseResponse(String responseText, final boolean isLoadMore) {
+        if (isDebug) Slog.d(TAG, "parseResponse response text : " + responseText);
+        if (null == responseText) {
+            return;
+        }
+        List<Dynamic> tempList = getDynamicsResponse(responseText, isLoadMore ? false : true , handler);
+        if (null == tempList || tempList.size() == 0) {
+            return;
+        }
+        int loadSize = tempList.size();
+        mTempSize = loadSize;
+        if (loadSize > 0) {
+            if (!isLoadMore) {
+                meetList.clear();
+            }
+            meetList.addAll(tempList);
+            handler.sendEmptyMessage(isLoadMore ? LOAD_DYNAMICS_DONE : HAVE_UPDATE);
+        } else {
+            handler.sendEmptyMessage(isLoadMore ? NO_MORE_DYNAMICS : NO_UPDATE);
+        }
+    }
 }
-                                             
-                                             
-                                
