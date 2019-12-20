@@ -393,29 +393,35 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
         mImageSwitcher.setOnTouchListener(this);
 
         navLayout = mArchiveProfile.findViewById(R.id.page_indicator);
-        FlowLayout baseProfile = mArchiveProfile.findViewById(R.id.meet_profile);
+        FlowLayout coreInfo = mArchiveProfile.findViewById(R.id.core_info);
+        FlowLayout eduInfo = mArchiveProfile.findViewById(R.id.education_info);
+        FlowLayout workInfo = mArchiveProfile.findViewById(R.id.work_info);
+        FlowLayout additionalInfo = mArchiveProfile.findViewById(R.id.additional_info);
         LinearLayout interactWrapper = mArchiveProfile.findViewById(R.id.interaction_wrap);
+        LinearLayout myInteractStatistics = mArchiveProfile.findViewById(R.id.my_interact_statistics);
         if (isSelf) {
             interactWrapper.setVisibility(View.GONE);
+            myInteractStatistics.setVisibility(View.VISIBLE);
         }
 
         LinearLayout livingWrap = mArchiveProfile.findViewById(R.id.living_wrap);
         LinearLayout illustrationWrap = mArchiveProfile.findViewById(R.id.illustration_wrap);
-        TextView profileDetail = mArchiveProfile.findViewById(R.id.profile_detail);
+        TextView resumeDetail = mArchiveProfile.findViewById(R.id.resume_detail);
+        TextView navResumeDetail = mArchiveProfile.findViewById(R.id.nav_resume);
 
-        TextView age = baseProfile.findViewById(R.id.age);
-        TextView height = baseProfile.findViewById(R.id.height);
-        TextView constellation = baseProfile.findViewById(R.id.constellation);
-        TextView hometown = baseProfile.findViewById(R.id.hometown);
-        TextView nation = baseProfile.findViewById(R.id.nation);
-        TextView religion = baseProfile.findViewById(R.id.religion);
+        TextView age = coreInfo.findViewById(R.id.age);
+        TextView height = coreInfo.findViewById(R.id.height);
+        TextView constellation = coreInfo.findViewById(R.id.constellation);
+        TextView hometown = additionalInfo.findViewById(R.id.hometown);
+        TextView nation = additionalInfo.findViewById(R.id.nation);
+        TextView religion = additionalInfo.findViewById(R.id.religion);
         TextView living = livingWrap.findViewById(R.id.living);
 
-        TextView degree = baseProfile.findViewById(R.id.degree);
-        TextView major = baseProfile.findViewById(R.id.major);
-        TextView university = baseProfile.findViewById(R.id.university);
-        TextView position = baseProfile.findViewById(R.id.position);
-        TextView industry = baseProfile.findViewById(R.id.industry);
+        TextView degree = eduInfo.findViewById(R.id.degree);
+        TextView major = eduInfo.findViewById(R.id.major);
+        TextView university = eduInfo.findViewById(R.id.university);
+        TextView position = workInfo.findViewById(R.id.position);
+        TextView industry = workInfo.findViewById(R.id.industry);
 
         TextView ageRequirement = mArchiveProfile.findViewById(R.id.age_require);
         TextView heightRequirement = mArchiveProfile.findViewById(R.id.height_require);
@@ -425,6 +431,10 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
 
         TextView illustration = mArchiveProfile.findViewById(R.id.illustration);
         TextView eyeView = mArchiveProfile.findViewById(R.id.visit_record);
+
+        if (mMeetMember.getSituation() == 1){
+            workInfo.setVisibility(View.VISIBLE);
+        }
 
         name.setText(mMeetMember.getName());
 
@@ -492,7 +502,22 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
             eyeView.setText(String.valueOf(mMeetMember.getVisitCount()));
         }
 
-        profileDetail.setOnClickListener(new View.OnClickListener() {
+        resumeDetail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ArchiveFragment archiveFragment = new ArchiveFragment();
+                Bundle bundle = new Bundle();
+                bundle.putInt("uid", uid);
+                archiveFragment.setArguments(bundle);
+                getSupportFragmentManager()    //
+                        .beginTransaction()
+                        .add(R.id.fragment_container, archiveFragment, "Archive")   // 此处的R.id.fragment_container是要盛放fragment的父容器
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
+
+        navResumeDetail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 ArchiveFragment archiveFragment = new ArchiveFragment();
@@ -887,7 +912,6 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
 
         LinearLayout loveCountWrap = mArchiveProfile.findViewById(R.id.love_count_wrap);
         LinearLayout lovedCountWrap = mArchiveProfile.findViewById(R.id.loved_count_wrap);
-        TextView loveDivider = mArchiveProfile.findViewById(R.id.love_divider);
         TextView lovedTitle = mArchiveProfile.findViewById(R.id.loved_count_title);
         lovedCount = mArchiveProfile.findViewById(R.id.loved_count);
         final TextView loveCount = mArchiveProfile.findViewById(R.id.love_count);
@@ -905,25 +929,19 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
             }
         });
 
-        if (authorUid == uid) {//only self can see love statistics
-            loveCountWrap.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("type", LOVE);
-                    bundle.putInt("uid", uid);
-                    bundle.putString("title", "喜欢的 " + loveCount.getText());
-                    CommonUserListDialogFragment commonUserListDialogFragment = new CommonUserListDialogFragment();
-                    commonUserListDialogFragment.setArguments(bundle);
-                    commonUserListDialogFragment.show(getSupportFragmentManager(), "CommonUserListDialogFragment");
-                }
-            });
+        loveCountWrap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putInt("type", LOVE);
+                bundle.putInt("uid", uid);
+                bundle.putString("title", "喜欢的 " + loveCount.getText());
+                CommonUserListDialogFragment commonUserListDialogFragment = new CommonUserListDialogFragment();
+                commonUserListDialogFragment.setArguments(bundle);
+                commonUserListDialogFragment.show(getSupportFragmentManager(), "CommonUserListDialogFragment");
+            }
+        });
 
-        } else {
-            lovedTitle.setText(getResources().getString(R.string.loved));
-            loveDivider.setVisibility(View.GONE);
-            loveCountWrap.setVisibility(View.GONE);
-        }
     }
 
     private void processFollowAction() {

@@ -228,7 +228,7 @@
     <string name="share_to">分享到</string>
     <string name="from">来自</string>
     <string name="loved">被喜欢</string>
-    <string name="archive_details">详细背景  ></string>
+    <string name="archive_details">详细背景</string>
     <string name="praised_dynamic">赞了动态</string>
     <string name="no_new_version">当前已是最新版本</string>
     <string name="checking">正在检查新版本</string>
@@ -242,5 +242,7 @@
     <string name="member">成员</string>
     <string name="follow_action">+关注</string>
     <string name="setting">设置</string>
-    <string name="title_activity_picture_preview">PicturePreviewActivity</string>
+    <string name="title_activity_picture_preview">照片预览</string>
+    <string name="meet_him">遇见他</string>
+    <string name="meet_she">遇见她</string>
 </resources>

@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/archive"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/archive"
     android:orientation="vertical">
+
     <include
-        android:visibility="gone"
         android:id="@+id/custom_actionbar"
         layout="@layout/custom_actionbar_common"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-         <ScrollView
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+
+    <ScrollView
         android:id="@+id/archive_scroll_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -24,14 +24,15 @@
             android:id="@+id/activity_archive_wrapper"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <TextView
                 android:id="@+id/settings"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
-                android:textSize="18sp"
                 android:text="@string/fa_setting"
+                android:textSize="18sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -62,8 +63,8 @@
                 app:layout_constraintEnd_toEndOf="@+id/head_uri"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@+id/head_uri" />
-                
-                <TextView
+
+            <TextView
                 android:id="@+id/name"
                 style="@style/Base.TextAppearance.AppCompat.Title"
                 android:layout_width="wrap_content"
@@ -84,7 +85,7 @@
                 android:layout_marginStart="8dp"
                 android:gravity="center_vertical"
                 android:text="sex"
-                
+
                 app:layout_constraintStart_toEndOf="@+id/name"
                 app:layout_constraintTop_toTopOf="@+id/name" />
 
@@ -94,19 +95,18 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="18dp"
                 android:gravity="center_horizontal"
-
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/name" />
-                
-                <LinearLayout
+
+            <LinearLayout
                 android:id="@+id/education"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:gravity="center"
-                android:visibility="gone"
                 android:orientation="horizontal"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/summary">
@@ -115,37 +115,33 @@
                     android:id="@+id/degree"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="5dp"
-                     />
-                    
-                    <TextView
+                    android:paddingBottom="5dp" />
+
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="·"
-                     />
+                    android:text="·" />
 
                 <TextView
                     android:id="@+id/university"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="5dp"
-                     />
+                    android:paddingBottom="5dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="·"
-                     />
+                    android:text="·" />
 
                 <TextView
                     android:id="@+id/major"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="5dp"
-                     />
-                
+                    android:paddingBottom="5dp" />
+
 
             </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/work"
                 android:layout_width="match_parent"
@@ -156,28 +152,25 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/education">
-                
+
                 <TextView
                     android:id="@+id/position"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="5dp"
-                     />
+                    android:paddingBottom="5dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="·"
-                     />
-                    
-                    <TextView
+                    android:text="·" />
+
+                <TextView
                     android:id="@+id/industry"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="5dp"
-                     />
+                    android:paddingBottom="5dp" />
             </LinearLayout>
-            
+
             <LinearLayout
                 android:id="@+id/living_wrap"
                 android:layout_width="match_parent"
@@ -192,178 +185,189 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/location"
-                     />
-                    
-                    <TextView
+                    android:text="@string/location" />
+
+                <TextView
                     android:id="@+id/living"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dp"
-                     />
+                    android:layout_marginLeft="8dp" />
 
                 <TextView
                     android:id="@+id/hometown"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dp"
-                     />
+                    android:layout_marginLeft="8dp" />
             </LinearLayout>
-            
+
             <LinearLayout
                 android:id="@+id/interaction_wrap"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                
+
                 android:paddingTop="18dp"
                 android:paddingBottom="10dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/living_wrap">
+
                 <Button
                     android:id="@+id/contacts"
                     android:layout_width="0dp"
                     android:layout_height="40dp"
                     android:layout_marginLeft="20dp"
-                    android:layout_marginRight="20dp"
                     android:layout_marginTop="8dp"
+                    android:layout_marginRight="20dp"
                     android:layout_marginBottom="8dp"
                     android:layout_weight="5"
                     android:background="@drawable/btn_stress"
                     android:elevation="5dp"
                     android:text="+朋友"
                     android:textColor="@color/white" />
-                 <Button
+
+                <Button
                     android:id="@+id/follow"
                     android:layout_width="0dp"
                     android:layout_height="40dp"
                     android:layout_marginLeft="20dp"
-                    android:layout_marginRight="20dp"
                     android:layout_marginTop="8dp"
+                    android:layout_marginRight="20dp"
                     android:layout_marginBottom="8dp"
                     android:layout_weight="5"
                     android:background="@drawable/btn_default"
                     android:elevation="5dp"
                     android:text="+关注"
                     android:textColor="@color/color_blue" />
-                    
-                    <Button
+
+                <Button
                     android:id="@+id/chat"
-                    android:visibility="gone"
                     android:layout_width="0dp"
                     android:layout_height="40dp"
-                    android:layout_marginTop="8dp"
                     android:layout_marginLeft="20dp"
+                    android:layout_marginTop="8dp"
                     android:layout_marginRight="20dp"
                     android:layout_marginBottom="8dp"
                     android:layout_weight="5"
                     android:background="@drawable/btn_primary"
                     android:elevation="5dp"
                     android:text="聊天"
-                    android:textColor="@color/colorWhite" />
+                    android:textColor="@color/colorWhite"
+                    android:visibility="gone" />
             </LinearLayout>
-         <LinearLayout
-          android:id="@+id/dynamics_count_wrapper"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginStart="16dp"
-          android:gravity="center"
-          android:orientation="horizontal"
-          android:padding="8dp"
-          app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toBottomOf="@+id/interaction_wrap">
-       <TextView
-            android:id="@+id/dynamics_count"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="2dp"
-            android:text="0" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="动态" />
-      </LinearLayout>
-            
             <LinearLayout
-            android:id="@+id/followed_count_wrap"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="1dp"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:padding="8dp"
-            app:layout_constraintStart_toEndOf="@+id/dynamics_count_wrapper"
-            app:layout_constraintTop_toTopOf="@+id/dynamics_count_wrapper">
-          <TextView
-              android:id="@+id/followed_count"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_marginBottom="2dp"
-              android:text="0" />
-                
-                <TextView
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:text="关注" />
-        </LinearLayout>
-      <LinearLayout
-            android:id="@+id/praised_count_wrap"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="1dp"
-                    android:gravity="center"
-            android:orientation="horizontal"
-            android:padding="8dp"
-            app:layout_constraintStart_toEndOf="@+id/followed_count_wrap"
-            app:layout_constraintTop_toTopOf="@+id/followed_count_wrap">
-          <TextView
-              android:id="@+id/praised_count"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_marginBottom="2dp"
-              android:text="0" />
-          
-           <TextView
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:text="赞" />
-        </LinearLayout>
-      <LinearLayout
-            android:id="@+id/meet_archive"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-                    android:gravity="center"
-            android:orientation="vertical"
-            android:padding="8dp"
-            android:visibility="invisible"
-            app:layout_constraintStart_toEndOf="@+id/praised_count_wrap"
-            app:layout_constraintTop_toTopOf="@+id/praised_count_wrap">
-          <TextView
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_marginBottom="2dp"
-              android:text="@string/fa_heart"
-              android:textColor="@color/color_red" />
+                android:id="@+id/dynamics_count_wrapper"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="8dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/interaction_wrap">
 
-          <TextView
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:text="征友" />
-        </LinearLayout>
-            
+                <TextView
+                    android:id="@+id/dynamics_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="2dp"
+                    android:textColor="@color/blue_dark"
+                    android:text="0" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="动态" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/followed_count_wrap"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="1dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="8dp"
+                app:layout_constraintStart_toEndOf="@+id/dynamics_count_wrapper"
+                app:layout_constraintTop_toTopOf="@+id/dynamics_count_wrapper">
+
+                <TextView
+                    android:id="@+id/followed_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="2dp"
+                    android:textColor="@color/blue_dark"
+                    android:text="0" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="关注" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/praised_count_wrap"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="1dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="8dp"
+                app:layout_constraintStart_toEndOf="@+id/followed_count_wrap"
+                app:layout_constraintTop_toTopOf="@+id/followed_count_wrap">
+
+                <TextView
+                    android:id="@+id/praised_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="2dp"
+                    android:textColor="@color/blue_dark"
+                    android:text="0" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="赞" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/meet_archive"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="8dp"
+                android:visibility="visible"
+                app:layout_constraintStart_toEndOf="@+id/praised_count_wrap"
+                app:layout_constraintTop_toTopOf="@+id/praised_count_wrap">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="2dp"
+                    android:text="@string/fa_heart"
+                    android:textColor="@color/color_red" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="征友" />
+            </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/introduction_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="3dp"
+                android:layout_marginTop="8dp"
                 android:background="@color/white"
                 android:orientation="horizontal"
                 android:padding="18dp"
                 app:layout_constraintEnd_toEndOf="@+id/add_introduction"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/dynamics_count_wrapper">
-                 <TextView
+
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/info" />
@@ -374,6 +378,7 @@
                     android:layout_marginLeft="8dp"
                     android:text="@string/introduction" />
             </LinearLayout>
+
             <TextView
                 android:id="@+id/add_introduction"
                 android:layout_width="wrap_content"
@@ -386,9 +391,9 @@
                 app:layout_constraintBottom_toBottomOf="@+id/introduction_title"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/introduction_title" />
-                
-                
-                <TextView
+
+
+            <TextView
                 android:id="@+id/introduction"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -398,8 +403,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/introduction_title" />
-                
-                <LinearLayout
+
+            <LinearLayout
                 android:id="@+id/introduction_edit_wrapper"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -409,7 +414,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/introduction">
-                 <android.support.design.widget.TextInputEditText
+
+                <android.support.design.widget.TextInputEditText
                     android:id="@+id/introduction_edit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -429,7 +435,7 @@
                     android:background="@drawable/btn_primary"
                     android:padding="5dp"
                     android:text="@string/save"
-                android:textColor="@color/colorWhite" />
+                    android:textColor="@color/colorWhite" />
             </LinearLayout>
 
             <LinearLayout
@@ -443,7 +449,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/introduction_edit_wrapper">
-                
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -455,7 +461,7 @@
                     android:layout_marginLeft="8dp"
                     android:text="@string/education_background" />
             </LinearLayout>
-            
+
             <TextView
                 android:id="@+id/add_education"
                 android:layout_width="wrap_content"
@@ -470,21 +476,21 @@
                 app:layout_constraintBottom_toBottomOf="@+id/education_background_wrap"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/education_background_wrap" />
-                
-                <LinearLayout
+
+            <LinearLayout
                 android:id="@+id/education_background_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
                 android:orientation="vertical"
-                android:paddingTop="10dp"
                 android:paddingLeft="18dp"
+                android:paddingTop="10dp"
                 android:paddingRight="18dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/education_background_wrap"></LinearLayout>
-                
-                <!-- for work experience-->
+
+            <!-- for work experience-->
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/work_experience_wrapper"
                 android:layout_width="match_parent"
@@ -492,7 +498,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/education_background_list">
-                
+
                 <LinearLayout
                     android:id="@+id/work_experience_wrap"
                     android:layout_width="match_parent"
@@ -504,7 +510,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
-                    
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -516,7 +522,7 @@
                         android:layout_marginLeft="8dp"
                         android:text="@string/work_experience" />
                 </LinearLayout>
-                
+
                 <TextView
                     android:id="@+id/add_work"
                     android:layout_width="wrap_content"
@@ -530,31 +536,31 @@
                     app:layout_constraintBottom_toBottomOf="@+id/work_experience_wrap"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/work_experience_wrap" />
-                    
-                    <LinearLayout
+
+                <LinearLayout
                     android:id="@+id/work_experience_list"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/white"
                     android:orientation="vertical"
-                    android:paddingTop="10dp"
                     android:paddingLeft="18dp"
+                    android:paddingTop="10dp"
                     android:paddingRight="18dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/work_experience_wrap"></LinearLayout>
             </android.support.constraint.ConstraintLayout>
-            
+
             <!-- for prize-->
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/prize_wrapper"
-                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/work_experience_wrapper">
-                
+
                 <LinearLayout
                     android:id="@+id/prize_icon_wrapper"
                     android:layout_width="match_parent"
@@ -571,8 +577,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/fa_prize" />
-                        
-                        <TextView
+
+                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="8dp"
@@ -599,24 +605,24 @@
                     android:layout_height="wrap_content"
                     android:background="@color/white"
                     android:orientation="vertical"
-                    android:paddingTop="10dp"
                     android:paddingLeft="18dp"
+                    android:paddingTop="10dp"
                     android:paddingRight="18dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/prize_icon_wrapper"></LinearLayout>
             </android.support.constraint.ConstraintLayout>
-            
+
             <!-- for paper-->
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/paper_wrapper"
-                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/prize_wrapper">
-                
+
                 <LinearLayout
                     android:id="@+id/paper_icon_wrapper"
                     android:layout_width="match_parent"
@@ -628,7 +634,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
-                    
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -640,7 +646,7 @@
                         android:layout_marginLeft="8dp"
                         android:text="@string/paper" />
                 </LinearLayout>
-                
+
                 <TextView
                     android:id="@+id/add_new_paper"
                     android:layout_width="wrap_content"
@@ -654,31 +660,31 @@
                     app:layout_constraintBottom_toBottomOf="@+id/paper_icon_wrapper"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/paper_icon_wrapper" />
-                    
-                    <LinearLayout
+
+                <LinearLayout
                     android:id="@+id/paper_list"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/white"
                     android:orientation="vertical"
-                    android:paddingTop="10dp"
                     android:paddingLeft="18dp"
+                    android:paddingTop="10dp"
                     android:paddingRight="18dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/paper_icon_wrapper"></LinearLayout>
             </android.support.constraint.ConstraintLayout>
-            
-             <!-- for blog-->
+
+            <!-- for blog-->
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/blog_wrapper"
-                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/paper_wrapper">
-                
+
                 <LinearLayout
                     android:id="@+id/blog_icon_wrapper"
                     android:layout_width="match_parent"
@@ -690,7 +696,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
-                    
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -702,7 +708,7 @@
                         android:layout_marginLeft="8dp"
                         android:text="@string/blog" />
                 </LinearLayout>
-                
+
                 <TextView
                     android:id="@+id/add_new_blog"
                     android:layout_width="wrap_content"
@@ -716,31 +722,31 @@
                     app:layout_constraintBottom_toBottomOf="@+id/blog_icon_wrapper"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/blog_icon_wrapper" />
-                    
-                    <LinearLayout
+
+                <LinearLayout
                     android:id="@+id/blog_list"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/white"
                     android:orientation="vertical"
-                    android:paddingTop="10dp"
                     android:paddingLeft="18dp"
+                    android:paddingTop="10dp"
                     android:paddingRight="18dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/blog_icon_wrapper"></LinearLayout>
             </android.support.constraint.ConstraintLayout>
-            
-             <!-- for volunteer-->
+
+            <!-- for volunteer-->
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/volunteer_wrapper"
-                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/blog_wrapper">
-                
+
                 <LinearLayout
                     android:id="@+id/volunteer_icon_wrapper"
                     android:layout_width="match_parent"
@@ -757,8 +763,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/fa_heart_o" />
-                        
-                        <TextView
+
+                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="8dp"
@@ -785,14 +791,14 @@
                     android:layout_height="wrap_content"
                     android:background="@color/white"
                     android:orientation="vertical"
-                    android:paddingTop="10dp"
                     android:paddingLeft="18dp"
+                    android:paddingTop="10dp"
                     android:paddingRight="18dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/volunteer_icon_wrapper"></LinearLayout>
             </android.support.constraint.ConstraintLayout>
-            
+
             <LinearLayout
                 android:id="@+id/experience_wrap"
                 android:layout_width="match_parent"
@@ -805,8 +811,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/volunteer_wrapper">
-                
-                 <TextView
+
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/fa_more_experience" />
@@ -817,7 +823,7 @@
                     android:layout_marginLeft="8dp"
                     android:text="@string/more_experience" />
             </LinearLayout>
-            
+
             <TextView
                 android:id="@+id/experience_extend"
                 android:layout_width="wrap_content"
@@ -830,8 +836,8 @@
                 app:layout_constraintBottom_toBottomOf="@+id/experience_wrap"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/experience_wrap" />
-                
-                <LinearLayout
+
+            <LinearLayout
                 android:id="@+id/experience_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -842,8 +848,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/experience_wrap">
-                
-                 <RelativeLayout
+
+                <RelativeLayout
                     android:id="@+id/prize_add_wrapper"
                     android:layout_width="match_parent"
                     android:layout_height="65dp"
@@ -855,10 +861,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/fa_prize"
-                        android:textSize="20sp"
-                        android:textColor="@color/colorWhite" />
-                        
-                         <TextView
+                        android:textColor="@color/colorWhite"
+                        android:textSize="20sp" />
+
+                    <TextView
                         android:id="@+id/prize_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -866,10 +872,10 @@
                         android:layout_marginLeft="8dp"
                         android:layout_toRightOf="@+id/prize_icon"
                         android:text="@string/prize"
-                        android:textSize="20sp"
-                        android:textColor="@color/colorWhite" />
-                        
-                         <TextView
+                        android:textColor="@color/colorWhite"
+                        android:textSize="20sp" />
+
+                    <TextView
                         android:id="@+id/add_prize"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -879,20 +885,20 @@
                         android:textColor="@color/colorWhite"
                         android:textSize="26sp"
                         android:textStyle="bold" />
-                        
-                        <View
+
+                    <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:layout_alignParentBottom="true"
                         android:background="@color/colorWhite" />
 
                 </RelativeLayout>
-                
-                 <RelativeLayout
+
+                <RelativeLayout
                     android:id="@+id/paper_add_wrapper"
                     android:layout_width="match_parent"
-                    android:layout_marginTop="1dp"
                     android:layout_height="65dp"
+                    android:layout_marginTop="1dp"
                     android:orientation="horizontal"
                     android:padding="10dp">
 
@@ -900,18 +906,18 @@
                         android:id="@+id/paper_icon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="20sp"
                         android:text="@string/fa_paper"
-                        android:textColor="@color/colorWhite" />
-                        
-                        <TextView
+                        android:textColor="@color/colorWhite"
+                        android:textSize="20sp" />
+
+                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="8dp"
-                        android:textSize="20sp"
                         android:layout_toRightOf="@+id/paper_icon"
                         android:text="@string/paper"
-                        android:textColor="@color/colorWhite" />
+                        android:textColor="@color/colorWhite"
+                        android:textSize="20sp" />
 
                     <TextView
                         android:id="@+id/add_paper"
@@ -922,8 +928,8 @@
                         android:textColor="@color/colorWhite"
                         android:textSize="26sp"
                         android:textStyle="bold" />
-                        
-                        <View
+
+                    <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:layout_alignParentBottom="true"
@@ -937,25 +943,25 @@
                     android:layout_marginTop="1dp"
                     android:orientation="horizontal"
                     android:padding="10dp">
-                    
+
                     <TextView
                         android:id="@+id/blog_icon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="20sp"
                         android:text="@string/fa_blog"
-                        android:textColor="@color/colorWhite" />
+                        android:textColor="@color/colorWhite"
+                        android:textSize="20sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="20sp"
                         android:layout_marginLeft="8dp"
                         android:layout_toRightOf="@+id/blog_icon"
                         android:text="@string/blog"
-                        android:textColor="@color/colorWhite" />
-                        
-                         <TextView
+                        android:textColor="@color/colorWhite"
+                        android:textSize="20sp" />
+
+                    <TextView
                         android:id="@+id/add_blog"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -972,7 +978,7 @@
                         android:background="@color/colorWhite" />
 
                 </RelativeLayout>
-                
+
                 <RelativeLayout
                     android:id="@+id/volunteer_add_wrapper"
                     android:layout_width="match_parent"
@@ -985,18 +991,18 @@
                         android:id="@+id/volunteer_icon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="20sp"
                         android:text="@string/fa_heart"
-                        android:textColor="@color/colorWhite" />
-                        
-                        <TextView
+                        android:textColor="@color/colorWhite"
+                        android:textSize="20sp" />
+
+                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="8dp"
-                        android:textSize="20sp"
                         android:layout_toRightOf="@+id/volunteer_icon"
                         android:text="@string/volunteer"
-                        android:textColor="@color/colorWhite" />
+                        android:textColor="@color/colorWhite"
+                        android:textSize="20sp" />
 
                     <TextView
                         android:id="@+id/add_volunteer"
@@ -1007,8 +1013,8 @@
                         android:textColor="@color/colorWhite"
                         android:textSize="26sp"
                         android:textStyle="bold" />
-                        
-                        </RelativeLayout>
+
+                </RelativeLayout>
             </LinearLayout>
         </android.support.constraint.ConstraintLayout>
     </ScrollView>
