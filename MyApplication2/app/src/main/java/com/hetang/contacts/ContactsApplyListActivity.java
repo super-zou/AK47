@@ -6,18 +6,17 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 import android.widget.TextView;
 
 import com.hetang.common.BaseAppCompatActivity;
+import com.hetang.main.MeetArchiveFragment;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.UserProfile;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.hetang.R;
 import com.hetang.adapter.ContactsListAdapter;
-import com.hetang.meet.MeetArchiveActivity;
 import com.hetang.util.FontManager;
 import com.hetang.util.Slog;
 
@@ -42,7 +41,7 @@ import static com.hetang.main.ContactsFragment.CONTACTS_NEW_APPLY;
 public class ContactsApplyListActivity extends BaseAppCompatActivity {
 
     private static final String TAG = "ContactsApplyListActivity";
-    MeetArchiveActivity.ImpressionStatistics impressionStatistics = null;
+    MeetArchiveFragment.ImpressionStatistics impressionStatistics = null;
     private Context mContext;
     private MyHandler myHandler;
     public static final int GET_CONTACTS_DONE = 0;

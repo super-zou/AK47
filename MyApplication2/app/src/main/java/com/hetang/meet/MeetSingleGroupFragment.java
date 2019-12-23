@@ -28,7 +28,7 @@ import com.hetang.util.CreateSubGroupDialogFragment;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.MyLinearLayoutManager;
 import com.hetang.util.ParseUtils;
-import com.hetang.util.SetAvatarActivity;
+import com.hetang.common.SetAvatarActivity;
 import com.hetang.util.SharedPreferencesUtils;
 import com.hetang.util.Slog;
 import com.hetang.util.UserProfile;
@@ -53,7 +53,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
-import static com.hetang.main.ArchiveFragment.SET_AVATAR_RESULT_OK;
+import static com.hetang.archive.ArchiveFragment.SET_AVATAR_RESULT_OK;
 import static com.hetang.meet.SingleGroupDetailsActivity.GET_SINGLE_GROUP_BY_GID;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 

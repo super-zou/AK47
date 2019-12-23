@@ -2,9 +2,6 @@ package com.hetang.util;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -12,7 +9,7 @@ import com.hetang.archive.ArchiveActivity;
 import com.hetang.common.Dynamic;
 import com.hetang.common.DynamicsInteractDetailsActivity;
 import com.hetang.common.MyApplication;
-import com.hetang.meet.MeetArchiveActivity;
+import com.hetang.main.MeetArchiveActivity;
 import com.hetang.meet.UserMeetInfo;
 import com.hetang.meet.MeetReferenceInfo;
 import com.hetang.update.UpdateCheckResult;
@@ -25,8 +22,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
@@ -34,7 +29,6 @@ import okhttp3.Response;
 import static com.hetang.common.DynamicsInteractDetailsActivity.DYNAMIC_COMMENT;
 import static com.hetang.common.DynamicsInteractDetailsActivity.MEET_RECOMMEND_COMMENT;
 import static com.hetang.meet.MeetRecommendFragment.student;
-import static com.hetang.util.HttpUtil.GET_USERINFO_WITH_ACCOUNT;
 
 /*added by xuchunping 2018.8.2 for Json data parse*/
 public class ParseUtils {
@@ -57,6 +51,7 @@ public class ParseUtils {
     public static final int TYPE_CHEERING_GROUP = 4;
     public static final int TYPE_SINGLE_GROUP = 5;
     public static final int TYPE_COMMON_SEARCH = 6;
+
     //for dynamic value
     public static final int ADD_MEET_DYNAMIC_ACTION = 0;
     public static final int ADD_INNER_DYNAMIC_ACTION = 1;
@@ -386,7 +381,7 @@ public class ParseUtils {
     public static void startArchiveActivity(final Context context, final int uid){
         Intent intent = new Intent(context, ArchiveActivity.class);
         intent.putExtra("uid", uid);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+        //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
         context.startActivity(intent);
     }
 
@@ -433,7 +428,7 @@ public class ParseUtils {
         userProfile.setLiving(userObject.optString("living"));
         userProfile.setHometown(userObject.optString("hometown"));
          
-         userProfile.setMajor(userObject.optString("major"));
+        userProfile.setMajor(userObject.optString("major"));
         userProfile.setDegree(userObject.optString("degree"));
         userProfile.setUniversity(userObject.optString("university"));
         userProfile.setPosition(userObject.optString("position"));

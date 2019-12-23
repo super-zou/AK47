@@ -13,7 +13,7 @@ import android.widget.TextView;
 import com.android.volley.RequestQueue;
 import com.bumptech.glide.Glide;
 import com.hetang.R;
-import com.hetang.meet.MeetArchiveActivity;
+import com.hetang.main.MeetArchiveFragment;
 import com.hetang.meet.UserMeetInfo;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
@@ -27,7 +27,7 @@ public class MeetImpressionStatisticsAdapter extends RecyclerView.Adapter<MeetIm
     private static Context mContext;
     RequestQueue queue;
     private MyItemClickListener mItemClickListener;
-    private List<MeetArchiveActivity.ImpressionStatistics> mImpressionStatisticsList;
+    private List<MeetArchiveFragment.ImpressionStatistics> mImpressionStatisticsList;
     //private ApprovedUsersDialogFragment approvedUsersDialogFragment;
     private android.support.v4.app.FragmentManager mFragmentManager;
 
@@ -37,7 +37,7 @@ public class MeetImpressionStatisticsAdapter extends RecyclerView.Adapter<MeetIm
         mFragmentManager = fragmentManager;
     }
 
-    public void setImpressionList(List<MeetArchiveActivity.ImpressionStatistics> impressionStatisticsList) {
+    public void setImpressionList(List<MeetArchiveFragment.ImpressionStatistics> impressionStatisticsList) {
         mImpressionStatisticsList = impressionStatisticsList;
     }
 
@@ -51,7 +51,7 @@ public class MeetImpressionStatisticsAdapter extends RecyclerView.Adapter<MeetIm
 
     @Override
     public void onBindViewHolder(@NonNull MeetImpressionStatisticsAdapter.ViewHolder holder, int position) {
-        final MeetArchiveActivity.ImpressionStatistics impressionStatistics = mImpressionStatisticsList.get(position);
+        final MeetArchiveFragment.ImpressionStatistics impressionStatistics = mImpressionStatisticsList.get(position);
         if(impressionStatistics.impression != null && impressionStatistics.impression.length() > 0){
             String impression;
             if(impressionStatistics.impression.length() < 12){

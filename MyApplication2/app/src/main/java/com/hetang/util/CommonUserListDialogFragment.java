@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -40,10 +41,14 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static com.hetang.archive.ArchiveFragment.REQUESTCODE;
+import static com.hetang.main.MeetArchiveFragment.RESULT_OK;
+
 public class CommonUserListDialogFragment extends DialogFragment {
     private static final String TAG = "CommonUserListDialogFragment";
     private static final int LOAD_USERS_DONE = 0;
-    private static final int HIDE_APPROVE = 1;
+    private static final int APPROVED = 1;
+    private static final int APPROVE_DONE = 2;
     private static final int PERSONALITY = 0;
     private static final int FOLLOWED = 1;
     private static final int FOLLOWING = 2;
@@ -66,10 +71,12 @@ public class CommonUserListDialogFragment extends DialogFragment {
     private LayoutInflater inflater;
     private Handler handler;
     private PersonalityApprovedAdapter personalityApprovedAdapter;
-    private CommonDialogFragmentInterface commonDialogFragmentInterface;
     private ProgressDialog progressDialog;
     private boolean writeDone = false;
     private int type;
+    int count = 0;
+    TextView titleText;
+    String personalityName = "";
     ImageView progressImageView;
     AnimationDrawable animationDrawable;
 
@@ -81,11 +88,6 @@ public class CommonUserListDialogFragment extends DialogFragment {
         super.onAttach(context);
         mContext = context;
         handler = new CommonUserListDialogFragment.MyHandler(CommonUserListDialogFragment.this);
-        try {
-            commonDialogFragmentInterface = (CommonDialogFragmentInterface) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() + "must implement commonDialogFragmentInterface");
-        }
     }
 
 
@@ -99,7 +101,7 @@ public class CommonUserListDialogFragment extends DialogFragment {
 
         initView();
 
-        TextView titleText = view.findViewById(R.id.title_text);
+        titleText = view.findViewById(R.id.title_text);
 
         handler = new CommonUserListDialogFragment.MyHandler(CommonUserListDialogFragment.this);
         type = bundle.getInt("type", 0);
@@ -107,13 +109,12 @@ public class CommonUserListDialogFragment extends DialogFragment {
         switch (type) {
             case PERSONALITY:
                 int pid = -1;
-                String personality = "";
-
                 if (bundle != null) {
-                    personality = bundle.getString("personality");
+                    personalityName = bundle.getString("personality");
                     pid = bundle.getInt("pid");
+                    count = bundle.getInt("count");
                 }
-                titleText.setText(personality);
+                titleText.setText(personalityName + " · " + count);
                 setApprovedUserView(pid);
                 break;
             case FOLLOWED:
@@ -233,7 +234,9 @@ public class CommonUserListDialogFragment extends DialogFragment {
                                 boolean status = new JSONObject(responseText).optBoolean("status");
                                 if (status == true) {
                                     writeDone = true;
-                                    mDialog.dismiss();
+                                    handler.sendEmptyMessage(APPROVE_DONE);
+                                    //mDialog.dismiss();
+                                    closeProgressDialog();
                                 } else {
                                     Toast.makeText(mContext, "提交失败，请稍后尝试！", Toast.LENGTH_LONG).show();
                                 }
@@ -315,15 +318,17 @@ public class CommonUserListDialogFragment extends DialogFragment {
                                 if (type == PERSONALITY) {
                                     if (guestUid == member.optInt("uid")) {
                                         //approve.setVisibility(View.INVISIBLE);
-                                        handler.sendEmptyMessage(HIDE_APPROVE);
+                                        handler.sendEmptyMessage(APPROVED);
                                     }
                                 }
 
                                 userProfile = ParseUtils.getUserProfileFromJSONObject(member);
                                 memberInfoList.add(userProfile);
                             }
-                            handler.sendEmptyMessage(LOAD_USERS_DONE);
                         }
+
+                        handler.sendEmptyMessage(LOAD_USERS_DONE);
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -339,13 +344,31 @@ public class CommonUserListDialogFragment extends DialogFragment {
     public void handleMessage(Message message) {
         switch (message.what) {
             case LOAD_USERS_DONE:
-                personalityApprovedAdapter.setData(memberInfoList);
-                personalityApprovedAdapter.notifyDataSetChanged();
-                animationDrawable.stop();
-                progressImageView.setVisibility(View.GONE);
+                if (memberInfoList.size() > 0){
+                    personalityApprovedAdapter.setData(memberInfoList);
+                    personalityApprovedAdapter.notifyDataSetChanged();
+                }
+                stopLoadProgress();
                 break;
-            case HIDE_APPROVE:
-                approve.setVisibility(View.INVISIBLE);
+            case APPROVED:
+                approve.setVisibility(View.VISIBLE);
+                approve.setText(getResources().getString(R.string.feature_approvied));
+                approve.setBackgroundColor(mContext.getResources().getColor(R.color.color_blue));
+                approve.setTextColor(mContext.getResources().getColor(R.color.white));
+                approve.setClickable(false);
+                approve.setEnabled(false);
+                break;
+            case APPROVE_DONE:
+                stopLoadProgress();
+                approve.setVisibility(View.VISIBLE);
+                approve.setText(getResources().getString(R.string.feature_approvied));
+                approve.setBackgroundColor(mContext.getResources().getColor(R.color.color_blue));
+                approve.setTextColor(mContext.getResources().getColor(R.color.white));
+                approve.setClickable(false);
+                approve.setEnabled(false);
+                count += 1;
+                titleText.setText(personalityName + " · " + count);
+
             default:
                 break;
         }
@@ -354,9 +377,12 @@ public class CommonUserListDialogFragment extends DialogFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (commonDialogFragmentInterface != null) {//callback from ArchivesActivity class
+        if (getTargetFragment() != null) {
             if (type == PERSONALITY){
-                commonDialogFragmentInterface.onBackFromDialog(ParseUtils.TYPE_PERSONALITY,0, writeDone);
+                Intent intent = new Intent();
+                intent.putExtra("type", ParseUtils.TYPE_PERSONALITY);
+                intent.putExtra("status", writeDone);
+                getTargetFragment().onActivityResult(REQUESTCODE, RESULT_OK, intent);
             }
         }
 
@@ -380,6 +406,13 @@ public class CommonUserListDialogFragment extends DialogFragment {
     private void closeProgressDialog() {
         if (progressDialog != null) {
             progressDialog.dismiss();
+        }
+    }
+
+    private void stopLoadProgress(){
+        if (progressImageView.getVisibility() == View.VISIBLE){
+            animationDrawable.stop();
+            progressImageView.setVisibility(View.GONE);
         }
     }
 

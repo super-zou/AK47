@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -27,6 +28,7 @@ import com.hetang.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.IOException;
 
 import okhttp3.Call;
@@ -34,6 +36,9 @@ import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+
+import static com.hetang.archive.ArchiveFragment.REQUESTCODE;
+import static com.hetang.main.MeetArchiveFragment.RESULT_OK;
 
 public class ReferenceWriteDialogFragment extends DialogFragment {
     private static final String TAG = "ReferenceWriteDialogFragment";
@@ -48,12 +53,11 @@ public class ReferenceWriteDialogFragment extends DialogFragment {
     private static final int RESPONSE_FAILED = 0;
     private static final int RESPONSE_SUCCESS = 1;
     TextView save;
-    private CommonDialogFragmentInterface commonDialogFragmentInterface;
     private ProgressDialog progressDialog;
     private boolean writeDone = false;
     private static int TYPE_REFERENCE = 1;
-    
-        @Override
+
+    @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         mContext = context;
@@ -72,16 +76,10 @@ public class ReferenceWriteDialogFragment extends DialogFragment {
                 super.handleMessage(msg);
             }
         };
-        
-        try {
-            //evaluateDialogFragmentListener = (EvaluateDialogFragmentListener) context;
-            commonDialogFragmentInterface = (CommonDialogFragmentInterface) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() + "must implement commonDialogFragmentInterface");
-        }
+
     }
-    
-        @Override
+
+    @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         int uid = -1;
@@ -91,7 +89,7 @@ public class ReferenceWriteDialogFragment extends DialogFragment {
             uid = bundle.getInt("uid");
             name = bundle.getString("name");
         }
-        
+
         inflater = LayoutInflater.from(mContext);
         mDialog = new Dialog(mContext, android.R.style.Theme_Light_NoTitleBar);
         mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -110,21 +108,21 @@ public class ReferenceWriteDialogFragment extends DialogFragment {
         window.setAttributes(layoutParams);
 
         TextView title = view.findViewById(R.id.write_reference_title);
-        title.setText("给"+name+"写推荐信");
+        title.setText("给" + name + "写推荐信");
 
         initView(uid);
         return mDialog;
     }
-    
-        private void initView(final int uid) {
+
+    private void initView(final int uid) {
 
         editText = view.findViewById(R.id.reference_edit_text);
         save = view.findViewById(R.id.save);
         TextView cancel = view.findViewById(R.id.cancel);
 
         getRelationShipSelection();
-        
-                editText.addTextChangedListener(new TextWatcher() {
+
+        editText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                 //editText.setBackground(mContext.getDrawable(R.drawable.label_btn_shape));
@@ -133,8 +131,8 @@ public class ReferenceWriteDialogFragment extends DialogFragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
             }
-            
-                        @Override
+
+            @Override
             public void afterTextChanged(Editable s) {
                 if (s.length() == 0 && editText.getText().length() == 0) {
                     if (save.isEnabled()) {
@@ -149,33 +147,33 @@ public class ReferenceWriteDialogFragment extends DialogFragment {
                 }
             }
         });
-        
+
         editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if(TextUtils.isEmpty(relation)){
+                if (TextUtils.isEmpty(relation)) {
                     Toast.makeText(mContext, "请选择你们的关系", Toast.LENGTH_LONG).show();
-                }else {
+                } else {
                     uploadToServer(editText.getText().toString(), uid, relation);
                     save.setEnabled(false);
                 }
                 return true;
             }
         });
-        
+
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!TextUtils.isEmpty(editText.getText())){
-                    if(TextUtils.isEmpty(relation)){
+                if (!TextUtils.isEmpty(editText.getText())) {
+                    if (TextUtils.isEmpty(relation)) {
                         Toast.makeText(mContext, "请选择你们的关系", Toast.LENGTH_LONG).show();
-                    }else {
+                    } else {
                         uploadToServer(editText.getText().toString(), uid, relation);
                     }
                 }
             }
         });
-        
+
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -183,8 +181,8 @@ public class ReferenceWriteDialogFragment extends DialogFragment {
             }
         });
     }
-    
-    private void getRelationShipSelection(){
+
+    private void getRelationShipSelection() {
         final MyRadioGroup relationGroupOne = view.findViewById(R.id.relation_radiogroup);
 
         relationGroupOne.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -195,8 +193,8 @@ public class ReferenceWriteDialogFragment extends DialogFragment {
             }
         });
     }
-    
-        private void uploadToServer(String input, int uid, String relation) {
+
+    private void uploadToServer(String input, int uid, String relation) {
         showProgress(mContext);
         RequestBody requestBody = new FormBody.Builder()
                 .add("uid", String.valueOf(uid))
@@ -207,7 +205,7 @@ public class ReferenceWriteDialogFragment extends DialogFragment {
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
                 Slog.d(TAG, "================uploadToServer response:" + responseText);
-                
+
                 try {
                     JSONObject statusObj = new JSONObject(responseText);
                     if (statusObj.optInt("response") != 1) {
@@ -222,7 +220,8 @@ public class ReferenceWriteDialogFragment extends DialogFragment {
                     e.printStackTrace();
                 }
             }
-             @Override
+
+            @Override
             public void onFailure(Call call, IOException e) {
 
             }
@@ -233,8 +232,12 @@ public class ReferenceWriteDialogFragment extends DialogFragment {
     public void onDestroy() {
         super.onDestroy();
         //KeyboardUtils.hideSoftInput(getContext());
-         if (commonDialogFragmentInterface != null) {//callback from ArchivesActivity class
-            commonDialogFragmentInterface.onBackFromDialog(ParseUtils.TYPE_REFERENCE,0, writeDone);
+
+        if (getTargetFragment() != null) {
+            Intent intent = new Intent();
+            intent.putExtra("type", ParseUtils.TYPE_REFERENCE);
+            intent.putExtra("status", writeDone);
+            getTargetFragment().onActivityResult(REQUESTCODE, RESULT_OK, intent);
         }
 
         closeProgressDialog();
@@ -243,7 +246,7 @@ public class ReferenceWriteDialogFragment extends DialogFragment {
             mDialog = null;
         }
     }
-    
+
     @Override
     public void onDismiss(DialogInterface dialogInterface) {
         super.onDismiss(dialogInterface);
@@ -253,8 +256,8 @@ public class ReferenceWriteDialogFragment extends DialogFragment {
     public void onCancel(DialogInterface dialogInterface) {
         super.onCancel(dialogInterface);
     }
-    
-        private void showProgress(Context context) {
+
+    private void showProgress(Context context) {
         if (progressDialog == null) {
             progressDialog = new ProgressDialog(context);
             progressDialog.setMessage(context.getResources().getString(R.string.saving_progress));

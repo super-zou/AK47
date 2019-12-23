@@ -42,7 +42,7 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static com.hetang.main.ArchiveFragment.SET_WORK_RESULT_OK;
+import static com.hetang.archive.ArchiveFragment.SET_WORK_RESULT_OK;
 
 public class WorkEditActivity extends BaseAppCompatActivity {
     private static final String TAG = "WorkEditActivity";

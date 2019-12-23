@@ -9,7 +9,6 @@ import android.os.Message;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
@@ -205,7 +204,8 @@ public class MainActivity extends BaseAppCompatActivity implements CommonDialogF
         mFragmentList.add(message);
         Fragment contacts = new ContactsFragment();
         mFragmentList.add(contacts);
-        BaseFragment me = new ArchiveFragment();
+        //BaseFragment me = new ArchiveFragment();
+        BaseFragment me = new MeetArchiveFragment();
         mFragmentList.add(me);
         
         //创建一个viewpager的adapter

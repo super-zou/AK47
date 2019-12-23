@@ -34,7 +34,7 @@
         android:id="@+id/name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="18dp"
+        android:layout_marginTop="24dp"
         android:text="name"
         android:textColor="@color/black"
         android:textSize="18sp"
@@ -56,12 +56,25 @@
         app:layout_constraintStart_toEndOf="@+id/name"
         app:layout_constraintTop_toTopOf="@+id/name" />
 
+    <Button
+        android:id="@+id/meet_btn"
+        android:layout_width="60dp"
+        android:layout_height="30dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/btn_warning"
+        android:text="@string/meet_text"
+        android:textColor="@color/white"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/name" />
+
     <com.nex3z.flowlayout.FlowLayout
-        android:id="@+id/core_info"
+        android:id="@+id/additional_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="18dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:gravity="center"
         app:layout_constraintEnd_toEndOf="@+id/name"
@@ -69,33 +82,33 @@
         app:layout_constraintTop_toBottomOf="@+id/name">
 
         <TextView
-            android:id="@+id/age"
+            android:id="@+id/hometown"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="1dp"
             android:background="@drawable/label_btn_shape"
             android:padding="6dp"
-            android:text="age"
+            android:text="hometown"
             android:textColor="@android:color/holo_blue_dark" />
 
         <TextView
-            android:id="@+id/height"
+            android:id="@+id/nation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="1dp"
             android:background="@drawable/label_btn_shape"
             android:padding="6dp"
-            android:text="height"
+            android:text="nation"
             android:textColor="@android:color/holo_blue_dark" />
 
         <TextView
-            android:id="@+id/constellation"
+            android:id="@+id/religion"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="1dp"
             android:background="@drawable/label_btn_shape"
             android:padding="6dp"
-            android:text="constellation"
+            android:text="religion"
             android:textColor="@android:color/holo_blue_dark" />
     </com.nex3z.flowlayout.FlowLayout>
 
@@ -109,7 +122,7 @@
         android:gravity="center"
         app:layout_constraintEnd_toEndOf="@+id/name"
         app:layout_constraintStart_toStartOf="@+id/name"
-        app:layout_constraintTop_toBottomOf="@+id/core_info">
+        app:layout_constraintTop_toBottomOf="@+id/additional_info">
 
         <TextView
             android:id="@+id/degree"
@@ -177,49 +190,6 @@
             android:textColor="@android:color/holo_blue_dark" />
     </com.nex3z.flowlayout.FlowLayout>
 
-    <com.nex3z.flowlayout.FlowLayout
-        android:id="@+id/additional_info"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="3dp"
-        android:layout_marginEnd="8dp"
-        android:gravity="center"
-        app:layout_constraintEnd_toEndOf="@+id/name"
-        app:layout_constraintStart_toStartOf="@+id/name"
-        app:layout_constraintTop_toBottomOf="@+id/work_info">
-
-        <TextView
-            android:id="@+id/hometown"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="1dp"
-            android:background="@drawable/label_btn_shape"
-            android:padding="6dp"
-            android:text="hometown"
-            android:textColor="@android:color/holo_blue_dark" />
-
-        <TextView
-            android:id="@+id/nation"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="1dp"
-            android:background="@drawable/label_btn_shape"
-            android:padding="6dp"
-            android:text="nation"
-            android:textColor="@android:color/holo_blue_dark" />
-
-        <TextView
-            android:id="@+id/religion"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="1dp"
-            android:background="@drawable/label_btn_shape"
-            android:padding="6dp"
-            android:text="religion"
-            android:textColor="@android:color/holo_blue_dark" />
-    </com.nex3z.flowlayout.FlowLayout>
-
     <LinearLayout
         android:id="@+id/living_wrap"
         android:layout_width="match_parent"
@@ -229,20 +199,20 @@
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="@+id/name"
         app:layout_constraintStart_toStartOf="@+id/name"
-        app:layout_constraintTop_toBottomOf="@+id/additional_info">
+        app:layout_constraintTop_toBottomOf="@+id/work_info">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/location"
-            android:textColor="@color/black" />
+            android:textColor="#999" />
 
         <TextView
             android:id="@+id/living"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
-            android:textColor="@color/black" />
+            android:textColor="#999" />
     </LinearLayout>
 
     <TextView
@@ -270,118 +240,16 @@
         app:layout_constraintTop_toBottomOf="@+id/living_wrap" />
 
     <LinearLayout
-        android:id="@+id/partner_requirement_label"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="18dp"
-        android:background="@color/white"
-        android:gravity="center_horizontal"
-        android:orientation="horizontal"
-        android:paddingTop="8dp"
-        android:paddingBottom="16dp"
-        app:layout_constraintEnd_toEndOf="@+id/resume_detail"
-        app:layout_constraintStart_toStartOf="@+id/resume_detail"
-        app:layout_constraintTop_toBottomOf="@+id/resume_detail">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/fa_heart"
-            android:textColor="@color/color_red" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_marginLeft="3dp"
-            android:alpha="0.8"
-            android:text="期待一位"
-            android:textColor="#999" />
-
-    </LinearLayout>
-
-    <com.nex3z.flowlayout.FlowLayout
-        android:id="@+id/partner_requirement"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:background="@color/white"
-        android:gravity="center"
-        app:layout_constraintEnd_toEndOf="@+id/partner_requirement_label"
-        app:layout_constraintStart_toStartOf="@+id/partner_requirement_label"
-        app:layout_constraintTop_toBottomOf="@+id/partner_requirement_label">
-
-        <TextView
-            android:id="@+id/age_require"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="3dp"
-            android:background="@drawable/label_btn_shape"
-            android:padding="6dp"
-            android:text="age"
-            android:textColor="@android:color/holo_blue_dark"
-            android:textSize="12sp" />
-
-        <TextView
-            android:id="@+id/height_require"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="3dp"
-            android:layout_marginBottom="3dp"
-            android:background="@drawable/label_btn_shape"
-            android:padding="6dp"
-            android:text="height"
-            android:textColor="@android:color/holo_blue_dark"
-            android:textSize="12sp" />
-
-        <TextView
-            android:id="@+id/degree_require"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="3dp"
-            android:layout_marginBottom="3dp"
-            android:background="@drawable/label_btn_shape"
-            android:padding="6dp"
-            android:text="degree"
-            android:textColor="@android:color/holo_blue_dark"
-            android:textSize="12sp" />
-
-        <TextView
-            android:id="@+id/sex_require"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="3dp"
-            android:layout_marginBottom="3dp"
-            android:background="@drawable/label_btn_shape"
-            android:padding="6dp"
-            android:text="sex"
-            android:textColor="@android:color/holo_blue_dark"
-            android:textSize="12sp" />
-
-        <TextView
-            android:id="@+id/lives_require"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="3dp"
-            android:layout_marginBottom="3dp"
-            android:background="@drawable/label_btn_shape"
-            android:padding="6dp"
-            android:text="lives"
-            android:textColor="@android:color/holo_blue_dark"
-            android:textSize="12sp" />
-
-    </com.nex3z.flowlayout.FlowLayout>
-
-    <LinearLayout
         android:id="@+id/interaction_wrap"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:background="@color/white"
         android:paddingTop="10dp"
         android:paddingBottom="18dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/partner_requirement">
+        app:layout_constraintTop_toBottomOf="@+id/resume_detail">
 
         <Button
             android:id="@+id/contacts"
@@ -425,85 +293,140 @@
             android:text="聊天"
             android:textColor="@color/colorWhite"
             android:visibility="gone" />
+
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/followed_count_wrap"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
         android:layout_marginStart="16dp"
-        android:orientation="horizontal"
-        android:padding="5dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/interaction_wrap">
-
-        <TextView
-            android:id="@+id/followed_count_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="关注"
-            android:textSize="16sp" />
-
-        <TextView
-            android:id="@+id/followed_count"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="3dp"
-            android:textColor="@android:color/holo_blue_dark"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-    </LinearLayout>
+        app:layout_constraintTop_toBottomOf="@+id/interaction_wrap" />
 
     <LinearLayout
-        android:id="@+id/praised_count_wrap"
-        android:layout_width="wrap_content"
+        android:id="@+id/interact_statistics_wrap"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
         android:orientation="horizontal"
-        android:padding="5dp"
-        app:layout_constraintStart_toEndOf="@+id/followed_count_wrap"
-        app:layout_constraintTop_toBottomOf="@+id/interaction_wrap">
+        android:paddingLeft="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="3dp"
+        android:visibility="visible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divider">
 
-        <TextView
-            android:id="@+id/praised_count_title"
+        <LinearLayout
+            android:id="@+id/followed_count_wrap"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="赞"
-            android:textSize="16sp" />
+            android:layout_marginStart="16dp"
+            android:orientation="horizontal"
+            android:padding="5dp">
 
-        <TextView
-            android:id="@+id/praised_count"
+            <TextView
+                android:id="@+id/followed_count_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="关注"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/followed_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="3dp"
+                android:textColor="@android:color/holo_blue_dark"
+                android:text="0"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/praised_count_wrap"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="3dp"
-            android:textColor="@android:color/holo_blue_dark"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-    </LinearLayout>
+            android:layout_marginStart="10dp"
+            android:orientation="horizontal"
+            android:padding="5dp">
 
-    <LinearLayout
-        android:id="@+id/loved_count_wrap"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="5dp"
-        app:layout_constraintStart_toEndOf="@+id/praised_count_wrap"
-        app:layout_constraintTop_toBottomOf="@+id/interaction_wrap">
+            <TextView
+                android:id="@+id/praised_count_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="赞"
+                android:textSize="16sp" />
 
-        <TextView
-            android:id="@+id/loved_count_title"
+            <TextView
+                android:id="@+id/praised_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="3dp"
+                android:textColor="@android:color/holo_blue_dark"
+                android:text="0"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/loved_count_wrap"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="喜欢"
-            android:textSize="16sp" />
+            android:layout_marginStart="10dp"
+            android:orientation="horizontal"
+            android:padding="5dp">
 
-        <TextView
-            android:id="@+id/loved_count"
+            <TextView
+                android:id="@+id/loved_count_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="喜欢"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/loved_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="3dp"
+                android:textColor="@android:color/holo_blue_dark"
+                android:text="0"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/dynamic_count_wrap"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="3dp"
-            android:textColor="@android:color/holo_blue_dark"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            android:layout_marginStart="5dp"
+            android:orientation="horizontal"
+            android:padding="5dp">
+
+            <TextView
+                android:id="@+id/dynamics_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="动态"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/dynamics_count_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="3dp"
+                android:textColor="@android:color/holo_blue_dark"
+                android:text="0"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
     </LinearLayout>
 
     <LinearLayout
@@ -512,23 +435,24 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingLeft="16dp"
-        android:paddingTop="3dp"
+        android:paddingTop="8dp"
         android:paddingBottom="3dp"
+        android:gravity="center"
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/followed_count_wrap">
+        app:layout_constraintTop_toBottomOf="@+id/interact_statistics_wrap">
 
         <LinearLayout
             android:id="@+id/following_count_wrap"
+            android:layout_marginLeft="3dp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="5dp">
+            android:layout_height="wrap_content">
 
             <TextView
                 android:id="@+id/following_count_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="我关注的"
+                android:text="我关注"
                 android:textSize="16sp" />
 
             <TextView
@@ -537,15 +461,16 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="3dp"
                 android:textColor="@android:color/holo_blue_dark"
-                android:textSize="16sp"
+                android:text="0"
+                android:textSize="18sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/praise_count_wrap"
+            android:layout_marginLeft="10dp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="5dp">
+            android:layout_height="wrap_content">
 
             <TextView
                 android:id="@+id/praise_count_title"
@@ -560,15 +485,16 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="3dp"
                 android:textColor="@android:color/holo_blue_dark"
-                android:textSize="16sp"
+                android:text="0"
+                android:textSize="18sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/love_count_wrap"
+            android:layout_marginLeft="10dp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="5dp">
+            android:layout_height="wrap_content">
 
             <TextView
                 android:id="@+id/love_count_title"
@@ -583,7 +509,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="3dp"
                 android:textColor="@android:color/holo_blue_dark"
-                android:textSize="16sp"
+                android:text="0"
+                android:textSize="18sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
@@ -658,104 +585,5 @@
             android:textColor="@android:color/holo_blue_dark"
             android:textSize="20sp" />
     </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/illustration_wrap"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:orientation="vertical"
-        android:paddingTop="8dp"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/interaction_statistics_wrap">
-
-        <View
-            android:id="@+id/divider2"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="?android:attr/listDivider" />
-
-        <TextView
-            android:id="@+id/illustration"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:background="@color/white"
-            android:lineSpacingMultiplier="1.5"
-            android:textColor="@color/black"
-            android:textSize="15sp" />
-    </LinearLayout>
-
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/dynamics_count"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorWhite"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/illustration_wrap">
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="?android:attr/listDivider"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/dynamics_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
-            android:text="@string/fa_fire"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/dynamics_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="3dp"
-            android:text="动态"
-            android:textColor="@color/black"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/dynamics_icon"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/dynamics_count_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/dynamics_label"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/meet_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:text="@string/fa_heart"
-            android:textColor="@color/color_red"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/dynamics_count_text"
-            app:layout_constraintTop_toTopOf="parent"/>
-        <TextView
-            android:id="@+id/meet_user"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/meet_him"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/meet_icon"
-            app:layout_constraintTop_toTopOf="parent"/>
-
-    </android.support.constraint.ConstraintLayout>
 
 </android.support.constraint.ConstraintLayout>

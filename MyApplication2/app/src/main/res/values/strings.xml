@@ -55,6 +55,7 @@
     <string name="introduction">简介</string>
     <string name="education_background">教育背景</string>
     <string name="work_experience">工作经历</string>
+    <string name="work_practice_experience">工作实习经历</string>
     <string name="honor_achievement">荣誉成就</string>
     <string name="Thesis_works">论文著作</string>
     <string name="research_achievement">研究成果</string>
@@ -147,8 +148,8 @@
     <string name="location_select_notice">请选择居住地</string>
     <string name="club">俱乐部</string>
     <string name="set_avatar">设置头像</string>
-    <string name="upload_more_picture">上传近照</string>
-    <string name="set_more_picture">先来一波近照暖暖场子，可以获得更多关注哦</string>
+    <string name="upload_more_picture">上传照片</string>
+    <string name="set_more_picture">多上传一些生活照，能够获得更多关注</string>
     <string name="self_info">个人信息</string>
     <string name="birthday">生日</string>
     <string name="birthyear">生年</string>
@@ -212,11 +213,13 @@
     <string name="find_more">更多 ></string>
     <string name="avatar_set_request_title">头像未设置</string>
     <string name="avatar_set_request_content">需要先设置头像，才能进一步操作</string>
+    <string name="condition_set_request_title">交友条件未设置</string>
+    <string name="condition_set_request_content">需要先设置真实头像和交友条件，才能查看其他用户的交友信息</string>
     <string name="contacts_apply">希望和你建立联系</string>
     <string name="waiting_accept">已申请，待对方通过</string>
     <string name="new_apply">好友请求</string>
     <string name="my_apply">我的申请</string>
-    <string name="add_contacts_apply_notice">和对方打个招呼，更容易被通过哦</string>
+    <string name="add_contacts_apply_notice">打个招呼，更容易被通过哦</string>
     <string name="view_details">查看详情</string>
     <string name="prepare_data">正在准备数据…</string>
     <string name="share_app">分享应用</string>
@@ -243,6 +246,4 @@
     <string name="follow_action">+关注</string>
     <string name="setting">设置</string>
     <string name="title_activity_picture_preview">照片预览</string>
-    <string name="meet_him">遇见他</string>
-    <string name="meet_she">遇见她</string>
 </resources>

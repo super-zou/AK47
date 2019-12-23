@@ -7,39 +7,26 @@
     android:fitsSystemWindows="true"
     android:id="@+id/meet_archive"
     android:background="@color/color_disabled">
-
-    <include
-        android:id="@+id/custom_actionbar"
-        layout="@layout/custom_actionbar_common"
+    <ScrollView
+        android:id="@+id/meet_archive_wrapper"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/fragment_container">
-        <ScrollView
-            android:id="@+id/meet_archive_wrapper"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <LinearLayout
-                android:orientation="vertical"
+            <include
+                android:id="@+id/meet_archive_profile"
+                layout="@layout/meet_archive_profile"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-                <include
-                    android:id="@+id/meet_archive_profile"
-                    layout="@layout/meet_archive_profile"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-                <include
-                    android:id="@+id/friends_relatives_reference"
-                    layout="@layout/friends_relatives_reference"
-                    android:layout_marginTop="8dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
-
-        </ScrollView>
-    </FrameLayout>
-
+                android:layout_height="wrap_content" />
+            <include
+                android:id="@+id/friends_relatives_reference"
+                layout="@layout/friends_relatives_reference"
+                android:layout_marginTop="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>
                   

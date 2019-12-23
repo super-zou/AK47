@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -37,6 +38,9 @@ import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+
+import static com.hetang.archive.ArchiveFragment.REQUESTCODE;
+import static com.hetang.main.MeetArchiveFragment.RESULT_OK;
 
 public class PersonalityEditDialogFragment extends DialogFragment {
     private static final String TAG = "PersonalityEditDialogFragment";
@@ -311,16 +315,20 @@ public class PersonalityEditDialogFragment extends DialogFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        
-        if (commonDialogFragmentInterface != null) {//callback from ArchivesActivity class
-            if(type == ParseUtils.TYPE_PERSONALITY){
-                commonDialogFragmentInterface.onBackFromDialog(ParseUtils.TYPE_PERSONALITY,0, writeDone);
+
+        if (getTargetFragment() != null){
+            Intent intent = new Intent();
+            if (type == ParseUtils.TYPE_PERSONALITY){
+                intent.putExtra("type", ParseUtils.TYPE_PERSONALITY);
+                intent.putExtra("status", writeDone);
             }
 
             if (type == ParseUtils.TYPE_HOBBY){
-                commonDialogFragmentInterface.onBackFromDialog(ParseUtils.TYPE_HOBBY,0, writeDone);
+                intent.putExtra("type", ParseUtils.TYPE_HOBBY);
+                intent.putExtra("status", writeDone);
             }
 
+            getTargetFragment().onActivityResult(REQUESTCODE, RESULT_OK, intent);
         }
 
         closeProgressDialog();

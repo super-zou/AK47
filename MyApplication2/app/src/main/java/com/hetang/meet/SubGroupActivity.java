@@ -1,10 +1,8 @@
 package com.hetang.meet;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Typeface;
@@ -31,7 +29,6 @@ import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.MyLinearLayoutManager;
 import com.hetang.util.ParseUtils;
-import com.hetang.util.SetAvatarActivity;
 import com.hetang.util.SharedPreferencesUtils;
 import com.hetang.util.Slog;
 import com.hetang.util.UserProfile;
@@ -46,7 +43,6 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,7 +54,6 @@ import okhttp3.Response;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static com.hetang.common.MyApplication.getContext;
-import static com.hetang.meet.SingleGroupDetailsActivity.GET_SINGLE_GROUP_BY_GID;
 import static com.hetang.meet.SubGroupDetailsActivity.GET_SUBGROUP_BY_GID;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 

@@ -83,20 +83,20 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity android:name=".util.CitySelectActivity" />
-        <activity android:name=".util.SetAvatarActivity" />
+        <activity android:name=".common.SetAvatarActivity" />
         <activity android:name=".region.activity.RegionSelectionActivity" />
         <activity android:name=".region.activity.BaseActivity" />
         <activity android:name=".common.AddDynamicsActivity" />
         <activity android:name=".common.SettingsActivity" />
-        <activity android:name=".meet.MeetArchiveActivity" />
+        <activity android:name=".main.MeetArchiveActivity" />
         <activity
             android:name=".meet.EvaluatorDetailsActivity"
             android:label="@string/evaluator_details"
-            android:parentActivityName=".meet.MeetArchiveActivity" />
+            android:parentActivityName=".main.MeetArchiveActivity" />
         <activity
             android:name=".meet.ApprovedUsersActivity"
             android:label="@string/evaluator_details"
-            android:parentActivityName=".meet.MeetArchiveActivity" />
+            android:parentActivityName=".main.MeetArchiveActivity" />
         <activity
             android:name=".archive.ArchiveActivity"
             android:launchMode="singleTask"

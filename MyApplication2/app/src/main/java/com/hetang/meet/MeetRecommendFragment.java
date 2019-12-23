@@ -29,11 +29,12 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.hetang.R;
 import com.hetang.adapter.MeetRecommendListAdapter;
+import com.hetang.main.MeetArchiveActivity;
 import com.hetang.util.InterActInterface;
 import com.hetang.common.MyApplication;
 import com.hetang.util.ParseUtils;
 import com.hetang.util.RoundImageView;
-import com.hetang.util.SetAvatarActivity;
+import com.hetang.common.SetAvatarActivity;
 
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
@@ -60,7 +61,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
-import static com.hetang.util.SetAvatarActivity.AVATAR_SET_ACTION_BROADCAST;
+import static com.hetang.common.SetAvatarActivity.AVATAR_SET_ACTION_BROADCAST;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
 import static com.hetang.common.AddPictureActivity.ADD_PICTURE_BROADCAST;
@@ -88,8 +89,8 @@ public class MeetRecommendFragment extends BaseFragment {
     private static final int GET_RECOMMEND_DONE = 1;
     private static final int GET_RECOMMEND_UPDATE = 2;
     private static final int GET_USER_PROFILE_DONE = 3;
-    private static final int MY_CONDITION_SET_DONE = 4;
-    private static final int MY_CONDITION_NOT_SET = 13;
+    public static final int MY_CONDITION_SET_DONE = 30;
+    public static final int MY_CONDITION_NOT_SET = 31;
     private static final int NO_MORE_RECOMMEND = 9;
     private static final int NO_UPDATE_RECOMMEND = 10;
     private static final int MY_CONDITION_LOVE_UPDATE = 11;

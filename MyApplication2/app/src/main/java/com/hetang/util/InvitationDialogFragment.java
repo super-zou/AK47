@@ -3,6 +3,7 @@ package com.hetang.util;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -34,6 +35,9 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.Response;
+
+import static com.hetang.archive.ArchiveFragment.REQUESTCODE;
+import static com.hetang.main.MeetArchiveFragment.RESULT_OK;
 
 public class InvitationDialogFragment extends DialogFragment implements View.OnClickListener {
     private static final String TAG = "InvitationDialogFragment";
@@ -429,12 +433,14 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
     public void onDestroy() {
         super.onDestroy();
 
-        if (commonDialogFragmentInterface != null) {//callback from ArchivesActivity class
-            if(type == ParseUtils.TYPE_CHEERING_GROUP){
-                commonDialogFragmentInterface.onBackFromDialog(ParseUtils.TYPE_CHEERING_GROUP,0, true);
+        if (getTargetFragment() != null){
+            if (type == ParseUtils.TYPE_CHEERING_GROUP){
+                Intent intent = new Intent();
+                intent.putExtra("type", ParseUtils.TYPE_CHEERING_GROUP);
+                intent.putExtra("status", true);
+                getTargetFragment().onActivityResult(REQUESTCODE, RESULT_OK, intent);
             }
         }
-
         if (mDialog != null) {
             mDialog.dismiss();
             mDialog = null;

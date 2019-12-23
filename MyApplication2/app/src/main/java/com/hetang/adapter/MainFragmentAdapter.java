@@ -6,9 +6,9 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.hetang.main.ContactsFragment;
 import com.hetang.home.HomeFragment;
-import com.hetang.main.ArchiveFragment;
 import com.hetang.main.MeetFragment;
 import com.hetang.main.MessageFragment;
+import com.hetang.main.MeetArchiveFragment;
 
 import java.util.List;
 
@@ -46,7 +46,7 @@ public class MainFragmentAdapter extends FragmentStatePagerAdapter {
                 fragment = new ContactsFragment();
                 break;
             case 4:
-                fragment = new ArchiveFragment();
+                fragment = new MeetArchiveFragment();
                 break;
             default:
                 fragment = new HomeFragment();

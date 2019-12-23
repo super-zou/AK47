@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.hetang.adapter.ImpressionApprovedDetailAdapter;
 import com.hetang.common.BaseAppCompatActivity;
 import com.hetang.common.HandlerTemp;
+import com.hetang.main.MeetArchiveFragment;
 import com.hetang.util.FontManager;
 
 import com.hetang.R;
@@ -33,7 +34,7 @@ import okhttp3.Response;
 public class ApprovedUsersActivity extends BaseAppCompatActivity {
 
     private static final String TAG = "ApprovedUsersActivity";
-    MeetArchiveActivity.ImpressionStatistics impressionStatistics = null;
+    MeetArchiveFragment.ImpressionStatistics impressionStatistics = null;
     private Context mContext;
     private final static int APPROVE_DONE = 1;
     private final static int RESULT_OK = 2;
@@ -85,6 +86,8 @@ public class ApprovedUsersActivity extends BaseAppCompatActivity {
         for (UserMeetInfo s:impressionStatistics.meetMemberList) {
             if (authorUid == s.getUid()){
                 approve.setText(getResources().getString(R.string.feature_approvied));
+                approve.setBackgroundColor(mContext.getResources().getColor(R.color.color_blue));
+                approve.setTextColor(mContext.getResources().getColor(R.color.white));
                 approve.setClickable(false);
                 approve.setEnabled(false);
             }

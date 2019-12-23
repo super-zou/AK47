@@ -282,7 +282,6 @@ public class AddPictureActivity extends BaseAppCompatActivity {
                     Slog.d(TAG, "Selected pictures: " + selectList.size());
                     //activity_picture_array = new String[selectList.size()];
                     if(selectList.size() > 0){
-                       
                         adapter.setList(selectList);
                         adapter.notifyDataSetChanged();
                     }

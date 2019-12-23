@@ -1,4 +1,4 @@
-package com.hetang.main;
+package com.hetang.archive;
 
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -21,27 +21,20 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.hetang.archive.BlogEditDialogFragment;
-import com.hetang.archive.EducationEditDialogFragment;
-import com.hetang.archive.PaperEditDialogFragment;
-import com.hetang.archive.PrizeEditDialogFragment;
-import com.hetang.archive.VolunteerEditDialogFragment;
-import com.hetang.archive.WorkEditActivity;
-import com.hetang.common.Chat;
-import com.hetang.common.SettingsActivity;
 import com.hetang.R;
-import com.hetang.meet.SpecificUserDynamicsActivity;
+import com.hetang.common.Chat;
+import com.hetang.common.MyApplication;
+import com.hetang.common.SettingsActivity;
 import com.hetang.util.BaseFragment;
 import com.hetang.util.CommonUserListDialogFragment;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
-import com.hetang.common.MyApplication;
 import com.hetang.util.ParseUtils;
 import com.hetang.util.RoundImageView;
-import com.hetang.util.SetAvatarActivity;
+import com.hetang.common.SetAvatarActivity;
+import com.hetang.util.SharedPreferencesUtils;
 import com.hetang.util.Slog;
 import com.hetang.util.UserProfile;
-import com.hetang.util.SharedPreferencesUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -56,23 +49,20 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-
-import static com.hetang.meet.MeetArchiveActivity.APPLIED;
-import static com.hetang.meet.MeetArchiveActivity.CONTACTS_ADD_URL;
-import static com.hetang.meet.MeetArchiveActivity.ESTABLISHED;
-import static com.hetang.meet.MeetArchiveActivity.FOLLOWED;
-import static com.hetang.meet.MeetArchiveActivity.FOLLOW_ACTION_URL;
-import static com.hetang.meet.MeetArchiveActivity.GET_CONTACTS_STATUS_DONE;
-import static com.hetang.meet.MeetArchiveActivity.GET_CONTACTS_STATUS_URL;
-import static com.hetang.meet.MeetArchiveActivity.GET_FOLLOW_DONE;
-import static com.hetang.meet.MeetArchiveActivity.GET_FOLLOW_STATUS_URL;
-import static com.hetang.meet.MeetArchiveActivity.GET_LOGGEDIN_ACCOUNT;
-import static com.hetang.meet.MeetArchiveActivity.GET_PRAISE_STATISTICS_URL;
-import static com.hetang.meet.MeetArchiveActivity.GET_PRAISE_STATISTICS_URL_DONE;
-import static com.hetang.meet.MeetArchiveActivity.PRAISED;
-import static com.hetang.util.ParseUtils.startMeetArchiveActivity;
+import static com.hetang.main.MeetArchiveFragment.APPLIED;
+import static com.hetang.main.MeetArchiveFragment.CONTACTS_ADD_URL;
+import static com.hetang.main.MeetArchiveFragment.ESTABLISHED;
+import static com.hetang.main.MeetArchiveFragment.FOLLOWED;
+import static com.hetang.main.MeetArchiveFragment.FOLLOW_ACTION_URL;
+import static com.hetang.main.MeetArchiveFragment.GET_CONTACTS_STATUS_DONE;
+import static com.hetang.main.MeetArchiveFragment.GET_CONTACTS_STATUS_URL;
+import static com.hetang.main.MeetArchiveFragment.GET_FOLLOW_DONE;
+import static com.hetang.main.MeetArchiveFragment.GET_FOLLOW_STATUS_URL;
+import static com.hetang.main.MeetArchiveFragment.GET_LOGGEDIN_ACCOUNT;
+import static com.hetang.main.MeetArchiveFragment.GET_PRAISE_STATISTICS_URL;
+import static com.hetang.main.MeetArchiveFragment.GET_PRAISE_STATISTICS_URL_DONE;
+import static com.hetang.main.MeetArchiveFragment.PRAISED;
 import static com.hetang.util.SharedPreferencesUtils.getYunXinAccount;
-import static com.hetang.meet.MeetDynamicsFragment.REQUEST_CODE;
 
 /**
  * Created by super-zou on 17-9-11.
@@ -90,7 +80,7 @@ public class ArchiveFragment extends BaseFragment {
     JSONArray mPaper = null;
     JSONArray mBlog = null;
     JSONArray mVolunteer = null;
-    
+
     public static final String GET_ACTIVITIES_COUNT_BY_UID = HttpUtil.DOMAIN + "?q=dynamic/get_count_by_uid";
     public static final String GET_USER_PROFILE_URL = HttpUtil.DOMAIN + "?q=account_manager/get_user_profile";
     public static final String SET_USER_PROFILE_URL = HttpUtil.DOMAIN + "?q=account_manager/set_user_profile";
@@ -110,7 +100,7 @@ public class ArchiveFragment extends BaseFragment {
     public static final int GET_PAPER_DONE = 6;
     public static final int GET_BLOG_DONE = 7;
     public static final int GET_VOLUNTEER_DONE = 8;
-    
+
     public final static int REQUESTCODE = 1;
     public final static int SET_AVATAR_RESULT_OK = 2;
     public final static int SET_WORK_RESULT_OK = 3;
@@ -121,11 +111,11 @@ public class ArchiveFragment extends BaseFragment {
     public final static int SET_VOLUNTEER_RESULT_OK = 8;
 
     private boolean isFollowed = false;
-    
+
     private LinearLayout mEducationBackgroundListView = null;
     private LinearLayout mWorkExperienceListView = null;
     private LinearLayout mPrizeListView = null;
-    private LinearLayout mPaperListView ;
+    private LinearLayout mPaperListView;
     private LinearLayout mBlogListView = null;
     private LinearLayout mVolunteerListView = null;
     RoundImageView headUri;
@@ -136,7 +126,7 @@ public class ArchiveFragment extends BaseFragment {
     View mView;
     Chat chat;
     TextView mSettings;
-    
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -145,10 +135,10 @@ public class ArchiveFragment extends BaseFragment {
         handler = new MyHandler(this);
         authorUid = SharedPreferencesUtils.getSessionUid(MyApplication.getContext());
 
-        Slog.d(TAG, "------------------authorUid: "+authorUid);
+        Slog.d(TAG, "------------------authorUid: " + authorUid);
 
         mSettings = view.findViewById(R.id.settings);
-        
+
         mEducationBackgroundListView = view.findViewById(R.id.education_background_list);
         mWorkExperienceListView = view.findViewById(R.id.work_experience_list);
         mPrizeListView = view.findViewById(R.id.prize_list);
@@ -156,13 +146,13 @@ public class ArchiveFragment extends BaseFragment {
         mBlogListView = view.findViewById(R.id.blog_list);
         mVolunteerListView = view.findViewById(R.id.volunteer_list);
 
-        if (getArguments() != null){
+        if (getArguments() != null) {
             uid = getArguments().getInt("uid");
             loadArchiveData();
-        }else {
+        } else {
             getCurrentUid();
         }
-        
+
         mSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -178,8 +168,8 @@ public class ArchiveFragment extends BaseFragment {
 
         return view;
     }
-    
-    private void getCurrentUid(){
+
+    private void getCurrentUid() {
         RequestBody requestBody = new FormBody.Builder().build();
         HttpUtil.sendOkHttpRequest(getContext(), GET_LOGGEDIN_ACCOUNT, requestBody, new Callback() {
             @Override
@@ -191,7 +181,7 @@ public class ArchiveFragment extends BaseFragment {
                             //String responseText = response.body().string();
                             uid = new JSONObject(responseText).optInt("uid");
                             loadArchiveData();
-                            }catch (JSONException e){
+                        } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
@@ -199,20 +189,23 @@ public class ArchiveFragment extends BaseFragment {
             }
 
             @Override
-            public void onFailure(Call call, IOException e) {}
+            public void onFailure(Call call, IOException e) {
+            }
         });
     }
 
     @Override
-    protected void initView(View view) { }
-    
-    @Override
-    protected void loadData() { }
+    protected void initView(View view) {
+    }
 
-    private void loadArchiveData(){
-        if (authorUid == uid){
+    @Override
+    protected void loadData() {
+    }
+
+    private void loadArchiveData() {
+        if (authorUid == uid) {
             mSettings.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             mSettings.setVisibility(View.GONE);
         }
 
@@ -225,8 +218,8 @@ public class ArchiveFragment extends BaseFragment {
         getEducationBackground();
 
     }
-    
-    private void getUserProfile(int uid){
+
+    private void getUserProfile(int uid) {
         RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
         HttpUtil.sendOkHttpRequest(getContext(), GET_USER_PROFILE_URL, requestBody, new Callback() {
             @Override
@@ -235,12 +228,13 @@ public class ArchiveFragment extends BaseFragment {
                     String responseText = response.body().string();
 
                     if (responseText != null) {
-                    if (!TextUtils.isEmpty(responseText)) {
+                        if (!TextUtils.isEmpty(responseText)) {
                             try {
-                                if (isDebug) Slog.d(TAG, "==============responseText: "+responseText);
+                                if (isDebug)
+                                    Slog.d(TAG, "==============responseText: " + responseText);
                                 JSONObject jsonObject = new JSONObject(responseText).optJSONObject("user");
                                 userProfile = ParseUtils.getUserProfileFromJSONObject(jsonObject);
-                                if(userProfile != null){
+                                if (userProfile != null) {
                                     handler.sendEmptyMessage(GET_USER_PROFILE_DONE);
                                 }
                             } catch (JSONException e) {
@@ -250,14 +244,14 @@ public class ArchiveFragment extends BaseFragment {
                     }
                 }
             }
-            
+
             @Override
             public void onFailure(Call call, IOException e) {
             }
         });
     }
 
-    private void setProfileView(){
+    private void setProfileView() {
 
         TextView setAvatar = mView.findViewById(R.id.set_avatar);
         TextView name = mView.findViewById(R.id.name);
@@ -280,21 +274,21 @@ public class ArchiveFragment extends BaseFragment {
         final TextView introduction = mView.findViewById(R.id.introduction);
         final TextView addIntroduction = mView.findViewById(R.id.add_introduction);
         final TextInputEditText introductionEdit = mView.findViewById(R.id.introduction_edit);
-         final TextView saveIntroduction = mView.findViewById(R.id.save_introduction);
+        final TextView saveIntroduction = mView.findViewById(R.id.save_introduction);
         //for education background
         TextView addEducation = mView.findViewById(R.id.add_education);
         //for work experience
         TextView addWorkExperience = mView.findViewById(R.id.add_work);
-        final TextView experienceExtend  = mView.findViewById(R.id.experience_extend);
+        final TextView experienceExtend = mView.findViewById(R.id.experience_extend);
         final ScrollView scrollView = mView.findViewById(R.id.archive_scroll_view);
         LinearLayout experienceWrapper = mView.findViewById(R.id.experience_wrap);
         TextView extend = mView.findViewById(R.id.experience_extend);
-        
+
         RelativeLayout paperWrapper = mView.findViewById(R.id.paper_add_wrapper);
         RelativeLayout blogWrapper = mView.findViewById(R.id.blog_add_wrapper);
         RelativeLayout volunteerWrapper = mView.findViewById(R.id.volunteer_add_wrapper);
 
-        if(userProfile.getAuthorSelf() == true){
+        if (userProfile.getAuthorSelf() == true) {
             interactWrapper.setVisibility(View.GONE);
             setAvatar.setVisibility(View.VISIBLE);
             addIntroduction.setVisibility(View.VISIBLE);
@@ -306,7 +300,7 @@ public class ArchiveFragment extends BaseFragment {
             extend.setVisibility(View.VISIBLE);
             moreQualificationAction();
         }
-        
+
         setAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -314,59 +308,59 @@ public class ArchiveFragment extends BaseFragment {
                 startActivityForResult(intent, REQUESTCODE);
             }
         });
-        
+
         if (!"".equals(userProfile.getAvatar())) {
             String picture_url = HttpUtil.DOMAIN + userProfile.getAvatar();
-            if (getActivity() != null){
+            if (getActivity() != null) {
                 Glide.with(getActivity()).load(picture_url).into(headUri);
             }
         } else {
-            if(userProfile.getSex() == 0){
+            if (userProfile.getSex() == 0) {
                 headUri.setImageDrawable(MyApplication.getContext().getDrawable(R.drawable.male_default_avator));
-            }else {
+            } else {
                 headUri.setImageDrawable(MyApplication.getContext().getDrawable(R.drawable.female_default_avator));
             }
         }
-        
+
         name.setText(userProfile.getName());
 
-        if(userProfile.getSex() == 0){
+        if (userProfile.getSex() == 0) {
             sex.setText(R.string.mars);
-        }else {
+        } else {
             sex.setText(R.string.venus);
         }
 
-        if(userProfile.getLiving() != null && !"".equals(userProfile.getLiving())){
-            living.setText("现居"+userProfile.getLiving().trim());
+        if (userProfile.getLiving() != null && !"".equals(userProfile.getLiving())) {
+            living.setText("现居" + userProfile.getLiving().trim());
         }
 
-        if(!"".equals(userProfile.getSummary()) && !"".equals(userProfile.getSummary())){
+        if (!"".equals(userProfile.getSummary()) && !"".equals(userProfile.getSummary())) {
             summary.setText(userProfile.getSummary());
         }
-        
-        if(userProfile.getSituation() == 0){
+
+        if (userProfile.getSituation() == 0) {
             educationWrapper.setVisibility(View.VISIBLE);
             degree.setText(userProfile.getDegreeName(userProfile.getDegree()));
             university.setText(userProfile.getUniversity());
             major.setText(userProfile.getMajor());
-        }else {
-            if(work.getVisibility() == View.GONE){
+        } else {
+            if (work.getVisibility() == View.GONE) {
                 work.setVisibility(View.VISIBLE);
             }
             position.setText(userProfile.getPosition());
             industry.setText(userProfile.getIndustry());
         }
-        
-        
-        if(!"".equals(userProfile.getHometown())){
-            hometown.setText(getResources().getText(R.string.hometown)+":"+userProfile.getHometown());
+
+
+        if (!"".equals(userProfile.getHometown())) {
+            hometown.setText(getResources().getText(R.string.hometown) + ":" + userProfile.getHometown());
         }
 
-        if(!TextUtils.isEmpty(userProfile.getIntroduction()) && !"null".equals(userProfile.getIntroduction())){
+        if (!TextUtils.isEmpty(userProfile.getIntroduction()) && !"null".equals(userProfile.getIntroduction())) {
             introduction.setVisibility(View.VISIBLE);
             introduction.setText(userProfile.getIntroduction());
 
-            if(userProfile.getAuthorSelf() == true){
+            if (userProfile.getAuthorSelf() == true) {
                 addIntroduction.setText(getString(R.string.edit_introduction));
             }
         }
@@ -375,10 +369,10 @@ public class ArchiveFragment extends BaseFragment {
         addIntroduction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(introductionEditWrapper.getVisibility() == View.GONE){
+                if (introductionEditWrapper.getVisibility() == View.GONE) {
                     introductionEditWrapper.setVisibility(View.VISIBLE);
                 }
-                if(!"".equals(introduction.getText())) {
+                if (!"".equals(introduction.getText())) {
                     introductionEdit.setText(introduction.getText());
                 }
             }
@@ -388,15 +382,15 @@ public class ArchiveFragment extends BaseFragment {
         saveIntroduction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!TextUtils.isEmpty(introductionEdit.getText())){
+                if (!TextUtils.isEmpty(introductionEdit.getText())) {
                     saveIntroduction(introductionEdit.getText().toString(), introduction);
                     addIntroduction.setText(getString(R.string.edit_introduction));
                 }
             }
         });
-        
+
         LinearLayout meetArchiveNav = mView.findViewById(R.id.meet_archive);
-        if(userProfile.getCid() != 0){
+        if (userProfile.getCid() != 0) {
             meetArchiveNav.setVisibility(View.VISIBLE);
         }
         meetArchiveNav.setOnClickListener(new View.OnClickListener() {
@@ -406,7 +400,7 @@ public class ArchiveFragment extends BaseFragment {
             }
         });
 
-        getWorkExperience();        
+        getWorkExperience();
         getPrize();
         getPaper();
         getBlog();
@@ -415,12 +409,12 @@ public class ArchiveFragment extends BaseFragment {
         experienceWrapper.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(experienceList.getVisibility() == View.VISIBLE){
+                if (experienceList.getVisibility() == View.VISIBLE) {
                     experienceList.setVisibility(View.GONE);
                     experienceExtend.setText(getString(R.string.fa_chevron_down));
-                }else {
-                
-                experienceList.setVisibility(View.VISIBLE);
+                } else {
+
+                    experienceList.setVisibility(View.VISIBLE);
                     experienceExtend.setText(getString(R.string.fa_chevron_up));
 
                     ConstraintLayout constraintLayout = mView.findViewById(R.id.activity_archive_wrapper);
@@ -437,8 +431,8 @@ public class ArchiveFragment extends BaseFragment {
         });
 
     }
-    
-    private void getContactsStatus(){
+
+    private void getContactsStatus() {
         RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
 
         //for contacts
@@ -450,7 +444,7 @@ public class ArchiveFragment extends BaseFragment {
                     // if(isDebug)
                     if (isDebug) Slog.d(TAG, "==========getContacts Status : " + responseText);
                     try {
-                    JSONObject status = new JSONObject(responseText);
+                        JSONObject status = new JSONObject(responseText);
                         contactStatus = status.optInt("status");
                         handler.sendEmptyMessage(GET_CONTACTS_STATUS_DONE);
                     } catch (JSONException e) {
@@ -464,8 +458,8 @@ public class ArchiveFragment extends BaseFragment {
             }
         });
     }
-    
-    private void moreQualificationAction(){
+
+    private void moreQualificationAction() {
 
         RelativeLayout prizeWrapper = mView.findViewById(R.id.prize_add_wrapper);
         RelativeLayout paperWrapper = mView.findViewById(R.id.paper_add_wrapper);
@@ -481,7 +475,7 @@ public class ArchiveFragment extends BaseFragment {
                 prizeEditDialogFragment.show(getFragmentManager(), "PrizeEditDialogFragment");
             }
         });
-        
+
         paperWrapper.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -499,7 +493,7 @@ public class ArchiveFragment extends BaseFragment {
                 blogEditDialogFragment.show(getFragmentManager(), "BlogEditDialogFragment");
             }
         });
-        
+
         volunteerWrapper.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -511,30 +505,32 @@ public class ArchiveFragment extends BaseFragment {
 
     }
 
-    private void saveIntroduction(String introduction, TextView introductionView){
+    private void saveIntroduction(String introduction, TextView introductionView) {
         RequestBody requestBody = new FormBody.Builder()
                 .add("uid", String.valueOf(userProfile.getUid()))
                 .add("introduction", introduction).build();
-                
-                if(introductionView.getVisibility() == View.GONE){
+
+        if (introductionView.getVisibility() == View.GONE) {
             introductionView.setVisibility(View.VISIBLE);
         }
         introductionView.setText(introduction);
         LinearLayout introductionEditWrapper = mView.findViewById(R.id.introduction_edit_wrapper);
-        if (introductionEditWrapper.getVisibility() == View.VISIBLE){
+        if (introductionEditWrapper.getVisibility() == View.VISIBLE) {
             introductionEditWrapper.setVisibility(View.GONE);
         }
 
         HttpUtil.sendOkHttpRequest(MyApplication.getContext(), SET_USER_PROFILE_URL, requestBody, new Callback() {
             @Override
-            public void onResponse(Call call, Response response) throws IOException {}
+            public void onResponse(Call call, Response response) throws IOException {
+            }
 
             @Override
-            public void onFailure(Call call, IOException e) {}
+            public void onFailure(Call call, IOException e) {
+            }
         });
     }
-    
-     private void addEducationBackground(TextView addEducation){
+
+    private void addEducationBackground(TextView addEducation) {
         addEducation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -545,7 +541,7 @@ public class ArchiveFragment extends BaseFragment {
         });
     }
 
-    private void addWorkExperience(TextView addWorkExperience){
+    private void addWorkExperience(TextView addWorkExperience) {
         addWorkExperience.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -554,13 +550,14 @@ public class ArchiveFragment extends BaseFragment {
             }
         });
     }
-    
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (isDebug) Slog.d(TAG, "--------------->onActivityResult requestCode: "+requestCode+" resultCode: "+resultCode);
-        if(requestCode == REQUESTCODE){
-            switch (resultCode){
+        if (isDebug)
+            Slog.d(TAG, "--------------->onActivityResult requestCode: " + requestCode + " resultCode: " + resultCode);
+        if (requestCode == REQUESTCODE) {
+            switch (resultCode) {
                 case SET_AVATAR_RESULT_OK:
                     String avatar = data.getStringExtra("avatar");
                     Glide.with(this).load(HttpUtil.DOMAIN + avatar).into(headUri);
@@ -568,7 +565,7 @@ public class ArchiveFragment extends BaseFragment {
                 case SET_WORK_RESULT_OK:
                     getWorkExperience();
                     break;
-                    case SET_EDUCATION_RESULT_OK:
+                case SET_EDUCATION_RESULT_OK:
                     getEducationBackground();
                     break;
                 case SET_PRIZE_RESULT_OK:
@@ -588,8 +585,8 @@ public class ArchiveFragment extends BaseFragment {
             }
         }
     }
-    
-    private void getDynamicsCount(final int uid){
+
+    private void getDynamicsCount(final int uid) {
 
         RequestBody requestBody = new FormBody.Builder()
                 .add("uid", String.valueOf(uid))
@@ -600,12 +597,14 @@ public class ArchiveFragment extends BaseFragment {
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
                     String responseText = response.body().string();
-                    if (isDebug) Slog.d(TAG, "==========getDynamicsCount response text : " + responseText);
+                    if (isDebug)
+                        Slog.d(TAG, "==========getDynamicsCount response text : " + responseText);
                     if (responseText != null && !TextUtils.isEmpty(responseText)) {
                         try {
                             int count = new JSONObject(responseText).optInt("count");
-                            if (isDebug) Slog.d(TAG, "==========getDynamicsCount response count : " + count);
-                            if(count > 0){
+                            if (isDebug)
+                                Slog.d(TAG, "==========getDynamicsCount response count : " + count);
+                            if (count > 0) {
                                 Message msg = new Message();
                                 Bundle bundle = new Bundle();
                                 bundle.putInt("count", count);
@@ -614,11 +613,11 @@ public class ArchiveFragment extends BaseFragment {
                                 handler.sendMessage(msg);
                             }
 
-                        }catch (JSONException e){
+                        } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        
-                        }
+
+                    }
                 }
             }
 
@@ -629,18 +628,18 @@ public class ArchiveFragment extends BaseFragment {
         });
 
     }
-    
-     private void getFollowedCount(int uid){
+
+    private void getFollowedCount(int uid) {
         RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
         HttpUtil.sendOkHttpRequest(MyApplication.getContext(), GET_FOLLOW_STATISTICS_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
                     String responseText = response.body().string();
-                    if(isDebug)
+                    if (isDebug)
                         Slog.d(TAG, "==========getFollow statistics : " + responseText);
                     try {
-                    JSONObject followObject = new JSONObject(responseText);
+                        JSONObject followObject = new JSONObject(responseText);
                         int followed_count = followObject.optInt("followed_count");
                         if (followed_count != 0) {
                             Bundle bundle = new Bundle();
@@ -655,19 +654,19 @@ public class ArchiveFragment extends BaseFragment {
                     }
                 }
             }
-            
+
             @Override
             public void onFailure(Call call, IOException e) {
             }
         });
     }
 
-    private void getFollowStatus(int uid){
+    private void getFollowStatus(int uid) {
         RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
         HttpUtil.sendOkHttpRequest(MyApplication.getContext(), GET_FOLLOW_STATUS_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-            if (response.body() != null) {
+                if (response.body() != null) {
                     String responseText = response.body().string();
                     if (isDebug) Slog.d(TAG, "==========getFollowStatus : " + responseText);
                     try {
@@ -685,8 +684,8 @@ public class ArchiveFragment extends BaseFragment {
             }
         });
     }
-    
-    private void getPraisedCount(int uid){
+
+    private void getPraisedCount(int uid) {
         RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
         HttpUtil.sendOkHttpRequest(MyApplication.getContext(), GET_PRAISE_STATISTICS_URL, requestBody, new Callback() {
             @Override
@@ -709,45 +708,48 @@ public class ArchiveFragment extends BaseFragment {
                     }
                 }
             }
-            
+
             @Override
             public void onFailure(Call call, IOException e) {
             }
         });
     }
 
-    public void getEducationBackground(){
-        Slog.d(TAG,"-------------------->getEducationBackground");
+    public void getEducationBackground() {
+        Slog.d(TAG, "-------------------->getEducationBackground");
         RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
-        
+
         HttpUtil.sendOkHttpRequest(MyApplication.getContext(), GET_EDUCATION_BACKGROUND_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
-                if(isDebug) Slog.d(TAG, "================getEducationBackground response:" + responseText);
+                if (isDebug)
+                    Slog.d(TAG, "================getEducationBackground response:" + responseText);
                 if (responseText != null && !TextUtils.isEmpty(responseText)) {
                     try {
                         mEducationBackground = new JSONObject(responseText).optJSONArray("education");
-                        if (isDebug) Slog.d(TAG, "================getEducationBackground education:" + mEducationBackground);
+                        if (isDebug)
+                            Slog.d(TAG, "================getEducationBackground education:" + mEducationBackground);
                         if (mEducationBackground != null) {
                             handler.sendEmptyMessage(GET_EDUCATION_BACKGROUND_DONE);
                         }
-                        } catch (JSONException e) {
+                    } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
             }
 
             @Override
-            public void onFailure(Call call, IOException e) { }
+            public void onFailure(Call call, IOException e) {
+            }
         });
     }
-    
-    private void setEducationBackgroundView(){
-        if(mEducationBackgroundListView.getChildCount() > 0){
+
+    private void setEducationBackgroundView() {
+        if (mEducationBackgroundListView.getChildCount() > 0) {
             mEducationBackgroundListView.removeAllViews();
         }
-        for (int i=0; i<mEducationBackground.length(); i++){
+        for (int i = 0; i < mEducationBackground.length(); i++) {
             try {
                 JSONObject education = mEducationBackground.getJSONObject(i);
                 View view = LayoutInflater.from(MyApplication.getContext()).inflate(R.layout.achieve_base_background, null);
@@ -756,45 +758,47 @@ public class ArchiveFragment extends BaseFragment {
                 TextView degree = view.findViewById(R.id.secondary_title);
                 TextView major = view.findViewById(R.id.last_title);
                 major.setVisibility(View.VISIBLE);
-                
+
                 TextView start = view.findViewById(R.id.start_time);
                 TextView end = view.findViewById(R.id.end_time);
 
                 university.setText(education.optString("university"));
                 degree.setText(education.optString("degree"));
-                major.setText(", "+education.optString("major"));
+                major.setText(", " + education.optString("major"));
 
-                start.setText(education.optString("entrance_year")+"年"+education.optString("entrance_month"));
-                end.setText("~  "+education.optString("graduate_year")+"年"+education.optString("graduate_month"));
-            }catch (JSONException e){
+                start.setText(education.optString("entrance_year") + "年" + education.optString("entrance_month"));
+                end.setText("~  " + education.optString("graduate_year") + "年" + education.optString("graduate_month"));
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
 
         }
     }
-    
-    public void getWorkExperience(){
-        
+
+    public void getWorkExperience() {
+
         RequestBody requestBody = new FormBody.Builder()
                 .add("uid", String.valueOf(uid)).build();
-                
-                HttpUtil.sendOkHttpRequest(MyApplication.getContext(), GET_WORK_EXPERIENCE_URL, requestBody, new Callback() {
+
+        HttpUtil.sendOkHttpRequest(MyApplication.getContext(), GET_WORK_EXPERIENCE_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
-                if(isDebug) Slog.d(TAG, "================getWorkExperience response:" + responseText);
+                if (isDebug)
+                    Slog.d(TAG, "================getWorkExperience response:" + responseText);
                 if (responseText != null && !TextUtils.isEmpty(responseText)) {
                     try {
                         mWorkExperience = new JSONObject(responseText).optJSONArray("work");
-                        if (isDebug) Slog.d(TAG, "================getWorkExperience work:" + mWorkExperience);
+                        if (isDebug)
+                            Slog.d(TAG, "================getWorkExperience work:" + mWorkExperience);
                         if (mWorkExperience != null) {
                             handler.sendEmptyMessage(GET_WORK_EXPERIENCE_DONE);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-              
-              }
+
+                }
             }
 
             @Override
@@ -804,15 +808,15 @@ public class ArchiveFragment extends BaseFragment {
         });
     }
 
-    public void getPrize(){
-    
-    RequestBody requestBody = new FormBody.Builder()
+    public void getPrize() {
+
+        RequestBody requestBody = new FormBody.Builder()
                 .add("uid", String.valueOf(uid)).build();
         HttpUtil.sendOkHttpRequest(MyApplication.getContext(), GET_PRIZE_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
-                if(isDebug) Slog.d(TAG, "================getPrize response:" + responseText);
+                if (isDebug) Slog.d(TAG, "================getPrize response:" + responseText);
                 if (responseText != null && !TextUtils.isEmpty(responseText)) {
                     try {
                         mPrize = new JSONObject(responseText).optJSONArray("prizes");
@@ -821,7 +825,7 @@ public class ArchiveFragment extends BaseFragment {
                             handler.sendEmptyMessage(GET_PRIZE_DONE);
                         }
                     } catch (JSONException e) {
-    e.printStackTrace();
+                        e.printStackTrace();
                     }
                 }
             }
@@ -832,8 +836,8 @@ public class ArchiveFragment extends BaseFragment {
             }
         });
     }
-    
-    public void getPaper(){
+
+    public void getPaper() {
 
         RequestBody requestBody = new FormBody.Builder()
                 .add("uid", String.valueOf(uid)).build();
@@ -841,7 +845,7 @@ public class ArchiveFragment extends BaseFragment {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
-                if(isDebug) Slog.d(TAG, "================getPaper response:" + responseText);
+                if (isDebug) Slog.d(TAG, "================getPaper response:" + responseText);
                 if (responseText != null && !TextUtils.isEmpty(responseText)) {
                     try {
                         mPaper = new JSONObject(responseText).optJSONArray("papers");
@@ -861,8 +865,8 @@ public class ArchiveFragment extends BaseFragment {
             }
         });
     }
-    
-    public void getBlog(){
+
+    public void getBlog() {
 
         RequestBody requestBody = new FormBody.Builder()
                 .add("uid", String.valueOf(uid)).build();
@@ -870,9 +874,9 @@ public class ArchiveFragment extends BaseFragment {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
-                if(isDebug) Slog.d(TAG, "================getPaper response:" + responseText);
+                if (isDebug) Slog.d(TAG, "================getPaper response:" + responseText);
                 if (responseText != null && !TextUtils.isEmpty(responseText)) {
-                try {
+                    try {
                         mBlog = new JSONObject(responseText).optJSONArray("blogs");
                         if (isDebug) Slog.d(TAG, "================getBlog blogs:" + mBlog);
                         if (mBlog != null && mBlog.length() > 0) {
@@ -890,8 +894,8 @@ public class ArchiveFragment extends BaseFragment {
             }
         });
     }
-    
-    public void getVolunteer(){
+
+    public void getVolunteer() {
 
         RequestBody requestBody = new FormBody.Builder()
                 .add("uid", String.valueOf(uid)).build();
@@ -899,11 +903,12 @@ public class ArchiveFragment extends BaseFragment {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
-                if(isDebug) Slog.d(TAG, "================getVolunteer response:" + responseText);
+                if (isDebug) Slog.d(TAG, "================getVolunteer response:" + responseText);
                 if (responseText != null && !TextUtils.isEmpty(responseText)) {
                     try {
                         mVolunteer = new JSONObject(responseText).optJSONArray("volunteers");
-                        if (isDebug) Slog.d(TAG, "================getVolunteer volunteers:" + mVolunteer);
+                        if (isDebug)
+                            Slog.d(TAG, "================getVolunteer volunteers:" + mVolunteer);
                         if (mVolunteer != null && mVolunteer.length() > 0) {
                             handler.sendEmptyMessage(GET_VOLUNTEER_DONE);
                         }
@@ -912,7 +917,7 @@ public class ArchiveFragment extends BaseFragment {
                     }
                 }
             }
-            
+
             @Override
             public void onFailure(Call call, IOException e) {
 
@@ -920,12 +925,12 @@ public class ArchiveFragment extends BaseFragment {
         });
     }
 
-    private void setWorkExperienceView(){
-        if(mWorkExperienceListView.getChildCount() > 0){
+    private void setWorkExperienceView() {
+        if (mWorkExperienceListView.getChildCount() > 0) {
             mWorkExperienceListView.removeAllViews();
         }
-        
-        for (int i=0; i<mWorkExperience.length(); i++){
+
+        for (int i = 0; i < mWorkExperience.length(); i++) {
             try {
                 JSONObject workExperience = mWorkExperience.getJSONObject(i);
                 View view = LayoutInflater.from(MyApplication.getContext()).inflate(R.layout.achieve_base_background, null);
@@ -935,26 +940,26 @@ public class ArchiveFragment extends BaseFragment {
                 TextView industry = view.findViewById(R.id.last_title);
                 TextView start = view.findViewById(R.id.start_time);
                 TextView end = view.findViewById(R.id.end_time);
-                
+
                 jobTitle.setText(workExperience.optString("position"));
                 company.setText(workExperience.optString("company"));
-                industry.setText(", "+workExperience.optString("industry"));
+                industry.setText(", " + workExperience.optString("industry"));
 
-                start.setText(workExperience.optInt("entrance_year")+"年");
-                if(workExperience.optInt("now") == 1 && workExperience.optInt("leave_year") == 0){
-                    end.setText("~  "+"至今");
-                }else {
-                    end.setText("~  "+workExperience.optString("leave_year")+"年");
+                start.setText(workExperience.optInt("entrance_year") + "年");
+                if (workExperience.optInt("now") == 1 && workExperience.optInt("leave_year") == 0) {
+                    end.setText("~  " + "至今");
+                } else {
+                    end.setText("~  " + workExperience.optString("leave_year") + "年");
                 }
 
-            }catch (JSONException e){
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
 
         }
     }
-    
-    private void setPrizeView(){
+
+    private void setPrizeView() {
 
         ConstraintLayout prizeWrapper = mView.findViewById(R.id.prize_wrapper);
         prizeWrapper.setVisibility(View.VISIBLE);
@@ -962,7 +967,7 @@ public class ArchiveFragment extends BaseFragment {
         TextView addPrize = mView.findViewById(R.id.add_new_prize);
         RelativeLayout addPrizeWrapper = mView.findViewById(R.id.prize_add_wrapper);
         addPrizeWrapper.setVisibility(View.GONE);
-        if (authorUid == uid){
+        if (authorUid == uid) {
             addPrize.setVisibility(View.VISIBLE);
             addPrize.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -973,11 +978,11 @@ public class ArchiveFragment extends BaseFragment {
                 }
             });
         }
-        
-        if(mPrizeListView.getChildCount() > 0){
+
+        if (mPrizeListView.getChildCount() > 0) {
             mPrizeListView.removeAllViews();
         }
-        for (int i=0; i<mPrize.length(); i++){
+        for (int i = 0; i < mPrize.length(); i++) {
             try {
                 JSONObject prize = mPrize.getJSONObject(i);
                 View view = LayoutInflater.from(MyApplication.getContext()).inflate(R.layout.achieve_base_background, null);
@@ -990,21 +995,21 @@ public class ArchiveFragment extends BaseFragment {
                 TextView end = view.findViewById(R.id.end_time);
                 end.setVisibility(View.GONE);
                 TextView description = view.findViewById(R.id.description);
-                
+
                 title.setText(prize.optString("title"));
                 institution.setText(prize.optString("institution"));
                 start.setText(prize.optString("time"));
                 description.setText(prize.optString("description"));
 
 
-            }catch (JSONException e){
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
 
         }
     }
-    
-    private void setPaperView(){
+
+    private void setPaperView() {
 
         ConstraintLayout paperWrapper = mView.findViewById(R.id.paper_wrapper);
         paperWrapper.setVisibility(View.VISIBLE);
@@ -1022,11 +1027,11 @@ public class ArchiveFragment extends BaseFragment {
             }
         });
 
-        if(mPaperListView != null && mPaperListView.getChildCount() > 0){
+        if (mPaperListView != null && mPaperListView.getChildCount() > 0) {
             mPaperListView.removeAllViews();
         }
-        
-        for (int i=0; i<mPaper.length(); i++){
+
+        for (int i = 0; i < mPaper.length(); i++) {
             try {
                 JSONObject paper = mPaper.getJSONObject(i);
                 View view = LayoutInflater.from(MyApplication.getContext()).inflate(R.layout.achieve_base_background, null);
@@ -1045,18 +1050,18 @@ public class ArchiveFragment extends BaseFragment {
 
                 title.setText(paper.optString("title"));
 
-                if(!TextUtils.isEmpty(paper.optString("website"))){
+                if (!TextUtils.isEmpty(paper.optString("website"))) {
                     website.setVisibility(View.VISIBLE);
                     website.setTag(paper.optString("website"));
                     title.setTextColor(getResources().getColor(R.color.color_blue));
 
                     titleWrapper.setOnClickListener(new View.OnClickListener() {
-                    @Override
+                        @Override
                         public void onClick(View view) {
                             Uri uri;
                             String uriString = website.getTag().toString();
-                            if(!uriString.startsWith("http") && !uriString.startsWith("https")){
-                                uriString = "http://"+uriString;
+                            if (!uriString.startsWith("http") && !uriString.startsWith("https")) {
+                                uriString = "http://" + uriString;
                             }
                             uri = Uri.parse(uriString);
                             Intent intent = new Intent(Intent.ACTION_VIEW, uri);
@@ -1068,8 +1073,8 @@ public class ArchiveFragment extends BaseFragment {
                 start.setText(paper.optString("time"));
                 description.setText(paper.optString("description"));
                 FontManager.markAsIconContainer(mView.findViewById(R.id.link), font);
-                
-                }catch (JSONException e){
+
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
@@ -1078,15 +1083,15 @@ public class ArchiveFragment extends BaseFragment {
 
     }
 
-    private void setBlogView(){
-    
-    ConstraintLayout blogWrapper = mView.findViewById(R.id.blog_wrapper);
+    private void setBlogView() {
+
+        ConstraintLayout blogWrapper = mView.findViewById(R.id.blog_wrapper);
         blogWrapper.setVisibility(View.VISIBLE);
 
         TextView addBlog = mView.findViewById(R.id.add_new_blog);
         RelativeLayout addBlogWrapper = mView.findViewById(R.id.blog_add_wrapper);
         addBlogWrapper.setVisibility(View.GONE);
-        if (authorUid == uid){
+        if (authorUid == uid) {
             addBlog.setVisibility(View.VISIBLE);
             addBlog.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -1097,12 +1102,12 @@ public class ArchiveFragment extends BaseFragment {
                 }
             });
         }
-        
-        if(mBlogListView.getChildCount() > 0){
+
+        if (mBlogListView.getChildCount() > 0) {
             mBlogListView.removeAllViews();
         }
 
-        for (int i=0; i<mBlog.length(); i++){
+        for (int i = 0; i < mBlog.length(); i++) {
             try {
                 JSONObject blog = mBlog.getJSONObject(i);
                 View view = LayoutInflater.from(MyApplication.getContext()).inflate(R.layout.achieve_base_background, null);
@@ -1112,7 +1117,7 @@ public class ArchiveFragment extends BaseFragment {
                 final TextView website = view.findViewById(R.id.link);
                 TextView subTitle1 = view.findViewById(R.id.secondary_title);
                 TextView subTitle2 = view.findViewById(R.id.last_title);
-                
+
                 subTitle1.setVisibility(View.GONE);
                 subTitle2.setVisibility(View.GONE);
                 TextView start = view.findViewById(R.id.start_time);
@@ -1121,18 +1126,18 @@ public class ArchiveFragment extends BaseFragment {
                 end.setVisibility(View.GONE);
                 TextView description = view.findViewById(R.id.description);
 
-                if(!TextUtils.isEmpty(blog.optString("blog_website"))){
+                if (!TextUtils.isEmpty(blog.optString("blog_website"))) {
                     website.setVisibility(View.VISIBLE);
                     website.setTag(blog.optString("blog_website"));
                     title.setTextColor(getResources().getColor(R.color.color_blue));
-                    
+
                     titleWrapper.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             Uri uri;
                             String uriString = website.getTag().toString();
-                            if(!uriString.startsWith("http") && !uriString.startsWith("https")){
-                                uriString = "http://"+uriString;
+                            if (!uriString.startsWith("http") && !uriString.startsWith("https")) {
+                                uriString = "http://" + uriString;
                             }
                             uri = Uri.parse(uriString);
                             Intent intent = new Intent(Intent.ACTION_VIEW, uri);
@@ -1140,12 +1145,12 @@ public class ArchiveFragment extends BaseFragment {
                         }
                     });
                 }
-                
+
                 title.setText(blog.optString("title"));
                 description.setText(blog.optString("description"));
 
 
-            }catch (JSONException e){
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
@@ -1153,8 +1158,8 @@ public class ArchiveFragment extends BaseFragment {
         FontManager.markAsIconContainer(mView.findViewById(R.id.blog_list), font);
 
     }
-    
-    private void setVolunteerView(){
+
+    private void setVolunteerView() {
 
         ConstraintLayout volunteerWrapper = mView.findViewById(R.id.volunteer_wrapper);
         volunteerWrapper.setVisibility(View.VISIBLE);
@@ -1162,11 +1167,11 @@ public class ArchiveFragment extends BaseFragment {
         TextView addVolunteer = mView.findViewById(R.id.add_new_volunteer);
         RelativeLayout addVolunteerWrapper = mView.findViewById(R.id.volunteer_add_wrapper);
         addVolunteerWrapper.setVisibility(View.GONE);
-        
-        if (authorUid == uid){
+
+        if (authorUid == uid) {
             addVolunteer.setVisibility(View.VISIBLE);
             addVolunteer.setOnClickListener(new View.OnClickListener() {
-            @Override
+                @Override
                 public void onClick(View view) {
                     VolunteerEditDialogFragment volunteerEditDialogFragment = new VolunteerEditDialogFragment();
                     volunteerEditDialogFragment.setTargetFragment(ArchiveFragment.this, REQUESTCODE);
@@ -1175,11 +1180,11 @@ public class ArchiveFragment extends BaseFragment {
             });
         }
 
-        if(mVolunteerListView.getChildCount() > 0){
+        if (mVolunteerListView.getChildCount() > 0) {
             mVolunteerListView.removeAllViews();
         }
-        
-        for (int i=0; i<mVolunteer.length(); i++){
+
+        for (int i = 0; i < mVolunteer.length(); i++) {
             try {
                 JSONObject volunteer = mVolunteer.getJSONObject(i);
                 View view = LayoutInflater.from(MyApplication.getContext()).inflate(R.layout.achieve_base_background, null);
@@ -1190,42 +1195,27 @@ public class ArchiveFragment extends BaseFragment {
                 TextView start = view.findViewById(R.id.start_time);
                 TextView end = view.findViewById(R.id.end_time);
                 TextView description = view.findViewById(R.id.description);
-                
+
                 institution.setText(volunteer.optString("institution"));
                 role.setText(volunteer.optString("role"));
                 website.setText(volunteer.optString("website"));
                 start.setText(volunteer.optString("start"));
-                end.setText("-  "+volunteer.optString("end"));
+                end.setText("-  " + volunteer.optString("end"));
                 description.setText(volunteer.optString("description"));
 
-            }catch (JSONException e){
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
     }
-    
-    private void setDynamicsCountView(int count){
-        LinearLayout dynamicsCountWrapper = mView.findViewById(R.id.dynamics_count_wrapper);
-        dynamicsCountWrapper.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MyApplication.getContext(), SpecificUserDynamicsActivity.class);
-                intent.putExtra("uid", userProfile.getUid());
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-                startActivity(intent);
-            }
-        });
-        
-        TextView dynamicsCount = mView.findViewById(R.id.dynamics_count);
-        dynamicsCount.setText(String.valueOf(count));
-    }
 
-    private void setFollowedStatistics(final int count){
+
+    private void setFollowedStatistics(final int count) {
         LinearLayout followedCountWrapper = mView.findViewById(R.id.followed_count_wrap);
         TextView followedCount = mView.findViewById(R.id.followed_count);
         followedCountWrapper.setOnClickListener(new View.OnClickListener() {
-        
-        @Override
+
+            @Override
             public void onClick(View view) {
                 Bundle bundle = new Bundle();
                 bundle.putInt("type", FOLLOWED);
@@ -1239,8 +1229,8 @@ public class ArchiveFragment extends BaseFragment {
 
         followedCount.setText(String.valueOf(count));
     }
-    
-    private void setPraisedStatistics(final int count){
+
+    private void setPraisedStatistics(final int count) {
         LinearLayout praisedCountWrapper = mView.findViewById(R.id.praised_count_wrap);
         TextView praisedCount = mView.findViewById(R.id.praised_count);
         praisedCount.setText(String.valueOf(count));
@@ -1251,7 +1241,7 @@ public class ArchiveFragment extends BaseFragment {
                 Bundle bundle = new Bundle();
                 bundle.putInt("type", PRAISED);
                 bundle.putInt("uid", userProfile.getUid());
-                
+
                 bundle.putString("title", "被赞 " + count);
                 CommonUserListDialogFragment commonUserListDialogFragment = new CommonUserListDialogFragment();
                 commonUserListDialogFragment.setArguments(bundle);
@@ -1267,7 +1257,7 @@ public class ArchiveFragment extends BaseFragment {
             followBtn.setBackground(MyApplication.getContext().getDrawable(R.drawable.btn_disable));
             followBtn.setTextColor(getResources().getColor(R.color.color_dark_grey));
         }
-        
+
         followBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1301,19 +1291,19 @@ public class ArchiveFragment extends BaseFragment {
                     @Override
                     public void onFailure(Call call, IOException e) {
                     }
-                    });
+                });
             }
         });
     }
 
-    private void getFollowStatisticsCount(){
+    private void getFollowStatisticsCount() {
         RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
         HttpUtil.sendOkHttpRequest(MyApplication.getContext(), GET_FOLLOW_STATISTICS_URL, requestBody, new Callback() {
-        @Override
+            @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
                     String responseText = response.body().string();
-                    if(isDebug)
+                    if (isDebug)
                         Slog.d(TAG, "==========getFollow statistics : " + responseText);
                     try {
                         JSONObject followObject = new JSONObject(responseText);
@@ -1330,8 +1320,8 @@ public class ArchiveFragment extends BaseFragment {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    
-                    }
+
+                }
             }
 
             @Override
@@ -1344,7 +1334,7 @@ public class ArchiveFragment extends BaseFragment {
         final Button contacts = mView.findViewById(R.id.contacts);
         final Button follow = mView.findViewById(R.id.follow);
         Button chatBtn = mView.findViewById(R.id.chat);
-        
+
         if (contactStatus == APPLIED) {
             contacts.setEnabled(false);
             contacts.setText("已申请");
@@ -1354,7 +1344,7 @@ public class ArchiveFragment extends BaseFragment {
             follow.setVisibility(View.GONE);
 
             chatBtn.setVisibility(View.VISIBLE);
-            if (null == chat){
+            if (null == chat) {
                 chat = new Chat();
             }
             chatBtn.setOnClickListener(new View.OnClickListener() {
@@ -1364,7 +1354,7 @@ public class ArchiveFragment extends BaseFragment {
                 }
             });
         }
-        
+
         contacts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1372,23 +1362,23 @@ public class ArchiveFragment extends BaseFragment {
                 HttpUtil.sendOkHttpRequest(MyApplication.getContext(), CONTACTS_ADD_URL, requestBody, new Callback() {
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
-                    if (response.body() != null) {
+                        if (response.body() != null) {
                             String responseText = response.body().string();
-                            if(isDebug)
+                            if (isDebug)
                                 Slog.d(TAG, "==========processContactsAction : " + responseText);
                             try {
                                 JSONObject status = new JSONObject(responseText);
                                 boolean addContacts = status.optBoolean("add_contacts");
-                                if(addContacts == true){
+                                if (addContacts == true) {
                                     getContactsStatus();
                                 }
-                            }catch (JSONException e){
+                            } catch (JSONException e) {
                                 e.printStackTrace();
                             }
                         }
                     }
-                    
-                     @Override
+
+                    @Override
                     public void onFailure(Call call, IOException e) {
                     }
                 });
@@ -1400,11 +1390,13 @@ public class ArchiveFragment extends BaseFragment {
     }
 
     @Override
-    protected int getLayoutId() {   return 0; }
-    
+    protected int getLayoutId() {
+        return 0;
+    }
+
     public void handleMessage(Message message) {
         Bundle bundle = message.getData();
-        switch (message.what){
+        switch (message.what) {
             case GET_USER_PROFILE_DONE:
                 setProfileView();
                 break;
@@ -1414,11 +1406,7 @@ public class ArchiveFragment extends BaseFragment {
             case GET_FOLLOW_DONE:
                 processFollowAction();
                 break;
-            case GET_ACTIVITIES_COUNT_DONE:
-                int dynamicsCount = bundle.getInt("count");
-                setDynamicsCountView(dynamicsCount);
-                break;
-                case GET_FOLLOW_STATISTICS_URL_DONE:
+            case GET_FOLLOW_STATISTICS_URL_DONE:
                 int followedCount = bundle.getInt("followed_count");
                 setFollowedStatistics(followedCount);
                 break;
@@ -1435,7 +1423,7 @@ public class ArchiveFragment extends BaseFragment {
             case GET_PRIZE_DONE:
                 setPrizeView();
                 break;
-                case GET_PAPER_DONE:
+            case GET_PAPER_DONE:
                 setPaperView();
                 break;
             case GET_BLOG_DONE:
@@ -1451,7 +1439,7 @@ public class ArchiveFragment extends BaseFragment {
 
     static class MyHandler extends Handler {
         WeakReference<ArchiveFragment> archiveFragmentWeakReference;
-        
+
         MyHandler(ArchiveFragment archiveFragment) {
             archiveFragmentWeakReference = new WeakReference<>(archiveFragment);
         }

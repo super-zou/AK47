@@ -1,17 +1,13 @@
 package com.hetang.adapter;
 
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
@@ -29,8 +25,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.hetang.R;
-import com.hetang.archive.ArchiveActivity;
-import com.hetang.meet.MeetArchiveActivity;
+import com.hetang.main.MeetArchiveActivity;
 import com.hetang.meet.SingleGroupDetailsActivity;
 import com.hetang.message.NotificationFragment;
 import com.hetang.util.FontManager;

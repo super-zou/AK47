@@ -3,7 +3,6 @@ package com.hetang.archive;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
@@ -18,6 +17,7 @@ import android.widget.Toast;
 
 import com.hetang.R;
 import com.hetang.util.BaseDialogFragment;
+import com.hetang.util.CommonDialogFragmentInterface;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.Slog;
@@ -30,8 +30,7 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static com.hetang.main.ArchiveFragment.REQUESTCODE;
-import static com.hetang.main.ArchiveFragment.SET_BLOG_RESULT_OK;
+import static com.hetang.archive.ArchiveFragment.SET_BLOG_RESULT_OK;
 
 public class BlogEditDialogFragment extends BaseDialogFragment {
     private static final String TAG = "BlogEditDialogFragment";
@@ -42,13 +41,20 @@ public class BlogEditDialogFragment extends BaseDialogFragment {
     private TextView title;
     private TextView save;
     private TextView cancel;
+    private boolean writeDone = false;
+    private CommonDialogFragmentInterface commonDialogFragmentInterface;
 
     private static final String CREATE_BLOG_URL = HttpUtil.DOMAIN + "?q=personal_archive/blog/create";
-    
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         mContext = context;
+        try {
+            commonDialogFragmentInterface = (CommonDialogFragmentInterface) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString() + "must implement commonDialogFragmentInterface");
+        }
     }
 
     @Override
@@ -58,7 +64,7 @@ public class BlogEditDialogFragment extends BaseDialogFragment {
         mDialog = new Dialog(mContext, android.R.style.Theme_Light_NoTitleBar);
         mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         view = inflater.inflate(R.layout.blog_edit, null);
-        
+
         mDialog.setContentView(view);
         mDialog.setCanceledOnTouchOutside(true);
         Window window = mDialog.getWindow();
@@ -70,7 +76,7 @@ public class BlogEditDialogFragment extends BaseDialogFragment {
         //window.setDimAmount(0.8f);
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         window.setAttributes(layoutParams);
-        
+
         initView();
 
         Typeface font = Typeface.createFromAsset(mContext.getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
@@ -80,8 +86,8 @@ public class BlogEditDialogFragment extends BaseDialogFragment {
     }
 
     private void initView() {
-    
-    save = mDialog.findViewById(R.id.save);
+
+        save = mDialog.findViewById(R.id.save);
         cancel = mDialog.findViewById(R.id.cancel);
 
         cancel.setOnClickListener(new View.OnClickListener() {
@@ -96,22 +102,22 @@ public class BlogEditDialogFragment extends BaseDialogFragment {
         final TextInputEditText descriptionEdit = mDialog.findViewById(R.id.description_edit);
 
         final Blog blog = new Blog();
-        
+
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!TextUtils.isEmpty(titleEdit.getText().toString())){
+                if (!TextUtils.isEmpty(titleEdit.getText().toString())) {
                     blog.title = titleEdit.getText().toString();
-                }else {
+                } else {
                     Toast.makeText(getContext(), "请输入名称", Toast.LENGTH_LONG).show();
                     return;
                 }
 
-                if (!TextUtils.isEmpty(websiteEdit.getText().toString())){
+                if (!TextUtils.isEmpty(websiteEdit.getText().toString())) {
                     blog.website = websiteEdit.getText().toString();
                 }
-                
-                if (!TextUtils.isEmpty(descriptionEdit.getText().toString())){
+
+                if (!TextUtils.isEmpty(descriptionEdit.getText().toString())) {
                     blog.description = descriptionEdit.getText().toString();
                 }
 
@@ -121,8 +127,8 @@ public class BlogEditDialogFragment extends BaseDialogFragment {
     }
 
     private void uploadToServer(Blog blog) {
-    
-    showProgressDialog(getString(R.string.saving_progress));
+
+        showProgressDialog(getString(R.string.saving_progress));
 
         RequestBody requestBody = new FormBody.Builder()
                 .add("title", blog.title)
@@ -133,31 +139,40 @@ public class BlogEditDialogFragment extends BaseDialogFragment {
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
                 Slog.d(TAG, "================uploadToServer response:" + responseText);
-                if(!TextUtils.isEmpty(responseText)){
+                if (!TextUtils.isEmpty(responseText)) {
+                    writeDone = true;
                     dismissProgressDialog();
                     mDialog.dismiss();
                 }
             }
-            
+
             @Override
-            public void onFailure(Call call, IOException e) {  }
+            public void onFailure(Call call, IOException e) {
+            }
         });
 
     }
 
-    class Blog{
+    class Blog {
         String title;
         String website;
         String description = "";
     }
-    
+
     @Override
     public void onDestroy() {
         super.onDestroy();
 
-        if (getTargetFragment() != null){
+        /*
+        if (getTargetFragment() != null) {
             Intent intent = new Intent();
             getTargetFragment().onActivityResult(REQUESTCODE, SET_BLOG_RESULT_OK, intent);
+        }
+
+         */
+
+        if (commonDialogFragmentInterface != null) {//callback from ArchivesActivity class
+            commonDialogFragmentInterface.onBackFromDialog(SET_BLOG_RESULT_OK, 0, writeDone);
         }
 
         dismissProgressDialog();
@@ -167,7 +182,7 @@ public class BlogEditDialogFragment extends BaseDialogFragment {
             mDialog = null;
         }
     }
-    
+
     @Override
     public void onDismiss(DialogInterface dialogInterface) {
         super.onDismiss(dialogInterface);

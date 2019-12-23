@@ -3,7 +3,6 @@ package com.hetang.archive;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
@@ -39,8 +38,7 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static com.hetang.main.ArchiveFragment.REQUESTCODE;
-import static com.hetang.main.ArchiveFragment.SET_EDUCATION_RESULT_OK;
+import static com.hetang.archive.ArchiveFragment.SET_EDUCATION_RESULT_OK;
 
 public class EducationEditDialogFragment extends BaseDialogFragment {
     private static final String TAG = "EducationEditDialogFragment";
@@ -51,6 +49,7 @@ public class EducationEditDialogFragment extends BaseDialogFragment {
     private TextView title;
     private TextView save;
     private TextView cancel;
+    private boolean writeDone = false;
     private CommonDialogFragmentInterface commonDialogFragmentInterface;
     private boolean degreeSlected = false;
     private boolean entranceSlected = false;
@@ -201,6 +200,7 @@ public class EducationEditDialogFragment extends BaseDialogFragment {
                 String responseText = response.body().string();
                 Slog.d(TAG, "================uploadToServer response:" + responseText);
                 if(!TextUtils.isEmpty(responseText)){
+                    writeDone = true;
                     dismissProgressDialog();
                     mDialog.dismiss();
                 }
@@ -239,10 +239,17 @@ public class EducationEditDialogFragment extends BaseDialogFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        
+
+        /*
         if (getTargetFragment() != null){
             Intent intent = new Intent();
             getTargetFragment().onActivityResult(REQUESTCODE, SET_EDUCATION_RESULT_OK, intent);
+        }
+
+         */
+
+        if (commonDialogFragmentInterface != null) {//callback from ArchivesActivity class
+            commonDialogFragmentInterface.onBackFromDialog(SET_EDUCATION_RESULT_OK, 0, writeDone);
         }
 
         dismissProgressDialog();

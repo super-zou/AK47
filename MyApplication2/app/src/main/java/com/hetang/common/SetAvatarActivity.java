@@ -1,4 +1,4 @@
-package com.hetang.util;
+package com.hetang.common;
 
 import android.Manifest;
 import android.content.Context;
@@ -20,8 +20,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hetang.R;
-import com.hetang.common.BaseAppCompatActivity;
 import com.hetang.meet.FillMeetInfoActivity;
+import com.hetang.util.FontManager;
+import com.hetang.util.HttpUtil;
+import com.hetang.util.Slog;
+import com.hetang.util.UserProfile;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
@@ -259,21 +262,20 @@ public class SetAvatarActivity extends BaseAppCompatActivity {
                             }else {
                                 int status = new JSONObject(responseText).optInt("response");
                                 if (status == 1) {
+                                    String avatarUri = new JSONObject(responseText).optString("avatar");
                                     if (isLookFriend) {
                                         Intent intent = new Intent(getApplicationContext(), FillMeetInfoActivity.class);
                                         intent.putExtra("userProfile", userProfile);
                                         startActivity(intent);
                                     } else {
-                                        String avatarUri = new JSONObject(responseText).optString("avatar");
                                         Slog.d(TAG, "------------------------>avatar: " + avatarUri);
                                         Intent intent = getIntent();
                                         intent.putExtra("avatar", avatarUri);
                                         setResult(SET_AVATAR_RESULT_OK, intent);
                                     }
+                                    sendBroadcast(avatarUri);
                                     finish();
                                 }
-
-                                sendBroadcast();
                             }
                             dismissProgressDialog();
 
@@ -297,7 +299,9 @@ public class SetAvatarActivity extends BaseAppCompatActivity {
 
     }
 
-    private void sendBroadcast() {
-        LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(AVATAR_SET_ACTION_BROADCAST));
+    private void sendBroadcast(String url) {
+        Intent intent = new Intent(AVATAR_SET_ACTION_BROADCAST);
+        intent.putExtra("avatar", url);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 }

@@ -1,6 +1,7 @@
 package com.hetang.util;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -21,6 +22,7 @@ import com.hetang.common.MyApplication;
 public abstract class BaseFragment extends Fragment {
     private static final String TAG = "BaseFragment";
     private static final boolean isDebug = false;
+    private ProgressDialog mProgressDialog;
     private Activity activity;
     private boolean isVisible = false;//当前Fragment是否可见
     private boolean isInitView = false;//是否与View建立起映射关系
@@ -128,5 +130,20 @@ public abstract class BaseFragment extends Fragment {
         msg.what = what;
         msg.obj = obj;
         msg.sendToTarget();
+    }
+
+    public void showProgressDialog(String msg) {
+        if (null == mProgressDialog) {
+            mProgressDialog = new ProgressDialog(getContext());
+            mProgressDialog.setMessage(msg);
+            mProgressDialog.setCanceledOnTouchOutside(false);
+        }
+        mProgressDialog.show();
+    }
+
+    public void dismissProgressDialog() {
+        if (null != mProgressDialog) {
+            mProgressDialog.dismiss();
+        }
     }
 }

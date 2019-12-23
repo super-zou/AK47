@@ -3,7 +3,6 @@ package com.hetang.archive;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
@@ -18,6 +17,7 @@ import android.widget.Toast;
 
 import com.hetang.R;
 import com.hetang.util.BaseDialogFragment;
+import com.hetang.util.CommonDialogFragmentInterface;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.Slog;
@@ -30,8 +30,7 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static com.hetang.main.ArchiveFragment.REQUESTCODE;
-import static com.hetang.main.ArchiveFragment.SET_VOLUNTEER_RESULT_OK;
+import static com.hetang.archive.ArchiveFragment.SET_VOLUNTEER_RESULT_OK;
 
 public class VolunteerEditDialogFragment extends BaseDialogFragment {
     private static final String TAG = "PrizeEditDialogFragment";
@@ -42,13 +41,19 @@ public class VolunteerEditDialogFragment extends BaseDialogFragment {
     private TextView title;
     private TextView save;
     private TextView cancel;
-
+    private boolean writeDone = false;
+    private CommonDialogFragmentInterface commonDialogFragmentInterface;
     private static final String CREATE_VOLUNTEER_URL = HttpUtil.DOMAIN + "?q=personal_archive/volunteer/create";
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         mContext = context;
+        try {
+            commonDialogFragmentInterface = (CommonDialogFragmentInterface) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString() + "must implement commonDialogFragmentInterface");
+        }
     }
     
     @Override
@@ -156,6 +161,7 @@ public class VolunteerEditDialogFragment extends BaseDialogFragment {
                 String responseText = response.body().string();
                 Slog.d(TAG, "================uploadToServer response:" + responseText);
                 if(!TextUtils.isEmpty(responseText)){
+                    writeDone = true;
                     dismissProgressDialog();
                     mDialog.dismiss();
                 }
@@ -179,9 +185,16 @@ public class VolunteerEditDialogFragment extends BaseDialogFragment {
     public void onDestroy() {
         super.onDestroy();
 
+        /*
         if (getTargetFragment() != null){
             Intent intent = new Intent();
             getTargetFragment().onActivityResult(REQUESTCODE, SET_VOLUNTEER_RESULT_OK, intent);
+        }
+
+         */
+
+        if (commonDialogFragmentInterface != null) {//callback from ArchivesActivity class
+            commonDialogFragmentInterface.onBackFromDialog(SET_VOLUNTEER_RESULT_OK, 0, writeDone);
         }
 
         dismissProgressDialog();

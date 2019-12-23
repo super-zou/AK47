@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -19,14 +20,13 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.hetang.util.CommonDialogFragmentInterface;
+import com.hetang.R;
+import com.hetang.common.HandlerTemp;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.ParseUtils;
 import com.hetang.util.Slog;
 import com.hetang.util.Utility;
 import com.nex3z.flowlayout.FlowLayout;
-import com.hetang.R;
-import com.hetang.common.HandlerTemp;
 import com.willy.ratingbar.BaseRatingBar;
 import com.willy.ratingbar.ScaleRatingBar;
 
@@ -34,7 +34,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -44,12 +43,15 @@ import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+
 import static android.view.Gravity.CENTER;
+import static com.hetang.archive.ArchiveFragment.REQUESTCODE;
+import static com.hetang.main.MeetArchiveFragment.RESULT_OK;
 
 public class EvaluateDialogFragment extends DialogFragment {
     private static final String TAG = "EvaluateDialogFragment";
     private static final int IMPRESSION_PARSE_DONE = 0;
-   // private static final String SET_IMPRESSION_URL = HttpUtil.DOMAIN + "?q=meet/impression/set";
+    // private static final String SET_IMPRESSION_URL = HttpUtil.DOMAIN + "?q=meet/impression/set";
     private static final String SET_EVALUATION_URL = HttpUtil.DOMAIN + "?q=meet/evaluation/set";
     private static final String GET_IMPRESSION_STATISTICS_URL = HttpUtil.DOMAIN + "?q=meet/impression/statistics";
     final List<String> selectedFeatures = new ArrayList<>();
@@ -60,18 +62,12 @@ public class EvaluateDialogFragment extends DialogFragment {
     private LayoutInflater inflater;
     private Handler handler = new EvaluateDialogFragment.MyHandler(this);
     private List<String> impressionList = new ArrayList<>();
-    private CommonDialogFragmentInterface commonDialogFragmentInterface;
     private ProgressDialog progressDialog;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         mContext = context;
-        try {
-            commonDialogFragmentInterface = (CommonDialogFragmentInterface) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() + "must implement commonDialogFragmentInterface");
-        }
     }
 
     @Override
@@ -119,12 +115,12 @@ public class EvaluateDialogFragment extends DialogFragment {
         } else {//display female features
             featureArr = getContext().getResources().getStringArray(R.array.female_features);
         }
-        for (int i=0; i<featureArr.length; i++){
-            TextView textView= new TextView(getContext());
+        for (int i = 0; i < featureArr.length; i++) {
+            TextView textView = new TextView(getContext());
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             textView.setText(featureArr[i]);
             textView.setGravity(CENTER);
-            textView.setPadding(16,16,16,16);
+            textView.setPadding(16, 16, 16, 16);
             textView.setBackground(getResources().getDrawable(R.drawable.label_bg));
             textView.setLayoutParams(layoutParams);
             featuresFL.addView(textView);
@@ -133,7 +129,7 @@ public class EvaluateDialogFragment extends DialogFragment {
 
         scaleRatingBar.setRating(rating);
         charmRating.setText(String.valueOf(rating));
-        
+
         scaleRatingBar.setOnRatingChangeListener(new BaseRatingBar.OnRatingChangeListener() {
 
             @Override
@@ -145,7 +141,7 @@ public class EvaluateDialogFragment extends DialogFragment {
         });
 
         selectFeatures(featuresFL);
-        
+
         Button addDiyFeature = view.findViewById(R.id.add_feature);
         Button saveFeatures = view.findViewById(R.id.save_features);
         final TextView errorNotice = view.findViewById(R.id.error_notice);
@@ -168,7 +164,7 @@ public class EvaluateDialogFragment extends DialogFragment {
                 }
             }
         });
-        
+
         saveFeatures.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -182,7 +178,7 @@ public class EvaluateDialogFragment extends DialogFragment {
                     mEvaluated = true;
                 }
                 float rating = 0;
-                
+
                 if (charmRating.getText().toString() != null && !"".equals(charmRating.getText().toString())) {
                     rating = Float.parseFloat(charmRating.getText().toString());
                     mEvaluated = true;
@@ -194,14 +190,14 @@ public class EvaluateDialogFragment extends DialogFragment {
             }
         });
     }
-    
+
     private void uploadToServer(String features, float rating, int uid) {
 
         showProgress(mContext);
         FormBody.Builder builder = new FormBody.Builder()
-                                                .add("uid", String.valueOf(uid))
-                                                .add("rating", String.valueOf(rating));
-        if(features != null && features.length() > 0){
+                .add("uid", String.valueOf(uid))
+                .add("rating", String.valueOf(rating));
+        if (features != null && features.length() > 0) {
             builder.add("features", features);
         }
 
@@ -340,9 +336,13 @@ public class EvaluateDialogFragment extends DialogFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-                //KeyboardUtils.hideSoftInput(getContext());
-        if (commonDialogFragmentInterface != null) {//callback from ArchivesActivity class
-            commonDialogFragmentInterface.onBackFromDialog(ParseUtils.TYPE_EVALUATE,0, mEvaluated);
+        //KeyboardUtils.hideSoftInput(getContext());
+
+        if (getTargetFragment() != null){
+            Intent intent = new Intent();
+            intent.putExtra("type", ParseUtils.TYPE_EVALUATE);
+            intent.putExtra("status", mEvaluated);
+            getTargetFragment().onActivityResult(REQUESTCODE, RESULT_OK, intent);
         }
 
         closeProgressDialog();
@@ -369,8 +369,8 @@ public class EvaluateDialogFragment extends DialogFragment {
         void onBackFromRatingAndImpressionDialogFragment(boolean evaluated);
     }
 
-        static class MyHandler extends HandlerTemp<EvaluateDialogFragment> {
-        public MyHandler(EvaluateDialogFragment cls){
+    static class MyHandler extends HandlerTemp<EvaluateDialogFragment> {
+        public MyHandler(EvaluateDialogFragment cls) {
             super(cls);
         }
 

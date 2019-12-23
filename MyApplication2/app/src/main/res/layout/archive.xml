@@ -1,47 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/white"
     android:id="@+id/archive"
+    android:fitsSystemWindows="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-
-    <include
-        android:id="@+id/custom_actionbar"
-        layout="@layout/custom_actionbar_common"
+    <android.support.constraint.ConstraintLayout
+        android:background="@color/background"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone" />
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/left_back"
+            android:layout_width="35dp"
+            android:layout_height="wrap_content"
+            android:paddingLeft="12dp"
+            android:paddingRight="8dp"
+            android:text="@string/left_angle"
+            android:textColor="@color/white"
+            android:textSize="28sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/settings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginBottom="8dp"
+            android:text="@string/fa_setting"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </android.support.constraint.ConstraintLayout>
 
     <ScrollView
         android:id="@+id/archive_scroll_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:background="@color/white"
         android:paddingBottom="8dp">
-
         <android.support.constraint.ConstraintLayout
             android:id="@+id/activity_archive_wrapper"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
-            <TextView
-                android:id="@+id/settings"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
-                android:text="@string/fa_setting"
-                android:textSize="18sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
 
             <com.hetang.util.RoundImageView
                 android:id="@+id/head_uri"
                 android:layout_width="180dp"
                 android:layout_height="180dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginEnd="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -70,7 +86,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginEnd="8dp"
                 android:text="name"
 
@@ -99,283 +115,30 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/name" />
 
-            <LinearLayout
-                android:id="@+id/education"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/summary">
-
-                <TextView
-                    android:id="@+id/degree"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="5dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="·" />
-
-                <TextView
-                    android:id="@+id/university"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="5dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="·" />
-
-                <TextView
-                    android:id="@+id/major"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="5dp" />
-
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/work"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:gravity="center"
-                android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/education">
-
-                <TextView
-                    android:id="@+id/position"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="5dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="·" />
-
-                <TextView
-                    android:id="@+id/industry"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="5dp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/living_wrap"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:gravity="center_horizontal"
-                android:orientation="horizontal"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/work">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/location" />
-
-                <TextView
-                    android:id="@+id/living"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dp" />
-
-                <TextView
-                    android:id="@+id/hometown"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/interaction_wrap"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-
-                android:paddingTop="18dp"
-                android:paddingBottom="10dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/living_wrap">
-
-                <Button
-                    android:id="@+id/contacts"
-                    android:layout_width="0dp"
-                    android:layout_height="40dp"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginRight="20dp"
-                    android:layout_marginBottom="8dp"
-                    android:layout_weight="5"
-                    android:background="@drawable/btn_stress"
-                    android:elevation="5dp"
-                    android:text="+朋友"
-                    android:textColor="@color/white" />
-
-                <Button
-                    android:id="@+id/follow"
-                    android:layout_width="0dp"
-                    android:layout_height="40dp"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginRight="20dp"
-                    android:layout_marginBottom="8dp"
-                    android:layout_weight="5"
-                    android:background="@drawable/btn_default"
-                    android:elevation="5dp"
-                    android:text="+关注"
-                    android:textColor="@color/color_blue" />
-
-                <Button
-                    android:id="@+id/chat"
-                    android:layout_width="0dp"
-                    android:layout_height="40dp"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginRight="20dp"
-                    android:layout_marginBottom="8dp"
-                    android:layout_weight="5"
-                    android:background="@drawable/btn_primary"
-                    android:elevation="5dp"
-                    android:text="聊天"
-                    android:textColor="@color/colorWhite"
-                    android:visibility="gone" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/dynamics_count_wrapper"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:padding="8dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/interaction_wrap">
-
-                <TextView
-                    android:id="@+id/dynamics_count"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="2dp"
-                    android:textColor="@color/blue_dark"
-                    android:text="0" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="动态" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/followed_count_wrap"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="1dp"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:padding="8dp"
-                app:layout_constraintStart_toEndOf="@+id/dynamics_count_wrapper"
-                app:layout_constraintTop_toTopOf="@+id/dynamics_count_wrapper">
-
-                <TextView
-                    android:id="@+id/followed_count"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="2dp"
-                    android:textColor="@color/blue_dark"
-                    android:text="0" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="关注" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/praised_count_wrap"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="1dp"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:padding="8dp"
-                app:layout_constraintStart_toEndOf="@+id/followed_count_wrap"
-                app:layout_constraintTop_toTopOf="@+id/followed_count_wrap">
-
-                <TextView
-                    android:id="@+id/praised_count"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="2dp"
-                    android:textColor="@color/blue_dark"
-                    android:text="0" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="赞" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/meet_archive"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:padding="8dp"
-                android:visibility="visible"
-                app:layout_constraintStart_toEndOf="@+id/praised_count_wrap"
-                app:layout_constraintTop_toTopOf="@+id/praised_count_wrap">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="2dp"
-                    android:text="@string/fa_heart"
-                    android:textColor="@color/color_red" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="征友" />
-            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/introduction_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="16dp"
                 android:background="@color/white"
                 android:orientation="horizontal"
                 android:padding="18dp"
                 app:layout_constraintEnd_toEndOf="@+id/add_introduction"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/dynamics_count_wrapper">
+                app:layout_constraintTop_toBottomOf="@+id/summary">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textSize="20sp"
                     android:text="@string/info" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="8dp"
+                    android:textSize="20sp"
                     android:text="@string/introduction" />
             </LinearLayout>
 
@@ -422,7 +185,6 @@
                     android:focusedByDefault="false"
                     android:hint="简单介绍一下自己"
                     android:minLines="2"
-                    android:textColor="@color/colorWhite"
                     android:textSize="15sp"
                     android:theme="@style/MyEditText" />
 
@@ -442,7 +204,7 @@
                 android:id="@+id/education_background_wrap"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="3dp"
+                android:layout_marginTop="16dp"
                 android:background="@color/white"
                 android:orientation="horizontal"
                 android:padding="18dp"
@@ -453,12 +215,14 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textSize="20sp"
                     android:text="@string/graduation" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="8dp"
+                    android:textSize="20sp"
                     android:text="@string/education_background" />
             </LinearLayout>
 
@@ -503,7 +267,7 @@
                     android:id="@+id/work_experience_wrap"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="3dp"
+                    android:layout_marginTop="8dp"
                     android:background="@color/white"
                     android:orientation="horizontal"
                     android:padding="18dp"
@@ -514,13 +278,15 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textSize="20sp"
                         android:text="@string/work" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="8dp"
-                        android:text="@string/work_experience" />
+                        android:textSize="20sp"
+                        android:text="@string/work_practice_experience" />
                 </LinearLayout>
 
                 <TextView
@@ -576,12 +342,14 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textSize="20sp"
                         android:text="@string/fa_prize" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="8dp"
+                        android:textSize="20sp"
                         android:text="@string/prize" />
                 </LinearLayout>
 
@@ -638,12 +406,14 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textSize="20sp"
                         android:text="@string/fa_paper" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="8dp"
+                        android:textSize="20sp"
                         android:text="@string/paper" />
                 </LinearLayout>
 
@@ -700,12 +470,14 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textSize="20sp"
                         android:text="@string/fa_blog" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="8dp"
+                        android:textSize="20sp"
                         android:text="@string/blog" />
                 </LinearLayout>
 
@@ -762,12 +534,14 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textSize="20sp"
                         android:text="@string/fa_heart_o" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="8dp"
+                        android:textSize="20sp"
                         android:text="@string/volunteer" />
                 </LinearLayout>
 
@@ -815,12 +589,14 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textSize="20sp"
                     android:text="@string/fa_more_experience" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="8dp"
+                    android:textSize="20sp"
                     android:text="@string/more_experience" />
             </LinearLayout>
 
@@ -861,7 +637,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/fa_prize"
-                        android:textColor="@color/colorWhite"
                         android:textSize="20sp" />
 
                     <TextView
@@ -872,7 +647,6 @@
                         android:layout_marginLeft="8dp"
                         android:layout_toRightOf="@+id/prize_icon"
                         android:text="@string/prize"
-                        android:textColor="@color/colorWhite"
                         android:textSize="20sp" />
 
                     <TextView
@@ -882,15 +656,14 @@
                         android:layout_alignTop="@id/prize_icon"
                         android:layout_alignParentRight="true"
                         android:text="@string/fa_plus"
-                        android:textColor="@color/colorWhite"
+                        android:textColor="@color/blue_dark"
                         android:textSize="26sp"
                         android:textStyle="bold" />
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:layout_alignParentBottom="true"
-                        android:background="@color/colorWhite" />
+                        android:layout_alignParentBottom="true" />
 
                 </RelativeLayout>
 
@@ -907,7 +680,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/fa_paper"
-                        android:textColor="@color/colorWhite"
                         android:textSize="20sp" />
 
                     <TextView
@@ -916,7 +688,6 @@
                         android:layout_marginLeft="8dp"
                         android:layout_toRightOf="@+id/paper_icon"
                         android:text="@string/paper"
-                        android:textColor="@color/colorWhite"
                         android:textSize="20sp" />
 
                     <TextView
@@ -925,7 +696,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
                         android:text="@string/fa_plus"
-                        android:textColor="@color/colorWhite"
+                        android:textColor="@color/blue_dark"
                         android:textSize="26sp"
                         android:textStyle="bold" />
 
@@ -933,7 +704,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:layout_alignParentBottom="true"
-                        android:background="@color/colorWhite" />
+                        android:textColor="@color/blue_dark"
+                         />
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -949,7 +721,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/fa_blog"
-                        android:textColor="@color/colorWhite"
                         android:textSize="20sp" />
 
                     <TextView
@@ -958,7 +729,6 @@
                         android:layout_marginLeft="8dp"
                         android:layout_toRightOf="@+id/blog_icon"
                         android:text="@string/blog"
-                        android:textColor="@color/colorWhite"
                         android:textSize="20sp" />
 
                     <TextView
@@ -967,7 +737,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
                         android:text="@string/fa_plus"
-                        android:textColor="@color/colorWhite"
+                        android:textColor="@color/blue_dark"
                         android:textSize="26sp"
                         android:textStyle="bold" />
 
@@ -975,7 +745,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:layout_alignParentBottom="true"
-                        android:background="@color/colorWhite" />
+                        android:textColor="@color/blue_dark"
+                         />
 
                 </RelativeLayout>
 
@@ -992,7 +763,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/fa_heart"
-                        android:textColor="@color/colorWhite"
                         android:textSize="20sp" />
 
                     <TextView
@@ -1001,7 +771,6 @@
                         android:layout_marginLeft="8dp"
                         android:layout_toRightOf="@+id/volunteer_icon"
                         android:text="@string/volunteer"
-                        android:textColor="@color/colorWhite"
                         android:textSize="20sp" />
 
                     <TextView
@@ -1010,7 +779,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
                         android:text="@string/fa_plus"
-                        android:textColor="@color/colorWhite"
+                        android:textColor="@color/blue_dark"
                         android:textSize="26sp"
                         android:textStyle="bold" />
 

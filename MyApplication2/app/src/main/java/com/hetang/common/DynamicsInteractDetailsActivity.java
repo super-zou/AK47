@@ -54,7 +54,7 @@ import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.hetang.R;
 import com.hetang.adapter.DynamicsInteractDetailsAdapter;
 import com.hetang.meet.DynamicsComment;
-import com.hetang.meet.MeetArchiveActivity;
+import com.hetang.main.MeetArchiveActivity;
 import com.hetang.meet.MeetDynamicsFragment;
 import com.hetang.meet.UserMeetInfo;
 

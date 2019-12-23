@@ -28,7 +28,7 @@ import com.hetang.util.InvitationDialogFragment;
 import com.hetang.common.MyApplication;
 import com.hetang.util.ParseUtils;
 import com.hetang.util.RoundImageView;
-import com.hetang.util.SetAvatarActivity;
+import com.hetang.common.SetAvatarActivity;
 import com.hetang.util.Slog;
 import com.hetang.util.UserProfile;
 import com.hetang.util.Utility;

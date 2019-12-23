@@ -2,17 +2,13 @@ package com.hetang.common;
 
 import android.app.ActivityManager;
 import android.app.Application;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.os.Message;
 import android.os.Process;
 import android.support.text.emoji.EmojiCompat;
 import android.support.text.emoji.bundled.BundledEmojiCompatConfig;
@@ -20,24 +16,19 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.hetang.util.HttpUtil;
-import com.hetang.util.ParseUtils;
 import com.hetang.util.Slog;
 import com.netease.nim.uikit.api.NimUIKit;
-import com.netease.nim.uikit.api.model.session.SessionEventListener;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.SDKOptions;
 import com.netease.nimlib.sdk.StatusBarNotificationConfig;
 import com.netease.nimlib.sdk.auth.LoginInfo;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
-import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.netease.nimlib.sdk.uinfo.UserInfoProvider;
 import com.netease.nimlib.sdk.uinfo.model.UserInfo;
 import com.netease.nimlib.sdk.util.NIMUtil;
 import com.hetang.R;
 import com.hetang.main.MainActivity;
-import com.hetang.meet.MeetArchiveActivity;
 import com.hetang.update.OkHttpUpdateService;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.commonsdk.UMConfigure;
@@ -49,8 +40,6 @@ import com.xuexiang.xupdate.entity.UpdateError;
 import com.xuexiang.xupdate.listener.OnUpdateFailureListener;
 import com.xuexiang.xupdate.utils.UpdateUtils;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -58,14 +47,6 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.FormBody;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-
-import static com.hetang.util.HttpUtil.GET_USERINFO_WITH_ACCOUNT;
-import static com.hetang.util.ParseUtils.startArchiveActivity;
 import static com.hetang.util.ParseUtils.startMeetArchiveActivity;
 import static com.netease.nimlib.sdk.StatusCode.LOGINED;
 import static com.hetang.util.SharedPreferencesUtils.getYunXinAccount;
