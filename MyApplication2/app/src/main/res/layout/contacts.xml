@@ -19,7 +19,6 @@
             android:gravity="center"
             android:text="@string/new_apply"
             android:textColor="@color/white"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintEnd_toStartOf="@+id/my_apply"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
