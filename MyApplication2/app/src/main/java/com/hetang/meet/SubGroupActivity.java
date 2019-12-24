@@ -160,9 +160,10 @@ public class SubGroupActivity extends BaseAppCompatActivity {
             @Override
             public void onItemClick(View view, int position) {
                 Slog.d(TAG, "==========click : " + position);
-                updateVisitorRecord(position);
+                                int gid = mSubGroupList.get(position).gid;
+                updateVisitorRecord(gid);
                 Intent intent = new Intent(getContext(), SubGroupDetailsActivity.class);
-                intent.putExtra("gid", mSubGroupList.get(position).gid);
+                intent.putExtra("gid", gid);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
                 startActivityForResult(intent, RESULT_FIRST_USER);
             }
@@ -200,8 +201,8 @@ public class SubGroupActivity extends BaseAppCompatActivity {
         }, 50);
     }
 
-    private void updateVisitorRecord(int position) {
-        int gid = mSubGroupList.get(position).gid;
+    public static void updateVisitorRecord(int gid) {
+        
         RequestBody requestBody = new FormBody.Builder()
                 .add("gid", String.valueOf(gid))
                 .build();
