@@ -8,41 +8,41 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NotificationCompat;
-import android.text.TextUtils;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.hetang.R;
+import com.hetang.common.MyApplication;
 import com.hetang.main.MeetArchiveActivity;
 import com.hetang.meet.SingleGroupDetailsActivity;
+import com.hetang.message.NotificationDetailsDialogFragment;
 import com.hetang.message.NotificationFragment;
+import com.hetang.util.CommonUserListDialogFragment;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
+import com.hetang.util.ParseUtils;
 import com.hetang.util.RoundImageView;
 import com.hetang.util.Slog;
 import com.hetang.util.UserProfile;
-import com.hetang.common.MyApplication;
-import com.hetang.util.ParseUtils;
 import com.hetang.util.Utility;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -59,10 +59,10 @@ import static com.hetang.util.ParseUtils.INVITE_SINGLE_GROUP_MEMBER_ACTION;
 import static com.hetang.util.ParseUtils.JOIN_CHEERING_GROUP_ACTION;
 import static com.hetang.util.ParseUtils.REFEREE_ACTION;
 import static com.hetang.util.ParseUtils.REFEREE_INVITE_NF;
-import static com.hetang.util.ParseUtils.startMeetArchiveActivity;
 import static com.hetang.util.Utility.drawableToBitmap;
+import static com.hetang.util.Utility.getDateToString;
 
-public class NotificationListAdapter extends RecyclerView.Adapter<NotificationListAdapter.ViewHolder>{
+public class NotificationListAdapter extends RecyclerView.Adapter<NotificationListAdapter.ViewHolder> {
     private static final String TAG = "NotificationListAdapter";
     private List<NotificationFragment.Notification> notificationList = new ArrayList<>();
     private Context mContext;
@@ -76,10 +76,11 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
     private static final int NOT_SHOWED = 0;
     private static final int SHOWED = 1;
     private Handler mHandler;
-    
-    public NotificationListAdapter(Context context) {
-        mContext = context;
+    private FragmentManager fragmentManager;
 
+    public NotificationListAdapter(Context context, FragmentManager fragmentManager) {
+        mContext = context;
+        this.fragmentManager = fragmentManager;
         mHandler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
@@ -94,7 +95,7 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
             }
         };
     }
-    
+
     public void setData(List<NotificationFragment.Notification> notificationList) {
         this.notificationList = notificationList;
     }
@@ -102,7 +103,7 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
     public void setScrolling(boolean isScrolling) {
         this.isScrolling = isScrolling;
     }
-    
+
     @Override
     public NotificationListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
@@ -114,10 +115,10 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
     @Override
     public void onBindViewHolder(@NonNull final NotificationListAdapter.ViewHolder holder, int position) {
         final NotificationFragment.Notification notification = notificationList.get(position);
-        
-        if (notification.isNew == UNREAD){
+
+        if (notification.isNew == UNREAD) {
             holder.isNew.setVisibility(View.VISIBLE);
-            switch (notification.type){
+            switch (notification.type) {
                 case EVALUATE_ACTION:
                 case REFEREE_ACTION:
                 case REFEREE_INVITE_NF:
@@ -125,28 +126,28 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
                 case APPROVE_IMPRESSION_ACTION:
                 case APPROVE_PERSONALITY_ACTION:
                 case JOIN_CHEERING_GROUP_ACTION:
-                    if (notification.showed == NOT_SHOWED){
+                    if (notification.showed == NOT_SHOWED) {
                         showNotification(notification);
                     }
                     break;
             }
-        }else {
+        } else {
             holder.isNew.setVisibility(View.GONE);
         }
-        
+
         holder.action.setText(notification.action);
         final UserProfile trigger = notification.trigger;//the trigger who produce this notice
         if (trigger.getAvatar() != null && !"".equals(trigger.getAvatar())) {
             Glide.with(mContext).load(HttpUtil.DOMAIN + trigger.getAvatar()).into(holder.avatar);
         } else {
-            if (trigger.getSex() == Utility.MALE){
+            if (trigger.getSex() == Utility.MALE) {
                 holder.avatar.setImageDrawable(mContext.getDrawable(R.drawable.male_default_avator));
-            }else {
+            } else {
                 holder.avatar.setImageDrawable(mContext.getDrawable(R.drawable.female_default_avator));
             }
         }
         holder.name.setText(trigger.getName());
-        
+        /*
         String profile = "";
         if (trigger.getSituation() != -1){
             if(trigger.getSituation() == 0){
@@ -156,16 +157,18 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
             }
             holder.profile.setText(profile);
         }
+        */
 
-        if (!TextUtils.isEmpty(notification.content)){
+        if (!TextUtils.isEmpty(notification.content)) {
             holder.content.setText(notification.content);
-        }else {
-            holder.content.setText("");
+        } else {
+            holder.content.setText("查看详情");
         }
-        
+
         String dataString = getDateToString(notification.timeStamp, "yyyy-MM-dd");
         holder.timeStamp.setText(dataString);
 
+        /*
         switch (notification.type){
             case ParseUtils.APPLY_CONTACTS_NF:
             case ParseUtils.APPLY_JOIN_SINGLE_GROUP_NF:
@@ -194,31 +197,33 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
                     holder.acceptBtn.setVisibility(View.GONE);
                     break;
         }
-        
+        */
+
+        /*
         holder.avatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (notification.trigger.getCid() <= 0){
+                if (notification.trigger.getCid() <= 0) {
                     ParseUtils.startArchiveActivity(mContext, notification.tid);
-                }else {
+                } else {
                     ParseUtils.startMeetArchiveActivity(mContext, notification.tid);
                 }
                 markNotificationProcessed(holder.isNew, notification);
             }
         });
-        
+
         holder.name.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (notification.trigger.getCid() <= 0){
+                if (notification.trigger.getCid() <= 0) {
                     ParseUtils.startArchiveActivity(mContext, notification.tid);
-                }else {
+                } else {
                     ParseUtils.startMeetArchiveActivity(mContext, notification.tid);
                 }
                 markNotificationProcessed(holder.isNew, notification);
             }
         });
-        
+        /*
         holder.profile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -230,19 +235,21 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
                 markNotificationProcessed(holder.isNew, notification);
             }
         });
-        
+
+         */
+
         holder.content.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                switch (notification.type){
+                switch (notification.type) {
                     case ParseUtils.MEET_COMMENT_REPLY_NF:
                     case ParseUtils.PRAISE_MEET_COMMENT_NF:
                     case ParseUtils.MEET_COMMENT_NF:
                         ParseUtils.startMeetConditionDetails(mContext, notification.uid, notification.id, null);
                         markNotificationProcessed(holder.isNew, notification);
                         break;
-                        
-                        case ParseUtils.LOVED_NF:
+
+                    case ParseUtils.LOVED_NF:
                     case ParseUtils.REFEREE_ACTION:
                     case ParseUtils.PRAISE_MEET_CONDITION_ACTION:
                     case ParseUtils.EVALUATE_ACTION:
@@ -253,7 +260,7 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
                         markNotificationProcessed(holder.isNew, notification);
                         break;
                     case ParseUtils.REFEREE_INVITE_NF:
-                    
+
                     case ParseUtils.ADD_CHEERING_GROUP_MEMBER_ACTION:
                         ParseUtils.startMeetArchiveActivity(mContext, notification.tid);
                         markNotificationProcessed(holder.isNew, notification);
@@ -265,39 +272,44 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
                         ParseUtils.startDynamicDetails(mContext, notification.id, null);
                         markNotificationProcessed(holder.isNew, notification);
                         break;
-                        
-                        case ParseUtils.JOIN_SINGLE_GROUP_ACTION:
+
+                    case ParseUtils.JOIN_SINGLE_GROUP_ACTION:
                     case ParseUtils.APPLY_JOIN_SINGLE_GROUP_NF:
                     case ParseUtils.INVITE_SINGLE_GROUP_MEMBER_ACTION:
                         startSingleGroupDetails(mContext, notification.id);
                         markNotificationProcessed(holder.isNew, notification);
                         break;
-                        default:
-                            break;
+                    default:
+                        break;
                 }
             }
         });
-        
+
         holder.item.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Slog.d(TAG, "---------------------------->nid: "+notification.nid);
+                Slog.d(TAG, "---------------------------->nid: " + notification.nid);
                 markNotificationProcessed(holder.isNew, notification);
+                NotificationDetailsDialogFragment notificationDetailsDialogFragment = new NotificationDetailsDialogFragment();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("notification", notification);
+                notificationDetailsDialogFragment.setArguments(bundle);
+                notificationDetailsDialogFragment.show(fragmentManager, "NotificationDetailsDialogFragment");
             }
         });
     }
-    
-    private void showNotification(NotificationFragment.Notification NF){
-        Intent clickIntent = new Intent();
-        final NotificationManager notificationManager = (NotificationManager)mContext.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        switch (NF.type){
+    private void showNotification(NotificationFragment.Notification NF) {
+        Intent clickIntent = new Intent();
+        final NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        switch (NF.type) {
             case EVALUATE_ACTION:
             case REFEREE_ACTION:
             case APPROVE_IMPRESSION_ACTION:
             case APPROVE_PERSONALITY_ACTION:
             case JOIN_CHEERING_GROUP_ACTION:
-            clickIntent = new Intent(mContext, MeetArchiveActivity.class);
+                clickIntent = new Intent(mContext, MeetArchiveActivity.class);
                 clickIntent.putExtra("uid", NF.uid);
                 break;
             case REFEREE_INVITE_NF:
@@ -310,30 +322,30 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
                 clickIntent.putExtra("gid", NF.id);
                 break;
         }
-        
+
         PendingIntent clickPI = PendingIntent.getActivity(mContext, 1, clickIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             String id = "channel_1";
             String description = "荷塘重要消息";
             int importance = NotificationManager.IMPORTANCE_HIGH;
             NotificationChannel channel = new NotificationChannel(id, description, importance);
             channel.enableLights(true);
-            if(channel.canShowBadge() == true){
+            if (channel.canShowBadge() == true) {
                 channel.setShowBadge(true);
             }
             channel.setBypassDnd(true);
             channel.enableVibration(true);
-            
+
             notificationManager.createNotificationChannel(channel);
             final NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext, id);
             builder.setCategory(android.app.Notification.CATEGORY_MESSAGE)
                     .setSmallIcon(R.drawable.icon)
-                    .setContentTitle(NF.trigger.getName()+" "+NF.action)
+                    .setContentTitle(NF.trigger.getName() + " " + NF.action)
                     .setContentText(NF.content)
-                     .setContentIntent(clickPI)
+                    .setContentIntent(clickPI)
                     .setAutoCancel(true);
-                    
-                    SimpleTarget<Drawable> simpleTarget = new SimpleTarget<Drawable>() {
+
+            SimpleTarget<Drawable> simpleTarget = new SimpleTarget<Drawable>() {
                 @Override
                 public void onResourceReady(Drawable resource, Transition<? super Drawable> transition) {
                     builder.setLargeIcon(drawableToBitmap(resource));
@@ -343,21 +355,21 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
             };
 
             Glide.with(mContext).load(HttpUtil.DOMAIN + NF.trigger.getAvatar()).into(simpleTarget);
-        }else {
-        
-        android.app.Notification notification = new NotificationCompat.Builder(mContext)
-                    .setContentTitle(NF.trigger.getName()+" "+NF.action)
+        } else {
+
+            android.app.Notification notification = new NotificationCompat.Builder(mContext)
+                    .setContentTitle(NF.trigger.getName() + " " + NF.action)
                     .setContentText(NF.content)
                     .setContentIntent(clickPI)
                     .setSmallIcon(R.drawable.icon)
                     .build();
             notificationManager.notify(1, notification);
         }
-        
+
         markNotificationShowed(NF.nid);
     }
-    
-    private void markNotificationShowed(int nid){
+
+    private void markNotificationShowed(int nid) {
         RequestBody requestBody = new FormBody.Builder()
                 .add("nid", String.valueOf(nid))
                 .add("showed", String.valueOf(SHOWED))
@@ -365,7 +377,7 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
         HttpUtil.sendOkHttpRequest(MyApplication.getContext(), NotificationFragment.NOTICE_PROCESS_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                if(response != null){
+                if (response != null) {
                     String responseText = response.body().string();
                 }
             }
@@ -376,23 +388,23 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
             }
         });
     }
-    
-    private void approveAction(NotificationFragment.Notification notification){
-        if (notification.type == ParseUtils.APPLY_CONTACTS_NF){
+
+    private void approveAction(NotificationFragment.Notification notification) {
+        if (notification.type == ParseUtils.APPLY_CONTACTS_NF) {
             acceptContactsApply(notification.tid);
-        }else if (notification.type == ParseUtils.APPLY_JOIN_SINGLE_GROUP_NF){
+        } else if (notification.type == ParseUtils.APPLY_JOIN_SINGLE_GROUP_NF) {
             approveSingleGroupApply(notification.id, notification.tid);
-        }else {
+        } else {
             acceptSingleGroupInvite(notification.id, notification.tid);
         }
     }
 
-    private void markNotificationProcessed(TextView isNew, NotificationFragment.Notification notification){
+    private void markNotificationProcessed(TextView isNew, NotificationFragment.Notification notification) {
         markNotificationProcessed(isNew, notification, UNPROCESSED);
     }
-    
-    private void markNotificationProcessed(TextView isNew, final NotificationFragment.Notification notification, final int processed){
-        Slog.d(TAG, "------------------>markNotificationProcessed nid: "+notification);
+
+    private void markNotificationProcessed(TextView isNew, final NotificationFragment.Notification notification, final int processed) {
+        Slog.d(TAG, "------------------>markNotificationProcessed nid: " + notification);
         isNew.setVisibility(View.GONE);
         notification.isNew = READ;
         RequestBody requestBody = new FormBody.Builder()
@@ -401,9 +413,9 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
         HttpUtil.sendOkHttpRequest(MyApplication.getContext(), NotificationFragment.NOTICE_PROCESS_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                if(response != null){
-                String responseText = response.body().string();
-                    if (processed == PROCESSED){
+                if (response != null) {
+                    String responseText = response.body().string();
+                    if (processed == PROCESSED) {
                         notification.processed = PROCESSED;
                         mHandler.sendEmptyMessage(UPDATE_PROCESS_BUTTON_STATUS);
                     }
@@ -416,39 +428,14 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
             }
         });
     }
-    
-    private void acceptSingleGroupInvite(int gid, int uid){
+
+    private void acceptSingleGroupInvite(int gid, int uid) {
         Slog.d(TAG, "=============accept");
         RequestBody requestBody = new FormBody.Builder()
                 .add("gid", String.valueOf(gid))
                 .add("uid", String.valueOf(uid))
                 .build();
         HttpUtil.sendOkHttpRequest(mContext, SingleGroupDetailsActivity.ACCEPT_JOIN_SINGLE_GROUP, requestBody, new Callback() {
-        @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                 Slog.d(TAG, "==========response body : " + response.body());
-                if (response.body() != null) {
-                    String responseText = response.body().string();
-                     Slog.d(TAG, "==========response text : " + responseText);
-                    if (responseText != null && !TextUtils.isEmpty(responseText)) {
-                        //refresh();
-                    }
-                }
-            }
-            @Override
-            public void onFailure(Call call, IOException e) {
-
-            }
-        });
-    }
-    
-    private void approveSingleGroupApply(int gid, int uid){
-        Slog.d(TAG, "=============approveSingleGroupApply gid: "+gid);
-        RequestBody requestBody = new FormBody.Builder()
-                .add("gid", String.valueOf(gid))
-                .add("uid", String.valueOf(uid))
-                .build();
-                 HttpUtil.sendOkHttpRequest(mContext, SingleGroupDetailsActivity.APPROVE_JOIN_SINGLE_GROUP, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 Slog.d(TAG, "==========response body : " + response.body());
@@ -460,7 +447,7 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
                     }
                 }
             }
-            
+
             @Override
             public void onFailure(Call call, IOException e) {
 
@@ -468,45 +455,66 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
         });
     }
 
-    private void startSingleGroupDetails(Context context, int gid){
+    private void approveSingleGroupApply(int gid, int uid) {
+        Slog.d(TAG, "=============approveSingleGroupApply gid: " + gid);
+        RequestBody requestBody = new FormBody.Builder()
+                .add("gid", String.valueOf(gid))
+                .add("uid", String.valueOf(uid))
+                .build();
+        HttpUtil.sendOkHttpRequest(mContext, SingleGroupDetailsActivity.APPROVE_JOIN_SINGLE_GROUP, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Slog.d(TAG, "==========response body : " + response.body());
+                if (response.body() != null) {
+                    String responseText = response.body().string();
+                    Slog.d(TAG, "==========response text : " + responseText);
+                    if (responseText != null && !TextUtils.isEmpty(responseText)) {
+                        //refresh();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+        });
+    }
+
+    private void startSingleGroupDetails(Context context, int gid) {
         Intent intent = new Intent(context, SingleGroupDetailsActivity.class);
         intent.putExtra("gid", gid);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
         mContext.startActivity(intent);
     }
-    
-    public static String getDateToString(long milSecond, String pattern) {
-        Date date = new Date(milSecond*1000);
-        SimpleDateFormat format = new SimpleDateFormat(pattern);
-        return format.format(date);
-    }
-    
-     @Override
+
+
+    @Override
     public int getItemCount() {
         return notificationList != null ? notificationList.size() : 0;
     }
-    
+
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView isNew;
         TextView action;
         RoundImageView avatar;
         TextView name;
-        TextView profile;
+        //TextView profile;
         TextView content;
-        Button acceptBtn;
+        //Button acceptBtn;
         TextView timeStamp;
         ConstraintLayout item;
 
         public ViewHolder(View view) {
-        
-        super(view);
+
+            super(view);
             isNew = view.findViewById(R.id.is_new);
             action = view.findViewById(R.id.action);
             avatar = view.findViewById(R.id.avatar);
             name = view.findViewById(R.id.name);
-            profile = view.findViewById(R.id.profile);
+            //profile = view.findViewById(R.id.profile);
             content = view.findViewById(R.id.content);
-            acceptBtn = view.findViewById(R.id.accept);
+            //acceptBtn = view.findViewById(R.id.accept);
             timeStamp = view.findViewById(R.id.timestamp);
             item = view.findViewById(R.id.notification_item);
 

@@ -61,6 +61,12 @@ public class Utility {
         return simpleDateFormat.format(date);
     }
 
+    public static String getDateToString(long milSecond, String pattern) {
+        Date date = new Date(milSecond*1000L);
+        SimpleDateFormat format = new SimpleDateFormat(pattern);
+        return format.format(date);
+    }
+
     public static float dpToPx(Context context, float dp) {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics());
     }
