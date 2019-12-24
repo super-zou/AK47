@@ -51,6 +51,7 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
     private static final String GET_REFERENCE_UIDS_URL = HttpUtil.DOMAIN + "?q=meet/reference/get_uids";
     private static final String GET_CHEERING_GROUP_UIDS_URL = HttpUtil.DOMAIN + "?q=meet/cheering_group/get_uids";
     private static final String GET_SINGLE_GROUP_UIDS_URL = HttpUtil.DOMAIN + "?q=single_group/get_uids";
+    private static final String GET_SUBGROUP_UIDS_URL = HttpUtil.DOMAIN + "?q=subgroup/get_uids";
     private Dialog mDialog;
     private int uid = -1;
     private int type = -1;
@@ -125,7 +126,7 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
                 getCheeringGroupUids();
                 break;
             case ParseUtils.TYPE_SINGLE_GROUP:
-                getSingleGroupUids();
+                getSubGroupUids();
                 break;
             case ParseUtils.TYPE_COMMON_SEARCH:
                 getAllContacts();
@@ -204,9 +205,9 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
         });
     }
     
-    private void getSingleGroupUids(){
+    private void getSubGroupUids(){
         FormBody requestBody = new FormBody.Builder().add("gid", String.valueOf(gid)).build();
-        HttpUtil.sendOkHttpRequest(mContext, GET_SINGLE_GROUP_UIDS_URL, requestBody, new Callback() {
+        HttpUtil.sendOkHttpRequest(mContext, GET_SUBGROUP_UIDS_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
