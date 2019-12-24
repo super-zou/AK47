@@ -15,6 +15,26 @@
             android:id="@+id/root_group_wrapper"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+            <LinearLayout
+                android:id="@+id/my_group"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:divider="@drawable/line_standard"
+                android:showDividers="middle">
+                <TextView
+                    android:text="我的团"
+                    android:textColor="@color/black"
+                    android:background="@color/white"
+                    android:padding="16dp"
+                    android:textSize="16sp"
+                    android:typeface="sans"
+                    android:fontFamily="sans-serif"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
             <!--association_group-->
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/association_group"
