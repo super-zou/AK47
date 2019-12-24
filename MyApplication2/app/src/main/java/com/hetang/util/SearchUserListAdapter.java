@@ -37,7 +37,7 @@ public class SearchUserListAdapter extends RecyclerView.Adapter<SearchUserListAd
     private int gid;
     private UserProfile memberInfo;
     private static final String ADD_CHEERING_GROUP_URL = HttpUtil.DOMAIN + "?q=meet/cheering_group/add";
-    private static final String ADD_SINGLE_GROUP_URL = HttpUtil.DOMAIN + "?q=single_group/add";
+        private static final String INVITE_SUBGROUP_MEMBER_URL = HttpUtil.DOMAIN + "?q=subgroup/invite";
     private static final String ADD_NOTICE_URL = HttpUtil.DOMAIN + "?q=notice/add";
     private static final String INVITE_REFERENCE_URL = HttpUtil.DOMAIN + "?q=meet/reference/invite";
     
@@ -125,7 +125,7 @@ public class SearchUserListAdapter extends RecyclerView.Adapter<SearchUserListAd
                         addCheeringGroup(v.getId());
                         break;
                         case ParseUtils.TYPE_SINGLE_GROUP:
-                        inviteSingleGroup(v.getId(), gid);
+                        inviteSubGroupMember(v.getId(), gid);
                         break;
                         default:
                             break;
@@ -150,12 +150,12 @@ public class SearchUserListAdapter extends RecyclerView.Adapter<SearchUserListAd
         }
     }
     
-    private void inviteSingleGroup(final int uid, int gid){
+    private void inviteSubGroupMember(final int uid, int gid){
         Slog.d(TAG, "--------------->gid: "+gid);
         final RequestBody requestBody = new FormBody.Builder()
                 .add("uid", String.valueOf(uid))
                 .add("gid", String.valueOf(gid)).build();
-        HttpUtil.sendOkHttpRequest(mContext, ADD_SINGLE_GROUP_URL, requestBody, new Callback() {
+        HttpUtil.sendOkHttpRequest(mContext, INVITE_SUBGROUP_MEMBER_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
