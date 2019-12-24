@@ -20,6 +20,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -168,10 +169,10 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
         String dataString = getDateToString(notification.timeStamp, "yyyy-MM-dd");
         holder.timeStamp.setText(dataString);
 
-        /*
+        
         switch (notification.type){
-            case ParseUtils.APPLY_CONTACTS_NF:
-            case ParseUtils.APPLY_JOIN_SINGLE_GROUP_NF:
+            //case ParseUtils.APPLY_CONTACTS_NF:
+            //case ParseUtils.APPLY_JOIN_SINGLE_GROUP_NF:
             case ParseUtils.INVITE_SINGLE_GROUP_MEMBER_ACTION:
                 holder.acceptBtn.setVisibility(View.VISIBLE);
                 if (notification.processed == UNPROCESSED){
@@ -197,9 +198,7 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
                     holder.acceptBtn.setVisibility(View.GONE);
                     break;
         }
-        */
-
-        /*
+                
         holder.avatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -223,21 +222,7 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
                 markNotificationProcessed(holder.isNew, notification);
             }
         });
-        /*
-        holder.profile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (notification.trigger.getCid() <= 0){
-                    ParseUtils.startArchiveActivity(mContext, notification.tid);
-                }else {
-                    ParseUtils.startMeetArchiveActivity(mContext, notification.tid);
-                }
-                markNotificationProcessed(holder.isNew, notification);
-            }
-        });
-
-         */
-
+        
         holder.content.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -501,7 +486,7 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
         TextView name;
         //TextView profile;
         TextView content;
-        //Button acceptBtn;
+        Button acceptBtn;
         TextView timeStamp;
         ConstraintLayout item;
 
@@ -514,7 +499,7 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
             name = view.findViewById(R.id.name);
             //profile = view.findViewById(R.id.profile);
             content = view.findViewById(R.id.content);
-            //acceptBtn = view.findViewById(R.id.accept);
+            acceptBtn = view.findViewById(R.id.accept);
             timeStamp = view.findViewById(R.id.timestamp);
             item = view.findViewById(R.id.notification_item);
 
