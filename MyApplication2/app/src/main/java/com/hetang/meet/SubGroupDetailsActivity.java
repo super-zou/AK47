@@ -469,14 +469,15 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
             @Override
             public void onClick(View view) {
                 String followUrl = "";
+                                String [] followSplit = followAmount.getText().toString().split(" ");
+                int currentCount = Integer.parseInt(followSplit[1]);
                 if (followed == true) {
                     followed = false;
                     followUrl = FOLLOW_GROUP_ACTION_URL + "cancel";
                     followBtn.setText("+关注");
                     followBtn.setTextColor(getResources().getColor(R.color.blue_dark));
                     followBtn.setBackground(MyApplication.getContext().getDrawable(R.drawable.btn_default));
-                    int currentCount = Integer.parseInt(followAmount.getText().toString());
-                    followAmount.setText(String.valueOf(currentCount - 1));
+                    followAmount.setText("关注 "+String.valueOf(currentCount - 1));
                     subGroup.followed = 0;
                 } else {
                     followed = true;
@@ -484,12 +485,12 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
                     followBtn.setText("已关注");
                     followBtn.setBackground(MyApplication.getContext().getDrawable(R.drawable.btn_disable));
                     followBtn.setTextColor(getResources().getColor(R.color.color_dark_grey));
-                    String amount = followAmount.getText().toString();
-                    int currentCount = 0;
-                    if (amount != null && !TextUtils.isEmpty(amount)) {
-                        currentCount = Integer.parseInt(amount);
+                    //String amount = followAmount.getText().toString();
+                    //int currentCount = 0;
+                    if ( followSplit[1] != null && !TextUtils.isEmpty(followSplit[1])) {
+                        currentCount = Integer.parseInt(followSplit[1]);
                     }
-                    followAmount.setText(String.valueOf(currentCount + 1));
+                    followAmount.setText("关注 "+String.valueOf(currentCount + 1));
                     subGroup.followed = 1;
                 }
 
