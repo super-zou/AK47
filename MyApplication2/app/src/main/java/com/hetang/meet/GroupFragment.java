@@ -1,6 +1,7 @@
 package com.hetang.meet;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
@@ -8,12 +9,16 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.constraint.ConstraintLayout;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.hetang.R;
 import com.hetang.common.Dynamic;
 import com.hetang.common.MyApplication;
@@ -21,8 +26,10 @@ import com.hetang.util.BaseFragment;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.ParseUtils;
+import com.hetang.util.RoundImageView;
 import com.hetang.util.Slog;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -38,6 +45,9 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static com.hetang.meet.SubGroupActivity.getSubGroup;
+import static com.hetang.meet.SubGroupActivity.updateVisitorRecord;
+
 public class GroupFragment extends BaseFragment implements View.OnClickListener {
     private static final boolean isDebug = true;
     private static final String TAG = "GroupFragment";
@@ -51,6 +61,9 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
     private static final int foreign_friend_group = 6;
     private static final int MAX_ROOT_GROUP = 7;
     private static final int LOAD_DATA_DONE = 8;
+        private static final int LOAD_MY_GROUP_DONE = 9;
+
+    LinearLayout myGroupWrap;
 
     ConstraintLayout associationGroup;
     ConstraintLayout publicGoodGroup;
@@ -61,10 +74,13 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
     ConstraintLayout foreignFriendGroup;
 
     private static final String SUBGROUP_GET_ROOT_SUMMARY = HttpUtil.DOMAIN + "?q=subgroup/get_root_summary";
+        private static final String SUBGROUP_GET_MY_GROUP = HttpUtil.DOMAIN + "?q=subgroup/get_my";
 
     private Handler handler;
+        private Context mContext;
     private View mView;
     ImageView progressImageView;
+        List<SubGroupActivity.SubGroup> groupList = new ArrayList<>();
     AnimationDrawable animationDrawable;
 
     List<GroupSummary> groupSummaryList = new ArrayList<>();
@@ -77,6 +93,7 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
 
     @Override
     protected void initView(View convertView) {
+                mContext = getContext();
         handler = new GroupFragment.MyHandler(this);
         mView = convertView;
         //show progressImage before loading done
@@ -90,6 +107,10 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
             }
         },50);
          */
+        
+                myGroupWrap = convertView.findViewById(R.id.my_group);
+
+        loadMyGroup();
 
         associationGroup = convertView.findViewById(R.id.association_group);
         associationGroup.setOnClickListener(this);
@@ -114,6 +135,60 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
         }
 
     }
+    
+    private void loadMyGroup(){
+
+        HttpUtil.sendOkHttpRequest(MyApplication.getContext(), SUBGROUP_GET_MY_GROUP, new FormBody.Builder().build(), new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.body() != null) {
+                    String responseText = response.body().string();
+                    if (isDebug) Slog.d(TAG, "==========response text : " + responseText);
+                    if (responseText != null && !TextUtils.isEmpty(responseText)) {
+                        JSONObject subGroupResponse = null;
+                        try {
+                            subGroupResponse = new JSONObject(responseText);
+                            if (subGroupResponse != null) {
+                                processResponse(subGroupResponse);
+                                handler.sendEmptyMessage(LOAD_MY_GROUP_DONE);
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        }
+                }
+            }
+            @Override
+            public void onFailure(Call call, IOException e) {
+            }
+        });
+    }
+    
+    private int processResponse(JSONObject subGroupResponse) {
+
+        int subGroupSize = 0;
+        JSONArray subGroupArray = null;
+
+        if (subGroupResponse != null) {
+            subGroupArray = subGroupResponse.optJSONArray("subgroup");
+        }
+        if (subGroupArray != null) {
+            subGroupSize = subGroupArray.length();
+            if (subGroupSize > 0) {
+                for (int i = 0; i < subGroupArray.length(); i++) {
+                    JSONObject group = subGroupArray.optJSONObject(i);
+                    if (group != null) {
+                        SubGroupActivity.SubGroup subGroup = getSubGroup(group);
+                        groupList.add(subGroup);
+                    }
+                }
+            }
+        }
+
+        return subGroupSize;
+    }
+    
 
     private void loadGroupData(final int type){
         RequestBody requestBody = new FormBody.Builder()
@@ -161,7 +236,48 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
         int followAmount;
         int activityAmount;
     }
+    
+    private void setMyGroupViewData(){
+        int size = groupList.size();
+        for (int i=0; i<size; i++){
+            SubGroupActivity.SubGroup subGroup = groupList.get(i);
+            final View myGroupView = LayoutInflater.from(getContext()).inflate(R.layout.my_group_summary, (ViewGroup) mView.findViewById(android.R.id.content), false);
+            RoundImageView groupLogo = myGroupView.findViewById(R.id.group_logo);
+            TextView groupName = myGroupView.findViewById(R.id.group_name);
+            TextView groupDesc = myGroupView.findViewById(R.id.group_desc);
+            TextView visitRecord = myGroupView.findViewById(R.id.visit_record);
+            TextView activityCount = myGroupView.findViewById(R.id.activity_count);
+            TextView followCount = myGroupView.findViewById(R.id.follow_count);
+            TextView memberCount = myGroupView.findViewById(R.id.member_count);
+            myGroupView.setId(subGroup.gid);
+            groupName.setText(subGroup.groupName);
+            groupDesc.setText(subGroup.groupProfile);
+            visitRecord.setText(mContext.getResources().getString(R.string.visit)+" "+subGroup.visitRecord);
+            followCount.setText(mContext.getResources().getString(R.string.follow)+" "+subGroup.followCount);
+            activityCount.setText(mContext.getResources().getString(R.string.dynamics)+" "+subGroup.activityCount);
+            memberCount.setText(mContext.getResources().getString(R.string.member)+" "+subGroup.memberCount);
 
+            if (subGroup.groupLogoUri != null && !"".equals(subGroup.groupLogoUri)) {
+                Glide.with(mContext).load(HttpUtil.DOMAIN + subGroup.groupLogoUri).into(groupLogo);
+            }else {
+                groupLogo.setImageDrawable(mContext.getDrawable(R.drawable.icon));
+            }
+            
+            myGroupWrap.addView(myGroupView);
+
+            myGroupView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int gid = myGroupView.getId();
+                    updateVisitorRecord(gid);
+                    Intent intent = new Intent(getContext(), SubGroupDetailsActivity.class);
+                    intent.putExtra("gid", gid);
+                    startActivity(intent);
+                }
+            });
+        }
+    }
+    
     private void setGroupSummaryView(int type, GroupSummary groupSummary){
         switch (type) {
             case association_group:
@@ -281,10 +397,17 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
 
     public void handleMessage(Message message) {
         Bundle bundle = message.getData();
-        int type = bundle.getInt("type");
-        GroupSummary groupSummary = (GroupSummary)bundle.getSerializable("summary");
-        if (message.what == LOAD_DATA_DONE){
-            setGroupSummaryView(type, groupSummary);
+        switch (message.what){
+            case LOAD_MY_GROUP_DONE:
+                setMyGroupViewData();
+                break;
+            case LOAD_DATA_DONE:
+                int type = bundle.getInt("type");
+                GroupSummary groupSummary = (GroupSummary)bundle.getSerializable("summary");
+                setGroupSummaryView(type, groupSummary);
+                break;
+                default:
+                    break;
         }
     }
 
