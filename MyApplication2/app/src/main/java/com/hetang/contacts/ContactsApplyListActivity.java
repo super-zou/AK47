@@ -47,7 +47,7 @@ public class ContactsApplyListActivity extends BaseAppCompatActivity {
     public static final int GET_CONTACTS_DONE = 0;
     private XRecyclerView mContactsApplyList;
     private ContactsListAdapter contactsListAdapter;
-    private List<UserProfile> contactsList = new ArrayList<>();
+    private List<Contacts> contactsList = new ArrayList<>();
 
     private static final String GET_CONTACTS_NEW_APPLY_URL = HttpUtil.DOMAIN + "?q=contacts/get_new_apply";
     private static final String GET_CONTACTS_MY_APPLY_URL = HttpUtil.DOMAIN + "?q=contacts/get_my_apply";
