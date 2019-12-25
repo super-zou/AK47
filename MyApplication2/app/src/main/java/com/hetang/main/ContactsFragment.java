@@ -5,9 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -20,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.hetang.R;
 import com.hetang.adapter.ContactsListAdapter;
 import com.hetang.common.MyApplication;
 import com.hetang.contacts.ContactsApplyListActivity;
@@ -31,7 +31,7 @@ import com.hetang.util.Slog;
 import com.hetang.util.UserProfile;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
-import com.hetang.R;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -73,7 +73,7 @@ public class ContactsFragment extends BaseFragment {
     private static final String GET_ALL_CONTACTS_URL = HttpUtil.DOMAIN + "?q=contacts/get_all_contacts";
     public static final String ACCEPT_CONTACTS_APPLY_URL = HttpUtil.DOMAIN + "?q=contacts/accept_apply";
     public static final String CONTACTS_DISMISS_URL = HttpUtil.DOMAIN + "?q=contacts/dismiss";
-    
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -87,7 +87,7 @@ public class ContactsFragment extends BaseFragment {
 
         return convertView;
     }
-    
+
     private void initContentView(View view) {
         myHandler = new MyHandler(this);
         recyclerView = view.findViewById(R.id.contacts_recyclerview);
@@ -99,7 +99,7 @@ public class ContactsFragment extends BaseFragment {
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
-        
+
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -113,7 +113,7 @@ public class ContactsFragment extends BaseFragment {
                 super.onScrollStateChanged(recyclerView, newState);
             }
         });
-        
+
         //+Begin added by xuchunping
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(linearLayoutManager);
@@ -128,7 +128,7 @@ public class ContactsFragment extends BaseFragment {
         recyclerView.getDefaultFootView().setLoadingHint(getString(R.string.loading_pull_up_tip));
         recyclerView.getDefaultFootView().setNoMoreHint(getString(R.string.loading_no_more));
         final int itemLimit = 5;
-        
+
         // When the item number of the screen number is list.size-2,we call the onLoadMore
         recyclerView.setLimitNumberToCallLoadMore(2);
         recyclerView.setRefreshProgressStyle(ProgressStyle.BallBeat);
@@ -137,14 +137,15 @@ public class ContactsFragment extends BaseFragment {
         recyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
 
             @Override
-            public void onRefresh() { }
+            public void onRefresh() {
+            }
 
             @Override
             public void onLoadMore() {
                 loadData();
             }
         });
-        
+
         recyclerView.setAdapter(contactsListAdapter);
 
         newApply.setOnClickListener(new View.OnClickListener() {
@@ -165,24 +166,25 @@ public class ContactsFragment extends BaseFragment {
             }
         });
     }
-    
+
     private void requestData() {
         RequestBody requestBody = new FormBody.Builder().build();
         HttpUtil.sendOkHttpRequest(getContext(), GET_ALL_CONTACTS_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                if(response != null){
+                if (response != null) {
                     String responseText = response.body().string();
-                    if (isDebug) Slog.d(TAG, "loadData response : "+responseText);
+                    if (isDebug) Slog.d(TAG, "loadData response : " + responseText);
                     processResponseText(responseText);
-                    if (isDebug) Slog.d(TAG, "------------------->contactsList size: "+contactsList.size());
-                    if(contactsList.size() > 0){
+                    if (isDebug)
+                        Slog.d(TAG, "------------------->contactsList size: " + contactsList.size());
+                    if (contactsList.size() > 0) {
                         myHandler.sendEmptyMessage(GET_CONTACTS_DONE);
-                    }else {
-                        if (newApplyCount > 0 || myApplyCount >0){
+                    } else {
+                        if (newApplyCount > 0 || myApplyCount > 0) {
                             myHandler.sendEmptyMessage(GET_CONTACTS_DONE);
                         }
-                   }
+                    }
                 }
             }
 
@@ -192,14 +194,14 @@ public class ContactsFragment extends BaseFragment {
             }
         });
     }
-    
-    private void processResponseText(String responseText){
+
+    private void processResponseText(String responseText) {
         try {
             JSONObject response = new JSONObject(responseText);
             JSONArray contactsArray = response.optJSONArray("contacts");
             JSONObject contactsObject;
-            if (contactsArray != null){
-                for (int i=0; i<contactsArray.length(); i++){
+            if (contactsArray != null) {
+                for (int i = 0; i < contactsArray.length(); i++) {
                     UserProfile contacts = new UserProfile();
                     contactsObject = contactsArray.getJSONObject(i);
                     contacts.setAvatar(contactsObject.optString("avatar"));
@@ -209,11 +211,12 @@ public class ContactsFragment extends BaseFragment {
                     contactsList.add(contacts);
                 }
             }
-            
-                        JSONArray requestArray = response.optJSONArray("request");
+
+            JSONArray requestArray = response.optJSONArray("request");
             JSONObject requestObject;
-            if (requestArray != null && requestArray.length() > 0){
-                for (int i=0; i<requestArray.length(); i++){
+            if (requestArray != null && requestArray.length() > 0) {
+                Slog.d(TAG, "------------------->requestArray length: "+requestArray.length());
+                for (int i = 0; i < requestArray.length(); i++) {
                     ContactsApplyListActivity.Contacts contacts = new ContactsApplyListActivity.Contacts();
                     requestObject = requestArray.getJSONObject(i);
                     contacts.setAvatar(requestObject.optString("avatar"));
@@ -224,22 +227,24 @@ public class ContactsFragment extends BaseFragment {
                     requestList.add(contacts);
                 }
             }
-            
+
             newApplyCount = response.optInt("newApplyCount");
             myApplyCount = response.optInt("myApplyCount");
-        }catch (JSONException e){
+        } catch (JSONException e) {
             e.printStackTrace();
         }
     }
-    
-    private void setRequestPeopleView(){
+
+    private void setRequestPeopleView() {
         mRequestHeaderView = LayoutInflater.from(getContext()).inflate(R.layout.contacts_requesting, (ViewGroup) mView.findViewById(android.R.id.content), false);
         recyclerView.addHeaderView(mRequestHeaderView);
-        final LinearLayout requestWrapper = mRequestHeaderView.findViewById(R.id.contacts_requesting);
+        final ConstraintLayout requestWrapper = mRequestHeaderView.findViewById(R.id.contacts_requesting);
+        LinearLayout requestSamples = mRequestHeaderView.findViewById(R.id.requesting_samples);
         TextView more = mRequestHeaderView.findViewById(R.id.more);
-        for (int i=0; i<requestList.size(); i++){
+        Slog.d(TAG, "-------------------------->requestList.size: " + requestList.size());
+        for (int i = 0; i < requestList.size(); i++) {
             View view = LayoutInflater.from(getContext()).inflate(R.layout.contacts_item, null);
-            requestWrapper.addView(view);
+            requestSamples.addView(view);
             RoundImageView avatar = view.findViewById(R.id.avatar);
             TextView name = view.findViewById(R.id.name);
             TextView content = view.findViewById(R.id.apply_content);
@@ -250,16 +255,17 @@ public class ContactsFragment extends BaseFragment {
             if (avatarUrl != null && !"".equals(avatarUrl)) {
                 Glide.with(getContext()).load(HttpUtil.DOMAIN + avatarUrl).into(avatar);
             } else {
-                if(request.getSex() == 0){
+                if (request.getSex() == 0) {
                     avatar.setImageDrawable(MyApplication.getContext().getDrawable(R.drawable.male_default_avator));
-                }else {
+                } else {
                     avatar.setImageDrawable(MyApplication.getContext().getDrawable(R.drawable.female_default_avator));
                 }
             }
-            
+
             name.setText(request.getName());
 
-            if (!TextUtils.isEmpty(request.getContent())){
+            if (!TextUtils.isEmpty(request.getContent())) {
+                content.setVisibility(View.VISIBLE);
                 content.setText(request.getContent());
             }
 
@@ -282,11 +288,11 @@ public class ContactsFragment extends BaseFragment {
                 public void onClick(View view) {
                     showProgressDialog("ÕýÔÚºöÂÔ");
                     dismiss(request.getUid());
-                    requestWrapper.removeViewAt((int)dismissBtn.getTag());
+                    requestWrapper.removeViewAt((int) dismissBtn.getTag());
                 }
             });
-            
-             acceptBtn.setOnClickListener(new View.OnClickListener() {
+
+            acceptBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     accept(acceptBtn, request.getUid());
@@ -294,8 +300,8 @@ public class ContactsFragment extends BaseFragment {
             });
 
         }
-        
-        if (newApplyCount > requestList.size()){
+
+        if (newApplyCount > requestList.size()) {
             more.setVisibility(View.VISIBLE);
             more.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -307,21 +313,21 @@ public class ContactsFragment extends BaseFragment {
             });
         }
     }
-    
-     public static void accept(Button acceptBtn, int uid){
+
+    public static void accept(Button acceptBtn, int uid) {
         acceptBtn.setText(MyApplication.getContext().getResources().getString(R.string.acceptted));
         acceptBtn.setClickable(false);
         acceptBtn.setBackground(MyApplication.getContext().getDrawable(R.drawable.btn_disable));
         acceptContactsApply(uid);
     }
-    
-    public static void acceptContactsApply(int uid){
+
+    public static void acceptContactsApply(int uid) {
         RequestBody requestBody = new FormBody.Builder()
                 .add("uid", String.valueOf(uid)).build();
         HttpUtil.sendOkHttpRequest(MyApplication.getContext(), ACCEPT_CONTACTS_APPLY_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                if(response != null){
+                if (response != null) {
                     String responseText = response.body().string();
                 }
             }
@@ -332,14 +338,14 @@ public class ContactsFragment extends BaseFragment {
             }
         });
     }
-    
-    private void dismiss(int uid){
+
+    private void dismiss(int uid) {
         RequestBody requestBody = new FormBody.Builder()
                 .add("uid", String.valueOf(uid)).build();
         HttpUtil.sendOkHttpRequest(MyApplication.getContext(), CONTACTS_DISMISS_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                if(response != null){
+                if (response != null) {
                     String responseText = response.body().string();
                     dismissProgressDialog();
                 }
@@ -351,55 +357,56 @@ public class ContactsFragment extends BaseFragment {
             }
         });
     }
-    
-            
-    
+
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Slog.d(TAG, "===================onActivityResult requestCode: "+requestCode+" resultCode: "+resultCode);
-        if (requestCode == Activity.RESULT_FIRST_USER){
+        Slog.d(TAG, "===================onActivityResult requestCode: " + requestCode + " resultCode: " + resultCode);
+        if (requestCode == Activity.RESULT_FIRST_USER) {
             reInitView();
         }
     }
 
-    private void reInitView(){
+    private void reInitView() {
         contactsList.clear();
         loadData();
     }
-    
+
     public void handleMessage(Message message) {
-        switch (message.what){
+        switch (message.what) {
             case GET_CONTACTS_DONE:
                 contactsListAdapter.setData(contactsList);
                 contactsListAdapter.notifyDataSetChanged();
                 recyclerView.refreshComplete();
 
-                if (newApplyCount > 0){
+                if (newApplyCount > 0) {
                     setRequestPeopleView();
-                    newApplyCountView.setText("+"+String.valueOf(newApplyCount));
-                }else {
+                    newApplyCountView.setText("+" + String.valueOf(newApplyCount));
+                } else {
                     newApplyCountView.setText("");
                 }
-                if (myApplyCount > 0){
-                    myApplyCountView.setText("+"+String.valueOf(myApplyCount));
+                if (myApplyCount > 0) {
+                    myApplyCountView.setText("+" + String.valueOf(myApplyCount));
                 }
-                
+
                 break;
             default:
                 break;
         }
     }
-    
-        @Override
-    protected int getLayoutId(){ return  0; }
 
     @Override
-    protected void initView(View view){
+    protected int getLayoutId() {
+        return 0;
+    }
+
+    @Override
+    protected void initView(View view) {
         return;
     }
 
     @Override
-    protected void loadData(){
+    protected void loadData() {
         return;
     }
 
@@ -409,7 +416,7 @@ public class ContactsFragment extends BaseFragment {
         MyHandler(ContactsFragment contactsFragment) {
             contactsFragmentWeakReference = new WeakReference<ContactsFragment>(contactsFragment);
         }
-        
+
         @Override
         public void handleMessage(Message message) {
             ContactsFragment contactsFragment = contactsFragmentWeakReference.get();
