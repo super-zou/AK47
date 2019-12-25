@@ -1017,6 +1017,7 @@ public class ArchiveFragment extends BaseFragment {
         TextView addPaper = mView.findViewById(R.id.add_new_paper);
         RelativeLayout addPaperWrapper = mView.findViewById(R.id.paper_add_wrapper);
         addPaperWrapper.setVisibility(View.GONE);
+        if (authorUid == uid){
         addPaper.setVisibility(View.VISIBLE);
         addPaper.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1026,6 +1027,7 @@ public class ArchiveFragment extends BaseFragment {
                 paperEditDialogFragment.show(getFragmentManager(), "PaperEditDialogFragment");
             }
         });
+        }
 
         if (mPaperListView != null && mPaperListView.getChildCount() > 0) {
             mPaperListView.removeAllViews();
