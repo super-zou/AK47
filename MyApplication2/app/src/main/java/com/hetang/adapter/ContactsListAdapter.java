@@ -1,6 +1,8 @@
 package com.hetang.adapter;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
@@ -33,6 +35,7 @@ import okhttp3.Response;
 
 import static com.hetang.main.ContactsFragment.ACCEPT_CONTACTS_APPLY_URL;
 import static com.hetang.main.ContactsFragment.CONTACTS_DEFAULT;
+import static com.hetang.main.ContactsFragment.CONTACTS_DISMISS_URL;
 import static com.hetang.main.ContactsFragment.CONTACTS_MY_APPLY;
 import static com.hetang.main.ContactsFragment.CONTACTS_NEW_APPLY;
 import static com.hetang.util.ParseUtils.startMeetArchiveActivity;
@@ -40,21 +43,37 @@ import static com.hetang.util.ParseUtils.startMeetArchiveActivity;
 public class ContactsListAdapter extends RecyclerView.Adapter<ContactsListAdapter.ContactsViewHolder> {
     private static final String TAG = "ContactsListAdapter";
     private static final boolean isDebug = true;
-    private List<UserProfile> contactsList;
+    private List<ContactsApplyListActivity.Contacts> contactsList;
     private Context mContext;
     private boolean isScrolling = false;
     private int type = 0;
+        private Handler mHandler;
+    private static final int DISMISS_ITEM = 0;
 
     public ContactsListAdapter(Context context, int type) {
         this.type = type;
         mContext = context;
+        
+        mHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                switch (msg.what) {
+                    case DISMISS_ITEM:
+                        notifyDataSetChanged();
+                        break;
+                    default:
+                        break;
+                }
+                super.handleMessage(msg);
+            }
+        };
     }
     
     public void setScrolling(boolean isScrolling) {
         this.isScrolling = isScrolling;
     }
 
-    public void setData(List<UserProfile> contactsList) {
+    public void setData(List<ContactsApplyListActivity.Contacts> contactsList) {
         this.contactsList = contactsList;
     }
 
@@ -115,7 +134,7 @@ public class ContactsListAdapter extends RecyclerView.Adapter<ContactsListAdapte
         });
     }
     
-    public void onApplyBindViewHolder(@NonNull final ContactsViewHolder holder, int position) {
+    public void onApplyBindViewHolder(@NonNull final ContactsViewHolder holder, final int position) {
         Slog.d(TAG, "------------------>onApplyBindViewHolder"+"  size: "+contactsList.size());
         final ContactsApplyListActivity.Contacts contacts = (ContactsApplyListActivity.Contacts) contactsList.get(position);
 
@@ -149,11 +168,12 @@ public class ContactsListAdapter extends RecyclerView.Adapter<ContactsListAdapte
             String content = contacts.getContent();
             if (content != null && !TextUtils.isEmpty(content)){
                 holder.applyContent.setVisibility(View.VISIBLE);
-                holder.applyContent.setText(content);
+                holder.applyContent.setText("“"+content+"”");
             }else {
                 holder.applyContent.setVisibility(View.GONE);
             }
             holder.accept.setVisibility(View.VISIBLE);
+            holder.dismiss.setVisibility(View.VISIBLE);
         }
 
         holder.accept.setOnClickListener(new View.OnClickListener() {
@@ -162,7 +182,35 @@ public class ContactsListAdapter extends RecyclerView.Adapter<ContactsListAdapte
                 accept(holder.accept, contacts.getUid());
             }
         });
+        
+                    holder.dismiss.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dismiss(contacts.getUid(), position);
+                }
+            });
 
+    }
+    
+    private void dismiss(int uid, final int position) {
+        RequestBody requestBody = new FormBody.Builder()
+                .add("uid", String.valueOf(uid)).build();
+        HttpUtil.sendOkHttpRequest(MyApplication.getContext(), CONTACTS_DISMISS_URL, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response != null) {
+                    String responseText = response.body().string();
+                    //dismissProgressDialog();
+                    contactsList.remove(position);
+                    mHandler.sendEmptyMessage(DISMISS_ITEM);
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.e(TAG, "onFailure e:" + e);
+            }
+        });
     }
     
     public static void accept(Button acceptBtn, int uid){
@@ -202,6 +250,7 @@ public class ContactsListAdapter extends RecyclerView.Adapter<ContactsListAdapte
         public RoundImageView avatar;
         public TextView name;
         Button accept;
+        Button dismiss;
         TextView applyContent;
 
         public ContactsViewHolder(View view) {
@@ -209,6 +258,7 @@ public class ContactsListAdapter extends RecyclerView.Adapter<ContactsListAdapte
             contactsItem = view.findViewById(R.id.contacts_item);
             avatar = view.findViewById(R.id.avatar);
             name = view.findViewById(R.id.name);
+            dismiss = view.findViewById(R.id.dismiss);
             accept = view.findViewById(R.id.accept);
             applyContent = view.findViewById(R.id.apply_content);
         }
