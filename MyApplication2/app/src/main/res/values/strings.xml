@@ -138,6 +138,7 @@
     <string name="cancel">取消</string>
     <string name="applied_wait">已申请入团，待审核</string>
     <string name="applying">已申请入团</string>
+    <string name="joined">已加入</string>
     <string name="approvied">同意加入</string>
     <string name="feature_approvied">已认可</string>
     <string name="member_count_suffix">位成员</string>
