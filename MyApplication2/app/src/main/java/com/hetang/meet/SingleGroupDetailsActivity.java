@@ -57,6 +57,7 @@ public class SingleGroupDetailsActivity extends BaseAppCompatActivity implements
     private static final String APPLY_JOIN_SINGLE_GROUP = HttpUtil.DOMAIN + "?q=single_group/apply";
     public static final String ACCEPT_JOIN_SINGLE_GROUP = HttpUtil.DOMAIN + "?q=single_group/accept";
     public static final String APPROVE_JOIN_SINGLE_GROUP = HttpUtil.DOMAIN + "?q=single_group/approve";
+    public static final String ACCEPT_SUBGROUP_INVITE = HttpUtil.DOMAIN + "?q=subgroup/accept";
     
     MeetSingleGroupFragment.SingleGroup singleGroup;
     private Handler handler = null;
