@@ -420,7 +420,7 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
                 .add("gid", String.valueOf(gid))
                 .add("uid", String.valueOf(uid))
                 .build();
-        HttpUtil.sendOkHttpRequest(mContext, SingleGroupDetailsActivity.ACCEPT_JOIN_SINGLE_GROUP, requestBody, new Callback() {
+        HttpUtil.sendOkHttpRequest(mContext, SingleGroupDetailsActivity.ACCEPT_SUBGROUP_INVITE, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 Slog.d(TAG, "==========response body : " + response.body());
