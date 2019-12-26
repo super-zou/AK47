@@ -41,7 +41,7 @@ public class SubGroupOperationDialogFragment extends BaseDialogFragment {
     private Dialog mDialog;
     private static final boolean isDebug = true;
     private static final String TAG = "DynamicOperationDialogFragment";
-    private static final String EXIT_GROUP = HttpUtil.DOMAIN + "?q=subgroup/exit";
+    private static final String QUIT_GROUP = HttpUtil.DOMAIN + "?q=subgroup/quit";
     private Context mContext;
     private SubGroupActivity.SubGroup subGroup;
 
@@ -125,7 +125,7 @@ public class SubGroupOperationDialogFragment extends BaseDialogFragment {
                 .add("gid", String.valueOf(gid))
                 .build();
 
-        HttpUtil.sendOkHttpRequest(getContext(), EXIT_GROUP, requestBody, new Callback() {
+        HttpUtil.sendOkHttpRequest(getContext(), QUIT_GROUP, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (isDebug) Slog.d(TAG, "==========response body : " + response.body());
