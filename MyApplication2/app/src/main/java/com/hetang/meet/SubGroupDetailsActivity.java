@@ -53,6 +53,7 @@ import com.hetang.util.SubGroupOperationDialogFragment;
 import com.hetang.util.Utility;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
+import com.umeng.commonsdk.debug.I;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -100,6 +101,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
     public static final String APPROVE_JOIN_SUBGROUP = HttpUtil.DOMAIN + "?q=subgroup/approve";
     public static final String GROUP_MODIFY_BROADCAST = "com.hetang.action.GROUP_MODIFY";
     public static final String EXIT_GROUP_BROADCAST = "com.hetang.action.EXIT_GROUP";
+    public static final String JOIN_GROUP_BROADCAST = "com.hetang.action.JOIN_GROUP";
 
     //MeetsubGroupFragment.subGroup subGroup;
     SubGroupActivity.SubGroup subGroup;
@@ -427,8 +429,13 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
         if (subGroup.authorStatus != -1) {
             if (subGroup.authorStatus == 0) {
                 joinBtn.setVisibility(View.VISIBLE);
-                joinBtn.setText(getResources().getString(R.string.applying));
-                joinBtn.setClickable(false);
+                joinBtn.setText(getResources().getString(R.string.approvied));
+                joinBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        acceptSingleGroupInvite();
+                    }
+                });
             } else {
                 joinBtn.setText(getResources().getString(R.string.invite_friend));
                 joinBtn.setOnClickListener(new View.OnClickListener() {
@@ -438,6 +445,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
                     }
                 });
             }
+            followBtn.setVisibility(View.INVISIBLE);
         } else {
             joinBtn.setVisibility(View.VISIBLE);
             joinBtn.setOnClickListener(new View.OnClickListener() {
@@ -447,6 +455,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
                 }
             });
         }
+        if (subGroup.authorStatus == -1){
 
         if (subGroup.followed == 1) {
             followed = true;
@@ -458,6 +467,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
             followBtn.setText("+关注");
             followBtn.setTextColor(getResources().getColor(R.color.blue_dark));
             followBtn.setBackground(MyApplication.getContext().getDrawable(R.drawable.btn_default));
+        }
         }
 
         followBtn.setOnClickListener(new View.OnClickListener() {
@@ -578,7 +588,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
 
                         dismissProgressDialog();
                         handler.sendEmptyMessage(JOIN_DONE);
-                        subGroup.authorStatus = 0;
+                        subGroup.authorStatus = 1;
                     }
                 }
             }
@@ -589,6 +599,35 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
             }
         });
     }
+    
+    private void acceptSingleGroupInvite() {
+        Slog.d(TAG, "=============accept");
+        RequestBody requestBody = new FormBody.Builder()
+                .add("gid", String.valueOf(gid))
+                .add("uid", String.valueOf(uid))
+                .build();
+        HttpUtil.sendOkHttpRequest(mContext, SingleGroupDetailsActivity.ACCEPT_SUBGROUP_INVITE, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Slog.d(TAG, "==========response body : " + response.body());
+                if (response.body() != null) {
+                    String responseText = response.body().string();
+                    Slog.d(TAG, "==========response text : " + responseText);
+                    if (responseText != null && !TextUtils.isEmpty(responseText)) {
+                        //refresh();
+                        handler.sendEmptyMessage(ACCEPT_DONE);
+                        subGroup.authorStatus = 1;
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+        });
+    }
+    
 
     private void showNoticeDialog() {
         final AlertDialog.Builder normalDialog =
@@ -679,8 +718,10 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
                 break;
             case JOIN_DONE:
             case ACCEPT_DONE:
-                joinBtn.setText(getResources().getString(R.string.applying));
+                joinBtn.setText(getResources().getString(R.string.joined));
                 joinBtn.setClickable(false);
+                followBtn.setVisibility(View.INVISIBLE);
+                sendJoinGroupBroadcast();
                 break;
             case NO_MORE_DYNAMICS:
                 recyclerView.setNoMore(true);
@@ -748,6 +789,12 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
             default:
                 break;
         }
+    }
+    
+        private void sendJoinGroupBroadcast() {
+        Intent intent = new Intent(JOIN_GROUP_BROADCAST);
+        intent.putExtra("gid", gid);
+        LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
     }
 
     private void stopLoadProgress(){
