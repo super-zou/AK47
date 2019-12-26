@@ -1,14 +1,17 @@
 package com.hetang.meet;
 
+import android.content.BroadcastReceiver;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -45,8 +48,11 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static com.hetang.meet.SubGroupActivity.GROUP_ADD_BROADCAST;
 import static com.hetang.meet.SubGroupActivity.getSubGroup;
 import static com.hetang.meet.SubGroupActivity.updateVisitorRecord;
+import static com.hetang.meet.SubGroupDetailsActivity.GET_SUBGROUP_BY_GID;
+import static com.hetang.meet.SubGroupDetailsActivity.JOIN_GROUP_BROADCAST;
 
 public class GroupFragment extends BaseFragment implements View.OnClickListener {
     private static final boolean isDebug = true;
@@ -62,6 +68,7 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
     private static final int MAX_ROOT_GROUP = 7;
     private static final int LOAD_DATA_DONE = 8;
         private static final int LOAD_MY_GROUP_DONE = 9;
+        private static final int LOAD_NEW_JOINED_GROUP_DONE = 10;
 
     LinearLayout myGroupWrap;
 
@@ -82,6 +89,7 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
     ImageView progressImageView;
         List<SubGroupActivity.SubGroup> groupList = new ArrayList<>();
     AnimationDrawable animationDrawable;
+        private GroupReceiver groupReceiver = new GroupReceiver();
 
     List<GroupSummary> groupSummaryList = new ArrayList<>();
 
@@ -133,7 +141,7 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
         for (int type=0; type<MAX_ROOT_GROUP; type++) {
             loadGroupData(type);
         }
-
+        registerBroadcast();
     }
     
     private void loadMyGroup(){
@@ -236,47 +244,109 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
         int followAmount;
         int activityAmount;
     }
+    private void getMyNewJoinedGroupData(int gid){
+        getSubGroupByGid(gid);
+    }
+
+    private void getSubGroupByGid(int gid) {
+        RequestBody requestBody = new FormBody.Builder()
+                .add("gid", String.valueOf(gid))
+                .build();
+        HttpUtil.sendOkHttpRequest(getContext(), GET_SUBGROUP_BY_GID, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (isDebug) Slog.d(TAG, "==========response body : " + response.body());
+
+                if (response.body() != null) {
+                    String responseText = response.body().string();
+                    if (isDebug) Slog.d(TAG, "==========response text : " + responseText);
+                    if (responseText != null && !TextUtils.isEmpty(responseText)) {
+                        processNewAddSubGroupResponse(responseText);
+                    }
+                }
+            }
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+        });
+    }
+
+    private void processNewAddSubGroupResponse(String response) {
+        JSONObject subGroupResponse = null;
+
+        try {
+            subGroupResponse = new JSONObject(response);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        
+        if (subGroupResponse != null) {
+            SubGroupActivity.SubGroup subGroup;
+            JSONObject group = subGroupResponse.optJSONObject("group");
+            subGroup = getSubGroup(group);
+            groupList.add(0, subGroup);
+
+            handler.sendEmptyMessage(LOAD_NEW_JOINED_GROUP_DONE);
+        }
+
+    }
+        
     
     private void setMyGroupViewData(){
         int size = groupList.size();
         for (int i=0; i<size; i++){
             SubGroupActivity.SubGroup subGroup = groupList.get(i);
-            final View myGroupView = LayoutInflater.from(getContext()).inflate(R.layout.my_group_summary, (ViewGroup) mView.findViewById(android.R.id.content), false);
-            RoundImageView groupLogo = myGroupView.findViewById(R.id.group_logo);
-            TextView groupName = myGroupView.findViewById(R.id.group_name);
-            TextView groupDesc = myGroupView.findViewById(R.id.group_desc);
-            TextView visitRecord = myGroupView.findViewById(R.id.visit_record);
-            TextView activityCount = myGroupView.findViewById(R.id.activity_count);
-            TextView followCount = myGroupView.findViewById(R.id.follow_count);
-            TextView memberCount = myGroupView.findViewById(R.id.member_count);
-            myGroupView.setId(subGroup.gid);
-            groupName.setText(subGroup.groupName);
-            groupDesc.setText(subGroup.groupProfile);
-            visitRecord.setText(mContext.getResources().getString(R.string.visit)+" "+subGroup.visitRecord);
-            followCount.setText(mContext.getResources().getString(R.string.follow)+" "+subGroup.followCount);
-            activityCount.setText(mContext.getResources().getString(R.string.dynamics)+" "+subGroup.activityCount);
-            memberCount.setText(mContext.getResources().getString(R.string.member)+" "+subGroup.memberCount);
-
-            if (subGroup.groupLogoUri != null && !"".equals(subGroup.groupLogoUri)) {
-                Glide.with(mContext).load(HttpUtil.DOMAIN + subGroup.groupLogoUri).into(groupLogo);
-            }else {
-                groupLogo.setImageDrawable(mContext.getDrawable(R.drawable.icon));
-            }
-            
-            myGroupWrap.addView(myGroupView);
-
-            myGroupView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    int gid = myGroupView.getId();
-                    updateVisitorRecord(gid);
-                    Intent intent = new Intent(getContext(), SubGroupDetailsActivity.class);
-                    intent.putExtra("gid", gid);
-                    startActivity(intent);
-                }
-            });
+            View subView = setMyGroupItem(subGroup);
+            myGroupWrap.addView(subView);
         }
     }
+    
+    private void setNewJoinedGroupView(){
+        SubGroupActivity.SubGroup subGroup = groupList.get(0);
+        View subView = setMyGroupItem(subGroup);
+        myGroupWrap.addView(subView, 0);
+    }
+    
+    private View setMyGroupItem(SubGroupActivity.SubGroup subGroup){
+        final View myGroupView = LayoutInflater.from(getContext()).inflate(R.layout.my_group_summary, (ViewGroup) mView.findViewById(android.R.id.content), false);
+        RoundImageView groupLogo = myGroupView.findViewById(R.id.group_logo);
+        TextView groupName = myGroupView.findViewById(R.id.group_name);
+        TextView groupDesc = myGroupView.findViewById(R.id.group_desc);
+        TextView visitRecord = myGroupView.findViewById(R.id.visit_record);
+        TextView activityCount = myGroupView.findViewById(R.id.activity_count);
+        TextView followCount = myGroupView.findViewById(R.id.follow_count);
+        TextView memberCount = myGroupView.findViewById(R.id.member_count);
+        myGroupView.setId(subGroup.gid);
+        groupName.setText(subGroup.groupName);
+        groupDesc.setText(subGroup.groupProfile);
+        visitRecord.setText(mContext.getResources().getString(R.string.visit)+" "+subGroup.visitRecord);
+        followCount.setText(mContext.getResources().getString(R.string.follow)+" "+subGroup.followCount);
+        activityCount.setText(mContext.getResources().getString(R.string.dynamics)+" "+subGroup.activityCount);
+        memberCount.setText(mContext.getResources().getString(R.string.member)+" "+subGroup.memberCount);
+
+        if (subGroup.groupLogoUri != null && !"".equals(subGroup.groupLogoUri)) {
+            Glide.with(mContext).load(HttpUtil.DOMAIN + subGroup.groupLogoUri).into(groupLogo);
+        }else {
+            groupLogo.setImageDrawable(mContext.getDrawable(R.drawable.icon));
+        }
+        
+        myGroupView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int gid = myGroupView.getId();
+                updateVisitorRecord(gid);
+                Intent intent = new Intent(getContext(), SubGroupDetailsActivity.class);
+                intent.putExtra("gid", gid);
+                startActivity(intent);
+            }
+        });
+
+        return myGroupView;
+    }
+    
+    
+        
     
     private void setGroupSummaryView(int type, GroupSummary groupSummary){
         switch (type) {
@@ -406,6 +476,9 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
                 GroupSummary groupSummary = (GroupSummary)bundle.getSerializable("summary");
                 setGroupSummaryView(type, groupSummary);
                 break;
+            case LOAD_NEW_JOINED_GROUP_DONE:
+                setNewJoinedGroupView();
+                break;
                 default:
                     break;
         }
@@ -428,10 +501,41 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
         }
     }
     
+        private class GroupReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()) {
+                case JOIN_GROUP_BROADCAST:
+                case GROUP_ADD_BROADCAST:
+                    int gid = intent.getIntExtra("gid", -1);
+                    if (gid > 0){
+                        getMyNewJoinedGroupData(gid);
+                    }
+                    break;
+            }
+
+        }
+    }
+    
+        private void registerBroadcast() {
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(JOIN_GROUP_BROADCAST);
+        intentFilter.addAction(GROUP_ADD_BROADCAST);
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(groupReceiver, intentFilter);
+    }
+
+    //unregister local broadcast
+    private void unRegisterLoginBroadcast() {
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(groupReceiver);
+    }
+    
+    
+    
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        unRegisterLoginBroadcast();
     }
 
     @Override
