@@ -149,6 +149,9 @@ public class MessageFragment extends Fragment implements ReminderManager.UnreadN
     public void onNotificationUnreadChanged(int unReadCount) {
         getUnreadNotification(handler);
     }
+    
+        @Override
+    public void onNewContactsApplied(int appliedCount){}
 
     /**
      * 注册未读消息数量观察者
