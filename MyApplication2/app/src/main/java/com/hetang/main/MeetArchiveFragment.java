@@ -97,6 +97,7 @@ import static com.hetang.meet.MeetRecommendFragment.GET_MY_CONDITION_URL;
 import static com.hetang.meet.MeetRecommendFragment.MY_CONDITION_NOT_SET;
 import static com.hetang.meet.MeetRecommendFragment.MY_CONDITION_SET_DONE;
 import static com.hetang.util.ParseUtils.startArchiveActivity;
+import static com.hetang.util.ParseUtils.startMeetArchiveActivity;
 import static com.hetang.util.SharedPreferencesUtils.getYunXinAccount;
 import static com.xuexiang.xupdate.utils.DrawableUtils.getDrawable;
 
@@ -426,8 +427,8 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
         });
 
         navLayout = mArchiveProfile.findViewById(R.id.page_indicator);
-        FlowLayout eduInfo = mArchiveProfile.findViewById(R.id.education_info);
-        FlowLayout workInfo = mArchiveProfile.findViewById(R.id.work_info);
+        LinearLayout eduInfo = mArchiveProfile.findViewById(R.id.education_info);
+        LinearLayout workInfo = mArchiveProfile.findViewById(R.id.work_info);
         FlowLayout additionalInfo = mArchiveProfile.findViewById(R.id.additional_info);
         LinearLayout interactWrapper = mArchiveProfile.findViewById(R.id.interaction_wrap);
         LinearLayout myInteractStatistics = mArchiveProfile.findViewById(R.id.my_interact_statistics);
@@ -504,11 +505,13 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
         hometown.setText(getResources().getString(R.string.hometown) + ":" + mMeetMember.getHometown());
         nation.setText(mMeetMember.getNation());
 
-
+        if (mMeetMember.getCid() > 0){
+            additionalInfo.setVisibility(View.VISIBLE);
         if (!"无".equals(mMeetMember.getReligion())) {
             religion.setText(mMeetMember.getReligion());
         } else {
             religion.setVisibility(View.GONE);
+        }
         }
 
         if (mMeetMember.getVisitCount() > 0) {
@@ -686,7 +689,7 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
             chatBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    chat.processChat(context, getYunXinAccount(context), mMeetMember.getInit());
+                    chat.processChat(getActivity(), getYunXinAccount(context), mMeetMember.getInit());
                 }
             });
         }
@@ -1852,7 +1855,7 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
             @Override
             public void onClick(View view) {
                 join.setVisibility(View.GONE);
-                showProgressDialog("正在加入");
+                showProgressDialog(getActivity(), "正在加入");
                 RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
                 HttpUtil.sendOkHttpRequest(mContext, JOIN_CHEERING_GROUP_URL, requestBody, new Callback() {
                     @Override
@@ -1882,10 +1885,7 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
         cheeringGroupList.setAdapter(mCheeringGroupAdapter);
         cheeringGroupList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                Intent intent = new Intent(mContext, ArchiveActivity.class);
-                intent.putExtra("uid", mCheeringGroupMemberList.get(position).getUid());
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-                startActivity(intent);
+                ParseUtils.startMeetArchiveActivity(mContext, mCheeringGroupMemberList.get(position).getUid());
             }
         });
     }
@@ -2338,7 +2338,7 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
                                     mMeetMember = ParseUtils.setMeetMemberInfo(jsonObject);
                                     handler.sendEmptyMessage(GET_MEET_ARCHIVE_DONE);
                                 } else {
-                                    startArchiveActivity(getContext(), uid);
+                                    startMeetArchiveActivity(getContext(), uid);
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
