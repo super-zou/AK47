@@ -326,11 +326,7 @@ import static com.hetang.util.ParseUtils.startMeetArchiveActivity;
         holder.meetDynamicsViewHolder.baseProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (dynamic.getCid() > 0){
-                    ParseUtils.startMeetArchiveActivity(mContext, dynamic.getUid());
-                }else {
-                    ParseUtils.startArchiveActivity(mContext, dynamic.getUid());
-                }
+                ParseUtils.startMeetArchiveActivity(mContext, dynamic.getUid());
             }
         });
 
@@ -340,11 +336,7 @@ import static com.hetang.util.ParseUtils.startMeetArchiveActivity;
         baseProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (dynamic.getCid() > 0){
-                    ParseUtils.startMeetArchiveActivity(mContext, dynamic.getUid());
-                }else {
-                    ParseUtils.startArchiveActivity(mContext, dynamic.getUid());
-                }
+                ParseUtils.startMeetArchiveActivity(mContext, dynamic.getUid());
             }
         });
     }
@@ -375,11 +367,7 @@ import static com.hetang.util.ParseUtils.startMeetArchiveActivity;
             holder.relatedUserProfile.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (dynamic.relatedUerProfile.getCid() > 0){
-                        ParseUtils.startMeetArchiveActivity(mContext, dynamic.relatedUerProfile.getUid());
-                    }else {
-                        ParseUtils.startArchiveActivity(mContext, dynamic.relatedUerProfile.getUid());
-                    }
+                    ParseUtils.startMeetArchiveActivity(mContext, dynamic.relatedUerProfile.getUid());
                 }
             });
             
@@ -393,11 +381,7 @@ import static com.hetang.util.ParseUtils.startMeetArchiveActivity;
         holder.relativeContentWrapper.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            if (dynamic.getCid() > 0){
-                    ParseUtils.startMeetArchiveActivity(mContext, dynamic.getRelatedId());
-                }else {
-                    ParseUtils.startArchiveActivity(mContext, dynamic.getRelatedId());
-                }
+ParseUtils.startMeetArchiveActivity(mContext, dynamic.getRelatedId());
             }
         });
     }
@@ -492,11 +476,7 @@ import static com.hetang.util.ParseUtils.startMeetArchiveActivity;
             holder.relatedUserProfile.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (dynamic.relatedUerProfile.getCid() > 0){
-                        ParseUtils.startMeetArchiveActivity(mContext, dynamic.relatedUerProfile.getUid());
-                    }else {
-                        ParseUtils.startArchiveActivity(mContext, dynamic.relatedUerProfile.getUid());
-                    }
+ParseUtils.startMeetArchiveActivity(mContext, dynamic.relatedUerProfile.getUid());
                 }
             });
 
