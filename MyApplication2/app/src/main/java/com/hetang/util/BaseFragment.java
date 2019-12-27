@@ -132,9 +132,9 @@ public abstract class BaseFragment extends Fragment {
         msg.sendToTarget();
     }
 
-    public void showProgressDialog(String msg) {
+    public void showProgressDialog(Context context, String msg) {
         if (null == mProgressDialog) {
-            mProgressDialog = new ProgressDialog(getContext());
+            mProgressDialog = new ProgressDialog(context);
             mProgressDialog.setMessage(msg);
             mProgressDialog.setCanceledOnTouchOutside(false);
         }
