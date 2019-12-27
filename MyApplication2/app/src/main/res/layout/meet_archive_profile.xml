@@ -36,6 +36,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:text="name"
+                      android:typeface="sans"
+        android:fontFamily="sans-serif"
         android:textColor="@color/black"
         android:textSize="18sp"
         android:textStyle="normal|bold"
@@ -77,6 +79,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:gravity="center"
+                                     android:visibility="gone"
         app:layout_constraintEnd_toEndOf="@+id/name"
         app:layout_constraintStart_toStartOf="@+id/name"
         app:layout_constraintTop_toBottomOf="@+id/name">
@@ -86,6 +89,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="1dp"
+                              android:fontFamily="sans-serif"
+	    android:typeface="sans"
             android:background="@drawable/label_btn_shape"
             android:padding="6dp"
             android:text="hometown"
@@ -96,6 +101,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="1dp"
+                              android:fontFamily="sans-serif"
+	    android:typeface="sans"
             android:background="@drawable/label_btn_shape"
             android:padding="6dp"
             android:text="nation"
@@ -108,95 +115,107 @@
             android:layout_margin="1dp"
             android:background="@drawable/label_btn_shape"
             android:padding="6dp"
+                              android:fontFamily="sans-serif"
+	    android:typeface="sans"
             android:text="religion"
             android:textColor="@android:color/holo_blue_dark" />
     </com.nex3z.flowlayout.FlowLayout>
 
-    <com.nex3z.flowlayout.FlowLayout
+     <LinearLayout
         android:id="@+id/education_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="3dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginTop="16dp"
         android:gravity="center"
+        android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="@+id/name"
         app:layout_constraintStart_toStartOf="@+id/name"
         app:layout_constraintTop_toBottomOf="@+id/additional_info">
-
-        <TextView
-            android:id="@+id/degree"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="1dp"
-            android:background="@drawable/label_btn_shape"
-            android:padding="6dp"
-            android:text="degree"
-            android:textColor="@android:color/holo_blue_dark" />
-
-        <TextView
+         <TextView
             android:id="@+id/university"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="1dp"
-            android:background="@drawable/label_btn_shape"
-            android:padding="6dp"
-            android:text="university"
-            android:textColor="@android:color/holo_blue_dark" />
+            android:fontFamily="sans-serif"
+            android:text=""
+            android:typeface="sans" />
 
         <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:text="@string/dot"
+            android:typeface="sans" />
+         
+         <TextView
             android:id="@+id/major"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="1dp"
-            android:background="@drawable/label_btn_shape"
-            android:padding="6dp"
-            android:text="major"
-            android:textColor="@android:color/holo_blue_dark"
-            android:visibility="gone" />
-    </com.nex3z.flowlayout.FlowLayout>
+            android:fontFamily="sans-serif"
+            android:text=""
+            android:typeface="sans" />
 
-    <com.nex3z.flowlayout.FlowLayout
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:text="@string/dot"
+            android:typeface="sans" />
+         
+         <TextView
+            android:id="@+id/degree"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:text=""
+            android:typeface="sans" />
+    </LinearLayout>
+    
+    <LinearLayout
         android:id="@+id/work_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="3dp"
-        android:layout_marginEnd="8dp"
-        android:gravity="center"
+        android:layout_marginTop="8dp"
         android:visibility="gone"
+        android:gravity="center"
+        android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="@+id/name"
         app:layout_constraintStart_toStartOf="@+id/name"
         app:layout_constraintTop_toBottomOf="@+id/education_info">
-
+        
         <TextView
             android:id="@+id/position"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="1dp"
-            android:background="@drawable/label_btn_shape"
-            android:padding="6dp"
-            android:text="position"
-            android:textColor="@android:color/holo_blue_dark" />
+            android:typeface="sans"
+            android:fontFamily="sans-serif"
+            android:text="职位" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:typeface="sans"
+            android:fontFamily="sans-serif"
+            android:text="@string/dot" />
         <TextView
             android:id="@+id/industry"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="1dp"
-            android:background="@drawable/label_btn_shape"
-            android:padding="6dp"
-            android:text="industry"
-            android:textColor="@android:color/holo_blue_dark" />
-    </com.nex3z.flowlayout.FlowLayout>
+            android:typeface="sans"
+            android:fontFamily="sans-serif"
+            android:text="行业" />
+    </LinearLayout> 
+        
 
+   
     <LinearLayout
         android:id="@+id/living_wrap"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
+        android:fontFamily="sans-serif"
         android:gravity="center_horizontal"
         android:orientation="horizontal"
+        android:typeface="sans"
         app:layout_constraintEnd_toEndOf="@+id/name"
         app:layout_constraintStart_toStartOf="@+id/name"
         app:layout_constraintTop_toBottomOf="@+id/work_info">
@@ -221,6 +240,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:padding="8dp"
+                      android:typeface="sans"
+        android:fontFamily="sans-serif"
         android:text="@string/archive_details"
         android:textColor="#999"
         app:layout_constraintEnd_toStartOf="@+id/nav_resume"
@@ -236,6 +257,8 @@
         android:padding="8dp"
         android:text="@string/chevron_right"
         android:textColor="#999"
+                      android:typeface="sans"
+        android:fontFamily="sans-serif"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/living_wrap" />
 
@@ -335,6 +358,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="关注"
+                              android:typeface="sans"
+        android:fontFamily="sans-serif"
                 android:textSize="16sp" />
 
             <TextView
@@ -344,6 +369,8 @@
                 android:layout_marginLeft="3dp"
                 android:textColor="@android:color/holo_blue_dark"
                 android:text="0"
+                              android:typeface="sans"
+        android:fontFamily="sans-serif"
                 android:textSize="18sp"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -362,6 +389,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="赞"
+                              android:typeface="sans"
+        android:fontFamily="sans-serif"
                 android:textSize="16sp" />
 
             <TextView
@@ -371,6 +400,8 @@
                 android:layout_marginLeft="3dp"
                 android:textColor="@android:color/holo_blue_dark"
                 android:text="0"
+                              android:typeface="sans"
+        android:fontFamily="sans-serif"
                 android:textSize="18sp"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -397,6 +428,8 @@
                 android:layout_marginLeft="3dp"
                 android:textColor="@android:color/holo_blue_dark"
                 android:text="0"
+                              android:typeface="sans"
+        android:fontFamily="sans-serif"
                 android:textSize="18sp"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -407,6 +440,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
             android:orientation="horizontal"
+                              android:typeface="sans"
+        android:fontFamily="sans-serif"
             android:padding="5dp">
 
             <TextView
@@ -414,6 +449,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="动态"
+                              android:typeface="sans"
+        android:fontFamily="sans-serif"
                 android:textSize="16sp" />
 
             <TextView
@@ -439,6 +476,8 @@
         android:paddingBottom="3dp"
         android:gravity="center"
         android:visibility="gone"
+                          android:typeface="sans"
+        android:fontFamily="sans-serif"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/interact_statistics_wrap">
 
@@ -469,6 +508,8 @@
         <LinearLayout
             android:id="@+id/praise_count_wrap"
             android:layout_marginLeft="10dp"
+                              android:typeface="sans"
+        android:fontFamily="sans-serif"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
@@ -493,6 +534,8 @@
         <LinearLayout
             android:id="@+id/love_count_wrap"
             android:layout_marginLeft="10dp"
+                              android:typeface="sans"
+        android:fontFamily="sans-serif"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
@@ -525,6 +568,8 @@
         android:gravity="right"
         android:paddingTop="18dp"
         android:paddingBottom="18dp"
+                          android:typeface="sans"
+        android:fontFamily="sans-serif"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/my_interact_statistics">
