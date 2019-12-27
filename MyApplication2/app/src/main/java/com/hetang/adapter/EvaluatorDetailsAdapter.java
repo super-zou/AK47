@@ -88,7 +88,7 @@ public class EvaluatorDetailsAdapter extends RecyclerView.Adapter<EvaluatorDetai
             int uid = Integer.parseInt(holder.uid.getText().toString());
             @Override
             public void onClick(View view) {
-                ParseUtils.startArchiveActivity(context, uid);
+                ParseUtils.startMeetArchiveActivity(context, uid);
             }
         });
     }
