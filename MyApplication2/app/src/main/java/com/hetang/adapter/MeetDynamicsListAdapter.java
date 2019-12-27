@@ -34,6 +34,7 @@ import com.hetang.common.MyApplication;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.InterActInterface;
+import com.hetang.util.ParseUtils;
 import com.hetang.util.RoundImageView;
 import com.hetang.util.Slog;
 import com.hetang.util.Utility;
@@ -172,10 +173,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
         holder.baseProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(mContext, ArchiveActivity.class);
-                intent.putExtra("uid", dynamic.getUid());
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-                mContext.startActivity(intent);
+ParseUtils.startMeetArchiveActivity(mContext, dynamic.getUid());
             }
         });
 
