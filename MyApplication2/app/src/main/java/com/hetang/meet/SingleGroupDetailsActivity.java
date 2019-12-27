@@ -128,10 +128,7 @@ public class SingleGroupDetailsActivity extends BaseAppCompatActivity implements
         leaderProfileDetails.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(SingleGroupDetailsActivity.this, ArchiveActivity.class);
-                intent.putExtra("uid", uid);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-                startActivity(intent);
+                ParseUtils.startMeetArchiveActivity(mContext, uid);
             }
         });
         
@@ -266,11 +263,8 @@ public class SingleGroupDetailsActivity extends BaseAppCompatActivity implements
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (userMeetInfo.getCid() > 0){
-                    ParseUtils.startMeetArchiveActivity(mContext, userMeetInfo.getUid());
-                }else {
-                    ParseUtils.startArchiveActivity(mContext, userMeetInfo.getUid());
-                }
+                ParseUtils.startMeetArchiveActivity(mContext, userMeetInfo.getUid());
+               
                // ParseUtils.startMeetArchiveActivity(SingleGroupDetailsActivity.this, userMeetInfo.getUid());
             }
         });
