@@ -20,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.hetang.util.ParseUtils;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -157,10 +158,7 @@ public class SubGroupDetailsListAdapter extends RecyclerView.Adapter<SubGroupDet
         holder.baseProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(mContext, ArchiveActivity.class);
-                intent.putExtra("uid", dynamic.getUid());
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-                mContext.startActivity(intent);
+                ParseUtils.startMeetArchiveActivity(mContext, dynamic.getUid());
             }
         });
 
