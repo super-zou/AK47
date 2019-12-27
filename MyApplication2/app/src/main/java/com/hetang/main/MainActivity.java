@@ -80,6 +80,7 @@ public class MainActivity extends BaseAppCompatActivity implements CommonDialogF
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
     TextView unReadView;
+     TextView contactsAppliedNoticeView;
     private MainFragmentAdapter mFragmentAdapter;
     private List<Fragment> mFragmentList = new ArrayList<>();
     
@@ -259,7 +260,7 @@ public class MainActivity extends BaseAppCompatActivity implements CommonDialogF
         });
 
         unReadView = mTabLayout.getTabAt(2).getCustomView().findViewById(R.id.unread);
-
+contactsAppliedNoticeView = mTabLayout.getTabAt(3).getCustomView().findViewById(R.id.unread);
         FontManager.markAsIconContainer(findViewById(R.id.tabs), font);
     }
 
@@ -302,11 +303,7 @@ public class MainActivity extends BaseAppCompatActivity implements CommonDialogF
                         Message message = new Message();
                         Bundle bundle = new Bundle();
                         bundle.putInt("uid", uid);
-                        if (cid > 0){
-                            message.what = START_MEET_ARCHIVE_ACTIVITY;
-                        }else {
-                            message.what = START_ARCHIVE_ACTIVITY;
-                        }
+message.what = START_MEET_ARCHIVE_ACTIVITY;
                         message.setData(bundle);
                         handler.sendMessage(message);
                         dismissProgressDialog();
@@ -349,6 +346,20 @@ public class MainActivity extends BaseAppCompatActivity implements CommonDialogF
         if (unReadCount > 0){
             if (unReadView.getVisibility() == View.GONE){
                 unReadView.setVisibility(View.VISIBLE);
+            }
+        }
+    }
+    
+    @Override
+    public void onNewContactsApplied(int appliedCount){
+        Slog.d(TAG, "------------------->onNewContactsApplied: "+appliedCount);
+        if (appliedCount > 0){
+            if (contactsAppliedNoticeView.getVisibility() == View.GONE){
+                contactsAppliedNoticeView.setVisibility(View.VISIBLE);
+            }
+        }else {
+            if (contactsAppliedNoticeView.getVisibility() == View.VISIBLE){
+                contactsAppliedNoticeView.setVisibility(View.GONE);
             }
         }
     }
@@ -495,9 +506,6 @@ public class MainActivity extends BaseAppCompatActivity implements CommonDialogF
                 break;
             case START_MEET_ARCHIVE_ACTIVITY:
                 startMeetArchiveActivity(this, uid);
-                break;
-            case START_ARCHIVE_ACTIVITY:
-                startArchiveActivity(this, uid);
                 break;
             default:
                 break;
