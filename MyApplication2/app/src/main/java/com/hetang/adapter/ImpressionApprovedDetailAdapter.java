@@ -67,11 +67,7 @@ public class ImpressionApprovedDetailAdapter extends RecyclerView.Adapter<Impres
         holder.headPic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (memberInfo.getCid() > 0){
-                    ParseUtils.startMeetArchiveActivity(mContext, memberInfo.getUid());
-                }else {
-                    ParseUtils.startArchiveActivity(mContext, memberInfo.getUid());
-                }
+ParseUtils.startMeetArchiveActivity(mContext, memberInfo.getUid());
 
             }
         });
