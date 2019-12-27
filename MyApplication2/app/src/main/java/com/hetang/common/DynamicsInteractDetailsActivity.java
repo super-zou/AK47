@@ -249,11 +249,7 @@ public class DynamicsInteractDetailsActivity extends BaseAppCompatActivity imple
         dynamicsInteractDetailsAdapter.setItemClickListener(new DynamicsInteractDetailsAdapter.MyItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Intent intent = new Intent(MyApplication.getContext(), ArchiveActivity.class);
-                intent.putExtra("uid", dynamicsComments.get(position).getAuthorUid());
-                Slog.d(TAG, "----------------->uid: "+dynamicsComments.get(position).getAuthorUid());
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-                startActivity(intent);
+                ParseUtils.startMeetArchiveActivity(mContext, dynamicsComments.get(position).getAuthorUid());
             }
         }, new InterActInterface() {
         @Override
