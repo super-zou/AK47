@@ -30,6 +30,7 @@ import com.hetang.R;
 import com.hetang.common.MyApplication;
 import com.hetang.main.MeetArchiveActivity;
 import com.hetang.meet.SingleGroupDetailsActivity;
+import com.hetang.meet.SubGroupDetailsActivity;
 import com.hetang.message.NotificationDetailsDialogFragment;
 import com.hetang.message.NotificationFragment;
 import com.hetang.util.CommonUserListDialogFragment;
@@ -74,6 +75,7 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
     private static final int PROCESSED = 1;
     private static final int IGNORED = -1;
     private static final int UPDATE_PROCESS_BUTTON_STATUS = 0;
+        private static final int MAKE_NOTIFICATION_SHOWED = 1;
     private static final int NOT_SHOWED = 0;
     private static final int SHOWED = 1;
     private Handler mHandler;
@@ -87,6 +89,7 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
             public void handleMessage(Message msg) {
                 switch (msg.what) {
                     case UPDATE_PROCESS_BUTTON_STATUS:
+                        case MAKE_NOTIFICATION_SHOWED:
                         notifyDataSetChanged();
                         break;
                     default:
@@ -119,6 +122,7 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
 
         if (notification.isNew == UNREAD) {
             holder.isNew.setVisibility(View.VISIBLE);
+            holder.isNew.bringToFront();
             switch (notification.type) {
                 case EVALUATE_ACTION:
                 case REFEREE_ACTION:
@@ -202,11 +206,7 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
         holder.avatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (notification.trigger.getCid() <= 0) {
-                    ParseUtils.startArchiveActivity(mContext, notification.tid);
-                } else {
-                    ParseUtils.startMeetArchiveActivity(mContext, notification.tid);
-                }
+ParseUtils.startMeetArchiveActivity(mContext, notification.tid);
                 markNotificationProcessed(holder.isNew, notification);
             }
         });
@@ -214,11 +214,7 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
         holder.name.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (notification.trigger.getCid() <= 0) {
-                    ParseUtils.startArchiveActivity(mContext, notification.tid);
-                } else {
-                    ParseUtils.startMeetArchiveActivity(mContext, notification.tid);
-                }
+ParseUtils.startMeetArchiveActivity(mContext, notification.tid);
                 markNotificationProcessed(holder.isNew, notification);
             }
         });
@@ -261,7 +257,7 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
                     case ParseUtils.JOIN_SINGLE_GROUP_ACTION:
                     case ParseUtils.APPLY_JOIN_SINGLE_GROUP_NF:
                     case ParseUtils.INVITE_SINGLE_GROUP_MEMBER_ACTION:
-                        startSingleGroupDetails(mContext, notification.id);
+                        startSubGroupDetails(mContext, notification.id);
                         markNotificationProcessed(holder.isNew, notification);
                         break;
                     default:
@@ -270,18 +266,7 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
             }
         });
 
-        holder.item.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Slog.d(TAG, "---------------------------->nid: " + notification.nid);
-                markNotificationProcessed(holder.isNew, notification);
-                NotificationDetailsDialogFragment notificationDetailsDialogFragment = new NotificationDetailsDialogFragment();
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("notification", notification);
-                notificationDetailsDialogFragment.setArguments(bundle);
-                notificationDetailsDialogFragment.show(fragmentManager, "NotificationDetailsDialogFragment");
-            }
-        });
+
     }
 
     private void showNotification(NotificationFragment.Notification NF) {
@@ -354,9 +339,9 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
         markNotificationShowed(NF.nid);
     }
 
-    private void markNotificationShowed(int nid) {
+    private void markNotificationShowed(final NotificationFragment.Notification notification) {
         RequestBody requestBody = new FormBody.Builder()
-                .add("nid", String.valueOf(nid))
+                .add("nid", String.valueOf(notification.nid))
                 .add("showed", String.valueOf(SHOWED))
                 .build();
         HttpUtil.sendOkHttpRequest(MyApplication.getContext(), NotificationFragment.NOTICE_PROCESS_URL, requestBody, new Callback() {
@@ -364,6 +349,8 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
             public void onResponse(Call call, Response response) throws IOException {
                 if (response != null) {
                     String responseText = response.body().string();
+                    notification.showed = SHOWED;
+                    mHandler.sendEmptyMessage(MAKE_NOTIFICATION_SHOWED);
                 }
             }
 
@@ -466,8 +453,8 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
         });
     }
 
-    private void startSingleGroupDetails(Context context, int gid) {
-        Intent intent = new Intent(context, SingleGroupDetailsActivity.class);
+    private void startSubGroupDetails(Context context, int gid) {
+        Intent intent = new Intent(context, SubGroupDetailsActivity.class);
         intent.putExtra("gid", gid);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
         mContext.startActivity(intent);
