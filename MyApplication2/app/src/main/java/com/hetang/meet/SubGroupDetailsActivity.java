@@ -86,6 +86,7 @@ import static com.hetang.meet.MeetDynamicsFragment.PRAISE_UPDATE;
 import static com.hetang.meet.MeetDynamicsFragment.UPDATE_COMMENT;
 import static com.hetang.util.ParseUtils.startArchiveActivity;
 import static com.hetang.common.SetAvatarActivity.MODIFY_SUBGROUP_LOGO_RESULT_OK;
+import static com.hetang.util.ParseUtils.startMeetArchiveActivity;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
 //import android.widget.GridLayout;
@@ -548,14 +549,14 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
         leaderName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startArchiveActivity(mContext, subGroup.leader.getUid());
+                startMeetArchiveActivity(mContext, subGroup.leader.getUid());
             }
         });
 
         leaderAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startArchiveActivity(mContext, subGroup.leader.getUid());
+                startMeetArchiveActivity(mContext, subGroup.leader.getUid());
             }
         });
     }
