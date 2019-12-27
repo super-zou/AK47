@@ -86,7 +86,7 @@ public class HomeFragment extends BaseFragment {
     private static final int PAGE_SIZE = 6;
     public static final int DEFAULT_RECOMMEND_COUNT = 8;
     public static final String GET_HOME_RECOMMEND_PERSON_URL = HttpUtil.DOMAIN + "?q=contacts/home_recommend_person";
-    private static final String GET_RECOMMEND_SINGLE_GROUP_URL = HttpUtil.DOMAIN + "?q=single_group/get_all";
+    private static final String GET_RECOMMEND_SUBGROUP_URL = HttpUtil.DOMAIN + "?q=subgroup/get_all";
     public static final String LOAD_CONCERNED_DYNAMICS_URL = HttpUtil.DOMAIN + "?q=dynamic/load_concerned";
     public static final String GET_UPDATE_CONCERNED_DYNAMICS_URL = HttpUtil.DOMAIN + "?q=dynamic/get_update_concerned";
     public static final String GET_MY_NEW_ADD_DYNAMICS_URL = HttpUtil.DOMAIN + "?q=dynamic/get_my_new_add";
@@ -104,7 +104,7 @@ public class HomeFragment extends BaseFragment {
     private List<MeetSingleGroupFragment.SingleGroup> mSingleGroupList = new ArrayList<>();
     
     public static final int GET_RECOMMEND_MEMBER_DONE = 6;
-    private static final int GET_RECOMMEND_SINGLE_GROUP_DONE = 7;
+    private static final int GET_RECOMMEND_GROUP_DONE = 7;
     public static final int NO_RECOMMEND_MEMBER_DONE = 8;
     public static final int GET_MY_NEW_ADD_DONE = 15;
 
@@ -290,7 +290,7 @@ public class HomeFragment extends BaseFragment {
                 .add("page", String.valueOf(page))
                 .build();
 
-        HttpUtil.sendOkHttpRequest(getContext(), GET_RECOMMEND_SINGLE_GROUP_URL, requestBody, new Callback() {
+        HttpUtil.sendOkHttpRequest(getContext(), GET_RECOMMEND_SUBGROUP_URL, requestBody, new Callback() {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
@@ -310,7 +310,7 @@ public class HomeFragment extends BaseFragment {
                     }
 
                     if(mLoadSize > 0){
-                        handler.sendEmptyMessage(GET_RECOMMEND_SINGLE_GROUP_DONE);
+                        handler.sendEmptyMessage(GET_RECOMMEND_GROUP_DONE);
                     }
                 }
             }
@@ -683,11 +683,7 @@ public class HomeFragment extends BaseFragment {
                 @Override
                 public void onClick(View view) {
                     //ParseUtils.startMeetArchiveActivity(getContext(), userProfile.getUid());
-                    if (userProfile.getCid() > 0){
-                        ParseUtils.startMeetArchiveActivity(mContext, userProfile.getUid());
-                    }else {
-                        ParseUtils.startArchiveActivity(mContext, userProfile.getUid());
-                    }
+ParseUtils.startMeetArchiveActivity(mContext, userProfile.getUid());
                 }
             });
             
@@ -695,7 +691,7 @@ public class HomeFragment extends BaseFragment {
     }
 
     private void setRecommendSingleGroupView(){
-        mRecommendSingleGroupView = LayoutInflater.from(mContext).inflate(R.layout.recommend_single_group, (ViewGroup) mView.findViewById(android.R.id.content), false);
+        mRecommendSingleGroupView = LayoutInflater.from(mContext).inflate(R.layout.recommend_group, (ViewGroup) mView.findViewById(android.R.id.content), false);
         xRecyclerView.addHeaderView(mRecommendSingleGroupView);
         LinearLayout singleGroupWrapper = mRecommendSingleGroupView.findViewById(R.id.single_group_wrapper);
         
