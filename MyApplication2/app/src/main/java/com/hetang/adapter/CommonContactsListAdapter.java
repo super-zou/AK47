@@ -89,12 +89,7 @@ public class CommonContactsListAdapter extends RecyclerView.Adapter<CommonContac
         holder.contactsItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (contacts.getCid() > 0){
-                    ParseUtils.startMeetArchiveActivity(mContext, contacts.getUid());
-                }else {
-                    ParseUtils.startArchiveActivity(mContext, contacts.getUid());
-                }
-
+               ParseUtils.startMeetArchiveActivity(mContext, contacts.getUid());
             }
         });
 
