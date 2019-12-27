@@ -11,6 +11,7 @@ public class ReminderManager {
     public interface UnreadNumChangedCallback {
         void onUnreadNumChanged(int unReadCount);
         void onNotificationUnreadChanged(int unReadCount);
+        void onNewContactsApplied(int appliedCount);
     }
     
     // singleton
@@ -61,6 +62,12 @@ public class ReminderManager {
     public final void updateNotificationUnreadNum(int unreadNum){
         for (UnreadNumChangedCallback cb : unreadNumChangedCallbacks) {
             cb.onNotificationUnreadChanged(unreadNum);
+        }
+    }
+    
+        public final void updateNewContactsApplied(int appliedCount){
+        for (UnreadNumChangedCallback cb : unreadNumChangedCallbacks) {
+            cb.onNewContactsApplied(appliedCount);
         }
     }
 }
