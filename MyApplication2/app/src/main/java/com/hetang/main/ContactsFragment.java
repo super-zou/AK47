@@ -22,6 +22,7 @@ import com.bumptech.glide.Glide;
 import com.hetang.R;
 import com.hetang.adapter.ContactsListAdapter;
 import com.hetang.common.MyApplication;
+import com.hetang.common.ReminderManager;
 import com.hetang.contacts.ContactsApplyListActivity;
 import com.hetang.util.BaseFragment;
 import com.hetang.util.HttpUtil;
@@ -61,6 +62,7 @@ public class ContactsFragment extends BaseFragment {
     private List<ContactsApplyListActivity.Contacts> requestList = new ArrayList<>();
     private ContactsListAdapter contactsListAdapter;
     private static final int GET_CONTACTS_DONE = 0;
+    private static final int NO_CONTACTS = 1;
     TextView newApply;
     TextView newApplyCountView;
     TextView myApply;
@@ -183,6 +185,8 @@ public class ContactsFragment extends BaseFragment {
                     } else {
                         if (newApplyCount > 0 || myApplyCount > 0) {
                             myHandler.sendEmptyMessage(GET_CONTACTS_DONE);
+                        }else {
+                            myHandler.sendEmptyMessage(NO_CONTACTS);
                         }
                     }
                 }
@@ -273,7 +277,10 @@ public class ContactsFragment extends BaseFragment {
                 if (myApplyCount > 0) {
                     myApplyCountView.setText("+" + String.valueOf(myApplyCount));
                 }
-
+ReminderManager.getInstance().updateNewContactsApplied(newApplyCount);
+                break;
+                case NO_CONTACTS:
+                ReminderManager.getInstance().updateNewContactsApplied(newApplyCount);
                 break;
             default:
                 break;
