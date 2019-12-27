@@ -79,7 +79,7 @@ public class PersonalityApprovedAdapter extends RecyclerView.Adapter<Personality
         holder.constraintLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ParseUtils.startArchiveActivity(mContext, userProfile.getUid());
+                ParseUtils.startMeetArchiveActivity(mContext, userProfile.getUid());
             }
         });
     }
