@@ -71,14 +71,14 @@ public class MeetReferenceAdapter extends RecyclerView.Adapter<MeetReferenceAdap
         holder.refereeHeadUri.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ParseUtils.startArchiveActivity(mContext, referenceInfo.getUid());
+                ParseUtils.startMeetArchiveActivity(mContext, referenceInfo.getUid());
             }
         });
 
         holder.name.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ParseUtils.startArchiveActivity(mContext, referenceInfo.getUid());
+                ParseUtils.startMeetArchiveActivity(mContext, referenceInfo.getUid());
             }
         });
 
