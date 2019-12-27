@@ -140,11 +140,7 @@ public class SearchUserListAdapter extends RecyclerView.Adapter<SearchUserListAd
             holder.searchItem.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (memberInfo.getCid() > 0){
-                        ParseUtils.startMeetArchiveActivity(mContext, memberInfo.getUid());
-                    }else {
-                        ParseUtils.startArchiveActivity(mContext, memberInfo.getUid());
-                    }
+ParseUtils.startMeetArchiveActivity(mContext, memberInfo.getUid());
                 }
             });
         }
