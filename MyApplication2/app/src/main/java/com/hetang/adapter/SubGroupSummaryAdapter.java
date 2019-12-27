@@ -29,6 +29,7 @@ import com.hetang.util.RoundImageView;
 import java.util.List;
 import static com.hetang.util.ParseUtils.startArchiveActivity;
 import static com.hetang.util.Utility.dpToPx;
+import static com.hetang.util.ParseUtils.startMeetArchiveActivity;
 
 /**
  * Created by super-zou on 18-9-21.
@@ -116,14 +117,14 @@ public class SubGroupSummaryAdapter extends RecyclerView.Adapter<SubGroupSummary
         holder.name.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startArchiveActivity(mContext, subGroup.leader.getUid());
+                startMeetArchiveActivity(mContext, subGroup.leader.getUid());
             }
         });
 
         holder.leaderHeadUri.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startArchiveActivity(mContext, subGroup.leader.getUid());
+                startMeetArchiveActivity(mContext, subGroup.leader.getUid());
             }
         });
 
