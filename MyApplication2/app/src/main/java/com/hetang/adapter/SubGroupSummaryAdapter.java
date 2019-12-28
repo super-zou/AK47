@@ -10,25 +10,22 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
 import com.hetang.R;
 import com.hetang.common.HandlerTemp;
-import com.hetang.meet.SubGroupActivity;
+import com.hetang.group.SubGroupActivity;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.RoundImageView;
 
 import java.util.List;
-import static com.hetang.util.ParseUtils.startArchiveActivity;
-import static com.hetang.util.Utility.dpToPx;
+
+import static com.hetang.common.MyApplication.getContext;
 import static com.hetang.util.ParseUtils.startMeetArchiveActivity;
 
 /**
@@ -80,12 +77,12 @@ public class SubGroupSummaryAdapter extends RecyclerView.Adapter<SubGroupSummary
         holder.name.setText(subGroup.leader.getName());
 
         if (subGroup.leader.getAvatar() != null && !"".equals(subGroup.leader.getAvatar())) {
-            Glide.with(mContext).load(HttpUtil.DOMAIN + subGroup.leader.getAvatar()).into(holder.leaderHeadUri);
+            Glide.with(getContext()).load(HttpUtil.DOMAIN + subGroup.leader.getAvatar()).into(holder.leaderHeadUri);
         } else {
             if (subGroup.leader.getSex() == 0){
-                holder.leaderHeadUri.setImageDrawable(mContext.getDrawable(R.drawable.male_default_avator));
+                holder.leaderHeadUri.setImageDrawable(getContext().getDrawable(R.drawable.male_default_avator));
             }else {
-                holder.leaderHeadUri.setImageDrawable(mContext.getDrawable(R.drawable.female_default_avator));
+                holder.leaderHeadUri.setImageDrawable(getContext().getDrawable(R.drawable.female_default_avator));
             }
         }
         holder.groupName.setText(subGroup.groupName.trim());
@@ -103,28 +100,28 @@ public class SubGroupSummaryAdapter extends RecyclerView.Adapter<SubGroupSummary
         }
         */
 
-        holder.visitRecord.setText(mContext.getResources().getString(R.string.visit)+" "+subGroup.visitRecord);
-        holder.followCount.setText(mContext.getResources().getString(R.string.follow)+" "+subGroup.followCount);
-        holder.activityCount.setText(mContext.getResources().getString(R.string.dynamics)+" "+subGroup.activityCount);
-        holder.memberCount.setText(mContext.getResources().getString(R.string.member)+" "+subGroup.memberCount);
+        holder.visitRecord.setText(getContext().getResources().getString(R.string.visit)+" "+subGroup.visitRecord);
+        holder.followCount.setText(getContext().getResources().getString(R.string.follow)+" "+subGroup.followCount);
+        holder.activityCount.setText(getContext().getResources().getString(R.string.dynamics)+" "+subGroup.activityCount);
+        holder.memberCount.setText(getContext().getResources().getString(R.string.member)+" "+subGroup.memberCount);
 
         if (subGroup.groupLogoUri != null && !"".equals(subGroup.groupLogoUri)) {
-            Glide.with(mContext).load(HttpUtil.DOMAIN + subGroup.groupLogoUri).into(holder.logo);
+            Glide.with(getContext()).load(HttpUtil.DOMAIN + subGroup.groupLogoUri).into(holder.logo);
         }else {
-            holder.logo.setImageDrawable(mContext.getDrawable(R.drawable.icon));
+            holder.logo.setImageDrawable(getContext().getDrawable(R.drawable.icon));
         }
         
         holder.name.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startMeetArchiveActivity(mContext, subGroup.leader.getUid());
+                startMeetArchiveActivity(getContext(), subGroup.leader.getUid());
             }
         });
 
         holder.leaderHeadUri.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startMeetArchiveActivity(mContext, subGroup.leader.getUid());
+                startMeetArchiveActivity(getContext(), subGroup.leader.getUid());
             }
         });
 
@@ -184,7 +181,7 @@ public class SubGroupSummaryAdapter extends RecyclerView.Adapter<SubGroupSummary
             followCount = view.findViewById(R.id.follow_count);
             //将全局的监听赋值给接口
             this.mListener = myItemClickListener;
-            Typeface font = Typeface.createFromAsset(mContext.getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
+            Typeface font = Typeface.createFromAsset(getContext().getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
             FontManager.markAsIconContainer(view.findViewById(R.id.reference_item), font);
         }
        /**

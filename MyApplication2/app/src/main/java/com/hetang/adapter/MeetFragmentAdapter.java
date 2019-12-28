@@ -8,8 +8,7 @@ import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.hetang.meet.GroupFragment;
-import com.hetang.meet.MeetSingleGroupFragment;
+import com.hetang.group.GroupFragment;
 import com.hetang.meet.MeetDiscoveryFragment;
 import com.hetang.meet.MeetDynamicsFragment;
 import com.hetang.meet.MeetRecommendFragment;

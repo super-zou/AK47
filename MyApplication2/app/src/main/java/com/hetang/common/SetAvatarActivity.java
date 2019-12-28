@@ -49,7 +49,7 @@ import okhttp3.Callback;
 import okhttp3.MediaType;
 import okhttp3.Response;
 
-import static com.hetang.meet.SubGroupDetailsActivity.MODIFY_LOGO;
+import static com.hetang.group.SubGroupDetailsActivity.MODIFY_LOGO;
 
 public class SetAvatarActivity extends BaseAppCompatActivity {
     private static final String TAG = "SetAvatarActivity";

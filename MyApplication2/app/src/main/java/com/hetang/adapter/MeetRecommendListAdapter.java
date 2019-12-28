@@ -41,6 +41,7 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static com.hetang.common.MyApplication.getContext;
 import static com.hetang.meet.MeetRecommendFragment.student;
 
 /**
@@ -163,16 +164,16 @@ public class MeetRecommendListAdapter extends RecyclerView.Adapter<MeetRecommend
         }
          
          if(meet.getNation() != null && !TextUtils.isEmpty(meet.getNation())){
-            holder.hometown.setText(mContext.getResources().getString(R.string.dot)+meet.getHometown()+"人");
+            holder.hometown.setText(getContext().getResources().getString(R.string.dot)+meet.getHometown()+"人");
         }
 
         if (meet.getAvatar() != null && !"".equals(meet.getAvatar())) {
-            Glide.with(MyApplication.getContext()).load(HttpUtil.DOMAIN + meet.getAvatar()).into(holder.avatar);
+            Glide.with(getContext()).load(HttpUtil.DOMAIN + meet.getAvatar()).into(holder.avatar);
         } else {
             if(meet.getSex() == 0){
-                holder.avatar.setImageDrawable(MyApplication.getContext().getDrawable(R.drawable.male_default_avator));
+                holder.avatar.setImageDrawable(getContext().getDrawable(R.drawable.male_default_avator));
             }else {
-                holder.avatar.setImageDrawable(MyApplication.getContext().getDrawable(R.drawable.female_default_avator));
+                holder.avatar.setImageDrawable(getContext().getDrawable(R.drawable.female_default_avator));
             }
         }
 
@@ -186,16 +187,22 @@ public class MeetRecommendListAdapter extends RecyclerView.Adapter<MeetRecommend
         }
 
         if (meet.getSituation() == student){
+            /*
             if (holder.status.getVisibility() == View.GONE){
                 holder.status.setVisibility(View.VISIBLE);
             }
+
+             */
             if (holder.workInfo.getVisibility() == View.VISIBLE){
                 holder.workInfo.setVisibility(View.GONE);
             }
         }else {
+            /*
             if (holder.status.getVisibility() != View.GONE){
                 holder.status.setVisibility(View.GONE);
             }
+
+             */
 
             if (holder.workInfo.getVisibility() == View.GONE){
                 holder.workInfo.setVisibility(View.VISIBLE);
@@ -261,16 +268,18 @@ public class MeetRecommendListAdapter extends RecyclerView.Adapter<MeetRecommend
             }
         }
 
+        /*
         if(!TextUtils.isEmpty(meet.getIllustration()) && !isScrolling){
             holder.illustration.setVisibility(View.VISIBLE);
             holder.illustration.setText(meet.getIllustration());
         }else {
             holder.illustration.setVisibility(View.GONE);
         }
+        */
          
           if (!TextUtils.isEmpty(meet.getRefereeName()) && !TextUtils.isEmpty(meet.getRefereeAvatar()) && !isScrolling){
             holder.reference.setVisibility(View.VISIBLE);
-            Glide.with(MyApplication.getContext()).load(HttpUtil.DOMAIN + meet.getRefereeAvatar()).into(holder.refereeAvatar);
+            Glide.with(getContext()).load(HttpUtil.DOMAIN + meet.getRefereeAvatar()).into(holder.refereeAvatar);
             holder.refereeName.setText(meet.getRefereeName()+mContext.getResources().getString(R.string.dot)+mContext.getResources().getString(R.string.recommend));
             holder.refereeContent.setText("“"+meet.getReferenceContent()+"”");
         }else {
@@ -381,7 +390,7 @@ public class MeetRecommendListAdapter extends RecyclerView.Adapter<MeetRecommend
         public TextView selfcondition;
         //public TextView requirement;
         public RoundImageView avatar;
-        public TextView illustration;
+        //public TextView illustration;
         public TextView visitIcon;
         public TextView visitRecord;
         public TextView lovedView;
@@ -413,7 +422,7 @@ public class MeetRecommendListAdapter extends RecyclerView.Adapter<MeetRecommend
             avatar =  view.findViewById(R.id.avatar);
             university = view.findViewById(R.id.university);
             degree = view.findViewById(R.id.degree);
-            status = view.findViewById(R.id.status);
+            //status = view.findViewById(R.id.status);
             educationBackground = view.findViewById(R.id.education_background);
             workInfo = view.findViewById(R.id.work_info);
             position = view.findViewById(R.id.position);
@@ -421,7 +430,7 @@ public class MeetRecommendListAdapter extends RecyclerView.Adapter<MeetRecommend
             
             selfcondition = (TextView) view.findViewById(R.id.self_condition);
            // requirement = (TextView) view.findViewById(R.id.partner_requirement);
-            illustration = (TextView) view.findViewById(R.id.illustration);
+            //illustration = (TextView) view.findViewById(R.id.illustration);
             visitIcon = view.findViewById(R.id.eye_icon);
             visitRecord = view.findViewById(R.id.visit_record);
             lovedView = (TextView) view.findViewById(R.id.loved_statistics);
@@ -439,7 +448,7 @@ public class MeetRecommendListAdapter extends RecyclerView.Adapter<MeetRecommend
             refereeContent = view.findViewById(R.id.reference_content);
 
             this.mListener = myItemClickListener;
-            Typeface font = Typeface.createFromAsset(mContext.getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
+            Typeface font = Typeface.createFromAsset(getContext().getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
             FontManager.markAsIconContainer(view.findViewById(R.id.behavior_statistics), font);
             FontManager.markAsIconContainer(view.findViewById(R.id.activity_indicator), font);
             FontManager.markAsIconContainer(view.findViewById(R.id.eye_icon), font);

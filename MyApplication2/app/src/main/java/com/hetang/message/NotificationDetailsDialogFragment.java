@@ -7,35 +7,15 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AlertDialog;
-import android.text.TextUtils;
-import android.view.Gravity;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.TextView;
 
 import com.hetang.R;
 import com.hetang.common.MyApplication;
-import com.hetang.meet.SubGroupActivity;
 import com.hetang.util.BaseDialogFragment;
-import com.hetang.util.CreateSubGroupDialogFragment;
 import com.hetang.util.FontManager;
-import com.hetang.util.HttpUtil;
-import com.hetang.util.Slog;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.FormBody;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-
-import static com.hetang.meet.SubGroupDetailsActivity.EXIT_GROUP_BROADCAST;
+import static com.hetang.group.SubGroupDetailsActivity.EXIT_GROUP_BROADCAST;
 
 /**
  * Created by super-zou on 18-9-9.

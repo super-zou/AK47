@@ -106,7 +106,7 @@
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".meet.SingleGroupDetailsActivity"
+            android:name=".group.SingleGroupDetailsActivity"
             android:launchMode="singleTop" />
         <activity
             android:name=".meet.SpecificUserDynamicsActivity"
@@ -124,10 +124,13 @@
             android:name=".contacts.ContactsApplyListActivity"
             android:launchMode="singleTask" />
         <activity
-            android:name=".meet.SubGroupActivity"
+            android:name=".group.SubGroupActivity"
             android:launchMode="singleTask" />
         <activity
-            android:name=".meet.SubGroupDetailsActivity"
+            android:name=".group.SubGroupDetailsActivity"
+            android:launchMode="singleTask" />
+        <activity
+            android:name=".group.GroupActivity"
             android:launchMode="singleTask" />
 
         <provider

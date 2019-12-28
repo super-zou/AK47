@@ -36,7 +36,7 @@
     <string name="approved">已同意</string>
     <string name="back">返回</string>
     <string name="look_friend">+我要交友</string>
-    <string name="look_friend_notice">写下你的交友要求，为你推荐合适人选</string>
+    <string name="look_friend_notice">填写交友条件，推荐更合适的人选</string>
 
     <!--+Begin: relations, add by zouhaichao 2018.11.27-->
     <string name="classmate">同学</string>
@@ -175,7 +175,7 @@
     <string name="position">职位</string>
     <string name="position_hint">职业、职位</string>
     <string name="industry">行业</string>
-    <string name="illustration_hint">尽量详细地介绍一下你的背景和对爱情的期待和要求，能帮你更容易交到朋友！</string>
+    <string name="illustration_hint">详细地介绍一下你的背景和交友要求，能帮你更容易交到朋友！</string>
     <string name="university_empty">请输入学校</string>
     <string name="major_empty">请输入专业</string>
     <string name="profession_empty">请输入职位</string>

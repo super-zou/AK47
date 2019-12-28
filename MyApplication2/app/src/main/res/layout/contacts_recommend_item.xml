@@ -1,19 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/cardView"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="top"
     android:layout_margin="10dp"
     app:cardUseCompatPadding="true">
-    
-        <android.support.constraint.ConstraintLayout
-        android:gravity="center_horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="260dp">
 
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="260dp"
+        android:gravity="center_horizontal">
         <com.hetang.util.RoundImageView
             android:id="@+id/head_uri"
             android:layout_width="160dp"
@@ -22,9 +20,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
-
-<TextView
+        <TextView
             android:id="@+id/name"
             style="@style/TextAppearance.AppCompat.Title"
             android:layout_width="wrap_content"
@@ -36,8 +32,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/head_uri" />
-            
-            <LinearLayout
+
+        <LinearLayout
             android:id="@+id/education"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -50,7 +46,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/name">
-            
+
             <TextView
                 android:id="@+id/degree"
                 style="@style/TextAppearance.AppCompat.Body1"
@@ -61,7 +57,7 @@
                 android:maxEms="10"
                 android:singleLine="true"
                 android:text="degree" />
-                
+
             <TextView
                 android:id="@+id/major"
                 style="@style/TextAppearance.AppCompat.Body1"
@@ -72,7 +68,7 @@
                 android:maxEms="10"
                 android:singleLine="true"
                 android:text="major" />
-                
+
             <TextView
                 android:id="@+id/university"
                 style="@style/TextAppearance.AppCompat.Body1"
@@ -81,58 +77,54 @@
                 android:ellipsize="end"
                 android:gravity="center_horizontal"
                 android:maxEms="10"
-                android:text="university"
-                android:singleLine="true" />
+                android:singleLine="true"
+                android:text="university" />
         </LinearLayout>
-        
         <LinearLayout
             android:id="@+id/work"
-            android:visibility="gone"
-            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="12dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
+            android:orientation="vertical"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/name">
-            
             <TextView
                 android:id="@+id/title"
-                android:gravity="center_horizontal"
+                style="@style/TextAppearance.AppCompat.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:maxEms="10"
-                android:singleLine="true"
                 android:ellipsize="end"
-                style="@style/TextAppearance.AppCompat.Body1" />
+                android:gravity="center_horizontal"
+                android:maxEms="10"
+                android:singleLine="true" />
             <TextView
                 android:id="@+id/company"
-                android:gravity="center_horizontal"
+                style="@style/TextAppearance.AppCompat.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:maxEms="10"
-                android:singleLine="true"
                 android:ellipsize="end"
-                style="@style/TextAppearance.AppCompat.Body1" />
+                android:gravity="center_horizontal"
+                android:maxEms="10"
+                android:singleLine="true" />
         </LinearLayout>
-        
         <LinearLayout
             android:id="@+id/find_more"
-            android:visibility="gone"
             android:layout_width="160dp"
             android:layout_height="260dp"
             android:background="#88323232"
             android:gravity="center"
             android:orientation="vertical"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
-            
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -141,6 +133,5 @@
                 android:text="@string/find_more"
                 android:textColor="@color/colorWhite" />
         </LinearLayout>
-
     </android.support.constraint.ConstraintLayout>
 </android.support.v7.widget.CardView>

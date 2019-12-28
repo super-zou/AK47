@@ -685,15 +685,21 @@ private void setDynamicContentView(View view, String pictures){
             university.setText(userMeetInfo.getUniversity()+getResources().getString(R.string.dot));
         }
         
-        TextView status = view.findViewById(R.id.status);
+//        TextView status = view.findViewById(R.id.status);
         if (userMeetInfo.getSituation() == MeetRecommendFragment.student){
+            /*
             if (status.getVisibility() == View.GONE){
                 status.setVisibility(View.VISIBLE);
             }
+
+             */
         }else {
+            /*
             if (status.getVisibility() != View.GONE){
                 status.setVisibility(View.GONE);
             }
+
+             */
             LinearLayout workInfo = view.findViewById(R.id.work_info);
             if (workInfo.getVisibility() == View.GONE){
                 workInfo.setVisibility(View.VISIBLE);

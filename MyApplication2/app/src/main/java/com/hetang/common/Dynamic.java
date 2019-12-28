@@ -1,8 +1,8 @@
 package com.hetang.common;
 
-import com.hetang.archive.ArchiveActivity;
+import com.hetang.group.SubGroupActivity;
 import com.hetang.home.HomeFragment;
-import com.hetang.meet.MeetSingleGroupFragment;
+import com.hetang.group.MeetSingleGroupFragment;
 import com.hetang.meet.UserMeetInfo;
 import com.hetang.util.UserProfile;
 
@@ -30,6 +30,7 @@ import java.util.Date;
     public Dynamic relatedContent;
     public UserMeetInfo relatedMeetContent;
     public MeetSingleGroupFragment.SingleGroup relatedSingleGroupContent;
+    public SubGroupActivity.SubGroup relatedSubGroupContent;
     public HomeFragment.BackgroundDetail backgroundDetail;
 
     public long getDid() {

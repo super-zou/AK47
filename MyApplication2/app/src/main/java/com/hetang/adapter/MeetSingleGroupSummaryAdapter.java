@@ -21,13 +21,14 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.hetang.R;
 import com.hetang.common.HandlerTemp;
-import com.hetang.meet.MeetSingleGroupFragment;
+import com.hetang.group.MeetSingleGroupFragment;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.RoundImageView;
 
 import java.util.List;
 
+import static com.hetang.common.MyApplication.getContext;
 import static com.hetang.util.Utility.dpToPx;
 
 /**
@@ -198,7 +199,7 @@ public class MeetSingleGroupSummaryAdapter extends RecyclerView.Adapter<MeetSing
             groupInfo = view.findViewById(R.id.group_info);
             //将全局的监听赋值给接口
             this.mListener = myItemClickListener;
-            Typeface font = Typeface.createFromAsset(mContext.getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
+            Typeface font = Typeface.createFromAsset(getContext().getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
             FontManager.markAsIconContainer(view.findViewById(R.id.reference_item), font);
         }
        /**

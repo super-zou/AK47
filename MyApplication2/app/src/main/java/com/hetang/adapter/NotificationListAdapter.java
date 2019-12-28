@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
@@ -29,11 +28,9 @@ import com.bumptech.glide.request.transition.Transition;
 import com.hetang.R;
 import com.hetang.common.MyApplication;
 import com.hetang.main.MeetArchiveActivity;
-import com.hetang.meet.SingleGroupDetailsActivity;
-import com.hetang.meet.SubGroupDetailsActivity;
-import com.hetang.message.NotificationDetailsDialogFragment;
+import com.hetang.group.SingleGroupDetailsActivity;
+import com.hetang.group.SubGroupDetailsActivity;
 import com.hetang.message.NotificationFragment;
-import com.hetang.util.CommonUserListDialogFragment;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.ParseUtils;
@@ -336,7 +333,7 @@ ParseUtils.startMeetArchiveActivity(mContext, notification.tid);
             notificationManager.notify(1, notification);
         }
 
-        markNotificationShowed(NF.nid);
+        markNotificationShowed(NF);
     }
 
     private void markNotificationShowed(final NotificationFragment.Notification notification) {

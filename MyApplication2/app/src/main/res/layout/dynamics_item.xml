@@ -98,6 +98,16 @@
             android:layout_marginRight="16dp"
             android:layout_marginBottom="20dp"
             android:orientation="horizontal"></GridLayout>
+
+        <TextView
+            android:id="@+id/from"
+            android:visibility="gone"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="20dp"
+            android:textColor="@color/blue_dark"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
     </LinearLayout>
     
     <LinearLayout

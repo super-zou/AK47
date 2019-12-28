@@ -1,151 +1,153 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/meet_item_id"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/colorWhite"
     android:layout_marginTop="3dp"
     android:layout_marginBottom="3dp"
+    android:background="@color/colorWhite"
     android:elevation="1dp">
-    
-        <com.hetang.util.RoundImageView
+
+    <com.hetang.util.RoundImageView
         android:id="@+id/avatar"
         android:layout_width="150dp"
         android:layout_height="150dp"
+        android:layout_alignParentStart="true"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:elevation="2dp"
-        android:scaleType="centerCrop"
-        android:layout_alignParentStart="true"/>
-        
-            <LinearLayout
+        android:scaleType="centerCrop" />
+
+    <LinearLayout
         android:id="@+id/name_info"
-        android:layout_marginTop="8dp"
-        android:layout_marginLeft="8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
         android:layout_toRightOf="@+id/avatar">
+
         <TextView
             android:id="@+id/name"
-            android:text="@string/archive_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@string/archive_text"
             android:textColor="@android:color/holo_blue_dark"
             android:textSize="15sp"
-            android:textStyle="normal|bold"
-            android:layout_marginStart="8dp" />
+            android:textStyle="normal|bold" />
     </LinearLayout>
-    
+
     <TextView
         android:id="@+id/self_condition"
-        android:layout_toRightOf="@+id/avatar"
-        android:layout_below="@+id/name_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/name_info"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="16dp"
+        android:layout_toRightOf="@+id/avatar"
         android:lineSpacingMultiplier="1.2"
-        android:textStyle="normal|bold"
-        android:textColor="@color/black"/>
-        
-        <LinearLayout
+        android:textColor="@color/black"
+        android:textStyle="normal|bold" />
+
+    <LinearLayout
         android:id="@+id/education_background"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/self_condition"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
-        android:layout_toRightOf="@+id/avatar"
-        android:layout_below="@+id/self_condition">
-        
+        android:layout_toRightOf="@+id/avatar">
+
         <TextView
             android:id="@+id/university"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textStyle="normal|bold"
-            android:textColor="@color/black"/>
+            android:textColor="@color/black"
+            android:textStyle="normal|bold" />
 
         <TextView
             android:id="@+id/degree"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textStyle="normal|bold"
-            android:textColor="@color/black"/>
-            
-             <TextView
+            android:textColor="@color/black"
+            android:textStyle="normal|bold" />
+
+        <!--
+        <TextView
             android:id="@+id/status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="@string/dot_student"
             android:textColor="@color/black"
-            android:textStyle="normal|bold"
-            android:text="@string/dot_student"/>
+            android:textStyle="normal|bold" />
+            -->
 
     </LinearLayout>
-    
+
     <LinearLayout
         android:id="@+id/work_info"
-        android:visibility="gone"
-        android:layout_toRightOf="@+id/avatar"
-        android:layout_below="@+id/education_background"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/education_background"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp">
+        android:layout_marginTop="8dp"
+        android:layout_toRightOf="@+id/avatar"
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/position"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:textColor="@color/black"
-            android:textStyle="normal|bold"
+            android:textStyle="normal|bold" />
+
+        <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-            
-             <TextView
-            android:text="@string/dot"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:text="@string/dot" />
 
         <TextView
             android:id="@+id/industry"
-            android:textColor="@color/black"
-            android:textStyle="normal|bold"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textStyle="normal|bold" />
     </LinearLayout>
-    
-     <LinearLayout
+
+    <LinearLayout
         android:id="@+id/live_info"
-        android:layout_toRightOf="@+id/avatar"
-        android:layout_below="@+id/work_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/work_info"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp">
+        android:layout_marginTop="8dp"
+        android:layout_toRightOf="@+id/avatar">
 
         <TextView
             android:id="@+id/living_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/location"/>
-            
-             <TextView
+            android:text="@string/location" />
+
+        <TextView
             android:id="@+id/living"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="2dp"
-            android:text="living"/>
+            android:text="living" />
 
         <TextView
-            android:text="@string/dot"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:text="@string/dot" />
+
         <TextView
             android:id="@+id/hometown"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
     </LinearLayout>
-    
-        <LinearLayout
+
+    <LinearLayout
         android:id="@+id/behavior_statistics"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -154,6 +156,7 @@
         android:layout_marginBottom="8dp"
         android:gravity="right"
         android:padding="8dp">
+
         <TextView
             android:id="@+id/eye_icon"
             android:layout_width="wrap_content"
@@ -163,8 +166,8 @@
             android:text="@string/fa_eye"
             android:textColor="@android:color/holo_blue_dark"
             android:textSize="20sp" />
-            
-             <TextView
+
+        <TextView
             android:id="@+id/visit_record"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -180,8 +183,8 @@
             android:text="@string/fa_heart_o"
             android:textColor="@android:color/holo_red_dark"
             android:textSize="20sp" />
-            
-            <TextView
+
+        <TextView
             android:id="@+id/loved_statistics"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -197,8 +200,8 @@
             android:text="@string/fa_thumbs_O_up"
             android:textColor="@android:color/holo_blue_dark"
             android:textSize="20sp" />
-            
-             <TextView
+
+        <TextView
             android:id="@+id/thumbs_up_statistics"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -214,8 +217,8 @@
             android:text="@string/fa_comment_o"
             android:textColor="@android:color/holo_blue_dark"
             android:textSize="20sp" />
-            
-            <TextView
+
+        <TextView
             android:id="@+id/comment_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

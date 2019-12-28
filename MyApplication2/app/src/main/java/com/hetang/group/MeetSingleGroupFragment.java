@@ -1,4 +1,4 @@
-package com.hetang.meet;
+package com.hetang.group;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -23,8 +23,8 @@ import android.widget.TextView;
 import com.hetang.R;
 import com.hetang.adapter.MeetSingleGroupSummaryAdapter;
 import com.hetang.common.MyApplication;
+import com.hetang.meet.UserMeetInfo;
 import com.hetang.util.BaseFragment;
-import com.hetang.util.CreateSubGroupDialogFragment;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.MyLinearLayoutManager;
 import com.hetang.util.ParseUtils;
@@ -54,7 +54,7 @@ import okhttp3.Response;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static com.hetang.archive.ArchiveFragment.SET_AVATAR_RESULT_OK;
-import static com.hetang.meet.SingleGroupDetailsActivity.GET_SINGLE_GROUP_BY_GID;
+import static com.hetang.group.SingleGroupDetailsActivity.GET_SINGLE_GROUP_BY_GID;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
 public class MeetSingleGroupFragment extends BaseFragment {

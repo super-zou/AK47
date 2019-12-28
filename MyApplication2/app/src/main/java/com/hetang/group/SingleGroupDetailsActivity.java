@@ -1,4 +1,4 @@
-package com.hetang.meet;
+package com.hetang.group;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -18,9 +18,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.hetang.archive.ArchiveActivity;
 import com.hetang.R;
 import com.hetang.common.BaseAppCompatActivity;
+import com.hetang.meet.FillMeetInfoActivity;
+import com.hetang.meet.UserMeetInfo;
 import com.hetang.util.CommonDialogFragmentInterface;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;

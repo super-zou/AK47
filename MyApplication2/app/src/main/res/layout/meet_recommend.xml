@@ -7,21 +7,23 @@
     android:layout_height="match_parent">
 
     <LinearLayout
-        android:visibility="gone"
+        android:visibility="visible"
         android:id="@+id/meet_info_add"
         android:orientation="vertical"
         android:layout_marginTop="3dp"
-        android:padding="8dp"
+        android:padding="3dp"
+        android:gravity="center"
         android:layout_gravity="center_horizontal"
-        android:background="@color/white"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
             android:id="@+id/look_friend"
             android:text="@string/look_friend"
-            android:textSize="18sp"
+            android:textSize="16sp"
+            android:padding="8dp"
+            android:background="@drawable/label_btn_shape_no_border"
             android:gravity="center_horizontal"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/background" />
         <TextView
@@ -29,20 +31,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:textSize="12sp"
+            android:textSize="13sp"
             android:layout_marginTop="3dp"
-            android:contextClickable="true"
-            android:textColor="@color/text_default" />
+            android:contextClickable="true" />
     </LinearLayout>
+    <com.jcodecraeer.xrecyclerview.XRecyclerView
+        android:id="@+id/recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
     <ImageView
         android:id="@+id/animal_progress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="128dp"
         android:src="@drawable/animal_progress" />
-    <com.jcodecraeer.xrecyclerview.XRecyclerView
-        android:id="@+id/recyclerview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
 </LinearLayout>

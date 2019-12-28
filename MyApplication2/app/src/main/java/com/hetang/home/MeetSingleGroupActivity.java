@@ -18,7 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.hetang.adapter.MeetSingleGroupSummaryAdapter;
-import com.hetang.util.CreateSubGroupDialogFragment;
+import com.hetang.group.CreateSubGroupDialogFragment;
 import com.hetang.util.HttpUtil;
 import com.hetang.common.MyApplication;
 import com.hetang.util.MyLinearLayoutManager;
@@ -27,8 +27,8 @@ import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.hetang.R;
 import com.hetang.common.BaseAppCompatActivity;
 import com.hetang.common.HandlerTemp;
-import com.hetang.meet.MeetSingleGroupFragment;
-import com.hetang.meet.SingleGroupDetailsActivity;
+import com.hetang.group.MeetSingleGroupFragment;
+import com.hetang.group.SingleGroupDetailsActivity;
 import com.hetang.util.FontManager;
 import com.hetang.util.SharedPreferencesUtils;
 import com.hetang.util.Slog;
@@ -49,7 +49,7 @@ import okhttp3.Response;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
-import static com.hetang.meet.MeetSingleGroupFragment.getSingleGroup;
+import static com.hetang.group.MeetSingleGroupFragment.getSingleGroup;
 
 public class MeetSingleGroupActivity extends BaseAppCompatActivity {
     private static final boolean isDebug = true;

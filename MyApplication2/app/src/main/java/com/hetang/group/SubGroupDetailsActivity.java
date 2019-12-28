@@ -1,4 +1,4 @@
-package com.hetang.meet;
+package com.hetang.group;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -37,6 +37,8 @@ import com.hetang.common.DynamicsInteractDetailsActivity;
 import com.hetang.common.MyApplication;
 import com.hetang.home.CommonContactsActivity;
 import com.hetang.home.HomeFragment;
+import com.hetang.meet.MeetDynamicsFragment;
+import com.hetang.meet.UserMeetInfo;
 import com.hetang.util.CommonDialogFragmentInterface;
 import com.hetang.util.CommonUserListDialogFragment;
 import com.hetang.util.DynamicOperationDialogFragment;
@@ -49,11 +51,9 @@ import com.hetang.util.ParseUtils;
 import com.hetang.util.RoundImageView;
 import com.hetang.common.SetAvatarActivity;
 import com.hetang.util.Slog;
-import com.hetang.util.SubGroupOperationDialogFragment;
 import com.hetang.util.Utility;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
-import com.umeng.commonsdk.debug.I;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -84,7 +84,6 @@ import static com.hetang.meet.MeetDynamicsFragment.NO_MORE_DYNAMICS;
 import static com.hetang.meet.MeetDynamicsFragment.NO_UPDATE;
 import static com.hetang.meet.MeetDynamicsFragment.PRAISE_UPDATE;
 import static com.hetang.meet.MeetDynamicsFragment.UPDATE_COMMENT;
-import static com.hetang.util.ParseUtils.startArchiveActivity;
 import static com.hetang.common.SetAvatarActivity.MODIFY_SUBGROUP_LOGO_RESULT_OK;
 import static com.hetang.util.ParseUtils.startMeetArchiveActivity;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
@@ -357,6 +356,14 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
 
         if (subGroupResponse != null) {
             JSONObject group = subGroupResponse.optJSONObject("group");
+            subGroup = getSubGroup(group);
+            handler.sendEmptyMessage(GET_GROUP_HEADER_DONE);
+        }
+    }
+
+    private SubGroupActivity.SubGroup getSubGroup(JSONObject group){
+        if (group != null){
+            SubGroupActivity.SubGroup subGroup = new SubGroupActivity.SubGroup();
             subGroup.gid = group.optInt("gid");
             subGroup.type = group.optInt("type");
             subGroup.groupName = group.optString("group_name");
@@ -377,9 +384,9 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
                 ParseUtils.setBaseProfile(subGroup.leader, group.optJSONObject("leader"));
             }
 
-            handler.sendEmptyMessage(GET_GROUP_HEADER_DONE);
+            return subGroup;
         }
-
+        return null;
     }
 
     private void setSubGroupHeaderView() {

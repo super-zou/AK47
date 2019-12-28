@@ -3,7 +3,6 @@ package com.hetang.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
@@ -27,10 +26,10 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.hetang.R;
-import com.hetang.archive.ArchiveActivity;
 import com.hetang.common.Dynamic;
 import com.hetang.common.HandlerTemp;
 import com.hetang.common.MyApplication;
+import com.hetang.group.SubGroupDetailsActivity;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.InterActInterface;
@@ -52,40 +51,34 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static com.hetang.util.ParseUtils.ADD_SUBGROUP_ACTIVITY_ACTION;
+
 /**
  * Created by haichao.zou on 2017/11/20.
  */
 
 public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsListAdapter.MeetDynamicsViewHolder> {
 
-    private static final boolean isDebug = false;
-    private static final String TAG = "MeetDynamicsListAdapter";
-
     //+ added by xuchunping
     public static final String PRAISED_DYNAMICS_URL = HttpUtil.DOMAIN + "?q=dynamic/interact/praise/add";
-
-    private static final int UPDATE_LOVE_COUNT = 0;
     public static final int UPDATE_PRAISED_COUNT = 1;
+    private static final boolean isDebug = false;
+    private static final String TAG = "MeetDynamicsListAdapter";
+    private static final int UPDATE_LOVE_COUNT = 0;
     private static final int UPDATE_COMMENT = 2;
-
-    private FragmentManager fragmentManager;
-
     private static final int TYPE_COMMENT = 0;
     private static final int TYPE_REPLY = 1;
-
-
-    private static Context mContext;
-
     static InterActInterface interActInterface;
+    private static Context mContext;
+    private static int width = 0;
+    private static int height = 0;
+    private static int innerWidth = 0;
+    private FragmentManager fragmentManager;
     private List<Dynamic> mMeetList;
-
     private List<ImageView> imageViewList = new ArrayList<>();
     private boolean isScrolling = false;
     private MeetDynamicsViewHolder mMyViewHolder;
     private DisplayMetrics outMetrics;
-    private static int width = 0;
-    private static int height = 0;
-    private static int innerWidth = 0;
     private boolean specificUser = false;
     private Handler mHandler = new MyHandler(this);
 
@@ -104,93 +97,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
 
     }
 
-    public void setScrolling(boolean isScrolling) {
-        this.isScrolling = isScrolling;
-    }
-
-    public void setData(List<Dynamic> meetList) {
-        mMeetList = meetList;
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        //Slog.d(TAG, "----------------->position: "+position+" type: "+mMeetList.get(position).getType()+" action: "+mMeetList.get(position).getAction());
-        return mMeetList.get(position).getType();
-    }
-
-    @Override
-    public MeetDynamicsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if (isDebug) Slog.d(TAG, "===========onCreateViewHolder==============");
-        View viewDynamic = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.meet_dynamics_item, parent, false);
-        MeetDynamicsViewHolder holder = new MeetDynamicsViewHolder(viewDynamic);
-        return holder;
-    }
-
-    @Override
-    public void onBindViewHolder(final MeetDynamicsViewHolder holder, final int position) {
-        if (isDebug)
-            Slog.d(TAG, "-------->onBindViewHolder position: " + position + " dynamicsGrid: " + holder.dynamicsGrid.hashCode());
-
-        final Dynamic dynamic = mMeetList.get(position);
-
-        if (specificUser) {
-            holder.baseProfile.setVisibility(View.GONE);
-        }
-
-        if (null != dynamic) {
-            setDynamicContent(holder, dynamic, position);
-        }
-
-        holder.dynamicsPraise.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //TODO change UI to show parised or no
-                if (1 == dynamic.getPraisedDynamics()) {
-                    Toast.makeText(mContext, "You have praised it!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                praiseDynamics(dynamic);
-            }
-        });
-
-        holder.dynamicsPraiseCount.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                interActInterface.onPraiseClick(view, position);
-            }
-        });
-
-        //when comment icon touched should show comment input dialog fragment
-        holder.dynamicsComment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //show the comment input dialog fragment
-                interActInterface.onCommentClick(v, position);
-            }
-        });
-
-        holder.baseProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-ParseUtils.startMeetArchiveActivity(mContext, dynamic.getUid());
-            }
-        });
-
-        if (dynamic.getAuthorSelf() == true) {
-            holder.operation.setVisibility(View.VISIBLE);
-            holder.operation.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    interActInterface.onOperationClick(view, position);
-                }
-            });
-        } else {
-            holder.operation.setVisibility(View.GONE);
-        }
-    }
-
-    public static void setDynamicContent(MeetDynamicsViewHolder holder, Dynamic dynamic, int position) {
+    public static void setDynamicContent(MeetDynamicsViewHolder holder, final Dynamic dynamic, int position) {
         if (dynamic == null) {
             return;
         }
@@ -235,6 +142,23 @@ ParseUtils.startMeetArchiveActivity(mContext, dynamic.getUid());
             if (holder.dynamicsGrid.getChildCount() > 0) {
                 holder.dynamicsGrid.removeAllViews();
             }
+        }
+
+        if (dynamic.getType() == ADD_SUBGROUP_ACTIVITY_ACTION) {
+            holder.from.setVisibility(View.VISIBLE);
+            if (!TextUtils.isEmpty(dynamic.getAction())){
+                holder.from.setText("#"+dynamic.getAction()+"#");
+            }
+            holder.from.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(mContext, SubGroupDetailsActivity.class);
+                    intent.putExtra("gid", dynamic.getPid());
+                    mContext.startActivity(intent);
+                }
+            });
+        } else {
+            holder.from.setVisibility(View.GONE);
         }
 
         if (dynamic.getPraisedDynamics() == 1) {
@@ -321,6 +245,92 @@ ParseUtils.startMeetArchiveActivity(mContext, dynamic.getUid());
             }
 
             holder.dynamicsGrid.setTag(dynamic);
+        }
+    }
+
+    public void setScrolling(boolean isScrolling) {
+        this.isScrolling = isScrolling;
+    }
+
+    public void setData(List<Dynamic> meetList) {
+        mMeetList = meetList;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        //Slog.d(TAG, "----------------->position: "+position+" type: "+mMeetList.get(position).getType()+" action: "+mMeetList.get(position).getAction());
+        return mMeetList.get(position).getType();
+    }
+
+    @Override
+    public MeetDynamicsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (isDebug) Slog.d(TAG, "===========onCreateViewHolder==============");
+        View viewDynamic = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.meet_dynamics_item, parent, false);
+        MeetDynamicsViewHolder holder = new MeetDynamicsViewHolder(viewDynamic);
+        return holder;
+    }
+
+    @Override
+    public void onBindViewHolder(final MeetDynamicsViewHolder holder, final int position) {
+        if (isDebug)
+            Slog.d(TAG, "-------->onBindViewHolder position: " + position + " dynamicsGrid: " + holder.dynamicsGrid.hashCode());
+
+        final Dynamic dynamic = mMeetList.get(position);
+
+        if (specificUser) {
+            holder.baseProfile.setVisibility(View.GONE);
+        }
+
+        if (null != dynamic) {
+            setDynamicContent(holder, dynamic, position);
+        }
+
+        holder.dynamicsPraise.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //TODO change UI to show parised or no
+                if (1 == dynamic.getPraisedDynamics()) {
+                    Toast.makeText(mContext, "You have praised it!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                praiseDynamics(dynamic);
+            }
+        });
+
+        holder.dynamicsPraiseCount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                interActInterface.onPraiseClick(view, position);
+            }
+        });
+
+        //when comment icon touched should show comment input dialog fragment
+        holder.dynamicsComment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //show the comment input dialog fragment
+                interActInterface.onCommentClick(v, position);
+            }
+        });
+
+        holder.baseProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ParseUtils.startMeetArchiveActivity(mContext, dynamic.getUid());
+            }
+        });
+
+        if (dynamic.getAuthorSelf() == true) {
+            holder.operation.setVisibility(View.VISIBLE);
+            holder.operation.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    interActInterface.onOperationClick(view, position);
+                }
+            });
+        } else {
+            holder.operation.setVisibility(View.GONE);
         }
     }
 
@@ -420,6 +430,7 @@ ParseUtils.startMeetArchiveActivity(mContext, dynamic.getUid());
         TextView dynamicsComment;
         TextView operation;
         GridLayout dynamicsGrid;
+        TextView from;
         LinearLayout commentList;
         LinearLayout contentMeta;
 
@@ -438,7 +449,7 @@ ParseUtils.startMeetArchiveActivity(mContext, dynamic.getUid());
             dynamicsComment = (TextView) view.findViewById(R.id.dynamic_comment);
             contentMeta = view.findViewById(R.id.dynamics_content_meta);
             operation = view.findViewById(R.id.operation);
-
+            from = view.findViewById(R.id.from);
             Typeface font = Typeface.createFromAsset(mContext.getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
             FontManager.markAsIconContainer(view.findViewById(R.id.meet_dynamics_item), font);
         }

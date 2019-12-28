@@ -1,4 +1,4 @@
-package com.hetang.meet;
+package com.hetang.group;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -24,7 +24,7 @@ import com.hetang.R;
 import com.hetang.adapter.SubGroupSummaryAdapter;
 import com.hetang.common.BaseAppCompatActivity;
 import com.hetang.common.MyApplication;
-import com.hetang.util.CreateSubGroupDialogFragment;
+import com.hetang.meet.UserMeetInfo;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.MyLinearLayoutManager;
@@ -54,7 +54,7 @@ import okhttp3.Response;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static com.hetang.common.MyApplication.getContext;
-import static com.hetang.meet.SubGroupDetailsActivity.GET_SUBGROUP_BY_GID;
+import static com.hetang.group.SubGroupDetailsActivity.GET_SUBGROUP_BY_GID;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
 public class SubGroupActivity extends BaseAppCompatActivity {
@@ -68,6 +68,7 @@ public class SubGroupActivity extends BaseAppCompatActivity {
     private int type = 0;
 
     private static final String SUBGROUP_GET_ALL = HttpUtil.DOMAIN + "?q=subgroup/get_all";
+    public static final String GET_MY_UNIVERSITY_SUBGROUP = HttpUtil.DOMAIN + "?q=subgroup/get_my_university";
     private static final String SUBGROUP_UPDATE = HttpUtil.DOMAIN + "?q=subgroup/update";
     private static final String ADD_SUBGROUP_VISITOR_RECORD = HttpUtil.DOMAIN + "?q=visitor_record/add_group_visit_record";
 
@@ -272,10 +273,6 @@ public class SubGroupActivity extends BaseAppCompatActivity {
 
             }
         });
-    }
-
-    private void getMyGroup() {
-
     }
 
     private int processResponse(JSONObject subGroupResponse) {

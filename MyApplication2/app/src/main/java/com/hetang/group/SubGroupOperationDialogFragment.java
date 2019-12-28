@@ -1,4 +1,4 @@
-package com.hetang.util;
+package com.hetang.group;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -17,7 +17,10 @@ import android.widget.TextView;
 
 import com.hetang.R;
 import com.hetang.common.MyApplication;
-import com.hetang.meet.SubGroupActivity;
+import com.hetang.util.BaseDialogFragment;
+import com.hetang.util.FontManager;
+import com.hetang.util.HttpUtil;
+import com.hetang.util.Slog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,37 +33,32 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static com.hetang.home.CommonContactsActivity.BLOCK_MEMBER_BROADCAST;
-import static com.hetang.home.CommonContactsActivity.DELETE_MEMBER_BROADCAST;
-import static com.hetang.home.CommonContactsActivity.UNBLOCK_MEMBER_BROADCAST;
-import static com.hetang.meet.SubGroupDetailsActivity.EXIT_GROUP_BROADCAST;
+import static com.hetang.group.SubGroupDetailsActivity.EXIT_GROUP_BROADCAST;
 
 /**
  * Created by super-zou on 18-9-9.
  */
- 
- public class GroupMemberOperationDialogFragment extends BaseDialogFragment {
+
+public class SubGroupOperationDialogFragment extends BaseDialogFragment {
     private Dialog mDialog;
     private static final boolean isDebug = true;
-    private static final String TAG = "GroupMemberOperationDialogFragment";
-    private static final String GROUP_MEMBER_OPERATION = HttpUtil.DOMAIN + "?q=subgroup/member/operation/";
+    private static final String TAG = "DynamicOperationDialogFragment";
+    private static final String QUIT_GROUP = HttpUtil.DOMAIN + "?q=subgroup/quit";
     private Context mContext;
-    private int gid;
-    private int uid;
-    private int status;
+    private SubGroupActivity.SubGroup subGroup;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         mContext = context;
     }
-    
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         mDialog = new Dialog(getActivity(), R.style.Theme_Design_BottomSheetDialog);
         mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        mDialog.setContentView(R.layout.group_member_operation);
+        mDialog.setContentView(R.layout.subgroup_operation);
 
         Typeface font = Typeface.createFromAsset(MyApplication.getContext().getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
         FontManager.markAsIconContainer(mDialog.findViewById(R.id.custom_actionbar), font);
@@ -71,99 +69,79 @@ import static com.hetang.meet.SubGroupDetailsActivity.EXIT_GROUP_BROADCAST;
         layoutParams.gravity = Gravity.CENTER;
         layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
         window.setAttributes(layoutParams);
-        
-        final Bundle bundle = getArguments();
-        gid = bundle.getInt("gid", 0);
-        uid = bundle.getInt("uid", 0);
-        status = bundle.getInt("status", -1);
 
-        TextView block = mDialog.findViewById(R.id.block);
-        if (status == 2){
-            block.setText("解禁");
+        final Bundle bundle = getArguments();
+        subGroup = (SubGroupActivity.SubGroup) bundle.getSerializable("subGroup");
+
+        TextView setting = mDialog.findViewById(R.id.setting);
+        if (subGroup.isLeader){
+            setting.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Bundle bundleModify = new Bundle();
+                    bundleModify.putSerializable("subgroup", subGroup);
+                    bundleModify.putBoolean("isModify", true);
+                    CreateSubGroupDialogFragment createSubGroupDialogFragment = new CreateSubGroupDialogFragment();
+                    createSubGroupDialogFragment.setArguments(bundleModify);
+                    createSubGroupDialogFragment.show(getFragmentManager(), "CreateSubGroupDialogFragment");
+                    mDialog.dismiss();
+                }
+            });
+        }else {
+            setting.setClickable(false);
+            setting.setTextColor(mContext.getResources().getColor(R.color.color_disabled));
         }
-        
-        block.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (status != 2){
+
+        TextView exit = mDialog.findViewById(R.id.exit);
+        if (subGroup.authorStatus == 1){
+            exit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
                     new AlertDialog.Builder(mContext)
-                            .setTitle(mContext.getResources().getString(R.string.block))
-                            .setMessage(mContext.getResources().getString(R.string.block_group_member_query_text))
+                            .setMessage(mContext.getResources().getString(R.string.exit_group_query_text))
                             .setPositiveButton("确认", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    operationGroupMember("block");
+                                    exitGroup(subGroup.gid);
                                 }
                             }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                            @Override
+                        @Override
                         public void onClick(DialogInterface dialog, int which) {
                             mDialog.dismiss();
                         }
                     }).create().show();
-                }else {
-                    operationGroupMember("unblock");
                 }
-            }
-        });
-
-
-        TextView delete = mDialog.findViewById(R.id.delete);
-        
-        delete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                new AlertDialog.Builder(mContext)
-                        .setTitle(mContext.getResources().getString(R.string.delete))
-                        .setMessage(mContext.getResources().getString(R.string.delete_group_member_query_text))
-                        .setPositiveButton("确认", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                operationGroupMember("delete");
-                            }
-                        }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mDialog.dismiss();
-                    }
-                }).create().show();
+            });
+        }else {
+            exit.setClickable(false);
+            exit.setTextColor(mContext.getResources().getColor(R.color.color_disabled));
         }
-        });
-
 
         return mDialog;
     }
 
-    public void operationGroupMember(final String operation) {
+    public void exitGroup(int gid) {
 
-        showProgressDialog("");
+        showProgressDialog("正在退出");
         final RequestBody requestBody = new FormBody.Builder()
                 .add("gid", String.valueOf(gid))
-                .add("uid", String.valueOf(uid))
                 .build();
-                
-                String uri;
-        if (operation.equals("block")){
-            uri = GROUP_MEMBER_OPERATION+"block";
-        }else if (operation.equals("delete")){
-            uri = GROUP_MEMBER_OPERATION+"delete";
-        }else {
-            uri = GROUP_MEMBER_OPERATION+"unblock";
-        }
 
-        HttpUtil.sendOkHttpRequest(getContext(), uri, requestBody, new Callback() {
-        @Override
+        HttpUtil.sendOkHttpRequest(getContext(), QUIT_GROUP, requestBody, new Callback() {
+            @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (isDebug) Slog.d(TAG, "==========response body : " + response.body());
                 if (response.body() != null) {
                     String responseText = response.body().string();
                     if (isDebug) Slog.d(TAG, "==========response text : " + responseText);
+
                     if (responseText != null && !TextUtils.isEmpty(responseText)) {
                         try {
                             JSONObject responseObj = new JSONObject(responseText);
                             if (responseObj != null) {
                                 int result = responseObj.optInt("result");
                                 if (result > 0) {
-                                    sendBroadcast(operation);
+                                    sendBroadcast();
                                     dismissProgressDialog();
                                 }
                             }
@@ -174,7 +152,7 @@ import static com.hetang.meet.SubGroupDetailsActivity.EXIT_GROUP_BROADCAST;
                     }
                 }
             }
-            
+
             @Override
             public void onFailure(Call call, IOException e) {
 
@@ -183,15 +161,8 @@ import static com.hetang.meet.SubGroupDetailsActivity.EXIT_GROUP_BROADCAST;
 
     }
 
-    private void sendBroadcast(String operation) {
-        Intent intent;
-        if (operation.equals("block")){
-            intent = new Intent(BLOCK_MEMBER_BROADCAST);
-            }else if (operation.equals("delete")){
-            intent = new Intent(DELETE_MEMBER_BROADCAST);
-        }else {
-            intent = new Intent(UNBLOCK_MEMBER_BROADCAST);
-        }
+    private void sendBroadcast() {
+        Intent intent = new Intent(EXIT_GROUP_BROADCAST);
         LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
     }
 
@@ -199,7 +170,7 @@ import static com.hetang.meet.SubGroupDetailsActivity.EXIT_GROUP_BROADCAST;
     public void onDismiss(DialogInterface dialogInterface) {
         super.onDismiss(dialogInterface);
     }
-    
+
     @Override
     public void onCancel(DialogInterface dialogInterface) {
         super.onCancel(dialogInterface);

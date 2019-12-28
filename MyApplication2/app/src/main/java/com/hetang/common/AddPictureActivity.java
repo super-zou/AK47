@@ -8,7 +8,6 @@ import android.support.v7.app.ActionBar;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,7 +42,6 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-import static com.hetang.meet.SubGroupDetailsActivity.MODIFY_LOGO;
 import static com.hetang.util.ParseUtils.startMeetArchiveActivity;
 
 public class AddPictureActivity extends BaseAppCompatActivity {

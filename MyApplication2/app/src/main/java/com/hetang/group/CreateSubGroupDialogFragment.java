@@ -1,4 +1,4 @@
-package com.hetang.util;
+package com.hetang.group;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -24,10 +24,14 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.hetang.R;
 import com.hetang.common.MyApplication;
-import com.hetang.meet.SubGroupActivity;
+import com.hetang.group.SubGroupActivity;
+import com.hetang.util.BaseDialogFragment;
+import com.hetang.util.FontManager;
+import com.hetang.util.HttpUtil;
+import com.hetang.util.RoundImageView;
+import com.hetang.util.Slog;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
@@ -53,8 +57,8 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static android.app.Activity.RESULT_OK;
-import static com.hetang.meet.MeetSingleGroupFragment.GROUP_ADD_BROADCAST;
-import static com.hetang.meet.SubGroupDetailsActivity.GROUP_MODIFY_BROADCAST;
+import static com.hetang.group.MeetSingleGroupFragment.GROUP_ADD_BROADCAST;
+import static com.hetang.group.SubGroupDetailsActivity.GROUP_MODIFY_BROADCAST;
 
 /**
  * Created by super-zou on 18-9-9.
