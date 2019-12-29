@@ -1,4 +1,4 @@
-package com.hetang.meet;
+package com.hetang.dynamics;
 
 import com.hetang.util.UserProfile;
 

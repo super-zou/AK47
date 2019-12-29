@@ -27,9 +27,9 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.hetang.R;
 import com.hetang.common.MyApplication;
-import com.hetang.main.MeetArchiveActivity;
 import com.hetang.group.SingleGroupDetailsActivity;
 import com.hetang.group.SubGroupDetailsActivity;
+import com.hetang.main.MeetArchiveActivity;
 import com.hetang.message.NotificationFragment;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
@@ -54,8 +54,10 @@ import static com.hetang.util.ParseUtils.ADD_CHEERING_GROUP_MEMBER_ACTION;
 import static com.hetang.util.ParseUtils.APPROVE_IMPRESSION_ACTION;
 import static com.hetang.util.ParseUtils.APPROVE_PERSONALITY_ACTION;
 import static com.hetang.util.ParseUtils.EVALUATE_ACTION;
-import static com.hetang.util.ParseUtils.INVITE_SINGLE_GROUP_MEMBER_ACTION;
+import static com.hetang.util.ParseUtils.FOLLOW_GROUP_ACTION;
+import static com.hetang.util.ParseUtils.INVITE_GROUP_MEMBER_ACTION;
 import static com.hetang.util.ParseUtils.JOIN_CHEERING_GROUP_ACTION;
+import static com.hetang.util.ParseUtils.MODIFY_GROUP_ACTION;
 import static com.hetang.util.ParseUtils.REFEREE_ACTION;
 import static com.hetang.util.ParseUtils.REFEREE_INVITE_NF;
 import static com.hetang.util.Utility.drawableToBitmap;
@@ -124,7 +126,7 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
                 case EVALUATE_ACTION:
                 case REFEREE_ACTION:
                 case REFEREE_INVITE_NF:
-                case INVITE_SINGLE_GROUP_MEMBER_ACTION:
+                case INVITE_GROUP_MEMBER_ACTION:
                 case APPROVE_IMPRESSION_ACTION:
                 case APPROVE_PERSONALITY_ACTION:
                 case JOIN_CHEERING_GROUP_ACTION:
@@ -174,7 +176,7 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
         switch (notification.type){
             //case ParseUtils.APPLY_CONTACTS_NF:
             //case ParseUtils.APPLY_JOIN_SINGLE_GROUP_NF:
-            case ParseUtils.INVITE_SINGLE_GROUP_MEMBER_ACTION:
+            case ParseUtils.INVITE_GROUP_MEMBER_ACTION:
                 holder.acceptBtn.setVisibility(View.VISIBLE);
                 if (notification.processed == UNPROCESSED){
                 holder.acceptBtn.setClickable(true);
@@ -251,9 +253,11 @@ ParseUtils.startMeetArchiveActivity(mContext, notification.tid);
                         markNotificationProcessed(holder.isNew, notification);
                         break;
 
-                    case ParseUtils.JOIN_SINGLE_GROUP_ACTION:
-                    case ParseUtils.APPLY_JOIN_SINGLE_GROUP_NF:
-                    case ParseUtils.INVITE_SINGLE_GROUP_MEMBER_ACTION:
+                    case ParseUtils.JOIN_GROUP_ACTION:
+                    case ParseUtils.APPLY_JOIN_GROUP_NF:
+                    case ParseUtils.INVITE_GROUP_MEMBER_ACTION:
+                    case FOLLOW_GROUP_ACTION:
+                    case MODIFY_GROUP_ACTION:
                         startSubGroupDetails(mContext, notification.id);
                         markNotificationProcessed(holder.isNew, notification);
                         break;
@@ -284,7 +288,7 @@ ParseUtils.startMeetArchiveActivity(mContext, notification.tid);
                 clickIntent = new Intent(mContext, MeetArchiveActivity.class);
                 clickIntent.putExtra("uid", NF.tid);
                 break;
-            case INVITE_SINGLE_GROUP_MEMBER_ACTION:
+            case INVITE_GROUP_MEMBER_ACTION:
                 clickIntent = new Intent(mContext, SingleGroupDetailsActivity.class);
                 clickIntent.putExtra("gid", NF.id);
                 break;
@@ -361,7 +365,7 @@ ParseUtils.startMeetArchiveActivity(mContext, notification.tid);
     private void approveAction(NotificationFragment.Notification notification) {
         if (notification.type == ParseUtils.APPLY_CONTACTS_NF) {
             acceptContactsApply(notification.tid);
-        } else if (notification.type == ParseUtils.APPLY_JOIN_SINGLE_GROUP_NF) {
+        } else if (notification.type == ParseUtils.APPLY_JOIN_GROUP_NF) {
             approveSingleGroupApply(notification.id, notification.tid);
         } else {
             acceptSingleGroupInvite(notification.id, notification.tid);

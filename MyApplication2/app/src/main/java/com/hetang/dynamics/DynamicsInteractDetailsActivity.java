@@ -1,4 +1,4 @@
-package com.hetang.common;
+package com.hetang.dynamics;
 
 import android.content.Context;
 import android.content.Intent;
@@ -37,7 +37,8 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.hetang.adapter.MeetDynamicsListAdapter;
 import com.hetang.adapter.MeetRecommendListAdapter;
-import com.hetang.archive.ArchiveActivity;
+import com.hetang.common.BaseAppCompatActivity;
+import com.hetang.common.MyApplication;
 import com.hetang.home.HomeFragment;
 import com.hetang.meet.MeetRecommendFragment;
 import com.hetang.util.CommonDialogFragmentInterface;
@@ -53,7 +54,6 @@ import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.hetang.R;
 import com.hetang.adapter.DynamicsInteractDetailsAdapter;
-import com.hetang.meet.DynamicsComment;
 import com.hetang.main.MeetArchiveActivity;
 import com.hetang.meet.MeetDynamicsFragment;
 import com.hetang.meet.UserMeetInfo;

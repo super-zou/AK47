@@ -86,7 +86,7 @@
         <activity android:name=".common.SetAvatarActivity" />
         <activity android:name=".region.activity.RegionSelectionActivity" />
         <activity android:name=".region.activity.BaseActivity" />
-        <activity android:name=".common.AddDynamicsActivity" />
+        <activity android:name=".dynamics.AddDynamicsActivity" />
         <activity android:name=".common.SettingsActivity" />
         <activity android:name=".main.MeetArchiveActivity" />
         <activity
@@ -102,14 +102,14 @@
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".common.DynamicsInteractDetailsActivity"
+            android:name=".dynamics.DynamicsInteractDetailsActivity"
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".group.SingleGroupDetailsActivity"
             android:launchMode="singleTop" />
         <activity
-            android:name=".meet.SpecificUserDynamicsActivity"
+            android:name=".dynamics.SpecificUserDynamicsActivity"
             android:launchMode="singleTask" />
         <activity
             android:name=".archive.WorkEditActivity"

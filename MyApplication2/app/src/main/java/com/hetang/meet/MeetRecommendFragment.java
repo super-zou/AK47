@@ -28,7 +28,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.hetang.R;
 import com.hetang.adapter.MeetRecommendListAdapter;
-import com.hetang.common.DynamicsInteractDetailsActivity;
+import com.hetang.dynamics.DynamicsInteractDetailsActivity;
 import com.hetang.common.HandlerTemp;
 import com.hetang.common.MyApplication;
 import com.hetang.common.SetAvatarActivity;
@@ -66,8 +66,8 @@ import okhttp3.Response;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static com.hetang.common.AddPictureActivity.ADD_PICTURE_BROADCAST;
-import static com.hetang.common.DynamicsInteractDetailsActivity.MEET_RECOMMEND_COMMENT;
-import static com.hetang.common.DynamicsInteractDetailsActivity.MY_CONDITION_COMMENT;
+import static com.hetang.dynamics.DynamicsInteractDetailsActivity.MEET_RECOMMEND_COMMENT;
+import static com.hetang.dynamics.DynamicsInteractDetailsActivity.MY_CONDITION_COMMENT;
 import static com.hetang.common.SetAvatarActivity.AVATAR_SET_ACTION_BROADCAST;
 import static com.hetang.group.SubGroupActivity.GET_MY_UNIVERSITY_SUBGROUP;
 import static com.hetang.home.HomeFragment.COMMENT_UPDATE_RESULT;
@@ -75,7 +75,6 @@ import static com.hetang.home.HomeFragment.LOVE_UPDATE_RESULT;
 import static com.hetang.home.HomeFragment.MY_COMMENT_UPDATE_RESULT;
 import static com.hetang.home.HomeFragment.MY_LOVE_UPDATE_RESULT;
 import static com.hetang.home.HomeFragment.MY_PRAISE_UPDATE_RESULT;
-import static com.hetang.home.HomeFragment.NO_RECOMMEND_MEMBER_DONE;
 import static com.hetang.home.HomeFragment.PRAISE_UPDATE_RESULT;
 import static com.hetang.meet.MeetDynamicsFragment.COMMENT_COUNT_UPDATE;
 import static com.hetang.meet.MeetDynamicsFragment.LOVE_UPDATE;
@@ -225,7 +224,6 @@ public class MeetRecommendFragment extends BaseFragment {
         recyclerView.setAdapter(meetRecommendListAdapter);
 
         getMyCondition();
-        getRecommendContacts();
         registerLoginBroadcast();
 
         addMeetInfo = view.findViewById(R.id.meet_info_add);
@@ -946,6 +944,7 @@ public class MeetRecommendFragment extends BaseFragment {
                     addMeetInfo.setVisibility(View.GONE);
                 }
                 setMeetHeaderView();
+                getRecommendContacts();
                 break;
             case MY_CONDITION_NOT_SET:
                 if (addMeetInfo.getVisibility() == View.GONE) {
@@ -954,6 +953,7 @@ public class MeetRecommendFragment extends BaseFragment {
                 if (!TextUtils.isEmpty(userProfile.getAvatar())) {
                     avatarSet = true;
                 }
+                getRecommendContacts();
                 break;
 
             case COMMENT_COUNT_UPDATE:

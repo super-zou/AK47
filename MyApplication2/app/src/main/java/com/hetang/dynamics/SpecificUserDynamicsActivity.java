@@ -1,55 +1,16 @@
-package com.hetang.meet;
+package com.hetang.dynamics;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.graphics.Typeface;
-import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.hetang.R;
-import com.hetang.adapter.DynamicsListAdapter;
 import com.hetang.common.BaseAppCompatActivity;
-import com.hetang.common.Dynamic;
-import com.hetang.common.DynamicsInteractDetailsActivity;
-import com.hetang.common.HandlerTemp;
-import com.hetang.common.MyApplication;
 import com.hetang.home.HomeFragment;
-import com.hetang.main.MeetArchiveFragment;
-import com.hetang.util.CommonDialogFragmentInterface;
-import com.hetang.util.CommonUserListDialogFragment;
 import com.hetang.util.FontManager;
-import com.hetang.util.HttpUtil;
-import com.hetang.util.InterActInterface;
-import com.hetang.util.Slog;
-import com.jcodecraeer.xrecyclerview.ProgressStyle;
-import com.jcodecraeer.xrecyclerview.XRecyclerView;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.FormBody;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-
-import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
-import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
 public class SpecificUserDynamicsActivity extends BaseAppCompatActivity{
     private static final String TAG = "SpecificUserDynamics";

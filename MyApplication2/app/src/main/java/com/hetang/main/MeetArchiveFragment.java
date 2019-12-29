@@ -42,9 +42,8 @@ import com.hetang.R;
 import com.hetang.adapter.CheeringGroupAdapter;
 import com.hetang.adapter.MeetImpressionStatisticsAdapter;
 import com.hetang.adapter.MeetReferenceAdapter;
-import com.hetang.archive.ArchiveActivity;
 import com.hetang.common.Chat;
-import com.hetang.common.Dynamic;
+import com.hetang.dynamics.Dynamic;
 import com.hetang.common.HandlerTemp;
 import com.hetang.common.MyApplication;
 import com.hetang.common.SetAvatarActivity;
@@ -55,7 +54,7 @@ import com.hetang.meet.FillMeetInfoActivity;
 import com.hetang.meet.MeetConditionDialogFragment;
 import com.hetang.meet.MeetDynamicsFragment;
 import com.hetang.meet.MeetReferenceInfo;
-import com.hetang.meet.SpecificUserDynamicsActivity;
+import com.hetang.dynamics.SpecificUserDynamicsActivity;
 import com.hetang.meet.UserMeetInfo;
 import com.hetang.util.BaseFragment;
 import com.hetang.util.CommonDialogFragmentInterface;
@@ -2207,7 +2206,7 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
                 processSubModules();
                 break;
             case GET_PICTURES_URL_DONE:
-                if (pictureArray.length() > 0) {
+                if (pictureArray != null && pictureArray.length() > 0) {
                     for (int i = 0; i < pictureArray.length(); i++) {
                         JSONObject pictureObj = pictureArray.optJSONObject(i);
                         final String url = HttpUtil.DOMAIN + pictureObj.optString("uri") + pictureObj.optString("filename");

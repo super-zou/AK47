@@ -6,8 +6,8 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.hetang.archive.ArchiveActivity;
-import com.hetang.common.Dynamic;
-import com.hetang.common.DynamicsInteractDetailsActivity;
+import com.hetang.dynamics.Dynamic;
+import com.hetang.dynamics.DynamicsInteractDetailsActivity;
 import com.hetang.common.MyApplication;
 import com.hetang.main.MeetArchiveActivity;
 import com.hetang.meet.UserMeetInfo;
@@ -26,8 +26,8 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static com.hetang.common.DynamicsInteractDetailsActivity.DYNAMIC_COMMENT;
-import static com.hetang.common.DynamicsInteractDetailsActivity.MEET_RECOMMEND_COMMENT;
+import static com.hetang.dynamics.DynamicsInteractDetailsActivity.DYNAMIC_COMMENT;
+import static com.hetang.dynamics.DynamicsInteractDetailsActivity.MEET_RECOMMEND_COMMENT;
 import static com.hetang.meet.MeetRecommendFragment.student;
 
 /*added by xuchunping 2018.8.2 for Json data parse*/
@@ -56,6 +56,7 @@ public class ParseUtils {
     public static final int ADD_MEET_DYNAMIC_ACTION = 0;
     public static final int ADD_INNER_DYNAMIC_ACTION = 1;
     public static final int PRAISE_DYNAMIC_ACTION = 2;
+    public static final int ADD_SUBGROUP_ACTIVITY_ACTION = 24;
     //for meet archive
     public static final int PRAISE_MEET_CONDITION_ACTION = 3;
     public static final int PUBLISH_MEET_CONDITION_ACTION = 4;
@@ -71,6 +72,14 @@ public class ParseUtils {
     public static final int CREATE_SINGLE_GROUP_ACTION = 13;
     public static final int JOIN_SINGLE_GROUP_ACTION = 14;
     public static final int INVITE_SINGLE_GROUP_MEMBER_ACTION = 15;
+
+    //for group
+    public static final int CREATE_GROUP_ACTION = 25;
+    public static final int JOIN_GROUP_ACTION = 26;
+    public static final int FOLLOW_GROUP_ACTION = 27;
+    public static final int MODIFY_GROUP_ACTION = 28;
+    public static final int INVITE_GROUP_MEMBER_ACTION = 29;
+
     //for archive
     public static final int ADD_CHEERING_GROUP_MEMBER_ACTION = 10;
     public static final int SET_AVATAR_ACTION = 16;
@@ -81,7 +90,7 @@ public class ParseUtils {
     public static final int ADD_PAPER_ACTION = 21;
     public static final int ADD_PRIZE_ACTION = 22;
     public static final int ADD_VOLUNTEER_ACTION = 23;
-    public static final int ADD_SUBGROUP_ACTIVITY_ACTION = 24;
+
     
     //here only for notification, other notification reused with dynamic
     public static final int APPLY_CONTACTS_NF = 50;
@@ -99,6 +108,7 @@ public class ParseUtils {
     public static final int MEET_COMMENT_REPLY_NF = 62;
     public static final int APPLY_JOIN_SINGLE_GROUP_NF = 63;
     public static final int ACCEPT_CONTACTS_APPLY_NF = 64;
+    public static final int APPLY_JOIN_GROUP_NF = 65;
     
     public static List<UserMeetInfo> getBaseMeetInfoList(String responseText) {
         List<UserMeetInfo> list = null;

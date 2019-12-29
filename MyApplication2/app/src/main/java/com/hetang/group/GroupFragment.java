@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.hetang.R;
@@ -55,20 +56,19 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
     private static final boolean isDebug = true;
     private static final String TAG = "GroupFragment";
 
-    private static final int association_group = 0;
-    private static final int public_good_group = 1;
-    private static final int fraternity_group = 2;
-    private static final int hobby_group = 3;
-    private static final int growUp_group = 4;
-    private static final int activity_group = 5;
-    private static final int foreign_friend_group = 6;
+    public static final int association_group = 0;
+    public static final int public_good_group = 1;
+    public static final int fraternity_group = 2;
+    public static final int hobby_group = 3;
+    public static final int growUp_group = 4;
+    public static final int activity_group = 5;
+    public static final int foreign_friend_group = 6;
     private static final int MAX_ROOT_GROUP = 7;
     private static final int LOAD_DATA_DONE = 8;
     private static final int LOAD_MY_GROUP_DONE = 9;
     private static final int LOAD_NEW_JOINED_GROUP_DONE = 10;
 
     LinearLayout myGroupWrap;
-
     ConstraintLayout associationGroup;
     ConstraintLayout publicGoodGroup;
     ConstraintLayout fraternityGroup;
@@ -462,10 +462,15 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
     }
 
     private void startSubGroupActivity(int type) {
-        Intent intent = new Intent(MyApplication.getContext(), SubGroupActivity.class);
-        intent.putExtra("type", type);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-        startActivity(intent);
+        if (type < activity_group){
+            Intent intent = new Intent(MyApplication.getContext(), SubGroupActivity.class);
+            intent.putExtra("type", type);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+            startActivity(intent);
+        }else {
+            Toast.makeText(getContext(),"ready?", Toast.LENGTH_LONG).show();
+        }
+
     }
 
 

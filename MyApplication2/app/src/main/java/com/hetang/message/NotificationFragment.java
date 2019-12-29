@@ -43,10 +43,10 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
-import static com.hetang.util.ParseUtils.APPLY_JOIN_SINGLE_GROUP_NF;
+import static com.hetang.util.ParseUtils.APPLY_JOIN_GROUP_NF;
 import static com.hetang.util.ParseUtils.COMMENT_PRAISED_NF;
-import static com.hetang.util.ParseUtils.INVITE_SINGLE_GROUP_MEMBER_ACTION;
-import static com.hetang.util.ParseUtils.JOIN_SINGLE_GROUP_ACTION;
+import static com.hetang.util.ParseUtils.INVITE_GROUP_MEMBER_ACTION;
+import static com.hetang.util.ParseUtils.JOIN_GROUP_ACTION;
 import static com.hetang.util.ParseUtils.PRAISE_DYNAMIC_ACTION;
 import static com.hetang.util.ParseUtils.PRAISE_MEET_COMMENT_NF;
 import static com.hetang.util.ParseUtils.REPLY_PRAISED_NF;
@@ -346,9 +346,9 @@ public class NotificationFragment extends BaseFragment {
                 case PRAISE_DYNAMIC_ACTION:
                 case COMMENT_PRAISED_NF:
                 case REPLY_PRAISED_NF:
-                case INVITE_SINGLE_GROUP_MEMBER_ACTION:
-                case JOIN_SINGLE_GROUP_ACTION:
-                case APPLY_JOIN_SINGLE_GROUP_NF:
+                case INVITE_GROUP_MEMBER_ACTION:
+                case JOIN_GROUP_ACTION:
+                case APPLY_JOIN_GROUP_NF:
                     notification.content = mContext.getResources().getString(R.string.view_details);
                     break;
             }

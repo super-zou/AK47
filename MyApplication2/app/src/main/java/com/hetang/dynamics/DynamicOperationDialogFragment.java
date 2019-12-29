@@ -1,4 +1,4 @@
-package com.hetang.util;
+package com.hetang.dynamics;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -17,6 +17,10 @@ import android.widget.TextView;
 
 import com.hetang.R;
 import com.hetang.common.MyApplication;
+import com.hetang.util.BaseDialogFragment;
+import com.hetang.util.FontManager;
+import com.hetang.util.HttpUtil;
+import com.hetang.util.Slog;
 
 import org.json.JSONException;
 import org.json.JSONObject;

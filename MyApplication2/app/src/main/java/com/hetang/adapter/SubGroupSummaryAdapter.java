@@ -26,6 +26,7 @@ import com.hetang.util.RoundImageView;
 import java.util.List;
 
 import static com.hetang.common.MyApplication.getContext;
+import static com.hetang.group.GroupFragment.association_group;
 import static com.hetang.util.ParseUtils.startMeetArchiveActivity;
 
 /**
@@ -87,11 +88,16 @@ public class SubGroupSummaryAdapter extends RecyclerView.Adapter<SubGroupSummary
         }
         holder.groupName.setText(subGroup.groupName.trim());
         holder.groupProfile.setText(subGroup.groupProfile.trim());
-        if (!TextUtils.isEmpty(subGroup.org)){
-            holder.org.setText(subGroup.org.trim());
-        }
+
         if (!TextUtils.isEmpty(subGroup.region)){
             holder.region.setText(subGroup.region.trim());
+        }
+
+        if (subGroup.type == association_group){
+            if (!TextUtils.isEmpty(subGroup.org)){
+                holder.org.setVisibility(View.VISIBLE);
+                holder.org.setText(subGroup.org.trim());
+            }
         }
 
         /*

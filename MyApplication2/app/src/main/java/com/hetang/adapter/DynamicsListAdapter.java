@@ -22,8 +22,8 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.hetang.R;
-import com.hetang.common.Dynamic;
-import com.hetang.common.DynamicsInteractDetailsActivity;
+import com.hetang.dynamics.Dynamic;
+import com.hetang.dynamics.DynamicsInteractDetailsActivity;
 import com.hetang.common.HandlerTemp;
 import com.hetang.common.MyApplication;
 import com.hetang.group.SubGroupActivity;
@@ -54,6 +54,8 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static com.hetang.util.ParseUtils.ADD_SUBGROUP_ACTIVITY_ACTION;
+import static com.hetang.util.ParseUtils.FOLLOW_GROUP_ACTION;
+import static com.hetang.util.ParseUtils.MODIFY_GROUP_ACTION;
 
 /**
  * Created by haichao.zou on 2017/11/20.
@@ -138,11 +140,13 @@ public class DynamicsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         .inflate(R.layout.meet_evaluate_action_item, parent, false);
                 holder = new MeetEvaluateViewHolder(viewMeetEvaluate);
                 break;
-            case ParseUtils.CREATE_SINGLE_GROUP_ACTION:
-            case ParseUtils.JOIN_SINGLE_GROUP_ACTION:
+            case ParseUtils.CREATE_GROUP_ACTION:
+            case ParseUtils.JOIN_GROUP_ACTION:
+            case FOLLOW_GROUP_ACTION:
+            case MODIFY_GROUP_ACTION:
             //case ParseUtils.INVITE_SINGLE_GROUP_MEMBER_ACTION:
                 View viewSubGroup = LayoutInflater.from(MyApplication.getContext())
-                        .inflate(R.layout.subgroup_summary_item, parent, false);
+                        .inflate(R.layout.group_action_item, parent, false);
                 holder = new SubGroupViewHolder(viewSubGroup);
 
                 break;
@@ -257,7 +261,7 @@ public class DynamicsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     private void setAuthorProfile(AuthorProfileVH authorProfileVH, Dynamic dynamic) {
-        //authorProfileVH.authorName.setText(dynamic.getName());
+        authorProfileVH.authorName.setText(dynamic.getName());
         authorProfileVH.action.setText(dynamic.getAction());
         TextPaint paint = authorProfileVH.action.getPaint();
         paint.setFakeBoldText(true);
@@ -359,6 +363,17 @@ public class DynamicsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             holder.authorContent.setVisibility(View.GONE);
         }
 
+        UserProfileViewHolder userProfileViewHolder = holder.userProfileViewHolder;
+        setRelatedUserProfileView(userProfileViewHolder, dynamic);
+
+        holder.relatedUserProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ParseUtils.startMeetArchiveActivity(mContext, dynamic.relatedUerProfile.getUid());
+            }
+        });
+
+        /*
         if (dynamic.getType() == ParseUtils.ADD_CHEERING_GROUP_MEMBER_ACTION) {
             UserProfileViewHolder userProfileViewHolder = holder.userProfileViewHolder;
             setRelatedUserProfileView(userProfileViewHolder, dynamic);
@@ -374,7 +389,7 @@ public class DynamicsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             holder.relativeContentWrapper.setVisibility(View.VISIBLE);
             holder.relativeContentWrapper.setBackgroundColor(mContext.getResources().getColor(R.color.color_disabled));
             setRelatedMeetContentView(holder.recommendViewHolder, dynamic);
-        }
+        }*/
 
         onDynamicsItemElementClick(holder.baseProfile, dynamic);
         holder.relativeContentWrapper.setOnClickListener(new View.OnClickListener() {
@@ -467,7 +482,7 @@ public class DynamicsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         if (isDebug)
             Slog.d(TAG, "-------->onSubGroupActionBindViewHolder position: " + position);
         final Dynamic dynamic = dynamicList.get(position);
-        //setAuthorProfile(holder.authorProfileVH, dynamic);
+        setAuthorProfile(holder.authorProfileVH, dynamic);
 
         /*
         if (dynamic.getType() == ParseUtils.INVITE_SINGLE_GROUP_MEMBER_ACTION) {
@@ -485,18 +500,18 @@ public class DynamicsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         */
 
         setRelatedSingleGroupContentView(holder.subGroupViewHolder, dynamic);
-        //onDynamicsItemElementClick(holder.baseProfile, dynamic);
-        /*
+        onDynamicsItemElementClick(holder.baseProfile, dynamic);
+
         holder.relativeContentWrapper.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(mContext, SubGroupDetailsActivity.class);
-                intent.putExtra("gid", dynamic.relatedSingleGroupContent.gid);
+                intent.putExtra("gid", dynamic.relatedSubGroupContent.gid);
                 mContext.startActivity(intent);
             }
         });
 
-         */
+
     }
 
     private void setRelatedUserProfileView(UserProfileViewHolder userProfileViewHolder, Dynamic dynamic) {
@@ -511,7 +526,7 @@ public class DynamicsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             picture_url = HttpUtil.DOMAIN + avatar;
             Glide.with(mContext).load(picture_url).into(userProfileViewHolder.relatedUserAvatar);
         } else {
-            if (dynamic.getSex() == 0) {
+            if (dynamic.relatedUerProfile.getSex() == 0) {
                 userProfileViewHolder.relatedUserAvatar.setImageDrawable(MyApplication.getContext().getDrawable(R.drawable.male_default_avator));
             } else {
                 userProfileViewHolder.relatedUserAvatar.setImageDrawable(MyApplication.getContext().getDrawable(R.drawable.female_default_avator));

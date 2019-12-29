@@ -21,12 +21,11 @@ import android.widget.TextView;
 
 import com.hetang.R;
 import com.hetang.adapter.DynamicsListAdapter;
-import com.hetang.common.AddDynamicsActivity;
-import com.hetang.common.Dynamic;
-import com.hetang.common.DynamicsInteractDetailsActivity;
+import com.hetang.dynamics.AddDynamicsActivity;
+import com.hetang.dynamics.Dynamic;
+import com.hetang.dynamics.DynamicsInteractDetailsActivity;
 import com.hetang.common.HandlerTemp;
 import com.hetang.common.MyApplication;
-import com.hetang.group.MeetSingleGroupFragment;
 import com.hetang.group.SubGroupActivity;
 import com.hetang.meet.MeetDynamicsFragment;
 import com.hetang.meet.UserMeetInfo;
@@ -58,11 +57,9 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
-import static com.hetang.common.AddDynamicsActivity.DYNAMICS_ADD_BROADCAST;
-import static com.hetang.common.DynamicsInteractDetailsActivity.COMMENT_ADD_BROADCAST;
-import static com.hetang.common.DynamicsInteractDetailsActivity.DYNAMIC_COMMENT;
-import static com.hetang.group.MeetSingleGroupFragment.getSingleGroup;
-import static com.hetang.group.SingleGroupDetailsActivity.GET_SINGLE_GROUP_BY_GID;
+import static com.hetang.dynamics.AddDynamicsActivity.DYNAMICS_ADD_BROADCAST;
+import static com.hetang.dynamics.DynamicsInteractDetailsActivity.COMMENT_ADD_BROADCAST;
+import static com.hetang.dynamics.DynamicsInteractDetailsActivity.DYNAMIC_COMMENT;
 import static com.hetang.group.SubGroupActivity.getSubGroup;
 import static com.hetang.group.SubGroupDetailsActivity.GET_SUBGROUP_BY_GID;
 import static com.hetang.meet.MeetDynamicsFragment.COMMENT_COUNT_UPDATE;
@@ -72,7 +69,15 @@ import static com.hetang.meet.MeetDynamicsFragment.LOAD_DYNAMICS_DONE;
 import static com.hetang.meet.MeetDynamicsFragment.NO_MORE_DYNAMICS;
 import static com.hetang.meet.MeetDynamicsFragment.NO_UPDATE;
 import static com.hetang.meet.MeetDynamicsFragment.UPDATE_COMMENT;
-import static com.hetang.util.SharedPreferencesUtils.getSessionUid;
+import static com.hetang.util.ParseUtils.ADD_CHEERING_GROUP_MEMBER_ACTION;
+import static com.hetang.util.ParseUtils.ADD_INNER_DYNAMIC_ACTION;
+import static com.hetang.util.ParseUtils.ADD_MEET_DYNAMIC_ACTION;
+import static com.hetang.util.ParseUtils.ADD_SUBGROUP_ACTIVITY_ACTION;
+import static com.hetang.util.ParseUtils.CREATE_GROUP_ACTION;
+import static com.hetang.util.ParseUtils.FOLLOW_GROUP_ACTION;
+import static com.hetang.util.ParseUtils.JOIN_GROUP_ACTION;
+import static com.hetang.util.ParseUtils.MODIFY_GROUP_ACTION;
+import static com.hetang.util.ParseUtils.PRAISE_DYNAMIC_ACTION;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
 public class HomeFragment extends BaseFragment {
@@ -114,6 +119,7 @@ public class HomeFragment extends BaseFragment {
     private int currentPos = 0;
     private View mView;
     private int uid = 0;
+    private int authorUid = 0;
     private boolean specificUser = false;
 
     @Override
@@ -126,9 +132,9 @@ public class HomeFragment extends BaseFragment {
         mView = view;
         handler = new MyHandler(this);
         mContext = MyApplication.getContext();
-
+        authorUid = SharedPreferencesUtils.getSessionUid(MyApplication.getContext());
         Bundle bundle = getArguments();
-        if (bundle != null){
+        if (bundle != null) {
             uid = bundle.getInt("uid");
             specificUser = bundle.getBoolean("specific", false);
         }
@@ -217,21 +223,25 @@ public class HomeFragment extends BaseFragment {
             }
 
             @Override
-            public void onOperationClick(View view, int position) {}
+            public void onOperationClick(View view, int position) {
+            }
 
         });
 
         xRecyclerView.setAdapter(dynamicsListAdapter);
 
-        TextView dynamicCreate = view.findViewById(R.id.dynamic_create);
-        dynamicCreate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(mContext, AddDynamicsActivity.class);
-                intent.putExtra("type", ParseUtils.ADD_INNER_DYNAMIC_ACTION);
-                startActivityForResult(intent, Activity.RESULT_FIRST_USER);
-            }
-        });
+        if (!specificUser){
+            TextView dynamicCreate = view.findViewById(R.id.dynamic_create);
+            dynamicCreate.setVisibility(View.VISIBLE);
+            dynamicCreate.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(mContext, AddDynamicsActivity.class);
+                    intent.putExtra("type", ADD_INNER_DYNAMIC_ACTION);
+                    startActivityForResult(intent, Activity.RESULT_FIRST_USER);
+                }
+            });
+        }
 
         progressImageView = view.findViewById(R.id.animal_progress);
         animationDrawable = (AnimationDrawable) progressImageView.getDrawable();
@@ -242,7 +252,7 @@ public class HomeFragment extends BaseFragment {
             }
         }, 50);
 
-        loadData();
+        //loadData();
 
         registerLoginBroadcast();
 
@@ -257,11 +267,12 @@ public class HomeFragment extends BaseFragment {
         final int page = dynamicList.size() / PAGE_SIZE;
         FormBody.Builder builder = new FormBody.Builder();
         String url = LOAD_CONCERNED_DYNAMICS_URL;
-        if (specificUser){
+        if (specificUser) {
             builder.add("uid", String.valueOf(uid));
             url = LOAD_SPECIFIC_DYNAMICS_URL;
         }
-        RequestBody requestBody = new FormBody.Builder()
+        Slog.d(TAG, "--------------->url: "+url);
+        RequestBody requestBody = builder
                 .add("step", String.valueOf(PAGE_SIZE))
                 .add("page", String.valueOf(page))
                 .build();
@@ -285,8 +296,8 @@ public class HomeFragment extends BaseFragment {
                             dynamicList.addAll(tempList);
                             Log.d(TAG, "getResponseText list.size:" + tempList.size());
                             handler.sendEmptyMessage(LOAD_DYNAMICS_DONE);
-                        }else {
-                            if (page == 0){
+                        } else {
+                            if (page == 0) {
                                 xRecyclerView.getDefaultFootView().setNoMoreHint(getString(R.string.no_content));
                             }
                             handler.sendEmptyMessage(NO_MORE_DYNAMICS);
@@ -337,7 +348,7 @@ public class HomeFragment extends BaseFragment {
             }
 
             switch (dynamic.getType()) {
-                case ParseUtils.PRAISE_DYNAMIC_ACTION:
+                case PRAISE_DYNAMIC_ACTION:
                     dynamic = getRelateContent(dynamic);
                     break;
                 case ParseUtils.PRAISE_MEET_CONDITION_ACTION:
@@ -349,15 +360,15 @@ public class HomeFragment extends BaseFragment {
                 case ParseUtils.ADD_HOBBY_ACTION:
                 case ParseUtils.EVALUATE_ACTION:
                 case ParseUtils.REFEREE_ACTION:
-
                     dynamic = getRelateMeetContent(dynamic);
                     break;
                 case ParseUtils.ADD_CHEERING_GROUP_MEMBER_ACTION:
                     dynamic = getRelatedUserProfile(dynamic);
                     break;
-                case ParseUtils.CREATE_SINGLE_GROUP_ACTION:
-                case ParseUtils.JOIN_SINGLE_GROUP_ACTION:
-                //case ParseUtils.INVITE_SINGLE_GROUP_MEMBER_ACTION:
+                case CREATE_GROUP_ACTION:
+                case JOIN_GROUP_ACTION:
+                case FOLLOW_GROUP_ACTION:
+                case MODIFY_GROUP_ACTION:
                     dynamic = getRelateSingleGroupContent(dynamic);
                     break;
 
@@ -375,16 +386,29 @@ public class HomeFragment extends BaseFragment {
 
             meetDynamicsFragment.setDynamicsInteract(dynamic, handler);
             Slog.d(TAG, "---------------------->dynamic.getUid(): " + dynamic.getUid());
-            /*
+
+
             if (dynamic.getUid() == authorUid){//author self
-                if (dynamic.getType() < PRAISE_DYNAMIC_ACTION){//only show meet or common dynamics to author self
-                    tempList.add(dynamic);
+                switch (dynamic.getType()){
+                    case ADD_MEET_DYNAMIC_ACTION:
+                    case ADD_INNER_DYNAMIC_ACTION:
+                    case ADD_SUBGROUP_ACTIVITY_ACTION:
+                    case CREATE_GROUP_ACTION:
+                    case JOIN_GROUP_ACTION:
+                    case MODIFY_GROUP_ACTION:
+                    case FOLLOW_GROUP_ACTION:
+                    case ADD_CHEERING_GROUP_MEMBER_ACTION:
+                        tempList.add(dynamic);
+                        break;
+                        default:
+                            break;
                 }
             }else {
                 tempList.add(dynamic);
             }
-            */
-            tempList.add(dynamic);
+
+
+            //tempList.add(dynamic);
         }
 
         return tempList;

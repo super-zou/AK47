@@ -1,4 +1,4 @@
-package com.hetang.common;
+package com.hetang.dynamics;
 
 import com.hetang.group.SubGroupActivity;
 import com.hetang.home.HomeFragment;

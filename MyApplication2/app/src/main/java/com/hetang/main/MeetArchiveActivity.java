@@ -11,9 +11,10 @@ import com.hetang.R;
 import com.hetang.common.BaseAppCompatActivity;
 import com.hetang.main.MeetArchiveFragment;
 import com.hetang.meet.UserMeetInfo;
+import com.hetang.util.CommonDialogFragmentInterface;
 import com.hetang.util.FontManager;
 
-public class MeetArchiveActivity extends BaseAppCompatActivity {
+public class MeetArchiveActivity extends BaseAppCompatActivity implements CommonDialogFragmentInterface {
     private static final String TAG = "MeetArchiveActivity";
     private static final boolean isDebug = true;
     FragmentManager fragmentManager;
@@ -85,7 +86,8 @@ public class MeetArchiveActivity extends BaseAppCompatActivity {
         super.onDestroy();
     }
 
-
+    @Override
+    public void onBackFromDialog(int type, int result, boolean status){}
 }
 
 

@@ -13,9 +13,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.hetang.common.DynamicsInteractDetailsActivity;
+import com.hetang.dynamics.DynamicsInteractDetailsActivity;
 import com.hetang.R;
-import com.hetang.meet.DynamicsComment;
+import com.hetang.dynamics.DynamicsComment;
 import com.hetang.util.InterActInterface;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;

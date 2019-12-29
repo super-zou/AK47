@@ -16,7 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.hetang.common.DynamicsInteractDetailsActivity;
+import com.hetang.dynamics.DynamicsInteractDetailsActivity;
 import com.hetang.common.HandlerTemp;
 import com.hetang.home.HomeFragment;
 import com.hetang.main.MeetArchiveActivity;

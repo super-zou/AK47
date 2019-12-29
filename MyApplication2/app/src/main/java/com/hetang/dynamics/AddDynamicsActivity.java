@@ -1,4 +1,4 @@
-package com.hetang.common;
+package com.hetang.dynamics;
 
 import android.Manifest;
 import android.content.Intent;
@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hetang.adapter.GridImageAdapter;
+import com.hetang.common.BaseAppCompatActivity;
 import com.hetang.home.HomeFragment;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;

@@ -83,28 +83,31 @@
         app:layout_constraintTop_toBottomOf="@+id/leader_head_uri" />
 
     <TextView
-        android:id="@+id/org"
+        android:id="@+id/region"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/profile"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:paddingRight="8dp"
+        android:text="西安"
         android:textColor="@color/color_dark_disabled"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profile" />
+        app:layout_constraintTop_toBottomOf="@+id/profile"/>
 
     <TextView
-        android:id="@+id/region"
+        android:id="@+id/org"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/profile"
         android:layout_marginStart="8dp"
         android:paddingRight="8dp"
+        android:visibility="gone"
+        android:text="@string/university"
         android:textColor="@color/color_dark_disabled"
-        app:layout_constraintBottom_toBottomOf="@+id/org"
-        app:layout_constraintStart_toEndOf="@+id/org"
-        app:layout_constraintTop_toTopOf="@+id/org" />
+        app:layout_constraintBottom_toBottomOf="@+id/region"
+        app:layout_constraintStart_toEndOf="@+id/region"
+        app:layout_constraintTop_toTopOf="@+id/region" />
 
     <TextView
         android:id="@+id/visit_record"
@@ -119,12 +122,12 @@
         android:textColor="@color/color_dark_disabled"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/org" />
+        app:layout_constraintTop_toBottomOf="@+id/region" />
     <TextView
         android:id="@+id/visit_activity_dot"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/org"
+        android:layout_below="@+id/region"
         android:gravity="center"
         android:text="@string/dot"
         app:layout_constraintBottom_toBottomOf="@+id/visit_record"
@@ -134,7 +137,7 @@
         android:id="@+id/activity_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/org"
+        android:layout_below="@+id/region"
         android:gravity="center"
         android:text=""
         android:textColor="@color/color_dark_disabled"
@@ -145,7 +148,7 @@
         android:id="@+id/follow_activity_dot"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/org"
+        android:layout_below="@+id/region"
         android:gravity="center"
         android:text="@string/dot"
         app:layout_constraintBottom_toBottomOf="@+id/visit_record"
@@ -155,7 +158,7 @@
         android:id="@+id/follow_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/org"
+        android:layout_below="@+id/region"
         android:gravity="center"
         android:text=""
         android:textColor="@color/color_dark_disabled"
@@ -167,7 +170,7 @@
         android:id="@+id/follow_member_dot"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/org"
+        android:layout_below="@+id/region"
         android:gravity="center"
         android:text="@string/dot"
         app:layout_constraintBottom_toBottomOf="@+id/visit_record"

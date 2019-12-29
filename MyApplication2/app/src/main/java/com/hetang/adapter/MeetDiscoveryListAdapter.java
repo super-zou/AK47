@@ -94,11 +94,14 @@ public class MeetDiscoveryListAdapter extends RecyclerView.Adapter<MeetDiscovery
         final UserMeetInfo meet = mMeetList.get(position);
         holder.name.setText(meet.getName());
 
+        /*
         if (meet.getActivityCount() > 0 && !isScrolling) {
             holder.activityIndicator.setVisibility(View.VISIBLE);
         } else {
             holder.activityIndicator.setVisibility(View.GONE);
         }
+
+         */
 
         if (meet.getLiving() != null && !TextUtils.isEmpty(meet.getLiving())) {
             holder.living.setText(meet.getLiving());
@@ -380,7 +383,7 @@ public class MeetDiscoveryListAdapter extends RecyclerView.Adapter<MeetDiscovery
         public ConstraintLayout thumbnailWrapper;
         public RoundImageView thumbnail;
         public TextView photosView;
-        public TextView activityIndicator;
+        //public TextView activityIndicator;
         public TextView comment;
         public TextView commentCount;
         public ConstraintLayout recommendLayout;
@@ -410,7 +413,7 @@ public class MeetDiscoveryListAdapter extends RecyclerView.Adapter<MeetDiscovery
             thumbsView = (TextView) view.findViewById(R.id.thumbs_up_statistics);
             thumbsIcon = (TextView) view.findViewById(R.id.thumbs_up_icon);
             photosView = (TextView) view.findViewById(R.id.photos_statistics);
-            activityIndicator = view.findViewById(R.id.activity_indicator);
+            //activityIndicator = view.findViewById(R.id.activity_indicator);
             comment = view.findViewById(R.id.comment);
             commentCount = view.findViewById(R.id.comment_count);
 
