@@ -468,7 +468,12 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
             startActivity(intent);
         }else {
-            Toast.makeText(getContext(),"ready?", Toast.LENGTH_LONG).show();
+            PreparationDialogFragment preparationDialogFragment = new PreparationDialogFragment();
+            //preparationDialogFragment.setTargetFragment(MeetArchiveFragment.this, REQUESTCODE);
+            Bundle bundle = new Bundle();
+            bundle.putInt("type", type);
+            preparationDialogFragment.setArguments(bundle);
+            preparationDialogFragment.show(getFragmentManager(), "PreparationDialogFragment");
         }
 
     }
