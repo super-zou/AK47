@@ -456,6 +456,7 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
 
         if (mMeetMember.getSituation() == 1) {
             workInfo.setVisibility(View.VISIBLE);
+            eduInfo.setVisibility(View.GONE);
         }
 
         name.setText(mMeetMember.getName());
