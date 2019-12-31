@@ -319,17 +319,21 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
         RoundImageView groupLogo = myGroupView.findViewById(R.id.group_logo);
         TextView groupName = myGroupView.findViewById(R.id.group_name);
         TextView groupDesc = myGroupView.findViewById(R.id.group_desc);
+        /*
         TextView visitRecord = myGroupView.findViewById(R.id.visit_record);
         TextView activityCount = myGroupView.findViewById(R.id.activity_count);
         TextView followCount = myGroupView.findViewById(R.id.follow_count);
         TextView memberCount = myGroupView.findViewById(R.id.member_count);
+        */
         myGroupView.setId(subGroup.gid);
         groupName.setText(subGroup.groupName);
         groupDesc.setText(subGroup.groupProfile);
+        /*
         visitRecord.setText(mContext.getResources().getString(R.string.visit) + " " + subGroup.visitRecord);
         followCount.setText(mContext.getResources().getString(R.string.follow) + " " + subGroup.followCount);
         activityCount.setText(mContext.getResources().getString(R.string.dynamics) + " " + subGroup.activityCount);
         memberCount.setText(mContext.getResources().getString(R.string.member) + " " + subGroup.memberCount);
+        */
 
         if (subGroup.groupLogoUri != null && !"".equals(subGroup.groupLogoUri)) {
             Glide.with(mContext).load(HttpUtil.DOMAIN + subGroup.groupLogoUri).into(groupLogo);
