@@ -466,13 +466,13 @@ public class DynamicsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             }
         }
 
-        setRelatedMeetContentView(holder.recommendViewHolder, dynamic);
+        setRelatedUserProfileView(holder.userProfileViewHolder, dynamic);
         onDynamicsItemElementClick(holder.baseProfile, dynamic);
 
         holder.relativeContentWrapper.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ParseUtils.startMeetArchiveActivity(mContext, dynamic.relatedMeetContent.getUid());
+                ParseUtils.startMeetArchiveActivity(mContext, dynamic.relatedUerProfile.getUid());
             }
         });
 
@@ -878,7 +878,7 @@ public class DynamicsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         TextView ratingScore;
         FlowLayout impressionFL;
         TextView createdView;
-        DynamicsInterActVH dynamicsInterActVH;
+        UserProfileViewHolder userProfileViewHolder;
         ConstraintLayout relativeContentWrapper;
         MeetRecommendListAdapter.ViewHolder recommendViewHolder;
 
@@ -890,8 +890,8 @@ public class DynamicsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             ratingScore = view.findViewById(R.id.rating_score);
             impressionFL = view.findViewById(R.id.impression_flow);
             //createdView = (TextView) view.findViewById(R.id.dynamic_time);
-            relativeContentWrapper = view.findViewById(R.id.relate_content);
-            dynamicsInterActVH = new DynamicsInterActVH(view);
+            relativeContentWrapper = view.findViewById(R.id.related_user_profile);
+            userProfileViewHolder = new UserProfileViewHolder(view);
             //for related content
             recommendViewHolder = new MeetRecommendListAdapter.ViewHolder(view, null);
             Typeface font = Typeface.createFromAsset(mContext.getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
