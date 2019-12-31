@@ -36,7 +36,7 @@
     <string name="approved">已同意</string>
     <string name="back">返回</string>
     <string name="look_friend">+我要交友</string>
-    <string name="look_friend_notice">填写交友条件，推荐更合适的人选</string>
+    <string name="look_friend_notice">填写交友条件，匹配更合适的伙伴</string>
 
     <!--+Begin: relations, add by zouhaichao 2018.11.27-->
     <string name="classmate">同学</string>
@@ -126,8 +126,8 @@
     <string name="name">姓名</string>
     <string name="name_option">姓名(可选)</string>
     <string name="sex">性别</string>
-    <string name="male">男士</string>
-    <string name="female">女士</string>
+    <string name="male">男</string>
+    <string name="female">女</string>
     <string name="living">居住地</string>
     <string name="locating">正在定位</string>
     <string name="select_living">选择居住地</string>
@@ -237,7 +237,7 @@
     <string name="praised_dynamic">赞了动态</string>
     <string name="no_new_version">当前已是最新版本</string>
     <string name="checking">正在检查新版本</string>
-    <string name="beta">Beta版本</string>
+    <string name="beta">内部测试Beta版</string>
     <string name="delete_query_text">确认删除该动态吗？</string>
     <string name="exit_group_query_text">确认退出此团吗？</string>
     <string name="visit">访问</string>
@@ -249,11 +249,11 @@
     <string name="setting">设置</string>
     <string name="title_activity_picture_preview">照片预览</string>
     <string name="preparation">即将上线，敬请关注。</string>
-    <string name="foreign_friend_desc">了解外国人的生活，与外国友人交流的平台</string>
     <string name="public_good_group_desc">点亮一盏灯，温暖一颗心</string>
-    <string name="association_group_desc">社团根据地，给你的社团安一个家；组织、参与社团活动，与各大高校社团交流经验</string>
-    <string name="fraternity_group_desc">高校交友团，让交友恋爱变简单；你寻找的人，也在等你</string>
-    <string name="hobby_group_desc">各种兴趣爱好专题，读书、音乐、电影，琴棋书画，旅游、运动、游戏等尽收</string>
-    <string name="growUp_group_desc">青春成长，收录考级、考研、留学、教育、哲思、心理等话题</string>
+    <string name="association_group_desc">社团根据地，给你的社团安一个家；各大高校社团之间分享经验，交流学习的平台</string>
+    <string name="fraternity_group_desc">高校交友团，跨越学校孤岛，让交友恋爱变简单；你寻找的人，也在等你</string>
+    <string name="hobby_group_desc">各种兴趣爱好专题，加入你感兴趣的专题，认识相同爱好的伙伴</string>
+    <string name="growUp_group_desc">交流学习成长经验，疑难咨询和解答，共同进步</string>
     <string name="activity_group_desc">发现各种创意、好玩的活动。与各大高校年轻人结伴出行，在活动中结识更多朋友。不负青春，让生活更精彩</string>
+    <string name="foreign_friend_desc">记录外国友人的生活，与外国友人交流</string>
 </resources>
