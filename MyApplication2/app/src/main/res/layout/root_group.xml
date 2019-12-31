@@ -50,9 +50,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginRight="8dp"
-                android:background="@color/white"
+                android:background="@drawable/round_background"
                 android:padding="16dp">
 
                 <TextView
@@ -94,7 +94,6 @@
                     android:fontFamily="sans-serif"
                     android:lineSpacingMultiplier="1.2"
                     android:maxLines="3"
-                    android:textColor="@color/black"
                     android:textSize="13sp"
                     android:typeface="sans"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -135,9 +134,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginRight="8dp"
-                android:background="@color/white"
+                android:background="@drawable/round_background"
                 android:padding="16dp">
 
                 <TextView
@@ -179,7 +178,6 @@
                     android:fontFamily="sans-serif"
                     android:lineSpacingMultiplier="1.2"
                     android:maxLines="3"
-                    android:textColor="@color/black"
                     android:textSize="13sp"
                     android:typeface="sans"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -219,9 +217,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginRight="8dp"
-                android:background="@color/white"
+                android:background="@drawable/round_background"
                 android:padding="16dp">
 
                 <TextView
@@ -263,7 +261,6 @@
                     android:fontFamily="sans-serif"
                     android:lineSpacingMultiplier="1.2"
                     android:maxLines="3"
-                    android:textColor="@color/black"
                     android:textSize="13sp"
                     android:typeface="sans"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -304,9 +301,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginRight="8dp"
-                android:background="@color/white"
+                android:background="@drawable/round_background"
                 android:padding="16dp">
 
                 <TextView
@@ -348,7 +345,6 @@
                     android:fontFamily="sans-serif"
                     android:lineSpacingMultiplier="1.2"
                     android:maxLines="3"
-                    android:textColor="@color/black"
                     android:textSize="13sp"
                     android:typeface="sans"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -389,9 +385,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginRight="8dp"
-                android:background="@color/white"
+                android:background="@drawable/round_background"
                 android:padding="16dp">
 
                 <TextView
@@ -433,7 +429,6 @@
                     android:fontFamily="sans-serif"
                     android:lineSpacingMultiplier="1.2"
                     android:maxLines="3"
-                    android:textColor="@color/black"
                     android:textSize="13sp"
                     android:typeface="sans"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -474,9 +469,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginRight="8dp"
-                android:background="@color/white"
+                android:background="@drawable/round_background"
                 android:padding="16dp">
 
                 <TextView
@@ -518,7 +513,6 @@
                     android:fontFamily="sans-serif"
                     android:lineSpacingMultiplier="1.2"
                     android:maxLines="3"
-                    android:textColor="@color/black"
                     android:textSize="13sp"
                     android:typeface="sans"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -559,9 +553,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginRight="8dp"
-                android:background="@color/white"
+                android:background="@drawable/round_background"
                 android:padding="16dp">
 
                 <TextView
@@ -603,7 +597,6 @@
                     android:fontFamily="sans-serif"
                     android:lineSpacingMultiplier="1.2"
                     android:maxLines="3"
-                    android:textColor="@color/black"
                     android:textSize="13sp"
                     android:typeface="sans"
                     app:layout_constraintEnd_toEndOf="parent"
