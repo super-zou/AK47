@@ -360,8 +360,6 @@ public class HomeFragment extends BaseFragment {
                 case ParseUtils.ADD_HOBBY_ACTION:
                 case ParseUtils.EVALUATE_ACTION:
                 case ParseUtils.REFEREE_ACTION:
-                    dynamic = getRelateMeetContent(dynamic);
-                    break;
                 case ParseUtils.ADD_CHEERING_GROUP_MEMBER_ACTION:
                     dynamic = getRelatedUserProfile(dynamic);
                     break;
@@ -542,8 +540,8 @@ public class HomeFragment extends BaseFragment {
                 String responseText = response.body().string();
                 if (!TextUtils.isEmpty(responseText)) {
                     JSONObject relatedContentJSONObject = new JSONObject(responseText).optJSONObject("archive");
-                    dynamic.relatedMeetContent = new UserMeetInfo();
-                    dynamic.relatedMeetContent = ParseUtils.setMeetMemberInfo(relatedContentJSONObject);
+                    dynamic.relatedUerProfile = new UserProfile();
+                    dynamic.relatedUerProfile = ParseUtils.setMeetMemberInfo(relatedContentJSONObject);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -791,24 +789,32 @@ public class HomeFragment extends BaseFragment {
                 dynamicsListAdapter.setData(dynamicList);
                 dynamicsListAdapter.notifyItemRangeInserted(0, mTempSize);
                 dynamicsListAdapter.notifyDataSetChanged();
-                xRecyclerView.refreshComplete();
+                if (xRecyclerView != null){
+                    xRecyclerView.refreshComplete();
+                }
                 mTempSize = 0;
                 break;
             case NO_UPDATE:
                 mTempSize = 0;
-                xRecyclerView.refreshComplete();
+                                if (xRecyclerView != null){
+                    xRecyclerView.refreshComplete();
+                }
                 break;
 
             case GET_MY_NEW_ADD_DONE:
                 dynamicsListAdapter.setData(dynamicList);
                 dynamicsListAdapter.notifyItemRangeInserted(0, 1);
                 dynamicsListAdapter.notifyDataSetChanged();
-                xRecyclerView.refreshComplete();
+                                if (xRecyclerView != null){
+                    xRecyclerView.refreshComplete();
+                }
                 break;
             case UPDATE_COMMENT:
                 dynamicsListAdapter.setData(dynamicList);
                 dynamicsListAdapter.notifyDataSetChanged();
-                xRecyclerView.refreshComplete();
+                                if (xRecyclerView != null){
+                    xRecyclerView.refreshComplete();
+                }
                 break;
 
             case COMMENT_COUNT_UPDATE:
@@ -818,7 +824,9 @@ public class HomeFragment extends BaseFragment {
                 dynamicList.get(currentPos).setCommentCount(commentCount);
                 dynamicsListAdapter.setData(dynamicList);
                 dynamicsListAdapter.notifyDataSetChanged();
-                xRecyclerView.refreshComplete();
+                                if (xRecyclerView != null){
+                    xRecyclerView.refreshComplete();
+                }
             default:
                 break;
         }
