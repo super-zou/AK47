@@ -28,7 +28,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:text="name"
+            android:text=""
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/head_uri" />
@@ -49,36 +49,33 @@
 
             <TextView
                 android:id="@+id/degree"
-                style="@style/TextAppearance.AppCompat.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:gravity="center_horizontal"
                 android:maxEms="10"
                 android:singleLine="true"
-                android:text="degree" />
+                android:text="" />
 
             <TextView
                 android:id="@+id/major"
-                style="@style/TextAppearance.AppCompat.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:gravity="center_horizontal"
                 android:maxEms="10"
                 android:singleLine="true"
-                android:text="major" />
+                android:text="" />
 
             <TextView
                 android:id="@+id/university"
-                style="@style/TextAppearance.AppCompat.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:gravity="center_horizontal"
                 android:maxEms="10"
                 android:singleLine="true"
-                android:text="university" />
+                android:text="" />
         </LinearLayout>
         <LinearLayout
             android:id="@+id/work"
@@ -95,7 +92,6 @@
             app:layout_constraintTop_toBottomOf="@+id/name">
             <TextView
                 android:id="@+id/title"
-                style="@style/TextAppearance.AppCompat.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
@@ -104,7 +100,6 @@
                 android:singleLine="true" />
             <TextView
                 android:id="@+id/company"
-                style="@style/TextAppearance.AppCompat.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
