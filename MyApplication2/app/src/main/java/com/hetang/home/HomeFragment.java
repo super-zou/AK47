@@ -385,7 +385,7 @@ public class HomeFragment extends BaseFragment {
             meetDynamicsFragment.setDynamicsInteract(dynamic, handler);
             Slog.d(TAG, "---------------------->dynamic.getUid(): " + dynamic.getUid());
 
-
+/*
             if (dynamic.getUid() == authorUid){//author self
                 switch (dynamic.getType()){
                     case ADD_MEET_DYNAMIC_ACTION:
@@ -404,9 +404,10 @@ public class HomeFragment extends BaseFragment {
             }else {
                 tempList.add(dynamic);
             }
+            */
 
 
-            //tempList.add(dynamic);
+            tempList.add(dynamic);
         }
 
         return tempList;

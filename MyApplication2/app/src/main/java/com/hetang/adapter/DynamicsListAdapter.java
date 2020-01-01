@@ -836,6 +836,9 @@ public class DynamicsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             dynamicsInterActVH = new DynamicsInterActVH(view);
             //for related content
             dynamicViewHolder = new DynamicViewHolder(view);
+            Typeface font = Typeface.createFromAsset(mContext.getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
+            //FontManager.markAsIconContainer(view.findViewById(R.id.meet_action_item), font);
+            FontManager.markAsIconContainer(view.findViewById(R.id.relate_content), font);
         }
     }
 
