@@ -117,7 +117,7 @@ public class AuthenticationActivity extends BaseAppCompatActivity {
                 TextView tabIcon = tab.getCustomView().findViewById(R.id.tab_icon);
                 TextView tabText = tab.getCustomView().findViewById(R.id.tab_text);
                 tabText.setTextColor(getResources().getColor(R.color.blue_dark));
-                tabIcon.setTextColor(getResources().getColor(R.color.blue_dark));
+               // tabIcon.setTextColor(getResources().getColor(R.color.blue_dark));
             }
             
             @Override
@@ -125,7 +125,7 @@ public class AuthenticationActivity extends BaseAppCompatActivity {
                 TextView tabIcon = tab.getCustomView().findViewById(R.id.tab_icon);
                 TextView tabText = tab.getCustomView().findViewById(R.id.tab_text);
                 tabText.setTextColor(getResources().getColor(R.color.text_default));
-                tabIcon.setTextColor(getResources().getColor(R.color.text_default));
+                //tabIcon.setTextColor(getResources().getColor(R.color.text_default));
             }
             
             @Override
