@@ -97,18 +97,18 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
     private Context mContext;
     public static final String GET_SUBGROUP_BY_GID = HttpUtil.DOMAIN + "?q=subgroup/get_by_gid";
     private static final String APPLY_JOIN_SUBGROUP = HttpUtil.DOMAIN + "?q=subgroup/apply";
-    public static final String ACCEPT_JOIN_SUBGROUP = HttpUtil.DOMAIN + "?q=subgroup/accept";
-    public static final String APPROVE_JOIN_SUBGROUP = HttpUtil.DOMAIN + "?q=subgroup/approve";
+    public static final String GET_AUTHENTICATION_STATUS = HttpUtil.DOMAIN + "?q=user_extdata/get_authentication_status";
     public static final String GROUP_MODIFY_BROADCAST = "com.hetang.action.GROUP_MODIFY";
     public static final String EXIT_GROUP_BROADCAST = "com.hetang.action.EXIT_GROUP";
     public static final String JOIN_GROUP_BROADCAST = "com.hetang.action.JOIN_GROUP";
 
     //MeetsubGroupFragment.subGroup subGroup;
     SubGroupActivity.SubGroup subGroup;
-    private Handler handler = null;
+    private static Handler handler = null;
     private static final int JOIN_DONE = 10;
     private static final int ACCEPT_DONE = 11;
     private static final int GET_GROUP_HEADER_DONE = 12;
+        private static final int SHOW_NOTICE_DIALOG = 13;
     private int uid = -1;
     private int gid = -1;
     private static final int PAGE_SIZE = 6;
@@ -116,10 +116,10 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
     private Bundle savedInstanceState;
     private GridLayout gridLayout;
     private JSONObject memberJSONObject = new JSONObject();
-    private static final int nonMEMBER = -1;
-    private static final int APPLYING = 0;
-    private static final int INVITTED = 1;
-    private static final int JOINED = 2;
+    private static final int UNAUTHENTICATED = -1;
+    private static final int AUTHENTICATING = 0;
+    private static final int VERIFIED = 1;
+    private static final int REJECTED = 2;
     public static final int MODIFY_LOGO = 3;
     private XRecyclerView recyclerView;
     ImageView progressImageView;
@@ -273,6 +273,12 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                                new Thread(new Runnable(){
+                    @Override
+                    public void run() {
+                        int status = getAuthenticationStatus();
+                        Slog.d(TAG, "--------------getAuthenticationStatus: "+status);
+                        if (status == 1){
                 if (subGroup.authorStatus > 0 || subGroup.followed > 0) {
                     Intent intent = new Intent(MyApplication.getContext(), AddDynamicsActivity.class);
                     intent.putExtra("type", ParseUtils.ADD_SUBGROUP_ACTIVITY_ACTION);
@@ -281,6 +287,16 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
                 } else {
                     showNoticeDialog();
                 }
+                            }else {
+                            Message message = Message.obtain();
+                            Bundle bundle = new Bundle();
+                            bundle.putInt("status", status);
+                            message.setData(bundle);
+                            message.what = SHOW_NOTICE_DIALOG;
+                            handler.sendMessage(message);
+                        }
+                    }
+                }).start();
 
             }
         });
@@ -308,6 +324,47 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
 
         loadData();
     }
+    
+    public int getAuthenticationStatus(){
+        int status = -1;
+        RequestBody requestBody = new FormBody.Builder().build();
+        Response response = HttpUtil.sendOkHttpRequestSync(getContext(), GET_AUTHENTICATION_STATUS, requestBody, null);
+        if (response != null){
+            try {
+                String responseText = response.body().string();
+                if (isDebug) Slog.d(TAG, "==========response text : " + responseText);
+                if (responseText != null && !TextUtils.isEmpty(responseText)) {
+                    JSONObject statusResponse = new JSONObject(responseText);
+                    status = statusResponse.optInt("status");
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } catch (IOException e){
+                e.printStackTrace();
+            }
+        }
+
+        return status;
+    }
+    
+     public void processStatus(int status){
+        Slog.d(TAG, "-----------processStatus status: "+status);
+        switch (status){
+            case UNAUTHENTICATED:
+                showNoticeDialog("未认证", "为了保证用户隐私及安全，交友模块需要身份认证", status);
+                break;
+            case AUTHENTICATING:
+                showNoticeDialog("认证中", "您的身份认证还在审核中，请耐心等待", status);
+                break;
+            case REJECTED:
+                showNoticeDialog("认证未通过", "您的身份认证审核未通过，请重新认证", status);
+                break;
+                default:
+                    break;
+
+        }
+    }
+    
 
     public void createCommentDetails(Dynamic dynamic) {
         Intent intent = new Intent(MyApplication.getContext(), DynamicsInteractDetailsActivity.class);
@@ -671,6 +728,55 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
         invitationDialogFragment.setArguments(bundle);
         invitationDialogFragment.show(getSupportFragmentManager(), "InvitationDialogFragment");
     }
+    
+    private void showNoticeDialog(String title, String content, final int status) {
+        final AlertDialog.Builder normalDialog =
+                new AlertDialog.Builder(this, R.style.Theme_MaterialComponents_Light_Dialog_Alert);
+        normalDialog.setTitle(title);
+        normalDialog.setMessage(content);
+        DialogInterface.OnClickListener listener = null;
+        String positiveButtonText= "";
+        if (status < 0){
+            positiveButtonText = "去认证";
+            listener = new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("type", 0);
+                    GroupMemberOperationDialogFragment groupMemberOperationDialogFragment = new GroupMemberOperationDialogFragment();
+                    groupMemberOperationDialogFragment.setArguments(bundle);
+                    groupMemberOperationDialogFragment.show(getSupportFragmentManager(), "GroupMemberOperationDialogFragment");
+                }
+            };
+            }else if (status == 0){
+            positiveButtonText = "确定";
+        }else {
+            positiveButtonText = "重新认证";
+            listener = new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("type", 1);
+                    GroupMemberOperationDialogFragment groupMemberOperationDialogFragment = new GroupMemberOperationDialogFragment();
+                    groupMemberOperationDialogFragment.setArguments(bundle);
+                    groupMemberOperationDialogFragment.show(getSupportFragmentManager(), "GroupMemberOperationDialogFragment");
+                }
+            };
+        }
+
+        normalDialog.setPositiveButton(positiveButtonText, listener);
+        
+        normalDialog.setNegativeButton("取消",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //...To-do
+                    }
+                });
+
+        normalDialog.show();
+    }
+    
 
     private void loadData() {
 
@@ -793,6 +899,10 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
                 subGroupDetailsListAdapter.notifyItemRemoved(currentPos);
                 subGroupDetailsListAdapter.notifyDataSetChanged();
                 recyclerView.refreshComplete();
+                break;
+                            case SHOW_NOTICE_DIALOG:
+                Bundle data = message.getData();
+                processStatus(data.getInt("status"));
                 break;
             default:
                 break;
