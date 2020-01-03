@@ -11,16 +11,19 @@ import android.os.Message;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.hetang.R;
+import com.hetang.archive.ArchiveActivity;
 import com.hetang.update.UpdateParser;
 import com.hetang.util.FontManager;
 import com.hetang.util.RoundImageView;
 import com.hetang.util.ShareDialogFragment;
+import com.hetang.util.SharedPreferencesUtils;
 import com.hetang.util.Slog;
 import com.hetang.util.Utility;
 import com.hetang.util.HttpUtil;
@@ -50,6 +53,8 @@ private static final String TAG = "SettingsActivity";
     public static final String NO_NEW_VERSION_BROADCAST = "com.tongmenhui.action.NO_NEW_VERSION";
     public static final String HAD_NEW_VERSION_BROADCAST = "com.tongmenhui.action.HAD_NEW_VERSION";
     public static final int GET_DOWNLOAD_URI_DOWN = 0;
+        public static final int GET_ADMIN_ROLE_DOWN = 1;
+    public static final String GET_ADMIN_ROLE_URL = HttpUtil.DOMAIN + "?q=user_extdata/get_admin_role";
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +105,44 @@ private static final String TAG = "SettingsActivity";
         });
 
         registerLoginBroadcast();
+        
+                getAdminRole();
+    }
+    
+    private void getAdminRole(){
+        RequestBody requestBody = new FormBody.Builder().build();
+        HttpUtil.sendOkHttpRequest(getContext(), GET_ADMIN_ROLE_URL, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String responseText = response.body().string();
+                try {
+                    int role = new JSONObject(responseText).optInt("role");
+                    if (role >= 0){
+                        myHandler.sendEmptyMessage(GET_ADMIN_ROLE_DOWN);
+                    }
+                    
+                    }catch (JSONException e){
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+            }
+        });
+    }
+    
+    private void setAuthenticationView(){
+        LinearLayout authenticationWrapper = findViewById(R.id.authentication_wrapper);
+        TextView authentication = findViewById(R.id.authentication);
+        authenticationWrapper.setVisibility(View.VISIBLE);
+        authenticationWrapper.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(SettingsActivity.this, AuthenticationActivity.class);
+                startActivity(intent);
+            }
+        });
     }
     
     private void getDownLoadQR(){
@@ -174,6 +217,9 @@ private static final String TAG = "SettingsActivity";
             case GET_DOWNLOAD_URI_DOWN:
                 RoundImageView downLoadQR = findViewById(R.id.download_qr_code);
                 Glide.with(this).load(HttpUtil.DOMAIN + uri).into(downLoadQR);
+                break;
+                            case GET_ADMIN_ROLE_DOWN:
+                setAuthenticationView();
                 break;
                 default:
                     break;
