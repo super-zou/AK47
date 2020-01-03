@@ -212,6 +212,8 @@
     <string name="accept">同意</string>
     <string name="acceptted">已同意</string>
     <string name="more">更多</string>
+        <string name="pass">通过</string>
+    <string name="reject">拒绝</string>
     <string name="find_more">更多 ></string>
     <string name="avatar_set_request_title">头像未设置</string>
     <string name="avatar_set_request_content">需要先设置头像，才能进一步操作</string>
@@ -229,6 +231,7 @@
     <string name="generate_invite_code">获取邀请码</string>
     <string name="check_update">检查新版本</string>
     <string name="feedback">意见反馈</string>
+    <string name="authentication">认证</string>
     <string name="share">分享</string>
     <string name="share_to">分享到</string>
     <string name="from">来自</string>
