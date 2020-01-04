@@ -168,6 +168,7 @@
     </RelativeLayout>
     
       <LinearLayout
+          android:id="@+id/feedback_wrapper"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="3dp"
@@ -191,6 +192,35 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:text="@string/feedback" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/authentication_wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:background="@color/white"
+        android:padding="16dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/feedback_wrapper">
+
+        <TextView
+            android:id="@+id/authentication_icon"
+            android:textSize="18sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/certificate" />
+
+        <TextView
+            android:id="@+id/authentication"
+            android:textSize="18sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@string/authentication" />
 
     </LinearLayout>
 

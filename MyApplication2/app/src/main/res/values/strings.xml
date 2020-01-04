@@ -124,6 +124,7 @@
     <string name="next">下一步</string>
     <string name="nickname">昵称</string>
     <string name="name">姓名</string>
+    <string name="realname">真实姓名</string>
     <string name="name_option">姓名(可选)</string>
     <string name="sex">性别</string>
     <string name="male">男</string>
@@ -250,6 +251,7 @@
     <string name="member">成员</string>
     <string name="follow_action">+关注</string>
     <string name="setting">设置</string>
+    <string name="submit">提交</string>
     <string name="title_activity_picture_preview">照片预览</string>
     <string name="preparation">即将上线，敬请关注。</string>
     <string name="public_good_group_desc">点亮一盏灯，温暖一颗心</string>
@@ -259,4 +261,5 @@
     <string name="growUp_group_desc">交流学习成长经验，疑难咨询和解答，共同进步</string>
     <string name="activity_group_desc">发现各种创意、好玩的活动。与各大高校年轻人结伴出行，在活动中结识更多朋友。不负青春，让生活更精彩</string>
     <string name="foreign_friend_desc">记录外国友人的生活，与外国友人交流</string>
+    <string name="authentication_introduction">请上传一张清晰的学生证，学生卡或校园卡等带有个人头像和信息的校园证件照，要求证件照与以上信息一致</string>
 </resources>

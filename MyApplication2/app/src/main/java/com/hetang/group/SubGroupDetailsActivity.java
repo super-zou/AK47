@@ -30,18 +30,20 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.hetang.R;
 import com.hetang.adapter.SubGroupDetailsListAdapter;
-import com.hetang.dynamics.AddDynamicsActivity;
 import com.hetang.common.BaseAppCompatActivity;
-import com.hetang.dynamics.Dynamic;
-import com.hetang.dynamics.DynamicsInteractDetailsActivity;
 import com.hetang.common.MyApplication;
+import com.hetang.common.SetAvatarActivity;
+import com.hetang.common.SubmitAuthenticationDialogFragment;
+import com.hetang.dynamics.AddDynamicsActivity;
+import com.hetang.dynamics.Dynamic;
+import com.hetang.dynamics.DynamicOperationDialogFragment;
+import com.hetang.dynamics.DynamicsInteractDetailsActivity;
 import com.hetang.home.CommonContactsActivity;
 import com.hetang.home.HomeFragment;
 import com.hetang.meet.MeetDynamicsFragment;
 import com.hetang.meet.UserMeetInfo;
 import com.hetang.util.CommonDialogFragmentInterface;
 import com.hetang.util.CommonUserListDialogFragment;
-import com.hetang.dynamics.DynamicOperationDialogFragment;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.InterActInterface;
@@ -49,7 +51,6 @@ import com.hetang.util.InvitationDialogFragment;
 import com.hetang.util.MyLinearLayoutManager;
 import com.hetang.util.ParseUtils;
 import com.hetang.util.RoundImageView;
-import com.hetang.common.SetAvatarActivity;
 import com.hetang.util.Slog;
 import com.hetang.util.Utility;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
@@ -71,6 +72,8 @@ import okhttp3.Response;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static com.hetang.common.MyApplication.getContext;
+import static com.hetang.common.SetAvatarActivity.MODIFY_LOGO;
+import static com.hetang.common.SetAvatarActivity.MODIFY_SUBGROUP_LOGO_RESULT_OK;
 import static com.hetang.home.CommonContactsActivity.GROUP_MEMBER;
 import static com.hetang.home.HomeFragment.GET_MY_NEW_ADD_DONE;
 import static com.hetang.home.HomeFragment.GET_MY_NEW_ADD_DYNAMICS_URL;
@@ -84,61 +87,58 @@ import static com.hetang.meet.MeetDynamicsFragment.NO_MORE_DYNAMICS;
 import static com.hetang.meet.MeetDynamicsFragment.NO_UPDATE;
 import static com.hetang.meet.MeetDynamicsFragment.PRAISE_UPDATE;
 import static com.hetang.meet.MeetDynamicsFragment.UPDATE_COMMENT;
-import static com.hetang.common.SetAvatarActivity.MODIFY_SUBGROUP_LOGO_RESULT_OK;
 import static com.hetang.util.ParseUtils.startMeetArchiveActivity;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
 //import android.widget.GridLayout;
 
 
-public class SubGroupDetailsActivity extends BaseAppCompatActivity implements CommonDialogFragmentInterface{
-    private static final String TAG = "subGroupDetailsActivity";
-    private static final boolean isDebug = true;
-    private Context mContext;
+public class SubGroupDetailsActivity extends BaseAppCompatActivity implements CommonDialogFragmentInterface {
     public static final String GET_SUBGROUP_BY_GID = HttpUtil.DOMAIN + "?q=subgroup/get_by_gid";
-    private static final String APPLY_JOIN_SUBGROUP = HttpUtil.DOMAIN + "?q=subgroup/apply";
     public static final String GET_AUTHENTICATION_STATUS = HttpUtil.DOMAIN + "?q=user_extdata/get_authentication_status";
     public static final String GROUP_MODIFY_BROADCAST = "com.hetang.action.GROUP_MODIFY";
     public static final String EXIT_GROUP_BROADCAST = "com.hetang.action.EXIT_GROUP";
     public static final String JOIN_GROUP_BROADCAST = "com.hetang.action.JOIN_GROUP";
-
-    //MeetsubGroupFragment.subGroup subGroup;
-    SubGroupActivity.SubGroup subGroup;
-    private static Handler handler = null;
+    public static final String FOLLOW_GROUP_ACTION_URL = HttpUtil.DOMAIN + "?q=follow/group_action/";
+    private static final String TAG = "subGroupDetailsActivity";
+    private static final boolean isDebug = true;
+    private static final String APPLY_JOIN_SUBGROUP = HttpUtil.DOMAIN + "?q=subgroup/apply";
     private static final int JOIN_DONE = 10;
     private static final int ACCEPT_DONE = 11;
     private static final int GET_GROUP_HEADER_DONE = 12;
-        private static final int SHOW_NOTICE_DIALOG = 13;
-    private int uid = -1;
-    private int gid = -1;
+    private static final int SHOW_NOTICE_DIALOG = 13;
     private static final int PAGE_SIZE = 6;
-    private int currentPos = 0;
-    private Bundle savedInstanceState;
-    private GridLayout gridLayout;
-    private JSONObject memberJSONObject = new JSONObject();
     private static final int UNAUTHENTICATED = -1;
     private static final int AUTHENTICATING = 0;
     private static final int VERIFIED = 1;
     private static final int REJECTED = 2;
-    public static final int MODIFY_LOGO = 3;
-    private XRecyclerView recyclerView;
+    private static Handler handler = null;
+    //MeetsubGroupFragment.subGroup subGroup;
+    SubGroupActivity.SubGroup subGroup;
     ImageView progressImageView;
     AnimationDrawable animationDrawable;
     View mGroupHeaderView;
     Button joinBtn;
     Button followBtn;
     boolean followed = false;
-    private int mTempSize;
     MeetDynamicsFragment dynamicsFragment;
     TextView visitRecordTV;
     TextView activityAmount;
     TextView followAmount;
     TextView memberAmount;
     RoundImageView logoImage;
+    SubGroupDetailsReceiver subGroupDetailsReceiver = new SubGroupDetailsReceiver();
+    private Context mContext;
+    private int uid = -1;
+    private int gid = -1;
+    private int currentPos = 0;
+    private Bundle savedInstanceState;
+    private GridLayout gridLayout;
+    private JSONObject memberJSONObject = new JSONObject();
+    private XRecyclerView recyclerView;
+    private int mTempSize;
     private List<Dynamic> dynamicList = new ArrayList<>();
     private SubGroupDetailsListAdapter subGroupDetailsListAdapter;
-    SubGroupDetailsReceiver subGroupDetailsReceiver = new SubGroupDetailsReceiver();
-    public static final String FOLLOW_GROUP_ACTION_URL = HttpUtil.DOMAIN + "?q=follow/group_action/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,7 +152,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
 
         gid = getIntent().getIntExtra("gid", -1);
         handler = new MyHandler(this);
-        if (dynamicsFragment == null){
+        if (dynamicsFragment == null) {
             dynamicsFragment = new MeetDynamicsFragment();
         }
         //getSubGroupByGid();
@@ -161,7 +161,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
     }
 
     private void initView() {
-        
+
         TextView back = findViewById(R.id.back);
         back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -238,8 +238,9 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
                 createCommentDetails(dynamicList.get(position));
 
             }
+
             @Override
-            public void onPraiseClick(View view, int position){
+            public void onPraiseClick(View view, int position) {
 
                 Bundle bundle = new Bundle();
                 bundle.putInt("type", DYNAMICS_PRAISED);
@@ -250,13 +251,14 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
                 commonUserListDialogFragment.show(getSupportFragmentManager(), "CommonUserListDialogFragment");
 
             }
+
             @Override
-            public void onDynamicPictureClick(View view, int position, String[] pictureUrlArray, int index){
+            public void onDynamicPictureClick(View view, int position, String[] pictureUrlArray, int index) {
                 dynamicsFragment.startPicturePreview(index, pictureUrlArray);
             }
 
             @Override
-            public void onOperationClick(View view, int position){
+            public void onOperationClick(View view, int position) {
                 Bundle bundle = new Bundle();
                 bundle.putLong("did", dynamicList.get(position).getDid());
                 currentPos = position;
@@ -273,21 +275,21 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                                new Thread(new Runnable(){
+                new Thread(new Runnable() {
                     @Override
                     public void run() {
                         int status = getAuthenticationStatus();
-                        Slog.d(TAG, "--------------getAuthenticationStatus: "+status);
-                        if (status == 1){
-                if (subGroup.authorStatus > 0 || subGroup.followed > 0) {
-                    Intent intent = new Intent(MyApplication.getContext(), AddDynamicsActivity.class);
-                    intent.putExtra("type", ParseUtils.ADD_SUBGROUP_ACTIVITY_ACTION);
-                    intent.putExtra("gid", gid);
-                    startActivityForResult(intent, Activity.RESULT_FIRST_USER);
-                } else {
-                    showNoticeDialog();
-                }
-                            }else {
+                        Slog.d(TAG, "--------------getAuthenticationStatus: " + status);
+                        if (status == 1) {
+                            if (subGroup.authorStatus > 0 || subGroup.followed > 0) {
+                                Intent intent = new Intent(MyApplication.getContext(), AddDynamicsActivity.class);
+                                intent.putExtra("type", ParseUtils.ADD_SUBGROUP_ACTIVITY_ACTION);
+                                intent.putExtra("gid", gid);
+                                startActivityForResult(intent, Activity.RESULT_FIRST_USER);
+                            } else {
+                                showNoticeDialog();
+                            }
+                        } else {
                             Message message = Message.obtain();
                             Bundle bundle = new Bundle();
                             bundle.putInt("status", status);
@@ -324,12 +326,12 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
 
         loadData();
     }
-    
-    public int getAuthenticationStatus(){
+
+    public int getAuthenticationStatus() {
         int status = -1;
         RequestBody requestBody = new FormBody.Builder().build();
         Response response = HttpUtil.sendOkHttpRequestSync(getContext(), GET_AUTHENTICATION_STATUS, requestBody, null);
-        if (response != null){
+        if (response != null) {
             try {
                 String responseText = response.body().string();
                 if (isDebug) Slog.d(TAG, "==========response text : " + responseText);
@@ -339,17 +341,17 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
-            } catch (IOException e){
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
 
         return status;
     }
-    
-     public void processStatus(int status){
-        Slog.d(TAG, "-----------processStatus status: "+status);
-        switch (status){
+
+    public void processStatus(int status) {
+        Slog.d(TAG, "-----------processStatus status: " + status);
+        switch (status) {
             case UNAUTHENTICATED:
                 showNoticeDialog("未认证", "为了保证用户隐私及安全，交友模块需要身份认证", status);
                 break;
@@ -359,12 +361,12 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
             case REJECTED:
                 showNoticeDialog("认证未通过", "您的身份认证审核未通过，请重新认证", status);
                 break;
-                default:
-                    break;
+            default:
+                break;
 
         }
     }
-    
+
 
     public void createCommentDetails(Dynamic dynamic) {
         Intent intent = new Intent(MyApplication.getContext(), DynamicsInteractDetailsActivity.class);
@@ -418,8 +420,8 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
         }
     }
 
-    private SubGroupActivity.SubGroup getSubGroup(JSONObject group){
-        if (group != null){
+    private SubGroupActivity.SubGroup getSubGroup(JSONObject group) {
+        if (group != null) {
             SubGroupActivity.SubGroup subGroup = new SubGroupActivity.SubGroup();
             subGroup.gid = group.optInt("gid");
             subGroup.type = group.optInt("type");
@@ -471,21 +473,21 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
         groupOrg.setText(subGroup.org);
         groupRegion.setText(subGroup.region);
         leaderName.setText(subGroup.leader.getName());
-        
-        created.setText("创建于 "+subGroup.created);
 
-        visitRecordTV.setText(mContext.getResources().getString(R.string.visit)+" "+subGroup.visitRecord);
-        activityAmount.setText(mContext.getResources().getString(R.string.dynamics)+" "+subGroup.activityCount);
-        followAmount.setText(mContext.getResources().getString(R.string.follow)+" "+subGroup.followCount);
-        memberAmount.setText(mContext.getResources().getString(R.string.member)+" "+subGroup.memberCount);
+        created.setText("创建于 " + subGroup.created);
+
+        visitRecordTV.setText(mContext.getResources().getString(R.string.visit) + " " + subGroup.visitRecord);
+        activityAmount.setText(mContext.getResources().getString(R.string.dynamics) + " " + subGroup.activityCount);
+        followAmount.setText(mContext.getResources().getString(R.string.follow) + " " + subGroup.followCount);
+        memberAmount.setText(mContext.getResources().getString(R.string.member) + " " + subGroup.memberCount);
 
         String avatar = subGroup.leader.getAvatar();
         if (avatar != null && !"".equals(avatar)) {
             Glide.with(mContext).load(HttpUtil.DOMAIN + avatar).into(leaderAvatar);
-        }else {
-            if(subGroup.leader.getSex() == 0){
+        } else {
+            if (subGroup.leader.getSex() == 0) {
                 leaderAvatar.setImageDrawable(MyApplication.getContext().getDrawable(R.drawable.male_default_avator));
-            }else {
+            } else {
                 leaderAvatar.setImageDrawable(MyApplication.getContext().getDrawable(R.drawable.female_default_avator));
             }
         }
@@ -520,19 +522,19 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
                 }
             });
         }
-        if (subGroup.authorStatus == -1){
+        if (subGroup.authorStatus == -1) {
 
-        if (subGroup.followed == 1) {
-            followed = true;
-            followBtn.setText("已关注");
-            followBtn.setBackground(MyApplication.getContext().getDrawable(R.drawable.btn_disable));
-            followBtn.setTextColor(getResources().getColor(R.color.color_dark_grey));
-        } else {
-            followed = false;
-            followBtn.setText("+关注");
-            followBtn.setTextColor(getResources().getColor(R.color.blue_dark));
-            followBtn.setBackground(MyApplication.getContext().getDrawable(R.drawable.btn_default));
-        }
+            if (subGroup.followed == 1) {
+                followed = true;
+                followBtn.setText("已关注");
+                followBtn.setBackground(MyApplication.getContext().getDrawable(R.drawable.btn_disable));
+                followBtn.setTextColor(getResources().getColor(R.color.color_dark_grey));
+            } else {
+                followed = false;
+                followBtn.setText("+关注");
+                followBtn.setTextColor(getResources().getColor(R.color.blue_dark));
+                followBtn.setBackground(MyApplication.getContext().getDrawable(R.drawable.btn_default));
+            }
         }
 
         followBtn.setOnClickListener(new View.OnClickListener() {
@@ -544,7 +546,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
             @Override
             public void onClick(View view) {
                 String followUrl = "";
-                                String [] followSplit = followAmount.getText().toString().split(" ");
+                String[] followSplit = followAmount.getText().toString().split(" ");
                 int currentCount = Integer.parseInt(followSplit[1]);
                 if (followed == true) {
                     followed = false;
@@ -552,7 +554,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
                     followBtn.setText("+关注");
                     followBtn.setTextColor(getResources().getColor(R.color.blue_dark));
                     followBtn.setBackground(MyApplication.getContext().getDrawable(R.drawable.btn_default));
-                    followAmount.setText("关注 "+String.valueOf(currentCount - 1));
+                    followAmount.setText("关注 " + String.valueOf(currentCount - 1));
                     subGroup.followed = 0;
                 } else {
                     followed = true;
@@ -562,10 +564,10 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
                     followBtn.setTextColor(getResources().getColor(R.color.color_dark_grey));
                     //String amount = followAmount.getText().toString();
                     //int currentCount = 0;
-                    if ( followSplit[1] != null && !TextUtils.isEmpty(followSplit[1])) {
+                    if (followSplit[1] != null && !TextUtils.isEmpty(followSplit[1])) {
                         currentCount = Integer.parseInt(followSplit[1]);
                     }
-                    followAmount.setText("关注 "+String.valueOf(currentCount + 1));
+                    followAmount.setText("关注 " + String.valueOf(currentCount + 1));
                     subGroup.followed = 1;
                 }
 
@@ -589,19 +591,35 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
         memberAmount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getContext(), CommonContactsActivity.class);
-                intent.putExtra("type", GROUP_MEMBER);
-                intent.putExtra("gid", gid);
-                intent.putExtra("isLeader", subGroup.isLeader);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-                startActivityForResult(intent, RESULT_FIRST_USER);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        int status = getAuthenticationStatus();
+                        Slog.d(TAG, "--------------getAuthenticationStatus: " + status);
+                        if (status == 1) {
+                            Intent intent = new Intent(getContext(), CommonContactsActivity.class);
+                            intent.putExtra("type", GROUP_MEMBER);
+                            intent.putExtra("gid", gid);
+                            intent.putExtra("isLeader", subGroup.isLeader);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                            startActivityForResult(intent, RESULT_FIRST_USER);
+                        } else {
+                            Message message = Message.obtain();
+                            Bundle bundle = new Bundle();
+                            bundle.putInt("status", status);
+                            message.setData(bundle);
+                            message.what = SHOW_NOTICE_DIALOG;
+                            handler.sendMessage(message);
+                        }
+                    }
+                }).start();
             }
         });
 
         logoImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (subGroup.isLeader){
+                if (subGroup.isLeader) {
                     Intent intent = new Intent(getContext(), SetAvatarActivity.class);
                     intent.putExtra("type", MODIFY_LOGO);
                     intent.putExtra("gid", subGroup.gid);
@@ -609,7 +627,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
                 }
             }
         });
-        
+
         leaderName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -664,7 +682,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
             }
         });
     }
-    
+
     private void acceptSingleGroupInvite() {
         Slog.d(TAG, "=============accept");
         RequestBody requestBody = new FormBody.Builder()
@@ -692,7 +710,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
             }
         });
     }
-    
+
 
     private void showNoticeDialog() {
         final AlertDialog.Builder normalDialog =
@@ -728,29 +746,29 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
         invitationDialogFragment.setArguments(bundle);
         invitationDialogFragment.show(getSupportFragmentManager(), "InvitationDialogFragment");
     }
-    
+
     private void showNoticeDialog(String title, String content, final int status) {
         final AlertDialog.Builder normalDialog =
                 new AlertDialog.Builder(this, R.style.Theme_MaterialComponents_Light_Dialog_Alert);
         normalDialog.setTitle(title);
         normalDialog.setMessage(content);
         DialogInterface.OnClickListener listener = null;
-        String positiveButtonText= "";
-        if (status < 0){
+        String positiveButtonText = "";
+        if (status < 0) {
             positiveButtonText = "去认证";
             listener = new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     Bundle bundle = new Bundle();
                     bundle.putInt("type", 0);
-                    GroupMemberOperationDialogFragment groupMemberOperationDialogFragment = new GroupMemberOperationDialogFragment();
-                    groupMemberOperationDialogFragment.setArguments(bundle);
-                    groupMemberOperationDialogFragment.show(getSupportFragmentManager(), "GroupMemberOperationDialogFragment");
+                    SubmitAuthenticationDialogFragment submitAuthenticationDialogFragment = new SubmitAuthenticationDialogFragment();
+                    submitAuthenticationDialogFragment.setArguments(bundle);
+                    submitAuthenticationDialogFragment.show(getSupportFragmentManager(), "SubmitAuthenticationDialogFragment");
                 }
             };
-            }else if (status == 0){
+        } else if (status == 0) {
             positiveButtonText = "确定";
-        }else {
+        } else {
             positiveButtonText = "重新认证";
             listener = new DialogInterface.OnClickListener() {
                 @Override
@@ -765,7 +783,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
         }
 
         normalDialog.setPositiveButton(positiveButtonText, listener);
-        
+
         normalDialog.setNegativeButton("取消",
                 new DialogInterface.OnClickListener() {
                     @Override
@@ -776,7 +794,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
 
         normalDialog.show();
     }
-    
+
 
     private void loadData() {
 
@@ -811,7 +829,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
                             }
                             Log.d(TAG, "getResponseText list.size:" + tempList.size());
                             handler.sendEmptyMessage(LOAD_DYNAMICS_DONE);
-                        }else {
+                        } else {
                             handler.sendEmptyMessage(NO_MORE_DYNAMICS);
                         }
 
@@ -820,7 +838,8 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
             }
 
             @Override
-            public void onFailure(Call call, IOException e) {}
+            public void onFailure(Call call, IOException e) {
+            }
         });
     }
 
@@ -891,7 +910,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
                 recyclerView.refreshComplete();
                 //update activity amount
                 subGroup.activityCount += 1;
-                activityAmount.setText(mContext.getResources().getString(R.string.dynamics)+" "+subGroup.activityCount);
+                activityAmount.setText(mContext.getResources().getString(R.string.dynamics) + " " + subGroup.activityCount);
                 break;
             case DYNAMICS_DELETE:
                 dynamicList.remove(currentPos);
@@ -900,7 +919,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
                 subGroupDetailsListAdapter.notifyDataSetChanged();
                 recyclerView.refreshComplete();
                 break;
-                            case SHOW_NOTICE_DIALOG:
+            case SHOW_NOTICE_DIALOG:
                 Bundle data = message.getData();
                 processStatus(data.getInt("status"));
                 break;
@@ -908,21 +927,21 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
                 break;
         }
     }
-    
-        private void sendJoinGroupBroadcast() {
+
+    private void sendJoinGroupBroadcast() {
         Intent intent = new Intent(JOIN_GROUP_BROADCAST);
         intent.putExtra("gid", gid);
         LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
     }
 
-    private void stopLoadProgress(){
-        if (progressImageView.getVisibility() == View.VISIBLE){
+    private void stopLoadProgress() {
+        if (progressImageView.getVisibility() == View.VISIBLE) {
             animationDrawable.stop();
             progressImageView.setVisibility(View.GONE);
 
         }
     }
-    
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == Activity.RESULT_FIRST_USER) {
@@ -937,7 +956,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
                     msg.what = COMMENT_COUNT_UPDATE;
                     handler.sendMessage(msg);
                     break;
-                    
+
                 case HomeFragment.PRAISE_UPDATE_RESULT:
                     handler.sendEmptyMessage(PRAISE_UPDATE);
                     break;
@@ -946,7 +965,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
                     break;
                 case MODIFY_SUBGROUP_LOGO_RESULT_OK:
                     String logoUri = data.getStringExtra("logoUri");
-                    if (!TextUtils.isEmpty(logoUri)){
+                    if (!TextUtils.isEmpty(logoUri)) {
                         Glide.with(this).load(HttpUtil.DOMAIN + logoUri).into(logoImage);
                     }
                     break;
@@ -955,9 +974,10 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
             }
         }
     }
-    
+
     @Override
-    public void onBackFromDialog(int type, int result, boolean status) { }
+    public void onBackFromDialog(int type, int result, boolean status) {
+    }
 
     private void getMyNewActivity() {
         RequestBody requestBody = new FormBody.Builder()
@@ -989,8 +1009,8 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
                                 handler.sendEmptyMessage(GET_MY_NEW_ADD_DONE);
                             }
                         }
-                        
-                        }
+
+                    }
                 }
             }
 
@@ -1015,28 +1035,12 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(subGroupDetailsReceiver);
     }
 
-    private class SubGroupDetailsReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            switch (intent.getAction()) {
-                case GROUP_MODIFY_BROADCAST:
-                    getSubGroupByGid();
-                    break;
-                case EXIT_GROUP_BROADCAST:
-                    getSubGroupByGid();
-                    Toast.makeText(mContext, "成功退出", Toast.LENGTH_LONG).show();
-                    break;
-            }
-
-        }
-    }
-    
     @Override
-    public void onBackPressed(){
+    public void onBackPressed() {
         exit();
     }
 
-    private void exit(){
+    private void exit() {
         Intent intent = new Intent();
         intent.putExtra("approved", true);
         setResult(RESULT_OK, intent);
@@ -1067,6 +1071,22 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
             if (subGroupDetailsActivity != null) {
                 subGroupDetailsActivity.handleMessage(message);
             }
+        }
+    }
+
+    private class SubGroupDetailsReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()) {
+                case GROUP_MODIFY_BROADCAST:
+                    getSubGroupByGid();
+                    break;
+                case EXIT_GROUP_BROADCAST:
+                    getSubGroupByGid();
+                    Toast.makeText(mContext, "成功退出", Toast.LENGTH_LONG).show();
+                    break;
+            }
+
         }
     }
 }

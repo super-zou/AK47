@@ -134,7 +134,6 @@ private static final String TAG = "SettingsActivity";
     
     private void setAuthenticationView(){
         LinearLayout authenticationWrapper = findViewById(R.id.authentication_wrapper);
-        TextView authentication = findViewById(R.id.authentication);
         authenticationWrapper.setVisibility(View.VISIBLE);
         authenticationWrapper.setOnClickListener(new View.OnClickListener() {
             @Override

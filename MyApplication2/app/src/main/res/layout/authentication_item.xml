@@ -81,7 +81,7 @@
         app:layout_constraintTop_toTopOf="@+id/reject" />
         
          <Button
-        android:id="@+id/verify"
+        android:id="@+id/pass"
         android:layout_width="80dp"
         android:layout_height="30dp"
         android:layout_marginTop="8dp"
@@ -106,7 +106,7 @@
         android:text="@string/reject"
         android:textColor="@color/disabled"
         android:visibility="visible"
-        app:layout_constraintEnd_toStartOf="@+id/verify"
-        app:layout_constraintTop_toTopOf="@+id/verify" />
+        app:layout_constraintEnd_toStartOf="@+id/pass"
+        app:layout_constraintTop_toTopOf="@+id/pass" />
 
 </android.support.constraint.ConstraintLayout>

@@ -11,9 +11,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.hetang.R;
 import com.hetang.adapter.AuthenticationListAdapter;
+import com.hetang.util.AuthenticateOperationInterface;
 import com.hetang.util.BaseFragment;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.Slog;
@@ -44,27 +46,30 @@ import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 public class AuthenticationFragment extends BaseFragment {
     private static final boolean isDebug = true;
     private static final String TAG = "AuthenticationFragment";
-
-    private int type;
     private static final int PAGE_SIZE = 5;
     private static final int LOAD_DONE = 0;
     private static final int UPDATE_DONE = 1;
     private static final int LOAD_COMPLETE_END = 2;
     private static final int LOAD_NOTHING_DONE = 3;
+    private static final int OPERATION_DONE = 4;
     private static final String GET_ALL_AUTHENTICATION_URL = HttpUtil.DOMAIN + "?q=user_extdata/get_all_authentication_status/";
-    private static final String GET_UPDATE_NOTICE_URL = HttpUtil.DOMAIN + "?q=notice/get_update";
-    
+    private static final String SET_AUTHENTICATION_STATUS = HttpUtil.DOMAIN + "?q=user_extdata/set_authentication_status";
+    Typeface font;
+    private int mCurrentPos;
+    int page = 0;
+    private int type;
+    private TextView countTV;
+    private int count;
+    private static int PASSED = 1;
+    private static int REJECTED = 2;
     private List<Authentication> authenticationList = new ArrayList<>();
     private XRecyclerView xRecyclerView;
     private int mTempSize;
     private AuthenticationListAdapter authenticationListAdapter;
     private Context mContext;
     private MyHandler handler;
-    Typeface font;
-    int i = 0;
     private Runnable runnable;
-    int page = 0;
-    
+
     public static final AuthenticationFragment newInstance(int type) {
         AuthenticationFragment f = new AuthenticationFragment();
         Bundle bdl = new Bundle();
@@ -78,7 +83,7 @@ public class AuthenticationFragment extends BaseFragment {
         super.onCreate(savedInstanceState);
         type = getArguments().getInt("type");
     }
-    
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -92,13 +97,14 @@ public class AuthenticationFragment extends BaseFragment {
     protected int getLayoutId() {
         return R.layout.authentication;
     }
-    
+
     protected void initView(View view) {
         Slog.d(TAG, "================================initView");
         handler = new MyHandler(this);
         mContext = MyApplication.getContext();
         authenticationListAdapter = new AuthenticationListAdapter(getContext());
 
+        countTV = view.findViewById(R.id.count);
         xRecyclerView = view.findViewById(R.id.authentication_list);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
@@ -110,7 +116,7 @@ public class AuthenticationFragment extends BaseFragment {
 
         xRecyclerView.getDefaultRefreshHeaderView().setRefreshTimeVisible(false);
         xRecyclerView.setPullRefreshEnabled(false);
-        
+
         xRecyclerView.getDefaultFootView().setNoMoreHint(getString(R.string.no_more));
         int itemLimit = 1;
         // When the item number of the screen number is list.size-2,we call the onLoadMore
@@ -129,15 +135,32 @@ public class AuthenticationFragment extends BaseFragment {
                 }
                 super.onScrollStateChanged(recyclerView, newState);
             }
-  });
+        });
 
         xRecyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
             @Override
-            public void onRefresh() {}
+            public void onRefresh() {
+            }
 
             @Override
             public void onLoadMore() {
                 loadData();
+            }
+        });
+
+        authenticationListAdapter.setOnItemClickListener(new AuthenticateOperationInterface() {
+            @Override
+            public void onPassClick(View view, int position) {
+                mCurrentPos = position;
+                Authentication authentication = authenticationList.get(position);
+                authenticationOperation(authentication.aid, authentication.getUid(), PASSED);
+            }
+
+            @Override
+            public void onRejectClick(View view, int position) {
+                mCurrentPos = position;
+                Authentication authentication = authenticationList.get(position);
+                authenticationOperation(authentication.aid, authentication.getUid(), REJECTED);
             }
         });
 
@@ -146,7 +169,45 @@ public class AuthenticationFragment extends BaseFragment {
         loadData();
 
     }
-    
+
+    private void authenticationOperation(int aid, int uid, int status){
+        showProgressDialog(getActivity(), "...");
+        RequestBody requestBody = new FormBody.Builder()
+                .add("aid", String.valueOf(aid))
+                .add("uid", String.valueOf(uid))
+                .add("status", String.valueOf(status))
+                .build();
+
+        HttpUtil.sendOkHttpRequest(MyApplication.getContext(), SET_AUTHENTICATION_STATUS, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.body() != null) {
+                    String responseText = response.body().string();
+                    if (isDebug) Slog.d(TAG, "==========load response text : " + responseText);
+                    if (responseText != null) {
+                        try {
+                            JSONObject responseObject = new JSONObject(responseText);
+                            int status = responseObject.optInt("status");
+                            if (status > 0){
+                                dismissProgressDialog();
+                                handler.sendEmptyMessage(OPERATION_DONE);
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+            }
+        });
+    }
+
     protected void loadData() {
         Slog.d(TAG, "-------------------------------->loadData");
         page = authenticationList.size() / PAGE_SIZE;
@@ -154,18 +215,18 @@ public class AuthenticationFragment extends BaseFragment {
                 .add("step", String.valueOf(PAGE_SIZE))
                 .add("page", String.valueOf(page))
                 .build();
-                
-                String url = "";
-        if (type == unVERIFIED){
-            url = GET_ALL_AUTHENTICATION_URL+"unverified";
-        }else if (type == VERIFIED){
-            url = GET_ALL_AUTHENTICATION_URL+"verified";
-        }else {
-            url = GET_ALL_AUTHENTICATION_URL+"rejected";
+
+        String url = "";
+        if (type == unVERIFIED) {
+            url = GET_ALL_AUTHENTICATION_URL + "unverified";
+        } else if (type == VERIFIED) {
+            url = GET_ALL_AUTHENTICATION_URL + "verified";
+        } else {
+            url = GET_ALL_AUTHENTICATION_URL + "rejected";
         }
 
-        Slog.d(TAG, "-------------url: "+url);
-        
+        Slog.d(TAG, "-------------url: " + url);
+
         HttpUtil.sendOkHttpRequest(MyApplication.getContext(), url, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
@@ -176,8 +237,8 @@ public class AuthenticationFragment extends BaseFragment {
                         int itemCount = processResponseText(responseText);
                         if (itemCount > 0) {
                             if (itemCount < PAGE_SIZE) {
-                            
-                            handler.sendEmptyMessage(LOAD_COMPLETE_END);
+
+                                handler.sendEmptyMessage(LOAD_COMPLETE_END);
                             } else {
                                 handler.sendEmptyMessage(LOAD_DONE);
                             }
@@ -194,22 +255,30 @@ public class AuthenticationFragment extends BaseFragment {
             }
         });
     }
-    
+
     private int processResponseText(String responseText) {
         JSONArray authenticationArray;
         JSONObject responseObject;
         try {
             responseObject = new JSONObject(responseText);
+            count = responseObject.optInt("count");
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    countTV.setText(String.valueOf(count));
+                }
+            });
             authenticationArray = responseObject.optJSONArray("results");
 
-            if (isDebug) Slog.d(TAG, "------------------------------>authenticationArray: " + authenticationArray);
+            if (isDebug)
+                Slog.d(TAG, "------------------------------>authenticationArray: " + authenticationArray);
             if (authenticationArray != null && authenticationArray.length() > 0) {
                 for (int i = 0; i < authenticationArray.length(); i++) {
                     JSONObject authenticationObject = authenticationArray.getJSONObject(i);
                     Authentication authentication = parseAuthentication(authenticationObject);
                     authenticationList.add(authentication);
                 }
-                
+
                 return authenticationArray.length();
             }
         } catch (JSONException e) {
@@ -219,20 +288,13 @@ public class AuthenticationFragment extends BaseFragment {
         return 0;
     }
 
-    public static class Authentication extends UserProfile{
-        public int aid;
-        public int officerUid;
-        public String authenticationPhotoUrl = "";
-        public int requestTime;
-    }
-    
     private Authentication parseAuthentication(JSONObject authenticationObject) {
         Authentication authentication = new Authentication();
         authentication.aid = authenticationObject.optInt("aid");
         authentication.officerUid = authenticationObject.optInt("officer_uid");
         authentication.authenticationPhotoUrl = authenticationObject.optString("uri");
         authentication.requestTime = authenticationObject.optInt("created");
-        
+
         authentication.setName(authenticationObject.optString("realname"));
         authentication.setAvatar(authenticationObject.optString("avatar"));
         authentication.setSex(authenticationObject.optInt("sex"));
@@ -243,7 +305,7 @@ public class AuthenticationFragment extends BaseFragment {
 
         return authentication;
     }
-    
+
     public void handleMessage(Message message) {
         switch (message.what) {
             case LOAD_DONE:
@@ -265,9 +327,16 @@ public class AuthenticationFragment extends BaseFragment {
                 xRecyclerView.setNoMore(true);
                 xRecyclerView.loadMoreComplete();
                 break;
+            case OPERATION_DONE:
+                countTV.setText(String.valueOf(count - 1));
+                authenticationList.remove(mCurrentPos);
+                authenticationListAdapter.setData(authenticationList, type);
+                authenticationListAdapter.notifyItemRemoved(mCurrentPos);
+                authenticationListAdapter.notifyDataSetChanged();
+                break;
             default:
                 break;
-     }
+        }
     }
 
     @Override
@@ -275,7 +344,14 @@ public class AuthenticationFragment extends BaseFragment {
         super.onDestroy();
         handler.removeCallbacks(runnable);
     }
-    
+
+    public static class Authentication extends UserProfile {
+        public int aid;
+        public int officerUid;
+        public String authenticationPhotoUrl = "";
+        public int requestTime;
+    }
+
     static class MyHandler extends Handler {
         WeakReference<AuthenticationFragment> notificationFragmentWeakReference;
 

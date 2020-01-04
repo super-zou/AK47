@@ -1,29 +1,174 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/white"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <include
+        android:id="@+id/custom_actionbar"
+        layout="@layout/custom_actionbar_common"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.hetang.util.RoundImageView
         android:id="@+id/avatar"
         android:layout_width="120dp"
         android:layout_height="120dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-        
-        <TextView
+        app:layout_constraintTop_toBottomOf="@+id/custom_actionbar" />
+
+    <TextView
         android:id="@+id/set_avatar"
         android:layout_width="120dp"
         android:layout_height="30dp"
-        android:gravity="center"
-        android:textColor="@color/white"
         android:background="@color/background"
+        android:gravity="center"
         android:text="@string/set_avatar"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="@+id/avatar"
         app:layout_constraintEnd_toEndOf="@+id/avatar"
         app:layout_constraintStart_toStartOf="@+id/avatar" />
 
-    
+    <EditText
+        android:id="@+id/realname_edittext"
+        style="@style/EditTextCustom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="136dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:hint="@string/realname"
+        android:textColor="@color/blue_dark"
+        android:textCursorDrawable="@drawable/cursor_color"
+        android:theme="@style/MyEditText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/custom_actionbar" />
+
+    <RadioGroup
+        android:id="@+id/sexRG"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="136dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/realname_edittext">
+
+        <TextView
+            android:id="@+id/sexTextView"
+            android:textColor="@color/blue_dark"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="16dp"
+            android:text="@string/sex" />
+
+        <RadioButton
+            android:id="@+id/radioMale"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:textColor="@color/blue_dark"
+            android:text="@string/male"
+            android:theme="@style/MyRadioButton" />
+
+        <RadioButton
+            android:id="@+id/radioFemale"
+            android:textColor="@color/blue_dark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:text="@string/female"
+            android:theme="@style/MyRadioButton" />
+    </RadioGroup>
+
+    <EditText
+        android:id="@+id/major_edittext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="136dp"
+        android:layout_marginEnd="8dp"
+        android:hint="@string/major"
+        style="@style/EditTextCustom"
+        android:textColor="@color/blue_dark"
+        android:textCursorDrawable="@drawable/cursor_color"
+        android:theme="@style/MyEditText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sexRG"/>
+
+    <org.angmarch.views.NiceSpinner
+        android:id="@+id/nice_spinner_degree"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/disabled"
+        android:entries="@array/degrees"
+        android:foreground="@drawable/btn_disable"
+        app:layout_constraintStart_toStartOf="@+id/major_edittext"
+        app:layout_constraintTop_toBottomOf="@+id/major_edittext"
+        app:textTint="@color/blue_dark" />
+
+    <!--
+    <EditText
+        android:id="@+id/degree_edittext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="136dp"
+        android:layout_marginEnd="8dp"
+        android:hint="@string/degree"
+        style="@style/EditTextCustom"
+        android:textColor="@color/blue_dark"
+        android:textCursorDrawable="@drawable/cursor_color"
+        android:theme="@style/MyEditText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/major_edittext"/>
+        -->
+
+    <EditText
+        android:id="@+id/university_edittext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="136dp"
+        android:layout_marginEnd="8dp"
+        android:hint="@string/university"
+        style="@style/EditTextCustom"
+        android:textColor="@color/blue_dark"
+        android:textCursorDrawable="@drawable/cursor_color"
+        android:theme="@style/MyEditText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/nice_spinner_degree"/>
+
+    <TextView
+        android:id="@+id/introduction"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/authentication_introduction"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/university_edittext" />
+
+    <com.hetang.util.RoundImageView
+        android:id="@+id/ID_photo"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/addimg_1x"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/introduction" />
+
 
 </android.support.constraint.ConstraintLayout>

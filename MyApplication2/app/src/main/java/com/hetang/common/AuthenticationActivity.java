@@ -89,7 +89,7 @@ public class AuthenticationActivity extends BaseAppCompatActivity {
         //创建一个viewpager的adapter
         mFragmentAdapter = new AuthenticationFragmentAdapter(getSupportFragmentManager(), mFragmentList, mTitles);
         mViewPager.setAdapter(mFragmentAdapter);
-        //mViewPager.setOffscreenPageLimit(3);
+        //mViewPager.setOffscreenPageLimit(0);
 
         //将TabLayout和ViewPager关联起来
         mTabLayout.setupWithViewPager(mViewPager);
@@ -114,18 +114,18 @@ public class AuthenticationActivity extends BaseAppCompatActivity {
          mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                TextView tabIcon = tab.getCustomView().findViewById(R.id.tab_icon);
+                TextView count = tab.getCustomView().findViewById(R.id.count);
                 TextView tabText = tab.getCustomView().findViewById(R.id.tab_text);
                 tabText.setTextColor(getResources().getColor(R.color.blue_dark));
-               // tabIcon.setTextColor(getResources().getColor(R.color.blue_dark));
+                count.setTextColor(getResources().getColor(R.color.blue_dark));
             }
             
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-                TextView tabIcon = tab.getCustomView().findViewById(R.id.tab_icon);
+                TextView count = tab.getCustomView().findViewById(R.id.count);
                 TextView tabText = tab.getCustomView().findViewById(R.id.tab_text);
                 tabText.setTextColor(getResources().getColor(R.color.text_default));
-                //tabIcon.setTextColor(getResources().getColor(R.color.text_default));
+                count.setTextColor(getResources().getColor(R.color.text_default));
             }
             
             @Override

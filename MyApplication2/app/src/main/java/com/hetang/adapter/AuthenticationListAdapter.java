@@ -32,6 +32,7 @@ import com.hetang.group.SingleGroupDetailsActivity;
 import com.hetang.group.SubGroupDetailsActivity;
 import com.hetang.main.MeetArchiveActivity;
 import com.hetang.message.NotificationFragment;
+import com.hetang.util.AuthenticateOperationInterface;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.ParseUtils;
@@ -73,6 +74,7 @@ public class AuthenticationListAdapter extends RecyclerView.Adapter<Authenticati
     private Handler mHandler;
     private int type;
     private FragmentManager fragmentManager;
+    private static AuthenticateOperationInterface authenticateOperationInterface;
     
     public AuthenticationListAdapter(Context context) {
         mContext = context;
@@ -100,6 +102,11 @@ public class AuthenticationListAdapter extends RecyclerView.Adapter<Authenticati
     public void setScrolling(boolean isScrolling) {
         this.isScrolling = isScrolling;
     }
+
+    //register the interActInterface callback, add by zouhaichao 2018/9/16
+    public void setOnItemClickListener(AuthenticateOperationInterface authenticateOperationInterface) {
+        this.authenticateOperationInterface = authenticateOperationInterface;
+    }
     
     @Override
     public AuthenticationListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -110,7 +117,7 @@ public class AuthenticationListAdapter extends RecyclerView.Adapter<Authenticati
     }
     
     @Override
-    public void onBindViewHolder(@NonNull final AuthenticationListAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final AuthenticationListAdapter.ViewHolder holder, final int position) {
         final AuthenticationFragment.Authentication authentication = authenticationList.get(position);
 
         if (authentication.getAvatar() != null && !"".equals(authentication.getAvatar())) {
@@ -142,20 +149,21 @@ public class AuthenticationListAdapter extends RecyclerView.Adapter<Authenticati
         holder.timeStamp.setText(dataString);
         
         if (type == unVERIFIED){
-            holder.verify.setVisibility(View.VISIBLE);
+            holder.pass.setVisibility(View.VISIBLE);
             holder.reject.setVisibility(View.VISIBLE);
 
-            holder.verify.setOnClickListener(new View.OnClickListener() {
+            holder.pass.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    verifyAction(authentication.aid, authentication.uid);
+                    //verifyAction(authentication.aid, authentication.uid);
+                    authenticateOperationInterface.onPassClick(view, position);
                 }
             });
             
             holder.reject.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    rejectAction(authentication.aid, authentication.uid);
+                    authenticateOperationInterface.onRejectClick(view, position);
                 }
             });
         }
@@ -169,68 +177,7 @@ public class AuthenticationListAdapter extends RecyclerView.Adapter<Authenticati
 
 
     }
-    
-    private void verifyAction(int aid, int uid) {
 
-    }
-
-    private void rejectAction(int aid, int uid) {
-
-    }
-    
-     private void acceptSingleGroupInvite(int gid, int uid) {
-        Slog.d(TAG, "=============accept");
-        RequestBody requestBody = new FormBody.Builder()
-                .add("gid", String.valueOf(gid))
-                .add("uid", String.valueOf(uid))
-                .build();
-        HttpUtil.sendOkHttpRequest(mContext, SingleGroupDetailsActivity.ACCEPT_SUBGROUP_INVITE, requestBody, new Callback() {
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-            Slog.d(TAG, "==========response body : " + response.body());
-                if (response.body() != null) {
-                    String responseText = response.body().string();
-                    Slog.d(TAG, "==========response text : " + responseText);
-                    if (responseText != null && !TextUtils.isEmpty(responseText)) {
-                        //refresh();
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call call, IOException e) {
-
-            }
-        });
-    }
-    
-    private void approveSingleGroupApply(int gid, int uid) {
-        Slog.d(TAG, "=============approveSingleGroupApply gid: " + gid);
-        RequestBody requestBody = new FormBody.Builder()
-                .add("gid", String.valueOf(gid))
-                .add("uid", String.valueOf(uid))
-                .build();
-                
-                 HttpUtil.sendOkHttpRequest(mContext, SingleGroupDetailsActivity.APPROVE_JOIN_SINGLE_GROUP, requestBody, new Callback() {
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                Slog.d(TAG, "==========response body : " + response.body());
-                if (response.body() != null) {
-                    String responseText = response.body().string();
-                    Slog.d(TAG, "==========response text : " + responseText);
-                    if (responseText != null && !TextUtils.isEmpty(responseText)) {
-                        //refresh();
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call call, IOException e) {
-
-            }
-        });
-    }
-    
     @Override
     public int getItemCount() {
         return authenticationList != null ? authenticationList.size() : 0;
@@ -244,7 +191,7 @@ public class AuthenticationListAdapter extends RecyclerView.Adapter<Authenticati
         TextView name;
         TextView university;
         TextView degree;
-        Button verify;
+        Button pass;
         Button reject;
         TextView timeStamp;
         
@@ -257,7 +204,7 @@ public class AuthenticationListAdapter extends RecyclerView.Adapter<Authenticati
             major = view.findViewById(R.id.major);
             degree = view.findViewById(R.id.degree);
             university = view.findViewById(R.id.university);
-            verify = view.findViewById(R.id.verify);
+            pass = view.findViewById(R.id.pass);
             reject = view.findViewById(R.id.reject);
             timeStamp = view.findViewById(R.id.timestamp);
         }

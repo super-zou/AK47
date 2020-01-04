@@ -129,7 +129,7 @@ public class UserProfile implements Serializable {
         return degree;
     }
 
-    public int getDegreeIndex() {
+    public int getDegreeIndex(String degree) {
         if (degree.equals("其它")) {
             return -1;
         }

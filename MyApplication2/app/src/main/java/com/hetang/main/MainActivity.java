@@ -14,8 +14,10 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.hetang.R;
 import com.hetang.adapter.MainFragmentAdapter;
 import com.hetang.common.BaseAppCompatActivity;
+import com.hetang.common.MyApplication;
 import com.hetang.common.ReminderManager;
 import com.hetang.home.HomeFragment;
 import com.hetang.update.UpdateParser;
@@ -23,13 +25,11 @@ import com.hetang.util.BaseFragment;
 import com.hetang.util.CommonDialogFragmentInterface;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
-import com.hetang.common.MyApplication;
 import com.hetang.util.SharedPreferencesUtils;
 import com.hetang.util.Slog;
-
 import com.netease.nim.uikit.api.NimUIKit;
-import com.netease.nim.uikit.api.model.session.SessionEventListener;
 import com.netease.nim.uikit.api.model.main.LoginSyncDataStatusObserver;
+import com.netease.nim.uikit.api.model.session.SessionEventListener;
 import com.netease.nim.uikit.common.ui.dialog.DialogMaker;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.NimIntent;
@@ -38,7 +38,6 @@ import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.auth.LoginInfo;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
-import com.hetang.R;
 import com.xuexiang.xupdate.XUpdate;
 
 import org.json.JSONException;
@@ -56,11 +55,10 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static com.hetang.common.Chat.createYunXinUser;
-import static com.hetang.util.HttpUtil.GET_USERINFO_WITH_ACCOUNT;
 import static com.hetang.util.HttpUtil.GET_PASSWORD_HASH;
-import static com.hetang.util.ParseUtils.startArchiveActivity;
-import static com.hetang.util.ParseUtils.startMeetArchiveActivity;
+import static com.hetang.util.HttpUtil.GET_USERINFO_WITH_ACCOUNT;
 import static com.hetang.util.HttpUtil.getYunXinAccountExist;
+import static com.hetang.util.ParseUtils.startMeetArchiveActivity;
 import static com.hetang.util.SharedPreferencesUtils.getYunXinAccount;
 import static com.hetang.util.SharedPreferencesUtils.getYunXinToken;
 import static com.hetang.util.SharedPreferencesUtils.setYunXinAccount;
@@ -68,41 +66,38 @@ import static com.hetang.util.SharedPreferencesUtils.setYunXinToken;
 
 public class MainActivity extends BaseAppCompatActivity implements CommonDialogFragmentInterface, ReminderManager.UnreadNumChangedCallback {
 
+    public static final int HAVA_NEW_VERSION = 2;
     private static final String TAG = "MainActivity";
     private final static boolean isDebug = false;
     private final static boolean isNimDebug = false;
     private final static boolean isUpdateDebug = false;
+    private static final int START_MEET_ARCHIVE_ACTIVITY = 2;
+    private static final int START_ARCHIVE_ACTIVITY = 3;
+    private static final int REQUEST_CODE_INSTALL_PERMISSION = 107;
+    private static MyHandler handler;
     TabLayout.Tab home_tab;
     TabLayout.Tab meet_tab;
     TabLayout.Tab message_tab;
     TabLayout.Tab contacts_tab;
     TabLayout.Tab me_tab;
+    TextView unReadView;
+    TextView contactsAppliedNoticeView;
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
-    TextView unReadView;
-     TextView contactsAppliedNoticeView;
     private MainFragmentAdapter mFragmentAdapter;
     private List<Fragment> mFragmentList = new ArrayList<>();
-    
-    private static MyHandler handler;
     private boolean hasUnreadMessage = false;
     private boolean hasUnreadSessions = false;
-    private static final int START_MEET_ARCHIVE_ACTIVITY = 2;
-    private static final int START_ARCHIVE_ACTIVITY = 3;
-    public static final int HAVA_NEW_VERSION = 2;
-    private static final int REQUEST_CODE_INSTALL_PERMISSION = 107;
-
-
     private String[] mTitles = MyApplication.getContext().getResources().getStringArray(R.array.main_tabs);
 
-    private int[] mIcons = {R.string.home, R.string.meet, R.string.message,R.string.contacts, R.string.me};
-    
+    private int[] mIcons = {R.string.home, R.string.meet, R.string.message, R.string.contacts, R.string.me};
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if(savedInstanceState != null){
+        if (savedInstanceState != null) {
             setIntent(new Intent());
         }
 
@@ -114,27 +109,28 @@ public class MainActivity extends BaseAppCompatActivity implements CommonDialogF
 
         loginYunXinServer();
 
-        if (isNimDebug) Slog.d(TAG, "#####################login status: "+ NIMClient.getStatus());
+        if (isNimDebug) Slog.d(TAG, "#####################login status: " + NIMClient.getStatus());
 
     }
-    
-    private void processIntent(){
+
+    private void processIntent() {
         Intent intent = getIntent();
-        if (intent != null){
+        if (intent != null) {
             if (intent.hasExtra(NimIntent.EXTRA_NOTIFY_CONTENT)) {
                 parseNotifyIntent(intent);
                 //finish();
             }
         }
     }
-    
+
     //check interval 24 hours
-    private void checkUpdate(){
+    private void checkUpdate() {
         long last = SharedPreferencesUtils.getUpdateCheckTimeStamp(this);
         long current = System.currentTimeMillis();
-        long interval = (current - last)/(1000*60*60);//get hour
-        if (isUpdateDebug) Slog.d(TAG, "----------------------->interval: "+interval+" last: "+String.valueOf(last)+" current: "+String.valueOf(current));
-        if (interval >= 24){
+        long interval = (current - last) / (1000 * 60 * 60);//get hour
+        if (isUpdateDebug)
+            Slog.d(TAG, "----------------------->interval: " + interval + " last: " + String.valueOf(last) + " current: " + String.valueOf(current));
+        if (interval >= 24) {
             XUpdate.newBuild(this)
                     .updateUrl(HttpUtil.CHECK_VERSION_UPDATE)
                     .updateParser(new UpdateParser(this, false))
@@ -145,16 +141,16 @@ public class MainActivity extends BaseAppCompatActivity implements CommonDialogF
             SharedPreferencesUtils.setUpdateCheckTimeStamp(this, current);
         }
     }
-    
+
     @Override
     protected void onNewIntent(Intent intent) {
-        if (intent != null){
+        if (intent != null) {
             setIntent(intent);
             processIntent();
         }
     }
 
-    
+
     private void parseNotifyIntent(Intent intent) {
 
         ArrayList<IMMessage> messages = (ArrayList<IMMessage>) intent.getSerializableExtra(NimIntent.EXTRA_NOTIFY_CONTENT);
@@ -165,19 +161,19 @@ public class MainActivity extends BaseAppCompatActivity implements CommonDialogF
             //showMainActivity(new Intent().putExtra(NimIntent.EXTRA_NOTIFY_CONTENT, messages.get(0)));
             if (isNimDebug) Slog.d(TAG, "######################parseNotifyIntent startP2PSession");
             IMMessage imMessage = messages.get(0);
-            if (imMessage.getSessionType() == SessionTypeEnum.P2P){
+            if (imMessage.getSessionType() == SessionTypeEnum.P2P) {
                 NimUIKit.startP2PSession(MyApplication.getContext(), imMessage.getSessionId());
             }
         }
     }
-    
-    private void init(){
+
+    private void init() {
         handler = new MyHandler(this);
 
         initMessage();
         initView();
     }
-    
+
     private void initView() {
         Typeface font = Typeface.createFromAsset(getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
 
@@ -196,7 +192,7 @@ public class MainActivity extends BaseAppCompatActivity implements CommonDialogF
         mTabLayout.addTab(message_tab);
         mTabLayout.addTab(contacts_tab);
         mTabLayout.addTab(me_tab);
-        
+
         BaseFragment home = new HomeFragment();
         mFragmentList.add(home);
         BaseFragment meet = new MeetFragment();
@@ -208,7 +204,7 @@ public class MainActivity extends BaseAppCompatActivity implements CommonDialogF
         //BaseFragment me = new ArchiveFragment();
         BaseFragment me = new MeetArchiveFragment();
         mFragmentList.add(me);
-        
+
         //创建一个viewpager的adapter
         mFragmentAdapter = new MainFragmentAdapter(getSupportFragmentManager(), mFragmentList, mTitles);
         mViewPager.setAdapter(mFragmentAdapter);
@@ -217,8 +213,8 @@ public class MainActivity extends BaseAppCompatActivity implements CommonDialogF
         //将TabLayout和ViewPager关联起来
         mTabLayout.setupWithViewPager(mViewPager);
         //index 0 selected by default
-        
-        for (int i=0; i<mTabLayout.getTabCount(); i++){
+
+        for (int i = 0; i < mTabLayout.getTabCount(); i++) {
             TabLayout.Tab tab = mTabLayout.getTabAt(i);
             tab.setCustomView(R.layout.tab_main_custom_item);
 
@@ -226,8 +222,8 @@ public class MainActivity extends BaseAppCompatActivity implements CommonDialogF
             TextView tabText = tab.getCustomView().findViewById(R.id.tab_text);
             tabIcon.setText(mIcons[i]);
             tabText.setText(mTitles[i]);
-            
-            if(i == 1){
+
+            if (i == 1) {
                 tabText.setTextColor(getResources().getColor(R.color.blue_dark));
                 tabIcon.setTextColor(getResources().getColor(R.color.blue_dark));
                 tab.select();
@@ -235,7 +231,7 @@ public class MainActivity extends BaseAppCompatActivity implements CommonDialogF
 
         }
 
-        
+
         mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -252,20 +248,20 @@ public class MainActivity extends BaseAppCompatActivity implements CommonDialogF
                 tabText.setTextColor(getResources().getColor(R.color.text_default));
                 tabIcon.setTextColor(getResources().getColor(R.color.text_default));
             }
-            
-             @Override
+
+            @Override
             public void onTabReselected(TabLayout.Tab tab) {
 
             }
         });
 
         unReadView = mTabLayout.getTabAt(2).getCustomView().findViewById(R.id.unread);
-contactsAppliedNoticeView = mTabLayout.getTabAt(3).getCustomView().findViewById(R.id.unread);
+        contactsAppliedNoticeView = mTabLayout.getTabAt(3).getCustomView().findViewById(R.id.unread);
         FontManager.markAsIconContainer(findViewById(R.id.tabs), font);
     }
 
-    private void initMessage(){
-         SessionEventListener listener = new SessionEventListener() {
+    private void initMessage() {
+        SessionEventListener listener = new SessionEventListener() {
             @Override
             public void onAvatarClicked(Context context, IMMessage message) {
                 // 一般用于打开用户资料页面
@@ -276,18 +272,20 @@ contactsAppliedNoticeView = mTabLayout.getTabAt(3).getCustomView().findViewById(
             public void onAvatarLongClicked(Context context, IMMessage message) {
                 // 一般用于群组@功能，或者弹出菜单，做拉黑，加好友等功能
             }
+
             @Override
-            public void onAckMsgClicked(Context context, IMMessage message){}
+            public void onAckMsgClicked(Context context, IMMessage message) {
+            }
         };
 
         NimUIKit.setSessionListener(listener);
-        
+
         initSessionMessageObserver();
         MessageFragment.getUnreadNotification(handler);
     }
-    
+
     //the account is user's phone number
-    private void startArchiveActivityWithAccount(final Context context, String account){
+    private void startArchiveActivityWithAccount(final Context context, String account) {
         showProgressDialog("");
 
         final RequestBody requestBody = new FormBody.Builder().add("account", String.valueOf(account)).build();
@@ -303,13 +301,13 @@ contactsAppliedNoticeView = mTabLayout.getTabAt(3).getCustomView().findViewById(
                         Message message = new Message();
                         Bundle bundle = new Bundle();
                         bundle.putInt("uid", uid);
-message.what = START_MEET_ARCHIVE_ACTIVITY;
+                        message.what = START_MEET_ARCHIVE_ACTIVITY;
                         message.setData(bundle);
                         handler.sendMessage(message);
                         dismissProgressDialog();
-                        } catch (JSONException e) {
+                    } catch (JSONException e) {
                         e.printStackTrace();
-                    } catch (IOException i){
+                    } catch (IOException i) {
                         i.printStackTrace();
                     }
                 }
@@ -320,91 +318,92 @@ message.what = START_MEET_ARCHIVE_ACTIVITY;
         Thread startArchiveThread = new Thread(runnable);
         startArchiveThread.start();
     }
-            
-    
+
+
     //未读消息数量观察者实现
     @Override
     public void onUnreadNumChanged(int unReadCount) {
-        if (isDebug) Slog.d(TAG, "------------------------->onUnreadNumChanged: "+unReadCount);
-        if (unReadCount > 0){
+        if (isDebug) Slog.d(TAG, "------------------------->onUnreadNumChanged: " + unReadCount);
+        if (unReadCount > 0) {
             hasUnreadSessions = true;
-            if (unReadView.getVisibility() == View.GONE){
+            if (unReadView.getVisibility() == View.GONE) {
                 unReadView.setVisibility(View.VISIBLE);
             }
-        }else {
+        } else {
             hasUnreadSessions = false;
-            if (hasUnreadMessage == false){
-                if (unReadView.getVisibility() != View.GONE){
+            if (hasUnreadMessage == false) {
+                if (unReadView.getVisibility() != View.GONE) {
                     unReadView.setVisibility(View.GONE);
                 }
             }
         }
     }
-    
+
     @Override
     public void onNotificationUnreadChanged(int unReadCount) {
-        if (unReadCount > 0){
-            if (unReadView.getVisibility() == View.GONE){
+        if (unReadCount > 0) {
+            if (unReadView.getVisibility() == View.GONE) {
                 unReadView.setVisibility(View.VISIBLE);
             }
         }
     }
-    
+
     @Override
-    public void onNewContactsApplied(int appliedCount){
-        Slog.d(TAG, "------------------->onNewContactsApplied: "+appliedCount);
-        if (appliedCount > 0){
-            if (contactsAppliedNoticeView.getVisibility() == View.GONE){
+    public void onNewContactsApplied(int appliedCount) {
+        Slog.d(TAG, "------------------->onNewContactsApplied: " + appliedCount);
+        if (appliedCount > 0) {
+            if (contactsAppliedNoticeView.getVisibility() == View.GONE) {
                 contactsAppliedNoticeView.setVisibility(View.VISIBLE);
             }
-        }else {
-            if (contactsAppliedNoticeView.getVisibility() == View.VISIBLE){
+        } else {
+            if (contactsAppliedNoticeView.getVisibility() == View.VISIBLE) {
                 contactsAppliedNoticeView.setVisibility(View.GONE);
             }
         }
     }
-    
-    private void loginYunXinServer(){
-       // final int authorUid = SharedPreferencesUtils.getSessionUid(MyApplication.getContext());
+
+    private void loginYunXinServer() {
+        // final int authorUid = SharedPreferencesUtils.getSessionUid(MyApplication.getContext());
         Runnable loginRunnable = new Runnable() {
             @Override
             public void run() {
                 //1.check account registered? only registered account will execute login, not registered will do register when establish chatting
                 final String accid = getYunXinAccount(MyApplication.getContext());
                 final String token = getYunXinToken(MyApplication.getContext());
-                Slog.d(TAG, "------------------------------------>loginYunXinServer with accid: "+ accid+"   token: "+token);
-                
-                if (!TextUtils.isEmpty(accid) && !TextUtils.isEmpty(token)){
+                Slog.d(TAG, "------------------------------------>loginYunXinServer with accid: " + accid + "   token: " + token);
+
+                if (!TextUtils.isEmpty(accid) && !TextUtils.isEmpty(token)) {
                     loginYunXin(accid, token);
-                }else {
+                } else {
                     int exist = getYunXinAccountExist(MyApplication.getContext(), accid);
-                    if (exist > 0){//yunxin account exist
+                    if (exist > 0) {//yunxin account exist
                         //loginYunXin(account, token);
                         getPassWordHashToLogin(accid);
-                    }else {//not existed, need create here
-                        if (createYunXinUser(accid) > 0){
+                    } else {//not existed, need create here
+                        if (createYunXinUser(accid) > 0) {
                             getPassWordHashToLogin(accid);
                         }
                     }
                 }
             }
         };
-        
+
         Thread loginThread = new Thread(loginRunnable);
         loginThread.start();
     }
 
-    public void loginYunXin(String account, final String token){
+    public void loginYunXin(String account, final String token) {
         NimUIKit.login(new LoginInfo(account, token), new RequestCallback<LoginInfo>() {
             @Override
             public void onSuccess(LoginInfo param) {
                 Slog.d(TAG, "---------->uikit login success");
                 setYunXinAccount(MyApplication.getContext(), param.getAccount());
-                if(!token.equals(param.getToken())){
+                if (!token.equals(param.getToken())) {
                     Slog.d(TAG, "-------->token error, rewrite by LoginInfo  param.getToken()");
                     setYunXinToken(MyApplication.getContext(), param.getToken());
                 }
             }
+
             @Override
             public void onFailed(int code) {
 
@@ -421,8 +420,8 @@ message.what = START_MEET_ARCHIVE_ACTIVITY;
             }
         });
     }
-    
-    private void getPassWordHashToLogin(final String accid){
+
+    private void getPassWordHashToLogin(final String accid) {
         RequestBody requestBody = new FormBody.Builder().build();
         HttpUtil.sendOkHttpRequest(MyApplication.getContext(), GET_PASSWORD_HASH, requestBody, new Callback() {
             @Override
@@ -433,8 +432,8 @@ message.what = START_MEET_ARCHIVE_ACTIVITY;
                     try {
                         JSONObject loginResponse = new JSONObject(responseText);
                         String passwordHash = loginResponse.getString("password_hash");
-                        Slog.d(TAG, "------------------------------------------->passwordHash: "+passwordHash);
-                        if (!TextUtils.isEmpty(passwordHash)){
+                        Slog.d(TAG, "------------------------------------------->passwordHash: " + passwordHash);
+                        if (!TextUtils.isEmpty(passwordHash)) {
                             loginYunXin(accid, passwordHash);
                         }
                     } catch (JSONException e) {
@@ -442,8 +441,10 @@ message.what = START_MEET_ARCHIVE_ACTIVITY;
                     }
                 }
             }
+
             @Override
-            public void onFailure(Call call, IOException e) {   }
+            public void onFailure(Call call, IOException e) {
+            }
         });
     }
 
@@ -454,20 +455,20 @@ message.what = START_MEET_ARCHIVE_ACTIVITY;
                 DialogMaker.dismissProgressDialog();
             }
         });
-        
+
         //如果数据没有同步完成，弹个进度Dialog
         if (!syncCompleted) {
             //DialogMaker.showProgressDialog(MainActivity.this, getString(R.string.prepare_data)).setCanceledOnTouchOutside(false);
         }
     }
 
-    private void initSessionMessageObserver(){
+    private void initSessionMessageObserver() {
         //registerMsgUnreadInfoObserver(true);
         observerSyncDataComplete();
         registerMsgUnreadInfoObserver(true);
         //registerSystemMessageObservers(true);
     }
-    
+
     /**
      * 注册未读消息数量观察者
      */
@@ -480,27 +481,28 @@ message.what = START_MEET_ARCHIVE_ACTIVITY;
             ReminderManager.getInstance().unregisterUnreadNumChangedCallback(this);
         }
     }
-    
+
     @Override
-    public void onBackFromDialog(int type, int result, boolean status){ }
+    public void onBackFromDialog(int type, int result, boolean status) {
+    }
 
     public void handleMessage(Message message) {
         TextView unRead = mTabLayout.getTabAt(2).getCustomView().findViewById(R.id.unread);
         Bundle bundle = message.getData();
         int uid = 0;
-        if (bundle != null){
+        if (bundle != null) {
             uid = bundle.getInt("uid");
         }
-        switch (message.what){
+        switch (message.what) {
             case MessageFragment.HAVE_UNREAD_MESSAGE:
                 hasUnreadMessage = true;
-                if (unRead.getVisibility() == View.GONE){
+                if (unRead.getVisibility() == View.GONE) {
                     unRead.setVisibility(View.VISIBLE);
                 }
                 break;
             case MessageFragment.HAVE_NO_UNREAD_MESSAGE:
                 hasUnreadMessage = false;
-                if (hasUnreadSessions == false && unRead.getVisibility() != View.GONE){
+                if (hasUnreadSessions == false && unRead.getVisibility() != View.GONE) {
                     unRead.setVisibility(View.GONE);
                 }
                 break;
@@ -511,13 +513,13 @@ message.what = START_MEET_ARCHIVE_ACTIVITY;
                 break;
         }
     }
-    
+
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
         initMessage();
-       // getUnreadNotification(handler);
-       // initSessionMessageObserver();
+        // getUnreadNotification(handler);
+        // initSessionMessageObserver();
 
     }
 
@@ -526,7 +528,7 @@ message.what = START_MEET_ARCHIVE_ACTIVITY;
         super.onDestroy();
         registerMsgUnreadInfoObserver(false);
     }
-    
+
     static class MyHandler extends Handler {
         WeakReference<MainActivity> mainActivityWeakReference;
 
