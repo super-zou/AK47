@@ -88,7 +88,7 @@
         <activity android:name=".region.activity.BaseActivity" />
         <activity android:name=".dynamics.AddDynamicsActivity" />
         <activity android:name=".common.SettingsActivity" />
-        <activity android:name=".common.AuthenticationActivity" />
+        <activity android:name=".authenticate.AuthenticationActivity" />
         <activity android:name=".main.MeetArchiveActivity" />
         <activity
             android:name=".meet.EvaluatorDetailsActivity"

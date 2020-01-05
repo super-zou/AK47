@@ -53,6 +53,8 @@ import static com.hetang.adapter.ContactsListAdapter.acceptContactsApply;
 import static com.hetang.util.ParseUtils.ADD_CHEERING_GROUP_MEMBER_ACTION;
 import static com.hetang.util.ParseUtils.APPROVE_IMPRESSION_ACTION;
 import static com.hetang.util.ParseUtils.APPROVE_PERSONALITY_ACTION;
+import static com.hetang.util.ParseUtils.AUTHENTICATION_REJECTED_NF;
+import static com.hetang.util.ParseUtils.AUTHENTICATION_VERIFIED_NF;
 import static com.hetang.util.ParseUtils.EVALUATE_ACTION;
 import static com.hetang.util.ParseUtils.FOLLOW_GROUP_ACTION;
 import static com.hetang.util.ParseUtils.INVITE_GROUP_MEMBER_ACTION;
@@ -240,7 +242,6 @@ ParseUtils.startMeetArchiveActivity(mContext, notification.tid);
                         markNotificationProcessed(holder.isNew, notification);
                         break;
                     case ParseUtils.REFEREE_INVITE_NF:
-
                     case ParseUtils.ADD_CHEERING_GROUP_MEMBER_ACTION:
                         ParseUtils.startMeetArchiveActivity(mContext, notification.tid);
                         markNotificationProcessed(holder.isNew, notification);
@@ -258,6 +259,8 @@ ParseUtils.startMeetArchiveActivity(mContext, notification.tid);
                     case ParseUtils.INVITE_GROUP_MEMBER_ACTION:
                     case FOLLOW_GROUP_ACTION:
                     case MODIFY_GROUP_ACTION:
+                    case AUTHENTICATION_VERIFIED_NF:
+                    case AUTHENTICATION_REJECTED_NF:
                         startSubGroupDetails(mContext, notification.id);
                         markNotificationProcessed(holder.isNew, notification);
                         break;

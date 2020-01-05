@@ -1,4 +1,4 @@
-package com.hetang.common;
+package com.hetang.authenticate;
 
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
@@ -26,6 +26,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.hetang.R;
+import com.hetang.common.MyApplication;
+import com.hetang.common.SetAvatarActivity;
 import com.hetang.util.BaseDialogFragment;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
@@ -63,6 +65,7 @@ public class SubmitAuthenticationDialogFragment extends BaseDialogFragment {
     private static final String TAG = "SubmitAuthenticationDialogFragment";
     private static final String SUBMIT_URL = HttpUtil.DOMAIN + "?q=user_extdata/submit_authentication_info";
     private int sex;
+    private int gid;
     private Dialog mDialog;
     private String before;
     private Context mContext;
@@ -115,7 +118,10 @@ public class SubmitAuthenticationDialogFragment extends BaseDialogFragment {
         layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT;
         window.setAttributes(layoutParams);
 
-        //final Bundle bundle = getArguments();
+        Bundle bundle = getArguments();
+        if (bundle != null){
+            gid = bundle.getInt("gid");
+        }
         //subGroup = (SubGroupActivity.SubGroup) bundle.getSerializable("subGroup");
         TextView leftBack = mDialog.findViewById(R.id.left_back);
         leftBack.setOnClickListener(new View.OnClickListener() {
@@ -189,6 +195,7 @@ public class SubmitAuthenticationDialogFragment extends BaseDialogFragment {
     private void submit() {
         showProgressDialog("");
         RequestBody requestBody = new FormBody.Builder()
+                .add("gid", String.valueOf(gid))
                 .add("authentication_info", getUserInfoJsonObject().toString())
                 .build();
 

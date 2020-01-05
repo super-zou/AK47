@@ -23,17 +23,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.hetang.R;
 import com.hetang.adapter.SubGroupDetailsListAdapter;
+import com.hetang.authenticate.SubmitAuthenticationDialogFragment;
 import com.hetang.common.BaseAppCompatActivity;
 import com.hetang.common.MyApplication;
 import com.hetang.common.SetAvatarActivity;
-import com.hetang.common.SubmitAuthenticationDialogFragment;
 import com.hetang.dynamics.AddDynamicsActivity;
 import com.hetang.dynamics.Dynamic;
 import com.hetang.dynamics.DynamicOperationDialogFragment;
@@ -56,6 +58,7 @@ import com.hetang.util.Utility;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -287,7 +290,12 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
                                 intent.putExtra("gid", gid);
                                 startActivityForResult(intent, Activity.RESULT_FIRST_USER);
                             } else {
-                                showNoticeDialog();
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        showNoticeDialog();
+                                    }
+                                });
                             }
                         } else {
                             Message message = Message.obtain();
@@ -439,6 +447,12 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
             subGroup.isLeader = group.optBoolean("isLeader");
             subGroup.followed = group.optInt("followed");
             subGroup.leader = new UserMeetInfo();
+
+            subGroup.maleCount = group.optInt("male_count");
+            subGroup.femaleCount = group.optInt("female_count");
+            subGroup.maleArr = group.optJSONArray("males");
+            subGroup.femaleArr = group.optJSONArray("females");
+
             if (group.optJSONObject("leader") != null) {
                 ParseUtils.setBaseProfile(subGroup.leader, group.optJSONObject("leader"));
             }
@@ -458,6 +472,10 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
         RoundImageView leaderAvatar = mGroupHeaderView.findViewById(R.id.leader_avatar);
         TextView groupDesc = mGroupHeaderView.findViewById(R.id.group_desc);
         TextView created = mGroupHeaderView.findViewById(R.id.created);
+        HorizontalScrollView maleHorizontalScrollView = mGroupHeaderView.findViewById(R.id.maleHorizontalScrollView);
+        LinearLayout maleWrapper = mGroupHeaderView.findViewById(R.id.male_wrapper);
+        HorizontalScrollView femaleHorizontalScrollView = mGroupHeaderView.findViewById(R.id.femaleHorizontalScrollView);
+        LinearLayout femaleWrapper = mGroupHeaderView.findViewById(R.id.female_wrapper);
         visitRecordTV = mGroupHeaderView.findViewById(R.id.visit_record);
         activityAmount = mGroupHeaderView.findViewById(R.id.activity_count);
         followAmount = mGroupHeaderView.findViewById(R.id.follow_count);
@@ -493,35 +511,96 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
         }
 
         groupDesc.setText(subGroup.groupProfile);
-        if (subGroup.authorStatus != -1) {
-            if (subGroup.authorStatus == 0) {
-                joinBtn.setVisibility(View.VISIBLE);
-                joinBtn.setText(getResources().getString(R.string.approvied));
-                joinBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        acceptSingleGroupInvite();
+
+        if (subGroup.maleCount > 0){
+            maleHorizontalScrollView.setVisibility(View.VISIBLE);
+            JSONArray maleArray = subGroup.maleArr;
+            int size = maleArray.length();
+            for (int i=0; i<size; i++){
+                View view = LayoutInflater.from(getContext()).inflate(R.layout.group_member_item, null);
+                maleWrapper.addView(view);
+                RoundImageView avatarView = view.findViewById(R.id.avatar);
+                try {
+                    if (maleArray.get(i) != ""){
+                        Glide.with(getContext()).load(HttpUtil.DOMAIN + maleArray.get(i)).into(avatarView);
                     }
-                });
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+
+                if (subGroup.maleCount > 6 && i == size - 1) {
+                    LinearLayout findMore = view.findViewById(R.id.find_more);
+                    findMore.setVisibility(View.VISIBLE);
+                    findMore.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Intent intent = new Intent(MyApplication.getContext(), CommonContactsActivity.class);
+                            startActivity(intent);
+                        }
+                    });
+                }
+            }
+        }
+
+        if (subGroup.femaleCount > 0){
+            femaleHorizontalScrollView.setVisibility(View.VISIBLE);
+            JSONArray femaleArray = subGroup.femaleArr;
+            int size = femaleArray.length();
+            for (int i=0; i<size; i++){
+                View view = LayoutInflater.from(getContext()).inflate(R.layout.group_member_item, null);
+                femaleWrapper.addView(view);
+                RoundImageView avatarView = view.findViewById(R.id.avatar);
+                try {
+                    if (femaleArray.get(i) != ""){
+                        Glide.with(getContext()).load(HttpUtil.DOMAIN + femaleArray.get(i)).into(avatarView);
+                    }
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+
+                if (subGroup.femaleCount > 6 && i == size - 1){
+                    LinearLayout findMore = view.findViewById(R.id.find_more);
+                    findMore.setVisibility(View.VISIBLE);
+                    findMore.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Intent intent = new Intent(MyApplication.getContext(), CommonContactsActivity.class);
+                            startActivity(intent);
+                        }
+                    });
+                }
+            }
+        }
+
+            if (subGroup.authorStatus != -1) {
+                if (subGroup.authorStatus == 0) {
+                    joinBtn.setVisibility(View.VISIBLE);
+                    joinBtn.setText(getResources().getString(R.string.approvied));
+                    joinBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            acceptSingleGroupInvite();
+                        }
+                    });
+                } else {
+                    joinBtn.setText(getResources().getString(R.string.invite_friend));
+                    joinBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            invite();
+                        }
+                    });
+                }
+                followBtn.setVisibility(View.INVISIBLE);
             } else {
-                joinBtn.setText(getResources().getString(R.string.invite_friend));
+                joinBtn.setVisibility(View.VISIBLE);
                 joinBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        invite();
+                        applyJoinGroup();
                     }
                 });
             }
-            followBtn.setVisibility(View.INVISIBLE);
-        } else {
-            joinBtn.setVisibility(View.VISIBLE);
-            joinBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    applyJoinGroup();
-                }
-            });
-        }
         if (subGroup.authorStatus == -1) {
 
             if (subGroup.followed == 1) {
@@ -715,8 +794,8 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
     private void showNoticeDialog() {
         final AlertDialog.Builder normalDialog =
                 new AlertDialog.Builder(this, R.style.Theme_MaterialComponents_Light_Dialog_Alert);
-        normalDialog.setTitle("请先关注或加入");
-        normalDialog.setMessage("需要先关注或加入团，才能发布信息");
+        normalDialog.setTitle("请先加入");
+        normalDialog.setMessage("加入后才能发布信息");
         /*
         normalDialog.setPositiveButton("去设置",
                 new DialogInterface.OnClickListener() {
@@ -761,6 +840,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
                 public void onClick(DialogInterface dialog, int which) {
                     Bundle bundle = new Bundle();
                     bundle.putInt("type", 0);
+                    bundle.putInt("gid", gid);
                     SubmitAuthenticationDialogFragment submitAuthenticationDialogFragment = new SubmitAuthenticationDialogFragment();
                     submitAuthenticationDialogFragment.setArguments(bundle);
                     submitAuthenticationDialogFragment.show(getSupportFragmentManager(), "SubmitAuthenticationDialogFragment");

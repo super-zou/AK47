@@ -1,6 +1,5 @@
-package com.hetang.common;
+package com.hetang.authenticate;
 
-import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -8,16 +7,12 @@ import android.os.Message;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.view.View;
 import android.widget.TextView;
 
 import com.hetang.R;
 import com.hetang.adapter.AuthenticationFragmentAdapter;
-import com.hetang.adapter.MainFragmentAdapter;
-import com.hetang.home.HomeFragment;
-import com.hetang.main.ContactsFragment;
-import com.hetang.main.MeetArchiveFragment;
-import com.hetang.main.MeetFragment;
+import com.hetang.common.BaseAppCompatActivity;
+import com.hetang.common.MyApplication;
 import com.hetang.main.MessageFragment;
 import com.hetang.util.BaseFragment;
 import com.hetang.util.FontManager;
@@ -37,7 +32,7 @@ public class AuthenticationActivity extends BaseAppCompatActivity {
     TabLayout.Tab rejected_tab;
     
     public static final int unVERIFIED = 0;
-    public static final int VERIFIED = 1;
+    public static final int PASSED = 1;
     public static final int REJECTED = 2;
 
     private TabLayout mTabLayout;
@@ -79,11 +74,11 @@ public class AuthenticationActivity extends BaseAppCompatActivity {
         mTabLayout.addTab(verified_tab);
         mTabLayout.addTab(rejected_tab);
         
-        BaseFragment unVerifiedFragment = AuthenticationFragment.newInstance(unVERIFIED);
+        BaseFragment unVerifiedFragment = new RequestFragment();
         mFragmentList.add(unVerifiedFragment);
-        BaseFragment verifiedFragment = AuthenticationFragment.newInstance(VERIFIED);
-        mFragmentList.add(verifiedFragment);
-        Fragment rejectedFragment = AuthenticationFragment.newInstance(REJECTED);
+        BaseFragment passedFragment = new PassedFragment();
+        mFragmentList.add(passedFragment);
+        Fragment rejectedFragment = new RejectedFragment();
         mFragmentList.add(rejectedFragment);
 
         //创建一个viewpager的adapter

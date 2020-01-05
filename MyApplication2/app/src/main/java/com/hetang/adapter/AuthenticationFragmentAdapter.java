@@ -4,18 +4,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.hetang.common.AuthenticationFragment;
-import com.hetang.home.HomeFragment;
-import com.hetang.main.ContactsFragment;
-import com.hetang.main.MeetArchiveFragment;
-import com.hetang.main.MeetFragment;
-import com.hetang.main.MessageFragment;
+import com.hetang.authenticate.PassedFragment;
+import com.hetang.authenticate.RejectedFragment;
+import com.hetang.authenticate.RequestFragment;
 
 import java.util.List;
-
-import static com.hetang.common.AuthenticationActivity.REJECTED;
-import static com.hetang.common.AuthenticationActivity.VERIFIED;
-import static com.hetang.common.AuthenticationActivity.unVERIFIED;
 
 public class AuthenticationFragmentAdapter extends FragmentStatePagerAdapter {
     public static final String TAG = "MainFragmentAdapter";
@@ -35,16 +28,16 @@ public class AuthenticationFragmentAdapter extends FragmentStatePagerAdapter {
         Fragment fragment;
         switch (position) {
             case 0:
-                fragment = AuthenticationFragment.newInstance(unVERIFIED);
+                fragment = new RequestFragment();
                 break;
             case 1:
-                fragment = AuthenticationFragment.newInstance(VERIFIED);
+                fragment = new PassedFragment();
                 break;
             case 2:
-                fragment = AuthenticationFragment.newInstance(REJECTED);
+                fragment = new RejectedFragment();
                 break;
             default:
-                fragment = AuthenticationFragment.newInstance(unVERIFIED);
+                fragment = new RequestFragment();
                 break;
 
         }

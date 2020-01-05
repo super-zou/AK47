@@ -18,12 +18,11 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.hetang.R;
-import com.hetang.archive.ArchiveActivity;
+import com.hetang.authenticate.AuthenticationActivity;
 import com.hetang.update.UpdateParser;
 import com.hetang.util.FontManager;
 import com.hetang.util.RoundImageView;
 import com.hetang.util.ShareDialogFragment;
-import com.hetang.util.SharedPreferencesUtils;
 import com.hetang.util.Slog;
 import com.hetang.util.Utility;
 import com.hetang.util.HttpUtil;

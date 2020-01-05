@@ -44,6 +44,8 @@ import okhttp3.Response;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static com.hetang.util.ParseUtils.APPLY_JOIN_GROUP_NF;
+import static com.hetang.util.ParseUtils.AUTHENTICATION_REJECTED_NF;
+import static com.hetang.util.ParseUtils.AUTHENTICATION_VERIFIED_NF;
 import static com.hetang.util.ParseUtils.COMMENT_PRAISED_NF;
 import static com.hetang.util.ParseUtils.INVITE_GROUP_MEMBER_ACTION;
 import static com.hetang.util.ParseUtils.JOIN_GROUP_ACTION;
@@ -56,7 +58,7 @@ public class NotificationFragment extends BaseFragment {
     private static final boolean isDebug = true;
     private static final String TAG = "NotificationFragment";
 
-    private static final int PAGE_SIZE = 6;
+    private static final int PAGE_SIZE = 8;
     private static final int LOAD_DONE = 0;
     private static final int UPDATE_DONE = 1;
     private static final int LOAD_COMPLETE_END = 2;
@@ -349,6 +351,8 @@ public class NotificationFragment extends BaseFragment {
                 case INVITE_GROUP_MEMBER_ACTION:
                 case JOIN_GROUP_ACTION:
                 case APPLY_JOIN_GROUP_NF:
+                case AUTHENTICATION_VERIFIED_NF:
+                case AUTHENTICATION_REJECTED_NF:
                     notification.content = mContext.getResources().getString(R.string.view_details);
                     break;
             }

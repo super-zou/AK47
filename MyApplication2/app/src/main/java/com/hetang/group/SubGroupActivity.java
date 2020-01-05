@@ -58,20 +58,14 @@ import static com.hetang.group.SubGroupDetailsActivity.GET_SUBGROUP_BY_GID;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
 public class SubGroupActivity extends BaseAppCompatActivity {
+    public static final String GET_MY_UNIVERSITY_SUBGROUP = HttpUtil.DOMAIN + "?q=subgroup/get_my_university";
+    public static final String GROUP_ADD_BROADCAST = "com.hetang.action.GROUP_ADD";
     private static final boolean isDebug = true;
     private static final String TAG = "SubGroupActivity";
-    final int itemLimit = 3;
-    private int mLoadSize = 0;
-    private int mUpdateSize = 0;
     private static final int PAGE_SIZE = 8;
-    private Handler handler;
-    private int type = 0;
-
     private static final String SUBGROUP_GET_ALL = HttpUtil.DOMAIN + "?q=subgroup/get_all";
-    public static final String GET_MY_UNIVERSITY_SUBGROUP = HttpUtil.DOMAIN + "?q=subgroup/get_my_university";
     private static final String SUBGROUP_UPDATE = HttpUtil.DOMAIN + "?q=subgroup/update";
     private static final String ADD_SUBGROUP_VISITOR_RECORD = HttpUtil.DOMAIN + "?q=visitor_record/add_group_visit_record";
-
     private static final int GET_ALL_DONE = 1;
     private static final int UPDATE_ALL = 2;
     private static final int GET_ALL_END = 3;
@@ -80,15 +74,67 @@ public class SubGroupActivity extends BaseAppCompatActivity {
     private static final int NO_MORE = 6;
     private static final int ADD_VISITOR_RECORD_DONE = 7;
     private static final int ADD_NEW_SUBGROUP_DONE = 8;
-
-    public static final String GROUP_ADD_BROADCAST = "com.hetang.action.GROUP_ADD";
+    final int itemLimit = 3;
+    ImageView progressImageView;
+    AnimationDrawable animationDrawable;
+    private int mLoadSize = 0;
+    private int mUpdateSize = 0;
+    private Handler handler;
+    private int type = 0;
     private SingleGroupReceiver mReceiver = new SingleGroupReceiver();
-
     private SubGroupSummaryAdapter subGroupSummaryAdapter;
     private XRecyclerView recyclerView;
     private List<SubGroup> mSubGroupList = new ArrayList<>();
-    ImageView progressImageView;
-    AnimationDrawable animationDrawable;
+
+    public static void updateVisitorRecord(int gid) {
+
+        RequestBody requestBody = new FormBody.Builder()
+                .add("gid", String.valueOf(gid))
+                .build();
+
+        HttpUtil.sendOkHttpRequest(getContext(), ADD_SUBGROUP_VISITOR_RECORD, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (isDebug)
+                    Slog.d(TAG, "==========updateVisitorRecord response body : " + response.body());
+                if (response.body() != null) {
+                    //todo
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+        });
+    }
+
+    public static SubGroup getSubGroup(JSONObject group) {
+        SubGroup subGroup = new SubGroup();
+        if (group != null) {
+            subGroup.gid = group.optInt("gid");
+            subGroup.type = group.optInt("type");
+            subGroup.groupName = group.optString("group_name");
+            subGroup.groupProfile = group.optString("group_profile");
+            subGroup.groupLogoUri = group.optString("logo_uri");
+            subGroup.org = group.optString("group_org");
+            subGroup.region = group.optString("region");
+            subGroup.memberCount = group.optInt("member_count");
+            subGroup.visitRecord = group.optInt("visit_record");
+            subGroup.followCount = group.optInt("follow_count");
+            subGroup.activityCount = group.optInt("activity_count");
+            subGroup.created = Utility.timeStampToDay(group.optInt("created"));
+
+            subGroup.leader = new UserMeetInfo();
+            if (group.optJSONObject("leader") != null) {
+                ParseUtils.setBaseProfile(subGroup.leader, group.optJSONObject("leader"));
+            }
+
+            return subGroup;
+        }
+
+        return null;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -200,29 +246,6 @@ public class SubGroupActivity extends BaseAppCompatActivity {
                 animationDrawable.start();
             }
         }, 50);
-    }
-
-    public static void updateVisitorRecord(int gid) {
-        
-        RequestBody requestBody = new FormBody.Builder()
-                .add("gid", String.valueOf(gid))
-                .build();
-
-        HttpUtil.sendOkHttpRequest(getContext(), ADD_SUBGROUP_VISITOR_RECORD, requestBody, new Callback() {
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (isDebug)
-                    Slog.d(TAG, "==========updateVisitorRecord response body : " + response.body());
-                if (response.body() != null) {
-                    //todo
-                }
-            }
-
-            @Override
-            public void onFailure(Call call, IOException e) {
-
-            }
-        });
     }
 
     private void loadData() {
@@ -343,33 +366,6 @@ public class SubGroupActivity extends BaseAppCompatActivity {
             mSubGroupList.add(0, singleGroup);
             handler.sendEmptyMessage(ADD_NEW_SUBGROUP_DONE);
         }
-    }
-
-    public static SubGroup getSubGroup(JSONObject group) {
-        SubGroup subGroup = new SubGroup();
-        if (group != null) {
-            subGroup.gid = group.optInt("gid");
-            subGroup.type = group.optInt("type");
-            subGroup.groupName = group.optString("group_name");
-            subGroup.groupProfile = group.optString("group_profile");
-            subGroup.groupLogoUri = group.optString("logo_uri");
-            subGroup.org = group.optString("group_org");
-            subGroup.region = group.optString("region");
-            subGroup.memberCount = group.optInt("member_count");
-            subGroup.visitRecord = group.optInt("visit_record");
-            subGroup.followCount = group.optInt("follow_count");
-            subGroup.activityCount = group.optInt("activity_count");
-            subGroup.created = Utility.timeStampToDay(group.optInt("created"));
-
-            subGroup.leader = new UserMeetInfo();
-            if (group.optJSONObject("leader") != null) {
-                ParseUtils.setBaseProfile(subGroup.leader, group.optJSONObject("leader"));
-            }
-
-            return subGroup;
-        }
-
-        return null;
     }
 
     private void checkAvatarSet() {
@@ -537,28 +533,6 @@ public class SubGroupActivity extends BaseAppCompatActivity {
         }
     }
 
-    public static class SubGroup implements Serializable {
-        public int gid;
-        public int type;
-        public String groupName;
-        public String groupProfile;
-        public String org;
-        public String region;
-        public String groupLogoUri;
-        public int memberCount = 0;
-        public int followCount = 0;
-        public int visitRecord = 0;
-        public int activityCount = 0;
-        public String created;
-        public UserMeetInfo leader;
-
-        //public List<String> headUrlList;
-        public int authorStatus = -1;
-        public int followed = -1;
-        public boolean isLeader = false;
-        //public List<UserMeetInfo> memberInfoList;
-    }
-
     private void registerLoginBroadcast() {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(GROUP_ADD_BROADCAST);
@@ -568,22 +542,6 @@ public class SubGroupActivity extends BaseAppCompatActivity {
     //unregister local broadcast
     private void unRegisterLoginBroadcast() {
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
-    }
-
-    private class SingleGroupReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            switch (intent.getAction()) {
-                case GROUP_ADD_BROADCAST:
-                    Slog.d(TAG, "==========GROUP_ADD_BROADCAST");
-                    int gid = intent.getIntExtra("gid", 0);
-                    if (gid > 0) {
-                        getMyNewAddedGroup(gid);
-                    }
-                    break;
-            }
-
-        }
     }
 
     private void getMyNewAddedGroup(int gid) {
@@ -620,7 +578,6 @@ public class SubGroupActivity extends BaseAppCompatActivity {
         });
     }
 
-
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -632,6 +589,31 @@ public class SubGroupActivity extends BaseAppCompatActivity {
         }
     }
 
+    public static class SubGroup implements Serializable {
+        public int gid;
+        public int type;
+        public String groupName;
+        public String groupProfile;
+        public String org;
+        public String region;
+        public String groupLogoUri;
+        public int memberCount = 0;
+        public int followCount = 0;
+        public int visitRecord = 0;
+        public int activityCount = 0;
+        public int maleCount = 0;
+        public int femaleCount = 0;
+        public JSONArray maleArr;
+        public JSONArray femaleArr;
+        public String created;
+        public UserMeetInfo leader;
+
+        //public List<String> headUrlList;
+        public int authorStatus = -1;
+        public int followed = -1;
+        public boolean isLeader = false;
+        //public List<UserMeetInfo> memberInfoList;
+    }
 
     static class MyHandler extends Handler {
         WeakReference<SubGroupActivity> subGroupActivityWeakReference;
@@ -646,6 +628,22 @@ public class SubGroupActivity extends BaseAppCompatActivity {
             if (subGroupActivity != null) {
                 subGroupActivity.handleMessage(message);
             }
+        }
+    }
+
+    private class SingleGroupReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()) {
+                case GROUP_ADD_BROADCAST:
+                    Slog.d(TAG, "==========GROUP_ADD_BROADCAST");
+                    int gid = intent.getIntExtra("gid", 0);
+                    if (gid > 0) {
+                        getMyNewAddedGroup(gid);
+                    }
+                    break;
+            }
+
         }
     }
 

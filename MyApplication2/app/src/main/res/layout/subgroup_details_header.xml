@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_marginBottom="8dp"
+    android:id="@+id/subgroup_details_header"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/subgroup_details_header">
-    
+    android:background="@color/white"
+    android:layout_marginBottom="8dp">
+
     <com.hetang.util.RoundImageView
         android:id="@+id/logo"
         android:layout_width="100dp"
@@ -15,24 +15,24 @@
         android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-        
+
     <TextView
         android:id="@+id/group_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="124dp"
         android:layout_marginEnd="8dp"
-        android:text=""
-        android:typeface="sans"
-        android:fontFamily="sans-serif"
         android:ellipsize="end"
+        android:fontFamily="sans-serif"
+        android:maxLines="2"
+        android:text=""
         android:textColor="@color/black"
         android:textSize="18sp"
-        android:maxLines="2"
+        android:typeface="sans"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/logo" />
-        
+
     <TextView
         android:id="@+id/org"
         android:layout_width="wrap_content"
@@ -53,7 +53,7 @@
         android:textColor="@color/color_dark_disabled"
         app:layout_constraintStart_toEndOf="@+id/org"
         app:layout_constraintTop_toTopOf="@+id/org" />
-    
+
     <com.hetang.util.RoundImageView
         android:id="@+id/leader_avatar"
         android:layout_width="50dp"
@@ -69,7 +69,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:text=""
-                      android:textColor="@color/blue_dark"
+        android:textColor="@color/blue_dark"
         android:textSize="15sp"
         android:textStyle="normal|bold"
         app:layout_constraintStart_toEndOf="@+id/leader_avatar"
@@ -84,6 +84,7 @@
         android:textColor="@color/color_dark_disabled"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/leader_name" />
+
     <Button
         android:id="@+id/follow"
         android:layout_width="0dp"
@@ -96,22 +97,22 @@
         app:layout_constraintEnd_toStartOf="@+id/join"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/leader_avatar" />
-    
-   <Button
+
+    <Button
         android:id="@+id/join"
-        android:visibility="visible"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="32dp"
-        android:textSize="16sp"
         android:background="@drawable/btn_primary"
         android:text="@string/join_action"
         android:textColor="@color/white"
+        android:textSize="16sp"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/follow"
         app:layout_constraintTop_toTopOf="@+id/follow" />
-    
+
     <View
         android:id="@+id/group_info_divider"
         android:layout_width="match_parent"
@@ -133,12 +134,12 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:ellipsize="end"
+        android:fontFamily="sans-serif"
         android:lineSpacingMultiplier="1.2"
         android:maxLines="5"
         android:padding="10dp"
-                      android:typeface="sans"
-        android:fontFamily="sans-serif"
         android:textColor="@color/black"
+        android:typeface="sans"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/group_info_divider" />
@@ -148,7 +149,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:background="@color/color_disabled"
         app:layout_constraintEnd_toEndOf="parent"
@@ -162,13 +163,12 @@
         android:layout_below="@+id/org"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:layout_marginBottom="8dp"
         android:gravity="center"
         android:text=""
         android:textColor="@color/color_dark_disabled"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/group_interact_divider" />
+
     <TextView
         android:id="@+id/visit_activity_dot"
         android:layout_width="wrap_content"
@@ -179,6 +179,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/visit_record"
         app:layout_constraintStart_toEndOf="@+id/visit_record"
         app:layout_constraintTop_toTopOf="@+id/visit_record" />
+
     <TextView
         android:id="@+id/activity_count"
         android:layout_width="wrap_content"
@@ -187,9 +188,9 @@
         android:gravity="center"
         android:text=""
         android:textColor="@color/color_dark_disabled"
-        app:layout_constraintBottom_toBottomOf="@+id/visit_record"
         app:layout_constraintStart_toEndOf="@+id/visit_activity_dot"
         app:layout_constraintTop_toTopOf="@+id/visit_record" />
+
     <TextView
         android:id="@+id/follow_activity_dot"
         android:layout_width="wrap_content"
@@ -200,6 +201,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/visit_record"
         app:layout_constraintStart_toEndOf="@+id/activity_count"
         app:layout_constraintTop_toTopOf="@+id/visit_record" />
+
     <TextView
         android:id="@+id/follow_count"
         android:layout_width="wrap_content"
@@ -222,6 +224,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/visit_record"
         app:layout_constraintStart_toEndOf="@+id/follow_count"
         app:layout_constraintTop_toTopOf="@+id/visit_record" />
+
     <TextView
         android:id="@+id/member_count"
         android:layout_width="wrap_content"
@@ -232,4 +235,59 @@
         app:layout_constraintBottom_toBottomOf="@+id/follow_count"
         app:layout_constraintStart_toEndOf="@+id/follow_member_dot"
         app:layout_constraintTop_toTopOf="@+id/follow_count" />
+
+    <View
+        android:id="@+id/member_avatar_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:background="@color/color_disabled"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/visit_record" />
+
+    <HorizontalScrollView
+        android:id="@+id/maleHorizontalScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:scrollbars="none"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/member_avatar_divider">
+
+        <LinearLayout
+            android:id="@+id/male_wrapper"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="8dp"
+            android:orientation="horizontal"
+            android:paddingRight="16dp"></LinearLayout>
+    </HorizontalScrollView>
+
+    <HorizontalScrollView
+        android:id="@+id/femaleHorizontalScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:scrollbars="none"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/maleHorizontalScrollView">
+
+        <LinearLayout
+            android:id="@+id/female_wrapper"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="8dp"
+            android:orientation="horizontal"
+            android:paddingRight="16dp"></LinearLayout>
+    </HorizontalScrollView>
 </android.support.constraint.ConstraintLayout>

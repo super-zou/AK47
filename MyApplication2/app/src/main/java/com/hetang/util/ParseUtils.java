@@ -109,7 +109,7 @@ public class ParseUtils {
     public static final int APPLY_JOIN_SINGLE_GROUP_NF = 63;
     public static final int ACCEPT_CONTACTS_APPLY_NF = 64;
     public static final int APPLY_JOIN_GROUP_NF = 65;
-        public static final int AUTHENTICATION_VERIFIED_NF = 66;
+    public static final int AUTHENTICATION_VERIFIED_NF = 66;
     public static final int AUTHENTICATION_REJECTED_NF = 67;
     
     public static List<UserMeetInfo> getBaseMeetInfoList(String responseText) {

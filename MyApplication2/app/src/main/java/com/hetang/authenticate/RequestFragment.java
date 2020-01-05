@@ -1,7 +1,5 @@
-package com.hetang.common;
+package com.hetang.authenticate;
 
-import android.content.Context;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -14,8 +12,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.hetang.R;
-import com.hetang.adapter.AuthenticationListAdapter;
-import com.hetang.util.AuthenticateOperationInterface;
+import com.hetang.adapter.AuthenticateRequestListAdapter;
+import com.hetang.common.MyApplication;
 import com.hetang.util.BaseFragment;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.Slog;
@@ -39,22 +37,20 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
-import static com.hetang.common.AuthenticationActivity.VERIFIED;
-import static com.hetang.common.AuthenticationActivity.unVERIFIED;
+import static com.hetang.authenticate.AuthenticationActivity.unVERIFIED;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
-public class AuthenticationFragment extends BaseFragment {
+public class RequestFragment extends BaseFragment {
     private static final boolean isDebug = true;
-    private static final String TAG = "AuthenticationFragment";
-    private static final int PAGE_SIZE = 5;
+    private static final String TAG = "RequestFragment";
+    private static final int PAGE_SIZE = 6;
     private static final int LOAD_DONE = 0;
     private static final int UPDATE_DONE = 1;
     private static final int LOAD_COMPLETE_END = 2;
     private static final int LOAD_NOTHING_DONE = 3;
     private static final int OPERATION_DONE = 4;
-    private static final String GET_ALL_AUTHENTICATION_URL = HttpUtil.DOMAIN + "?q=user_extdata/get_all_authentication_status/";
-    private static final String SET_AUTHENTICATION_STATUS = HttpUtil.DOMAIN + "?q=user_extdata/set_authentication_status";
-    Typeface font;
+    public static final String GET_ALL_AUTHENTICATION_URL = HttpUtil.DOMAIN + "?q=user_extdata/get_all_authentication_status/";
+    public static final String SET_AUTHENTICATION_STATUS = HttpUtil.DOMAIN + "?q=user_extdata/set_authentication_status";
     private int mCurrentPos;
     int page = 0;
     private int type;
@@ -64,24 +60,12 @@ public class AuthenticationFragment extends BaseFragment {
     private static int REJECTED = 2;
     private List<Authentication> authenticationList = new ArrayList<>();
     private XRecyclerView xRecyclerView;
-    private int mTempSize;
-    private AuthenticationListAdapter authenticationListAdapter;
-    private Context mContext;
+    private AuthenticateRequestListAdapter authenticationListAdapter;
     private MyHandler handler;
-    private Runnable runnable;
-
-    public static final AuthenticationFragment newInstance(int type) {
-        AuthenticationFragment f = new AuthenticationFragment();
-        Bundle bdl = new Bundle();
-        bdl.putInt("type", type);
-        f.setArguments(bdl);
-        return f;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        type = getArguments().getInt("type");
     }
 
     @Nullable
@@ -99,10 +83,8 @@ public class AuthenticationFragment extends BaseFragment {
     }
 
     protected void initView(View view) {
-        Slog.d(TAG, "================================initView");
         handler = new MyHandler(this);
-        mContext = MyApplication.getContext();
-        authenticationListAdapter = new AuthenticationListAdapter(getContext());
+        authenticationListAdapter = new AuthenticateRequestListAdapter(getContext());
 
         countTV = view.findViewById(R.id.count);
         xRecyclerView = view.findViewById(R.id.authentication_list);
@@ -209,23 +191,13 @@ public class AuthenticationFragment extends BaseFragment {
     }
 
     protected void loadData() {
-        Slog.d(TAG, "-------------------------------->loadData");
         page = authenticationList.size() / PAGE_SIZE;
         RequestBody requestBody = new FormBody.Builder()
                 .add("step", String.valueOf(PAGE_SIZE))
                 .add("page", String.valueOf(page))
                 .build();
 
-        String url = "";
-        if (type == unVERIFIED) {
-            url = GET_ALL_AUTHENTICATION_URL + "unverified";
-        } else if (type == VERIFIED) {
-            url = GET_ALL_AUTHENTICATION_URL + "verified";
-        } else {
-            url = GET_ALL_AUTHENTICATION_URL + "rejected";
-        }
-
-        Slog.d(TAG, "-------------url: " + url);
+        String url = GET_ALL_AUTHENTICATION_URL + "unverified";
 
         HttpUtil.sendOkHttpRequest(MyApplication.getContext(), url, requestBody, new Callback() {
             @Override
@@ -237,7 +209,6 @@ public class AuthenticationFragment extends BaseFragment {
                         int itemCount = processResponseText(responseText);
                         if (itemCount > 0) {
                             if (itemCount < PAGE_SIZE) {
-
                                 handler.sendEmptyMessage(LOAD_COMPLETE_END);
                             } else {
                                 handler.sendEmptyMessage(LOAD_DONE);
@@ -245,7 +216,6 @@ public class AuthenticationFragment extends BaseFragment {
                         } else {
                             handler.sendEmptyMessage(LOAD_NOTHING_DONE);
                         }
-
                     }
                 }
             }
@@ -288,13 +258,14 @@ public class AuthenticationFragment extends BaseFragment {
         return 0;
     }
 
-    private Authentication parseAuthentication(JSONObject authenticationObject) {
+    public static Authentication parseAuthentication(JSONObject authenticationObject) {
         Authentication authentication = new Authentication();
         authentication.aid = authenticationObject.optInt("aid");
         authentication.officerUid = authenticationObject.optInt("officer_uid");
         authentication.authenticationPhotoUrl = authenticationObject.optString("uri");
         authentication.requestTime = authenticationObject.optInt("created");
 
+        authentication.setUid(authenticationObject.optInt("uid"));
         authentication.setName(authenticationObject.optString("realname"));
         authentication.setAvatar(authenticationObject.optString("avatar"));
         authentication.setSex(authenticationObject.optInt("sex"));
@@ -309,14 +280,14 @@ public class AuthenticationFragment extends BaseFragment {
     public void handleMessage(Message message) {
         switch (message.what) {
             case LOAD_DONE:
-                authenticationListAdapter.setData(authenticationList, type);
+                authenticationListAdapter.setData(authenticationList, unVERIFIED);
                 authenticationListAdapter.notifyDataSetChanged();
                 xRecyclerView.refreshComplete();
                 //xRecyclerView.loadMoreComplete();
                 break;
 
             case LOAD_COMPLETE_END:
-                authenticationListAdapter.setData(authenticationList, type);
+                authenticationListAdapter.setData(authenticationList, unVERIFIED);
                 authenticationListAdapter.notifyDataSetChanged();
                 xRecyclerView.refreshComplete();
                 xRecyclerView.loadMoreComplete();
@@ -328,11 +299,8 @@ public class AuthenticationFragment extends BaseFragment {
                 xRecyclerView.loadMoreComplete();
                 break;
             case OPERATION_DONE:
-                countTV.setText(String.valueOf(count - 1));
-                authenticationList.remove(mCurrentPos);
-                authenticationListAdapter.setData(authenticationList, type);
-                authenticationListAdapter.notifyItemRemoved(mCurrentPos);
-                authenticationListAdapter.notifyDataSetChanged();
+                authenticationList.clear();
+                loadData();
                 break;
             default:
                 break;
@@ -342,7 +310,6 @@ public class AuthenticationFragment extends BaseFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        handler.removeCallbacks(runnable);
     }
 
     public static class Authentication extends UserProfile {
@@ -353,15 +320,15 @@ public class AuthenticationFragment extends BaseFragment {
     }
 
     static class MyHandler extends Handler {
-        WeakReference<AuthenticationFragment> notificationFragmentWeakReference;
+        WeakReference<RequestFragment> notificationFragmentWeakReference;
 
-        MyHandler(AuthenticationFragment notificationFragment) {
+        MyHandler(RequestFragment notificationFragment) {
             notificationFragmentWeakReference = new WeakReference<>(notificationFragment);
         }
 
         @Override
         public void handleMessage(Message message) {
-            AuthenticationFragment notificationFragment = notificationFragmentWeakReference.get();
+            RequestFragment notificationFragment = notificationFragmentWeakReference.get();
             if (notificationFragment != null) {
                 notificationFragment.handleMessage(message);
             }

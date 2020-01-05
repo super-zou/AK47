@@ -215,7 +215,7 @@
     <string name="more">更多</string>
         <string name="pass">通过</string>
     <string name="reject">拒绝</string>
-    <string name="find_more">更多 ></string>
+    <string name="find_more">更多 >></string>
     <string name="avatar_set_request_title">头像未设置</string>
     <string name="avatar_set_request_content">需要先设置头像，才能进一步操作</string>
     <string name="condition_set_request_title">交友条件未设置</string>
