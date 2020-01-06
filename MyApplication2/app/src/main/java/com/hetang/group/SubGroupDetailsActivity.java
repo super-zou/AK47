@@ -990,9 +990,10 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
                 public void onClick(DialogInterface dialog, int which) {
                     Bundle bundle = new Bundle();
                     bundle.putInt("type", 1);
-                    GroupMemberOperationDialogFragment groupMemberOperationDialogFragment = new GroupMemberOperationDialogFragment();
-                    groupMemberOperationDialogFragment.setArguments(bundle);
-                    groupMemberOperationDialogFragment.show(getSupportFragmentManager(), "GroupMemberOperationDialogFragment");
+                    bundle.putInt("gid", gid);
+                    SubmitAuthenticationDialogFragment submitAuthenticationDialogFragment = new SubmitAuthenticationDialogFragment();
+                    submitAuthenticationDialogFragment.setArguments(bundle);
+                    submitAuthenticationDialogFragment.show(getSupportFragmentManager(), "SubmitAuthenticationDialogFragment");
                 }
             };
         }
