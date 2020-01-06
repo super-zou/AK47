@@ -342,9 +342,13 @@ public class DynamicsInteractDetailsActivity extends BaseAppCompatActivity imple
                     try {
                         JSONObject relatedContentJSONObject = new JSONObject(responseText).optJSONObject("dynamic");
                         MeetDynamicsFragment meetDynamicsFragment = new MeetDynamicsFragment();
-                        dynamic = meetDynamicsFragment.setMeetDynamics(relatedContentJSONObject);
-                   setDynamicsInteract(dynamic);
-                        handler.sendEmptyMessage(GET_DYNAMIC_DONE);
+                        if (relatedContentJSONObject != null) {
+                            dynamic = meetDynamicsFragment.setMeetDynamics(relatedContentJSONObject);
+                        }
+                        if (dynamic != null){
+                            setDynamicsInteract(dynamic);
+                            handler.sendEmptyMessage(GET_DYNAMIC_DONE);
+                        }
                     }catch (JSONException e){
                         e.printStackTrace();
                     }
