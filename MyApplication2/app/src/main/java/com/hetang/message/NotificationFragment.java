@@ -352,7 +352,6 @@ public class NotificationFragment extends BaseFragment {
                 case JOIN_GROUP_ACTION:
                 case APPLY_JOIN_GROUP_NF:
                 case AUTHENTICATION_VERIFIED_NF:
-                case AUTHENTICATION_REJECTED_NF:
                     notification.content = mContext.getResources().getString(R.string.view_details);
                     break;
             }
