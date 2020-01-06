@@ -54,6 +54,7 @@ import com.hetang.util.MyLinearLayoutManager;
 import com.hetang.util.ParseUtils;
 import com.hetang.util.RoundImageView;
 import com.hetang.util.Slog;
+import com.hetang.util.UserProfile;
 import com.hetang.util.Utility;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
@@ -77,7 +78,9 @@ import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static com.hetang.common.MyApplication.getContext;
 import static com.hetang.common.SetAvatarActivity.MODIFY_LOGO;
 import static com.hetang.common.SetAvatarActivity.MODIFY_SUBGROUP_LOGO_RESULT_OK;
+import static com.hetang.group.GroupFragment.fraternity_group;
 import static com.hetang.home.CommonContactsActivity.GROUP_MEMBER;
+import static com.hetang.home.CommonContactsActivity.GROUP_MEMBER_CATEGRORY;
 import static com.hetang.home.HomeFragment.GET_MY_NEW_ADD_DONE;
 import static com.hetang.home.HomeFragment.GET_MY_NEW_ADD_DYNAMICS_URL;
 import static com.hetang.meet.MeetDynamicsFragment.COMMENT_COUNT_UPDATE;
@@ -90,6 +93,8 @@ import static com.hetang.meet.MeetDynamicsFragment.NO_MORE_DYNAMICS;
 import static com.hetang.meet.MeetDynamicsFragment.NO_UPDATE;
 import static com.hetang.meet.MeetDynamicsFragment.PRAISE_UPDATE;
 import static com.hetang.meet.MeetDynamicsFragment.UPDATE_COMMENT;
+import static com.hetang.util.ParseUtils.FEMALE;
+import static com.hetang.util.ParseUtils.MALE;
 import static com.hetang.util.ParseUtils.startMeetArchiveActivity;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
@@ -134,6 +139,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
     private Context mContext;
     private int uid = -1;
     private int gid = -1;
+    private int type;
     private int currentPos = 0;
     private Bundle savedInstanceState;
     private GridLayout gridLayout;
@@ -154,6 +160,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
         FontManager.markAsIconContainer(findViewById(R.id.group_details_layout), font);
 
         gid = getIntent().getIntExtra("gid", -1);
+        type = getIntent().getIntExtra("type", -1);
         handler = new MyHandler(this);
         if (dynamicsFragment == null) {
             dynamicsFragment = new MeetDynamicsFragment();
@@ -281,9 +288,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        int status = getAuthenticationStatus();
-                        Slog.d(TAG, "--------------getAuthenticationStatus: " + status);
-                        if (status == 1) {
+                        if (type != fraternity_group) {
                             if (subGroup.authorStatus > 0 || subGroup.followed > 0) {
                                 Intent intent = new Intent(MyApplication.getContext(), AddDynamicsActivity.class);
                                 intent.putExtra("type", ParseUtils.ADD_SUBGROUP_ACTIVITY_ACTION);
@@ -298,12 +303,30 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
                                 });
                             }
                         } else {
-                            Message message = Message.obtain();
-                            Bundle bundle = new Bundle();
-                            bundle.putInt("status", status);
-                            message.setData(bundle);
-                            message.what = SHOW_NOTICE_DIALOG;
-                            handler.sendMessage(message);
+                            int status = getAuthenticationStatus();
+                            Slog.d(TAG, "--------------getAuthenticationStatus: " + status);
+                            if (status == 1) {
+                                if (subGroup.authorStatus > 0 || subGroup.followed > 0) {
+                                    Intent intent = new Intent(MyApplication.getContext(), AddDynamicsActivity.class);
+                                    intent.putExtra("type", ParseUtils.ADD_SUBGROUP_ACTIVITY_ACTION);
+                                    intent.putExtra("gid", gid);
+                                    startActivityForResult(intent, Activity.RESULT_FIRST_USER);
+                                } else {
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            showNoticeDialog();
+                                        }
+                                    });
+                                }
+                            } else {
+                                Message message = Message.obtain();
+                                Bundle bundle = new Bundle();
+                                bundle.putInt("status", status);
+                                message.setData(bundle);
+                                message.what = SHOW_NOTICE_DIALOG;
+                                handler.sendMessage(message);
+                            }
                         }
                     }
                 }).start();
@@ -387,6 +410,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
     private void getSubGroupByGid() {
         RequestBody requestBody = new FormBody.Builder()
                 .add("gid", String.valueOf(gid))
+                .add("type", String.valueOf(type))
                 .build();
 
         HttpUtil.sendOkHttpRequest(this, GET_SUBGROUP_BY_GID, requestBody, new Callback() {
@@ -448,10 +472,32 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
             subGroup.followed = group.optInt("followed");
             subGroup.leader = new UserMeetInfo();
 
-            subGroup.maleCount = group.optInt("male_count");
-            subGroup.femaleCount = group.optInt("female_count");
-            subGroup.maleArr = group.optJSONArray("males");
-            subGroup.femaleArr = group.optJSONArray("females");
+            if (type == fraternity_group) {
+                subGroup.maleCount = group.optInt("male_count");
+                subGroup.femaleCount = group.optInt("female_count");
+                try {
+                    //for male
+                    JSONArray maleArr = group.optJSONArray("males");
+                    for (int i = 0; i < maleArr.length(); i++) {
+                        UserProfile userProfile = new UserProfile();
+                        JSONObject maleObject = maleArr.getJSONObject(i);
+                        userProfile.setUid(maleObject.optInt("uid"));
+                        userProfile.setAvatar(maleObject.optString("avatar"));
+                        subGroup.maleList.add(userProfile);
+                    }
+                    //for female
+                    JSONArray femaleArr = group.optJSONArray("females");
+                    for (int i = 0; i < femaleArr.length(); i++) {
+                        UserProfile userProfile = new UserProfile();
+                        JSONObject maleObject = femaleArr.getJSONObject(i);
+                        userProfile.setUid(maleObject.optInt("uid"));
+                        userProfile.setAvatar(maleObject.optString("avatar"));
+                        subGroup.femaleList.add(userProfile);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
 
             if (group.optJSONObject("leader") != null) {
                 ParseUtils.setBaseProfile(subGroup.leader, group.optJSONObject("leader"));
@@ -512,95 +558,174 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
 
         groupDesc.setText(subGroup.groupProfile);
 
-        if (subGroup.maleCount > 0){
-            maleHorizontalScrollView.setVisibility(View.VISIBLE);
-            JSONArray maleArray = subGroup.maleArr;
-            int size = maleArray.length();
-            for (int i=0; i<size; i++){
-                View view = LayoutInflater.from(getContext()).inflate(R.layout.group_member_item, null);
-                maleWrapper.addView(view);
-                RoundImageView avatarView = view.findViewById(R.id.avatar);
-                try {
-                    if (maleArray.get(i) != ""){
-                        Glide.with(getContext()).load(HttpUtil.DOMAIN + maleArray.get(i)).into(avatarView);
+        if (type == fraternity_group) {
+            if (subGroup.maleCount > 0) {
+                maleHorizontalScrollView.setVisibility(View.VISIBLE);
+                int size = subGroup.maleList.size();
+                for (int i = 0; i < size; i++) {
+                    View view = LayoutInflater.from(getContext()).inflate(R.layout.group_member_item, null);
+                    maleWrapper.addView(view);
+                    final RoundImageView avatarView = view.findViewById(R.id.avatar);
+                    String avatarUri = subGroup.maleList.get(i).getAvatar();
+                    if (avatarUri != "") {
+                        Glide.with(getContext()).load(HttpUtil.DOMAIN + avatarUri).into(avatarView);
                     }
-                }catch (JSONException e){
-                    e.printStackTrace();
-                }
-
-                if (subGroup.maleCount > 6 && i == size - 1) {
-                    LinearLayout findMore = view.findViewById(R.id.find_more);
-                    findMore.setVisibility(View.VISIBLE);
-                    findMore.setOnClickListener(new View.OnClickListener() {
+                    avatarView.setTag(subGroup.maleList.get(i).getUid());
+                    if (subGroup.maleCount > 6 && i == size - 1) {
+                        LinearLayout findMore = view.findViewById(R.id.find_more);
+                        findMore.setVisibility(View.VISIBLE);
+                        findMore.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        int status = getAuthenticationStatus();
+                                        if (status == 1) {
+                                            Intent intent = new Intent(MyApplication.getContext(), CommonContactsActivity.class);
+                                            intent.putExtra("type", GROUP_MEMBER_CATEGRORY);
+                                            intent.putExtra("sex", MALE);
+                                            intent.putExtra("gid", gid);
+                                            startActivity(intent);
+                                        } else {
+                                            Message message = Message.obtain();
+                                            Bundle bundle = new Bundle();
+                                            bundle.putInt("status", status);
+                                            message.setData(bundle);
+                                            message.what = SHOW_NOTICE_DIALOG;
+                                            handler.sendMessage(message);
+                                        }
+                                    }
+                                }).start();
+                            }
+                        });
+                    }
+                    avatarView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            Intent intent = new Intent(MyApplication.getContext(), CommonContactsActivity.class);
-                            startActivity(intent);
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    int status = getAuthenticationStatus();
+                                    if (status == 1) {
+                                        startMeetArchiveActivity(SubGroupDetailsActivity.this, (int) avatarView.getTag());
+                                    } else {
+                                        Message message = Message.obtain();
+                                        Bundle bundle = new Bundle();
+                                        bundle.putInt("status", status);
+                                        message.setData(bundle);
+                                        message.what = SHOW_NOTICE_DIALOG;
+                                        handler.sendMessage(message);
+                                    }
+                                }
+                            }).start();
+                        }
+                    });
+
+                }
+            }
+
+            if (subGroup.femaleCount > 0) {
+                femaleHorizontalScrollView.setVisibility(View.VISIBLE);
+                int size = subGroup.femaleList.size();
+                for (int i = 0; i < size; i++) {
+                    View view = LayoutInflater.from(getContext()).inflate(R.layout.group_member_item, null);
+                    femaleWrapper.addView(view);
+                    final RoundImageView avatarView = view.findViewById(R.id.avatar);
+                    String avatarUri = subGroup.femaleList.get(i).getAvatar();
+                    if (avatarUri != "") {
+                        Glide.with(getContext()).load(HttpUtil.DOMAIN + avatarUri).into(avatarView);
+                    }
+                    avatarView.setTag(subGroup.femaleList.get(i).getUid());
+                    if (subGroup.femaleCount > 6 && i == size - 1) {
+                        LinearLayout findMore = view.findViewById(R.id.find_more);
+                        findMore.setVisibility(View.VISIBLE);
+                        findMore.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Intent intent = new Intent(MyApplication.getContext(), CommonContactsActivity.class);
+                                intent.putExtra("type", GROUP_MEMBER_CATEGRORY);
+                                intent.putExtra("sex", FEMALE);
+                                intent.putExtra("gid", gid);
+                                startActivity(intent);
+                            }
+                        });
+                    }
+
+                    avatarView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    int status = getAuthenticationStatus();
+                                    if (status == 1) {
+                                        startMeetArchiveActivity(SubGroupDetailsActivity.this, (int) avatarView.getTag());
+                                    } else {
+                                        Message message = Message.obtain();
+                                        Bundle bundle = new Bundle();
+                                        bundle.putInt("status", status);
+                                        message.setData(bundle);
+                                        message.what = SHOW_NOTICE_DIALOG;
+                                        handler.sendMessage(message);
+                                    }
+                                }
+                            }).start();
                         }
                     });
                 }
             }
         }
 
-        if (subGroup.femaleCount > 0){
-            femaleHorizontalScrollView.setVisibility(View.VISIBLE);
-            JSONArray femaleArray = subGroup.femaleArr;
-            int size = femaleArray.length();
-            for (int i=0; i<size; i++){
-                View view = LayoutInflater.from(getContext()).inflate(R.layout.group_member_item, null);
-                femaleWrapper.addView(view);
-                RoundImageView avatarView = view.findViewById(R.id.avatar);
-                try {
-                    if (femaleArray.get(i) != ""){
-                        Glide.with(getContext()).load(HttpUtil.DOMAIN + femaleArray.get(i)).into(avatarView);
-                    }
-                }catch (JSONException e){
-                    e.printStackTrace();
-                }
 
-                if (subGroup.femaleCount > 6 && i == size - 1){
-                    LinearLayout findMore = view.findViewById(R.id.find_more);
-                    findMore.setVisibility(View.VISIBLE);
-                    findMore.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Intent intent = new Intent(MyApplication.getContext(), CommonContactsActivity.class);
-                            startActivity(intent);
-                        }
-                    });
-                }
-            }
-        }
-
-            if (subGroup.authorStatus != -1) {
-                if (subGroup.authorStatus == 0) {
-                    joinBtn.setVisibility(View.VISIBLE);
-                    joinBtn.setText(getResources().getString(R.string.approvied));
-                    joinBtn.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            acceptSingleGroupInvite();
-                        }
-                    });
-                } else {
-                    joinBtn.setText(getResources().getString(R.string.invite_friend));
-                    joinBtn.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            invite();
-                        }
-                    });
-                }
-                followBtn.setVisibility(View.INVISIBLE);
-            } else {
+        if (subGroup.authorStatus != -1) {
+            if (subGroup.authorStatus == 0) {
                 joinBtn.setVisibility(View.VISIBLE);
+                joinBtn.setText(getResources().getString(R.string.approvied));
                 joinBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        applyJoinGroup();
+                        acceptSingleGroupInvite();
+                    }
+                });
+            } else {
+                joinBtn.setText(getResources().getString(R.string.invite_friend));
+                joinBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        invite();
                     }
                 });
             }
+            followBtn.setVisibility(View.INVISIBLE);
+        } else {
+            joinBtn.setVisibility(View.VISIBLE);
+            joinBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (type != fraternity_group){
+                        applyJoinGroup();
+                    }else {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                int status = getAuthenticationStatus();
+                                if (status == 1) {
+                                    applyJoinGroup();
+                                } else {
+                                    Message message = Message.obtain();
+                                    Bundle bundle = new Bundle();
+                                    bundle.putInt("status", status);
+                                    message.setData(bundle);
+                                    message.what = SHOW_NOTICE_DIALOG;
+                                    handler.sendMessage(message);
+                                }
+                            }
+                        }).start();
+                    }
+                }
+            });
+        }
         if (subGroup.authorStatus == -1) {
 
             if (subGroup.followed == 1) {
@@ -673,23 +798,33 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        int status = getAuthenticationStatus();
-                        Slog.d(TAG, "--------------getAuthenticationStatus: " + status);
-                        if (status == 1) {
+                        if (type != fraternity_group){
                             Intent intent = new Intent(getContext(), CommonContactsActivity.class);
                             intent.putExtra("type", GROUP_MEMBER);
                             intent.putExtra("gid", gid);
                             intent.putExtra("isLeader", subGroup.isLeader);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
                             startActivityForResult(intent, RESULT_FIRST_USER);
-                        } else {
-                            Message message = Message.obtain();
-                            Bundle bundle = new Bundle();
-                            bundle.putInt("status", status);
-                            message.setData(bundle);
-                            message.what = SHOW_NOTICE_DIALOG;
-                            handler.sendMessage(message);
+                        }else {
+                            int status = getAuthenticationStatus();
+                            Slog.d(TAG, "--------------getAuthenticationStatus: " + status);
+                            if (status == 1) {
+                                Intent intent = new Intent(getContext(), CommonContactsActivity.class);
+                                intent.putExtra("type", GROUP_MEMBER);
+                                intent.putExtra("gid", gid);
+                                intent.putExtra("isLeader", subGroup.isLeader);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                                startActivityForResult(intent, RESULT_FIRST_USER);
+                            } else {
+                                Message message = Message.obtain();
+                                Bundle bundle = new Bundle();
+                                bundle.putInt("status", status);
+                                message.setData(bundle);
+                                message.what = SHOW_NOTICE_DIALOG;
+                                handler.sendMessage(message);
+                            }
                         }
+
                     }
                 }).start();
             }

@@ -211,6 +211,7 @@ public class SubGroupActivity extends BaseAppCompatActivity {
                 updateVisitorRecord(gid);
                 Intent intent = new Intent(getContext(), SubGroupDetailsActivity.class);
                 intent.putExtra("gid", gid);
+                intent.putExtra("type", type);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
                 startActivityForResult(intent, RESULT_FIRST_USER);
             }
@@ -603,8 +604,8 @@ public class SubGroupActivity extends BaseAppCompatActivity {
         public int activityCount = 0;
         public int maleCount = 0;
         public int femaleCount = 0;
-        public JSONArray maleArr;
-        public JSONArray femaleArr;
+        public List<UserProfile> maleList = new ArrayList<>();
+        public List<UserProfile> femaleList = new ArrayList<>();
         public String created;
         public UserMeetInfo leader;
 

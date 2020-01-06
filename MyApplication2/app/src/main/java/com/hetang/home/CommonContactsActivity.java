@@ -66,6 +66,7 @@ public class CommonContactsActivity extends BaseAppCompatActivity {
     private boolean isLeader;
     private int mLoadSize = 0;
     public static final int GROUP_MEMBER = 2;
+    public static final int GROUP_MEMBER_CATEGRORY = 3;
     private static final int PAGE_SIZE = 12;//page size
     private static final int GET_ALL_DONE = 1;
     private static final int GET_ALL_END = 2;
@@ -74,6 +75,7 @@ public class CommonContactsActivity extends BaseAppCompatActivity {
     private static final int MEMBER_BLOCKED = 5;
     private static final int MEMBER_UNBLOCKED = 6;
     public static final String GET_ALL_MEMBERS_URL = HttpUtil.DOMAIN + "?q=subgroup/get_all_members";
+    public static final String GET_ALL_MEMBERS_CATEGRORY_URL = HttpUtil.DOMAIN + "?q=subgroup/get_all_members_categrory";
     public static final String DELETE_MEMBER_BROADCAST = "com.hetang.action.DELETE_MEMBER";
     public static final String BLOCK_MEMBER_BROADCAST = "com.hetang.action.BLOCK_MEMBER";
     public static final String UNBLOCK_MEMBER_BROADCAST = "com.hetang.action.UNBLOCK_MEMBER";
@@ -84,7 +86,7 @@ public class CommonContactsActivity extends BaseAppCompatActivity {
     private Handler handler;
     Typeface font;
     int currentPosition = -1;
-    int status = -1;
+    int sex = -1;
     ImageView progressImageView;
     AnimationDrawable animationDrawable;
     private List<UserProfile> contactsList = new ArrayList<>();
@@ -106,6 +108,9 @@ public class CommonContactsActivity extends BaseAppCompatActivity {
         if (type == GROUP_MEMBER) {
             gid = getIntent().getIntExtra("gid", -1);
             isLeader = getIntent().getBooleanExtra("isLeader", false);
+        }else if (type == GROUP_MEMBER_CATEGRORY){
+            sex = getIntent().getIntExtra("sex", 0);
+            gid = getIntent().getIntExtra("gid", -1);
         }
         TextView back = findViewById(R.id.left_back);
         back.setOnClickListener(new View.OnClickListener() {
@@ -223,6 +228,10 @@ public class CommonContactsActivity extends BaseAppCompatActivity {
         if (type == GROUP_MEMBER) {
             builder.add("gid", String.valueOf(gid));
             uri = GET_ALL_MEMBERS_URL;
+        }else if (type == GROUP_MEMBER_CATEGRORY){
+            builder.add("gid", String.valueOf(gid));
+            builder.add("sex", String.valueOf(sex));
+            uri = GET_ALL_MEMBERS_CATEGRORY_URL;
         }
         RequestBody requestBody = builder.build();
 
