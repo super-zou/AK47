@@ -23,6 +23,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.hetang.R;
@@ -66,6 +67,7 @@ public class SubmitAuthenticationDialogFragment extends BaseDialogFragment {
     private static final String SUBMIT_URL = HttpUtil.DOMAIN + "?q=user_extdata/submit_authentication_info";
     private int sex;
     private int gid;
+    private int type;
     private Dialog mDialog;
     private String before;
     private Context mContext;
@@ -120,7 +122,10 @@ public class SubmitAuthenticationDialogFragment extends BaseDialogFragment {
 
         Bundle bundle = getArguments();
         if (bundle != null){
-            gid = bundle.getInt("gid");
+            type = bundle.getInt("type", 0);
+            if (type == 0){
+                gid = bundle.getInt("gid");
+            }
         }
         //subGroup = (SubGroupActivity.SubGroup) bundle.getSerializable("subGroup");
         TextView leftBack = mDialog.findViewById(R.id.left_back);
@@ -139,7 +144,9 @@ public class SubmitAuthenticationDialogFragment extends BaseDialogFragment {
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                submit();
+                if (checkValid()){
+                    submit();
+                }
             }
         });
 
@@ -194,10 +201,12 @@ public class SubmitAuthenticationDialogFragment extends BaseDialogFragment {
 
     private void submit() {
         showProgressDialog("");
-        RequestBody requestBody = new FormBody.Builder()
+        FormBody.Builder builder = new FormBody.Builder()
                 .add("gid", String.valueOf(gid))
                 .add("authentication_info", getUserInfoJsonObject().toString())
-                .build();
+                .add("type", String.valueOf(type));
+
+        RequestBody requestBody = builder.build();
 
         HttpUtil.sendOkHttpRequest(mContext, SUBMIT_URL, requestBody, new Callback() {
             @Override
@@ -216,6 +225,40 @@ public class SubmitAuthenticationDialogFragment extends BaseDialogFragment {
         });
 
 
+    }
+    
+    private boolean checkValid(){
+        if (TextUtils.isEmpty(realNameET.getText().toString())){
+            Toast.makeText(getContext(), "姓名不能为空", Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+        if (TextUtils.isEmpty(majorET.getText().toString())){
+            Toast.makeText(getContext(), "专业不能为空", Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+        if (degree.equals("学历")){
+            Toast.makeText(getContext(), "请选择学历", Toast.LENGTH_LONG).show();
+            return false;
+        }
+        
+        if (TextUtils.isEmpty(universityET.getText().toString())){
+            Toast.makeText(getContext(), "学校不能为空", Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+        if (TextUtils.isEmpty(userProfile.getAvatar()) && TextUtils.isEmpty(avatarUri)){
+            Toast.makeText(getContext(), "请设置头像", Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+        if (TextUtils.isEmpty(uri)){
+            Toast.makeText(getContext(), "请上传证件照", Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+        return true;
     }
 
 
@@ -260,9 +303,10 @@ public class SubmitAuthenticationDialogFragment extends BaseDialogFragment {
         }
 
         majorET.setText(userProfile.getMajor());
+        
+        degree = userProfile.getDegreeName(userProfile.getDegree());
 
         for (int i=0; i<degreeList.size(); i++){
-            degree = userProfile.getDegreeName(userProfile.getDegree());
             if (degree.equals(degreeList.get(i))){
                 niceSpinnerDegree.setSelectedIndex(i);
                 break;
