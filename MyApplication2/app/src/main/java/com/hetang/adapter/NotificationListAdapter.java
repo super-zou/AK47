@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
@@ -26,6 +27,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.hetang.R;
+import com.hetang.authenticate.SubmitAuthenticationDialogFragment;
 import com.hetang.common.MyApplication;
 import com.hetang.group.SingleGroupDetailsActivity;
 import com.hetang.group.SubGroupDetailsActivity;
@@ -50,6 +52,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static com.hetang.adapter.ContactsListAdapter.acceptContactsApply;
+import static com.hetang.common.MyApplication.getContext;
 import static com.hetang.util.ParseUtils.ADD_CHEERING_GROUP_MEMBER_ACTION;
 import static com.hetang.util.ParseUtils.APPROVE_IMPRESSION_ACTION;
 import static com.hetang.util.ParseUtils.APPROVE_PERSONALITY_ACTION;
@@ -62,6 +65,7 @@ import static com.hetang.util.ParseUtils.JOIN_CHEERING_GROUP_ACTION;
 import static com.hetang.util.ParseUtils.MODIFY_GROUP_ACTION;
 import static com.hetang.util.ParseUtils.REFEREE_ACTION;
 import static com.hetang.util.ParseUtils.REFEREE_INVITE_NF;
+import static com.hetang.util.ParseUtils.startMeetArchiveActivity;
 import static com.hetang.util.Utility.drawableToBitmap;
 import static com.hetang.util.Utility.getDateToString;
 
@@ -76,7 +80,7 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
     private static final int PROCESSED = 1;
     private static final int IGNORED = -1;
     private static final int UPDATE_PROCESS_BUTTON_STATUS = 0;
-        private static final int MAKE_NOTIFICATION_SHOWED = 1;
+    private static final int MAKE_NOTIFICATION_SHOWED = 1;
     private static final int NOT_SHOWED = 0;
     private static final int SHOWED = 1;
     private Handler mHandler;
@@ -227,7 +231,7 @@ ParseUtils.startMeetArchiveActivity(mContext, notification.tid);
                     case ParseUtils.MEET_COMMENT_REPLY_NF:
                     case ParseUtils.PRAISE_MEET_COMMENT_NF:
                     case ParseUtils.MEET_COMMENT_NF:
-                        ParseUtils.startMeetConditionDetails(mContext, notification.uid, notification.id, null);
+                        ParseUtils.startMeetConditionDetails(getContext(), notification.uid, notification.id, null);
                         markNotificationProcessed(holder.isNew, notification);
                         break;
 
@@ -238,19 +242,19 @@ ParseUtils.startMeetArchiveActivity(mContext, notification.tid);
                     case ParseUtils.APPROVE_IMPRESSION_ACTION:
                     case ParseUtils.APPROVE_PERSONALITY_ACTION:
                     case ParseUtils.JOIN_CHEERING_GROUP_ACTION:
-                        ParseUtils.startMeetArchiveActivity(mContext, notification.uid);
+                        ParseUtils.startMeetArchiveActivity(getContext(), notification.uid);
                         markNotificationProcessed(holder.isNew, notification);
                         break;
                     case ParseUtils.REFEREE_INVITE_NF:
                     case ParseUtils.ADD_CHEERING_GROUP_MEMBER_ACTION:
-                        ParseUtils.startMeetArchiveActivity(mContext, notification.tid);
+                        ParseUtils.startMeetArchiveActivity(getContext(), notification.tid);
                         markNotificationProcessed(holder.isNew, notification);
                         break;
                     case ParseUtils.COMMENT_REPLY_NF:
                     case ParseUtils.COMMENT_PRAISED_NF:
                     case ParseUtils.DYNAMIC_COMMENT_NF:
                     case ParseUtils.PRAISE_DYNAMIC_ACTION:
-                        ParseUtils.startDynamicDetails(mContext, notification.id, null);
+                        ParseUtils.startDynamicDetails(getContext(), notification.id, null);
                         markNotificationProcessed(holder.isNew, notification);
                         break;
 
@@ -260,11 +264,20 @@ ParseUtils.startMeetArchiveActivity(mContext, notification.tid);
                     case FOLLOW_GROUP_ACTION:
                     case MODIFY_GROUP_ACTION:
                     case AUTHENTICATION_VERIFIED_NF:
+                        startSubGroupDetails(getContext(), notification.id);
+                        markNotificationProcessed(holder.isNew, notification);
+                        break;
                     case AUTHENTICATION_REJECTED_NF:
-                        startSubGroupDetails(mContext, notification.id);
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("type", 1);
+                        SubmitAuthenticationDialogFragment submitAuthenticationDialogFragment = new SubmitAuthenticationDialogFragment();
+                        submitAuthenticationDialogFragment.setArguments(bundle);
+                        submitAuthenticationDialogFragment.show(fragmentManager, "SubmitAuthenticationDialogFragment");
                         markNotificationProcessed(holder.isNew, notification);
                         break;
                     default:
+                        startMeetArchiveActivity(getContext(),notification.tid);
+                        markNotificationProcessed(holder.isNew, notification);
                         break;
                 }
             }
