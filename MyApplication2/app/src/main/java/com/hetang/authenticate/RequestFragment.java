@@ -1,5 +1,7 @@
 package com.hetang.authenticate;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -54,6 +56,7 @@ public class RequestFragment extends BaseFragment {
     private int mCurrentPos;
     int page = 0;
     private int type;
+    private String reason = "名字与证件不一致";
     private TextView countTV;
     private int count;
     private static int PASSED = 1;
@@ -135,14 +138,34 @@ public class RequestFragment extends BaseFragment {
             public void onPassClick(View view, int position) {
                 mCurrentPos = position;
                 Authentication authentication = authenticationList.get(position);
-                authenticationOperation(authentication.aid, authentication.getUid(), PASSED);
+                authenticationOperation(authentication.aid, authentication.getUid(), PASSED, "");
             }
 
             @Override
-            public void onRejectClick(View view, int position) {
+            public void onRejectClick(View view, final int position) {
                 mCurrentPos = position;
-                Authentication authentication = authenticationList.get(position);
-                authenticationOperation(authentication.aid, authentication.getUid(), REJECTED);
+                 AlertDialog.Builder builder=new AlertDialog.Builder(getActivity());
+                builder.setTitle("拒绝原因");
+                final String[] items=new String[]{"名字与证件不一致","头像非本人","性别与证件不一致","学历与证件不一致", "专业与证件不一致", "学校与证件不一致","上传的证件照不符合要求"};
+                
+                builder.setSingleChoiceItems(items, 0, new DialogInterface.OnClickListener(){
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                          Slog.d(TAG, "----------------------> selected: "+items[which]);
+                          reason = items[which];
+                    }});
+                builder.setPositiveButton("确定", new DialogInterface.OnClickListener(){
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // TODO Auto-generated method stub
+                        Slog.d(TAG, "-------------------------->reason: "+reason);
+                        Authentication authentication = authenticationList.get(position);
+                        authenticationOperation(authentication.aid, authentication.getUid(), REJECTED, reason);
+
+                    }});
+                builder.create().show();
             }
         });
 
@@ -152,13 +175,16 @@ public class RequestFragment extends BaseFragment {
 
     }
 
-    private void authenticationOperation(int aid, int uid, int status){
+    private void authenticationOperation(int aid, int uid, int status, String reason){
         showProgressDialog(getActivity(), "...");
-        RequestBody requestBody = new FormBody.Builder()
-                .add("aid", String.valueOf(aid))
+        FormBody.Builder builder = new FormBody.Builder();
+        builder.add("aid", String.valueOf(aid))
                 .add("uid", String.valueOf(uid))
-                .add("status", String.valueOf(status))
-                .build();
+                .add("status", String.valueOf(status));
+        if (status == REJECTED){
+            builder.add("reason", reason);
+        }
+        RequestBody requestBody = builder.build();
 
         HttpUtil.sendOkHttpRequest(MyApplication.getContext(), SET_AUTHENTICATION_STATUS, requestBody, new Callback() {
             @Override
