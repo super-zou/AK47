@@ -713,7 +713,7 @@ public class MeetRecommendFragment extends BaseFragment {
             View view = LayoutInflater.from(getContext()).inflate(R.layout.recommend_group_item, null);
             groupWrapper.addView(view);
 
-            if (i > 2 && i == size - 1) {
+            if (size > 2 && i == size - 1) {
                 LinearLayout findMore = view.findViewById(R.id.find_more);
                 findMore.setVisibility(View.VISIBLE);
 
@@ -739,7 +739,7 @@ public class MeetRecommendFragment extends BaseFragment {
             }
 
             TextView visitRecord = view.findViewById(R.id.visit_record);
-            visitRecord.setText("访问量 " + subGroup.visitRecord);
+            visitRecord.setText("访问 " + subGroup.visitRecord);
 
             TextView activityCount = view.findViewById(R.id.activity_count);
             activityCount.setText("动态 " + subGroup.activityCount);
@@ -885,9 +885,11 @@ public class MeetRecommendFragment extends BaseFragment {
     public void handleMessage(Message message) {
         switch (message.what) {
             case NO_MORE_RECOMMEND:
+                stopLoadProgress();
                 recyclerView.setNoMore(true);
                 recyclerView.loadMoreComplete();
-                stopLoadProgress();
+                meetRecommendListAdapter.notifyDataSetChanged();
+                recyclerView.refreshComplete();
                 break;
 
             case GET_RECOMMEND_DONE:
