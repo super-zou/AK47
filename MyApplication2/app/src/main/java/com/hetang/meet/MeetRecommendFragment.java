@@ -888,7 +888,6 @@ public class MeetRecommendFragment extends BaseFragment {
                 stopLoadProgress();
                 recyclerView.setNoMore(true);
                 recyclerView.loadMoreComplete();
-                meetRecommendListAdapter.notifyDataSetChanged();
                 recyclerView.refreshComplete();
                 break;
 
