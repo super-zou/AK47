@@ -107,7 +107,7 @@
     <string name="request_verification_code">请输入验证码</string>
     <string name="verify_verification_code_failed">校验失败，请重新获取</string>
     <string name="login_by_password">密码登录</string>
-    <string name="login_failed">密码失败</string>
+    <string name="login_failed">登录失败</string>
     <string name="logining_progress">正在登陆…</string>
     <string name="saving_progress">正在保存…</string>
     <string name="hetang_introduction">不负青春，让生活更精彩</string>
