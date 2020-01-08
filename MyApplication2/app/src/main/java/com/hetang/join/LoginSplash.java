@@ -98,6 +98,7 @@ public class LoginSplash extends BaseAppCompatActivity {
                     @Override
                     public void run() {
                         Toast.makeText(LoginSplash.this, "网络未连接！", Toast.LENGTH_LONG).show();
+                        getLoginStatus(getApplicationContext());
                     }
                 });
             }
