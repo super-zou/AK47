@@ -157,7 +157,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:fontFamily="sans-serif"
-                    android:text="单身伊甸园"
+                    android:text="伊甸园"
                     android:textColor="@color/black"
                     android:textSize="28sp"
                     android:textStyle="bold"
