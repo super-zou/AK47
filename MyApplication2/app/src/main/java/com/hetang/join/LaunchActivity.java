@@ -163,7 +163,7 @@ public class LaunchActivity extends BaseAppCompatActivity {
                     intent.putExtra("account", account);
                     startActivity(intent);
                     
-                    finish();
+                    //finish();
                     
                 }
             }

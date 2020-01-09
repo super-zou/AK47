@@ -105,7 +105,7 @@
     <string name="enter_verification_code">输入验证码</string>
     <string name="send_verification_code">已发送验证码至</string>
     <string name="request_verification_code">请输入验证码</string>
-    <string name="verify_verification_code_failed">校验失败，请重新获取</string>
+    <string name="verify_verification_code_failed">校验失败，请60s后重新获取</string>
     <string name="login_by_password">密码登录</string>
     <string name="login_failed">登录失败</string>
     <string name="logining_progress">正在登陆…</string>

@@ -31,6 +31,7 @@ import okhttp3.Response;
 public class VerificationCodeJoin extends BaseAppCompatActivity {
     /*+Begin: added by xuchunping 2018.7.19*/
     private static final String TAG = "VerificationCodeJoin";
+    private static final String GET_VERIFICATION_CODE_URL = HttpUtil.DOMAIN + "?q=chat/get_verification_code";
     private static final String ACCOUNT_CHECK_URL = HttpUtil.DOMAIN + "?q=account_manager/check_account_info";
     private static final String REGISTER_URL = HttpUtil.DOMAIN + "?q=register_guide/register";
 
@@ -44,9 +45,10 @@ public class VerificationCodeJoin extends BaseAppCompatActivity {
     
     private TextView resend;
     private TimeCount timeCount;
-    private String mVerificationCode;
+    private String mInputVerificationCode;
     private TextInputLayout mVerifyCodeInputLayout;
     private String account;
+    private String mResponseVerifyCode;
     /*-End: added by xuchunping 2018.7.19*/
 
     @Override
@@ -83,11 +85,11 @@ public class VerificationCodeJoin extends BaseAppCompatActivity {
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mVerificationCode = mVerificationCodeEdit.getText().toString();
-                if(TextUtils.isEmpty(mVerificationCode)){
+                mInputVerificationCode = mVerificationCodeEdit.getText().toString();
+                if(TextUtils.isEmpty(mInputVerificationCode)){
                     mVerifyCodeInputLayout.setError(getResources().getString(R.string.request_verification_code));
                 }else {
-                    if(verifyVerificationCode()){
+                    if(verifyResult()){
                         checkRigister(account);
                     }else{
                         mVerifyCodeInputLayout.setError(getResources().getString(R.string.verify_verification_code_failed));
@@ -99,20 +101,48 @@ public class VerificationCodeJoin extends BaseAppCompatActivity {
     }
 
     private void requstVerificationCode(){
-        final int numcode = (int) ((Math.random() * 9 + 1) * 100000);
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
+        sendVerificationCodeRequest();
+    }
+
+    private void sendVerificationCodeRequest(){
+        Slog.d(TAG, "-------------------->sendVerificationCodeRequest account: "+account);
+        RequestBody requestBody = new FormBody.Builder()
+                .add("mobile", account)
+                .build();
+        HttpUtil.sendOkHttpRequest(VerificationCodeJoin.this, GET_VERIFICATION_CODE_URL, requestBody, new Callback() {
+
             @Override
-            public void run() {
-                mVerificationCodeEdit.setText(String.valueOf(numcode));
+            public void onResponse(Call call, Response response) throws IOException {
+                String responseText = response.body().string();
+                Slog.d(TAG, "------------>sendVerificationCodeRequest response : " + responseText);
+
+                try {
+                    if (!TextUtils.isEmpty(responseText)) {
+                        JSONObject result = new JSONObject(responseText).optJSONObject("result");
+                        mResponseVerifyCode = result.optString("obj");
+                    }else {
+                        //createNewUser(account);
+                    }
+                } catch (JSONException e) {
+                    Slog.e(TAG, "sendVerificationCodeRequest onResponse e:" + e.toString());
+                }
+
             }
-        }, 3000);
 
-
+            @Override
+            public void onFailure(Call call, IOException e) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        toast("VerificationCodeJoin failed");
+                    }
+                });
+            }
+        });
     }
     
-    private boolean verifyVerificationCode(){
-        return true;
+    private boolean verifyResult(){
+        return mInputVerificationCode.equals(mResponseVerifyCode);
     }
     private void customActionbarSet(String titleContent){
         TextView back = findViewById(R.id.left_back);
@@ -210,7 +240,7 @@ public class VerificationCodeJoin extends BaseAppCompatActivity {
         public void onFinish() {
             resend.setText(getResources().getString(R.string.request_again));
             resend.setClickable(true);
-            resend.setTextColor(getResources().getColor(R.color.color_blue));
+            resend.setTextColor(getResources().getColor(R.color.blue_dark));
         }
     }
 

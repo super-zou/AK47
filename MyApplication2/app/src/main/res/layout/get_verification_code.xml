@@ -93,7 +93,7 @@
             android:layout_marginLeft="8dp"
             android:text="@string/get_verification_code"
             android:textColor="@color/color_dark_disabled"
-            android:textSize="12sp" />
+            android:textSize="16sp" />
     </LinearLayout>
     
     <Button
