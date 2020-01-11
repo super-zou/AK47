@@ -287,7 +287,7 @@ public class SingleGroupDetailsActivity extends BaseAppCompatActivity implements
             singleGroup.gid = group.optInt("gid");
             singleGroup.groupName = group.optString("group_name");
             singleGroup.groupProfile = group.optString("group_profile");
-            singleGroup.groupMarkUri = group.optString("group_mark_uri");
+            singleGroup.logoUri = group.optString("logo_uri");
             singleGroup.org = group.optString("group_org");
             singleGroup.created = Utility.timeStampToDay(group.optInt("created"));
             singleGroup.authorStatus = group.optInt("author_status");
