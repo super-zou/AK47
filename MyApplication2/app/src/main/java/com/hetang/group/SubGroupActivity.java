@@ -16,10 +16,16 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
+import com.hetang.util.RoundImageView;
 import com.hetang.R;
 import com.hetang.adapter.SubGroupSummaryAdapter;
 import com.hetang.common.BaseAppCompatActivity;
@@ -54,6 +60,9 @@ import okhttp3.Response;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static com.hetang.common.MyApplication.getContext;
+import static com.hetang.group.GroupFragment.SINGLE_GROUP;
+import static com.hetang.group.GroupFragment.fraternity_group;
+import static com.hetang.group.MeetSingleGroupFragment.getSingleGroup;
 import static com.hetang.group.SubGroupDetailsActivity.GET_SUBGROUP_BY_GID;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
@@ -63,6 +72,7 @@ public class SubGroupActivity extends BaseAppCompatActivity {
     private static final boolean isDebug = true;
     private static final String TAG = "SubGroupActivity";
     private static final int PAGE_SIZE = 8;
+        private static final String SINGLE_GROUP_GET_ALL = HttpUtil.DOMAIN + "?q=single_group/get_all";
     private static final String SUBGROUP_GET_ALL = HttpUtil.DOMAIN + "?q=subgroup/get_all";
     private static final String SUBGROUP_UPDATE = HttpUtil.DOMAIN + "?q=subgroup/update";
     private static final String ADD_SUBGROUP_VISITOR_RECORD = HttpUtil.DOMAIN + "?q=visitor_record/add_group_visit_record";
@@ -74,6 +84,8 @@ public class SubGroupActivity extends BaseAppCompatActivity {
     private static final int NO_MORE = 6;
     private static final int ADD_VISITOR_RECORD_DONE = 7;
     private static final int ADD_NEW_SUBGROUP_DONE = 8;
+        private static final int GET_SINGLE_GROUP_DONE = 9;
+    private static final int NO_SINGLE_GROUP_DONE = 10;
     final int itemLimit = 3;
     ImageView progressImageView;
     AnimationDrawable animationDrawable;
@@ -85,6 +97,7 @@ public class SubGroupActivity extends BaseAppCompatActivity {
     private SubGroupSummaryAdapter subGroupSummaryAdapter;
     private XRecyclerView recyclerView;
     private List<SubGroup> mSubGroupList = new ArrayList<>();
+        private List<MeetSingleGroupFragment.SingleGroup> mSingleGroupList = new ArrayList<>();
 
     public static void updateVisitorRecord(int gid) {
 
@@ -150,8 +163,12 @@ public class SubGroupActivity extends BaseAppCompatActivity {
         type = getIntent().getIntExtra("type", 0);
 
         initView();
-
-        loadData();
+        
+        if (type != fraternity_group){
+            loadData();
+        }else {
+            getRecommendSingleGroup();
+        }
     }
 
     private void initView() {
@@ -248,6 +265,47 @@ public class SubGroupActivity extends BaseAppCompatActivity {
             }
         }, 50);
     }
+    
+    private void getRecommendSingleGroup(){
+        RequestBody requestBody = new FormBody.Builder()
+                .add("step", String.valueOf(PAGE_SIZE))
+                .add("page", String.valueOf(0))
+                .add("type", String.valueOf(type))
+                .build();
+        
+        HttpUtil.sendOkHttpRequest(getContext(), SINGLE_GROUP_GET_ALL, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.body() != null) {
+                    String responseText = response.body().string();
+                    if (isDebug) Slog.d(TAG, "==========response text : " + responseText);
+                    if (responseText != null && !TextUtils.isEmpty(responseText)) {
+                        try {
+                            JSONObject singleGroupResponse = new JSONObject(responseText);
+                            if (singleGroupResponse != null) {
+                                int groupSize = processSingleGroupResponse(singleGroupResponse);
+                                if (groupSize > 0) {
+                                    handler.sendEmptyMessage(GET_SINGLE_GROUP_DONE);
+                                }else {
+                                    handler.sendEmptyMessage(NO_SINGLE_GROUP_DONE);
+                                }
+                            } else {
+                                handler.sendEmptyMessage(NO_SINGLE_GROUP_DONE);
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }
+            }
+@Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+        });
+    }
 
     private void loadData() {
 
@@ -323,6 +381,96 @@ public class SubGroupActivity extends BaseAppCompatActivity {
 
         return subGroupSize;
     }
+    
+    private int processSingleGroupResponse(JSONObject singleGroupResponse) {
+
+        int singleGroupSize = 0;
+        JSONArray singleGroupArray = null;
+
+        if (singleGroupResponse != null) {
+            singleGroupArray = singleGroupResponse.optJSONArray("single_group");
+        }
+
+        if (singleGroupArray != null) {
+            singleGroupSize = singleGroupArray.length();
+            if (singleGroupSize > 0) {
+                for (int i = 0; i < singleGroupArray.length(); i++) {
+                    JSONObject group = singleGroupArray.optJSONObject(i);
+                    if (group != null) {
+                        MeetSingleGroupFragment.SingleGroup singleGroup = getSingleGroup(group, true);
+                        mSingleGroupList.add(singleGroup);
+                    }
+                }
+            }
+        }
+
+        return singleGroupSize;
+    }
+    
+    private void setSingleGroupHeader(){
+        View singleGroupView = LayoutInflater.from(getContext()).inflate(R.layout.recommend_group, (ViewGroup) findViewById(android.R.id.content), false);
+        recyclerView.addHeaderView(singleGroupView);
+        TextView title = singleGroupView.findViewById(R.id.group_recommend_title);
+        title.setText(getContext().getResources().getString(R.string.matchmaker));
+        LinearLayout groupWrapper = singleGroupView.findViewById(R.id.group_wrapper);
+        if (groupWrapper == null) {
+            return;
+        }
+        
+        int size = mSingleGroupList.size();
+        for (int i = 0; i < size; i++) {
+            View view = LayoutInflater.from(getContext()).inflate(R.layout.single_group_item, null);
+            groupWrapper.addView(view);
+
+            if (size > 5 && i == size - 1) {
+                LinearLayout findMore = view.findViewById(R.id.find_more);
+                findMore.setVisibility(View.VISIBLE);
+
+                findMore.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(getContext(), GroupActivity.class);
+                        startActivity(intent);
+                    }
+                });
+            }
+            
+            final MeetSingleGroupFragment.SingleGroup singleGroup = mSingleGroupList.get(i);
+            /*
+            TextView groupName = view.findViewById(R.id.group_name);
+            groupName.setText(singleGroup.groupName);
+            */
+
+            RoundImageView avatar = view.findViewById(R.id.avatar);
+            String logo = singleGroup.leader.getAvatar();
+            if (logo != null && !"".equals(logo)) {
+                Glide.with(getContext()).load(HttpUtil.DOMAIN + logo).into(avatar);
+            }
+
+            TextView leaderName = view.findViewById(R.id.name);
+            leaderName.setText(singleGroup.leader.getName());
+            TextView university = view.findViewById(R.id.university);
+            university.setText(singleGroup.leader.getUniversity());
+            
+            TextView memberCount = view.findViewById(R.id.group_member);
+            memberCount.setText("成员 " + singleGroup.memberCount);
+
+            TextView evaluateCount = view.findViewById(R.id.evaluate_count);
+            evaluateCount.setText("评价 " + singleGroup.evaluateCount);
+
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(getContext(), SingleGroupDetailsActivity.class);
+                    intent.putExtra("gid", singleGroup.gid);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                    startActivity(intent);
+                }
+            });
+        }
+    }
+    
+    
 
     private int processUpdateResponse(JSONObject SingleGroupResponse) {
         List<SubGroup> mSubGroupUpdateList = new ArrayList<>();
@@ -504,6 +652,13 @@ public class SubGroupActivity extends BaseAppCompatActivity {
                 subGroupSummaryAdapter.notifyItemRangeInserted(0, 1);
                 subGroupSummaryAdapter.notifyDataSetChanged();
                 recyclerView.refreshComplete();
+                break;
+                            case GET_SINGLE_GROUP_DONE:
+                setSingleGroupHeader();
+                loadData();
+                break;
+            case NO_SINGLE_GROUP_DONE:
+                loadData();
                 break;
             default:
                 break;
