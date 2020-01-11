@@ -67,6 +67,7 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
     private static final int LOAD_DATA_DONE = 8;
     private static final int LOAD_MY_GROUP_DONE = 9;
     private static final int LOAD_NEW_JOINED_GROUP_DONE = 10;
+    public static final int SINGLE_GROUP = 20;
 
     LinearLayout myGroupWrap;
     ConstraintLayout associationGroup;
