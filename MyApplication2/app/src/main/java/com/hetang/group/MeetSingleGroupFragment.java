@@ -241,7 +241,7 @@ public class MeetSingleGroupFragment extends BaseFragment {
                 for (int i = 0; i < SingleGroupArray.length(); i++) {
                     JSONObject group = SingleGroupArray.optJSONObject(i);
                     if (group != null) {
-                        SingleGroup singleGroup = getSingleGroup(group);
+                        SingleGroup singleGroup = getSingleGroup(group, false);
                         mSingleGroupList.add(singleGroup);
                     }
                 }
@@ -264,7 +264,7 @@ public class MeetSingleGroupFragment extends BaseFragment {
                 for (int i = 0; i < SingleGroupArray.length(); i++) {
                     JSONObject group = SingleGroupArray.optJSONObject(i);
                     if (group != null) {
-                        SingleGroup singleGroup = getSingleGroup(group);
+                        SingleGroup singleGroup = getSingleGroup(group, false);
                         mSingleGroupUpdateList.add(singleGroup);
                     }
                 }
@@ -291,7 +291,7 @@ public class MeetSingleGroupFragment extends BaseFragment {
         }
 
         if (SingleGroupObject != null) {
-            SingleGroup singleGroup = getSingleGroup(SingleGroupObject);
+            SingleGroup singleGroup = getSingleGroup(SingleGroupObject, false);
             mSingleGroupUpdateList.add(singleGroup);
             mSingleGroupList.addAll(0, mSingleGroupUpdateList);
             Message message = new Message();
@@ -303,17 +303,17 @@ public class MeetSingleGroupFragment extends BaseFragment {
         }
     }
 
-    public static SingleGroup getSingleGroup(JSONObject group) {
+    public static SingleGroup getSingleGroup(JSONObject group, boolean isSummary) {
         SingleGroup singleGroup = new SingleGroup();
         if (group != null) {
             singleGroup.gid = group.optInt("gid");
             singleGroup.groupName = group.optString("group_name");
             singleGroup.groupProfile = group.optString("group_profile");
-            singleGroup.groupMarkUri = group.optString("group_mark_uri");
+            singleGroup.logoUri = group.optString("logo_uri");
             singleGroup.org = group.optString("group_org");
             singleGroup.created = Utility.timeStampToDay(group.optInt("created"));
             JSONArray memberArray = group.optJSONArray("members");
-
+             if (!isSummary){
             if (memberArray != null && memberArray.length() > 0) {
                 int count = 0;
                 if (memberArray.length() > 3) {
@@ -326,6 +326,9 @@ public class MeetSingleGroupFragment extends BaseFragment {
                 for (int n = 0; n < count; n++) {
                     singleGroup.headUrlList.add(memberArray.optJSONObject(n).optString("avatar"));
                 }
+            }
+                 }else {
+               singleGroup.memberCount = memberArray.length();
             }
 
             singleGroup.leader = new UserMeetInfo();
@@ -550,7 +553,7 @@ public class MeetSingleGroupFragment extends BaseFragment {
         public String groupName;
         public String groupProfile;
         public String org;
-        public String groupMarkUri;
+        public String logoUri;
         public int memberCountRemain = 0;
         public String created;
         public UserMeetInfo leader;
@@ -559,6 +562,9 @@ public class MeetSingleGroupFragment extends BaseFragment {
         public int authorStatus = -1;
         public boolean isLeader = false;
         public List<UserMeetInfo> memberInfoList;
+        
+                public int evaluateCount = 0;
+        public int memberCount = 0;
     }
 
     private void registerLoginBroadcast() {
