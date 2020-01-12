@@ -11,7 +11,7 @@ public class UserProfile implements Serializable {
     public boolean authorSelf = false;
     public int uid = -1;
     public String pass;
-    public String name = "";
+    public String nickname = "";
     public String realname = "";
     public int sex = 0;
     public String avatar = "";
@@ -59,12 +59,12 @@ public class UserProfile implements Serializable {
         return authorSelf;
     }
 
-    public String getName() {
-        return name;
+    public String getNickName() {
+        return nickname;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setNickName(String nickname) {
+        this.nickname = nickname;
     }
 
     public String getPass() {
@@ -230,11 +230,11 @@ public class UserProfile implements Serializable {
         this.situation = situation;
     }
 
-    public String getRealname() {
+    public String getRealName() {
         return realname;
     }
 
-    public void setRealname(String realname) {
+    public void setRealName(String realname) {
         if (realname != null && !"null".equals(realname)) {
             this.realname = realname;
         }

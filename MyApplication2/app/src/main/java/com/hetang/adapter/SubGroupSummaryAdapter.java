@@ -75,7 +75,7 @@ public class SubGroupSummaryAdapter extends RecyclerView.Adapter<SubGroupSummary
     }
 
     public static void setContentView(SubGroupSummaryAdapter.ViewHolder holder, final SubGroupActivity.SubGroup subGroup){
-        holder.name.setText(subGroup.leader.getName());
+        holder.name.setText(subGroup.leader.getNickName());
 
         if (subGroup.leader.getAvatar() != null && !"".equals(subGroup.leader.getAvatar())) {
             Glide.with(getContext()).load(HttpUtil.DOMAIN + subGroup.leader.getAvatar()).into(holder.leaderHeadUri);

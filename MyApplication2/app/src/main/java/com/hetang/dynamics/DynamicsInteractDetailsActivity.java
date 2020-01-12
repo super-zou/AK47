@@ -433,7 +433,7 @@ public class DynamicsInteractDetailsActivity extends BaseAppCompatActivity imple
 
         ConstraintLayout baseProfile = view.findViewById(R.id.base_profile);
         TextView name =  view.findViewById(R.id.name);
-        name.setText(dynamic.getName());
+        name.setText(dynamic.getNickName());
         TextView living =  view.findViewById(R.id.living);
         living.setText(dynamic.getLiving());
         RoundImageView avatar =  view.findViewById(R.id.avatar);
@@ -644,7 +644,7 @@ private void setDynamicContentView(View view, String pictures){
         });
 
         TextView name = view.findViewById(R.id.name);
-        name.setText(userMeetInfo.getName());
+        name.setText(userMeetInfo.getNickName());
 
         TextView selfcondition = view.findViewById(R.id.self_condition);
         selfcondition.setText(userMeetInfo.getSelfCondition(userMeetInfo.getSituation()));
@@ -1091,8 +1091,8 @@ private void setDynamicContentView(View view, String pictures){
     
     private void setComment(JSONObject commentObj, DynamicsComment dynamicsComment){
         dynamicsComment.setAvatar(commentObj.optString("avatar"));
-        dynamicsComment.setName(commentObj.optString("name"));
-        dynamicsComment.setAuthorName(commentObj.optString("name"));
+        dynamicsComment.setNickName(commentObj.optString("nickname"));
+        dynamicsComment.setAuthorName(commentObj.optString("nickname"));
         dynamicsComment.setAuthorUid(commentObj.optInt("uid"));
         dynamicsComment.setSex(commentObj.optInt("sex"));
         dynamicsComment.setSituation(commentObj.optInt("situation"));

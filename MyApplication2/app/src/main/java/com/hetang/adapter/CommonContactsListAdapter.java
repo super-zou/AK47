@@ -81,7 +81,7 @@ public class CommonContactsListAdapter extends RecyclerView.Adapter<CommonContac
             }
         }
         
-        holder.name.setText(contacts.getName());
+        holder.name.setText(contacts.getNickName());
         holder.degree.setText(contacts.getDegreeName(contacts.getDegree()));
         holder.major.setText(contacts.getMajor());
         holder.university.setText(contacts.getUniversity());

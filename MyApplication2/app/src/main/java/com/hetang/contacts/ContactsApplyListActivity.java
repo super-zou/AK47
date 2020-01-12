@@ -144,7 +144,7 @@ HttpUtil.sendOkHttpRequest(ContactsApplyListActivity.this, address, requestBody,
                     JSONObject contactsObject = contactsArray.optJSONObject(i);
                     contacts.setAvatar(contactsObject.optString("avatar"));
                     contacts.setUid(contactsObject.optInt("uid"));
-                    contacts.setName(contactsObject.optString("name"));
+                    contacts.setNickName(contactsObject.optString("nickname"));
                     contacts.setSex(contactsObject.optInt("sex"));
                     contacts.setContent(contactsObject.optString("apply_content"));
                     contactsList.add(contacts);

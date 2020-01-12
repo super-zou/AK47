@@ -6,19 +6,15 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.hetang.R;
 import com.hetang.adapter.ContactsListAdapter;
 import com.hetang.common.MyApplication;
@@ -26,10 +22,7 @@ import com.hetang.common.ReminderManager;
 import com.hetang.contacts.ContactsApplyListActivity;
 import com.hetang.util.BaseFragment;
 import com.hetang.util.HttpUtil;
-import com.hetang.util.ParseUtils;
-import com.hetang.util.RoundImageView;
 import com.hetang.util.Slog;
-import com.hetang.util.UserProfile;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
@@ -210,7 +203,7 @@ public class ContactsFragment extends BaseFragment {
                     contactsObject = contactsArray.getJSONObject(i);
                     contacts.setAvatar(contactsObject.optString("avatar"));
                     contacts.setUid(contactsObject.optInt("uid"));
-                    contacts.setName(contactsObject.optString("name"));
+                    contacts.setNickName(contactsObject.optString("nickname"));
                     contacts.setSex(contactsObject.optInt("sex"));
                     contactsList.add(contacts);
                 }

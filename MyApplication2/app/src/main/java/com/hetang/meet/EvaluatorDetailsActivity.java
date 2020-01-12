@@ -186,7 +186,7 @@ public class EvaluatorDetailsActivity extends BaseAppCompatActivity {
             if(features != null && !TextUtils.isEmpty(features)){
                 evaluatorDetails.setFeatures(evaluatorDetailsObj.optString("features"));
             }
-            evaluatorDetails.setName(evaluatorDetailsObj.optString("name"));
+            evaluatorDetails.setNickName(evaluatorDetailsObj.optString("nickname"));
             evaluatorDetails.setAvatar(evaluatorDetailsObj.optString("avatar"));
             evaluatorDetails.setSex(evaluatorDetailsObj.optInt("sex"));
             mEvaluatorDetailsList.add(evaluatorDetails);

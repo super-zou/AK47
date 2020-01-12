@@ -49,7 +49,7 @@ public class PersonalityApprovedAdapter extends RecyclerView.Adapter<Personality
     @Override
     public void onBindViewHolder(@NonNull PersonalityApprovedAdapter.ViewHolder holder, int position) {
         final UserProfile userProfile = mMemberInfoList.get(position);
-        holder.name.setText(userProfile.getName());
+        holder.name.setText(userProfile.getNickName());
         String profile = "";
         if (userProfile.getSituation() == 0) {//student
             profile = userProfile.getUniversity() + "·" + userProfile.getDegreeName(userProfile.getDegree()) + "·" + userProfile.getMajor();

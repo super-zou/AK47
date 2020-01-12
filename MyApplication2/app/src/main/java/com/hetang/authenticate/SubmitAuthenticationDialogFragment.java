@@ -294,7 +294,7 @@ public class SubmitAuthenticationDialogFragment extends BaseDialogFragment {
             }
         }
 
-        realNameET.setText(userProfile.getRealname());
+        realNameET.setText(userProfile.getRealName());
         sex = userProfile.getSex();
         if (userProfile.getSex() == 0) {
             maleRB.setChecked(true);

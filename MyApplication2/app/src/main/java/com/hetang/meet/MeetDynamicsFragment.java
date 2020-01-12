@@ -313,7 +313,7 @@ public class MeetDynamicsFragment extends BaseFragment {
 
         if (isDebug) Slog.d(TAG, "==========dynamicsArray.getJSONObject: " + dynamicJSONObject);
 
-        dynamic.setName(dynamicJSONObject.optString("name"));
+        dynamic.setNickName(dynamicJSONObject.optString("nickname"));
         dynamic.setUid(dynamicJSONObject.optInt("uid"));
 
         if(dynamicJSONObject.optInt("type") == ADD_SUBGROUP_ACTIVITY_ACTION){

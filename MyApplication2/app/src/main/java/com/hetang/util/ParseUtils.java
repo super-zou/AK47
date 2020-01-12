@@ -226,8 +226,8 @@ public class ParseUtils {
     }
     
     public static UserMeetInfo setBaseProfile(UserMeetInfo userMeetInfo, JSONObject member){
-        userMeetInfo.setName(member.optString("name"));
-        userMeetInfo.setRealname(member.optString("realname"));
+        userMeetInfo.setNickName(member.optString("nickname"));
+        userMeetInfo.setRealName(member.optString("realname"));
         userMeetInfo.setUid(member.optInt("uid"));
         userMeetInfo.setSex(member.optInt("sex"));
         userMeetInfo.setInit(member.optString("init"));
@@ -298,7 +298,7 @@ public class ParseUtils {
         
         JSONObject refereeObj = member.optJSONObject("reference");
         if (refereeObj != null){
-            userMeetInfo.setRefereeName(refereeObj.optString("account"));
+            userMeetInfo.setRefereeName(refereeObj.optString("nickname"));
             userMeetInfo.setRefereeAvatar(refereeObj.optString("avatar"));
             userMeetInfo.setReferenceContent(refereeObj.optString("content"));
         }
@@ -349,7 +349,7 @@ public class ParseUtils {
                         for (int i = 0; i < referenceArray.length(); i++) {
                             meetReferenceInfo = new MeetReferenceInfo();
                             JSONObject reference = referenceArray.getJSONObject(i);
-                            meetReferenceInfo.setRefereeName(reference.optString("name"));
+                            meetReferenceInfo.setRefereeName(reference.optString("nickname"));
                             meetReferenceInfo.setRelation(reference.optString("relation"));
                             String profile = "";
                             if (reference.optInt("situation") == 0) {
@@ -427,7 +427,7 @@ public class ParseUtils {
             return null;
         }
         userProfile.setUid(userObject.optInt("uid"));
-        userProfile.setName(userObject.optString("name"));
+        userProfile.setNickName(userObject.optString("nickname"));
         userProfile.setPass(userObject.optString("pass"));
         userProfile.setCreated(userObject.optInt("created"));
         userProfile.setAccess(userObject.optInt("access"));
@@ -439,7 +439,7 @@ public class ParseUtils {
         userProfile.setAvatar(userObject.optString("avatar"));
         userProfile.setSex(userObject.optInt("sex"));
         userProfile.setSituation(userObject.optInt("situation"));
-        userProfile.setRealname(userObject.optString("realname"));
+        userProfile.setRealName(userObject.optString("realname"));
         userProfile.setLiving(userObject.optString("living"));
         userProfile.setHometown(userObject.optString("hometown"));
          

@@ -50,7 +50,7 @@ public class CheeringGroupAdapter extends BaseAdapter {
     }
     
         private void setViewHolder(ViewHolder holder, UserProfile cheeringGroup){
-        holder.name.setText(cheeringGroup.getName());
+        holder.name.setText(cheeringGroup.getNickName());
         //holder.profile.setText(cheeringGroup.getBaseProfile());
 
         if(cheeringGroup.getSituation() == 0){

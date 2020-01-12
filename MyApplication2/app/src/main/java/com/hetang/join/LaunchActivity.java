@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -37,11 +36,7 @@ import static com.hetang.util.SharedPreferencesUtils.setYunXinToken;
 
 public class LaunchActivity extends BaseAppCompatActivity {
     private static final String TAG = "LaunchActivity";
-    //private static final String domain = "http://112.126.83.127:81";
-    private static final String TOKEN_URL = HttpUtil.DOMAIN + "?q=rest_services/user/token";
-    private static final String GET_USERNAME_URL = HttpUtil.DOMAIN + "?q=account_manager/get_username_by_phonenumber";
-    private static final String LOGIN_URL = HttpUtil.DOMAIN + "?q=rest_services/user/login";
-    //private static final String get_users_ext = HttpUtil.DOMAIN + "?q=user_extdata/get_user";
+    private static final String GET_ACCOUNT_STATUS_URL = HttpUtil.DOMAIN + "?q=account_manager/get_account_status";
     private EditText accountEdit;
     private EditText passwordEdit;
     
@@ -146,8 +141,8 @@ public class LaunchActivity extends BaseAppCompatActivity {
                     }
 
                     //Slog.d(TAG, "account: " + account + " password: " + password);
-                    getUsernameByPhoneNumber(LaunchActivity.this, phoneInputLayout, passwordInputLayout, account, password);
-                    finish();
+                    getAccountStatus(LaunchActivity.this, phoneInputLayout, passwordInputLayout, account, password);
+                    //finish();
                     
                 }else {//join by verification code
                 if(TextUtils.isEmpty(account)){
@@ -179,12 +174,11 @@ public class LaunchActivity extends BaseAppCompatActivity {
         return true;
     }
     
-    public void getUsernameByPhoneNumber(final Context context, final TextInputLayout phoneInputLayout, final TextInputLayout passwordInputLayout, String account, final String password) {
+    public void getAccountStatus(final Context context, final TextInputLayout phoneInputLayout, final TextInputLayout passwordInputLayout, final String account, final String password) {
 
         //showProgress(context);
         Slog.d(TAG, "====account: "+account+ "password: "+password);
-        
-        
+
         setYunXinAccount(context, account);
         
         RequestBody requestBody = new FormBody.Builder()
@@ -192,7 +186,7 @@ public class LaunchActivity extends BaseAppCompatActivity {
                 .add("account", account)
                 .add("password", password)
                 .build();
-        HttpUtil.sendOkHttpRequest(context, GET_USERNAME_URL, requestBody, new Callback() {
+        HttpUtil.sendOkHttpRequest(context, GET_ACCOUNT_STATUS_URL, requestBody, new Callback() {
             int check_login_user = 0;
             int uid;
             String userName;
@@ -226,10 +220,10 @@ public class LaunchActivity extends BaseAppCompatActivity {
                                 }
                             });
                         }else {
-                                userName = check_response.optString("user_name");
+                                //userName = check_response.optString("user_name");
                                 yunxinToken = check_response.optString("pass");
                                 uid = check_response.optInt("uid");
-                                gotoLogin(context, uid, userName, password, yunxinToken);
+                                gotoLogin(context, uid, account, password, yunxinToken);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -250,12 +244,16 @@ public class LaunchActivity extends BaseAppCompatActivity {
         });
     }
     
-    public void gotoLogin(Context context, int uid, String userName, String password, String yunxinToken) {
+    public void gotoLogin(Context context, int uid, String mobile, String password, String yunxinToken) {
 
         SharedPreferences.Editor editor = context.getSharedPreferences("account_info", MODE_PRIVATE).edit();
-        editor.putString("account", account);
+        if (TextUtils.isEmpty(account)){
+            editor.putString("account", mobile);
+        }else {
+            editor.putString("account", account);
+        }
         editor.putInt("uid", uid);
-        editor.putString("name", userName);
+        //editor.putString("name", userName);
         editor.putString("password", password);
         editor.putString("token", yunxinToken);
         editor.putInt("type", 0);

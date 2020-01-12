@@ -6,7 +6,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -46,7 +45,7 @@ public class ImpressionApprovedDetailAdapter extends RecyclerView.Adapter<Impres
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         final UserMeetInfo memberInfo = mMemberInfoList.get(position);
-        holder.name.setText(memberInfo.getName());
+        holder.name.setText(memberInfo.getNickName());
         String profile = memberInfo.getBaseProfile();
         holder.profile.setText(profile.replaceAll(" ", ""));
         

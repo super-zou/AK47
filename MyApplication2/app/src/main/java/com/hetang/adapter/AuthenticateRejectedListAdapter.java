@@ -97,7 +97,7 @@ public class AuthenticateRejectedListAdapter extends RecyclerView.Adapter<Authen
         
         Glide.with(getContext()).load(HttpUtil.DOMAIN + authentication.authenticationPhotoUrl).into(holder.authenticationPhoto);
 
-        holder.name.setText(authentication.getName());
+        holder.name.setText(authentication.getNickName());
         if (authentication.getSex() == 0){
             holder.sex.setText(mContext.getResources().getString(R.string.male));
             holder.sex.setTextColor(mContext.getResources().getColor(R.color.background));

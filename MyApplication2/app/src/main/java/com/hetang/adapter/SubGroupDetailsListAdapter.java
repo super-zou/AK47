@@ -177,7 +177,7 @@ public class SubGroupDetailsListAdapter extends RecyclerView.Adapter<SubGroupDet
         if (dynamic == null) {
             return;
         }
-        holder.name.setText(dynamic.getName());
+        holder.name.setText(dynamic.getNickName());
         holder.living.setText(dynamic.getLiving());
 
         if (dynamic.getAvatar() != null && !"".equals(dynamic.getAvatar())) {

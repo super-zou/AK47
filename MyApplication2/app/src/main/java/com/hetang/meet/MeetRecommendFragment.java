@@ -388,7 +388,7 @@ public class MeetRecommendFragment extends BaseFragment {
                 contactsObject = contactsArray.getJSONObject(i);
                 contacts.setAvatar(contactsObject.optString("avatar"));
                 contacts.setUid(contactsObject.optInt("uid"));
-                contacts.setName(contactsObject.optString("name"));
+                contacts.setNickName(contactsObject.optString("nickname"));
                 contacts.setSex(contactsObject.optInt("sex"));
                 contacts.setSituation(contactsObject.optInt("situation"));
                 contacts.setUniversity(contactsObject.optString("university"));
@@ -668,7 +668,7 @@ public class MeetRecommendFragment extends BaseFragment {
             }
 
             TextView name = view.findViewById(R.id.name);
-            name.setText(userProfile.getName());
+            name.setText(userProfile.getNickName());
 
             LinearLayout education = view.findViewById(R.id.education);
             LinearLayout work = view.findViewById(R.id.work);

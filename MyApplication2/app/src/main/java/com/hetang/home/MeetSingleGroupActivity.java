@@ -223,7 +223,7 @@ public class MeetSingleGroupActivity extends BaseAppCompatActivity {
                 for (int i=0; i<SingleGroupArray.length(); i++){
                     JSONObject group = SingleGroupArray.optJSONObject(i);
                     if (group != null){
-                        MeetSingleGroupFragment.SingleGroup singleGroup = getSingleGroup(group);
+                        MeetSingleGroupFragment.SingleGroup singleGroup = getSingleGroup(group, false);
                         mSingleGroupList.add(singleGroup);
                     }
                 }
@@ -248,7 +248,7 @@ public class MeetSingleGroupActivity extends BaseAppCompatActivity {
                 for (int i=0; i<SingleGroupArray.length(); i++){
                     JSONObject group = SingleGroupArray.optJSONObject(i);
                     if (group != null){
-                        MeetSingleGroupFragment.SingleGroup singleGroup = getSingleGroup(group);
+                        MeetSingleGroupFragment.SingleGroup singleGroup = getSingleGroup(group, false);
                         mSingleGroupUpdateList.add(singleGroup);
                     }
                 }

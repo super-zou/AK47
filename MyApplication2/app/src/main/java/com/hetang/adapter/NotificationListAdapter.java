@@ -156,7 +156,7 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
                 holder.avatar.setImageDrawable(mContext.getDrawable(R.drawable.female_default_avator));
             }
         }
-        holder.name.setText(trigger.getName());
+        holder.name.setText(trigger.getNickName());
         /*
         String profile = "";
         if (trigger.getSituation() != -1){
@@ -327,7 +327,7 @@ ParseUtils.startMeetArchiveActivity(mContext, notification.tid);
             final NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext, id);
             builder.setCategory(android.app.Notification.CATEGORY_MESSAGE)
                     .setSmallIcon(R.drawable.icon)
-                    .setContentTitle(NF.trigger.getName() + " " + NF.action)
+                    .setContentTitle(NF.trigger.getNickName() + " " + NF.action)
                     .setContentText(NF.content)
                     .setContentIntent(clickPI)
                     .setAutoCancel(true);
@@ -345,7 +345,7 @@ ParseUtils.startMeetArchiveActivity(mContext, notification.tid);
         } else {
 
             android.app.Notification notification = new NotificationCompat.Builder(mContext)
-                    .setContentTitle(NF.trigger.getName() + " " + NF.action)
+                    .setContentTitle(NF.trigger.getNickName() + " " + NF.action)
                     .setContentText(NF.content)
                     .setContentIntent(clickPI)
                     .setSmallIcon(R.drawable.icon)

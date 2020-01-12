@@ -261,7 +261,7 @@ public class DynamicsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     private void setAuthorProfile(AuthorProfileVH authorProfileVH, Dynamic dynamic) {
-        authorProfileVH.authorName.setText(dynamic.getName());
+        authorProfileVH.authorName.setText(dynamic.getNickName());
         authorProfileVH.action.setText(dynamic.getAction());
         TextPaint paint = authorProfileVH.action.getPaint();
         paint.setFakeBoldText(true);
@@ -532,7 +532,7 @@ public class DynamicsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 userProfileViewHolder.relatedUserAvatar.setImageDrawable(MyApplication.getContext().getDrawable(R.drawable.female_default_avator));
             }
         }
-        userProfileViewHolder.relatedUserName.setText(dynamic.relatedUerProfile.getName());
+        userProfileViewHolder.relatedUserName.setText(dynamic.relatedUerProfile.getNickName());
 
         if (dynamic.relatedUerProfile.getSituation() == 0) {
             userProfileViewHolder.relatedUserLevel.setText(dynamic.relatedUerProfile.getDegreeName(dynamic.relatedUerProfile.getDegree()));

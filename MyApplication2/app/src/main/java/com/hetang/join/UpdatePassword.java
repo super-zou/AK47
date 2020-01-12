@@ -35,6 +35,8 @@ import static com.hetang.util.SharedPreferencesUtils.setYunXinToken;
 
 public class UpdatePassword extends BaseAppCompatActivity {
     private static final String TAG = "UpdatePassword";
+    private static final int PASSWORD_RESET_DONE = 0;
+    private static final String UPDATE_PASSWORD = HttpUtil.DOMAIN + "?q=account_manager/update_password";
     private TextInputLayout enterPassword;
     private TextInputEditText enterPasswordEdit;
     private Button passwordLogin;
@@ -43,7 +45,6 @@ public class UpdatePassword extends BaseAppCompatActivity {
     private TextInputLayout requestNewPassword;
     private TextInputEditText requestNewPasswordEdit;
     private TextInputLayout newPasswordRepeat;
-    
     private TextInputEditText newPasswordRepeatEdit;
     private Button resetLogin;
     private String account;
@@ -52,9 +53,6 @@ public class UpdatePassword extends BaseAppCompatActivity {
     private LaunchActivity launchActivity;
     private Handler handler;
     private Context mContext;
-
-    private static final int PASSWORD_RESET_DONE = 0;
-    private static final String UPDATE_PASSWORD = HttpUtil.DOMAIN + "?q=account_manager/update_password";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,81 +80,81 @@ public class UpdatePassword extends BaseAppCompatActivity {
             public void handleMessage(Message message) {
                 if (message.what == PASSWORD_RESET_DONE) {
                     Slog.d(TAG, "============handle message");
-                    launchActivity.getUsernameByPhoneNumber(mContext,null, null, account, password);
+                    launchActivity.getAccountStatus(mContext, null, null, account, password);
                     finish();
-       }
+                }
             }
         };
 
     }
 
-    private void passwordLogin(){
+    private void passwordLogin() {
         launchActivity = new LaunchActivity();
         passwordLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 password = enterPasswordEdit.getText().toString();
-                Slog.d(TAG, "================password: "+password+ " account: "+account);
-                if(TextUtils.isEmpty(password)){
+                Slog.d(TAG, "================password: " + password + " account: " + account);
+                if (TextUtils.isEmpty(password)) {
                     enterPassword.setError(getResources().getString(R.string.password_is_empty_error));
                     return;
                 }
-                
-                if(password.length() < 6){
+
+                if (password.length() < 6) {
                     enterPassword.setError(getResources().getString(R.string.password_length_error));
                     return;
                 }
 
-                launchActivity.getUsernameByPhoneNumber(mContext,null, enterPassword, account, password);
-                
+                launchActivity.getAccountStatus(mContext, null, enterPassword, account, password);
+
                 finish();
-                
+
             }
         });
     }
 
-    private void newPasswordLogin(){
+    private void newPasswordLogin() {
         requestNewPasswordBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 newPasswordFields.setVisibility(View.VISIBLE);
             }
         });
-        
+
         resetLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 password = requestNewPasswordEdit.getText().toString();
                 repeatPassword = newPasswordRepeatEdit.getText().toString();
-                Slog.d(TAG, "================password: "+password+ " repeatPassword: "+repeatPassword);
-                if(TextUtils.isEmpty(password)){
+                Slog.d(TAG, "================password: " + password + " repeatPassword: " + repeatPassword);
+                if (TextUtils.isEmpty(password)) {
                     requestNewPasswordEdit.setError(getResources().getString(R.string.password_is_empty_error));
                     return;
                 }
 
-                if(password.length() < 6){
+                if (password.length() < 6) {
                     requestNewPasswordEdit.setError(getResources().getString(R.string.password_length_error));
                     return;
                 }
 
-                if(!password.equals(repeatPassword)){
+                if (!password.equals(repeatPassword)) {
                     newPasswordRepeat.setError(getResources().getString(R.string.password_repeat_error));
                     return;
-       }
+                }
 
-                //launchActivity.getUsernameByPhoneNumber(UpdatePassword.this,null, null, account, password);
+                //launchActivity.getAccountStatus(UpdatePassword.this,null, null, account, password);
                 resetPassword(account, password);
             }
         });
     }
 
-    private void resetPassword(final String account, final String password){
+    private void resetPassword(final String account, final String password) {
         RequestBody requestBody = new FormBody.Builder()
                 .add("account", account)
                 .add("password", password)
                 .build();
         HttpUtil.sendOkHttpRequest(mContext, UPDATE_PASSWORD, requestBody, new Callback() {
-        @Override
+            @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
                 Slog.d(TAG, "resetPassword response : " + responseText);
@@ -167,8 +165,8 @@ public class UpdatePassword extends BaseAppCompatActivity {
                         String yunxinToken = checkResponse.optString("token");
 
                         setYunXinToken(mContext, yunxinToken);
-                        Slog.d(TAG, "resetPassword checkResponse : " + checkResponse + " status: "+status);
-                        if(status == true){
+                        Slog.d(TAG, "resetPassword checkResponse : " + checkResponse + " status: " + status);
+                        if (status == true) {
                             Slog.d(TAG, "=====send message");
                             handler.sendEmptyMessage(PASSWORD_RESET_DONE);
                         }
@@ -177,7 +175,7 @@ public class UpdatePassword extends BaseAppCompatActivity {
                     }
                 }
             }
-            
+
             @Override
             public void onFailure(Call call, IOException e) {
                 runOnUiThread(new Runnable() {
@@ -190,7 +188,7 @@ public class UpdatePassword extends BaseAppCompatActivity {
         });
     }
 
-    private void customActionbarSet(){
+    private void customActionbarSet() {
         TextView back = findViewById(R.id.left_back);
         back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -198,7 +196,7 @@ public class UpdatePassword extends BaseAppCompatActivity {
                 finish();
             }
         });
-        
+
         Typeface font = Typeface.createFromAsset(getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
         FontManager.markAsIconContainer(findViewById(R.id.custom_actionbar), font);
     }

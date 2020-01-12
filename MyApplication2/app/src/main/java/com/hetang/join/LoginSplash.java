@@ -32,7 +32,8 @@ public class LoginSplash extends BaseAppCompatActivity {
     private static final String TOKEN_URL = HttpUtil.DOMAIN + "?q=rest_services/user/token";
     private static final String GET_LOGIN_STATUS = HttpUtil.DOMAIN + "?q=account_manager/get_login_status";
     private static final String LOGIN_URL = HttpUtil.DOMAIN + "?q=rest_services/user/login";
-    
+
+    private String account = "";
     private String name = "";
     private String password = "";
     private String token;
@@ -46,10 +47,11 @@ public class LoginSplash extends BaseAppCompatActivity {
         
         SharedPreferences preferences = getSharedPreferences("account_info", MODE_PRIVATE);
         if(autoLogin == true && preferences != null){
-            name = preferences.getString("name", "");
+            account = preferences.getString("account", "");
+            //name = preferences.getString("name", "");
             password = preferences.getString("password","");
 
-            if(!TextUtils.isEmpty(name) && !TextUtils.isEmpty(password)){
+            if(!TextUtils.isEmpty(account) && !TextUtils.isEmpty(password)){
                 getLoginStatus(getApplicationContext());
             }else {
                 Intent intent = new Intent(LoginSplash.this, LaunchActivity.class);
@@ -82,7 +84,7 @@ public class LoginSplash extends BaseAppCompatActivity {
                             finish();
                         }else {
                             Slog.d(TAG, "------------>start login");
-                            accessToken(getApplicationContext(), name, password);
+                            accessToken(getApplicationContext(), account, password);
                         }
                     }catch (JSONException e){
                         e.printStackTrace();
@@ -106,7 +108,7 @@ public class LoginSplash extends BaseAppCompatActivity {
 
     }
     
-    public void accessToken(final Context context, final String userName, final String password) {
+    public void accessToken(final Context context, final String account, final String password) {
         RequestBody requestBody = new FormBody.Builder().build();
         HttpUtil.sendOkHttpRequest(context, TOKEN_URL, requestBody, new Callback() {
 
@@ -119,7 +121,7 @@ public class LoginSplash extends BaseAppCompatActivity {
                         JSONObject responseObject = new JSONObject(responseText);
                         token = responseObject.getString("token");
                         // Slog.d(TAG, "token : "+token);
-                        loginFinally(context, token, userName, password);
+                        loginFinally(context, token, account, password);
                     } catch (JSONException e) {
                     e.printStackTrace();
                     }
@@ -140,10 +142,10 @@ public class LoginSplash extends BaseAppCompatActivity {
 
     }
     
-    public void loginFinally(final Context context, String token, String userName, String password) {
-        //Slog.d(TAG, "loginFinally username: "+userName+" password: "+password+ " token: "+token);
+    public void loginFinally(final Context context, String token, String account, String password) {
+        Slog.d(TAG, "loginFinally account: "+account+" password: "+password+ " token: "+token);
         RequestBody requestBody = new FormBody.Builder()
-                .add("username", userName)
+                .add("username", account)
                 .add("password", password)
                 .build();
 

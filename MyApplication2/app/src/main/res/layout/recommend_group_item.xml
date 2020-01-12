@@ -34,7 +34,7 @@
             android:gravity="center"
             android:ellipsize="end"
             android:singleLine="true"
-            android:text=""
+            android:textStyle="bold"
             android:textColor="@color/color_blue"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

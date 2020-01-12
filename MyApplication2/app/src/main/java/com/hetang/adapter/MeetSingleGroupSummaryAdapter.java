@@ -78,7 +78,7 @@ public class MeetSingleGroupSummaryAdapter extends RecyclerView.Adapter<MeetSing
     }
     
     public static void setContentView(MeetSingleGroupSummaryAdapter.ViewHolder holder, MeetSingleGroupFragment.SingleGroup singleGroup){
-        holder.name.setText(singleGroup.leader.getName());
+        holder.name.setText(singleGroup.leader.getNickName());
 
         if (singleGroup.leader.getAvatar() != null && !"".equals(singleGroup.leader.getAvatar())) {
             Glide.with(mContext).load(HttpUtil.DOMAIN + singleGroup.leader.getAvatar()).into(holder.leaderHeadUri);

@@ -536,7 +536,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
         groupName.setText(subGroup.groupName);
         groupOrg.setText(subGroup.org);
         groupRegion.setText(subGroup.region);
-        leaderName.setText(subGroup.leader.getName());
+        leaderName.setText(subGroup.leader.getNickName());
 
         created.setText("创建于 " + subGroup.created);
 

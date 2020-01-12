@@ -119,7 +119,7 @@ public class ContactsListAdapter extends RecyclerView.Adapter<ContactsListAdapte
             }
         }
         
-        holder.name.setText(contacts.getName());
+        holder.name.setText(contacts.getNickName());
 
         holder.contactsItem.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -145,7 +145,7 @@ public class ContactsListAdapter extends RecyclerView.Adapter<ContactsListAdapte
             }
         }
         
-        holder.name.setText(contacts.getName());
+        holder.name.setText(contacts.getNickName());
 
         holder.contactsItem.setOnClickListener(new View.OnClickListener() {
             @Override

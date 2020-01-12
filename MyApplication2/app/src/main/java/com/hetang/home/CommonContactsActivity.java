@@ -275,7 +275,7 @@ public class CommonContactsActivity extends BaseAppCompatActivity {
                 contactsObject = contactsArray.getJSONObject(i);
                 contacts.setAvatar(contactsObject.optString("avatar"));
                 contacts.setUid(contactsObject.optInt("uid"));
-                contacts.setName(contactsObject.optString("name"));
+                contacts.setNickName(contactsObject.optString("nickname"));
                 contacts.setSex(contactsObject.optInt("sex"));
                 contacts.setSituation(contactsObject.optInt("situation"));
                 contacts.setStatus(contactsObject.optInt("status"));

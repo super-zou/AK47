@@ -118,7 +118,7 @@ public class DynamicsInteractDetailsAdapter extends RecyclerView.Adapter<Dynamic
         mPosition = position;
 
         final DynamicsComment dynamicsComment = dynamicsCommentList.get(position);
-        holder.name.setText(dynamicsComment.getName());
+        holder.name.setText(dynamicsComment.getNickName());
 
         String avatar = dynamicsComment.getAvatar();
         if (avatar != null && !"".equals(avatar) &&  !isScrolling) {

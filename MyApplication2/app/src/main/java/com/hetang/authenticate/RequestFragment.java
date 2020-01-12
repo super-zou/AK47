@@ -292,7 +292,8 @@ public class RequestFragment extends BaseFragment {
         authentication.requestTime = authenticationObject.optInt("created");
 
         authentication.setUid(authenticationObject.optInt("uid"));
-        authentication.setName(authenticationObject.optString("realname"));
+        authentication.setNickName(authenticationObject.optString("nickname"));
+        authentication.setRealName(authenticationObject.optString("realname"));
         authentication.setAvatar(authenticationObject.optString("avatar"));
         authentication.setSex(authenticationObject.optInt("sex"));
         authentication.setSituation(authenticationObject.optInt("situation"));

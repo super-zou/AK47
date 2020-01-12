@@ -28,6 +28,9 @@ import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+
+import static com.hetang.util.Utility.isApkInDebug;
+
 public class VerificationCodeJoin extends BaseAppCompatActivity {
     /*+Begin: added by xuchunping 2018.7.19*/
     private static final String TAG = "VerificationCodeJoin";
@@ -142,7 +145,11 @@ public class VerificationCodeJoin extends BaseAppCompatActivity {
     }
     
     private boolean verifyResult(){
-        return mInputVerificationCode.equals(mResponseVerifyCode);
+        if (isApkInDebug(VerificationCodeJoin.this)){
+            return true;
+        }else {
+            return mInputVerificationCode.equals(mResponseVerifyCode);
+        }
     }
     private void customActionbarSet(String titleContent){
         TextView back = findViewById(R.id.left_back);

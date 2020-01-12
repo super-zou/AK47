@@ -61,7 +61,7 @@ public class EvaluatorDetailsAdapter extends RecyclerView.Adapter<EvaluatorDetai
             }
         }
         
-        holder.name.setText(evaluatorDetails.getName());
+        holder.name.setText(evaluatorDetails.getNickName());
         holder.uid.setText(String.valueOf(evaluatorDetails.getEvaluatorUid()));
         holder.scaleRatingBar.setRating((float) evaluatorDetails.getRating());
         holder.rating.setText(evaluatorDetails.getRating() + "分");

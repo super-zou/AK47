@@ -188,7 +188,7 @@ public class SingleGroupDetailsActivity extends BaseAppCompatActivity implements
         RoundImageView leaderHead = findViewById(R.id.head_uri);
         Glide.with(MyApplication.getContext()).load(HttpUtil.DOMAIN + singleGroup.leader.getAvatar()).into(leaderHead);
         TextView leaderName = findViewById(R.id.leader_name);
-        leaderName.setText(singleGroup.leader.getName());
+        leaderName.setText(singleGroup.leader.getNickName());
         TextView leaderProfile = findViewById(R.id.leader_profile);
         TextView leaderBaseProfile = findViewById(R.id.base_profile);
         TextView living = findViewById(R.id.living);
@@ -234,7 +234,7 @@ public class SingleGroupDetailsActivity extends BaseAppCompatActivity implements
     private void addMemberView(final UserMeetInfo userMeetInfo, boolean isNew){
         View view = LayoutInflater.from(this).inflate(R.layout.group_member, null);
         TextView memberName = view.findViewById(R.id.name);
-        memberName.setText(userMeetInfo.getName());
+        memberName.setText(userMeetInfo.getNickName());
         RoundImageView memberHead = view.findViewById(R.id.member_head);
 
         GridLayout.Spec rowSpec = GridLayout.spec(GridLayout.UNDEFINED, 1, 1.0f);

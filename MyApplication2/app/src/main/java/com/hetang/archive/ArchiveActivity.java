@@ -269,7 +269,7 @@ public class ArchiveActivity extends BaseAppCompatActivity implements CommonDial
             }
         }
 
-        name.setText(userProfile.getName());
+        name.setText(userProfile.getNickName());
 
         if (userProfile.getSex() == 0) {
             sex.setText(R.string.mars);

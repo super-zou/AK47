@@ -223,7 +223,6 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Slog.d(TAG, "------------------->onCreateView");
         viewContent = inflater.inflate(R.layout.meet_archive, container, false);
         mContext = getContext();
         handler = new MyHandler(this);
@@ -264,7 +263,7 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
 
     private void getLoggedinAccount() {
         authorUid = SharedPreferencesUtils.getSessionUid(MyApplication.getContext());
-        Slog.d(TAG, "------------------------>getArguments: " + getArguments());
+        Slog.d(TAG, "------------------------>authorUid: " + authorUid);
         if (getArguments() == null) {//get current user info
 
             if (authorUid > 0) {
@@ -459,7 +458,7 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
             eduInfo.setVisibility(View.GONE);
         }
 
-        name.setText(mMeetMember.getName());
+        name.setText(mMeetMember.getNickName());
 
         if (!"".equals(mMeetMember.getAvatar())) {
             // Glide.with(mContext).load(HttpUtil.DOMAIN + mMeetMember.userProfile.getAvatar()).into(headUri);
@@ -1535,7 +1534,7 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
                         JSONObject member = responseArray.optJSONObject(i);
                         userMeetInfo.setUid(member.optInt("uid"));
                         userMeetInfo.setSex(member.optInt("sex"));
-                        userMeetInfo.setName(member.optString("name"));
+                        userMeetInfo.setNickName(member.optString("nickname"));
                         userMeetInfo.setAvatar(member.optString("avatar"));
                         userMeetInfo.setSituation(member.optInt("situation"));
                         if (member.optInt("situation") == 0) {//student
@@ -1593,7 +1592,7 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
                     referenceWriteDialogFragment.setTargetFragment(MeetArchiveFragment.this, REQUESTCODE);
                     Bundle bundle = new Bundle();
                     bundle.putInt("uid", uid);
-                    bundle.putString("name", mMeetMember.getName());
+                    bundle.putString("name", mMeetMember.getNickName());
 
                     referenceWriteDialogFragment.setArguments(bundle);
                     referenceWriteDialogFragment.show(getFragmentManager(), "ReferenceWriteDialogFragment");

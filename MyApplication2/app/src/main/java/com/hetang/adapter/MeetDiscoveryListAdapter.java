@@ -92,7 +92,7 @@ public class MeetDiscoveryListAdapter extends RecyclerView.Adapter<MeetDiscovery
     public void onBindViewHolder(final ViewHolder holder, final int position) {
 
         final UserMeetInfo meet = mMeetList.get(position);
-        holder.name.setText(meet.getName());
+        holder.name.setText(meet.getNickName());
 
         /*
         if (meet.getActivityCount() > 0 && !isScrolling) {

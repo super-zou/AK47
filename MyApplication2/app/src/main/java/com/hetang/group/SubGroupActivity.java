@@ -24,8 +24,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-
-import com.hetang.util.RoundImageView;
 import com.hetang.R;
 import com.hetang.adapter.SubGroupSummaryAdapter;
 import com.hetang.common.BaseAppCompatActivity;
@@ -35,6 +33,7 @@ import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.MyLinearLayoutManager;
 import com.hetang.util.ParseUtils;
+import com.hetang.util.RoundImageView;
 import com.hetang.util.SharedPreferencesUtils;
 import com.hetang.util.Slog;
 import com.hetang.util.UserProfile;
@@ -60,7 +59,6 @@ import okhttp3.Response;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static com.hetang.common.MyApplication.getContext;
-import static com.hetang.group.GroupFragment.SINGLE_GROUP;
 import static com.hetang.group.GroupFragment.fraternity_group;
 import static com.hetang.group.MeetSingleGroupFragment.getSingleGroup;
 import static com.hetang.group.SubGroupDetailsActivity.GET_SUBGROUP_BY_GID;
@@ -72,7 +70,7 @@ public class SubGroupActivity extends BaseAppCompatActivity {
     private static final boolean isDebug = true;
     private static final String TAG = "SubGroupActivity";
     private static final int PAGE_SIZE = 8;
-        private static final String SINGLE_GROUP_GET_ALL = HttpUtil.DOMAIN + "?q=single_group/get_all";
+    private static final String SINGLE_GROUP_GET_ALL = HttpUtil.DOMAIN + "?q=single_group/get_all";
     private static final String SUBGROUP_GET_ALL = HttpUtil.DOMAIN + "?q=subgroup/get_all";
     private static final String SUBGROUP_UPDATE = HttpUtil.DOMAIN + "?q=subgroup/update";
     private static final String ADD_SUBGROUP_VISITOR_RECORD = HttpUtil.DOMAIN + "?q=visitor_record/add_group_visit_record";
@@ -84,7 +82,7 @@ public class SubGroupActivity extends BaseAppCompatActivity {
     private static final int NO_MORE = 6;
     private static final int ADD_VISITOR_RECORD_DONE = 7;
     private static final int ADD_NEW_SUBGROUP_DONE = 8;
-        private static final int GET_SINGLE_GROUP_DONE = 9;
+    private static final int GET_SINGLE_GROUP_DONE = 9;
     private static final int NO_SINGLE_GROUP_DONE = 10;
     final int itemLimit = 3;
     ImageView progressImageView;
@@ -97,7 +95,7 @@ public class SubGroupActivity extends BaseAppCompatActivity {
     private SubGroupSummaryAdapter subGroupSummaryAdapter;
     private XRecyclerView recyclerView;
     private List<SubGroup> mSubGroupList = new ArrayList<>();
-        private List<MeetSingleGroupFragment.SingleGroup> mSingleGroupList = new ArrayList<>();
+    private List<MeetSingleGroupFragment.SingleGroup> mSingleGroupList = new ArrayList<>();
 
     public static void updateVisitorRecord(int gid) {
 
@@ -152,7 +150,7 @@ public class SubGroupActivity extends BaseAppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.sub_group_summary);
+        setContentView(R.layout.subgroup_summary);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.hide();
@@ -163,10 +161,10 @@ public class SubGroupActivity extends BaseAppCompatActivity {
         type = getIntent().getIntExtra("type", 0);
 
         initView();
-        
-        if (type != fraternity_group){
+
+        if (type != fraternity_group) {
             loadData();
-        }else {
+        } else {
             getRecommendSingleGroup();
         }
     }
@@ -224,7 +222,7 @@ public class SubGroupActivity extends BaseAppCompatActivity {
             @Override
             public void onItemClick(View view, int position) {
                 Slog.d(TAG, "==========click : " + position);
-                                int gid = mSubGroupList.get(position).gid;
+                int gid = mSubGroupList.get(position).gid;
                 updateVisitorRecord(gid);
                 Intent intent = new Intent(getContext(), SubGroupDetailsActivity.class);
                 intent.putExtra("gid", gid);
@@ -265,14 +263,14 @@ public class SubGroupActivity extends BaseAppCompatActivity {
             }
         }, 50);
     }
-    
-    private void getRecommendSingleGroup(){
+
+    private void getRecommendSingleGroup() {
         RequestBody requestBody = new FormBody.Builder()
                 .add("step", String.valueOf(PAGE_SIZE))
                 .add("page", String.valueOf(0))
                 .add("type", String.valueOf(type))
                 .build();
-        
+
         HttpUtil.sendOkHttpRequest(getContext(), SINGLE_GROUP_GET_ALL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
@@ -286,7 +284,7 @@ public class SubGroupActivity extends BaseAppCompatActivity {
                                 int groupSize = processSingleGroupResponse(singleGroupResponse);
                                 if (groupSize > 0) {
                                     handler.sendEmptyMessage(GET_SINGLE_GROUP_DONE);
-                                }else {
+                                } else {
                                     handler.sendEmptyMessage(NO_SINGLE_GROUP_DONE);
                                 }
                             } else {
@@ -300,7 +298,8 @@ public class SubGroupActivity extends BaseAppCompatActivity {
                     }
                 }
             }
-@Override
+
+            @Override
             public void onFailure(Call call, IOException e) {
 
             }
@@ -381,7 +380,7 @@ public class SubGroupActivity extends BaseAppCompatActivity {
 
         return subGroupSize;
     }
-    
+
     private int processSingleGroupResponse(JSONObject singleGroupResponse) {
 
         int singleGroupSize = 0;
@@ -406,8 +405,8 @@ public class SubGroupActivity extends BaseAppCompatActivity {
 
         return singleGroupSize;
     }
-    
-    private void setSingleGroupHeader(){
+
+    private void setSingleGroupHeader() {
         View singleGroupView = LayoutInflater.from(getContext()).inflate(R.layout.recommend_group, (ViewGroup) findViewById(android.R.id.content), false);
         recyclerView.addHeaderView(singleGroupView);
         TextView title = singleGroupView.findViewById(R.id.group_recommend_title);
@@ -416,7 +415,7 @@ public class SubGroupActivity extends BaseAppCompatActivity {
         if (groupWrapper == null) {
             return;
         }
-        
+
         int size = mSingleGroupList.size();
         for (int i = 0; i < size; i++) {
             View view = LayoutInflater.from(getContext()).inflate(R.layout.single_group_item, null);
@@ -434,7 +433,7 @@ public class SubGroupActivity extends BaseAppCompatActivity {
                     }
                 });
             }
-            
+
             final MeetSingleGroupFragment.SingleGroup singleGroup = mSingleGroupList.get(i);
             /*
             TextView groupName = view.findViewById(R.id.group_name);
@@ -448,10 +447,10 @@ public class SubGroupActivity extends BaseAppCompatActivity {
             }
 
             TextView leaderName = view.findViewById(R.id.name);
-            leaderName.setText(singleGroup.leader.getName());
+            leaderName.setText(singleGroup.leader.getNickName());
             TextView university = view.findViewById(R.id.university);
             university.setText(singleGroup.leader.getUniversity());
-            
+
             TextView memberCount = view.findViewById(R.id.group_member);
             memberCount.setText("成员 " + singleGroup.memberCount);
 
@@ -469,8 +468,7 @@ public class SubGroupActivity extends BaseAppCompatActivity {
             });
         }
     }
-    
-    
+
 
     private int processUpdateResponse(JSONObject SingleGroupResponse) {
         List<SubGroup> mSubGroupUpdateList = new ArrayList<>();
@@ -653,7 +651,7 @@ public class SubGroupActivity extends BaseAppCompatActivity {
                 subGroupSummaryAdapter.notifyDataSetChanged();
                 recyclerView.refreshComplete();
                 break;
-                            case GET_SINGLE_GROUP_DONE:
+            case GET_SINGLE_GROUP_DONE:
                 setSingleGroupHeader();
                 loadData();
                 break;

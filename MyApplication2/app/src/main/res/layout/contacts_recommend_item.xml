@@ -29,8 +29,8 @@
             android:layout_marginEnd="8dp"
             android:typeface="sans"
             android:fontFamily="sans-serif"
-            android:textColor="@color/black"
-            android:text=""
+            android:textColor="@color/blue_dark"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/head_uri" />

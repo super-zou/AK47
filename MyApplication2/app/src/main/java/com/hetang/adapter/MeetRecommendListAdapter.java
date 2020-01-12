@@ -26,7 +26,6 @@ import com.hetang.util.HttpUtil;
 import com.hetang.util.InterActInterface;
 import com.hetang.util.RoundImageView;
 import com.hetang.util.Slog;
-import com.hetang.common.MyApplication;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -149,7 +148,7 @@ public class MeetRecommendListAdapter extends RecyclerView.Adapter<MeetRecommend
     }
     
      public static void setMeetRecommendContent(ViewHolder holder, UserMeetInfo meet){
-        holder.name.setText(meet.getName());
+        holder.name.setText(meet.getNickName());
 
         /*
         if(meet.getActivityCount() > 0 && !isScrolling){

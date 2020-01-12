@@ -44,7 +44,6 @@ import okhttp3.Response;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static com.hetang.util.ParseUtils.APPLY_JOIN_GROUP_NF;
-import static com.hetang.util.ParseUtils.AUTHENTICATION_REJECTED_NF;
 import static com.hetang.util.ParseUtils.AUTHENTICATION_VERIFIED_NF;
 import static com.hetang.util.ParseUtils.COMMENT_PRAISED_NF;
 import static com.hetang.util.ParseUtils.INVITE_GROUP_MEMBER_ACTION;
@@ -322,7 +321,7 @@ public class NotificationFragment extends BaseFragment {
         notification.tid = noticeObject.optInt("tid");
         notification.trigger = new UserProfile();
 
-        notification.trigger.setName(noticeObject.optString("name"));
+        notification.trigger.setNickName(noticeObject.optString("nickname"));
         notification.trigger.setAvatar(noticeObject.optString("avatar"));
         notification.trigger.setSex(noticeObject.optInt("sex"));
         notification.trigger.setSituation(noticeObject.optInt("situation"));

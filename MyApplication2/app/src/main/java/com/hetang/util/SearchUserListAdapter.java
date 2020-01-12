@@ -70,7 +70,7 @@ public class SearchUserListAdapter extends RecyclerView.Adapter<SearchUserListAd
     public void onBindViewHolder(@NonNull final SearchUserListAdapter.SearchUserViewHolder holder, int position) {
         memberInfo = mMemberInfoList.get(position);
 
-        holder.name.setText(memberInfo.getName());
+        holder.name.setText(memberInfo.getNickName());
         if (type == TYPE_COMMON_SEARCH){
             holder.invite.setVisibility(View.GONE);
         }else {
