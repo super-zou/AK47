@@ -21,10 +21,11 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.hetang.R;
 import com.hetang.common.HandlerTemp;
-import com.hetang.group.MeetSingleGroupFragment;
+import com.hetang.group.SingleGroupActivity;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.RoundImageView;
+import com.hetang.util.UserProfile;
 
 import java.util.List;
 
@@ -41,7 +42,7 @@ public class MeetSingleGroupSummaryAdapter extends RecyclerView.Adapter<MeetSing
     private static Context mContext;
     private int width;
     RequestQueue queue;
-    private List<MeetSingleGroupFragment.SingleGroup> mSingleGroupList;
+    private List<SingleGroupActivity.SingleGroup> mSingleGroupList;
     private boolean isScrolling = false;
     private MyItemClickListener mItemClickListener;
 
@@ -49,7 +50,7 @@ public class MeetSingleGroupSummaryAdapter extends RecyclerView.Adapter<MeetSing
         mContext = context;
     }
 
-    public void setData(List<MeetSingleGroupFragment.SingleGroup> singleGroupList, int parentWidth) {
+    public void setData(List<SingleGroupActivity.SingleGroup> singleGroupList, int parentWidth) {
         mSingleGroupList = singleGroupList;
         width = parentWidth;
     }
@@ -64,7 +65,7 @@ public class MeetSingleGroupSummaryAdapter extends RecyclerView.Adapter<MeetSing
     
     @Override
     public void onBindViewHolder(@NonNull MeetSingleGroupSummaryAdapter.ViewHolder holder, final int position) {
-         final MeetSingleGroupFragment.SingleGroup singleGroup = mSingleGroupList.get(position);
+         final SingleGroupActivity.SingleGroup singleGroup = mSingleGroupList.get(position);
         setContentView(holder, singleGroup);
 
         holder.itemLayout.setOnClickListener(new View.OnClickListener() {
@@ -77,16 +78,16 @@ public class MeetSingleGroupSummaryAdapter extends RecyclerView.Adapter<MeetSing
         });
     }
     
-    public static void setContentView(MeetSingleGroupSummaryAdapter.ViewHolder holder, MeetSingleGroupFragment.SingleGroup singleGroup){
+    public static void setContentView(MeetSingleGroupSummaryAdapter.ViewHolder holder, SingleGroupActivity.SingleGroup singleGroup){
         holder.name.setText(singleGroup.leader.getNickName());
 
         if (singleGroup.leader.getAvatar() != null && !"".equals(singleGroup.leader.getAvatar())) {
-            Glide.with(mContext).load(HttpUtil.DOMAIN + singleGroup.leader.getAvatar()).into(holder.leaderHeadUri);
+            Glide.with(mContext).load(HttpUtil.DOMAIN + singleGroup.leader.getAvatar()).into(holder.leaderAvatar);
         } else {
             if (singleGroup.leader.getSex() == 0){
-                holder.leaderHeadUri.setImageDrawable(mContext.getDrawable(R.drawable.male_default_avator));
+                holder.leaderAvatar.setImageDrawable(mContext.getDrawable(R.drawable.male_default_avator));
             }else {
-                holder.leaderHeadUri.setImageDrawable(mContext.getDrawable(R.drawable.female_default_avator));
+                holder.leaderAvatar.setImageDrawable(mContext.getDrawable(R.drawable.female_default_avator));
             }
         }
         holder.groupName.setText(singleGroup.groupName.trim());
@@ -95,63 +96,38 @@ public class MeetSingleGroupSummaryAdapter extends RecyclerView.Adapter<MeetSing
             holder.org.setText("来自 "+singleGroup.org.trim());
         }
 
-        if (singleGroup.headUrlList != null && singleGroup.headUrlList.size() > 0 ) {
-            holder.divider.setVisibility(View.VISIBLE);
-            holder.memberSummary.setVisibility(View.VISIBLE);
-            //if(!isScrolling){
-            if(holder.memberSummary.getTag() == null){
-                setMemberAvatarView(singleGroup, holder);
-            }else {
-                if (!singleGroup.equals(holder.memberSummary.getTag())){
-                    holder.memberSummary.removeAllViews();
-                    setMemberAvatarView(singleGroup, holder);
+        holder.name.setText(singleGroup.leader.getNickName().trim());
+        holder.university.setText(singleGroup.leader.getUniversity().trim());
+
+        holder.introduction.setText(singleGroup.introduction);
+        holder.maleCount.setText(mContext.getResources().getString(R.string.male)+" "+singleGroup.maleCount);
+        holder.femaleCount.setText(mContext.getResources().getString(R.string.female)+" "+singleGroup.femaleCount);
+        holder.evaluateCount.setText(mContext.getResources().getString(R.string.evaluation)+" "+singleGroup.evaluateCount);
+        
+         if (singleGroup.memberList != null && singleGroup.memberList.size() > 0 ) {
+            holder.memberWrapper.setVisibility(View.VISIBLE);
+            for (int i=0; i<singleGroup.memberList.size(); i++){
+                View view = LayoutInflater.from(getContext()).inflate(R.layout.single_group_member_item, null);
+                holder.memberWrapper.addView(view);
+                UserProfile member = singleGroup.memberList.get(i);
+                RoundImageView memberAvatar = view.findViewById(R.id.avatar);
+                String avatar = member.getAvatar();
+                if (avatar != null && !"".equals(avatar)) {
+                    Glide.with(getContext()).load(HttpUtil.DOMAIN + avatar).into(memberAvatar);
                 }
-            }
-
-            // }
-        }else {
-            holder.divider.setVisibility(View.GONE);
-            holder.memberSummary.setVisibility(View.GONE);
-            if(holder.memberSummary.getChildCount() > 0){
-                holder.memberSummary.removeAllViews();
-            }
-        }
-        if (singleGroup.memberCountRemain > 0){
-            holder.membeRemainsCount.setVisibility(View.VISIBLE);
-            holder.membeRemainsCount.setText("+"+singleGroup.memberCountRemain);
-        }else {
-            holder.membeRemainsCount.setVisibility(View.GONE);
-        }
-    }
-    
-    public static void setMemberAvatarView(MeetSingleGroupFragment.SingleGroup singleGroup, ViewHolder holder){
-        int avatarCount = singleGroup.headUrlList.size();
-        for (int i=0; i<avatarCount; i++){
-            RoundImageView imageView = new RoundImageView(mContext);
-            LinearLayout.LayoutParams layoutParams;
-            float itemWidth = dpToPx(mContext, 100);
-            float itemHeight = itemWidth;
-            layoutParams = new LinearLayout.LayoutParams((int)itemWidth, (int)itemHeight);
-            layoutParams.rightMargin = 2;
-            imageView.setLayoutParams(layoutParams);
-            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-            holder.memberSummary.addView(imageView, i);
-            String avatar = singleGroup.headUrlList.get(i);
-
-            final RequestOptions requestOptions = new RequestOptions()
-                    .placeholder(mContext.getDrawable(R.mipmap.hetang_icon))
-                    .diskCacheStrategy(DiskCacheStrategy.RESOURCE);
-             if (avatar != null && !"null".equals(avatar)){
-                Glide.with(mContext).load(HttpUtil.DOMAIN + avatar).apply(requestOptions).into(imageView);
+                
+                TextView degree = view.findViewById(R.id.degree);
+                degree.setText(member.getDegreeName(member.getDegree()));
+                TextView major = view.findViewById(R.id.major);
+                major.setText(member.getMajor());
+                TextView university = view.findViewById(R.id.university);
+                university.setText(member.getUniversity());
             }
         }
-
-        holder.memberSummary.setTag(singleGroup);
-    }
+        
+    }         
     
-            
-    
-    public void notifySetListDataChanged(List<MeetSingleGroupFragment.SingleGroup> list){
+    public void notifySetListDataChanged(List<SingleGroupActivity.SingleGroup> list){
         this.mSingleGroupList = list;
         notifyDataSetChanged();
     }
@@ -167,36 +143,29 @@ public class MeetSingleGroupSummaryAdapter extends RecyclerView.Adapter<MeetSing
     
    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
        private MyItemClickListener mListener;
-                RoundImageView leaderHeadUri;
+       RoundImageView leaderAvatar;
         TextView name;
-        //TextView baseProfle;
-        TextView groupName;
-        TextView org;
-        //TextView created;
-        TextView groupProfile;
-        View divider;
-        LinearLayout memberSummary;
-        TextView membeRemainsCount;
-       
-        LinearLayout leaderProfile;
-        RelativeLayout groupInfo;
-        ConstraintLayout itemLayout;
+        TextView university;
+        TextView introduction;
+        TextView maleCount;
+        TextView femaleCount;
+        TextView evaluateCount;
+        LinearLayout memberWrapper;
+        ConstraintLayout itemLayout;         
         
         public ViewHolder(View view, MyItemClickListener myItemClickListener) {
             super(view);
             itemLayout = view.findViewById(R.id.single_group_summary_item);
-            leaderHeadUri = view.findViewById(R.id.leader_head_uri);
+            leaderAvatar = view.findViewById(R.id.leader_avatar);
             name = view.findViewById(R.id.leader_name);
-            //baseProfle = view.findViewById(R.id.base_profile);
-            groupName = view.findViewById(R.id.group_name);
-            org = view.findViewById(R.id.org);
+            university = view.findViewById(R.id.university);
             //created = view.findViewById(R.id.created);
-            groupProfile = view.findViewById(R.id.profile);
-            divider = view.findViewById(R.id.divider);
-            memberSummary = view.findViewById(R.id.member_summary);
-            membeRemainsCount = view.findViewById(R.id.remains);
-            leaderProfile = view.findViewById(R.id.leader_profile);
-            groupInfo = view.findViewById(R.id.group_info);
+            introduction = view.findViewById(R.id.introduction);
+            maleCount = view.findViewById(R.id.male_member_count);
+            femaleCount = view.findViewById(R.id.female_member_count);
+            evaluateCount = view.findViewById(R.id.evaluate_count);
+            memberWrapper = view.findViewById(R.id.member_wrapper);
+            
             //将全局的监听赋值给接口
             this.mListener = myItemClickListener;
             Typeface font = Typeface.createFromAsset(getContext().getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
