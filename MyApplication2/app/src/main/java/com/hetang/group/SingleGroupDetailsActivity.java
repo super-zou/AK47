@@ -33,6 +33,7 @@ import com.hetang.common.SetAvatarActivity;
 import com.hetang.util.Slog;
 import com.hetang.util.UserProfile;
 import com.hetang.util.Utility;
+import com.hetang.util.SharedPreferencesUtils; 
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -60,7 +61,7 @@ public class SingleGroupDetailsActivity extends BaseAppCompatActivity implements
     public static final String APPROVE_JOIN_SINGLE_GROUP = HttpUtil.DOMAIN + "?q=single_group/approve";
     public static final String ACCEPT_SUBGROUP_INVITE = HttpUtil.DOMAIN + "?q=subgroup/accept";
     
-    MeetSingleGroupFragment.SingleGroup singleGroup;
+    SingleGroupActivity.SingleGroup singleGroup;
     private Handler handler = null;
     private static final int GET_DONE = 0;
     private static final int JOIN_DONE = 1;
@@ -182,8 +183,8 @@ public class SingleGroupDetailsActivity extends BaseAppCompatActivity implements
             });
         }
 
-        TextView title = findViewById(R.id.title);
-        title.setText(singleGroup.groupName);
+        //TextView title = findViewById(R.id.title);
+        //title.setText(singleGroup.groupName);
         
         RoundImageView leaderHead = findViewById(R.id.head_uri);
         Glide.with(MyApplication.getContext()).load(HttpUtil.DOMAIN + singleGroup.leader.getAvatar()).into(leaderHead);
@@ -208,6 +209,7 @@ public class SingleGroupDetailsActivity extends BaseAppCompatActivity implements
         
         TextView memberCountView = findViewById(R.id.member_count);
 
+        /*
         int memberCount = singleGroup.memberInfoList.size();
         if(memberCount > 0){
             memberCountView.setText(memberCount+getString(R.string.member_count_suffix));
@@ -226,6 +228,7 @@ public class SingleGroupDetailsActivity extends BaseAppCompatActivity implements
                 addMemberView(singleGroup.memberInfoList.get(i), false);
             }
         }
+        */
 
         Typeface font = Typeface.createFromAsset(getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
         FontManager.markAsIconContainer(findViewById(R.id.group_details_layout), font);
@@ -280,8 +283,9 @@ public class SingleGroupDetailsActivity extends BaseAppCompatActivity implements
         }catch (JSONException e){
             e.printStackTrace();
         }
-        singleGroup = new MeetSingleGroupFragment.SingleGroup();
+        singleGroup = new SingleGroupActivity.SingleGroup();
 
+        /*
         if(singleGroupResponse != null){
             JSONObject group = singleGroupResponse.optJSONObject("single_group");
             singleGroup.gid = group.optInt("gid");
@@ -307,6 +311,7 @@ public class SingleGroupDetailsActivity extends BaseAppCompatActivity implements
 
             handler.sendEmptyMessage(GET_DONE);
         }
+        */
 
     }
     
@@ -484,9 +489,9 @@ public class SingleGroupDetailsActivity extends BaseAppCompatActivity implements
                 join.setText(getResources().getString(R.string.applied_wait));
                 join.setClickable(false);
 
-                int memberCount = singleGroup.memberInfoList.size()+1;
+                //int memberCount = singleGroup.memberInfoList.size()+1;
 
-                memberCountView.setText(memberCount+getString(R.string.member_count_suffix));
+                //memberCountView.setText(memberCount+getString(R.string.member_count_suffix));
 
                 Typeface font = Typeface.createFromAsset(getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
                 FontManager.markAsIconContainer(findViewById(R.id.group_details_layout), font);
