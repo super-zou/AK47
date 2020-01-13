@@ -60,7 +60,7 @@ import okhttp3.Response;
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static com.hetang.common.MyApplication.getContext;
 import static com.hetang.group.GroupFragment.fraternity_group;
-import static com.hetang.group.MeetSingleGroupFragment.getSingleGroup;
+import static com.hetang.group.SingleGroupActivity.getSingleGroup;
 import static com.hetang.group.SubGroupDetailsActivity.GET_SUBGROUP_BY_GID;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
@@ -95,7 +95,7 @@ public class SubGroupActivity extends BaseAppCompatActivity {
     private SubGroupSummaryAdapter subGroupSummaryAdapter;
     private XRecyclerView recyclerView;
     private List<SubGroup> mSubGroupList = new ArrayList<>();
-    private List<MeetSingleGroupFragment.SingleGroup> mSingleGroupList = new ArrayList<>();
+    private List<SingleGroupActivity.SingleGroup> mSingleGroupList = new ArrayList<>();
 
     public static void updateVisitorRecord(int gid) {
 
@@ -396,7 +396,7 @@ public class SubGroupActivity extends BaseAppCompatActivity {
                 for (int i = 0; i < singleGroupArray.length(); i++) {
                     JSONObject group = singleGroupArray.optJSONObject(i);
                     if (group != null) {
-                        MeetSingleGroupFragment.SingleGroup singleGroup = getSingleGroup(group, true);
+                        SingleGroupActivity.SingleGroup singleGroup = getSingleGroup(group, true);
                         mSingleGroupList.add(singleGroup);
                     }
                 }
@@ -415,12 +415,27 @@ public class SubGroupActivity extends BaseAppCompatActivity {
         if (groupWrapper == null) {
             return;
         }
+        
+                TextView moreTalent = singleGroupView.findViewById(R.id.more_talent);
+        moreTalent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(SubGroupActivity.this, SingleGroupActivity.class);
+                startActivity(intent);
+            }
+        });
+
 
         int size = mSingleGroupList.size();
+        if (size > 10){
+            size = 10;
+        }
+        
         for (int i = 0; i < size; i++) {
             View view = LayoutInflater.from(getContext()).inflate(R.layout.single_group_item, null);
             groupWrapper.addView(view);
 
+            /*
             if (size > 5 && i == size - 1) {
                 LinearLayout findMore = view.findViewById(R.id.find_more);
                 findMore.setVisibility(View.VISIBLE);
@@ -433,23 +448,27 @@ public class SubGroupActivity extends BaseAppCompatActivity {
                     }
                 });
             }
+            */
 
-            final MeetSingleGroupFragment.SingleGroup singleGroup = mSingleGroupList.get(i);
+            final SingleGroupActivity.SingleGroup singleGroup = mSingleGroupList.get(i);
             /*
             TextView groupName = view.findViewById(R.id.group_name);
             groupName.setText(singleGroup.groupName);
             */
 
-            RoundImageView avatar = view.findViewById(R.id.avatar);
-            String logo = singleGroup.leader.getAvatar();
-            if (logo != null && !"".equals(logo)) {
-                Glide.with(getContext()).load(HttpUtil.DOMAIN + logo).into(avatar);
+            RoundImageView avatarRV = view.findViewById(R.id.avatar);
+            String avatar = singleGroup.leader.getAvatar();
+            if (avatar != null && !"".equals(avatar)) {
+                Glide.with(getContext()).load(HttpUtil.DOMAIN + avatar).into(avatarRV);
             }
 
             TextView leaderName = view.findViewById(R.id.name);
             leaderName.setText(singleGroup.leader.getNickName());
             TextView university = view.findViewById(R.id.university);
             university.setText(singleGroup.leader.getUniversity());
+            
+            TextView introduction = view.findViewById(R.id.introduction);
+            introduction.setText(singleGroup.introduction);
 
             TextView memberCount = view.findViewById(R.id.group_member);
             memberCount.setText("成员 " + singleGroup.memberCount);
