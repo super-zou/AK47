@@ -110,6 +110,9 @@
             android:name=".group.SingleGroupDetailsActivity"
             android:launchMode="singleTop" />
         <activity
+            android:name=".group.SingleGroupActivity"
+            android:launchMode="singleTop" />
+        <activity
             android:name=".dynamics.SpecificUserDynamicsActivity"
             android:launchMode="singleTask" />
         <activity
