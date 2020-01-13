@@ -89,6 +89,8 @@
     <string name="dot_student">" · 学生"</string>
     <string name="group_leader">团长</string>
     <string name="matchmaker">牵线达人</string>
+        <string name="contact_matchmaker">联系达人</string>
+    <string name="more_talent">更多达人</string>
     <string name="join_group">+申请加入</string>
     <!--+End: add for archive, by zouhaichao 2018.12.6-->
     <string name="join_hetang">加入荷塘</string>
@@ -251,6 +253,7 @@
     <string name="follow">关注</string>
     <string name="member">成员</string>
     <string name="follow_action">+关注</string>
+    <string name="evaluation">评价</string>
     <string name="setting">设置</string>
     <string name="submit">提交</string>
     <string name="title_activity_picture_preview">照片预览</string>
