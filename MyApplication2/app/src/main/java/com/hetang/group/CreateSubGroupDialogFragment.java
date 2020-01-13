@@ -57,7 +57,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static android.app.Activity.RESULT_OK;
-import static com.hetang.group.MeetSingleGroupFragment.GROUP_ADD_BROADCAST;
+import static com.hetang.group.SingleGroupActivity.GROUP_ADD_BROADCAST;
 import static com.hetang.group.SubGroupDetailsActivity.GROUP_MODIFY_BROADCAST;
 
 /**
