@@ -2,7 +2,7 @@ package com.hetang.dynamics;
 
 import com.hetang.group.SubGroupActivity;
 import com.hetang.home.HomeFragment;
-import com.hetang.group.MeetSingleGroupFragment;
+import com.hetang.group.SingleGroupActivity;
 import com.hetang.meet.UserMeetInfo;
 import com.hetang.util.UserProfile;
 
@@ -29,7 +29,7 @@ import java.util.Date;
     public UserProfile relatedUerProfile;
     public Dynamic relatedContent;
     public UserMeetInfo relatedMeetContent;
-    public MeetSingleGroupFragment.SingleGroup relatedSingleGroupContent;
+    public SingleGroupActivity.SingleGroup relatedSingleGroupContent;
     public SubGroupActivity.SubGroup relatedSubGroupContent;
     public HomeFragment.BackgroundDetail backgroundDetail;
 
