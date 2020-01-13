@@ -27,7 +27,7 @@ import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.hetang.R;
 import com.hetang.common.BaseAppCompatActivity;
 import com.hetang.common.HandlerTemp;
-import com.hetang.group.MeetSingleGroupFragment;
+import com.hetang.group.SingleGroupActivity;
 import com.hetang.group.SingleGroupDetailsActivity;
 import com.hetang.util.FontManager;
 import com.hetang.util.SharedPreferencesUtils;
@@ -49,7 +49,7 @@ import okhttp3.Response;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
-import static com.hetang.group.MeetSingleGroupFragment.getSingleGroup;
+import static com.hetang.group.SingleGroupActivity.getSingleGroup;
 
 public class MeetSingleGroupActivity extends BaseAppCompatActivity {
     private static final boolean isDebug = true;
@@ -72,8 +72,8 @@ public class MeetSingleGroupActivity extends BaseAppCompatActivity {
 
     private MeetSingleGroupSummaryAdapter meetSingleGroupSummaryAdapter = new MeetSingleGroupSummaryAdapter(MyApplication.getContext());
     private XRecyclerView recyclerView;
-    private List<MeetSingleGroupFragment.SingleGroup> mSingleGroupList = new ArrayList<>();
-    private List<MeetSingleGroupFragment.SingleGroup> mSingleGroupUpdateList = new ArrayList<>();
+    private List<SingleGroupActivity.SingleGroup> mSingleGroupList = new ArrayList<>();
+    private List<SingleGroupActivity.SingleGroup> mSingleGroupUpdateList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -223,7 +223,7 @@ public class MeetSingleGroupActivity extends BaseAppCompatActivity {
                 for (int i=0; i<SingleGroupArray.length(); i++){
                     JSONObject group = SingleGroupArray.optJSONObject(i);
                     if (group != null){
-                        MeetSingleGroupFragment.SingleGroup singleGroup = getSingleGroup(group, false);
+                        SingleGroupActivity.SingleGroup singleGroup = getSingleGroup(group, false);
                         mSingleGroupList.add(singleGroup);
                     }
                 }
@@ -248,7 +248,7 @@ public class MeetSingleGroupActivity extends BaseAppCompatActivity {
                 for (int i=0; i<SingleGroupArray.length(); i++){
                     JSONObject group = SingleGroupArray.optJSONObject(i);
                     if (group != null){
-                        MeetSingleGroupFragment.SingleGroup singleGroup = getSingleGroup(group, false);
+                        SingleGroupActivity.SingleGroup singleGroup = getSingleGroup(group, false);
                         mSingleGroupUpdateList.add(singleGroup);
                     }
                 }
