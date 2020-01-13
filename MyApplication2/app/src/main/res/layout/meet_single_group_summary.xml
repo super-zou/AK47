@@ -8,7 +8,6 @@
     android:layout_height="match_parent">
 
     <LinearLayout
-        android:visibility="gone"
         android:id="@+id/custom_actionbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -20,13 +19,32 @@
 
         <TextView
             android:id="@+id/back"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:padding="8dp"
             android:text="@string/left_angle"
+            android:layout_weight="1"
             android:textColor="@color/white"
             android:textSize="28sp" />
+        <TextView
+            android:id="@+id/title"
+            android:text="@string/matchmaker"
+            android:gravity="center"
+            android:layout_weight="10"
+            android:textSize="18sp"
+            android:textColor="@color/white"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"/>
     </LinearLayout>
+    
+    <com.jcodecraeer.xrecyclerview.XRecyclerView
+        android:id="@+id/single_group_summary_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/custom_actionbar"></com.jcodecraeer.xrecyclerview.XRecyclerView>
+    
     <ImageView
         android:id="@+id/animal_progress"
         android:layout_width="match_parent"
@@ -36,13 +54,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-    <com.jcodecraeer.xrecyclerview.XRecyclerView
-        android:id="@+id/single_group_summary_list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/custom_actionbar"></com.jcodecraeer.xrecyclerview.XRecyclerView>
     
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/create_single_group"
