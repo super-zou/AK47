@@ -11,7 +11,7 @@
         android:id="@+id/custom_actionbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/background"
+        android:background="@color/blue_dark"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -56,7 +56,7 @@
         app:layout_constraintTop_toTopOf="parent" />
     
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/create_single_group"
+        android:id="@+id/become_talent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
