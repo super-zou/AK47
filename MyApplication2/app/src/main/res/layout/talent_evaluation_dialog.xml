@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
+    
+     <com.willy.ratingbar.ScaleRatingBar xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/charm_rating_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="68dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.052"
+        app:srb_clearRatingEnabled="true"
+        app:srb_clickable="true"
+        app:srb_drawableFilled="@drawable/filled"
+        app:srb_isIndicator="false"
+        app:srb_minimumStars="0"
+        app:srb_numStars="5"
+        app:srb_rating="0"
+        app:srb_scrollable="true"
+        app:srb_starHeight="30dp"
+        app:srb_starPadding="6dp"
+        app:srb_starWidth="30dp"
+        app:srb_stepSize="0.5"></com.willy.ratingbar.ScaleRatingBar>
+        
+        <TextView
+        android:id="@+id/charm_rating"
+        android:layout_width="53dp"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/charm_rating_bar"
+        android:layout_alignBottom="@+id/charm_rating_bar"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="32dp"
+        android:layout_toEndOf="@+id/charm_rating_bar"
+        android:text=""
+        app:layout_constraintBottom_toBottomOf="@+id/charm_rating_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/charm_rating_bar"
+        app:layout_constraintTop_toTopOf="@+id/charm_rating_bar" />
+        
+        <TextView
+        android:id="@+id/rating_notice"
+        android:layout_width="147dp"
+        android:layout_height="23dp"
+        android:gravity="center"
+        android:layout_alignStart="@+id/charm_rating_bar"
+        android:layout_alignEnd="@+id/charm_rating_bar"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="8dp"
+        android:text="给达人评分"
+        app:layout_constraintEnd_toEndOf="@+id/charm_rating_bar"
+        app:layout_constraintStart_toStartOf="@+id/charm_rating_bar"
+        app:layout_constraintTop_toBottomOf="@+id/charm_rating_bar" />
+        
+            <android.support.v7.widget.AppCompatEditText
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:focusedByDefault="false"
+        android:hint="评价达人"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rating_notice" />
+        
+            <Button
+        android:id="@+id/save_evaluate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/btn_stress"
+        android:text="保存"
+        android:textColor="@color/line_color"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/content" />
+        
+        <TextView
+        android:id="@+id/error_notice"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="* 请给达人打分"
+        android:textColor="@color/color_c51"
+        app:layout_constraintEnd_toEndOf="@+id/save_evaluate"
+        app:layout_constraintStart_toStartOf="@+id/save_evaluate"
+        app:layout_constraintTop_toBottomOf="@+id/save_evaluate" />
+
+</android.support.constraint.ConstraintLayout>
