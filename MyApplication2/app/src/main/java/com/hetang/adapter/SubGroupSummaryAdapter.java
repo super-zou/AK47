@@ -178,7 +178,7 @@ public class SubGroupSummaryAdapter extends RecyclerView.Adapter<SubGroupSummary
             org = view.findViewById(R.id.org);
             //created = view.findViewById(R.id.created);
             groupProfile = view.findViewById(R.id.profile);
-            leaderProfile = view.findViewById(R.id.leader_profile);
+            //leaderProfile = view.findViewById(R.id.leader_profile);
             logo = view.findViewById(R.id.logo);
             region = view.findViewById(R.id.region);
             memberCount = view.findViewById(R.id.member_count);
