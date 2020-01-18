@@ -90,7 +90,7 @@ public class MainActivity extends BaseAppCompatActivity implements CommonDialogF
     private boolean hasUnreadSessions = false;
     private String[] mTitles = MyApplication.getContext().getResources().getStringArray(R.array.main_tabs);
 
-    private int[] mIcons = {R.string.home, R.string.meet, R.string.message, R.string.contacts, R.string.me};
+    private int[] mIcons = {R.string.home, R.string.fa_magnet, R.string.message, R.string.contacts, R.string.me};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
