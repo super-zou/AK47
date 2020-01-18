@@ -136,6 +136,9 @@
         <activity
             android:name=".group.GroupActivity"
             android:launchMode="singleTask" />
+        <activity
+            android:name=".common.TalentEvaluatorDetailsActivity"
+            android:launchMode="singleTask" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
