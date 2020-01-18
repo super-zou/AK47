@@ -33,6 +33,7 @@ public class UserProfile implements Serializable {
     private int status;
 
     private String init;
+    private String account;
     private int cid = 0;//this is {meet_condition} table's cid, who has add meet info
 
     public int getUid() {
@@ -323,5 +324,8 @@ public class UserProfile implements Serializable {
     
         public void setStatus(int status){ this.status = status; }
     public int getStatus(){ return status; }
+    
+        public void setAccount(String account){ this.account = account; }
+    public String getAccount(){ return account; }
 
 }
