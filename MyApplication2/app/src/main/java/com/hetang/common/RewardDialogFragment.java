@@ -1,3 +1,6 @@
+package com.hetang.common;
+
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
