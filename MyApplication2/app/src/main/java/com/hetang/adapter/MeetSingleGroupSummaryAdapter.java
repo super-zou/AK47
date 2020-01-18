@@ -90,11 +90,13 @@ public class MeetSingleGroupSummaryAdapter extends RecyclerView.Adapter<MeetSing
                 holder.leaderAvatar.setImageDrawable(mContext.getDrawable(R.drawable.female_default_avator));
             }
         }
+        /*
         holder.groupName.setText(singleGroup.groupName.trim());
         holder.groupProfile.setText(singleGroup.groupProfile.trim());
         if (!TextUtils.isEmpty(singleGroup.org)){
             holder.org.setText("来自 "+singleGroup.org.trim());
         }
+        */
 
         holder.name.setText(singleGroup.leader.getNickName().trim());
         holder.university.setText(singleGroup.leader.getUniversity().trim());
