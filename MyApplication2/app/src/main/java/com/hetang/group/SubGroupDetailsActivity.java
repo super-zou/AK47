@@ -78,7 +78,7 @@ import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static com.hetang.common.MyApplication.getContext;
 import static com.hetang.common.SetAvatarActivity.MODIFY_LOGO;
 import static com.hetang.common.SetAvatarActivity.MODIFY_SUBGROUP_LOGO_RESULT_OK;
-import static com.hetang.group.GroupFragment.fraternity_group;
+import static com.hetang.group.GroupFragment.eden_group;
 import static com.hetang.home.CommonContactsActivity.GROUP_MEMBER;
 import static com.hetang.home.CommonContactsActivity.GROUP_MEMBER_CATEGRORY;
 import static com.hetang.home.HomeFragment.GET_MY_NEW_ADD_DONE;
@@ -114,13 +114,13 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
     private static final int JOIN_DONE = 10;
     private static final int ACCEPT_DONE = 11;
     private static final int GET_GROUP_HEADER_DONE = 12;
-    private static final int SHOW_NOTICE_DIALOG = 13;
-    private static final int PAGE_SIZE = 6;
-    private static final int UNAUTHENTICATED = -1;
-    private static final int AUTHENTICATING = 0;
-    private static final int VERIFIED = 1;
-    private static final int REJECTED = 2;
-    private static Handler handler = null;
+    public static final int SHOW_NOTICE_DIALOG = 13;
+    public static final int PAGE_SIZE = 6;
+    public static final int UNAUTHENTICATED = -1;
+    public static final int AUTHENTICATING = 0;
+    public static final int VERIFIED = 1;
+    public static final int REJECTED = 2;
+    public static Handler handler = null;
     //MeetsubGroupFragment.subGroup subGroup;
     SubGroupActivity.SubGroup subGroup;
     ImageView progressImageView;
@@ -288,7 +288,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        if (type != fraternity_group) {
+                        if (type != eden_group) {
                             if (subGroup.authorStatus > 0 || subGroup.followed > 0) {
                                 Intent intent = new Intent(MyApplication.getContext(), AddDynamicsActivity.class);
                                 intent.putExtra("type", ParseUtils.ADD_SUBGROUP_ACTIVITY_ACTION);
@@ -472,7 +472,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
             subGroup.followed = group.optInt("followed");
             subGroup.leader = new UserMeetInfo();
 
-            if (type == fraternity_group) {
+            if (type == eden_group) {
                 subGroup.maleCount = group.optInt("male_count");
                 subGroup.femaleCount = group.optInt("female_count");
                 try {
@@ -558,7 +558,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
 
         groupDesc.setText(subGroup.groupProfile);
 
-        if (type == fraternity_group) {
+        if (type == eden_group) {
             if (subGroup.maleCount > 0) {
                 maleHorizontalScrollView.setVisibility(View.VISIBLE);
                 int size = subGroup.maleList.size();
@@ -703,7 +703,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
             joinBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (type != fraternity_group){
+                    if (type != eden_group){
                         applyJoinGroup();
                     }else {
                         new Thread(new Runnable() {
@@ -798,7 +798,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        if (type != fraternity_group){
+                        if (type != eden_group){
                             Intent intent = new Intent(getContext(), CommonContactsActivity.class);
                             intent.putExtra("type", GROUP_MEMBER);
                             intent.putExtra("gid", gid);
@@ -961,7 +961,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
         invitationDialogFragment.show(getSupportFragmentManager(), "InvitationDialogFragment");
     }
 
-    private void showNoticeDialog(String title, String content, final int status) {
+    public void showNoticeDialog(String title, String content, final int status) {
         final AlertDialog.Builder normalDialog =
                 new AlertDialog.Builder(this, R.style.Theme_MaterialComponents_Light_Dialog_Alert);
         normalDialog.setTitle(title);
