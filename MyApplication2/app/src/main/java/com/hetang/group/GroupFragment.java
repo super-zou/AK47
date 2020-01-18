@@ -19,7 +19,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.hetang.R;
@@ -58,7 +57,7 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
 
     public static final int association_group = 0;
     public static final int public_good_group = 1;
-    public static final int fraternity_group = 2;
+    public static final int eden_group = 2;
     public static final int hobby_group = 3;
     public static final int growUp_group = 4;
     public static final int activity_group = 5;
@@ -380,7 +379,7 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
                 visitAmountOfPublicGood.setText("访问 " + groupSummary.visitRecord);
                 TextView descOfPublicGood = mView.findViewById(R.id.public_good_group_desc);
                 break;
-            case fraternity_group:
+            case eden_group:
                 //TextView universityAmountOfFraternity = mView.findViewById(R.id.university_amount_of_fraternity);
                 TextView subgroupAmountOfFraternity = mView.findViewById(R.id.subGroup_amount_of_fraternity);
                 subgroupAmountOfFraternity.setText("群组 " + groupSummary.subgroupAmount);
@@ -446,7 +445,7 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
                 startSubGroupActivity(public_good_group);
                 break;
             case R.id.fraternity_group:
-                startSubGroupActivity(fraternity_group);
+                startSubGroupActivity(eden_group);
                 break;
             case R.id.hobby_group:
                 startSubGroupActivity(hobby_group);
