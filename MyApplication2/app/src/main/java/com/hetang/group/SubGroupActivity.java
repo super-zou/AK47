@@ -59,7 +59,7 @@ import okhttp3.Response;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static com.hetang.common.MyApplication.getContext;
-import static com.hetang.group.GroupFragment.fraternity_group;
+import static com.hetang.group.GroupFragment.eden_group;
 import static com.hetang.group.SingleGroupActivity.getSingleGroup;
 import static com.hetang.group.SubGroupDetailsActivity.GET_SUBGROUP_BY_GID;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
@@ -162,7 +162,7 @@ public class SubGroupActivity extends BaseAppCompatActivity {
 
         initView();
 
-        if (type != fraternity_group) {
+        if (type != eden_group) {
             loadData();
         } else {
             getRecommendSingleGroup();
