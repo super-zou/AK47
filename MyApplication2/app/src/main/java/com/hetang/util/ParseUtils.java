@@ -234,6 +234,7 @@ public class ParseUtils {
         if (!member.optString("avatar").equals("null")){
             userMeetInfo.setAvatar(member.optString("avatar"));
         }
+        userMeetInfo.setAccount(member.optString("account"));
         userMeetInfo.setBirthYear(member.optInt("birth_year"));
         userMeetInfo.setHeight(member.optInt("height"));
 
