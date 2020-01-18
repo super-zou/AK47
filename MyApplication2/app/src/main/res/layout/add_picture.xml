@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
+    android:background="@color/blue_dark"
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_marginBottom="18dp"
-        android:background="@color/background">
+        android:background="@color/blue_dark">
 
         <TextView
             android:id="@+id/left_back"
