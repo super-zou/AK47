@@ -5,6 +5,7 @@ import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
@@ -102,6 +103,7 @@ public class FillMeetInfoActivity extends BaseAppCompatActivity {
     private ArrayList<CommonBean> provinceItems = new ArrayList<>();
     private ArrayList<ArrayList<String>> cityItems = new ArrayList<>();
     //private ArrayList<ArrayList<ArrayList<String>>> options3Items = new ArrayList<>();
+        public static final String FILL_MEET_INFO_BROADCAST = "com.hetang.action.FILL_MEET_INFO";
 
     boolean isHometownSet = false;
     boolean isEndPage = false;
@@ -521,6 +523,7 @@ public class FillMeetInfoActivity extends BaseAppCompatActivity {
                 intent.putExtra("uid", userProfile.getUid());
                 startActivity(intent);
                 dismissProgressDialog();
+                sendBroadcast();
                 finish();
             }
 
@@ -621,6 +624,12 @@ public class FillMeetInfoActivity extends BaseAppCompatActivity {
         }
 
         return true;
+    }
+    
+        private void sendBroadcast() {
+        Intent intent;
+        intent = new Intent(FILL_MEET_INFO_BROADCAST);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
 }
