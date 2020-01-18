@@ -491,8 +491,9 @@ public class SingleGroupActivity extends BaseAppCompatActivity {
             JSONArray memberArray = group.optJSONArray("members");
             
             
-            if (memberArray != null && count > 0) {
+            if (memberArray != null) {
                 int count = memberArray.length();
+                if(count > 0){
                 singleGroup.memberList = new ArrayList<>();
                 for (int n = 0; n < count; n++) {
                     UserMeetInfo userMeetInfo = new UserMeetInfo();
@@ -509,6 +510,7 @@ public class SingleGroupActivity extends BaseAppCompatActivity {
                         userMeetInfo.setLiving(memberArray.optJSONObject(n).optString("living"));
                     }
                     singleGroup.memberList.add(userMeetInfo);
+                }
                 }
             }
 
