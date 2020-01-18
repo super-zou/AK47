@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_gravity="center_horizontal"
-    android:background="@color/colorWhite"
+    android:background="@drawable/border"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
@@ -12,7 +12,7 @@
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="18dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:elevation="8dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -25,6 +25,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+                          android:textColor="@color/blue_dark"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/member_head" />
@@ -76,17 +77,29 @@
 
     </LinearLayout>
     
+    <TextView
+        android:id="@+id/university"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:textSize="10sp"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/base_profile" />
+    
     <LinearLayout
         android:id="@+id/living_wrap"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+                  android:layout_marginBottom="8dp"
         android:gravity="center_horizontal"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/base_profile">
+        app:layout_constraintTop_toBottomOf="@+id/university">
 
         <TextView
             android:textSize="10sp"
@@ -99,6 +112,7 @@
             android:textSize="10sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+                  android:layout_marginLeft="3dp"
             android:layout_marginLeft="8dp" />
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>
