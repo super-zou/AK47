@@ -72,9 +72,11 @@ public class SetAvatarActivity extends BaseAppCompatActivity {
     private int type = 0;
     public static final int MODIFY_LOGO = 3;
     public static final int AUTHENTICATION_PHOTO = 4;
+        public static final int TALENT_AUTHENTICATION_PHOTO = 5;
 
     public static final String AVATAR_SET_ACTION_BROADCAST = "com.hetang.action.AVATAR_SET";
     public static final String SUBMIT_AUTHENTICATION_ACTION_BROADCAST = "com.hetang.action.SUBMIT_AUTHEN";
+        public static final String SUBMIT_TALENT_AUTHENTICATION_ACTION_BROADCAST = "com.hetang.action.SUBMIT_TALENT_AUTHEN";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +99,8 @@ public class SetAvatarActivity extends BaseAppCompatActivity {
             title.setText("修改团标");
         }else if (type == AUTHENTICATION_PHOTO){
             title.setText("上传证件照");
+        }else if (type == TALENT_AUTHENTICATION_PHOTO){
+            title.setText("上传赞赏二维码");
         }
 
         leftBack.setOnClickListener(new View.OnClickListener() {
@@ -116,7 +120,7 @@ public class SetAvatarActivity extends BaseAppCompatActivity {
                     if (type == MODIFY_LOGO){
                         params.put("type", "group_logo");
                         params.put("gid", String.valueOf(gid));
-                    }else if (type == AUTHENTICATION_PHOTO){
+                    }else if (type == AUTHENTICATION_PHOTO || type == TALENT_AUTHENTICATION_PHOTO){
                         params.put("type", "authentication");
                     }else {
                         params.put("type", "avatar");
@@ -248,7 +252,7 @@ public class SetAvatarActivity extends BaseAppCompatActivity {
         String uri;
         if (type == MODIFY_LOGO){
             uri = MODIFY_SUBGROUP_LOGO_URL;
-        }else if (type == AUTHENTICATION_PHOTO){
+        }else if (type == AUTHENTICATION_PHOTO || type == TALENT_AUTHENTICATION_PHOTO){
             uri = SUBMIT_AUTHENTICATION_PHOTO_URL;
         }else {
             uri = UPLOAD_PICTURE_URL;
@@ -267,7 +271,7 @@ public class SetAvatarActivity extends BaseAppCompatActivity {
                                 intent.putExtra("logoUri", logoUri);
                                 setResult(MODIFY_SUBGROUP_LOGO_RESULT_OK, intent);
                                 finish();
-                            }else if (type == AUTHENTICATION_PHOTO){
+                            }else if (type == AUTHENTICATION_PHOTO || type == TALENT_AUTHENTICATION_PHOTO){
                                 int status = new JSONObject(responseText).optInt("response");
                                 if (status == 1) {
                                     String uri = new JSONObject(responseText).optString("uri");
@@ -318,6 +322,9 @@ public class SetAvatarActivity extends BaseAppCompatActivity {
         Intent intent;
         if (type == AUTHENTICATION_PHOTO){
             intent = new Intent(SUBMIT_AUTHENTICATION_ACTION_BROADCAST);
+            intent.putExtra("uri", uri);
+        }else if (type == TALENT_AUTHENTICATION_PHOTO) {
+            intent = new Intent(SUBMIT_TALENT_AUTHENTICATION_ACTION_BROADCAST);
             intent.putExtra("uri", uri);
         }else {
             intent = new Intent(AVATAR_SET_ACTION_BROADCAST);
