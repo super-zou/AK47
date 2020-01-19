@@ -26,6 +26,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.hetang.R;
 import com.hetang.adapter.MeetSingleGroupSummaryAdapter;
+import com.hetang.authenticate.TalentAuthenticationDialogFragment;
 import com.hetang.common.BaseAppCompatActivity;
 import com.hetang.common.MyApplication;
 import com.hetang.meet.UserMeetInfo;
@@ -524,8 +525,10 @@ public class SingleGroupActivity extends BaseAppCompatActivity {
 return null;
     }
 
-        private void becomeTalent() {
-
+    private void becomeTalent() {
+        TalentAuthenticationDialogFragment talentAuthenticationDialogFragment = new TalentAuthenticationDialogFragment();
+        //createSingleGroupDialogFragment.setTargetFragment(SingleGroupActivity.this, REQUEST_CODE);
+        talentAuthenticationDialogFragment.show(getSupportFragmentManager(), "TalentAuthenticationDialogFragment");
     }
     
     private void checkAvatarSet() {

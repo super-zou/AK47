@@ -265,8 +265,7 @@
     <string name="reward_done">已赞赏</string>
     <string name="wechat_support">请用微信扫码支付</string>
     <string name="submit_payment">上传赞赏码</string>
-    <string name="payment_notice">为了感谢你作为达人给大家带来帮助和便利，寻求或得到帮助的人会支付一定的感谢费表示心意。
-                                                   目前仅支持微信赞赏码收款，请上传你的赞赏二维码。*在微信收付款里选择赞赏码，设置金额后保存*</string>
+    <string name="payment_notice">寻求或得到帮助的人会支付一定的感谢费表示心意。*目前仅支持微信赞赏码收款，在微信收付款里选择赞赏码，设置金额后保存，然后点下面的\"+\"上传*</string>
     <string name="talent_introduction_title">达人介绍</string>
     <string name="talent_introduction">请介绍一下，作为牵线达人，能够给大家提供什么帮助，带来什么便利</string>
     <string name="invite_member_condition">达人申请成功后，需要招募至少3位成员加入你的牵线团</string>

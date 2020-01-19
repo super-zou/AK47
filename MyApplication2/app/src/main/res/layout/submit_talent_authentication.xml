@@ -75,8 +75,8 @@
         
         <com.hetang.util.RoundImageView
         android:id="@+id/reward_qr_code"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:layout_marginTop="16dp"
         android:background="@drawable/addimg_1x"
         app:layout_constraintEnd_toEndOf="parent"
@@ -117,7 +117,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:text="@string/cancel"
-        android:background="@drawable/btn_big_radius_disable"
+        android:textColor="@color/text_default"
+        android:background="@drawable/btn_big_radius_default"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/submit" />
         

@@ -58,7 +58,7 @@
 
     <TextView
         android:id="@+id/more_talent"
-                      android:text="@string/more_talent"
+        android:text="@string/more_talent"
         android:background="@drawable/round_background_blue"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
