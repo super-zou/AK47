@@ -142,7 +142,7 @@
     <string name="location_permission_request">荷塘将使用手机的定位功能，帮您定位地址信息；\n如果禁用则部分功能不可用</string>
     <string name="open_now">立即开启</string>
     <string name="cancel">取消</string>
-    <string name="applied_wait">已申请入团，待审核</string>
+    <string name="applied_wait">已申请，待达人通过</string>
     <string name="applying">已申请入团</string>
     <string name="joined">已加入</string>
     <string name="approvied">同意加入</string>
@@ -261,13 +261,15 @@
     <string name="submit">提交</string>
     <string name="title_activity_picture_preview">照片预览</string>
         <string name="reward">赞赏达人</string>
+        <string name="become_talent">成为达人</string>
+        <string name="no_evaluate">暂无评价</string>
     <string name="abandon">不用了</string>
     <string name="reward_done">已赞赏</string>
     <string name="wechat_support">请用微信扫码支付</string>
     <string name="submit_payment">上传赞赏码</string>
     <string name="payment_notice">寻求或得到帮助的人会支付一定的感谢费表示心意。*目前仅支持微信赞赏码收款，在微信收付款里选择赞赏码，设置金额后保存，然后点下面的\"+\"上传*</string>
     <string name="talent_introduction_title">达人介绍</string>
-    <string name="talent_introduction">请介绍一下，作为牵线达人，能够给大家提供什么帮助，带来什么便利</string>
+    <string name="talent_introduction">介绍一下你的优势，能够提供哪些帮助和服务</string>  
     <string name="invite_member_condition">达人申请成功后，需要招募至少3位成员加入你的牵线团</string>
     <string name="reward_content">达人帮你牵线搭桥，极大提高交友成功率。一点赞赏聊表心意，达人更愿意付出时间帮忙。</string>
     <string name="preparation">即将上线，敬请关注。</string>
