@@ -67,6 +67,7 @@ public class TalentEvaluatorDetailsActivity extends BaseAppCompatActivity {
         final int uid = getIntent().getIntExtra("uid", -1);
         final int type = getIntent().getIntExtra("type", -1);
         float scores = getIntent().getFloatExtra("scores", 0);
+                final int gid = getIntent().getIntExtra("gid", 0);
 
         handler = new TalentEvaluatorDetailsActivity.MyHandler(this);
         mEvaluatorDetailsList = new ArrayList<>();
@@ -104,7 +105,7 @@ public class TalentEvaluatorDetailsActivity extends BaseAppCompatActivity {
             @Override
             public void onLoadMore() {
                 //loadDynamicsData(mMeetMember.getUid());
-                getEvaluatorDetails(uid, type);
+                getEvaluatorDetails(uid, type, gid);
             }
         });
         
@@ -122,7 +123,7 @@ public class TalentEvaluatorDetailsActivity extends BaseAppCompatActivity {
 
         setScoresView(scores);
 
-        getEvaluatorDetails(uid, type);
+        getEvaluatorDetails(uid, type, gid);
         
         TextView back = findViewById(R.id.back);
         back.setOnClickListener(new View.OnClickListener() {
@@ -145,12 +146,13 @@ public class TalentEvaluatorDetailsActivity extends BaseAppCompatActivity {
         scaleRatingBar.setRating(scores);
     }
     
-    private void getEvaluatorDetails(int uid, int type) {
+    private void getEvaluatorDetails(int uid, int type, int gid) {
         Slog.d(TAG, "------------------------>uid: "+uid);
         int page = mEvaluatorDetailsList.size() / PAGE_SIZE;
         RequestBody requestBody = new FormBody.Builder()
                 .add("uid", String.valueOf(uid))
                 .add("type", String.valueOf(type))
+            .add("gid", String.valueOf(gid))
                 .add("step", String.valueOf(PAGE_SIZE))
                 .add("page", String.valueOf(page))
                 .build();
