@@ -20,7 +20,9 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -31,6 +33,7 @@ import com.hetang.common.BaseAppCompatActivity;
 import com.hetang.common.MyApplication;
 import com.hetang.meet.UserMeetInfo;
 import com.hetang.util.BaseFragment;
+import com.hetang.util.CommonDialogFragmentInterface;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.MyLinearLayoutManager;
@@ -63,11 +66,14 @@ import okhttp3.Response;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static com.hetang.archive.ArchiveFragment.SET_AVATAR_RESULT_OK;
+import static com.hetang.authenticate.TalentAuthenticationDialogFragment.TALENT_AUTHENTICATION_RESULT_OK;
 import static com.hetang.common.MyApplication.getContext;
+import static com.hetang.common.TalentEvaluateDialogFragment.SET_EVALUATE_RESULT_OK;
+import static com.hetang.group.GroupFragment.eden_group;
 import static com.hetang.group.SingleGroupDetailsActivity.GET_SINGLE_GROUP_BY_GID;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
-public class SingleGroupActivity extends BaseAppCompatActivity {
+public class SingleGroupActivity extends BaseAppCompatActivity implements CommonDialogFragmentInterface{
     private static final boolean isDebug = true;
     private static final String TAG = "SingleGroupActivity";
     final int itemLimit = 3;
@@ -92,9 +98,7 @@ public class SingleGroupActivity extends BaseAppCompatActivity {
     private static final int NO_MORE = 6;
         private static final int GET_MY_GROUP_DONE = 7;
     private static final int NO_MY_GROUP = 8;
-
-    public static final String GROUP_ADD_BROADCAST = "com.hetang.action.GROUP_ADD";
-    private SingleGroupReceiver mReceiver = new SingleGroupReceiver();
+        private static final int PROCESS_NEW_CREATED = 9;
     
      private MeetSingleGroupSummaryAdapter meetSingleGroupSummaryAdapter;
     private XRecyclerView recyclerView;
@@ -104,6 +108,8 @@ public class SingleGroupActivity extends BaseAppCompatActivity {
     ImageView progressImageView;
     AnimationDrawable animationDrawable;
     View mMyGroupView;
+        private int groupType = eden_group;
+    private ViewGroup myGroupView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,7 +119,7 @@ public class SingleGroupActivity extends BaseAppCompatActivity {
         
         initView();
 
-        FloatingActionButton floatingActionButton = findViewById(R.id.become_talent);
+        Button floatingActionButton = findViewById(R.id.become_talent);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -129,7 +135,7 @@ public class SingleGroupActivity extends BaseAppCompatActivity {
             }
         });
         
-        registerLoginBroadcast();
+        //registerLoginBroadcast();
 
         //show progressImage before loading done
         progressImageView = findViewById(R.id.animal_progress);
@@ -170,7 +176,7 @@ public class SingleGroupActivity extends BaseAppCompatActivity {
                                 handler.sendEmptyMessage(NO_MY_GROUP);
                             }
                             
-                            loadData();
+                           // loadData();
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -300,12 +306,15 @@ public class SingleGroupActivity extends BaseAppCompatActivity {
     }
     
     private void setMyGroupView(){
-        ViewGroup myGroupView = (ViewGroup) LayoutInflater.from(getContext()).inflate(R.layout.my_single_group, (ViewGroup) findViewById(android.R.id.content), false);
+        myGroupView = (ViewGroup) LayoutInflater.from(getContext()).inflate(R.layout.my_single_group, (ViewGroup) findViewById(android.R.id.content), false);
         recyclerView.addHeaderView(myGroupView);
-
+android.widget.LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            layoutParams.setMargins(0, 0, 0, 3);
+        
         if (mLeadGroupList.size() > 0){
             for (int i=0; i<mLeadGroupList.size(); i++){
                 View leadGroupItemView = LayoutInflater.from(getContext()).inflate(R.layout.single_group_summary_item, (ViewGroup) findViewById(android.R.id.content), false);
+                leadGroupItemView.setLayoutParams(layoutParams);
                 myGroupView.addView(leadGroupItemView);
                 setGroupView(leadGroupItemView, mLeadGroupList.get(i));
                 final SingleGroup singleGroup = mLeadGroupList.get(i);
@@ -324,6 +333,7 @@ public class SingleGroupActivity extends BaseAppCompatActivity {
         if (mJoinGroupList.size() > 0){
             for (int i=0; i<mJoinGroupList.size(); i++){
                 View joinGroupItemView = LayoutInflater.from(getContext()).inflate(R.layout.single_group_summary_item, (ViewGroup) findViewById(android.R.id.content), false);
+                joinGroupItemView.setLayoutParams(layoutParams);
                 myGroupView.addView(joinGroupItemView);
                 setGroupView(joinGroupItemView, mJoinGroupList.get(i));
                 final SingleGroup singleGroup = mJoinGroupList.get(i);
@@ -341,6 +351,22 @@ public class SingleGroupActivity extends BaseAppCompatActivity {
 
     }
     
+        private void addMyNewGroup(){
+        View leadGroupItemView = LayoutInflater.from(getContext()).inflate(R.layout.single_group_summary_item, (ViewGroup) findViewById(android.R.id.content), false);
+        myGroupView.addView(leadGroupItemView, 0);
+        setGroupView(leadGroupItemView, mLeadGroupList.get(0));
+
+        leadGroupItemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), SingleGroupDetailsActivity.class);
+                intent.putExtra("gid", mLeadGroupList.get(0).gid);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                startActivity(intent);
+            }
+        });
+    }
+    
     private void setGroupView(View view, SingleGroup singleGroup){
         TextView nameTV = view.findViewById(R.id.leader_name);
         nameTV.setText(singleGroup.leader.getNickName());
@@ -354,8 +380,12 @@ public class SingleGroupActivity extends BaseAppCompatActivity {
         maleCountTV.setText(getResources().getString(R.string.male)+" "+singleGroup.maleCount);
         TextView femaleCountTV = view.findViewById(R.id.female_member_count);
         femaleCountTV.setText(getResources().getString(R.string.female)+" "+singleGroup.femaleCount);
-        TextView evaluateCountTV = view.findViewById(R.id.evaluate_count);
-        evaluateCountTV.setText(getResources().getString(R.string.evaluation)+" "+singleGroup.evaluateCount);
+        if (singleGroup.evaluateCount > 0){
+            TextView evaluateCountTV = view.findViewById(R.id.evaluate_count);
+            float scoreFloat = singleGroup.evaluateScores/singleGroup.evaluateCount;
+            float score = (float)(Math.round(scoreFloat*10))/10;
+            evaluateCountTV.setText("评价 "+score+getResources().getString(R.string.dot)+singleGroup.evaluateCount);
+        }
     }
 
     private int processMyGroupResponse(JSONObject SingleGroupResponse) {
@@ -459,7 +489,6 @@ public class SingleGroupActivity extends BaseAppCompatActivity {
     }
     
     private void processNewAddResponse(JSONObject SingleGroupResponse) {
-        List<SingleGroup> mSingleGroupUpdateList = new ArrayList<>();
         JSONObject SingleGroupObject = null;
         if (SingleGroupResponse != null) {
             SingleGroupObject = SingleGroupResponse.optJSONObject("single_group");
@@ -467,14 +496,8 @@ public class SingleGroupActivity extends BaseAppCompatActivity {
 
         if (SingleGroupObject != null) {
             SingleGroup singleGroup = getSingleGroup(SingleGroupObject, false);
-            mSingleGroupUpdateList.add(singleGroup);
-            mSingleGroupList.addAll(0, mSingleGroupUpdateList);
-            Message message = new Message();
-            message.what = UPDATE_ALL;
-            Bundle bundle = new Bundle();
-            bundle.putInt("update_size", mSingleGroupUpdateList.size());
-            message.setData(bundle);
-            handler.sendMessage(message);
+            mLeadGroupList.add(0, singleGroup);
+            handler.sendEmptyMessage(PROCESS_NEW_CREATED);
         }
     }
     
@@ -489,6 +512,8 @@ public class SingleGroupActivity extends BaseAppCompatActivity {
             singleGroup.femaleCount = group.optInt("female_count");
             singleGroup.authorStatus = group.optInt("author_status");
             singleGroup.isLeader = group.optBoolean("isLeader");
+                        singleGroup.evaluateScores = (float) group.optDouble("scores");
+            singleGroup.evaluateCount = group.optInt("count");
             JSONArray memberArray = group.optJSONArray("members");
             
             
@@ -527,6 +552,9 @@ return null;
 
     private void becomeTalent() {
         TalentAuthenticationDialogFragment talentAuthenticationDialogFragment = new TalentAuthenticationDialogFragment();
+                Bundle bundle = new Bundle();
+        bundle.putInt("type", groupType);
+        talentAuthenticationDialogFragment.setArguments(bundle);
         //createSingleGroupDialogFragment.setTargetFragment(SingleGroupActivity.this, REQUEST_CODE);
         talentAuthenticationDialogFragment.show(getSupportFragmentManager(), "TalentAuthenticationDialogFragment");
     }
@@ -665,8 +693,13 @@ return null;
                 break;
                             case GET_MY_GROUP_DONE:
                 setMyGroupView();
+                                loadData();
                 break;
             case NO_MY_GROUP:
+                                loadData();
+                break;
+                            case PROCESS_NEW_CREATED:
+                addMyNewGroup();
                 break;
             default:
                 break;
@@ -746,7 +779,7 @@ return null;
         public String created;
         public UserMeetInfo leader;
         public List<UserMeetInfo> memberList;
-        public int evaluateScore = 0;
+public float evaluateScores = 0;
         public int evaluateCount = 0;
         public int memberCount = 0;
         public int maleCount = 0;
@@ -755,15 +788,17 @@ return null;
         public boolean isLeader;
     }
 
-    private void registerLoginBroadcast() {
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(GROUP_ADD_BROADCAST);
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, intentFilter);
-    }
-    
-    //unregister local broadcast
-    private void unRegisterLoginBroadcast() {
-        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
+    @Override
+    public void onBackFromDialog(int type, int result, boolean status) {
+        switch (type){
+            case TALENT_AUTHENTICATION_RESULT_OK://For EvaluateDialogFragment back
+                if(status == true){
+                    getMyNewAddedGroup(result);
+                }
+                break;
+            default:
+                break;
+        }
     }
 
     private class SingleGroupReceiver extends BroadcastReceiver {
@@ -820,8 +855,6 @@ return null;
     @Override
     public void onDestroy() {
         super.onDestroy();
-        unRegisterLoginBroadcast();
-
         if (recyclerView != null) {
             recyclerView.destroy();
             recyclerView = null;
