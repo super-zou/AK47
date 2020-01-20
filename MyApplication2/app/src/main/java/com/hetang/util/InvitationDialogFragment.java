@@ -38,6 +38,7 @@ import okhttp3.Response;
 
 import static com.hetang.archive.ArchiveFragment.REQUESTCODE;
 import static com.hetang.main.MeetArchiveFragment.RESULT_OK;
+import static com.hetang.util.ParseUtils.TYPE_SINGLE_GROUP;
 
 public class InvitationDialogFragment extends DialogFragment implements View.OnClickListener {
     private static final String TAG = "InvitationDialogFragment";
@@ -113,7 +114,7 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
         if (bundle != null) {
             uid = bundle.getInt("uid", 0);
             type = bundle.getInt("type", 0);
-            if(type == ParseUtils.TYPE_SINGLE_GROUP){
+            if(type == ParseUtils.TYPE_SUBGROUP || type == TYPE_SINGLE_GROUP){
                 gid = bundle.getInt("gid", -1);
             }
         }
@@ -125,8 +126,11 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
             case ParseUtils.TYPE_CHEERING_GROUP:
                 getCheeringGroupUids();
                 break;
-            case ParseUtils.TYPE_SINGLE_GROUP:
+            case ParseUtils.TYPE_SUBGROUP:
                 getSubGroupUids();
+                break;
+                            case TYPE_SINGLE_GROUP:
+                getSingleGroupUids();
                 break;
             case ParseUtils.TYPE_COMMON_SEARCH:
                 getAllContacts();
@@ -241,6 +245,42 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
             }
         });
     }
+    
+        private void getSingleGroupUids(){
+        FormBody requestBody = new FormBody.Builder().add("gid", String.valueOf(gid)).build();
+        HttpUtil.sendOkHttpRequest(mContext, GET_SINGLE_GROUP_UIDS_URL, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.body() != null) {
+                    String responseText = response.body().string();
+                    Slog.d(TAG, "==========getSingleGroupUids  response text : " + responseText);
+                    if (responseText != null && !TextUtils.isEmpty(responseText)) {
+                        try {
+                            JSONArray uidJsonArray = new JSONObject(responseText).optJSONArray("response");
+                            Slog.d(TAG, "==========uidJsonArray : " + uidJsonArray);
+                            if (uidJsonArray != null && uidJsonArray.length() > 0){
+                                uidArray = new int[uidJsonArray.length()];
+                                for (int i=0; i<uidJsonArray.length(); i++){
+                                    uidArray[i] = uidJsonArray.getInt(i);
+                                }
+                            }
+
+                        }catch (JSONException e){
+                            e.printStackTrace();
+                        }
+                    }
+                    handler.sendEmptyMessage(GET_UIDS_DONE);
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+        });
+    }
+                    
     private void getRefereeUids(){
         FormBody requestBody = new FormBody.Builder().build();
         HttpUtil.sendOkHttpRequest(mContext, GET_REFERENCE_UIDS_URL, requestBody, new Callback() {
@@ -398,7 +438,7 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
                 searchContactsByName();
                 break;
             case QUERY_USER_DONE:
-                if(type == ParseUtils.TYPE_SINGLE_GROUP){
+                if(type == ParseUtils.TYPE_SUBGROUP || type == TYPE_SINGLE_GROUP){
                     adapter.setData(mMemberInfoList, type, uidArray, gid);
                 }else {
                     adapter.setData(mMemberInfoList, type, uidArray);
@@ -413,8 +453,8 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
                 adapter.notifyDataSetChanged();
                 break;
             case GET_CONTACTS_DONE:
-               if (type == ParseUtils.TYPE_SINGLE_GROUP){
-                    adapter.setData(mMemberInfoList, type, uidArray, gid);
+               if (type == ParseUtils.TYPE_SUBGROUP || type == TYPE_SINGLE_GROUP){
+                    adapter.setData(mContactsList, type, uidArray, gid);
                 }else {
                     adapter.setData(mContactsList, type, uidArray);
                 }
