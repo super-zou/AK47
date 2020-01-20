@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
+    <android.support.constraint.ConstraintLayout
         android:id="@+id/custom_actionbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -19,28 +19,49 @@
 
         <TextView
             android:id="@+id/back"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
             android:padding="8dp"
             android:text="@string/left_angle"
-            android:layout_weight="1"
             android:textColor="@color/white"
-            android:textSize="28sp" />
+            android:textSize="28sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
         <TextView
             android:id="@+id/title"
-            android:text="@string/matchmaker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:gravity="center"
-            android:layout_weight="10"
-            android:textSize="18sp"
+            android:text="@string/matchmaker"
             android:textColor="@color/white"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"/>
-    </LinearLayout>
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+ <Button
+            android:id="@+id/become_talent"
+            android:layout_width="wrap_content"
+            android:layout_height="38dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="2dp"
+            android:background="@drawable/label_btn_shape"
+            android:text="@string/become_talent"
+            android:textColor="@android:color/holo_blue_dark"
+            android:padding="2dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </android.support.constraint.ConstraintLayout>
     
     <com.jcodecraeer.xrecyclerview.XRecyclerView
         android:id="@+id/single_group_summary_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+                                                 android:paddingBottom="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/custom_actionbar"></com.jcodecraeer.xrecyclerview.XRecyclerView>
@@ -55,16 +76,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
     
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/become_talent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:alpha="0.8"
-        android:background="@color/blue_dark"
-        android:src="@drawable/ic_plus"
-        app:backgroundTint="@color/blue_dark"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"></android.support.design.widget.FloatingActionButton>
     
 </android.support.constraint.ConstraintLayout>
