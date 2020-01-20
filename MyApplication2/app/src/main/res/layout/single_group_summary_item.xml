@@ -6,16 +6,16 @@
     android:id="@+id/single_group_summary_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="6dp"
+    android:layout_marginBottom="10dp"
+    android:elevation="8dp"
     android:paddingTop="8dp"
     android:paddingBottom="8dp"
-    android:elevation="8dp"
     android:background="@color/white">
     
      <com.hetang.util.RoundImageView
         android:id="@+id/leader_avatar"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:gravity="center"
@@ -42,6 +42,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:text="@string/university"
+                      android:textColor="@color/disabled"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/leader_name"
         app:layout_constraintStart_toEndOf="@+id/leader_name"
         app:layout_constraintTop_toTopOf="@+id/leader_name" />
 
@@ -52,10 +55,11 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:ellipsize="end"
-        android:lines="3"
-        android:paddingLeft="116dp"
+        android:lines="2"
+        android:paddingLeft="96dp"
         android:text="@string/introduction"
         android:textSize="12sp"
+        android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/leader_name" />
@@ -114,7 +118,7 @@
         android:ellipsize="end"
         android:maxEms="18"
         android:singleLine="true"
-        android:text="evaluate_count"
+        android:text=""
         android:textColor="@color/disabled"
         android:textSize="10sp"
         app:layout_constraintStart_toEndOf="@+id/female_member_count"
