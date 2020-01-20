@@ -955,7 +955,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
         Bundle bundle = new Bundle();
         bundle.putInt("gid", gid);
         Slog.d(TAG, "---------------------->invite gid: " + gid);
-        bundle.putInt("type", ParseUtils.TYPE_SINGLE_GROUP);
+        bundle.putInt("type", ParseUtils.TYPE_SUBGROUP);
 
         invitationDialogFragment.setArguments(bundle);
         invitationDialogFragment.show(getSupportFragmentManager(), "InvitationDialogFragment");
