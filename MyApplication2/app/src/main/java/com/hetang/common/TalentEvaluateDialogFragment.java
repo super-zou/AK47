@@ -65,6 +65,7 @@ public class TalentEvaluateDialogFragment extends DialogFragment {
     
     private int uid;
     private int type;
+        private int gid;
     private static final int WRITE_EVALUATE_DONE = 0;
     public final static int SET_EVALUATE_RESULT_OK = 7;
     private CommonDialogFragmentInterface commonDialogFragmentInterface;
@@ -85,6 +86,7 @@ public class TalentEvaluateDialogFragment extends DialogFragment {
         if (bundle != null) {
             uid = bundle.getInt("uid");
             type = bundle.getInt("type");
+                        gid = bundle.getInt("gid");
         }
         inflater = LayoutInflater.from(mContext);
         mDialog = new Dialog(mContext, android.R.style.Theme_Light_NoTitleBar_Fullscreen);
@@ -150,6 +152,7 @@ public class TalentEvaluateDialogFragment extends DialogFragment {
                 .add("uid", String.valueOf(uid))
                 .add("type", String.valueOf(type))
                 .add("content", content)
+                            .add("gid", String.valueOf(gid))
                 .add("rating", String.valueOf(rating));
 
         RequestBody requestBody = builder.build();
