@@ -20,6 +20,7 @@ import android.support.v7.widget.GridLayout;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.hetang.R;
@@ -161,7 +162,7 @@ public class SingleGroupDetailsActivity extends BaseAppCompatActivity implements
                     join.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            checkMeetConditionSet();
+                            checkMeetConditionSet(true);
                         }
                     });
                     break;
@@ -174,7 +175,7 @@ public class SingleGroupDetailsActivity extends BaseAppCompatActivity implements
                     join.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            accept();
+                            checkMeetConditionSet(false);
                         }
                     });
                     break;
@@ -242,6 +243,7 @@ public class SingleGroupDetailsActivity extends BaseAppCompatActivity implements
                 TalentEvaluateDialogFragment talentEvaluateDialogFragment = new TalentEvaluateDialogFragment();
                 Bundle bundle = new Bundle();
                 bundle.putInt("uid", uid);
+                                bundle.putInt("gid", gid);
                 bundle.putInt("type", eden_group);
                 talentEvaluateDialogFragment.setArguments(bundle);
                 talentEvaluateDialogFragment.show(getSupportFragmentManager(), "TalentEvaluateDialogFragment");
@@ -258,6 +260,7 @@ public class SingleGroupDetailsActivity extends BaseAppCompatActivity implements
         RequestBody requestBody = new FormBody.Builder()
                 .add("uid", String.valueOf(uid))
                 .add("type", String.valueOf(eden_group))
+            .add("gid", String.valueOf(gid))
                 .build();
 
         HttpUtil.sendOkHttpRequest(this, GET_EVALUATION_STATISTICS_URL, requestBody, new Callback() {
@@ -286,7 +289,11 @@ public class SingleGroupDetailsActivity extends BaseAppCompatActivity implements
             JSONObject evaluateObject = new JSONObject(response);
             double scores = evaluateObject.optDouble("scores");
             int count = evaluateObject.optInt("count");
-            float score = (float) scores/count;
+                        float score = 0;
+            if (count != 0){
+                float scoreFloat = (float) scores/count;
+                score = (float)(Math.round(scoreFloat*10))/10;
+            }
             Slog.d(TAG, "------------------>processEvaluationResponse: scores"+scores+"  score: "+score+ " count "+count);
             Message message = new Message();
             Bundle bundle = new Bundle();
@@ -303,7 +310,12 @@ public class SingleGroupDetailsActivity extends BaseAppCompatActivity implements
     
     private void setEvaluationView(final float score, int count){
         TextView evaluateTV = findViewById(R.id.evaluate);
-        String textContent = score+"分"+getResources().getString(R.string.dot)+count+"条评论";
+        String textContent = "";
+        if (count == 0){
+            textContent = getResources().getString(R.string.no_evaluate);
+        }else {
+            textContent = score+"分"+getResources().getString(R.string.dot)+count+"条评论";
+        }
         evaluateTV.setText(textContent);
 
         evaluateTV.setOnClickListener(new View.OnClickListener() {
@@ -313,6 +325,7 @@ public class SingleGroupDetailsActivity extends BaseAppCompatActivity implements
                 intent.putExtra("uid", uid);
                 intent.putExtra("type", eden_group);
                 intent.putExtra("scores", score);
+                intent.putExtra("gid", gid);
                 startActivity(intent);
             }
         });
@@ -414,14 +427,7 @@ public class SingleGroupDetailsActivity extends BaseAppCompatActivity implements
                 if (response.body() != null) {
                     String responseText = response.body().string();
                     if(isDebug) Slog.d(TAG, "==========response text : " + responseText);
-                    if (responseText != null && !TextUtils.isEmpty(responseText)) {
-
-                        try {
-                            memberJSONObject = new JSONObject(responseText).optJSONObject("response");
-                        }catch (JSONException e){
-                            e.printStackTrace();
-                        }
-                        
+                    if (responseText != null && !TextUtils.isEmpty(responseText)) {                        
                         dismissProgressDialog();
                         handler.sendEmptyMessage(JOIN_DONE);
                     }
@@ -435,7 +441,7 @@ public class SingleGroupDetailsActivity extends BaseAppCompatActivity implements
         });
     }
     
-    private void checkMeetConditionSet(){
+    private void checkMeetConditionSet(final boolean apply){
         RequestBody requestBody = new FormBody.Builder().build();
         HttpUtil.sendOkHttpRequest(this, ParseUtils.GET_USER_PROFILE_URL, requestBody, new Callback() {
             @Override
@@ -460,7 +466,11 @@ public class SingleGroupDetailsActivity extends BaseAppCompatActivity implements
                                         });
 
                                     }else {
-                                        applyJoinGroup();
+                                         if (apply){
+                                            applyJoinGroup();
+                                        }else {
+                                            accept();
+                                        }
                                     }
                                 }
                             } catch (JSONException e) {
@@ -505,7 +515,7 @@ public class SingleGroupDetailsActivity extends BaseAppCompatActivity implements
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            checkMeetConditionSet();
+                            checkMeetConditionSet(true);
                         }
                     });
         }
@@ -579,6 +589,11 @@ public class SingleGroupDetailsActivity extends BaseAppCompatActivity implements
                     String responseText = response.body().string();
                     if(isDebug) Slog.d(TAG, "==========response text : " + responseText);
                     if (responseText != null && !TextUtils.isEmpty(responseText)) {
+                                                try {
+                            memberJSONObject = new JSONObject(responseText).optJSONObject("response");
+                        }catch (JSONException e){
+                            e.printStackTrace();
+                        }
                         handler.sendEmptyMessage(ACCEPT_DONE);
                         //refresh();
                     }
@@ -603,21 +618,17 @@ public class SingleGroupDetailsActivity extends BaseAppCompatActivity implements
                 setSingleGroupView();
                 break;
             case JOIN_DONE:
+                                TextView join = findViewById(R.id.join);
+                join.setText(getResources().getString(R.string.applied_wait));
+                join.setClickable(false);
+                break;
             case ACCEPT_DONE:
                 UserMeetInfo userMeetInfo = new UserMeetInfo();
                 ParseUtils.setBaseProfile(userMeetInfo, memberJSONObject);
                 addMemberView(userMeetInfo, true);
-                TextView memberCountView = findViewById(R.id.member_count);
-                TextView join = findViewById(R.id.join);
-                join.setText(getResources().getString(R.string.applied_wait));
-                join.setClickable(false);
-
-                //int memberCount = singleGroup.memberInfoList.size()+1;
-
-                //memberCountView.setText(memberCount+getString(R.string.member_count_suffix));
-
-                Typeface font = Typeface.createFromAsset(getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
-                FontManager.markAsIconContainer(findViewById(R.id.group_details_layout), font);
+                                LinearLayout joinWrapper = findViewById(R.id.join_wrap);
+                joinWrapper.setVisibility(View.GONE);
+                singleGroup.authorStatus = JOINED;
                 break;
                 case GET_EVALUATION_DONE:
                 Bundle bundle = message.getData();
@@ -668,8 +679,13 @@ public class SingleGroupDetailsActivity extends BaseAppCompatActivity implements
         public void onReceive(Context context, Intent intent) {
             switch (intent.getAction()) {
                 case FILL_MEET_INFO_BROADCAST:
-                    applyJoinGroup();
-                    break;
+if (singleGroup.authorStatus == nonMEMBER){
+                        applyJoinGroup();
+                        Toast.makeText(mContext, "申请已发出，待达人审核", Toast.LENGTH_LONG).show();
+                    }else if (singleGroup.authorStatus == INVITTED){
+                        accept();
+                        Toast.makeText(mContext, "已加入牵线团", Toast.LENGTH_LONG).show();
+                    }                    break;
             }
 
         }
