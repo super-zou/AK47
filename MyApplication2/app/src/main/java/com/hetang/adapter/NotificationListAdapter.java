@@ -54,6 +54,7 @@ import okhttp3.Response;
 import static com.hetang.adapter.ContactsListAdapter.acceptContactsApply;
 import static com.hetang.common.MyApplication.getContext;
 import static com.hetang.util.ParseUtils.ADD_CHEERING_GROUP_MEMBER_ACTION;
+import static com.hetang.util.ParseUtils.APPLY_JOIN_SINGLE_GROUP_NF;
 import static com.hetang.util.ParseUtils.APPROVE_IMPRESSION_ACTION;
 import static com.hetang.util.ParseUtils.APPROVE_PERSONALITY_ACTION;
 import static com.hetang.util.ParseUtils.AUTHENTICATION_REJECTED_NF;
@@ -61,7 +62,9 @@ import static com.hetang.util.ParseUtils.AUTHENTICATION_VERIFIED_NF;
 import static com.hetang.util.ParseUtils.EVALUATE_ACTION;
 import static com.hetang.util.ParseUtils.FOLLOW_GROUP_ACTION;
 import static com.hetang.util.ParseUtils.INVITE_GROUP_MEMBER_ACTION;
+import static com.hetang.util.ParseUtils.INVITE_SINGLE_GROUP_MEMBER_ACTION;
 import static com.hetang.util.ParseUtils.JOIN_CHEERING_GROUP_ACTION;
+import static com.hetang.util.ParseUtils.JOIN_SINGLE_GROUP_ACTION;
 import static com.hetang.util.ParseUtils.MODIFY_GROUP_ACTION;
 import static com.hetang.util.ParseUtils.REFEREE_ACTION;
 import static com.hetang.util.ParseUtils.REFEREE_INVITE_NF;
@@ -181,7 +184,7 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
         
         switch (notification.type){
             //case ParseUtils.APPLY_CONTACTS_NF:
-            //case ParseUtils.APPLY_JOIN_SINGLE_GROUP_NF:
+            case ParseUtils.APPLY_JOIN_SINGLE_GROUP_NF:
             case ParseUtils.INVITE_GROUP_MEMBER_ACTION:
                 holder.acceptBtn.setVisibility(View.VISIBLE);
                 if (notification.processed == UNPROCESSED){
@@ -273,6 +276,12 @@ ParseUtils.startMeetArchiveActivity(mContext, notification.tid);
                         SubmitAuthenticationDialogFragment submitAuthenticationDialogFragment = new SubmitAuthenticationDialogFragment();
                         submitAuthenticationDialogFragment.setArguments(bundle);
                         submitAuthenticationDialogFragment.show(fragmentManager, "SubmitAuthenticationDialogFragment");
+                        markNotificationProcessed(holder.isNew, notification);
+                        break;
+                    case INVITE_SINGLE_GROUP_MEMBER_ACTION:
+                    case APPLY_JOIN_SINGLE_GROUP_NF:
+                    case JOIN_SINGLE_GROUP_ACTION:
+                        startSingleGroupDetails(getContext(), notification.id);
                         markNotificationProcessed(holder.isNew, notification);
                         break;
                     default:
@@ -383,7 +392,9 @@ ParseUtils.startMeetArchiveActivity(mContext, notification.tid);
             acceptContactsApply(notification.tid);
         } else if (notification.type == ParseUtils.APPLY_JOIN_GROUP_NF) {
             approveSingleGroupApply(notification.id, notification.tid);
-        } else {
+        }else if (notification.type == ParseUtils.APPLY_JOIN_SINGLE_GROUP_NF){
+            approveSingleGroupApply(notification.id, notification.tid); 
+        }else {
             acceptSingleGroupInvite(notification.id, notification.tid);
         }
     }
@@ -472,6 +483,13 @@ ParseUtils.startMeetArchiveActivity(mContext, notification.tid);
 
     private void startSubGroupDetails(Context context, int gid) {
         Intent intent = new Intent(context, SubGroupDetailsActivity.class);
+        intent.putExtra("gid", gid);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+        mContext.startActivity(intent);
+    }
+    
+    private void startSingleGroupDetails(Context context, int gid) {
+        Intent intent = new Intent(context, SingleGroupDetailsActivity.class);
         intent.putExtra("gid", gid);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
         mContext.startActivity(intent);
