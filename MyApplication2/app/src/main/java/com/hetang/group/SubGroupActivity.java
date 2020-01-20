@@ -435,26 +435,7 @@ public class SubGroupActivity extends BaseAppCompatActivity {
             View view = LayoutInflater.from(getContext()).inflate(R.layout.single_group_item, null);
             groupWrapper.addView(view);
 
-            /*
-            if (size > 5 && i == size - 1) {
-                LinearLayout findMore = view.findViewById(R.id.find_more);
-                findMore.setVisibility(View.VISIBLE);
-
-                findMore.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent intent = new Intent(getContext(), GroupActivity.class);
-                        startActivity(intent);
-                    }
-                });
-            }
-            */
-
             final SingleGroupActivity.SingleGroup singleGroup = mSingleGroupList.get(i);
-            /*
-            TextView groupName = view.findViewById(R.id.group_name);
-            groupName.setText(singleGroup.groupName);
-            */
 
             RoundImageView avatarRV = view.findViewById(R.id.avatar);
             String avatar = singleGroup.leader.getAvatar();
@@ -473,8 +454,12 @@ public class SubGroupActivity extends BaseAppCompatActivity {
             TextView memberCount = view.findViewById(R.id.group_member);
             memberCount.setText("成员 " + singleGroup.memberCount);
 
-            TextView evaluateCount = view.findViewById(R.id.evaluate_count);
-            evaluateCount.setText("评价 " + singleGroup.evaluateCount);
+           if (singleGroup.evaluateCount > 0){
+                TextView evaluateCountTV = view.findViewById(R.id.evaluate_count);
+                float scoreFloat = singleGroup.evaluateScores/singleGroup.evaluateCount;
+                float score = (float)(Math.round(scoreFloat*10))/10;
+                evaluateCountTV.setText("评价 "+score+getResources().getString(R.string.dot)+singleGroup.evaluateCount);
+            }
 
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
