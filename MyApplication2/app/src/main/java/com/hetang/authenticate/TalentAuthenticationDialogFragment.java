@@ -31,6 +31,7 @@ import com.hetang.R;
 import com.hetang.common.MyApplication;
 import com.hetang.common.SetAvatarActivity;
 import com.hetang.util.BaseDialogFragment;
+import com.hetang.util.CommonDialogFragmentInterface;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.ParseUtils;
@@ -66,19 +67,27 @@ import static com.hetang.common.SetAvatarActivity.TALENT_AUTHENTICATION_PHOTO;
 public class TalentAuthenticationDialogFragment extends BaseDialogFragment {
     private static final boolean isDebug = true;
     private static final String TAG = "TalentAuthenticationDialogFragment";
-    private static final String SUBMIT_URL = HttpUtil.DOMAIN + "?q=user_extdata/submit_authentication_info";
+    private static final String SUBMIT_URL = HttpUtil.DOMAIN + "?q=talent/become/apply";
     private int type;
+        private int gid;
     private Dialog mDialog;
     private Context mContext;
     private String uri;
     private EditText introductionET;
     private RoundImageView rewardQRCode;
     private QRCodeSetBroadcastReceiver mReceiver;
+        private CommonDialogFragmentInterface commonDialogFragmentInterface;
+    public final static int TALENT_AUTHENTICATION_RESULT_OK = 0;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         mContext = context;
+                try {
+            commonDialogFragmentInterface = (CommonDialogFragmentInterface) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString() + "must implement commonDialogFragmentInterface");
+        }
     }
     
     @Override
@@ -153,7 +162,9 @@ public class TalentAuthenticationDialogFragment extends BaseDialogFragment {
     private void submit() {
         showProgressDialog("");
         FormBody.Builder builder = new FormBody.Builder()
-                .add("talent_info", getTalentJsonObject().toString());
+                .add("introduction", introductionET.getText().toString())
+                .add("uri", uri)
+                .add("type", String.valueOf(type));
 
         RequestBody requestBody = builder.build();
 
@@ -163,8 +174,13 @@ public class TalentAuthenticationDialogFragment extends BaseDialogFragment {
                 String responseText = response.body().string();
                 Slog.d(TAG, "saveUserInfo response : "+responseText);
                 if (!TextUtils.isEmpty(responseText)) {
+                    try {
+                        gid = new JSONObject(responseText).optInt("gid");
+                    }catch (JSONException e){
+                        e.printStackTrace();
+                    }
                     dismissProgressDialog();
-                    dismiss();
+                    mDialog.dismiss();
                 }
             }
             @Override
@@ -236,6 +252,9 @@ private JSONObject getTalentJsonObject() {
     public void onDismiss(DialogInterface dialogInterface) {
         super.onDismiss(dialogInterface);
         unRegisterBroadcast();
+        if (commonDialogFragmentInterface != null) {//callback from ArchivesActivity class
+            commonDialogFragmentInterface.onBackFromDialog(TALENT_AUTHENTICATION_RESULT_OK, gid, true);
+        }
     }
 
     @Override
