@@ -104,30 +104,58 @@ public class MeetSingleGroupSummaryAdapter extends RecyclerView.Adapter<MeetSing
         holder.introduction.setText(singleGroup.introduction);
         holder.maleCount.setText(mContext.getResources().getString(R.string.male)+" "+singleGroup.maleCount);
         holder.femaleCount.setText(mContext.getResources().getString(R.string.female)+" "+singleGroup.femaleCount);
-        holder.evaluateCount.setText(mContext.getResources().getString(R.string.evaluation)+" "+singleGroup.evaluateCount);
-        
-         if (singleGroup.memberList != null && singleGroup.memberList.size() > 0 ) {
-            holder.memberWrapper.setVisibility(View.VISIBLE);
-            for (int i=0; i<singleGroup.memberList.size(); i++){
-                View view = LayoutInflater.from(getContext()).inflate(R.layout.single_group_member_item, null);
-                holder.memberWrapper.addView(view);
-                UserProfile member = singleGroup.memberList.get(i);
-                RoundImageView memberAvatar = view.findViewById(R.id.avatar);
-                String avatar = member.getAvatar();
-                if (avatar != null && !"".equals(avatar)) {
-                    Glide.with(getContext()).load(HttpUtil.DOMAIN + avatar).into(memberAvatar);
-                }
-                
-                TextView degree = view.findViewById(R.id.degree);
-                degree.setText(member.getDegreeName(member.getDegree()));
-                TextView major = view.findViewById(R.id.major);
-                major.setText(member.getMajor());
-                TextView university = view.findViewById(R.id.university);
-                university.setText(member.getUniversity());
-            }
+        if (singleGroup.evaluateCount > 0){
+            float scoreFloat = singleGroup.evaluateScores/singleGroup.evaluateCount;
+            float score = (float)(Math.round(scoreFloat*10))/10;
+            holder.evaluateCount.setText(score+mContext.getResources().getString(R.string.dot)+singleGroup.evaluateCount);
+        }else {
+            holder.evaluateCount.setText("");
         }
         
-    }         
+        if (singleGroup.memberList != null && singleGroup.memberList.size() > 0) {
+             holder.memberWrapper.setVisibility(View.VISIBLE);
+             if (holder.memberWrapper.getTag() == null){
+                 setMemberView(singleGroup, holder);
+             }else {
+                 if (!singleGroup.equals(holder.memberWrapper.getTag())){
+                     holder.memberWrapper.removeAllViews();
+                     setMemberView(singleGroup, holder);
+                 }
+             }
+        }else {
+            holder.memberWrapper.setVisibility(View.GONE);
+            /*
+             if (holder.memberWrapper.getChildCount() > 0){
+                 holder.memberWrapper.removeAllViews();
+             }
+
+             */
+        }
+        
+    }
+    
+    public static void setMemberView(SingleGroupActivity.SingleGroup singleGroup, ViewHolder holder){
+        for (int i=0; i<singleGroup.memberList.size(); i++){
+            View view = LayoutInflater.from(getContext()).inflate(R.layout.single_group_member_item, null);
+            holder.memberWrapper.addView(view);
+            UserProfile member = singleGroup.memberList.get(i);
+            RoundImageView memberAvatar = view.findViewById(R.id.avatar);
+            String avatar = member.getAvatar();
+            if (avatar != null && !"".equals(avatar)) {
+                Glide.with(getContext()).load(HttpUtil.DOMAIN + avatar).into(memberAvatar);
+            }
+
+            TextView degree = view.findViewById(R.id.degree);
+            degree.setText(member.getDegreeName(member.getDegree()));
+            TextView major = view.findViewById(R.id.major);
+            major.setText(member.getMajor());
+            TextView university = view.findViewById(R.id.university);
+            university.setText(member.getUniversity());
+        }
+
+        holder.memberWrapper.setTag(singleGroup);
+    }
+        
     
     public void notifySetListDataChanged(List<SingleGroupActivity.SingleGroup> list){
         this.mSingleGroupList = list;
