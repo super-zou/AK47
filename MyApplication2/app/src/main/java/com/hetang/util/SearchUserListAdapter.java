@@ -38,6 +38,7 @@ public class SearchUserListAdapter extends RecyclerView.Adapter<SearchUserListAd
     private UserProfile memberInfo;
     private static final String ADD_CHEERING_GROUP_URL = HttpUtil.DOMAIN + "?q=meet/cheering_group/add";
         private static final String INVITE_SUBGROUP_MEMBER_URL = HttpUtil.DOMAIN + "?q=subgroup/invite";
+        private static final String INVITE_SINGLE_GROUP_MEMBER_URL = HttpUtil.DOMAIN + "?q=single_group/invite";
     private static final String ADD_NOTICE_URL = HttpUtil.DOMAIN + "?q=notice/add";
     private static final String INVITE_REFERENCE_URL = HttpUtil.DOMAIN + "?q=meet/reference/invite";
     
@@ -109,6 +110,7 @@ public class SearchUserListAdapter extends RecyclerView.Adapter<SearchUserListAd
                 if (memberInfo.getUid() == uidArray[i]){
                     holder.invite.setEnabled(false);
                     holder.invite.setText(R.string.invited_member);
+                    holder.invite.setBackground(mContext.getResources().getDrawable(R.drawable.btn_disable));
                     break;
                 }
             }
@@ -124,6 +126,9 @@ public class SearchUserListAdapter extends RecyclerView.Adapter<SearchUserListAd
                     case ParseUtils.TYPE_CHEERING_GROUP:
                         addCheeringGroup(v.getId());
                         break;
+                        case ParseUtils.TYPE_SUBGROUP:
+                        inviteSubGroupMember(v.getId(), gid);
+                        break;
                         case ParseUtils.TYPE_SINGLE_GROUP:
                         inviteSubGroupMember(v.getId(), gid);
                         break;
@@ -133,6 +138,7 @@ public class SearchUserListAdapter extends RecyclerView.Adapter<SearchUserListAd
                 }
                 holder.invite.setEnabled(false);
                 holder.invite.setText(R.string.invited_member);
+                holder.invite.setBackground(mContext.getResources().getDrawable(R.drawable.btn_disable));
             }
         });
         
@@ -178,6 +184,28 @@ ParseUtils.startMeetArchiveActivity(mContext, memberInfo.getUid());
                     String responseText = response.body().string();
                     if (isDebug)
                         Slog.d(TAG, "==========inviteReference response text : " + responseText);
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+            }
+        });
+    }
+    
+    private void inviteSingleGroupMember(final int uid, int gid){
+        Slog.d(TAG, "--------------->gid: "+gid);
+        final RequestBody requestBody = new FormBody.Builder()
+                .add("uid", String.valueOf(uid))
+                .add("gid", String.valueOf(gid)).build();
+        HttpUtil.sendOkHttpRequest(mContext, INVITE_SINGLE_GROUP_MEMBER_URL, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.body() != null) {
+                    String responseText = response.body().string();
+                    if (isDebug)
+                        Slog.d(TAG, "==========addCheeringGroup response text : " + responseText);
+                    //addNotice(uid, 6, "单身团邀请", "邀请你加入单身团");
                 }
             }
 
