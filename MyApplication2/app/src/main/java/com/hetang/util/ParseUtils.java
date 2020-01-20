@@ -49,8 +49,9 @@ public class ParseUtils {
     public static final int TYPE_PERSONALITY = 2;
     public static final int TYPE_HOBBY = 3;
     public static final int TYPE_CHEERING_GROUP = 4;
-    public static final int TYPE_SINGLE_GROUP = 5;
+    public static final int TYPE_SUBGROUP = 5;
     public static final int TYPE_COMMON_SEARCH = 6;
+        public static final int TYPE_SINGLE_GROUP = 7;
 
     //for dynamic value
     public static final int ADD_MEET_DYNAMIC_ACTION = 0;
