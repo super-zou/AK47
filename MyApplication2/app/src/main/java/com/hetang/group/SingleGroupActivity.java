@@ -14,7 +14,7 @@ import android.os.Message;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
+
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -58,7 +58,7 @@ import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-
+import static com.hetang.group.SubGroupActivity.ADD_NEW_TALENT_DONE;
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static com.hetang.archive.ArchiveFragment.SET_AVATAR_RESULT_OK;
 import static com.hetang.authenticate.TalentAuthenticationDialogFragment.TALENT_AUTHENTICATION_RESULT_OK;
@@ -73,13 +73,13 @@ import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 public class SingleGroupActivity extends BaseAppCompatActivity implements CommonDialogFragmentInterface {
     private static final boolean isDebug = true;
     private static final String TAG = "SingleGroupActivity";
-    private static final int PAGE_SIZE = 8;
+    private static final int PAGE_SIZE = 10;
     private static final String SINGLE_GROUP_ADD = HttpUtil.DOMAIN + "?q=single_group/add";
     private static final String SINGLE_GROUP_APPLY = HttpUtil.DOMAIN + "?q=single_group/apply";
     private static final String SINGLE_GROUP_APPROVE = HttpUtil.DOMAIN + "?q=single_group/approve";
-    private static final String SINGLE_GROUP_GET_BY_UID = HttpUtil.DOMAIN + "?q=single_group/get_by_uid";
+    public static final String SINGLE_GROUP_GET_BY_UID = HttpUtil.DOMAIN + "?q=single_group/get_by_uid";
     private static final String SINGLE_GROUP_GET_BY_ORG = HttpUtil.DOMAIN + "?q=single_group/get_by_org";
-    private static final String SINGLE_GROUP_GET_MY = HttpUtil.DOMAIN + "?q=single_group/get_my";
+    public static final String SINGLE_GROUP_GET_MY = HttpUtil.DOMAIN + "?q=single_group/get_my";
     private static final String SINGLE_GROUP_GET_ALL = HttpUtil.DOMAIN + "?q=single_group/get_all";
     private static final String SINGLE_GROUP_UPDATE = HttpUtil.DOMAIN + "?q=single_group/update";
     private static final int GET_ALL_DONE = 1;
@@ -88,8 +88,8 @@ public class SingleGroupActivity extends BaseAppCompatActivity implements Common
     private static final int NO_UPDATE = 4;
     private static final int SET_AVATAR = 5;
     private static final int NO_MORE = 6;
-    private static final int GET_MY_GROUP_DONE = 7;
-    private static final int NO_MY_GROUP = 8;
+    public static final int GET_MY_GROUP_DONE = 7;
+    public static final int NO_MY_GROUP = 8;
     private static final int PROCESS_NEW_CREATED = 9;
     final int itemLimit = 3;
     ImageView progressImageView;
@@ -191,50 +191,8 @@ public class SingleGroupActivity extends BaseAppCompatActivity implements Common
             }
         }, 50);
 
-        //loadData();
-        getMySingleGroup();
-    }
-
-    private void getMySingleGroup() {
-        RequestBody requestBody = new FormBody.Builder().build();
-
-        HttpUtil.sendOkHttpRequest(getContext(), SINGLE_GROUP_GET_MY, requestBody, new Callback() {
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (response.body() != null) {
-                    String responseText = response.body().string();
-                    if (isDebug) Slog.d(TAG, "==========response text : " + responseText);
-                    if (responseText != null && !TextUtils.isEmpty(responseText)) {
-                        JSONObject SingleGroupResponse = null;
-
-                        try {
-                            SingleGroupResponse = new JSONObject(responseText);
-                            if (SingleGroupResponse != null) {
-                                int loadSize = processMyGroupResponse(SingleGroupResponse);
-                                if (loadSize > 0) {
-                                    handler.sendEmptyMessage(GET_MY_GROUP_DONE);
-                                } else {
-                                    handler.sendEmptyMessage(NO_MY_GROUP);
-                                }
-                            } else {
-                                handler.sendEmptyMessage(NO_MY_GROUP);
-                            }
-
-                            // loadData();
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call call, IOException e) {
-
-            }
-        });
+        loadData();
+        //getMySingleGroup();
     }
 
     private void initView() {
@@ -349,129 +307,7 @@ public class SingleGroupActivity extends BaseAppCompatActivity implements Common
         });
     }
 
-    private void setMyGroupView() {
-        myGroupView = (ViewGroup) LayoutInflater.from(getContext()).inflate(R.layout.my_single_group, (ViewGroup) findViewById(android.R.id.content), false);
-        recyclerView.addHeaderView(myGroupView);
-        android.widget.LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        layoutParams.setMargins(0, 0, 0, 3);
-
-        if (mLeadGroupList.size() > 0) {
-            for (int i = 0; i < mLeadGroupList.size(); i++) {
-                View leadGroupItemView = LayoutInflater.from(getContext()).inflate(R.layout.single_group_summary_item, (ViewGroup) findViewById(android.R.id.content), false);
-                leadGroupItemView.setLayoutParams(layoutParams);
-                myGroupView.addView(leadGroupItemView);
-                setGroupView(leadGroupItemView, mLeadGroupList.get(i));
-                final SingleGroup singleGroup = mLeadGroupList.get(i);
-                leadGroupItemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent intent = new Intent(getContext(), SingleGroupDetailsActivity.class);
-                        intent.putExtra("gid", singleGroup.gid);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-                        startActivity(intent);
-                    }
-                });
-            }
-        }
-
-        if (mJoinGroupList.size() > 0) {
-            for (int i = 0; i < mJoinGroupList.size(); i++) {
-                View joinGroupItemView = LayoutInflater.from(getContext()).inflate(R.layout.single_group_summary_item, (ViewGroup) findViewById(android.R.id.content), false);
-                joinGroupItemView.setLayoutParams(layoutParams);
-                myGroupView.addView(joinGroupItemView);
-                setGroupView(joinGroupItemView, mJoinGroupList.get(i));
-                final SingleGroup singleGroup = mJoinGroupList.get(i);
-                joinGroupItemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent intent = new Intent(getContext(), SingleGroupDetailsActivity.class);
-                        intent.putExtra("gid", singleGroup.gid);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-                        startActivity(intent);
-                    }
-                });
-            }
-        }
-
-    }
-
-    private void addMyNewGroup() {
-        View leadGroupItemView = LayoutInflater.from(getContext()).inflate(R.layout.single_group_summary_item, (ViewGroup) findViewById(android.R.id.content), false);
-        myGroupView.addView(leadGroupItemView, 0);
-        setGroupView(leadGroupItemView, mLeadGroupList.get(0));
-
-        leadGroupItemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getContext(), SingleGroupDetailsActivity.class);
-                intent.putExtra("gid", mLeadGroupList.get(0).gid);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-                startActivity(intent);
-            }
-        });
-    }
-
-    private void setGroupView(View view, SingleGroup singleGroup) {
-        TextView nameTV = view.findViewById(R.id.leader_name);
-        nameTV.setText(singleGroup.leader.getNickName());
-        RoundImageView avatar = view.findViewById(R.id.leader_avatar);
-        Glide.with(this).load(HttpUtil.DOMAIN + singleGroup.leader.getAvatar()).into(avatar);
-        TextView universityTV = view.findViewById(R.id.university);
-        universityTV.setText(singleGroup.leader.getUniversity());
-        TextView introductionTV = view.findViewById(R.id.introduction);
-        introductionTV.setText(singleGroup.introduction);
-        TextView maleCountTV = view.findViewById(R.id.male_member_count);
-        maleCountTV.setText(getResources().getString(R.string.male) + " " + singleGroup.maleCount);
-        TextView femaleCountTV = view.findViewById(R.id.female_member_count);
-        femaleCountTV.setText(getResources().getString(R.string.female) + " " + singleGroup.femaleCount);
-        if (singleGroup.evaluateCount > 0) {
-            TextView evaluateCountTV = view.findViewById(R.id.evaluate_count);
-            float scoreFloat = singleGroup.evaluateScores / singleGroup.evaluateCount;
-            float score = (float) (Math.round(scoreFloat * 10)) / 10;
-            evaluateCountTV.setText("评价 " + score + getResources().getString(R.string.dot) + singleGroup.evaluateCount);
-        }
-    }
-
-    private int processMyGroupResponse(JSONObject SingleGroupResponse) {
-
-        int singGroupSize = 0;
-        JSONArray leadGroupArray = null;
-        JSONArray joinGroupArray = null;
-
-        if (SingleGroupResponse != null) {
-            leadGroupArray = SingleGroupResponse.optJSONArray("lead_groups");
-            joinGroupArray = SingleGroupResponse.optJSONArray("join_groups");
-        }
-
-        if (leadGroupArray != null) {
-            singGroupSize = leadGroupArray.length();
-            if (singGroupSize > 0) {
-                for (int i = 0; i < leadGroupArray.length(); i++) {
-                    JSONObject group = leadGroupArray.optJSONObject(i);
-                    if (group != null) {
-                        SingleGroup singleGroup = getSingleGroup(group, false);
-                        mLeadGroupList.add(singleGroup);
-                    }
-                }
-            }
-        }
-
-        if (joinGroupArray != null) {
-            singGroupSize = joinGroupArray.length();
-            if (singGroupSize > 0) {
-                for (int i = 0; i < joinGroupArray.length(); i++) {
-                    JSONObject group = joinGroupArray.optJSONObject(i);
-                    if (group != null) {
-                        SingleGroup singleGroup = getSingleGroup(group, false);
-                        mJoinGroupList.add(singleGroup);
-                    }
-                }
-            }
-        }
-
-        return singGroupSize;
-    }
-
+    
     private int processResponse(JSONObject SingleGroupResponse) {
 
         int singGroupSize = 0;
@@ -529,18 +365,6 @@ public class SingleGroupActivity extends BaseAppCompatActivity implements Common
         return SingleGroupArray != null ? SingleGroupArray.length() : 0;
     }
 
-    private void processNewAddResponse(JSONObject SingleGroupResponse) {
-        JSONObject SingleGroupObject = null;
-        if (SingleGroupResponse != null) {
-            SingleGroupObject = SingleGroupResponse.optJSONObject("single_group");
-        }
-
-        if (SingleGroupObject != null) {
-            SingleGroup singleGroup = getSingleGroup(SingleGroupObject, false);
-            mLeadGroupList.add(0, singleGroup);
-            handler.sendEmptyMessage(PROCESS_NEW_CREATED);
-        }
-    }
 
     private void becomeTalent() {
         TalentAuthenticationDialogFragment talentAuthenticationDialogFragment = new TalentAuthenticationDialogFragment();
@@ -650,14 +474,14 @@ public class SingleGroupActivity extends BaseAppCompatActivity implements Common
             case GET_ALL_DONE:
                 meetSingleGroupSummaryAdapter.setData(mSingleGroupList, recyclerView.getWidth());
                 meetSingleGroupSummaryAdapter.notifyDataSetChanged();
-                recyclerView.refreshComplete();
+                //recyclerView.refreshComplete();
                 // recyclerView.loadMoreComplete();
                 stopLoadProgress();
                 break;
             case GET_ALL_END:
                 meetSingleGroupSummaryAdapter.setData(mSingleGroupList, recyclerView.getWidth());
                 meetSingleGroupSummaryAdapter.notifyDataSetChanged();
-                recyclerView.refreshComplete();
+                //recyclerView.refreshComplete();
                 recyclerView.loadMoreComplete();
                 recyclerView.setNoMore(true);
                 stopLoadProgress();
@@ -683,15 +507,13 @@ public class SingleGroupActivity extends BaseAppCompatActivity implements Common
             case SET_AVATAR:
                 startAvatarSetActivity();
                 break;
-            case GET_MY_GROUP_DONE:
-                setMyGroupView();
-                loadData();
-                break;
-            case NO_MY_GROUP:
-                loadData();
-                break;
-            case PROCESS_NEW_CREATED:
-                addMyNewGroup();
+                        case ADD_NEW_TALENT_DONE:
+                meetSingleGroupSummaryAdapter.setData(mSingleGroupList, recyclerView.getWidth());
+                meetSingleGroupSummaryAdapter.notifyItemInserted(0);
+                meetSingleGroupSummaryAdapter.notifyDataSetChanged();
+                if (mSingleGroupList.size() <= PAGE_SIZE){
+                    recyclerView.loadMoreComplete();
+                }
                 break;
             default:
                 break;
@@ -770,7 +592,7 @@ public class SingleGroupActivity extends BaseAppCompatActivity implements Common
         switch (type) {
             case TALENT_AUTHENTICATION_RESULT_OK://For EvaluateDialogFragment back
                 if (status == true) {
-                    getMyNewAddedGroup(result);
+                    getMyNewAddedTalent(result);
                 }
                 break;
             default:
@@ -778,7 +600,7 @@ public class SingleGroupActivity extends BaseAppCompatActivity implements Common
         }
     }
 
-    private void getMyNewAddedGroup(int gid) {
+    private void getMyNewAddedTalent(int gid) {
         RequestBody requestBody = new FormBody.Builder()
                 .add("gid", String.valueOf(gid))
                 .build();
@@ -810,6 +632,19 @@ public class SingleGroupActivity extends BaseAppCompatActivity implements Common
 
             }
         });
+    }
+    
+        private void processNewAddResponse(JSONObject subGroupResponse) {
+        JSONObject subGroupObject = null;
+        if (subGroupResponse != null) {
+            subGroupObject = subGroupResponse.optJSONObject("single_group");
+        }
+
+        if (subGroupObject != null) {
+            SingleGroupActivity.SingleGroup singleGroup = getSingleGroup(subGroupObject, true);
+            mSingleGroupList.add(0, singleGroup);
+            handler.sendEmptyMessage(ADD_NEW_TALENT_DONE);
+        }
     }
 
     @Override
@@ -860,7 +695,7 @@ public class SingleGroupActivity extends BaseAppCompatActivity implements Common
                     Slog.d(TAG, "==========GROUP_ADD_BROADCAST");
                     int gid = intent.getIntExtra("gid", 0);
                     if (gid > 0) {
-                        getMyNewAddedGroup(gid);
+                        getMyNewAddedTalent(gid);
                     }
                     break;
             }
