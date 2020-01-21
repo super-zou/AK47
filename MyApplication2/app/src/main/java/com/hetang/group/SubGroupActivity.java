@@ -64,7 +64,10 @@ import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static com.hetang.authenticate.TalentAuthenticationDialogFragment.TALENT_AUTHENTICATION_RESULT_OK;
 import static com.hetang.common.MyApplication.getContext;
 import static com.hetang.group.GroupFragment.eden_group;
+import static com.hetang.group.SingleGroupActivity.GET_MY_GROUP_DONE;
+import static com.hetang.group.SingleGroupActivity.SINGLE_GROUP_GET_MY;
 import static com.hetang.group.SingleGroupActivity.getSingleGroup;
+import static com.hetang.group.SingleGroupDetailsActivity.GET_SINGLE_GROUP_BY_GID;
 import static com.hetang.group.SubGroupDetailsActivity.GET_SUBGROUP_BY_GID;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
@@ -85,9 +88,10 @@ public class SubGroupActivity extends BaseAppCompatActivity implements CommonDia
     private static final int SET_AVATAR = 5;
     private static final int NO_MORE = 6;
     private static final int ADD_VISITOR_RECORD_DONE = 7;
-    private static final int ADD_NEW_SUBGROUP_DONE = 8;
-    private static final int GET_SINGLE_GROUP_DONE = 9;
+    public static final int ADD_NEW_SUBGROUP_DONE = 8;
+    public static final int GET_SINGLE_GROUP_DONE = 9;
     private static final int NO_SINGLE_GROUP_DONE = 10;
+        public static final int ADD_NEW_TALENT_DONE = 11;
     final int itemLimit = 3;
     ImageView progressImageView;
     AnimationDrawable animationDrawable;
@@ -95,11 +99,14 @@ public class SubGroupActivity extends BaseAppCompatActivity implements CommonDia
     private int mUpdateSize = 0;
     private Handler handler;
     private int type = 0;
+        private ViewGroup myGroupView;
     private SingleGroupReceiver mReceiver = new SingleGroupReceiver();
     private SubGroupSummaryAdapter subGroupSummaryAdapter;
     private XRecyclerView recyclerView;
     private List<SubGroup> mSubGroupList = new ArrayList<>();
     private List<SingleGroupActivity.SingleGroup> mSingleGroupList = new ArrayList<>();
+        private List<SingleGroupActivity.SingleGroup> mLeadGroupList = new ArrayList<>();
+    private List<SingleGroupActivity.SingleGroup> mJoinGroupList = new ArrayList<>();
 
     public static void updateVisitorRecord(int gid) {
 
@@ -123,6 +130,83 @@ public class SubGroupActivity extends BaseAppCompatActivity implements CommonDia
             }
         });
     }
+    
+    private void getMySingleGroup() {
+        RequestBody requestBody = new FormBody.Builder().build();
+
+        HttpUtil.sendOkHttpRequest(getContext(), SINGLE_GROUP_GET_MY, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.body() != null) {
+                    String responseText = response.body().string();
+                    if (isDebug) Slog.d(TAG, "==========response text : " + responseText);
+                    if (responseText != null && !TextUtils.isEmpty(responseText)) {
+                        JSONObject SingleGroupResponse = null;
+                        try {
+                            SingleGroupResponse = new JSONObject(responseText);
+                            if (SingleGroupResponse != null) {
+                                int loadSize = processMyGroupResponse(SingleGroupResponse);
+                                if (loadSize > 0) {
+                                    handler.sendEmptyMessage(GET_MY_GROUP_DONE);
+                                }
+                            }
+
+                            getRecommendSingleGroup();
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+        });
+    }
+    
+    private int processMyGroupResponse(JSONObject SingleGroupResponse) {
+
+        int singGroupSize = 0;
+        JSONArray leadGroupArray = null;
+        JSONArray joinGroupArray = null;
+
+        if (SingleGroupResponse != null) {
+            leadGroupArray = SingleGroupResponse.optJSONArray("lead_groups");
+            joinGroupArray = SingleGroupResponse.optJSONArray("join_groups");
+        }
+        
+        if (leadGroupArray != null) {
+            singGroupSize = leadGroupArray.length();
+            if (singGroupSize > 0) {
+                for (int i = 0; i < leadGroupArray.length(); i++) {
+                    JSONObject group = leadGroupArray.optJSONObject(i);
+                    if (group != null) {
+                        SingleGroupActivity.SingleGroup singleGroup = getSingleGroup(group, false);
+                        mLeadGroupList.add(singleGroup);
+                    }
+                }
+            }
+        }
+        
+        if (joinGroupArray != null) {
+            singGroupSize = joinGroupArray.length();
+            if (singGroupSize > 0) {
+                for (int i = 0; i < joinGroupArray.length(); i++) {
+                    JSONObject group = joinGroupArray.optJSONObject(i);
+                    if (group != null) {
+                        SingleGroupActivity.SingleGroup singleGroup = getSingleGroup(group, false);
+                        mJoinGroupList.add(singleGroup);
+                    }
+                }
+            }
+        }
+
+        return singGroupSize;
+    }
+    
 
     public static SubGroup getSubGroup(JSONObject group) {
         SubGroup subGroup = new SubGroup();
@@ -169,9 +253,80 @@ public class SubGroupActivity extends BaseAppCompatActivity implements CommonDia
         if (type != eden_group) {
             loadData();
         } else {
-            getRecommendSingleGroup();
+            getMySingleGroup();
         }
     }
+    
+    private void setMyGroupView() {
+        myGroupView = (ViewGroup) LayoutInflater.from(getContext()).inflate(R.layout.my_single_group, (ViewGroup) findViewById(android.R.id.content), false);
+        recyclerView.addHeaderView(myGroupView);
+        android.widget.LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        layoutParams.setMargins(0, 0, 0, 3);
+        
+        if (mLeadGroupList.size() > 0) {
+            for (int i = 0; i < mLeadGroupList.size(); i++) {
+                View leadGroupItemView = LayoutInflater.from(getContext()).inflate(R.layout.single_group_summary_item, (ViewGroup) findViewById(android.R.id.content), false);
+                leadGroupItemView.setLayoutParams(layoutParams);
+                myGroupView.addView(leadGroupItemView);
+                setGroupView(leadGroupItemView, mLeadGroupList.get(i));
+                final SingleGroupActivity.SingleGroup singleGroup = mLeadGroupList.get(i);
+                leadGroupItemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(getContext(), SingleGroupDetailsActivity.class);
+                        intent.putExtra("gid", singleGroup.gid);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                        startActivity(intent);
+                    }
+                });
+            }
+        }
+        if (mJoinGroupList.size() > 0) {
+            for (int i = 0; i < mJoinGroupList.size(); i++) {
+                View joinGroupItemView = LayoutInflater.from(getContext()).inflate(R.layout.single_group_summary_item, (ViewGroup) findViewById(android.R.id.content), false);
+                joinGroupItemView.setLayoutParams(layoutParams);
+                myGroupView.addView(joinGroupItemView);
+                setGroupView(joinGroupItemView, mJoinGroupList.get(i));
+                final SingleGroupActivity.SingleGroup singleGroup = mJoinGroupList.get(i);
+                joinGroupItemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(getContext(), SingleGroupDetailsActivity.class);
+                        intent.putExtra("gid", singleGroup.gid);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                        startActivity(intent);
+                    }
+                });
+            }
+        }
+
+    }
+    
+    private void setGroupView(View view, SingleGroupActivity.SingleGroup singleGroup) {
+        TextView nameTV = view.findViewById(R.id.leader_name);
+        nameTV.setText(singleGroup.leader.getNickName());
+        RoundImageView avatar = view.findViewById(R.id.leader_avatar);
+        Glide.with(this).load(HttpUtil.DOMAIN + singleGroup.leader.getAvatar()).into(avatar);
+        TextView universityTV = view.findViewById(R.id.university);
+        universityTV.setText(singleGroup.leader.getUniversity());
+        TextView introductionTV = view.findViewById(R.id.introduction);
+        
+        introductionTV.setText(singleGroup.introduction);
+        TextView maleCountTV = view.findViewById(R.id.male_member_count);
+        maleCountTV.setText(getResources().getString(R.string.male) + " " + singleGroup.maleCount);
+        TextView femaleCountTV = view.findViewById(R.id.female_member_count);
+        femaleCountTV.setText(getResources().getString(R.string.female) + " " + singleGroup.femaleCount);
+        if (singleGroup.evaluateCount > 0) {
+            TextView evaluateCountTV = view.findViewById(R.id.evaluate_count);
+            float scoreFloat = singleGroup.evaluateScores / singleGroup.evaluateCount;
+            float score = (float) (Math.round(scoreFloat * 10)) / 10;
+            evaluateCountTV.setText("评价 " + score + getResources().getString(R.string.dot) + singleGroup.evaluateCount);
+        }
+    }
+    
+    
+        
+        
 
     private void initView() {
         Typeface font = Typeface.createFromAsset(MyApplication.getContext().getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
@@ -300,12 +455,10 @@ public class SubGroupActivity extends BaseAppCompatActivity implements CommonDia
                                 int groupSize = processSingleGroupResponse(singleGroupResponse);
                                 if (groupSize > 0) {
                                     handler.sendEmptyMessage(GET_SINGLE_GROUP_DONE);
-                                } else {
-                                    handler.sendEmptyMessage(NO_SINGLE_GROUP_DONE);
-                                }
-                            } else {
-                                handler.sendEmptyMessage(NO_SINGLE_GROUP_DONE);
-                            }
+                                } 
+                            } 
+                            
+                             loadData();
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -336,9 +489,7 @@ public class SubGroupActivity extends BaseAppCompatActivity implements CommonDia
         switch (type) {
             case TALENT_AUTHENTICATION_RESULT_OK://For EvaluateDialogFragment back
                 if (status == true) {
-                    Intent intent = new Intent(SubGroupActivity.this, SingleGroupActivity.class);
-                    startActivity(intent);
-
+                    getMyNewAdded(result, true);
                 }
                 break;
             default:
@@ -547,16 +698,26 @@ public class SubGroupActivity extends BaseAppCompatActivity implements CommonDia
         return SingleGroupArray != null ? SingleGroupArray.length() : 0;
     }
 
-    private void processNewAddResponse(JSONObject subGroupResponse) {
+    private void processNewAddResponse(JSONObject subGroupResponse, boolean isTalent) {
         JSONObject subGroupObject = null;
         if (subGroupResponse != null) {
-            subGroupObject = subGroupResponse.optJSONObject("group");
+            if (isTalent){
+                subGroupObject = subGroupResponse.optJSONObject("single_group");
+            }else {
+                subGroupObject = subGroupResponse.optJSONObject("group");
+            }
         }
 
         if (subGroupObject != null) {
-            SubGroup singleGroup = getSubGroup(subGroupObject);
-            mSubGroupList.add(0, singleGroup);
-            handler.sendEmptyMessage(ADD_NEW_SUBGROUP_DONE);
+            if (isTalent){
+                SingleGroupActivity.SingleGroup singleGroup = getSingleGroup(subGroupObject, true);
+                mLeadGroupList.add(0, singleGroup);
+                handler.sendEmptyMessage(ADD_NEW_TALENT_DONE);
+            }else {
+                SubGroup singleGroup = getSubGroup(subGroupObject);
+                mSubGroupList.add(0, singleGroup);
+                handler.sendEmptyMessage(ADD_NEW_SUBGROUP_DONE);
+            }
         }
     }
 
@@ -597,6 +758,22 @@ public class SubGroupActivity extends BaseAppCompatActivity implements CommonDia
 
             @Override
             public void onFailure(Call call, IOException e) {
+            }
+        });
+    }
+    
+        private void addMyNewTalent() {
+        View leadGroupItemView = LayoutInflater.from(getContext()).inflate(R.layout.single_group_summary_item, (ViewGroup) findViewById(android.R.id.content), false);
+        myGroupView.addView(leadGroupItemView, 1);
+        setGroupView(leadGroupItemView, mLeadGroupList.get(0));
+
+        leadGroupItemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), SingleGroupDetailsActivity.class);
+                intent.putExtra("gid", mLeadGroupList.get(0).gid);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                startActivity(intent);
             }
         });
     }
@@ -660,7 +837,7 @@ public class SubGroupActivity extends BaseAppCompatActivity implements CommonDia
                 Slog.d(TAG, "-------------->GET_ALL_DONE");
                 subGroupSummaryAdapter.setData(mSubGroupList);
                 subGroupSummaryAdapter.notifyDataSetChanged();
-                recyclerView.refreshComplete();
+                //recyclerView.refreshComplete();
                 // recyclerView.loadMoreComplete();
                 stopLoadProgress();
                 break;
@@ -668,7 +845,7 @@ public class SubGroupActivity extends BaseAppCompatActivity implements CommonDia
                 Slog.d(TAG, "-------------->GET_ALL_END");
                 subGroupSummaryAdapter.setData(mSubGroupList);
                 subGroupSummaryAdapter.notifyDataSetChanged();
-                recyclerView.refreshComplete();
+                //recyclerView.refreshComplete();
                 recyclerView.loadMoreComplete();
                 recyclerView.setNoMore(true);
                 stopLoadProgress();
@@ -694,14 +871,19 @@ public class SubGroupActivity extends BaseAppCompatActivity implements CommonDia
                 subGroupSummaryAdapter.setData(mSubGroupList);
                 subGroupSummaryAdapter.notifyItemRangeInserted(0, 1);
                 subGroupSummaryAdapter.notifyDataSetChanged();
-                recyclerView.refreshComplete();
+                if (mSingleGroupList.size() <= PAGE_SIZE){
+                    recyclerView.loadMoreComplete();
+                }
+                break;
+                case ADD_NEW_TALENT_DONE:
+                addMyNewTalent();
                 break;
             case GET_SINGLE_GROUP_DONE:
                 setSingleGroupHeader();
-                loadData();
+                
                 break;
-            case NO_SINGLE_GROUP_DONE:
-                loadData();
+            case GET_MY_GROUP_DONE:
+                setMyGroupView();
                 break;
             default:
                 break;
@@ -743,12 +925,17 @@ public class SubGroupActivity extends BaseAppCompatActivity implements CommonDia
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
     }
 
-    private void getMyNewAddedGroup(int gid) {
+    private void getMyNewAddedGroup(int gid, final boolean isTalent) {
         RequestBody requestBody = new FormBody.Builder()
                 .add("gid", String.valueOf(gid))
                 .build();
+        
+        String uri = GET_SUBGROUP_BY_GID;
+        if (isTalent){
+            uri = GET_SINGLE_GROUP_BY_GID;
+        }
 
-        HttpUtil.sendOkHttpRequest(getContext(), GET_SUBGROUP_BY_GID, requestBody, new Callback() {
+        HttpUtil.sendOkHttpRequest(getContext(), uri, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (isDebug) Slog.d(TAG, "==========response body : " + response.body());
@@ -761,7 +948,7 @@ public class SubGroupActivity extends BaseAppCompatActivity implements CommonDia
                         try {
                             subGroupResponse = new JSONObject(responseText);
                             if (subGroupResponse != null) {
-                                processNewAddResponse(subGroupResponse);
+                                processNewAddResponse(subGroupResponse, isTalent);
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -838,7 +1025,7 @@ public class SubGroupActivity extends BaseAppCompatActivity implements CommonDia
                     Slog.d(TAG, "==========GROUP_ADD_BROADCAST");
                     int gid = intent.getIntExtra("gid", 0);
                     if (gid > 0) {
-                        getMyNewAddedGroup(gid);
+                        getMyNewAdded(gid, false);
                     }
                     break;
             }
