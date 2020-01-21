@@ -15,9 +15,8 @@ import com.hetang.adapter.MeetFragmentAdapter;
 import com.hetang.R;
 import com.hetang.util.BaseFragment;
 import com.hetang.util.FontManager;
-import com.hetang.util.InvitationDialogFragment;
+import com.hetang.common.InvitationDialogFragment;
 import com.hetang.util.ParseUtils;
-import com.hetang.util.Slog;
 
 /**
  * Created by super-zou on 17-9-11.

@@ -65,6 +65,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
+import static android.view.ViewGroup.getChildMeasureSpec;
 import static com.hetang.common.AddPictureActivity.ADD_PICTURE_BROADCAST;
 import static com.hetang.dynamics.DynamicsInteractDetailsActivity.MEET_RECOMMEND_COMMENT;
 import static com.hetang.dynamics.DynamicsInteractDetailsActivity.MY_CONDITION_COMMENT;
@@ -707,7 +708,15 @@ public class MeetRecommendFragment extends BaseFragment {
         if (groupWrapper == null) {
             return;
         }
-
+        TextView more = mRecommendGroupView.findViewById(R.id.more);
+        more.setText(getContext().getResources().getString(R.string.more));
+        more.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), GroupActivity.class);
+                startActivity(intent);
+            }
+        });
         int size = subGroupList.size();
         for (int i = 0; i < size; i++) {
             View view = LayoutInflater.from(getContext()).inflate(R.layout.recommend_group_item, null);

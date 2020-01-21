@@ -33,17 +33,14 @@ import com.hetang.meet.UserMeetInfo;
 import com.hetang.util.CommonDialogFragmentInterface;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
-import com.hetang.util.InvitationDialogFragment;
+import com.hetang.common.InvitationDialogFragment;
 import com.hetang.common.MyApplication;
 import com.hetang.util.ParseUtils;
 import com.hetang.util.RoundImageView;
 import com.hetang.common.SetAvatarActivity;
 import com.hetang.util.Slog;
 import com.hetang.util.UserProfile;
-import com.hetang.util.Utility;
-import com.hetang.util.SharedPreferencesUtils; 
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 

@@ -6,14 +6,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -31,22 +28,20 @@ import com.hetang.adapter.MeetSingleGroupSummaryAdapter;
 import com.hetang.authenticate.TalentAuthenticationDialogFragment;
 import com.hetang.common.BaseAppCompatActivity;
 import com.hetang.common.MyApplication;
+import com.hetang.common.SetAvatarActivity;
 import com.hetang.meet.UserMeetInfo;
-import com.hetang.util.BaseFragment;
 import com.hetang.util.CommonDialogFragmentInterface;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.MyLinearLayoutManager;
 import com.hetang.util.ParseUtils;
 import com.hetang.util.RoundImageView;
-import com.hetang.common.SetAvatarActivity;
 import com.hetang.util.SharedPreferencesUtils;
 import com.hetang.util.Slog;
 import com.hetang.util.UserProfile;
 import com.hetang.util.Utility;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
-import com.netease.nim.uikit.business.robot.parser.elements.group.LinearLayout;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -68,19 +63,17 @@ import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static com.hetang.archive.ArchiveFragment.SET_AVATAR_RESULT_OK;
 import static com.hetang.authenticate.TalentAuthenticationDialogFragment.TALENT_AUTHENTICATION_RESULT_OK;
 import static com.hetang.common.MyApplication.getContext;
-import static com.hetang.common.TalentEvaluateDialogFragment.SET_EVALUATE_RESULT_OK;
 import static com.hetang.group.GroupFragment.eden_group;
 import static com.hetang.group.SingleGroupDetailsActivity.GET_SINGLE_GROUP_BY_GID;
+import static com.hetang.group.SubGroupActivity.GROUP_ADD_BROADCAST;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
-public class SingleGroupActivity extends BaseAppCompatActivity implements CommonDialogFragmentInterface{
+//import com.netease.nim.uikit.business.robot.parser.elements.group.LinearLayout;
+
+public class SingleGroupActivity extends BaseAppCompatActivity implements CommonDialogFragmentInterface {
     private static final boolean isDebug = true;
     private static final String TAG = "SingleGroupActivity";
-    final int itemLimit = 3;
-    private int mLoadSize = 0;
-    private int mUpdateSize = 0;
     private static final int PAGE_SIZE = 8;
-    private Handler handler;
     private static final String SINGLE_GROUP_ADD = HttpUtil.DOMAIN + "?q=single_group/add";
     private static final String SINGLE_GROUP_APPLY = HttpUtil.DOMAIN + "?q=single_group/apply";
     private static final String SINGLE_GROUP_APPROVE = HttpUtil.DOMAIN + "?q=single_group/approve";
@@ -89,34 +82,85 @@ public class SingleGroupActivity extends BaseAppCompatActivity implements Common
     private static final String SINGLE_GROUP_GET_MY = HttpUtil.DOMAIN + "?q=single_group/get_my";
     private static final String SINGLE_GROUP_GET_ALL = HttpUtil.DOMAIN + "?q=single_group/get_all";
     private static final String SINGLE_GROUP_UPDATE = HttpUtil.DOMAIN + "?q=single_group/update";
-    
     private static final int GET_ALL_DONE = 1;
     private static final int UPDATE_ALL = 2;
     private static final int GET_ALL_END = 3;
     private static final int NO_UPDATE = 4;
     private static final int SET_AVATAR = 5;
     private static final int NO_MORE = 6;
-        private static final int GET_MY_GROUP_DONE = 7;
+    private static final int GET_MY_GROUP_DONE = 7;
     private static final int NO_MY_GROUP = 8;
-        private static final int PROCESS_NEW_CREATED = 9;
-    
-     private MeetSingleGroupSummaryAdapter meetSingleGroupSummaryAdapter;
-    private XRecyclerView recyclerView;
-    private List<SingleGroup> mSingleGroupList = new ArrayList<>();
-        private List<SingleGroup> mLeadGroupList = new ArrayList<>();
-    private List<SingleGroup> mJoinGroupList = new ArrayList<>();
+    private static final int PROCESS_NEW_CREATED = 9;
+    final int itemLimit = 3;
     ImageView progressImageView;
     AnimationDrawable animationDrawable;
     View mMyGroupView;
-        private int groupType = eden_group;
+    private int mLoadSize = 0;
+    private int mUpdateSize = 0;
+    private Handler handler;
+    private MeetSingleGroupSummaryAdapter meetSingleGroupSummaryAdapter;
+    private XRecyclerView recyclerView;
+    private List<SingleGroup> mSingleGroupList = new ArrayList<>();
+    private List<SingleGroup> mLeadGroupList = new ArrayList<>();
+    private List<SingleGroup> mJoinGroupList = new ArrayList<>();
+    private int groupType = eden_group;
     private ViewGroup myGroupView;
+
+    public static SingleGroup getSingleGroup(JSONObject group, boolean isSummary) {
+        SingleGroup singleGroup = new SingleGroup();
+        if (group != null) {
+            singleGroup.gid = group.optInt("gid");
+            singleGroup.introduction = group.optString("introduction");
+            singleGroup.created = Utility.timeStampToDay(group.optInt("created"));
+            singleGroup.memberCount = group.optInt("member_count");
+            singleGroup.maleCount = group.optInt("male_count");
+            singleGroup.femaleCount = group.optInt("female_count");
+            singleGroup.authorStatus = group.optInt("author_status");
+            singleGroup.isLeader = group.optBoolean("isLeader");
+            singleGroup.evaluateScores = (float) group.optDouble("scores");
+            singleGroup.evaluateCount = group.optInt("count");
+            JSONArray memberArray = group.optJSONArray("members");
+
+
+            if (memberArray != null) {
+                int count = memberArray.length();
+                if (count > 0) {
+                    singleGroup.memberList = new ArrayList<>();
+                    for (int n = 0; n < count; n++) {
+                        UserMeetInfo userMeetInfo = new UserMeetInfo();
+                        userMeetInfo.setUid(memberArray.optJSONObject(n).optInt("uid"));
+                        userMeetInfo.setNickName(memberArray.optJSONObject(n).optString("nickname"));
+                        userMeetInfo.setAvatar(memberArray.optJSONObject(n).optString("avatar"));
+                        userMeetInfo.setMajor(memberArray.optJSONObject(n).optString("major"));
+                        userMeetInfo.setDegree(memberArray.optJSONObject(n).optString("degree"));
+                        userMeetInfo.setUniversity(memberArray.optJSONObject(n).optString("university"));
+                        userMeetInfo.setSex(memberArray.optJSONObject(n).optInt("sex"));
+                        if (!isSummary) {
+                            userMeetInfo.setBirthYear(memberArray.optJSONObject(n).optInt("birth_year"));
+                            userMeetInfo.setHeight(memberArray.optJSONObject(n).optInt("height"));
+                            userMeetInfo.setLiving(memberArray.optJSONObject(n).optString("living"));
+                        }
+                        singleGroup.memberList.add(userMeetInfo);
+                    }
+                }
+            }
+
+            singleGroup.leader = new UserMeetInfo();
+            ParseUtils.setBaseProfile(singleGroup.leader, group);
+
+            return singleGroup;
+
+        }
+
+        return null;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.meet_single_group_summary);
         handler = new SingleGroupActivity.MyHandler(this);
-        
+
         initView();
 
         Button floatingActionButton = findViewById(R.id.become_talent);
@@ -134,7 +178,7 @@ public class SingleGroupActivity extends BaseAppCompatActivity implements Common
                 finish();
             }
         });
-        
+
         //registerLoginBroadcast();
 
         //show progressImage before loading done
@@ -150,7 +194,7 @@ public class SingleGroupActivity extends BaseAppCompatActivity implements Common
         //loadData();
         getMySingleGroup();
     }
-    
+
     private void getMySingleGroup() {
         RequestBody requestBody = new FormBody.Builder().build();
 
@@ -162,21 +206,21 @@ public class SingleGroupActivity extends BaseAppCompatActivity implements Common
                     if (isDebug) Slog.d(TAG, "==========response text : " + responseText);
                     if (responseText != null && !TextUtils.isEmpty(responseText)) {
                         JSONObject SingleGroupResponse = null;
-                        
+
                         try {
                             SingleGroupResponse = new JSONObject(responseText);
                             if (SingleGroupResponse != null) {
                                 int loadSize = processMyGroupResponse(SingleGroupResponse);
-                                if (loadSize > 0){
+                                if (loadSize > 0) {
                                     handler.sendEmptyMessage(GET_MY_GROUP_DONE);
-                                }else {
+                                } else {
                                     handler.sendEmptyMessage(NO_MY_GROUP);
                                 }
                             } else {
                                 handler.sendEmptyMessage(NO_MY_GROUP);
                             }
-                            
-                           // loadData();
+
+                            // loadData();
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -192,8 +236,8 @@ public class SingleGroupActivity extends BaseAppCompatActivity implements Common
             }
         });
     }
-    
-    private void initView(){
+
+    private void initView() {
         recyclerView = findViewById(R.id.single_group_summary_list);
         meetSingleGroupSummaryAdapter = new MeetSingleGroupSummaryAdapter(getContext());
         MyLinearLayoutManager linearLayoutManager = new MyLinearLayoutManager(getContext());
@@ -202,7 +246,7 @@ public class SingleGroupActivity extends BaseAppCompatActivity implements Common
 
         recyclerView.setRefreshProgressStyle(BallSpinFadeLoader);
         recyclerView.setLoadingMoreProgressStyle(ProgressStyle.BallRotate);
-        
+
         recyclerView.setPullRefreshEnabled(false);
         recyclerView.getDefaultRefreshHeaderView().setRefreshTimeVisible(true);
         recyclerView.getDefaultFootView().setLoadingHint(getString(R.string.loading_pull_up_tip));
@@ -212,7 +256,7 @@ public class SingleGroupActivity extends BaseAppCompatActivity implements Common
         recyclerView.setLimitNumberToCallLoadMore(itemLimit);
         recyclerView.setRefreshProgressStyle(ProgressStyle.BallBeat);
         recyclerView.setLoadingMoreProgressStyle(ProgressStyle.SquareSpin);
-        
+
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -225,7 +269,7 @@ public class SingleGroupActivity extends BaseAppCompatActivity implements Common
                 super.onScrollStateChanged(recyclerView, newState);
             }
         });
-        
+
         recyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
             @Override
             public void onRefresh() {
@@ -248,7 +292,7 @@ public class SingleGroupActivity extends BaseAppCompatActivity implements Common
                 startActivity(intent);
             }
         });
-        
+
         recyclerView.setAdapter(meetSingleGroupSummaryAdapter);
 
         Typeface font = Typeface.createFromAsset(MyApplication.getContext().getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
@@ -262,7 +306,7 @@ public class SingleGroupActivity extends BaseAppCompatActivity implements Common
                 .add("step", String.valueOf(PAGE_SIZE))
                 .add("page", String.valueOf(page))
                 .build();
-                
+
         HttpUtil.sendOkHttpRequest(getContext(), SINGLE_GROUP_GET_ALL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
@@ -271,7 +315,7 @@ public class SingleGroupActivity extends BaseAppCompatActivity implements Common
                     if (isDebug) Slog.d(TAG, "==========response text : " + responseText);
                     if (responseText != null && !TextUtils.isEmpty(responseText)) {
                         JSONObject SingleGroupResponse = null;
-                        
+
                         try {
                             SingleGroupResponse = new JSONObject(responseText);
                             if (SingleGroupResponse != null) {
@@ -292,7 +336,7 @@ public class SingleGroupActivity extends BaseAppCompatActivity implements Common
 
                         } catch (JSONException e) {
                             e.printStackTrace();
-    }
+                        }
 
                     }
                 }
@@ -304,15 +348,15 @@ public class SingleGroupActivity extends BaseAppCompatActivity implements Common
             }
         });
     }
-    
-    private void setMyGroupView(){
+
+    private void setMyGroupView() {
         myGroupView = (ViewGroup) LayoutInflater.from(getContext()).inflate(R.layout.my_single_group, (ViewGroup) findViewById(android.R.id.content), false);
         recyclerView.addHeaderView(myGroupView);
-android.widget.LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            layoutParams.setMargins(0, 0, 0, 3);
-        
-        if (mLeadGroupList.size() > 0){
-            for (int i=0; i<mLeadGroupList.size(); i++){
+        android.widget.LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        layoutParams.setMargins(0, 0, 0, 3);
+
+        if (mLeadGroupList.size() > 0) {
+            for (int i = 0; i < mLeadGroupList.size(); i++) {
                 View leadGroupItemView = LayoutInflater.from(getContext()).inflate(R.layout.single_group_summary_item, (ViewGroup) findViewById(android.R.id.content), false);
                 leadGroupItemView.setLayoutParams(layoutParams);
                 myGroupView.addView(leadGroupItemView);
@@ -330,8 +374,8 @@ android.widget.LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutP
             }
         }
 
-        if (mJoinGroupList.size() > 0){
-            for (int i=0; i<mJoinGroupList.size(); i++){
+        if (mJoinGroupList.size() > 0) {
+            for (int i = 0; i < mJoinGroupList.size(); i++) {
                 View joinGroupItemView = LayoutInflater.from(getContext()).inflate(R.layout.single_group_summary_item, (ViewGroup) findViewById(android.R.id.content), false);
                 joinGroupItemView.setLayoutParams(layoutParams);
                 myGroupView.addView(joinGroupItemView);
@@ -350,8 +394,8 @@ android.widget.LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutP
         }
 
     }
-    
-        private void addMyNewGroup(){
+
+    private void addMyNewGroup() {
         View leadGroupItemView = LayoutInflater.from(getContext()).inflate(R.layout.single_group_summary_item, (ViewGroup) findViewById(android.R.id.content), false);
         myGroupView.addView(leadGroupItemView, 0);
         setGroupView(leadGroupItemView, mLeadGroupList.get(0));
@@ -366,8 +410,8 @@ android.widget.LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutP
             }
         });
     }
-    
-    private void setGroupView(View view, SingleGroup singleGroup){
+
+    private void setGroupView(View view, SingleGroup singleGroup) {
         TextView nameTV = view.findViewById(R.id.leader_name);
         nameTV.setText(singleGroup.leader.getNickName());
         RoundImageView avatar = view.findViewById(R.id.leader_avatar);
@@ -377,14 +421,14 @@ android.widget.LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutP
         TextView introductionTV = view.findViewById(R.id.introduction);
         introductionTV.setText(singleGroup.introduction);
         TextView maleCountTV = view.findViewById(R.id.male_member_count);
-        maleCountTV.setText(getResources().getString(R.string.male)+" "+singleGroup.maleCount);
+        maleCountTV.setText(getResources().getString(R.string.male) + " " + singleGroup.maleCount);
         TextView femaleCountTV = view.findViewById(R.id.female_member_count);
-        femaleCountTV.setText(getResources().getString(R.string.female)+" "+singleGroup.femaleCount);
-        if (singleGroup.evaluateCount > 0){
+        femaleCountTV.setText(getResources().getString(R.string.female) + " " + singleGroup.femaleCount);
+        if (singleGroup.evaluateCount > 0) {
             TextView evaluateCountTV = view.findViewById(R.id.evaluate_count);
-            float scoreFloat = singleGroup.evaluateScores/singleGroup.evaluateCount;
-            float score = (float)(Math.round(scoreFloat*10))/10;
-            evaluateCountTV.setText("评价 "+score+getResources().getString(R.string.dot)+singleGroup.evaluateCount);
+            float scoreFloat = singleGroup.evaluateScores / singleGroup.evaluateCount;
+            float score = (float) (Math.round(scoreFloat * 10)) / 10;
+            evaluateCountTV.setText("评价 " + score + getResources().getString(R.string.dot) + singleGroup.evaluateCount);
         }
     }
 
@@ -398,8 +442,8 @@ android.widget.LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutP
             leadGroupArray = SingleGroupResponse.optJSONArray("lead_groups");
             joinGroupArray = SingleGroupResponse.optJSONArray("join_groups");
         }
-        
-         if (leadGroupArray != null) {
+
+        if (leadGroupArray != null) {
             singGroupSize = leadGroupArray.length();
             if (singGroupSize > 0) {
                 for (int i = 0; i < leadGroupArray.length(); i++) {
@@ -411,7 +455,7 @@ android.widget.LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutP
                 }
             }
         }
-        
+
         if (joinGroupArray != null) {
             singGroupSize = joinGroupArray.length();
             if (singGroupSize > 0) {
@@ -427,10 +471,7 @@ android.widget.LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutP
 
         return singGroupSize;
     }
-    
-    
-        
-    
+
     private int processResponse(JSONObject SingleGroupResponse) {
 
         int singGroupSize = 0;
@@ -455,7 +496,7 @@ android.widget.LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutP
 
         return singGroupSize;
     }
-    
+
     private int processUpdateResponse(JSONObject SingleGroupResponse) {
         List<SingleGroup> mSingleGroupUpdateList = new ArrayList<>();
         JSONArray SingleGroupArray = null;
@@ -487,7 +528,7 @@ android.widget.LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutP
 
         return SingleGroupArray != null ? SingleGroupArray.length() : 0;
     }
-    
+
     private void processNewAddResponse(JSONObject SingleGroupResponse) {
         JSONObject SingleGroupObject = null;
         if (SingleGroupResponse != null) {
@@ -500,65 +541,16 @@ android.widget.LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutP
             handler.sendEmptyMessage(PROCESS_NEW_CREATED);
         }
     }
-    
-    public static SingleGroup getSingleGroup(JSONObject group, boolean isSummary) {
-        SingleGroup singleGroup = new SingleGroup();
-        if (group != null) {
-            singleGroup.gid = group.optInt("gid");
-            singleGroup.introduction = group.optString("introduction");
-            singleGroup.created = Utility.timeStampToDay(group.optInt("created"));
-            singleGroup.memberCount = group.optInt("member_count");
-            singleGroup.maleCount = group.optInt("male_count");
-            singleGroup.femaleCount = group.optInt("female_count");
-            singleGroup.authorStatus = group.optInt("author_status");
-            singleGroup.isLeader = group.optBoolean("isLeader");
-                        singleGroup.evaluateScores = (float) group.optDouble("scores");
-            singleGroup.evaluateCount = group.optInt("count");
-            JSONArray memberArray = group.optJSONArray("members");
-            
-            
-            if (memberArray != null) {
-                int count = memberArray.length();
-                if(count > 0){
-                singleGroup.memberList = new ArrayList<>();
-                for (int n = 0; n < count; n++) {
-                    UserMeetInfo userMeetInfo = new UserMeetInfo();
-                    userMeetInfo.setUid(memberArray.optJSONObject(n).optInt("uid"));
-                    userMeetInfo.setNickName(memberArray.optJSONObject(n).optString("nickname"));
-                    userMeetInfo.setAvatar(memberArray.optJSONObject(n).optString("avatar"));
-                    userMeetInfo.setMajor(memberArray.optJSONObject(n).optString("major"));
-                    userMeetInfo.setDegree(memberArray.optJSONObject(n).optString("degree"));
-                    userMeetInfo.setUniversity(memberArray.optJSONObject(n).optString("university"));
-                    userMeetInfo.setSex(memberArray.optJSONObject(n).optInt("sex"));
-                    if (!isSummary) {
-                        userMeetInfo.setBirthYear(memberArray.optJSONObject(n).optInt("birth_year"));
-                        userMeetInfo.setHeight(memberArray.optJSONObject(n).optInt("height"));
-                        userMeetInfo.setLiving(memberArray.optJSONObject(n).optString("living"));
-                    }
-                    singleGroup.memberList.add(userMeetInfo);
-                }
-                }
-            }
-
-            singleGroup.leader = new UserMeetInfo();
-            ParseUtils.setBaseProfile(singleGroup.leader, group);
-
-            return singleGroup;
-
-        }
-
-return null;
-    }
 
     private void becomeTalent() {
         TalentAuthenticationDialogFragment talentAuthenticationDialogFragment = new TalentAuthenticationDialogFragment();
-                Bundle bundle = new Bundle();
+        Bundle bundle = new Bundle();
         bundle.putInt("type", groupType);
         talentAuthenticationDialogFragment.setArguments(bundle);
         //createSingleGroupDialogFragment.setTargetFragment(SingleGroupActivity.this, REQUEST_CODE);
         talentAuthenticationDialogFragment.show(getSupportFragmentManager(), "TalentAuthenticationDialogFragment");
     }
-    
+
     private void checkAvatarSet() {
         RequestBody requestBody = new FormBody.Builder().build();
         HttpUtil.sendOkHttpRequest(getContext(), ParseUtils.GET_USER_PROFILE_URL, requestBody, new Callback() {
@@ -568,8 +560,8 @@ return null;
                     String responseText = response.body().string();
                     if (isDebug)
                         Slog.d(TAG, "==========get archive response text : " + responseText);
-                        
-                        if (responseText != null) {
+
+                    if (responseText != null) {
                         if (!TextUtils.isEmpty(responseText)) {
                             try {
                                 JSONObject jsonObject = new JSONObject(responseText).optJSONObject("user");
@@ -600,7 +592,7 @@ return null;
             }
         });
     }
-    
+
     private void showSingleGroupDialog() {
         CreateSubGroupDialogFragment createSingleGroupDialogFragment = new CreateSubGroupDialogFragment();
         //createSingleGroupDialogFragment.setTargetFragment(SingleGroupActivity.this, REQUEST_CODE);
@@ -614,8 +606,8 @@ return null;
                 .add("step", String.valueOf(PAGE_SIZE))
                 .add("page", String.valueOf(0))
                 .build();
-                
-                HttpUtil.sendOkHttpRequest(getContext(), SINGLE_GROUP_UPDATE, requestBody, new Callback() {
+
+        HttpUtil.sendOkHttpRequest(getContext(), SINGLE_GROUP_UPDATE, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
@@ -623,7 +615,7 @@ return null;
                     if (isDebug) Slog.d(TAG, "==========response text : " + responseText);
                     if (responseText != null && !TextUtils.isEmpty(responseText)) {
                         JSONObject singleGroupResponse = null;
-                        
+
                         try {
                             singleGroupResponse = new JSONObject(responseText);
                             if (singleGroupResponse != null) {
@@ -641,8 +633,8 @@ return null;
                         } else {
                             handler.sendEmptyMessage(NO_UPDATE);
                         }
-                        
-                        }
+
+                    }
                 }
             }
 
@@ -652,7 +644,7 @@ return null;
             }
         });
     }
-    
+
     public void handleMessage(Message message) {
         switch (message.what) {
             case GET_ALL_DONE:
@@ -670,8 +662,8 @@ return null;
                 recyclerView.setNoMore(true);
                 stopLoadProgress();
                 break;
-                
-                case NO_MORE:
+
+            case NO_MORE:
                 recyclerView.setNoMore(true);
                 recyclerView.loadMoreComplete();
                 stopLoadProgress();
@@ -691,22 +683,22 @@ return null;
             case SET_AVATAR:
                 startAvatarSetActivity();
                 break;
-                            case GET_MY_GROUP_DONE:
+            case GET_MY_GROUP_DONE:
                 setMyGroupView();
-                                loadData();
+                loadData();
                 break;
             case NO_MY_GROUP:
-                                loadData();
+                loadData();
                 break;
-                            case PROCESS_NEW_CREATED:
+            case PROCESS_NEW_CREATED:
                 addMyNewGroup();
                 break;
             default:
                 break;
         }
     }
-    
-     private void stopLoadProgress() {
+
+    private void stopLoadProgress() {
         if (progressImageView.getVisibility() == View.VISIBLE) {
             animationDrawable.stop();
             progressImageView.setVisibility(View.GONE);
@@ -736,7 +728,7 @@ return null;
                 });
         AlertDialog normalDialog = normalDialogBuilder.create();
         normalDialog.show();
-        
+
         try {
             Field mAlert = AlertDialog.class.getDeclaredField("mAlert");
             mAlert.setAccessible(true);
@@ -751,7 +743,7 @@ return null;
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }
-        
+
         normalDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.color_disabled));
         normalDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.color_blue));
         normalDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextSize(18);
@@ -772,14 +764,70 @@ return null;
             }
         }
     }
-    
+
+    @Override
+    public void onBackFromDialog(int type, int result, boolean status) {
+        switch (type) {
+            case TALENT_AUTHENTICATION_RESULT_OK://For EvaluateDialogFragment back
+                if (status == true) {
+                    getMyNewAddedGroup(result);
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void getMyNewAddedGroup(int gid) {
+        RequestBody requestBody = new FormBody.Builder()
+                .add("gid", String.valueOf(gid))
+                .build();
+
+        HttpUtil.sendOkHttpRequest(getContext(), GET_SINGLE_GROUP_BY_GID, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (isDebug) Slog.d(TAG, "==========response body : " + response.body());
+
+                if (response.body() != null) {
+                    String responseText = response.body().string();
+                    if (isDebug) Slog.d(TAG, "==========response text : " + responseText);
+                    if (responseText != null && !TextUtils.isEmpty(responseText)) {
+                        JSONObject singleGroupResponse = null;
+                        try {
+                            singleGroupResponse = new JSONObject(responseText);
+                            if (singleGroupResponse != null) {
+                                processNewAddResponse(singleGroupResponse);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+        });
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (recyclerView != null) {
+            recyclerView.destroy();
+            recyclerView = null;
+        }
+    }
+
     public static class SingleGroup {
         public int gid;
         public String introduction;
         public String created;
         public UserMeetInfo leader;
         public List<UserMeetInfo> memberList;
-public float evaluateScores = 0;
+        public float evaluateScores = 0;
         public int evaluateCount = 0;
         public int memberCount = 0;
         public int maleCount = 0;
@@ -788,16 +836,19 @@ public float evaluateScores = 0;
         public boolean isLeader;
     }
 
-    @Override
-    public void onBackFromDialog(int type, int result, boolean status) {
-        switch (type){
-            case TALENT_AUTHENTICATION_RESULT_OK://For EvaluateDialogFragment back
-                if(status == true){
-                    getMyNewAddedGroup(result);
-                }
-                break;
-            default:
-                break;
+    static class MyHandler extends Handler {
+        WeakReference<SingleGroupActivity> meetSingleGroupFragmentWeakReference;
+
+        MyHandler(SingleGroupActivity singleGroupActivity) {
+            meetSingleGroupFragmentWeakReference = new WeakReference<SingleGroupActivity>(singleGroupActivity);
+        }
+
+        @Override
+        public void handleMessage(Message message) {
+            SingleGroupActivity singleGroupActivity = meetSingleGroupFragmentWeakReference.get();
+            if (singleGroupActivity != null) {
+                singleGroupActivity.handleMessage(message);
+            }
         }
     }
 
@@ -814,66 +865,6 @@ public float evaluateScores = 0;
                     break;
             }
 
-        }
-    }
-    
-    private void getMyNewAddedGroup(int gid) {
-        RequestBody requestBody = new FormBody.Builder()
-                .add("gid", String.valueOf(gid))
-                .build();
-
-        HttpUtil.sendOkHttpRequest(getContext(), GET_SINGLE_GROUP_BY_GID, requestBody, new Callback() {
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (isDebug) Slog.d(TAG, "==========response body : " + response.body());
-                
-                 if (response.body() != null) {
-                    String responseText = response.body().string();
-                    if (isDebug) Slog.d(TAG, "==========response text : " + responseText);
-                    if (responseText != null && !TextUtils.isEmpty(responseText)) {
-                        JSONObject singleGroupResponse = null;
-                        try {
-                            singleGroupResponse = new JSONObject(responseText);
-                            if (singleGroupResponse != null) {
-                                processNewAddResponse(singleGroupResponse);
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-            
-            @Override
-            public void onFailure(Call call, IOException e) {
-
-            }
-        });
-    }
-
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (recyclerView != null) {
-            recyclerView.destroy();
-            recyclerView = null;
-        }
-    }
-    
-    static class MyHandler extends Handler {
-        WeakReference<SingleGroupActivity> meetSingleGroupFragmentWeakReference;
-
-        MyHandler(SingleGroupActivity singleGroupActivity) {
-            meetSingleGroupFragmentWeakReference = new WeakReference<SingleGroupActivity>(singleGroupActivity);
-        }
-
-        @Override
-        public void handleMessage(Message message) {
-            SingleGroupActivity singleGroupActivity = meetSingleGroupFragmentWeakReference.get();
-            if (singleGroupActivity != null) {
-                singleGroupActivity.handleMessage(message);
-            }
         }
     }
 

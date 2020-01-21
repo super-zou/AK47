@@ -19,6 +19,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -26,9 +27,11 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.hetang.R;
 import com.hetang.adapter.SubGroupSummaryAdapter;
+import com.hetang.authenticate.TalentAuthenticationDialogFragment;
 import com.hetang.common.BaseAppCompatActivity;
 import com.hetang.common.MyApplication;
 import com.hetang.meet.UserMeetInfo;
+import com.hetang.util.CommonDialogFragmentInterface;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.MyLinearLayoutManager;
@@ -58,13 +61,14 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
+import static com.hetang.authenticate.TalentAuthenticationDialogFragment.TALENT_AUTHENTICATION_RESULT_OK;
 import static com.hetang.common.MyApplication.getContext;
 import static com.hetang.group.GroupFragment.eden_group;
 import static com.hetang.group.SingleGroupActivity.getSingleGroup;
 import static com.hetang.group.SubGroupDetailsActivity.GET_SUBGROUP_BY_GID;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
-public class SubGroupActivity extends BaseAppCompatActivity {
+public class SubGroupActivity extends BaseAppCompatActivity implements CommonDialogFragmentInterface {
     public static final String GET_MY_UNIVERSITY_SUBGROUP = HttpUtil.DOMAIN + "?q=subgroup/get_my_university";
     public static final String GROUP_ADD_BROADCAST = "com.hetang.action.GROUP_ADD";
     private static final boolean isDebug = true;
@@ -253,6 +257,18 @@ public class SubGroupActivity extends BaseAppCompatActivity {
             }
         });
 
+        Button becomeTalentBtn = findViewById(R.id.become_talent);
+        if (type == eden_group){
+            becomeTalentBtn.setVisibility(View.VISIBLE);
+            becomeTalentBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    becomeTalent();
+                }
+            });
+        }
+
+
         //show progressImage before loading done
         progressImageView = findViewById(R.id.animal_progress);
         animationDrawable = (AnimationDrawable) progressImageView.getDrawable();
@@ -304,6 +320,30 @@ public class SubGroupActivity extends BaseAppCompatActivity {
 
             }
         });
+    }
+
+    private void becomeTalent() {
+        TalentAuthenticationDialogFragment talentAuthenticationDialogFragment = new TalentAuthenticationDialogFragment();
+        Bundle bundle = new Bundle();
+        bundle.putInt("type", eden_group);
+        talentAuthenticationDialogFragment.setArguments(bundle);
+        //createSingleGroupDialogFragment.setTargetFragment(SingleGroupActivity.this, REQUEST_CODE);
+        talentAuthenticationDialogFragment.show(getSupportFragmentManager(), "TalentAuthenticationDialogFragment");
+    }
+
+    @Override
+    public void onBackFromDialog(int type, int result, boolean status) {
+        switch (type) {
+            case TALENT_AUTHENTICATION_RESULT_OK://For EvaluateDialogFragment back
+                if (status == true) {
+                    Intent intent = new Intent(SubGroupActivity.this, SingleGroupActivity.class);
+                    startActivity(intent);
+
+                }
+                break;
+            default:
+                break;
+        }
     }
 
     private void loadData() {
@@ -415,8 +455,9 @@ public class SubGroupActivity extends BaseAppCompatActivity {
         if (groupWrapper == null) {
             return;
         }
-        
-                TextView moreTalent = singleGroupView.findViewById(R.id.more_talent);
+
+        TextView moreTalent = singleGroupView.findViewById(R.id.more);
+        moreTalent.setText(getResources().getString(R.string.more_talent));
         moreTalent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -427,10 +468,10 @@ public class SubGroupActivity extends BaseAppCompatActivity {
 
 
         int size = mSingleGroupList.size();
-        if (size > 10){
+        if (size > 10) {
             size = 10;
         }
-        
+
         for (int i = 0; i < size; i++) {
             View view = LayoutInflater.from(getContext()).inflate(R.layout.single_group_item, null);
             groupWrapper.addView(view);
@@ -447,18 +488,18 @@ public class SubGroupActivity extends BaseAppCompatActivity {
             leaderName.setText(singleGroup.leader.getNickName());
             TextView university = view.findViewById(R.id.university);
             university.setText(singleGroup.leader.getUniversity());
-            
+
             TextView introduction = view.findViewById(R.id.introduction);
             introduction.setText(singleGroup.introduction);
 
             TextView memberCount = view.findViewById(R.id.group_member);
             memberCount.setText("成员 " + singleGroup.memberCount);
 
-           if (singleGroup.evaluateCount > 0){
+            if (singleGroup.evaluateCount > 0) {
                 TextView evaluateCountTV = view.findViewById(R.id.evaluate_count);
-                float scoreFloat = singleGroup.evaluateScores/singleGroup.evaluateCount;
-                float score = (float)(Math.round(scoreFloat*10))/10;
-                evaluateCountTV.setText("评价 "+score+getResources().getString(R.string.dot)+singleGroup.evaluateCount);
+                float scoreFloat = singleGroup.evaluateScores / singleGroup.evaluateCount;
+                float score = (float) (Math.round(scoreFloat * 10)) / 10;
+                evaluateCountTV.setText("评价 " + score + getResources().getString(R.string.dot) + singleGroup.evaluateCount);
             }
 
             view.setOnClickListener(new View.OnClickListener() {

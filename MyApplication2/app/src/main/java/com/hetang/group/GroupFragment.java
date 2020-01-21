@@ -211,8 +211,8 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
                     if (isDebug) Slog.d(TAG, "==========response text : " + responseText);
                     try {
                         GroupSummary groupSummary = new GroupSummary();
-                        if (summaryObject != null){
                         JSONObject summaryObject = new JSONObject(responseText).optJSONObject("result");
+                        if (summaryObject != null){
                         groupSummary.subgroupAmount = summaryObject.optInt("subgroup_count");
                         groupSummary.memberAmount = summaryObject.optInt("member_count");
                         groupSummary.visitRecord = summaryObject.optInt("visit_record");

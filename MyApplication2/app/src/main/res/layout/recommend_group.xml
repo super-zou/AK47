@@ -27,14 +27,14 @@
         android:paddingTop="10dp">
 
         <TextView
-                  android:id="@+id/group_recommend_title"
+            android:id="@+id/group_recommend_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="6"
             android:text="推荐的团"
-                              android:textStyle="bold"
             android:textColor="@color/black"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
         <View
             android:layout_width="0dp"
@@ -58,17 +58,17 @@
     </HorizontalScrollView>
 
     <TextView
-        android:id="@+id/more_talent"
-        android:text="@string/more_talent"
-        android:background="@drawable/round_background_blue"
+        android:id="@+id/more"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginBottom="16dp"
-        android:textColor="@color/white"
+        android:background="@drawable/round_background_blue"
         android:gravity="center"
-        android:textStyle="bold"
         android:padding="8dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:text=""
+        android:textColor="@color/white"
+        android:textStyle="bold" />
 
 </LinearLayout>

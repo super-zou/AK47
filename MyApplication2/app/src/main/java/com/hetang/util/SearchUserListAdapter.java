@@ -1,6 +1,7 @@
 package com.hetang.util;
 
 import android.content.Context;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import com.android.volley.RequestQueue;
 import com.bumptech.glide.Glide;
 import com.hetang.R;
+import com.hetang.common.HandlerTemp;
 import com.hetang.common.MyApplication;
 
 import java.io.IOException;
@@ -29,32 +31,33 @@ import static com.hetang.util.ParseUtils.TYPE_COMMON_SEARCH;
 public class SearchUserListAdapter extends RecyclerView.Adapter<SearchUserListAdapter.SearchUserViewHolder> {
     private static final String TAG = "SearchUserListAdapter";
     private static final boolean isDebug = true;
-    RequestQueue queue;
+    private static final String ADD_CHEERING_GROUP_URL = HttpUtil.DOMAIN + "?q=meet/cheering_group/add";
+    private static final String INVITE_SUBGROUP_MEMBER_URL = HttpUtil.DOMAIN + "?q=subgroup/invite";
+    private static final String INVITE_SINGLE_GROUP_MEMBER_URL = HttpUtil.DOMAIN + "?q=single_group/invite";
+    private static final String ADD_NOTICE_URL = HttpUtil.DOMAIN + "?q=notice/add";
+    private static final String INVITE_REFERENCE_URL = HttpUtil.DOMAIN + "?q=meet/reference/invite";
+    private MyHandler myHandler = new MyHandler(this);
     private List<UserProfile> mMemberInfoList;
     private Context mContext;
     private int type;
-    private int uidArray[];
+    private List<Integer> uidList;
     private int gid;
     private UserProfile memberInfo;
-    private static final String ADD_CHEERING_GROUP_URL = HttpUtil.DOMAIN + "?q=meet/cheering_group/add";
-        private static final String INVITE_SUBGROUP_MEMBER_URL = HttpUtil.DOMAIN + "?q=subgroup/invite";
-        private static final String INVITE_SINGLE_GROUP_MEMBER_URL = HttpUtil.DOMAIN + "?q=single_group/invite";
-    private static final String ADD_NOTICE_URL = HttpUtil.DOMAIN + "?q=notice/add";
-    private static final String INVITE_REFERENCE_URL = HttpUtil.DOMAIN + "?q=meet/reference/invite";
-    
+    private static final int INVITED = 0;
+
     public SearchUserListAdapter(Context context) {
         mContext = context;
-    } 
+    }
 
-    
-    public void setData(List<UserProfile> memberInfoList , int type, int[] uidArray) {
+
+    public void setData(List<UserProfile> memberInfoList, int type, List<Integer> uidList) {
         mMemberInfoList = memberInfoList;
         this.type = type;
-        this.uidArray = uidArray;
+        this.uidList = uidList;
     }
-    
-    public void setData(List<UserProfile> memberInfoList , int type, int[] uidArray, int gid) {
-        setData(memberInfoList, type, uidArray);
+
+    public void setData(List<UserProfile> memberInfoList, int type, List<Integer> uidList, int gid) {
+        setData(memberInfoList, type, uidList);
         this.gid = gid;
     }
 
@@ -66,20 +69,20 @@ public class SearchUserListAdapter extends RecyclerView.Adapter<SearchUserListAd
         SearchUserViewHolder holder = new SearchUserViewHolder(view);
         return holder;
     }
-    
+
     @Override
     public void onBindViewHolder(@NonNull final SearchUserListAdapter.SearchUserViewHolder holder, int position) {
         memberInfo = mMemberInfoList.get(position);
 
         holder.name.setText(memberInfo.getNickName());
-        if (type == TYPE_COMMON_SEARCH){
+        if (type == TYPE_COMMON_SEARCH) {
             holder.invite.setVisibility(View.GONE);
-        }else {
-            if(type == ParseUtils.TYPE_CHEERING_GROUP){
+        } else {
+            if (type == ParseUtils.TYPE_CHEERING_GROUP) {
                 holder.invite.setText(R.string.add_member);
             }
         }
-        
+
         String profile = "";
         if (memberInfo.getSituation() == 0) {//student
             profile = memberInfo.getUniversity() + "·" + memberInfo.getDegreeName(memberInfo.getDegree()) + "·" + memberInfo.getMajor();
@@ -89,25 +92,25 @@ public class SearchUserListAdapter extends RecyclerView.Adapter<SearchUserListAd
         holder.profile.setText(profile);
         holder.invite.setId(memberInfo.getUid());
         String avatar = memberInfo.getAvatar();
-        
+
         if (avatar != null && !"".equals(avatar)) {
             Glide.with(MyApplication.getContext()).load(HttpUtil.DOMAIN + avatar).into(holder.avatar);
         } else {
-            if(memberInfo.getSex() == 0){
+            if (memberInfo.getSex() == 0) {
                 holder.avatar.setImageDrawable(MyApplication.getContext().getDrawable(R.drawable.male_default_avator));
-            }else {
+            } else {
                 holder.avatar.setImageDrawable(MyApplication.getContext().getDrawable(R.drawable.female_default_avator));
             }
         }
-        
-        if(!holder.invite.isEnabled()){
+
+        if (!holder.invite.isEnabled()) {
             holder.invite.setEnabled(true);
             holder.invite.setText(R.string.invite);
         }
 
-        if(uidArray != null && uidArray.length > 0){
-            for (int i=0; i<uidArray.length; i++){
-                if (memberInfo.getUid() == uidArray[i]){
+        if (uidList != null && uidList.size() > 0) {
+            for (int i = 0; i < uidList.size(); i++) {
+                if (memberInfo.getUid() == uidList.get(i)) {
                     holder.invite.setEnabled(false);
                     holder.invite.setText(R.string.invited_member);
                     holder.invite.setBackground(mContext.getResources().getDrawable(R.drawable.btn_disable));
@@ -115,25 +118,25 @@ public class SearchUserListAdapter extends RecyclerView.Adapter<SearchUserListAd
                 }
             }
         }
-        
+
         holder.invite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                switch (type){
+                switch (type) {
                     case ParseUtils.TYPE_REFERENCE:
                         inviteReference(v.getId());
                         break;
                     case ParseUtils.TYPE_CHEERING_GROUP:
                         addCheeringGroup(v.getId());
                         break;
-                        case ParseUtils.TYPE_SUBGROUP:
+                    case ParseUtils.TYPE_SUBGROUP:
                         inviteSubGroupMember(v.getId(), gid);
                         break;
-                        case ParseUtils.TYPE_SINGLE_GROUP:
-                        inviteSubGroupMember(v.getId(), gid);
+                    case ParseUtils.TYPE_SINGLE_GROUP:
+                        inviteSingleGroupMember(v.getId(), gid);
                         break;
-                        default:
-                            break;
+                    default:
+                        break;
 
                 }
                 holder.invite.setEnabled(false);
@@ -141,19 +144,19 @@ public class SearchUserListAdapter extends RecyclerView.Adapter<SearchUserListAd
                 holder.invite.setBackground(mContext.getResources().getDrawable(R.drawable.btn_disable));
             }
         });
-        
-         if (type == TYPE_COMMON_SEARCH){
+
+        if (type == TYPE_COMMON_SEARCH) {
             holder.searchItem.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-ParseUtils.startMeetArchiveActivity(mContext, memberInfo.getUid());
+                    ParseUtils.startMeetArchiveActivity(mContext, memberInfo.getUid());
                 }
             });
         }
     }
-    
-    private void inviteSubGroupMember(final int uid, int gid){
-        Slog.d(TAG, "--------------->gid: "+gid);
+
+    private void inviteSubGroupMember(final int uid, int gid) {
+        Slog.d(TAG, "--------------->gid: " + gid);
         final RequestBody requestBody = new FormBody.Builder()
                 .add("uid", String.valueOf(uid))
                 .add("gid", String.valueOf(gid)).build();
@@ -173,8 +176,8 @@ ParseUtils.startMeetArchiveActivity(mContext, memberInfo.getUid());
             }
         });
     }
-    
-    private void inviteReference(int uid){
+
+    private void inviteReference(int uid) {
 
         final RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
         HttpUtil.sendOkHttpRequest(mContext, INVITE_REFERENCE_URL, requestBody, new Callback() {
@@ -192,9 +195,9 @@ ParseUtils.startMeetArchiveActivity(mContext, memberInfo.getUid());
             }
         });
     }
-    
-    private void inviteSingleGroupMember(final int uid, int gid){
-        Slog.d(TAG, "--------------->gid: "+gid);
+
+    private void inviteSingleGroupMember(final int uid, int gid) {
+        Slog.d(TAG, "--------------->gid: " + gid);
         final RequestBody requestBody = new FormBody.Builder()
                 .add("uid", String.valueOf(uid))
                 .add("gid", String.valueOf(gid)).build();
@@ -205,6 +208,8 @@ ParseUtils.startMeetArchiveActivity(mContext, memberInfo.getUid());
                     String responseText = response.body().string();
                     if (isDebug)
                         Slog.d(TAG, "==========addCheeringGroup response text : " + responseText);
+                        uidList.add(uid);
+                    myHandler.sendEmptyMessage(INVITED);
                     //addNotice(uid, 6, "单身团邀请", "邀请你加入单身团");
                 }
             }
@@ -214,8 +219,8 @@ ParseUtils.startMeetArchiveActivity(mContext, memberInfo.getUid());
             }
         });
     }
-    
-    private void addCheeringGroup(final int uid){
+
+    private void addCheeringGroup(final int uid) {
         //Toast.makeText(mContext, "add cheering uid: " + uid, Toast.LENGTH_SHORT).show();
         final RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
         HttpUtil.sendOkHttpRequest(mContext, ADD_CHEERING_GROUP_URL, requestBody, new Callback() {
@@ -229,25 +234,26 @@ ParseUtils.startMeetArchiveActivity(mContext, memberInfo.getUid());
                     //addNotice(uid, 6, "亲友团邀请", "已将你设置为亲友团成员");
                 }
             }
+
             @Override
             public void onFailure(Call call, IOException e) {
             }
         });
     }
 
-    public void addNotice(int uid, int type, String action, String content){
-        
+    public void addNotice(int uid, int type, String action, String content) {
+
         FormBody.Builder builder = new FormBody.Builder()
                 .add("uid", String.valueOf(uid))
                 .add("action", action)
                 .add("type", String.valueOf(type))
                 .add("content", content);
 
-        if (type == ParseUtils.TYPE_SINGLE_GROUP){
-            Slog.d(TAG, "------------------>gid: "+gid);
+        if (type == ParseUtils.TYPE_SINGLE_GROUP) {
+            Slog.d(TAG, "------------------>gid: " + gid);
             builder = builder.add("id", String.valueOf(gid));
         }
-        
+
         final RequestBody requestBody = builder.build();
 
         HttpUtil.sendOkHttpRequest(mContext, ADD_NOTICE_URL, requestBody, new Callback() {
@@ -265,8 +271,8 @@ ParseUtils.startMeetArchiveActivity(mContext, memberInfo.getUid());
             }
         });
     }
-    
-     @Override
+
+    @Override
     public int getItemCount() {
         if (null == mMemberInfoList) {
             return 0;
@@ -274,8 +280,18 @@ ParseUtils.startMeetArchiveActivity(mContext, memberInfo.getUid());
 
         return mMemberInfoList.size();
     }
-    
-     public static class SearchUserViewHolder extends RecyclerView.ViewHolder {
+
+    private void handleMessage(Message message) {
+        switch (message.what) {
+            case INVITED:
+                notifyDataSetChanged();
+                break;
+            default:
+                break;
+        }
+    }
+
+    public static class SearchUserViewHolder extends RecyclerView.ViewHolder {
 
         public RoundImageView avatar;
         public TextView name;
@@ -290,6 +306,20 @@ ParseUtils.startMeetArchiveActivity(mContext, memberInfo.getUid());
             profile = (TextView) view.findViewById(R.id.profile);
             invite = (Button) view.findViewById(R.id.invite);
             searchItem = view.findViewById(R.id.search_user_item);
+        }
+    }
+
+    static class MyHandler extends HandlerTemp<SearchUserListAdapter> {
+        public MyHandler(SearchUserListAdapter cls) {
+            super(cls);
+        }
+
+        @Override
+        public void handleMessage(Message message) {
+            SearchUserListAdapter searchUserListAdapter = ref.get();
+            if (searchUserListAdapter != null) {
+                searchUserListAdapter.handleMessage(message);
+            }
         }
     }
 }

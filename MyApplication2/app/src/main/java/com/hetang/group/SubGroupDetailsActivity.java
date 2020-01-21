@@ -49,7 +49,7 @@ import com.hetang.util.CommonUserListDialogFragment;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.InterActInterface;
-import com.hetang.util.InvitationDialogFragment;
+import com.hetang.common.InvitationDialogFragment;
 import com.hetang.util.MyLinearLayoutManager;
 import com.hetang.util.ParseUtils;
 import com.hetang.util.RoundImageView;

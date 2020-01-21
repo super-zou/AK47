@@ -1,4 +1,4 @@
-package com.hetang.util;
+package com.hetang.common;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -20,7 +20,14 @@ import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.hetang.R;
-//import com.hetang.meet.MeetMemberInfo;
+import com.hetang.util.CommonDialogFragmentInterface;
+import com.hetang.util.FontManager;
+import com.hetang.util.HttpUtil;
+import com.hetang.util.ParseUtils;
+import com.hetang.util.SearchUserListAdapter;
+import com.hetang.util.ShareDialogFragment;
+import com.hetang.util.Slog;
+import com.hetang.util.UserProfile;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,6 +47,8 @@ import static com.hetang.archive.ArchiveFragment.REQUESTCODE;
 import static com.hetang.main.MeetArchiveFragment.RESULT_OK;
 import static com.hetang.util.ParseUtils.TYPE_SINGLE_GROUP;
 
+//import com.hetang.meet.MeetMemberInfo;
+
 public class InvitationDialogFragment extends DialogFragment implements View.OnClickListener {
     private static final String TAG = "InvitationDialogFragment";
     private static final int GET_UIDS_DONE = 0;
@@ -57,6 +66,7 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
     private int uid = -1;
     private int type = -1;
     private int[] uidArray;
+    private List<Integer> uidList;
     private int gid;
     private RecyclerView searchResultsView;
     //private ArrayAdapter<String> adapter;
@@ -114,12 +124,12 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
         if (bundle != null) {
             uid = bundle.getInt("uid", 0);
             type = bundle.getInt("type", 0);
-            if(type == ParseUtils.TYPE_SUBGROUP || type == TYPE_SINGLE_GROUP){
+            if (type == ParseUtils.TYPE_SUBGROUP || type == TYPE_SINGLE_GROUP) {
                 gid = bundle.getInt("gid", -1);
             }
         }
-        
-        switch (type){
+
+        switch (type) {
             case ParseUtils.TYPE_REFERENCE:
                 getRefereeUids();
                 break;
@@ -129,22 +139,22 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
             case ParseUtils.TYPE_SUBGROUP:
                 getSubGroupUids();
                 break;
-                            case TYPE_SINGLE_GROUP:
+            case TYPE_SINGLE_GROUP:
                 getSingleGroupUids();
                 break;
             case ParseUtils.TYPE_COMMON_SEARCH:
                 getAllContacts();
                 searchContactsByName();
                 break;
-                default:
-                    break;
+            default:
+                break;
         }
-        
+
         Typeface font = Typeface.createFromAsset(mContext.getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
         FontManager.markAsIconContainer(mDialog.findViewById(R.id.invite_reference), font);
 
         TextView cancel = mDialog.findViewById(R.id.cancel);
-        
+
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -153,7 +163,7 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
         });
 
         TextView shareIcon = mDialog.findViewById(R.id.share_icon);
-        
+
         shareIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -181,13 +191,13 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
                     if (responseText != null && !TextUtils.isEmpty(responseText)) {
                         try {
                             JSONArray memberInfoArray = new JSONObject(responseText).optJSONArray("contacts");
-                            if (memberInfoArray != null && memberInfoArray.length() > 0){
+                            if (memberInfoArray != null && memberInfoArray.length() > 0) {
                                 //mMemberInfoList.clear();
-                                for (int i=0; i<memberInfoArray.length(); i++){
+                                for (int i = 0; i < memberInfoArray.length(); i++) {
                                     JSONObject jsonObject = memberInfoArray.getJSONObject(i);
-                                    Slog.d(TAG, "==============user jsonObject: "+jsonObject);
+                                    Slog.d(TAG, "==============user jsonObject: " + jsonObject);
                                     userProfile = ParseUtils.getUserProfileFromJSONObject(jsonObject);
-                                    if(userProfile != null){
+                                    if (userProfile != null) {
                                         mContactsList.add(userProfile);
                                         Slog.d(TAG, "getResponseText mContactsList.size:" + mContactsList.size());
                                         handler.sendEmptyMessage(GET_CONTACTS_DONE);
@@ -195,10 +205,10 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
                                 }
                             }
 
-                        }catch (JSONException e){
+                        } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        }
+                    }
                 }
             }
 
@@ -208,8 +218,8 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
             }
         });
     }
-    
-    private void getSubGroupUids(){
+
+    private void getSubGroupUids() {
         FormBody requestBody = new FormBody.Builder().add("gid", String.valueOf(gid)).build();
         HttpUtil.sendOkHttpRequest(mContext, GET_SUBGROUP_UIDS_URL, requestBody, new Callback() {
             @Override
@@ -222,18 +232,18 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
                         try {
                             JSONArray uidJsonArray = new JSONObject(responseText).optJSONArray("response");
                             Slog.d(TAG, "==========uidJsonArray : " + uidJsonArray);
-                            if (uidJsonArray != null && uidJsonArray.length() > 0){
-                                uidArray = new int[uidJsonArray.length()];
-                                for (int i=0; i<uidJsonArray.length(); i++){
-                                    uidArray[i] = uidJsonArray.getInt(i);
+                            if (uidJsonArray != null && uidJsonArray.length() > 0) {
+                                uidList = new ArrayList<>();
+                                for (int i = 0; i < uidJsonArray.length(); i++) {
+                                    uidList.add(uidJsonArray.getInt(i));
                                 }
                             }
 
-                        }catch (JSONException e){
+                        } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
-                    
+
                     handler.sendEmptyMessage(GET_UIDS_DONE);
 
                 }
@@ -245,8 +255,8 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
             }
         });
     }
-    
-        private void getSingleGroupUids(){
+
+    private void getSingleGroupUids() {
         FormBody requestBody = new FormBody.Builder().add("gid", String.valueOf(gid)).build();
         HttpUtil.sendOkHttpRequest(mContext, GET_SINGLE_GROUP_UIDS_URL, requestBody, new Callback() {
             @Override
@@ -258,14 +268,14 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
                         try {
                             JSONArray uidJsonArray = new JSONObject(responseText).optJSONArray("response");
                             Slog.d(TAG, "==========uidJsonArray : " + uidJsonArray);
-                            if (uidJsonArray != null && uidJsonArray.length() > 0){
-                                uidArray = new int[uidJsonArray.length()];
-                                for (int i=0; i<uidJsonArray.length(); i++){
-                                    uidArray[i] = uidJsonArray.getInt(i);
+                            if (uidJsonArray != null && uidJsonArray.length() > 0) {
+                                uidList = new ArrayList<>();
+                                for (int i = 0; i < uidJsonArray.length(); i++) {
+                                    uidList.add(uidJsonArray.getInt(i));
                                 }
                             }
 
-                        }catch (JSONException e){
+                        } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
@@ -280,8 +290,8 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
             }
         });
     }
-                    
-    private void getRefereeUids(){
+
+    private void getRefereeUids() {
         FormBody requestBody = new FormBody.Builder().build();
         HttpUtil.sendOkHttpRequest(mContext, GET_REFERENCE_UIDS_URL, requestBody, new Callback() {
             @Override
@@ -294,18 +304,18 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
                         try {
                             JSONArray uidJsonArray = new JSONObject(responseText).optJSONArray("response");
                             Slog.d(TAG, "==========uidJsonArray : " + uidJsonArray);
-                            if (uidJsonArray != null && uidJsonArray.length() > 0){
-                                uidArray = new int[uidJsonArray.length()];
-                                for (int i=0; i<uidJsonArray.length(); i++){
-                                    uidArray[i] = uidJsonArray.getInt(i);
+                            if (uidJsonArray != null && uidJsonArray.length() > 0) {
+                                uidList = new ArrayList<>();
+                                for (int i = 0; i < uidJsonArray.length(); i++) {
+                                    uidList.add(uidJsonArray.getInt(i));
                                 }
                             }
 
-                        }catch (JSONException e){
+                        } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
-                    
+
                     handler.sendEmptyMessage(GET_UIDS_DONE);
 
                 }
@@ -317,8 +327,8 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
             }
         });
     }
-    
-    private void getCheeringGroupUids(){
+
+    private void getCheeringGroupUids() {
         FormBody requestBody = new FormBody.Builder().build();
         HttpUtil.sendOkHttpRequest(mContext, GET_CHEERING_GROUP_UIDS_URL, requestBody, new Callback() {
             @Override
@@ -330,17 +340,17 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
                         try {
                             JSONArray uidJsonArray = new JSONObject(responseText).optJSONArray("response");
                             Slog.d(TAG, "==========uidJsonArray : " + uidJsonArray);
-                            if (uidJsonArray != null && uidJsonArray.length() > 0){
-                                uidArray = new int[uidJsonArray.length()];
-                                for (int i=0; i<uidJsonArray.length(); i++){
-                                    uidArray[i] = uidJsonArray.getInt(i);
+                            if (uidJsonArray != null && uidJsonArray.length() > 0) {
+                                uidList = new ArrayList<>();
+                                for (int i = 0; i < uidJsonArray.length(); i++) {
+                                    uidList.add(uidJsonArray.getInt(i));
                                 }
                             }
-                        }catch (JSONException e){
+                        } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
-                    
+
                     handler.sendEmptyMessage(GET_UIDS_DONE);
                 }
             }
@@ -351,8 +361,7 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
             }
         });
     }
-    
-    
+
 
     public void searchContactsByName() {
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -397,20 +406,20 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
                         try {
                             //JSONArray memberInfoArray = new JSONObject(responseText).optJSONArray("contacts");
                             JSONArray memberInfoArray = new JSONObject(responseText).optJSONArray("users");
-                            if (memberInfoArray != null && memberInfoArray.length() > 0){
+                            if (memberInfoArray != null && memberInfoArray.length() > 0) {
                                 mMemberInfoList.clear();
-                                for (int i=0; i<memberInfoArray.length(); i++){
+                                for (int i = 0; i < memberInfoArray.length(); i++) {
                                     JSONObject jsonObject = memberInfoArray.getJSONObject(i);
-                                    Slog.d(TAG, "==============user jsonObject: "+jsonObject);
+                                    Slog.d(TAG, "==============user jsonObject: " + jsonObject);
                                     userProfile = ParseUtils.getUserProfileFromJSONObject(jsonObject);
-                                    if(userProfile != null){
+                                    if (userProfile != null) {
                                         mMemberInfoList.add(userProfile);
                                         Slog.d(TAG, "getResponseText list.size:" + mMemberInfoList.size());
                                         handler.sendEmptyMessage(QUERY_USER_DONE);
                                     }
                                 }
                             }
-                        }catch (JSONException e){
+                        } catch (JSONException e) {
                             e.printStackTrace();
                         }
 
@@ -438,10 +447,10 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
                 searchContactsByName();
                 break;
             case QUERY_USER_DONE:
-                if(type == ParseUtils.TYPE_SUBGROUP || type == TYPE_SINGLE_GROUP){
-                    adapter.setData(mMemberInfoList, type, uidArray, gid);
-                }else {
-                    adapter.setData(mMemberInfoList, type, uidArray);
+                if (type == ParseUtils.TYPE_SUBGROUP || type == TYPE_SINGLE_GROUP) {
+                    adapter.setData(mMemberInfoList, type, uidList, gid);
+                } else {
+                    adapter.setData(mMemberInfoList, type, uidList);
                 }
                 adapter.notifyDataSetChanged();
                 break;
@@ -449,14 +458,14 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
                 mMemberInfoList.clear();
                 mContactsList.clear();
                 searchResultsView.removeAllViews();
-                adapter.setData(mMemberInfoList, type, uidArray);
+                adapter.setData(mMemberInfoList, type, uidList);
                 adapter.notifyDataSetChanged();
                 break;
             case GET_CONTACTS_DONE:
-               if (type == ParseUtils.TYPE_SUBGROUP || type == TYPE_SINGLE_GROUP){
-                    adapter.setData(mContactsList, type, uidArray, gid);
-                }else {
-                    adapter.setData(mContactsList, type, uidArray);
+                if (type == ParseUtils.TYPE_SUBGROUP || type == TYPE_SINGLE_GROUP) {
+                    adapter.setData(mContactsList, type, uidList, gid);
+                } else {
+                    adapter.setData(mContactsList, type, uidList);
                 }
                 adapter.notifyDataSetChanged();
                 break;
@@ -469,13 +478,13 @@ public class InvitationDialogFragment extends DialogFragment implements View.OnC
     public void onClick(View view) {
 
     }
-    
+
     @Override
     public void onDestroy() {
         super.onDestroy();
 
-        if (getTargetFragment() != null){
-            if (type == ParseUtils.TYPE_CHEERING_GROUP){
+        if (getTargetFragment() != null) {
+            if (type == ParseUtils.TYPE_CHEERING_GROUP) {
                 Intent intent = new Intent();
                 intent.putExtra("type", ParseUtils.TYPE_CHEERING_GROUP);
                 intent.putExtra("status", true);
