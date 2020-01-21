@@ -73,7 +73,7 @@ import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-
+import static com.hetang.dynamics.DynamicOperationDialogFragment.DYNAMIC_OPERATION_RESULT;
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static com.hetang.common.MyApplication.getContext;
 import static com.hetang.common.SetAvatarActivity.MODIFY_LOGO;
@@ -1061,6 +1061,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
 
 
     public void handleMessage(Message message) {
+        Bundle bundle;
         switch (message.what) {
             case GET_GROUP_HEADER_DONE:
                 setSubGroupHeaderView();
@@ -1080,7 +1081,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
             case LOAD_DYNAMICS_DONE:
                 subGroupDetailsListAdapter.setData(dynamicList);
                 subGroupDetailsListAdapter.notifyDataSetChanged();
-                recyclerView.refreshComplete();
+                //recyclerView.refreshComplete();
                 if (mTempSize < PAGE_SIZE) {
                     //loading finished
                     recyclerView.loadMoreComplete();
@@ -1105,7 +1106,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
                 subGroupDetailsListAdapter.notifyDataSetChanged();
                 break;
             case COMMENT_COUNT_UPDATE:
-                Bundle bundle = message.getData();
+                bundle = message.getData();
                 int commentCount = bundle.getInt("commentCount");
                 if (isDebug)
                     Slog.d(TAG, "------------------>COMMENT_COUNT_UPDATE: position: " + currentPos + " commentCount: " + commentCount);
@@ -1123,7 +1124,9 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
                 subGroupDetailsListAdapter.setData(dynamicList);
                 subGroupDetailsListAdapter.notifyItemRangeInserted(0, 1);
                 subGroupDetailsListAdapter.notifyDataSetChanged();
-                recyclerView.refreshComplete();
+                                if (dynamicList.size() <= PAGE_SIZE){
+                    recyclerView.loadMoreComplete();
+                }
                 //update activity amount
                 subGroup.activityCount += 1;
                 activityAmount.setText(mContext.getResources().getString(R.string.dynamics) + " " + subGroup.activityCount);
@@ -1133,7 +1136,9 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
                 subGroupDetailsListAdapter.setData(dynamicList);
                 subGroupDetailsListAdapter.notifyItemRemoved(currentPos);
                 subGroupDetailsListAdapter.notifyDataSetChanged();
-                recyclerView.refreshComplete();
+                                if (dynamicList.size() < PAGE_SIZE - 1){
+                    recyclerView.loadMoreComplete();
+                }
                 break;
             case SHOW_NOTICE_DIALOG:
                 Bundle data = message.getData();
@@ -1193,6 +1198,18 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
 
     @Override
     public void onBackFromDialog(int type, int result, boolean status) {
+                switch (type){
+            case DYNAMIC_OPERATION_RESULT:
+                if (status){
+                    Message message = new Message();
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("did", result);
+                    message.setData(bundle);
+                    message.what = DYNAMICS_DELETE;
+                    handler.sendMessage(message);
+                }
+                break;
+        }
     }
 
     private void getMyNewActivity() {
