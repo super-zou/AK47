@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.hetang.R;
 import com.hetang.common.MyApplication;
 import com.hetang.util.BaseDialogFragment;
+import com.hetang.util.CommonDialogFragmentInterface;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.Slog;
@@ -33,7 +34,9 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static com.hetang.archive.ArchiveFragment.SET_BLOG_RESULT_OK;
 import static com.hetang.meet.MeetDynamicsFragment.DYNAMICS_DELETE_BROADCAST;
+import static com.hetang.meet.MeetDynamicsFragment.REQUEST_CODE;
 
 /**
  * Created by super-zou on 18-9-9.
@@ -45,11 +48,15 @@ import static com.hetang.meet.MeetDynamicsFragment.DYNAMICS_DELETE_BROADCAST;
     private static final String TAG = "DynamicOperationDialogFragment";
     private static final String DELETE_DYNAMIC = HttpUtil.DOMAIN + "?q=dynamic/action/delete";
     private Context mContext;
+      private CommonDialogFragmentInterface commonDialogFragmentInterface;
+    public static final int DYNAMIC_OPERATION_RESULT = 0;
+    private boolean isDeleted = false;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         mContext = context;
+             commonDialogFragmentInterface = (CommonDialogFragmentInterface) context;
     }
     
     @Override
@@ -96,7 +103,7 @@ import static com.hetang.meet.MeetDynamicsFragment.DYNAMICS_DELETE_BROADCAST;
         return mDialog;
     }
     
-    public void deleteDynamic(long did){
+    public void deleteDynamic(final long did){
 
         showProgressDialog("正在删除");
         final RequestBody requestBody = new FormBody.Builder()
@@ -116,7 +123,9 @@ import static com.hetang.meet.MeetDynamicsFragment.DYNAMICS_DELETE_BROADCAST;
                          if (responseObj != null){
                              int result = responseObj.optInt("result");
                              if (result > 0){
-                                 sendBroadcast();
+                                 //sendBroadcast();
+                                                               isDeleted = true;
+                                 back2Caller((int)did);
                                  dismissProgressDialog();
                              }
                          }
@@ -139,6 +148,16 @@ import static com.hetang.meet.MeetDynamicsFragment.DYNAMICS_DELETE_BROADCAST;
     private void sendBroadcast() {
         Intent intent = new Intent(DYNAMICS_DELETE_BROADCAST);
         LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
+    }
+  
+      private void back2Caller(int result){
+        if (getTargetFragment() != null){
+            getTargetFragment().onActivityResult(REQUEST_CODE, DYNAMIC_OPERATION_RESULT, null);
+        }else {
+            if (commonDialogFragmentInterface != null) {//callback from ArchivesActivity class
+                commonDialogFragmentInterface.onBackFromDialog(DYNAMIC_OPERATION_RESULT, result, isDeleted);
+            }
+        }
     }
 
     @Override
