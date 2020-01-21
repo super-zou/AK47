@@ -57,16 +57,17 @@
             android:paddingRight="16dp"></LinearLayout>
     </HorizontalScrollView>
 
-    <TextView
+<TextView
         android:id="@+id/more"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginBottom="16dp"
+        android:elevation="8dp"
         android:background="@drawable/round_background_blue"
         android:gravity="center"
-        android:padding="8dp"
+        android:padding="12dp"
         android:text=""
         android:textColor="@color/white"
         android:textStyle="bold" />
