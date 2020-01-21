@@ -23,6 +23,7 @@ import com.hetang.R;
 import com.hetang.adapter.DynamicsListAdapter;
 import com.hetang.dynamics.AddDynamicsActivity;
 import com.hetang.dynamics.Dynamic;
+import com.hetang.dynamics.DynamicOperationDialogFragment;
 import com.hetang.dynamics.DynamicsInteractDetailsActivity;
 import com.hetang.common.HandlerTemp;
 import com.hetang.common.MyApplication;
@@ -58,14 +59,17 @@ import okhttp3.Response;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static com.hetang.dynamics.AddDynamicsActivity.DYNAMICS_ADD_BROADCAST;
+import static com.hetang.dynamics.DynamicOperationDialogFragment.DYNAMIC_OPERATION_RESULT;
 import static com.hetang.dynamics.DynamicsInteractDetailsActivity.COMMENT_ADD_BROADCAST;
 import static com.hetang.dynamics.DynamicsInteractDetailsActivity.DYNAMIC_COMMENT;
 import static com.hetang.group.SubGroupActivity.getSubGroup;
 import static com.hetang.group.SubGroupDetailsActivity.GET_SUBGROUP_BY_GID;
+import static com.hetang.meet.MeetDynamicsFragment.DYNAMICS_DELETE;
 import static com.hetang.meet.MeetDynamicsFragment.COMMENT_COUNT_UPDATE;
 import static com.hetang.meet.MeetDynamicsFragment.GET_DYNAMICS_WITH_ID_URL;
 import static com.hetang.meet.MeetDynamicsFragment.HAVE_UPDATE;
 import static com.hetang.meet.MeetDynamicsFragment.LOAD_DYNAMICS_DONE;
+import static com.hetang.meet.MeetDynamicsFragment.REQUEST_CODE;
 import static com.hetang.meet.MeetDynamicsFragment.NO_MORE_DYNAMICS;
 import static com.hetang.meet.MeetDynamicsFragment.NO_UPDATE;
 import static com.hetang.meet.MeetDynamicsFragment.UPDATE_COMMENT;
@@ -224,6 +228,13 @@ public class HomeFragment extends BaseFragment {
 
             @Override
             public void onOperationClick(View view, int position) {
+                                Bundle bundle = new Bundle();
+                bundle.putLong("did", dynamicList.get(position).getDid());
+                currentPos = position;
+                DynamicOperationDialogFragment dynamicOperationDialogFragment = new DynamicOperationDialogFragment();
+                dynamicOperationDialogFragment.setArguments(bundle);
+                dynamicOperationDialogFragment.setTargetFragment(HomeFragment.this, REQUEST_CODE);
+                dynamicOperationDialogFragment.show(getFragmentManager(), "DynamicOperationDialogFragment");
             }
 
         });
@@ -731,6 +742,7 @@ public class HomeFragment extends BaseFragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         Slog.d(TAG, "===================onActivityResult requestCode: " + requestCode + " resultCode: " + resultCode);
         if (requestCode == Activity.RESULT_FIRST_USER) {
             switch (resultCode) {
@@ -746,6 +758,9 @@ public class HomeFragment extends BaseFragment {
                     break;
                 case DYNAMICS_UPDATE_RESULT:
                     getMyNewAddDynamics();
+                    break;
+                                    case DYNAMIC_OPERATION_RESULT:
+                    handler.sendEmptyMessage(DYNAMICS_DELETE);
                     break;
                 default:
                     break;
@@ -828,6 +843,16 @@ public class HomeFragment extends BaseFragment {
                                 if (xRecyclerView != null){
                     xRecyclerView.refreshComplete();
                 }
+                                break;
+            case DYNAMICS_DELETE:
+                dynamicList.remove(currentPos);
+                dynamicsListAdapter.setData(dynamicList);
+                dynamicsListAdapter.notifyItemRemoved(currentPos);
+                dynamicsListAdapter.notifyDataSetChanged();
+                if (dynamicList.size() < PAGE_SIZE - 1){
+                    xRecyclerView.loadMoreComplete();
+                }
+                break;
             default:
                 break;
         }
