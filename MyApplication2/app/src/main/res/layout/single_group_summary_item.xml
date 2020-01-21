@@ -6,8 +6,7 @@
     android:id="@+id/single_group_summary_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="10dp"
-    android:elevation="8dp"
+
     android:paddingTop="8dp"
     android:paddingBottom="8dp"
     android:background="@color/white">
