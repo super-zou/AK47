@@ -27,6 +27,7 @@ import com.hetang.common.MyApplication;
 import com.hetang.common.PicturePreviewActivity;
 import com.hetang.home.HomeFragment;
 import com.hetang.util.BaseFragment;
+import com.hetang.util.CommonDialogFragmentInterface;
 import com.hetang.util.CommonUserListDialogFragment;
 import com.hetang.dynamics.DynamicOperationDialogFragment;
 import com.hetang.util.HttpUtil;
@@ -56,6 +57,7 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static com.hetang.dynamics.DynamicOperationDialogFragment.DYNAMIC_OPERATION_RESULT;
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static com.hetang.home.HomeFragment.GET_MY_NEW_ADD_DONE;
 import static com.hetang.home.HomeFragment.GET_MY_NEW_ADD_DYNAMICS_URL;
@@ -66,7 +68,7 @@ import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
  * Created by haichao.zou on 2017/11/20.
  */
 
-public class MeetDynamicsFragment extends BaseFragment {
+public class MeetDynamicsFragment extends BaseFragment implements CommonDialogFragmentInterface{
 
     public static final int REQUEST_CODE = 1;
     private static final boolean isDebug = true;
@@ -118,6 +120,18 @@ public class MeetDynamicsFragment extends BaseFragment {
     protected int getLayoutId() {
         int layoutId = R.layout.meet_dynamics;
         return layoutId;
+    }
+    
+        @Override
+    public void onBackFromDialog(int type, int result, boolean status) {
+        Slog.d(TAG, "--------------------------->onBackFromDialog");
+        switch (type){
+            case DYNAMIC_OPERATION_RESULT:
+                if (status){
+                    handler.sendEmptyMessage(DYNAMICS_DELETE);
+                }
+                break;
+        }
     }
 
     @Override
@@ -212,6 +226,7 @@ public class MeetDynamicsFragment extends BaseFragment {
                 currentPos = position;
                 DynamicOperationDialogFragment dynamicOperationDialogFragment = new DynamicOperationDialogFragment();
                 dynamicOperationDialogFragment.setArguments(bundle);
+                dynamicOperationDialogFragment.setTargetFragment(MeetDynamicsFragment.this, REQUEST_CODE);
                 dynamicOperationDialogFragment.show(getFragmentManager(), "DynamicOperationDialogFragment");
             }
 
@@ -524,13 +539,18 @@ public class MeetDynamicsFragment extends BaseFragment {
                 meetDynamicsListAdapter.setData(meetList);
                 meetDynamicsListAdapter.notifyItemRangeInserted(0, 1);
                 meetDynamicsListAdapter.notifyDataSetChanged();
-                recyclerView.refreshComplete();
+                                if (meetList.size() <= PAGE_SIZE){
+                    recyclerView.loadMoreComplete();
+                }
                 break;
             case DYNAMICS_DELETE:
                 meetList.remove(currentPos);
                 meetDynamicsListAdapter.setData(meetList);
                 meetDynamicsListAdapter.notifyItemRemoved(currentPos);
                 meetDynamicsListAdapter.notifyDataSetChanged();
+                                if (meetList.size() < PAGE_SIZE - 1){
+                    recyclerView.loadMoreComplete();
+                }
                 break;
             default:
                 break;
@@ -547,6 +567,7 @@ public class MeetDynamicsFragment extends BaseFragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == Activity.RESULT_FIRST_USER) {
             switch (resultCode) {
                 case HomeFragment.COMMENT_UPDATE_RESULT:
@@ -565,6 +586,9 @@ public class MeetDynamicsFragment extends BaseFragment {
                     break;
                 case HomeFragment.DYNAMICS_UPDATE_RESULT:
                     getMyNewActivity();
+                    break;
+                                    case DYNAMIC_OPERATION_RESULT:
+                    handler.sendEmptyMessage(DYNAMICS_DELETE);
                     break;
                 default:
                     break;
@@ -653,9 +677,11 @@ public class MeetDynamicsFragment extends BaseFragment {
                     if (isDebug) Slog.d(TAG, "==========DYNAMICS_ADD_BROADCAST");
                     requestData(false);
                     break;
+                    /*
                 case DYNAMICS_DELETE_BROADCAST:
                     handler.sendEmptyMessage(DYNAMICS_DELETE);
                     break;
+                    */
                 default:
                     break;
             }
