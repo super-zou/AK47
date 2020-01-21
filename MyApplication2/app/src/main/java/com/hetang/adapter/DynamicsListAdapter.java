@@ -325,6 +325,18 @@ public class DynamicsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 interActInterface.onCommentClick(v, position);
             }
         });
+        
+        if (dynamic.getAuthorSelf() == true){
+            holder.meetDynamicsViewHolder.operation.setVisibility(View.VISIBLE);
+            holder.meetDynamicsViewHolder.operation.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    interActInterface.onOperationClick(view, position);
+                }
+            });
+        }else {
+            holder.meetDynamicsViewHolder.operation.setVisibility(View.GONE);
+        }
 
         holder.meetDynamicsViewHolder.baseProfile.setOnClickListener(new View.OnClickListener() {
             @Override
