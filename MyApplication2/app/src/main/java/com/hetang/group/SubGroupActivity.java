@@ -74,6 +74,9 @@ import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 public class SubGroupActivity extends BaseAppCompatActivity implements CommonDialogFragmentInterface {
     public static final String GET_MY_UNIVERSITY_SUBGROUP = HttpUtil.DOMAIN + "?q=subgroup/get_my_university";
     public static final String GROUP_ADD_BROADCAST = "com.hetang.action.GROUP_ADD";
+    public static final int ADD_NEW_SUBGROUP_DONE = 8;
+    public static final int GET_SINGLE_GROUP_DONE = 9;
+    public static final int ADD_NEW_TALENT_DONE = 11;
     private static final boolean isDebug = true;
     private static final String TAG = "SubGroupActivity";
     private static final int PAGE_SIZE = 8;
@@ -88,10 +91,7 @@ public class SubGroupActivity extends BaseAppCompatActivity implements CommonDia
     private static final int SET_AVATAR = 5;
     private static final int NO_MORE = 6;
     private static final int ADD_VISITOR_RECORD_DONE = 7;
-    public static final int ADD_NEW_SUBGROUP_DONE = 8;
-    public static final int GET_SINGLE_GROUP_DONE = 9;
     private static final int NO_SINGLE_GROUP_DONE = 10;
-        public static final int ADD_NEW_TALENT_DONE = 11;
     final int itemLimit = 3;
     ImageView progressImageView;
     AnimationDrawable animationDrawable;
@@ -99,13 +99,13 @@ public class SubGroupActivity extends BaseAppCompatActivity implements CommonDia
     private int mUpdateSize = 0;
     private Handler handler;
     private int type = 0;
-        private ViewGroup myGroupView;
+    private ViewGroup myGroupView;
     private SingleGroupReceiver mReceiver = new SingleGroupReceiver();
     private SubGroupSummaryAdapter subGroupSummaryAdapter;
     private XRecyclerView recyclerView;
     private List<SubGroup> mSubGroupList = new ArrayList<>();
     private List<SingleGroupActivity.SingleGroup> mSingleGroupList = new ArrayList<>();
-        private List<SingleGroupActivity.SingleGroup> mLeadGroupList = new ArrayList<>();
+    private List<SingleGroupActivity.SingleGroup> mLeadGroupList = new ArrayList<>();
     private List<SingleGroupActivity.SingleGroup> mJoinGroupList = new ArrayList<>();
 
     public static void updateVisitorRecord(int gid) {
@@ -130,83 +130,6 @@ public class SubGroupActivity extends BaseAppCompatActivity implements CommonDia
             }
         });
     }
-    
-    private void getMySingleGroup() {
-        RequestBody requestBody = new FormBody.Builder().build();
-
-        HttpUtil.sendOkHttpRequest(getContext(), SINGLE_GROUP_GET_MY, requestBody, new Callback() {
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (response.body() != null) {
-                    String responseText = response.body().string();
-                    if (isDebug) Slog.d(TAG, "==========response text : " + responseText);
-                    if (responseText != null && !TextUtils.isEmpty(responseText)) {
-                        JSONObject SingleGroupResponse = null;
-                        try {
-                            SingleGroupResponse = new JSONObject(responseText);
-                            if (SingleGroupResponse != null) {
-                                int loadSize = processMyGroupResponse(SingleGroupResponse);
-                                if (loadSize > 0) {
-                                    handler.sendEmptyMessage(GET_MY_GROUP_DONE);
-                                }
-                            }
-
-                            getRecommendSingleGroup();
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        }
-                }
-            }
-
-            @Override
-            public void onFailure(Call call, IOException e) {
-
-            }
-        });
-    }
-    
-    private int processMyGroupResponse(JSONObject SingleGroupResponse) {
-
-        int singGroupSize = 0;
-        JSONArray leadGroupArray = null;
-        JSONArray joinGroupArray = null;
-
-        if (SingleGroupResponse != null) {
-            leadGroupArray = SingleGroupResponse.optJSONArray("lead_groups");
-            joinGroupArray = SingleGroupResponse.optJSONArray("join_groups");
-        }
-        
-        if (leadGroupArray != null) {
-            singGroupSize = leadGroupArray.length();
-            if (singGroupSize > 0) {
-                for (int i = 0; i < leadGroupArray.length(); i++) {
-                    JSONObject group = leadGroupArray.optJSONObject(i);
-                    if (group != null) {
-                        SingleGroupActivity.SingleGroup singleGroup = getSingleGroup(group, false);
-                        mLeadGroupList.add(singleGroup);
-                    }
-                }
-            }
-        }
-        
-        if (joinGroupArray != null) {
-            singGroupSize = joinGroupArray.length();
-            if (singGroupSize > 0) {
-                for (int i = 0; i < joinGroupArray.length(); i++) {
-                    JSONObject group = joinGroupArray.optJSONObject(i);
-                    if (group != null) {
-                        SingleGroupActivity.SingleGroup singleGroup = getSingleGroup(group, false);
-                        mJoinGroupList.add(singleGroup);
-                    }
-                }
-            }
-        }
-
-        return singGroupSize;
-    }
-    
 
     public static SubGroup getSubGroup(JSONObject group) {
         SubGroup subGroup = new SubGroup();
@@ -235,6 +158,81 @@ public class SubGroupActivity extends BaseAppCompatActivity implements CommonDia
         return null;
     }
 
+    private void getMySingleGroup() {
+        RequestBody requestBody = new FormBody.Builder().build();
+
+        HttpUtil.sendOkHttpRequest(getContext(), SINGLE_GROUP_GET_MY, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.body() != null) {
+                    String responseText = response.body().string();
+                    if (isDebug) Slog.d(TAG, "==========getMySingleGroup response text : " + responseText);
+                    if (responseText != null && !TextUtils.isEmpty(responseText)) {
+                        JSONObject SingleGroupResponse = null;
+                        try {
+                            SingleGroupResponse = new JSONObject(responseText);
+                            if (SingleGroupResponse != null) {
+                                int loadSize = processMyGroupResponse(SingleGroupResponse);
+                                if (loadSize > 0) {
+                                    handler.sendEmptyMessage(GET_MY_GROUP_DONE);
+                                }
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    getRecommendSingleGroup();
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+        });
+    }
+
+    private int processMyGroupResponse(JSONObject SingleGroupResponse) {
+
+        int singGroupSize = 0;
+        JSONArray leadGroupArray = null;
+        JSONArray joinGroupArray = null;
+
+        if (SingleGroupResponse != null) {
+            leadGroupArray = SingleGroupResponse.optJSONArray("lead_groups");
+            joinGroupArray = SingleGroupResponse.optJSONArray("join_groups");
+        }
+
+        if (leadGroupArray != null) {
+            singGroupSize = leadGroupArray.length();
+            if (singGroupSize > 0) {
+                for (int i = 0; i < leadGroupArray.length(); i++) {
+                    JSONObject group = leadGroupArray.optJSONObject(i);
+                    if (group != null) {
+                        SingleGroupActivity.SingleGroup singleGroup = getSingleGroup(group, false);
+                        mLeadGroupList.add(singleGroup);
+                    }
+                }
+            }
+        }
+
+        if (joinGroupArray != null) {
+            singGroupSize = joinGroupArray.length();
+            if (singGroupSize > 0) {
+                for (int i = 0; i < joinGroupArray.length(); i++) {
+                    JSONObject group = joinGroupArray.optJSONObject(i);
+                    if (group != null) {
+                        SingleGroupActivity.SingleGroup singleGroup = getSingleGroup(group, false);
+                        mJoinGroupList.add(singleGroup);
+                    }
+                }
+            }
+        }
+
+        return singGroupSize;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -256,13 +254,15 @@ public class SubGroupActivity extends BaseAppCompatActivity implements CommonDia
             getMySingleGroup();
         }
     }
-    
+
     private void setMyGroupView() {
-        myGroupView = (ViewGroup) LayoutInflater.from(getContext()).inflate(R.layout.my_single_group, (ViewGroup) findViewById(android.R.id.content), false);
-        recyclerView.addHeaderView(myGroupView);
+        if (myGroupView == null){
+            myGroupView = (ViewGroup) LayoutInflater.from(getContext()).inflate(R.layout.my_single_group, (ViewGroup) findViewById(android.R.id.content), false);
+            recyclerView.addHeaderView(myGroupView);
+        }
         android.widget.LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         layoutParams.setMargins(0, 0, 0, 3);
-        
+
         if (mLeadGroupList.size() > 0) {
             for (int i = 0; i < mLeadGroupList.size(); i++) {
                 View leadGroupItemView = LayoutInflater.from(getContext()).inflate(R.layout.single_group_summary_item, (ViewGroup) findViewById(android.R.id.content), false);
@@ -301,7 +301,7 @@ public class SubGroupActivity extends BaseAppCompatActivity implements CommonDia
         }
 
     }
-    
+
     private void setGroupView(View view, SingleGroupActivity.SingleGroup singleGroup) {
         TextView nameTV = view.findViewById(R.id.leader_name);
         nameTV.setText(singleGroup.leader.getNickName());
@@ -310,7 +310,7 @@ public class SubGroupActivity extends BaseAppCompatActivity implements CommonDia
         TextView universityTV = view.findViewById(R.id.university);
         universityTV.setText(singleGroup.leader.getUniversity());
         TextView introductionTV = view.findViewById(R.id.introduction);
-        
+
         introductionTV.setText(singleGroup.introduction);
         TextView maleCountTV = view.findViewById(R.id.male_member_count);
         maleCountTV.setText(getResources().getString(R.string.male) + " " + singleGroup.maleCount);
@@ -323,10 +323,7 @@ public class SubGroupActivity extends BaseAppCompatActivity implements CommonDia
             evaluateCountTV.setText("评价 " + score + getResources().getString(R.string.dot) + singleGroup.evaluateCount);
         }
     }
-    
-    
-        
-        
+
 
     private void initView() {
         Typeface font = Typeface.createFromAsset(MyApplication.getContext().getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
@@ -413,7 +410,7 @@ public class SubGroupActivity extends BaseAppCompatActivity implements CommonDia
         });
 
         Button becomeTalentBtn = findViewById(R.id.become_talent);
-        if (type == eden_group){
+        if (type == eden_group) {
             becomeTalentBtn.setVisibility(View.VISIBLE);
             becomeTalentBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -447,7 +444,7 @@ public class SubGroupActivity extends BaseAppCompatActivity implements CommonDia
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
                     String responseText = response.body().string();
-                    if (isDebug) Slog.d(TAG, "==========response text : " + responseText);
+                    if (isDebug) Slog.d(TAG, "==========getRecommendSingleGroup response text : " + responseText);
                     if (responseText != null && !TextUtils.isEmpty(responseText)) {
                         try {
                             JSONObject singleGroupResponse = new JSONObject(responseText);
@@ -455,16 +452,15 @@ public class SubGroupActivity extends BaseAppCompatActivity implements CommonDia
                                 int groupSize = processSingleGroupResponse(singleGroupResponse);
                                 if (groupSize > 0) {
                                     handler.sendEmptyMessage(GET_SINGLE_GROUP_DONE);
-                                } 
-                            } 
-                            
-                             loadData();
-
+                                }
+                            }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
 
                     }
+
+                    loadData();
                 }
             }
 
@@ -511,7 +507,7 @@ public class SubGroupActivity extends BaseAppCompatActivity implements CommonDia
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
                     String responseText = response.body().string();
-                    if (isDebug) Slog.d(TAG, "==========response text : " + responseText);
+                    if (isDebug) Slog.d(TAG, "==========loadData response text : " + responseText);
                     if (responseText != null && !TextUtils.isEmpty(responseText)) {
                         JSONObject subGroupResponse = null;
                         try {
@@ -535,7 +531,8 @@ public class SubGroupActivity extends BaseAppCompatActivity implements CommonDia
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-
+                    }else {
+                        handler.sendEmptyMessage(NO_MORE);
                     }
                 }
             }
@@ -701,19 +698,19 @@ public class SubGroupActivity extends BaseAppCompatActivity implements CommonDia
     private void processNewAddResponse(JSONObject subGroupResponse, boolean isTalent) {
         JSONObject subGroupObject = null;
         if (subGroupResponse != null) {
-            if (isTalent){
+            if (isTalent) {
                 subGroupObject = subGroupResponse.optJSONObject("single_group");
-            }else {
+            } else {
                 subGroupObject = subGroupResponse.optJSONObject("group");
             }
         }
 
         if (subGroupObject != null) {
-            if (isTalent){
+            if (isTalent) {
                 SingleGroupActivity.SingleGroup singleGroup = getSingleGroup(subGroupObject, true);
                 mLeadGroupList.add(0, singleGroup);
                 handler.sendEmptyMessage(ADD_NEW_TALENT_DONE);
-            }else {
+            } else {
                 SubGroup singleGroup = getSubGroup(subGroupObject);
                 mSubGroupList.add(0, singleGroup);
                 handler.sendEmptyMessage(ADD_NEW_SUBGROUP_DONE);
@@ -761,9 +758,13 @@ public class SubGroupActivity extends BaseAppCompatActivity implements CommonDia
             }
         });
     }
-    
-        private void addMyNewTalent() {
+
+    private void addMyNewTalent() {
         View leadGroupItemView = LayoutInflater.from(getContext()).inflate(R.layout.single_group_summary_item, (ViewGroup) findViewById(android.R.id.content), false);
+        if (myGroupView == null){
+            myGroupView = (ViewGroup) LayoutInflater.from(getContext()).inflate(R.layout.my_single_group, (ViewGroup) findViewById(android.R.id.content), false);
+            recyclerView.addHeaderView(myGroupView);
+        }
         myGroupView.addView(leadGroupItemView, 1);
         setGroupView(leadGroupItemView, mLeadGroupList.get(0));
 
@@ -851,6 +852,7 @@ public class SubGroupActivity extends BaseAppCompatActivity implements CommonDia
                 stopLoadProgress();
                 break;
             case NO_MORE:
+                Slog.d(TAG, "-------------->NO_MORE");
                 recyclerView.setNoMore(true);
                 recyclerView.loadMoreComplete();
                 stopLoadProgress();
@@ -871,16 +873,16 @@ public class SubGroupActivity extends BaseAppCompatActivity implements CommonDia
                 subGroupSummaryAdapter.setData(mSubGroupList);
                 subGroupSummaryAdapter.notifyItemRangeInserted(0, 1);
                 subGroupSummaryAdapter.notifyDataSetChanged();
-                if (mSingleGroupList.size() <= PAGE_SIZE){
+                if (mSingleGroupList.size() <= PAGE_SIZE) {
                     recyclerView.loadMoreComplete();
                 }
                 break;
-                case ADD_NEW_TALENT_DONE:
+            case ADD_NEW_TALENT_DONE:
                 addMyNewTalent();
+                subGroupSummaryAdapter.notifyDataSetChanged();
                 break;
             case GET_SINGLE_GROUP_DONE:
                 setSingleGroupHeader();
-                
                 break;
             case GET_MY_GROUP_DONE:
                 setMyGroupView();
@@ -925,13 +927,13 @@ public class SubGroupActivity extends BaseAppCompatActivity implements CommonDia
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
     }
 
-    private void getMyNewAddedGroup(int gid, final boolean isTalent) {
+    private void getMyNewAdded(int gid, final boolean isTalent) {
         RequestBody requestBody = new FormBody.Builder()
                 .add("gid", String.valueOf(gid))
                 .build();
-        
+
         String uri = GET_SUBGROUP_BY_GID;
-        if (isTalent){
+        if (isTalent) {
             uri = GET_SINGLE_GROUP_BY_GID;
         }
 
@@ -942,7 +944,7 @@ public class SubGroupActivity extends BaseAppCompatActivity implements CommonDia
 
                 if (response.body() != null) {
                     String responseText = response.body().string();
-                    if (isDebug) Slog.d(TAG, "==========response text : " + responseText);
+                    if (isDebug) Slog.d(TAG, "==========getMyNewAdded response text : " + responseText);
                     if (responseText != null && !TextUtils.isEmpty(responseText)) {
                         JSONObject subGroupResponse = null;
                         try {
