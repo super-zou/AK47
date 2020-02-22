@@ -3,10 +3,10 @@ package com.hetang.main;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.Nullable;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
+import androidx.annotation.Nullable;
+import com.google.android.material.tabs.TabLayout;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.ViewPager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +20,7 @@ import com.hetang.util.HttpUtil;
 import com.hetang.common.MyApplication;
 import com.hetang.message.NotificationFragment;
 import com.hetang.util.Slog;
+import com.tencent.qcloud.tim.uikit.modules.conversation.ConversationManagerKit;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,7 +39,7 @@ import okhttp3.Response;
  * Created by super-zou on 17-9-11.
  */
 
-public class MessageFragment extends Fragment implements ReminderManager.UnreadNumChangedCallback {
+public class MessageFragment extends Fragment implements ReminderManager.UnreadNumChangedCallback , ConversationManagerKit.MessageUnreadWatcher{
     private static final String TAG = "MessageFragment";
     private static final boolean isDebug = false;
     private TabLayout mTabLayout;
@@ -74,8 +75,6 @@ public class MessageFragment extends Fragment implements ReminderManager.UnreadN
         mViewPager = (ViewPager) view.findViewById(R.id.message_view_pager);
         
         //获取标签数据
-        //notification_tab = mTabLayout.newTab().setText(mMessageTitleList.get(0));
-        //letter_tab = mTabLayout.newTab().setText(mMessageTitleList.get(1));
         notification_tab = mTabLayout.newTab();
         letter_tab = mTabLayout.newTab();
 
@@ -127,6 +126,26 @@ public class MessageFragment extends Fragment implements ReminderManager.UnreadN
 
             }
         });
+
+        // 未读消息监视器
+        ConversationManagerKit.getInstance().addUnreadWatcher(this);
+    }
+
+    @Override
+    public void updateUnread(int unReadCount) {
+        Slog.d(TAG, "------------------>updateUnread: "+unReadCount);
+        TextView unRead = mTabLayout.getTabAt(1).getCustomView().findViewById(R.id.count);
+        if (unReadCount > 0){
+            if (unRead.getVisibility() == View.GONE) {
+                unRead.setVisibility(View.VISIBLE);
+            }
+            unRead.setText(String.valueOf(unReadCount));
+        }else {
+            if (unRead.getVisibility() == View.VISIBLE) {
+                unRead.setVisibility(View.GONE);
+            }
+            unRead.setText("");
+        }
     }
     
     @Override

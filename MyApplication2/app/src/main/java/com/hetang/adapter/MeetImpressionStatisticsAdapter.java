@@ -2,8 +2,9 @@ package com.hetang.adapter;
 
 import android.content.Context;
 import android.graphics.Typeface;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,9 +30,9 @@ public class MeetImpressionStatisticsAdapter extends RecyclerView.Adapter<MeetIm
     private MyItemClickListener mItemClickListener;
     private List<MeetArchiveFragment.ImpressionStatistics> mImpressionStatisticsList;
     //private ApprovedUsersDialogFragment approvedUsersDialogFragment;
-    private android.support.v4.app.FragmentManager mFragmentManager;
+    private FragmentManager mFragmentManager;
 
-    public MeetImpressionStatisticsAdapter(Context context, android.support.v4.app.FragmentManager fragmentManager) {
+    public MeetImpressionStatisticsAdapter(Context context, FragmentManager fragmentManager) {
 
         mContext = context;
         mFragmentManager = fragmentManager;

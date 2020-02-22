@@ -1,25 +1,16 @@
 package com.hetang.adapter;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.hetang.R;
-import com.hetang.common.MyApplication;
-import com.hetang.common.TalentEvaluatorDetailsActivity;
-import com.hetang.meet.EvaluatorDetailsActivity;
-import com.hetang.util.HttpUtil;
-import com.hetang.util.ParseUtils;
-import com.hetang.util.RoundImageView;
-import com.nex3z.flowlayout.FlowLayout;
-import com.willy.ratingbar.ScaleRatingBar;
+import com.hetang.talent.TalentEvaluatorDetailsActivity;
 
 import java.util.ArrayList;
 import java.util.List;

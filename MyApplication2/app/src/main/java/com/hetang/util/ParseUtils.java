@@ -44,6 +44,9 @@ public class ParseUtils {
     public static final String GET_SPECIFIC_VOLUNTEER_URL = HttpUtil.DOMAIN + "?q=personal_archive/get_specific_volunteer";
     public static final String GET_SPECIFIC_BLOG_URL = HttpUtil.DOMAIN + "?q=personal_archive/get_specific_blog";
 
+    public static final String DEFAULT_MALE_AVATAR_URL = HttpUtil.DOMAIN + "sites/default/files/userdata/common_avatar/male_default_avator.png";
+    public static final String DEFAULT_FEMALE_AVATAR_URL = HttpUtil.DOMAIN + "sites/default/files/userdata/common_avatar/female_default_avator.png";
+
     public static final int TYPE_EVALUATE = 0;
     public static final int TYPE_REFERENCE = 1;
     public static final int TYPE_PERSONALITY = 2;
@@ -173,7 +176,14 @@ public class ParseUtils {
     }
     
     public static UserProfile getUserProfile(int uid){
-        RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
+        RequestBody requestBody;
+        FormBody.Builder builder = new FormBody.Builder();
+        //RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
+        if (uid > 0){
+            requestBody = builder.add("uid", String.valueOf(uid)).build();
+        }else {
+            requestBody = builder.build();
+        }
         Response response = HttpUtil.sendOkHttpRequestSync(MyApplication.getContext(), GET_USER_PROFILE_URL, requestBody, null);
         if (response != null){
             try {
@@ -351,6 +361,7 @@ public class ParseUtils {
                         for (int i = 0; i < referenceArray.length(); i++) {
                             meetReferenceInfo = new MeetReferenceInfo();
                             JSONObject reference = referenceArray.getJSONObject(i);
+                            meetReferenceInfo.setRid(reference.optInt("rid"));
                             meetReferenceInfo.setRefereeName(reference.optString("nickname"));
                             meetReferenceInfo.setRelation(reference.optString("relation"));
                             String profile = "";

@@ -1,8 +1,10 @@
 package com.hetang.adapter;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
+import android.graphics.Typeface;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -12,6 +14,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.hetang.common.MyApplication;
+import com.hetang.common.OnItemClickListener;
+import com.hetang.util.FontManager;
 import com.nex3z.flowlayout.FlowLayout;
 import com.hetang.R;
 import com.hetang.meet.EvaluatorDetailsActivity;
@@ -23,7 +27,9 @@ import com.willy.ratingbar.ScaleRatingBar;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.hetang.common.MyApplication.getContext;
 import static com.hetang.util.ParseUtils.startMeetArchiveActivity;
+import static com.hetang.util.SharedPreferencesUtils.getSessionUid;
 
 public class EvaluatorDetailsAdapter extends RecyclerView.Adapter<EvaluatorDetailsAdapter.ViewHolder> {
     private static final String TAG = "EvaluatorDetailsAdapter";
@@ -55,9 +61,9 @@ public class EvaluatorDetailsAdapter extends RecyclerView.Adapter<EvaluatorDetai
             Glide.with(context).load(HttpUtil.DOMAIN + avatar).into(holder.avatar);
         } else {
             if(evaluatorDetails.getSex() == 0){
-                holder.avatar.setImageDrawable(MyApplication.getContext().getDrawable(R.drawable.male_default_avator));
+                holder.avatar.setImageDrawable(getContext().getDrawable(R.drawable.male_default_avator));
             }else {
-                holder.avatar.setImageDrawable(MyApplication.getContext().getDrawable(R.drawable.female_default_avator));
+                holder.avatar.setImageDrawable(getContext().getDrawable(R.drawable.female_default_avator));
             }
         }
         
@@ -68,6 +74,16 @@ public class EvaluatorDetailsAdapter extends RecyclerView.Adapter<EvaluatorDetai
         //Slog.d(TAG, "=====================getImpression: " + evaluatorDetails.getFeatures());
 
         String features = evaluatorDetails.getFeatures();
+
+        if (evaluatorDetails.getEvaluatorUid() == getSessionUid(getContext())){
+            holder.edit.setVisibility(View.VISIBLE);
+            holder.edit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mItemClickListener.onItemClick(position, view);
+                }
+            });
+        }
         
         if (!"".equals(features) && !"null".equals(features)) {
             if(holder.features.getTag() == null){
@@ -101,15 +117,23 @@ public class EvaluatorDetailsAdapter extends RecyclerView.Adapter<EvaluatorDetai
             diyTextView.setPadding((int) dpToPx(8), (int) dpToPx(8), (int) dpToPx(8), (int) dpToPx(8));
             diyTextView.setText(featureArray[i]);
             diyTextView.setGravity(Gravity.CENTER);
-            diyTextView.setBackground(context.getDrawable(R.drawable.label_bg));
+            diyTextView.setTextColor(getContext().getResources().getColor(R.color.white));
+            diyTextView.setBackground(context.getDrawable(R.drawable.btn_big_radius_primary));
             featureView.addView(diyTextView);
         }
+
         featureView.setTag(evaluatorDetails);
     }
 
     @Override
     public int getItemCount() {
         return null != mEvaluatorDetailsList ? mEvaluatorDetailsList.size() : 0;
+    }
+
+    private OnItemClickListener mItemClickListener;
+
+    public void setOnItemClickListener(OnItemClickListener l) {
+        this.mItemClickListener = l;
     }
 
     private float dpToPx(float dp) {
@@ -123,6 +147,7 @@ public class EvaluatorDetailsAdapter extends RecyclerView.Adapter<EvaluatorDetai
         ScaleRatingBar scaleRatingBar;
         FlowLayout features;
         TextView rating;
+        TextView edit;
 
         public ViewHolder(View view) {
             super(view);
@@ -132,6 +157,10 @@ public class EvaluatorDetailsAdapter extends RecyclerView.Adapter<EvaluatorDetai
             scaleRatingBar = view.findViewById(R.id.charm_rating);
             rating = view.findViewById(R.id.rating);
             features = view.findViewById(R.id.features);
+            edit = view.findViewById(R.id.edit);
+
+            Typeface font = Typeface.createFromAsset(getContext().getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
+            FontManager.markAsIconContainer(view.findViewById(R.id.edit), font);
         }
     }
 

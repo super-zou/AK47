@@ -2,9 +2,9 @@ package com.hetang.main;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.TabLayout;
-import android.support.v4.view.ViewPager;
+import androidx.annotation.Nullable;
+import com.google.android.material.tabs.TabLayout;
+import androidx.viewpager.widget.ViewPager;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -80,6 +80,7 @@ public class MeetFragment extends BaseFragment {
 
         //将TabLayout和ViewPager关联起来
         mTabLayout.setupWithViewPager(mViewPager);
+
         
         mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override

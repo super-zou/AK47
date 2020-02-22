@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android" 
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/custom_actionbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -32,7 +32,6 @@
 
         <Button
             android:id="@+id/become_talent"
-            android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="38dp"
             android:layout_marginEnd="8dp"
@@ -42,7 +41,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
     <ImageView
         android:id="@+id/animal_progress"
         android:layout_width="match_parent"
@@ -61,7 +60,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/custom_actionbar"></com.jcodecraeer.xrecyclerview.XRecyclerView>
     
-    <android.support.design.widget.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/create_single_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -71,6 +70,6 @@
         android:src="@drawable/ic_plus"
         app:backgroundTint="@color/blue_dark"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"></android.support.design.widget.FloatingActionButton>
+        app:layout_constraintEnd_toEndOf="parent"></com.google.android.material.floatingactionbutton.FloatingActionButton>
     
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

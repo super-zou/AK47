@@ -1,25 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background">
+    android:fitsSystemWindows="true"
+    android:background="@color/white">
 
-    <include
-        android:id="@+id/custom_actionbar"
-        layout="@layout/custom_actionbar_common"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/left_back"
+        android:layout_width="35dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="3dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:paddingLeft="12dp"
+        android:paddingRight="8dp"
+        android:text="@string/left_angle"
+        android:textSize="28sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-        
-        <LinearLayout
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:padding="3dp"
+        android:singleLine="true"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/left_back"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/left_back" />
+
+    <LinearLayout
         android:id="@+id/send_notice"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -28,7 +43,7 @@
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/custom_actionbar">
+        app:layout_constraintTop_toBottomOf="@+id/left_back">
 
         <TextView
             android:id="@+id/send_sms_code_title"
@@ -37,9 +52,8 @@
             android:layout_marginRight="3dp"
             android:layout_weight="1"
             android:gravity="right"
-            android:textColor="@color/white"
             android:text="@string/send_verification_code" />
-            
+
         <TextView
             android:id="@+id/phone_number"
             android:layout_width="0dp"
@@ -47,8 +61,8 @@
             android:layout_marginLeft="3dp"
             android:layout_weight="1"
             android:gravity="left"
-            android:textStyle="bold"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <LinearLayout
@@ -56,14 +70,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
+        android:orientation="horizontal"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
-        android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="@+id/send_notice"
         app:layout_constraintStart_toStartOf="@+id/send_notice"
         app:layout_constraintTop_toBottomOf="@+id/send_notice">
-        
-        <android.support.design.widget.TextInputLayout
+
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/verification_code_textInputlayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -72,30 +86,29 @@
             app:errorTextAppearance="@style/TextErrorAppearance"
             app:hintTextAppearance="@style/HintAppearance">
 
-            <android.support.design.widget.TextInputEditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/verification_code_edittext"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="number"
                 android:hint="@string/enter_verification_code"
-                android:textColor="@color/white"
-                android:textSize="32sp"
+                android:inputType="number"
                 android:textCursorDrawable="@drawable/cursor_color"
+                android:textSize="32sp"
                 android:theme="@style/MyEditText" />
-        </android.support.design.widget.TextInputLayout>
-        
+        </com.google.android.material.textfield.TextInputLayout>
+
         <TextView
             android:id="@+id/resend"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
             android:layout_weight="2"
             android:paddingTop="24dp"
-            android:layout_marginLeft="8dp"
             android:text="@string/get_verification_code"
             android:textColor="@color/color_dark_disabled"
             android:textSize="16sp" />
     </LinearLayout>
-    
+
     <Button
         android:id="@+id/confirm"
         android:layout_width="match_parent"
@@ -113,4 +126,4 @@
         app:layout_constraintTop_toBottomOf="@+id/verification_code_layout" />
 
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

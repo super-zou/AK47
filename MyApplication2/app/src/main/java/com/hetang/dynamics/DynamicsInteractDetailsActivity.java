@@ -10,11 +10,11 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.constraint.ConstraintLayout;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.ActionBar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -73,7 +73,7 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
+import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 import static com.hetang.meet.MeetDynamicsFragment.DYNAMICS_PRAISED;
 import static com.hetang.meet.MeetDynamicsFragment.GET_DYNAMICS_WITH_ID_URL;
@@ -565,7 +565,8 @@ private void setDynamicContentView(View view, String pictures){
             }
             
             final RequestOptions requestOptions = new RequestOptions()
-                    .placeholder(mContext.getDrawable(R.mipmap.hetang_icon))
+                    //.placeholder(mContext.getDrawable(R.mipmap.hetang_icon))
+                    .placeholder(mContext.getResources().getDrawable(R.drawable.icon))
                     .diskCacheStrategy(DiskCacheStrategy.RESOURCE);
             final List<Drawable> drawableList = new ArrayList<>();
             for (int i = 0; i < length; i++) {

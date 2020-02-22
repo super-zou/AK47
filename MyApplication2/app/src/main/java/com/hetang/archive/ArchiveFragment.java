@@ -6,9 +6,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
-import android.support.design.widget.TextInputEditText;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import com.google.android.material.textfield.TextInputEditText;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,9 +22,9 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.hetang.R;
-import com.hetang.common.Chat;
 import com.hetang.common.MyApplication;
 import com.hetang.common.SettingsActivity;
+import com.hetang.contacts.ChatActivity;
 import com.hetang.util.BaseFragment;
 import com.hetang.util.CommonUserListDialogFragment;
 import com.hetang.util.FontManager;
@@ -35,6 +35,8 @@ import com.hetang.common.SetAvatarActivity;
 import com.hetang.util.SharedPreferencesUtils;
 import com.hetang.util.Slog;
 import com.hetang.util.UserProfile;
+import com.tencent.imsdk.TIMConversationType;
+import com.tencent.qcloud.tim.uikit.modules.chat.base.ChatInfo;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -62,7 +64,6 @@ import static com.hetang.main.MeetArchiveFragment.GET_LOGGEDIN_ACCOUNT;
 import static com.hetang.main.MeetArchiveFragment.GET_PRAISE_STATISTICS_URL;
 import static com.hetang.main.MeetArchiveFragment.GET_PRAISE_STATISTICS_URL_DONE;
 import static com.hetang.main.MeetArchiveFragment.PRAISED;
-import static com.hetang.util.SharedPreferencesUtils.getYunXinAccount;
 
 /**
  * Created by super-zou on 17-9-11.
@@ -70,7 +71,7 @@ import static com.hetang.util.SharedPreferencesUtils.getYunXinAccount;
 
 public class ArchiveFragment extends BaseFragment {
     private static final String TAG = "ArchiveFragment";
-    private static final boolean isDebug = false;
+    private static final boolean isDebug = true;
     private Handler handler;
     UserProfile userProfile;
     JSONObject mSummary = null;
@@ -124,7 +125,6 @@ public class ArchiveFragment extends BaseFragment {
     Typeface font;
     private int contactStatus = -1;
     View mView;
-    Chat chat;
     TextView mSettings;
 
     @Nullable
@@ -220,6 +220,7 @@ public class ArchiveFragment extends BaseFragment {
     }
 
     private void getUserProfile(int uid) {
+        Slog.d(TAG, "-------------------------------->uid: "+uid);
         RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
         HttpUtil.sendOkHttpRequest(getContext(), GET_USER_PROFILE_URL, requestBody, new Callback() {
             @Override
@@ -1346,13 +1347,19 @@ public class ArchiveFragment extends BaseFragment {
             follow.setVisibility(View.GONE);
 
             chatBtn.setVisibility(View.VISIBLE);
-            if (null == chat) {
-                chat = new Chat();
-            }
+
             chatBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    chat.processChat(getActivity(), getYunXinAccount(getActivity()), userProfile.getInit());
+                    //chat.processChat(getActivity(), getYunXinAccount(getActivity()), userProfile.getInit());
+                    ChatInfo chatInfo = new ChatInfo();
+                    chatInfo.setType(TIMConversationType.C2C);
+                    chatInfo.setId(String.valueOf(userProfile.getUid()));
+                    chatInfo.setChatName(userProfile.getNickName());
+                    //chatInfo.setId();
+                    Intent intent = new Intent(getContext(), ChatActivity.class);
+                    intent.putExtra("CHAT_INFO", chatInfo);
+                    startActivity(intent);
                 }
             });
         }

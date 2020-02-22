@@ -11,12 +11,12 @@ import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.GridLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.appcompat.app.AlertDialog;
+import androidx.gridlayout.widget.GridLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -44,6 +44,7 @@ import com.hetang.home.CommonContactsActivity;
 import com.hetang.home.HomeFragment;
 import com.hetang.meet.MeetDynamicsFragment;
 import com.hetang.meet.UserMeetInfo;
+import com.hetang.picture.GlideEngine;
 import com.hetang.util.CommonDialogFragmentInterface;
 import com.hetang.util.CommonUserListDialogFragment;
 import com.hetang.util.FontManager;
@@ -58,6 +59,8 @@ import com.hetang.util.UserProfile;
 import com.hetang.util.Utility;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
+import com.luck.picture.lib.PictureSelector;
+import com.luck.picture.lib.entity.LocalMedia;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -74,7 +77,7 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import static com.hetang.dynamics.DynamicOperationDialogFragment.DYNAMIC_OPERATION_RESULT;
-import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
+import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static com.hetang.common.MyApplication.getContext;
 import static com.hetang.common.SetAvatarActivity.MODIFY_LOGO;
 import static com.hetang.common.SetAvatarActivity.MODIFY_SUBGROUP_LOGO_RESULT_OK;
@@ -97,9 +100,6 @@ import static com.hetang.util.ParseUtils.FEMALE;
 import static com.hetang.util.ParseUtils.MALE;
 import static com.hetang.util.ParseUtils.startMeetArchiveActivity;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
-
-//import android.widget.GridLayout;
-
 
 public class SubGroupDetailsActivity extends BaseAppCompatActivity implements CommonDialogFragmentInterface {
     public static final String GET_SUBGROUP_BY_GID = HttpUtil.DOMAIN + "?q=subgroup/get_by_gid";
@@ -167,7 +167,6 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
         }
         //getSubGroupByGid();
         initView();
-
     }
 
     private void initView() {
@@ -229,7 +228,6 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
             public void onRefresh() {
                 //updateData();
             }
-
             @Override
             public void onLoadMore() {
                 loadData();
@@ -244,14 +242,11 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
             @Override
             public void onCommentClick(View view, int position) {
                 currentPos = position;
-                //createCommentDetails(meetList.get(position).getDid(), meetList.get(position).getCommentCount());
                 createCommentDetails(dynamicList.get(position));
-
             }
 
             @Override
             public void onPraiseClick(View view, int position) {
-
                 Bundle bundle = new Bundle();
                 bundle.putInt("type", DYNAMICS_PRAISED);
                 bundle.putLong("did", dynamicList.get(position).getDid());
@@ -259,12 +254,11 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
                 CommonUserListDialogFragment commonUserListDialogFragment = new CommonUserListDialogFragment();
                 commonUserListDialogFragment.setArguments(bundle);
                 commonUserListDialogFragment.show(getSupportFragmentManager(), "CommonUserListDialogFragment");
-
             }
 
             @Override
             public void onDynamicPictureClick(View view, int position, String[] pictureUrlArray, int index) {
-                dynamicsFragment.startPicturePreview(index, pictureUrlArray);
+                startPicturePreview(position, pictureUrlArray);
             }
 
             @Override
@@ -356,6 +350,22 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
         getSubGroupByGid();
 
         loadData();
+    }
+
+    public void startPicturePreview(int position, String[] pictureUrlArray){
+        Slog.d(TAG, "------------------->startPicturePreview: "+"position: "+position+" picture array length: "+pictureUrlArray.length);
+        List<LocalMedia> localMediaList = new ArrayList<>();
+        for (int i=0; i<pictureUrlArray.length; i++){
+            LocalMedia localMedia = new LocalMedia();
+            localMedia.setPath(HttpUtil.getDomain()+pictureUrlArray[i]);
+            localMediaList.add(localMedia);
+        }
+
+        PictureSelector.create(this)
+                .themeStyle(R.style.picture_default_style) // xml设置主题
+                .loadImageEngine(GlideEngine.createGlideEngine())// 外部传入图片加载引擎，必传项
+                .openExternalPreview(position, localMediaList);
+
     }
 
     public int getAuthenticationStatus() {

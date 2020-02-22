@@ -13,6 +13,10 @@ public class MeetReferenceInfo extends UserProfile{
     private Long created;
     private String avatar;
     private int uid = 0;
+    private int rid;
+
+    public void setRid(int rid){ this.rid = rid; }
+    public int getRid(){ return rid; }
 
     public String getRefereeName() {
         return refereeName;
@@ -45,4 +49,6 @@ public class MeetReferenceInfo extends UserProfile{
     public void setReferenceContent(String reference_content) {
         this.content = reference_content;
     }
+
+    public String getContent() { return content; }
 }

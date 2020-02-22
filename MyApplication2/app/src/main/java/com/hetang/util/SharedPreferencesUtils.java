@@ -15,7 +15,7 @@ public class SharedPreferencesUtils {
     private static final String NOTIFICATION_SHARED_NAME = "notification";
     private static final String ACCOUNT = "account";//account is phone number or email
     private static final String CHECK_UPDATE_TIME = "check_update_time";
-    private static final String SESSION = "session";
+    private static final String SESSION = "conversation_fragment";
     private static final String AUTHOR_UID = "uid";
     private static final String SEX = "sex";
     private static final String PASSWORD = "password";
@@ -30,6 +30,7 @@ public class SharedPreferencesUtils {
     private static final String LAST_SINGLE_GROUP = "last_dynamics";
     private static final String TIME_STAMP = "time_stamp";
     private static final String LAST_NOTIFICATION = "last_notification";
+    private static final String TUIKIT_AUTO_LOGIN = "auto_login";
 
     private static SharedPreferences getSharePreferences(Context context, String type) {
         return context.getSharedPreferences(type, Context.MODE_PRIVATE);
@@ -50,6 +51,14 @@ public class SharedPreferencesUtils {
 
     public static void setName(Context context, String name) {
         getSharePreferences(context, ACCOUNT_SHARED_NAME).edit().putString(NAME, name).apply();
+    }
+
+    public static Boolean getTuiKitAutoLogin(Context context) {
+        return getSharePreferences(context, ACCOUNT_SHARED_NAME).getBoolean(TUIKIT_AUTO_LOGIN, false);
+    }
+
+    public static void setTuiKitAutoLogin(Context context, boolean autoLogin) {
+        getSharePreferences(context, ACCOUNT_SHARED_NAME).edit().putBoolean(TUIKIT_AUTO_LOGIN, autoLogin).apply();
     }
     
     public static int getUid(Context context) {
@@ -83,25 +92,6 @@ public class SharedPreferencesUtils {
     public static void setAccountType(Context context, int type) {
         getSharePreferences(context, ACCOUNT_SHARED_NAME).edit().putInt(ACCOUNT_TYPE, type).apply();
     }
-
-    public static String getYunXinToken(Context context) {
-        return getSharePreferences(context, ACCOUNT_SHARED_NAME).getString(TOKEN, "");
-    }
-    public static void setYunXinToken(Context context, String token) {
-        getSharePreferences(context, ACCOUNT_SHARED_NAME).edit().putString(TOKEN, token).apply();
-    }
-
-    //Begin: for yunxin account
-    public static String getYunXinAccount(Context context) {
-        return getSharePreferences(context, YUNXIN_ACCOUNT_SHARED_NAME).getString(YUNXIN_ACCOUNT, "");
-    }
-
-    public static void setYunXinAccount(Context context, String accid) {//accid is phone number
-        if (!accid.equals(getYunXinAccount(context))){
-            getSharePreferences(context, YUNXIN_ACCOUNT_SHARED_NAME).edit().putString(YUNXIN_ACCOUNT, accid).apply();
-        }
-    }
-    //End: for yunxin account
 
     public static String getRecommendLast(Context context) {
         return getSharePreferences(context, MEET_RECOMMNED_SHARED_NAME).getString(LAST_RECOMMNED, "");

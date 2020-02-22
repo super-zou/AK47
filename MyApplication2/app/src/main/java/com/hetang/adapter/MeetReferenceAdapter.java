@@ -2,16 +2,17 @@ package com.hetang.adapter;
 
 import android.content.Context;
 import android.graphics.Typeface;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.ImageView;
+
 import com.bumptech.glide.Glide;
 
 import com.hetang.R;
+import com.hetang.common.OnItemClickListener;
 import com.hetang.meet.MeetReferenceInfo;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
@@ -21,7 +22,9 @@ import com.hetang.util.RoundImageView;
 
 import java.util.List;
 
+import static com.hetang.common.MyApplication.getContext;
 import static com.hetang.util.ParseUtils.startMeetArchiveActivity;
+import static com.hetang.util.SharedPreferencesUtils.getSessionUid;
 
 /**
  * Created by super-zou on 18-9-21.
@@ -67,6 +70,16 @@ public class MeetReferenceAdapter extends RecyclerView.Adapter<MeetReferenceAdap
                 holder.refereeHeadUri.setImageDrawable(MyApplication.getContext().getDrawable(R.drawable.female_default_avator));
             }
         }
+
+        if (referenceInfo.getUid() == getSessionUid(getContext())){
+            holder.edit.setVisibility(View.VISIBLE);
+            holder.edit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mItemClickListener.onItemClick(position, view);
+                }
+            });
+        }
         
         holder.refereeHeadUri.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,6 +97,12 @@ public class MeetReferenceAdapter extends RecyclerView.Adapter<MeetReferenceAdap
 
     }
 
+    private OnItemClickListener mItemClickListener;
+
+    public void setOnItemClickListener(OnItemClickListener l) {
+        this.mItemClickListener = l;
+    }
+
     @Override
     public int getItemCount() {
         return mReferenceList != null ? mReferenceList.size() : 0;
@@ -98,6 +117,7 @@ public class MeetReferenceAdapter extends RecyclerView.Adapter<MeetReferenceAdap
         TextView referenceContent;
         TextView createdView;
         TextView commentIcon;
+        TextView edit;
 
         public ReferenceViewHolder(View view) {
             super(view);
@@ -107,6 +127,7 @@ public class MeetReferenceAdapter extends RecyclerView.Adapter<MeetReferenceAdap
             refereeProfile = view.findViewById(R.id.referee_profile);
             thumbsUpIcon = view.findViewById(R.id.thumbs_up_icon);
             commentIcon = view.findViewById(R.id.comment_icon);
+            edit = view.findViewById(R.id.edit);
             //createdView = view.findViewById(R.id.dynamic_time);
             referenceContent = view.findViewById(R.id.reference_content);
             //commentList = (LinearLayout) view.findViewById(R.id.dynamics_comments);

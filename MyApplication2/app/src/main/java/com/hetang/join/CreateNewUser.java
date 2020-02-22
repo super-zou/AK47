@@ -2,7 +2,6 @@ package com.hetang.join;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
@@ -10,13 +9,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.NonNull;
-import android.support.design.widget.TextInputEditText;
-import android.support.design.widget.TextInputLayout;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -68,7 +67,6 @@ import static com.hetang.util.SharedPreferencesUtils.setAccountType;
 import static com.hetang.util.SharedPreferencesUtils.setLoginedAccountSex;
 import static com.hetang.util.SharedPreferencesUtils.setName;
 import static com.hetang.util.SharedPreferencesUtils.setPassWord;
-import static com.hetang.util.SharedPreferencesUtils.setYunXinAccount;
 
 public class CreateNewUser extends BaseAppCompatActivity {
     private static final String TAG = "CreateNewUser";
@@ -215,6 +213,7 @@ public class CreateNewUser extends BaseAppCompatActivity {
                         
                         NiceSpinner niceSpinnerDegree = findViewById(R.id.nice_spinner_degree);
                         final List<String> degreeList = new LinkedList<>(Arrays.asList(degrees));
+                        niceSpinnerDegree.setBackgroundResource(R.drawable.border_all);
                         niceSpinnerDegree.attachDataSource(degreeList);
                         niceSpinnerDegree.addOnItemClickListener(new AdapterView.OnItemClickListener() {
                             @Override
@@ -555,7 +554,7 @@ public class CreateNewUser extends BaseAppCompatActivity {
                 setPassWord(MyApplication.getContext(), password);
                 setAccountType(MyApplication.getContext(), 0);
                 setLoginedAccountSex(MyApplication.getContext(), sex);
-                setYunXinAccount(MyApplication.getContext(), account);
+                //setYunXinAccount(MyApplication.getContext(), account);
                 Intent intent = new Intent(CreateNewUser.this, LoginSplash.class);
                 startActivity(intent);
                 finish();
@@ -631,7 +630,7 @@ public class CreateNewUser extends BaseAppCompatActivity {
         });
 
         Typeface font = Typeface.createFromAsset(getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
-        FontManager.markAsIconContainer(findViewById(R.id.custom_actionbar), font);
+        FontManager.markAsIconContainer(findViewById(R.id.left_back), font);
         FontManager.markAsIconContainer(findViewById(R.id.create_next), font);
     }
     

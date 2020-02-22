@@ -5,14 +5,17 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ActivityInfo;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -20,12 +23,13 @@ import android.widget.ImageView;
 
 import com.hetang.R;
 import com.hetang.adapter.MeetDynamicsListAdapter;
+import com.hetang.common.PicturePreviewActivity;
 import com.hetang.dynamics.AddDynamicsActivity;
 import com.hetang.dynamics.Dynamic;
 import com.hetang.dynamics.DynamicsInteractDetailsActivity;
 import com.hetang.common.MyApplication;
-import com.hetang.common.PicturePreviewActivity;
 import com.hetang.home.HomeFragment;
+import com.hetang.picture.GlideEngine;
 import com.hetang.util.BaseFragment;
 import com.hetang.util.CommonDialogFragmentInterface;
 import com.hetang.util.CommonUserListDialogFragment;
@@ -37,6 +41,8 @@ import com.hetang.util.SharedPreferencesUtils;
 import com.hetang.util.Slog;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
+import com.luck.picture.lib.PictureExternalPreviewActivity;
+import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.entity.LocalMedia;
 import com.luck.picture.lib.tools.DoubleUtils;
@@ -58,7 +64,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static com.hetang.dynamics.DynamicOperationDialogFragment.DYNAMIC_OPERATION_RESULT;
-import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
+import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static com.hetang.home.HomeFragment.GET_MY_NEW_ADD_DONE;
 import static com.hetang.home.HomeFragment.GET_MY_NEW_ADD_DYNAMICS_URL;
 import static com.hetang.util.ParseUtils.ADD_SUBGROUP_ACTIVITY_ACTION;
@@ -92,7 +98,6 @@ public class MeetDynamicsFragment extends BaseFragment implements CommonDialogFr
     public static final String GET_DYNAMICS_UPDATE_URL = HttpUtil.DOMAIN + "?q=dynamic/action/update";
     public static final String REQUEST_INTERACT_URL = HttpUtil.DOMAIN + "?q=dynamic/interact/get";
     public static final String GET_DYNAMICS_WITH_ID_URL = HttpUtil.DOMAIN + "?q=dynamic/get_with_id";
-
 
     JSONObject dynamics_response;
     JSONObject commentResponse;
@@ -259,6 +264,7 @@ public class MeetDynamicsFragment extends BaseFragment implements CommonDialogFr
     }
 
     public void startPicturePreview(int position, String[] pictureUrlArray){
+        Slog.d(TAG, "------------------->startPicturePreview: "+"position: "+position+" picture array length: "+pictureUrlArray.length);
         List<LocalMedia> localMediaList = new ArrayList<>();
         for (int i=0; i<pictureUrlArray.length; i++){
             LocalMedia localMedia = new LocalMedia();
@@ -266,14 +272,11 @@ public class MeetDynamicsFragment extends BaseFragment implements CommonDialogFr
             localMediaList.add(localMedia);
         }
 
-        //PictureSelector.create(MeetDynamicsFragment.this).externalPicturePreview(index, localMediaList);
-        if (!DoubleUtils.isFastDoubleClick()) {
-            Intent intent = new Intent(getContext(), PicturePreviewActivity.class);
-            intent.putExtra(PictureConfig.EXTRA_PREVIEW_SELECT_LIST, (Serializable) localMediaList);
-            intent.putExtra(PictureConfig.EXTRA_POSITION, position);
-            getContext().startActivity(intent);
-            //getContext().overridePendingTransition(R.anim.a5, 0);
-        }
+        PictureSelector.create(this)
+                .themeStyle(R.style.picture_default_style) // xml设置主题
+                .loadImageEngine(GlideEngine.createGlideEngine())// 外部传入图片加载引擎，必传项
+                .openExternalPreview(position, localMediaList);
+
     }
 
     @Override

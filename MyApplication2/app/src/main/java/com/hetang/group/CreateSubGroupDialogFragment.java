@@ -11,7 +11,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -26,7 +26,9 @@ import android.widget.Toast;
 
 import com.hetang.R;
 import com.hetang.common.MyApplication;
-import com.hetang.group.SubGroupActivity;
+import com.hetang.common.SetAvatarActivity;
+import com.hetang.dynamics.AddDynamicsActivity;
+import com.hetang.picture.GlideEngine;
 import com.hetang.util.BaseDialogFragment;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
@@ -36,6 +38,7 @@ import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
+import com.luck.picture.lib.style.PictureWindowAnimationStyle;
 
 import org.angmarch.views.NiceSpinner;
 import org.json.JSONException;
@@ -82,6 +85,7 @@ public class CreateSubGroupDialogFragment extends BaseDialogFragment {
     private String org = "";
     private boolean isModify = false;
     private SubGroupActivity.SubGroup subGroup;
+    private AddDynamicsActivity addDynamicsActivity;
 
     @Override
     public void onAttach(Context context) {
@@ -150,6 +154,9 @@ public class CreateSubGroupDialogFragment extends BaseDialogFragment {
     }
 
     private void initView() {
+        if (addDynamicsActivity == null){
+            addDynamicsActivity = new AddDynamicsActivity();
+        }
         String[] universityArray = getResources().getStringArray(R.array.university);
         NiceSpinner niceSpinnerUniversity = mDialog.findViewById(R.id.university_spinner);
         final List<String> universityList = new LinkedList<>(Arrays.asList(universityArray));
@@ -203,33 +210,49 @@ public class CreateSubGroupDialogFragment extends BaseDialogFragment {
         final int width = dm.widthPixels;
         final int screenHeight = width;
 
-        int themeId = R.style.picture_default_style;
-
-        PictureSelector.create(this)
-                .openGallery(PictureMimeType.ofImage())// 全部.PictureMimeType.ofAll()、图片.ofImage()、视频.ofVideo()、音频.ofAudio()
-                .theme(themeId)// 主题样式设置 具体参考 values/styles   用法：R.style.picture.white.style
+        PictureSelector.create(CreateSubGroupDialogFragment.this)
+                .openGallery(PictureMimeType.ofImage())
+                .loadImageEngine(GlideEngine.createGlideEngine())// 外部传入图片加载引擎，必传项
+                .theme(R.style.picture_WeChat_style)// 主题样式设置 具体参考 values/styles   用法：R.style.picture.white.style v2.3.3后 建议使用setPictureStyle()动态方式
+                .isWeChatStyle(true)// 是否开启微信图片选择风格
+                //.isUseCustomCamera(cb_custom_camera.isChecked())// 是否使用自定义相机
+                //.setLanguage(language)// 设置语言，默认中文
+                .setPictureStyle(addDynamicsActivity.getWeChatStyle())// 动态自定义相册主题
+                .setPictureCropStyle(addDynamicsActivity.getCropParameterStyle())// 动态自定义裁剪主题
+                .setPictureWindowAnimationStyle(new PictureWindowAnimationStyle())// 自定义相册启动退出动画
+                //.isWithVideoImage(true)// 图片和视频是否可以同选,只在ofAll模式下有效
                 .maxSelectNum(1)// 最大图片选择数量
                 .minSelectNum(1)// 最小选择数量
-                .selectionMode(PictureConfig.SINGLE)// 多选 or 单选
+                .isReturnEmpty(false)// 未选择数据时点击按钮是否可以返回
+                //.isAndroidQTransform(false)// 是否需要处理Android Q 拷贝至应用沙盒的操作，只针对compress(false); && enableCrop(false);有效,默认处理
+                .selectionMode(PictureConfig.SINGLE )// 多选 or 单选
+                //.isSingleDirectReturn(cb_single_back.isChecked())// 单选模式下是否直接返回，PictureConfig.SINGLE模式下有效
                 .previewImage(true)// 是否可预览图片
                 .isCamera(true)// 是否显示拍照按钮
                 .isZoomAnim(true)// 图片列表点击 缩放效果 默认true
                 //.imageFormat(PictureMimeType.PNG)// 拍照保存图片格式后缀,默认jpeg
-                //.setOutputCameraPath("/CustomPath")// 自定义拍照保存路径
                 .enableCrop(true)// 是否裁剪
+                //.basicUCropConfig()//对外提供所有UCropOptions参数配制，但如果PictureSelector原本支持设置的还是会使用原有的设置
                 .compress(true)// 是否压缩
+                .compressQuality(100)// 图片压缩后输出质量 0~ 100
                 .synOrAsy(true)//同步true或异步false 压缩 默认同步
-                .glideOverride(width, screenHeight)// glide 加载宽高，越小图片列表越流畅，但会影响列表图片浏览的清晰度
+                //.queryMaxFileSize(10)// 只查多少M以内的图片、视频、音频  单位M
+                //.compressSavePath(getPath())//压缩图片保存地址
                 .withAspectRatio(1, 1)// 裁剪比例 如16:9 3:2 3:4 1:1 可自定义
                 //.hideBottomControls(cb_hide.isChecked() ? false : true)// 是否显示uCrop工具栏，默认不显示
-                .isGif(true)// 是否显示gif图片
-                .freeStyleCropEnabled(false)// 裁剪框是否可拖拽
-                .showCropFrame(false)// 是否显示裁剪矩形边框 圆形裁剪时建议设为false
+                //.isGif(cb_isGif.isChecked())// 是否显示gif图片
+                //.freeStyleCropEnabled(true)// 裁剪框是否可拖拽
+                .showCropFrame(true)// 是否显示裁剪矩形边框 圆形裁剪时建议设为false
                 .showCropGrid(true)// 是否显示裁剪矩形网格 圆形裁剪时建议设为false
-                .openClickSound(true)// 是否开启点击声音
-                .cropCompressQuality(100)// 裁剪压缩质量 默认100
+                //.openClickSound(cb_voice.isChecked())// 是否开启点击声音
+                //.selectionMedia(mAdapter.getData())// 是否传入已选图片
+                .isDragFrame(true)// 是否可拖动裁剪框(固定)
+                //.previewEggs(false)// 预览图片时 是否增强左右滑动图片体验(图片滑动一半即可看到上一张是否选中)
+                //.cropCompressQuality(90)// 注：已废弃 改用cutOutQuality()
+                //.cutOutQuality(90)// 裁剪输出质量 默认100
                 .minimumCompressSize(100)// 小于100kb的图片不压缩
                 .cropWH(width, screenHeight)// 裁剪宽高比，设置如果大于图片本身宽高则无效
+                //.cropImageWideHigh(1, 1)// 裁剪宽高比，设置如果大于图片本身宽高则无效
                 .rotateEnabled(true) // 裁剪是否可旋转图片
                 .scaleEnabled(true)// 裁剪是否可放大缩小图片
                 .forResult(PictureConfig.SINGLE);//结果回调onActivityResult code

@@ -6,8 +6,8 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Message;
-import android.support.constraint.ConstraintLayout;
-import android.support.v7.widget.RecyclerView;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -268,7 +268,8 @@ public class SubGroupDetailsListAdapter extends RecyclerView.Adapter<SubGroupDet
             }
 
             final RequestOptions requestOptions = new RequestOptions()
-                    .placeholder(mContext.getDrawable(R.mipmap.hetang_icon))
+                    //.placeholder(mContext.getDrawable(R.mipmap.hetang_icon))
+                    .placeholder(mContext.getResources().getDrawable(R.drawable.icon))
                     .diskCacheStrategy(DiskCacheStrategy.RESOURCE);
             final List<Drawable> drawableList = new ArrayList<>();
 

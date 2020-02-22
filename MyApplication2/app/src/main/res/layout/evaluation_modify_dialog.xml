@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
+
+    <com.willy.ratingbar.ScaleRatingBar
+        android:id="@+id/charm_rating_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srb_clearRatingEnabled="true"
+        app:srb_clickable="true"
+        app:srb_drawableFilled="@drawable/filled"
+        app:srb_isIndicator="false"
+        app:srb_minimumStars="0"
+        app:srb_numStars="5"
+        app:srb_rating="0"
+        app:srb_scrollable="true"
+        app:srb_starHeight="30dp"
+        app:srb_starPadding="6dp"
+        app:srb_starWidth="30dp"
+        app:srb_stepSize="0.5"></com.willy.ratingbar.ScaleRatingBar>
+
+    <TextView
+        android:id="@+id/charm_rating"
+        android:layout_width="53dp"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/charm_rating_bar"
+        android:layout_alignBottom="@+id/charm_rating_bar"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="32dp"
+        android:layout_toEndOf="@+id/charm_rating_bar"
+        android:text=""
+        app:layout_constraintBottom_toBottomOf="@+id/charm_rating_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/charm_rating_bar"
+        app:layout_constraintTop_toTopOf="@+id/charm_rating_bar" />
+
+    <com.nex3z.flowlayout.FlowLayout
+        android:id="@+id/featuresFL"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:padding="8dp"
+        app:flChildSpacing="5dp"
+        app:flRowSpacing="5dp"
+        app:flChildSpacingForLastRow="align"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/charm_rating_bar"></com.nex3z.flowlayout.FlowLayout>
+    
+    <LinearLayout
+        android:id="@+id/add_diy_features"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/featuresFL">
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/feature_input"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="5"
+            android:focusedByDefault="false"
+            android:hint="自定义" />
+
+        <Button
+            android:id="@+id/add_feature"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="2"
+            android:background="@drawable/btn_primary"
+            android:text="+添加"
+            android:textColor="@color/colorWhite" />
+        
+   </LinearLayout>
+
+    <com.nex3z.flowlayout.FlowLayout
+        android:id="@+id/diy_features"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        app:flChildSpacing="8dp"
+        app:flChildSpacingForLastRow="align"
+        app:flRowSpacing="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/add_diy_features">
+
+    </com.nex3z.flowlayout.FlowLayout>
+
+    <Button
+        android:id="@+id/save_features"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/btn_stress"
+        android:text="保存"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/diy_features" />
+    
+   <TextView
+        android:id="@+id/error_notice"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="* 请给该用户打分"
+        android:textColor="@color/color_c51"
+        app:layout_constraintEnd_toEndOf="@+id/save_features"
+        app:layout_constraintStart_toStartOf="@+id/save_features"
+        app:layout_constraintTop_toBottomOf="@+id/save_features" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

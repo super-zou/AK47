@@ -10,9 +10,9 @@ import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -29,14 +29,12 @@ import com.hetang.common.HandlerTemp;
 import com.hetang.common.MyApplication;
 import com.hetang.group.SubGroupActivity;
 import com.hetang.meet.MeetDynamicsFragment;
-import com.hetang.meet.UserMeetInfo;
 import com.hetang.util.BaseFragment;
 import com.hetang.util.CommonUserListDialogFragment;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.InterActInterface;
 import com.hetang.util.ParseUtils;
-import com.hetang.util.PictureReviewDialogFragment;
 import com.hetang.util.SharedPreferencesUtils;
 import com.hetang.util.Slog;
 import com.hetang.util.UserProfile;
@@ -57,7 +55,7 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
+import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static com.hetang.dynamics.AddDynamicsActivity.DYNAMICS_ADD_BROADCAST;
 import static com.hetang.dynamics.DynamicOperationDialogFragment.DYNAMIC_OPERATION_RESULT;
 import static com.hetang.dynamics.DynamicsInteractDetailsActivity.COMMENT_ADD_BROADCAST;
@@ -73,10 +71,7 @@ import static com.hetang.meet.MeetDynamicsFragment.REQUEST_CODE;
 import static com.hetang.meet.MeetDynamicsFragment.NO_MORE_DYNAMICS;
 import static com.hetang.meet.MeetDynamicsFragment.NO_UPDATE;
 import static com.hetang.meet.MeetDynamicsFragment.UPDATE_COMMENT;
-import static com.hetang.util.ParseUtils.ADD_CHEERING_GROUP_MEMBER_ACTION;
 import static com.hetang.util.ParseUtils.ADD_INNER_DYNAMIC_ACTION;
-import static com.hetang.util.ParseUtils.ADD_MEET_DYNAMIC_ACTION;
-import static com.hetang.util.ParseUtils.ADD_SUBGROUP_ACTIVITY_ACTION;
 import static com.hetang.util.ParseUtils.CREATE_GROUP_ACTION;
 import static com.hetang.util.ParseUtils.FOLLOW_GROUP_ACTION;
 import static com.hetang.util.ParseUtils.JOIN_GROUP_ACTION;
@@ -217,13 +212,7 @@ public class HomeFragment extends BaseFragment {
 
             @Override
             public void onDynamicPictureClick(View view, int position, String[] pictureUrlArray, int index) {
-                Bundle bundle = new Bundle();
-                bundle.putInt("index", index);
-                bundle.putStringArray("pictureUrlArray", pictureUrlArray);
-
-                PictureReviewDialogFragment pictureReviewDialogFragment = new PictureReviewDialogFragment();
-                pictureReviewDialogFragment.setArguments(bundle);
-                pictureReviewDialogFragment.show(getFragmentManager(), "PictureReviewDialogFragment");
+                meetDynamicsFragment.startPicturePreview(position, pictureUrlArray);
             }
 
             @Override

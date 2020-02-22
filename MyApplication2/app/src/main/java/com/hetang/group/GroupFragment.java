@@ -10,8 +10,8 @@ import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.constraint.ConstraintLayout;
-import android.support.v4.content.LocalBroadcastManager;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +23,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.hetang.R;
 import com.hetang.common.MyApplication;
+import com.hetang.talent.TalentDetailsActivity;
 import com.hetang.util.BaseFragment;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
@@ -45,11 +46,15 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static com.hetang.common.MyApplication.getContext;
 import static com.hetang.group.SubGroupActivity.GROUP_ADD_BROADCAST;
+import static com.hetang.group.SubGroupActivity.TALENT_ADD_BROADCAST;
 import static com.hetang.group.SubGroupActivity.getSubGroup;
+import static com.hetang.group.SubGroupActivity.getTalent;
 import static com.hetang.group.SubGroupActivity.updateVisitorRecord;
 import static com.hetang.group.SubGroupDetailsActivity.GET_SUBGROUP_BY_GID;
 import static com.hetang.group.SubGroupDetailsActivity.JOIN_GROUP_BROADCAST;
+import static com.hetang.talent.TalentDetailsActivity.GET_TALENT_byID;
 
 public class GroupFragment extends BaseFragment implements View.OnClickListener {
     private static final boolean isDebug = true;
@@ -66,9 +71,13 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
     private static final int LOAD_DATA_DONE = 8;
     private static final int LOAD_MY_GROUP_DONE = 9;
     private static final int LOAD_NEW_JOINED_GROUP_DONE = 10;
+    private static final int LOAD_MY_TALENTS_DONE = 11;
+    private static final int LOAD_NEW_ADDED_TALENT_DONE = 12;
     public static final int SINGLE_GROUP = 20;
 
+    TextView myTalentLabel;
     LinearLayout myGroupWrap;
+    LinearLayout myTalentWrapper;
     ConstraintLayout associationGroup;
     ConstraintLayout publicGoodGroup;
     ConstraintLayout fraternityGroup;
@@ -79,11 +88,13 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
 
     private static final String SUBGROUP_GET_ROOT_SUMMARY = HttpUtil.DOMAIN + "?q=subgroup/get_root_summary";
     private static final String SUBGROUP_GET_MY_GROUP = HttpUtil.DOMAIN + "?q=subgroup/get_my";
+    private static final String GET_MY_TALENTS = HttpUtil.DOMAIN + "?q=talent/get_my";
 
     private Handler handler;
     private Context mContext;
     private View mView;
     ImageView progressImageView;
+    List<SubGroupActivity.Talent> talentList = new ArrayList<>();
     List<SubGroupActivity.SubGroup> groupList = new ArrayList<>();
     AnimationDrawable animationDrawable;
     private GroupReceiver groupReceiver = new GroupReceiver();
@@ -101,21 +112,12 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
         mContext = getContext();
         handler = new GroupFragment.MyHandler(this);
         mView = convertView;
-        //show progressImage before loading done
-        /*
-        progressImageView = convertView.findViewById(R.id.animal_progress);
-        animationDrawable = (AnimationDrawable)progressImageView.getDrawable();
-        progressImageView.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                animationDrawable.start();
-            }
-        },50);
-         */
 
         myGroupWrap = convertView.findViewById(R.id.my_group);
 
-        loadMyGroup();
+        loadMyTalents();
+
+        loadMyGroups();
 
         associationGroup = convertView.findViewById(R.id.association_group);
         associationGroup.setOnClickListener(this);
@@ -141,7 +143,62 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
         registerBroadcast();
     }
 
-    private void loadMyGroup() {
+    private void loadMyTalents(){
+        HttpUtil.sendOkHttpRequest(MyApplication.getContext(), GET_MY_TALENTS, new FormBody.Builder().build(), new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.body() != null) {
+                    String responseText = response.body().string();
+                    if (isDebug) Slog.d(TAG, "==========loadMyTalents response text : " + responseText);
+                    if (responseText != null && !TextUtils.isEmpty(responseText)) {
+                        JSONObject talentResponse = null;
+                        try {
+                            talentResponse = new JSONObject(responseText);
+                            if (talentResponse != null) {
+                                processTalentResponse(talentResponse);
+                                if (talentList.size() > 0){
+                                    handler.sendEmptyMessage(LOAD_MY_TALENTS_DONE);
+                                }
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+            }
+        });
+    }
+
+    private int processTalentResponse(JSONObject talentResponse) {
+
+        int talentSize = 0;
+        JSONArray talentArray = null;
+
+        if (talentResponse != null) {
+            talentArray = talentResponse.optJSONArray("talents");
+        }
+        if (talentArray != null) {
+            talentSize = talentArray.length();
+            if (talentSize > 0) {
+                for (int i = 0; i < talentArray.length(); i++) {
+                    JSONObject talentObject = talentArray.optJSONObject(i);
+                    if (talentObject != null) {
+                        SubGroupActivity.Talent talent = getTalent(talentObject);
+                        talentList.add(talent);
+                    }
+                }
+            }
+        }
+
+        return talentSize;
+    }
+
+    private void loadMyGroups() {
 
         HttpUtil.sendOkHttpRequest(MyApplication.getContext(), SUBGROUP_GET_MY_GROUP, new FormBody.Builder().build(), new Callback() {
             @Override
@@ -248,6 +305,44 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
         int activityAmount;
     }
 
+    private void getNewAddedTalentById(int aid){
+        RequestBody requestBody = new FormBody.Builder()
+                .add("aid", String.valueOf(aid))
+                .build();
+        HttpUtil.sendOkHttpRequest(getContext(), GET_TALENT_byID, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (isDebug) Slog.d(TAG, "==========response body : " + response.body());
+
+                if (response.body() != null) {
+                    String responseText = response.body().string();
+                    if (isDebug) Slog.d(TAG, "==========response text : " + responseText);
+                    if (responseText != null && !TextUtils.isEmpty(responseText)) {
+                        JSONObject talentResponse = null;
+
+                        try {
+                            talentResponse = new JSONObject(responseText);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        if (talentResponse != null) {
+                            JSONObject talentObject = talentResponse.optJSONObject("talent");
+                            SubGroupActivity.Talent talent = getTalent(talentObject);
+                            talentList.add(0, talent);
+                            handler.sendEmptyMessage(LOAD_NEW_ADDED_TALENT_DONE);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+        });
+    }
+
     private void getMyNewJoinedGroupData(int gid) {
         getSubGroupByGid(gid);
     }
@@ -297,6 +392,19 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
 
     }
 
+    private void setMyTalentViewData(){
+        myTalentLabel = mView.findViewById(R.id.my_talent_label);
+        myTalentWrapper = mView.findViewById(R.id.my_talent_wrapper);
+        myTalentLabel.setVisibility(View.VISIBLE);
+        myTalentWrapper.setVisibility(View.VISIBLE);
+
+        int size = talentList.size();
+        for (int i=0; i<size; i++){
+            SubGroupActivity.Talent talent = talentList.get(i);
+            View talentView = setMyTalentItem(talent);
+            myTalentWrapper.addView(talentView);
+        }
+    }
 
     private void setMyGroupViewData() {
         TextView myGroupLabel = mView.findViewById(R.id.my_group_label);
@@ -307,6 +415,78 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
             SubGroupActivity.SubGroup subGroup = groupList.get(i);
             View subView = setMyGroupItem(subGroup);
             myGroupWrap.addView(subView);
+        }
+    }
+
+    private View setMyTalentItem(SubGroupActivity.Talent talent) {
+        final View myTalentView = LayoutInflater.from(getContext()).inflate(R.layout.talent_summary_item, (ViewGroup) mView.findViewById(android.R.id.content), false);
+        TextView name = myTalentView.findViewById(R.id.leader_name);
+        name.setText(talent.profile.getNickName().trim());
+
+        RoundImageView avatar = myTalentView.findViewById(R.id.leader_avatar);
+        if (talent.profile.getAvatar() != null && !"".equals(talent.profile.getAvatar())) {
+            Glide.with(mContext).load(HttpUtil.DOMAIN + talent.profile.getAvatar()).into(avatar);
+        } else {
+            if (talent.profile.getSex() == 0){
+                avatar.setImageDrawable(mContext.getDrawable(R.drawable.male_default_avator));
+            }else {
+                avatar.setImageDrawable(mContext.getDrawable(R.drawable.female_default_avator));
+            }
+        }
+
+        TextView university = myTalentView.findViewById(R.id.university);
+        TextView degree = myTalentView.findViewById(R.id.degree);
+        TextView charge = myTalentView.findViewById(R.id.charge);
+        TextView subject = myTalentView.findViewById(R.id.subject);
+        TextView introduction = myTalentView.findViewById(R.id.introduction);
+        TextView star = myTalentView.findViewById(R.id.star);
+        TextView evaluateCount = myTalentView.findViewById(R.id.evaluate_count);
+        if (talent.profile.getSituation() == 0){
+            university.setText(talent.profile.getUniversity().trim());
+            degree.setText(talent.profile.getDegreeName(talent.profile.getDegree()));
+        }else {
+            university.setText(talent.profile.getIndustry());
+            degree.setText(talent.profile.getPosition());
+        }
+
+        charge.setText(String.valueOf(talent.charge));
+        subject.setText(talent.subject);
+        introduction.setText(talent.introduction);
+        //holder.maleCount.setText(mContext.getResources().getString(R.string.male)+" "+singleGroup.maleCount);
+        //holder.femaleCount.setText(mContext.getResources().getString(R.string.female)+" "+singleGroup.femaleCount);
+        if (talent.evaluateCount > 0){
+            float scoreFloat = talent.evaluateScores/talent.evaluateCount;
+            float score = (float)(Math.round(scoreFloat*10))/10;
+            star.setVisibility(View.VISIBLE);
+            evaluateCount.setText(score+getContext().getResources().getString(R.string.dot)+talent.evaluateCount);
+        }
+
+        ConstraintLayout talentItem = myTalentView.findViewById(R.id.talent_summary_item);
+        talentItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), TalentDetailsActivity.class);
+                //intent.putExtra("talent", talent);
+                intent.putExtra("aid", talent.aid);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                startActivity(intent);
+            }
+        });
+
+        Typeface font = Typeface.createFromAsset(getContext().getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
+        FontManager.markAsIconContainer(myTalentView.findViewById(R.id.cny), font);
+        FontManager.markAsIconContainer(myTalentView.findViewById(R.id.star), font);
+
+        return myTalentView;
+    }
+
+    private void setNewAddedTalentView(){
+        SubGroupActivity.Talent talent = talentList.get(0);
+        View talentView = setMyTalentItem(talent);
+        myTalentWrapper.addView(talentView, 0);
+        if (myTalentWrapper.getVisibility() == View.GONE){
+            myTalentWrapper.setVisibility(View.VISIBLE);
+            myTalentLabel.setVisibility(View.VISIBLE);
         }
     }
 
@@ -491,6 +671,9 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
             case LOAD_MY_GROUP_DONE:
                 setMyGroupViewData();
                 break;
+            case LOAD_MY_TALENTS_DONE:
+                setMyTalentViewData();
+                break;
             case LOAD_DATA_DONE:
                 int type = bundle.getInt("type");
                 GroupSummary groupSummary = (GroupSummary) bundle.getSerializable("summary");
@@ -498,6 +681,9 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
                 break;
             case LOAD_NEW_JOINED_GROUP_DONE:
                 setNewJoinedGroupView();
+                break;
+            case LOAD_NEW_ADDED_TALENT_DONE:
+                setNewAddedTalentView();
                 break;
             default:
                 break;
@@ -533,6 +719,12 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
                         getMyNewJoinedGroupData(gid);
                     }
                     break;
+                case TALENT_ADD_BROADCAST:
+                    int aid = intent.getIntExtra("aid", -1);
+                    if (aid > 0){
+                        getNewAddedTalentById(aid);
+                    }
+                    break;
             }
 
         }
@@ -542,6 +734,7 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(JOIN_GROUP_BROADCAST);
         intentFilter.addAction(GROUP_ADD_BROADCAST);
+        intentFilter.addAction(TALENT_ADD_BROADCAST);
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(groupReceiver, intentFilter);
     }
 
@@ -558,9 +751,7 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
     }
 
     @Override
-    protected void loadData() {
-
-    }
+    protected void loadData() {}
 
     static class MyHandler extends Handler {
         WeakReference<GroupFragment> groupFragmentWeakReference;

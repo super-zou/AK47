@@ -25,6 +25,8 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import com.hetang.R;
 
+import static com.hetang.util.SharedPreferencesUtils.setUid;
+
 public class LoginSplash extends BaseAppCompatActivity {
 
     private static final String TAG = "LoginSplash";
@@ -161,14 +163,15 @@ public class LoginSplash extends BaseAppCompatActivity {
                         String sessionId = loginResponse.getString("sessid");
                         String session_name = loginResponse.getString("session_name");
                         JSONObject user = loginResponse.getJSONObject("user");
-                        Slog.d(TAG, "sessionId: " + sessionId + "===session name: " + session_name);
+                        Slog.d(TAG, "sessionId: " + sessionId + "===conversation_fragment name: " + session_name);
 
-                        SharedPreferences.Editor editor = context.getSharedPreferences("session", MODE_PRIVATE).edit();
+                        SharedPreferences.Editor editor = context.getSharedPreferences("conversation_fragment", MODE_PRIVATE).edit();
                         editor.putString("sessionId", sessionId);
                         editor.putString("sessionName", session_name);
                         editor.putInt("uid", user.getInt("uid"));
-                        
                         editor.apply();
+
+                        setUid(context, user.getInt("uid"));
 
                         Intent intent = new Intent(context, MainActivity.class);
                         context.startActivity(intent);

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/meet_archive_profile"
     android:layout_width="match_parent"
@@ -35,12 +35,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:text="name"
-                      android:typeface="sans"
         android:fontFamily="sans-serif"
+        android:text="name"
         android:textColor="@color/black"
         android:textSize="18sp"
         android:textStyle="normal|bold"
+        android:typeface="sans"
         app:layout_constraintEnd_toEndOf="@+id/image_switcher"
         app:layout_constraintStart_toStartOf="@+id/image_switcher"
         app:layout_constraintTop_toBottomOf="@+id/image_switcher" />
@@ -79,7 +79,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:gravity="center"
-                                     android:visibility="gone"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="@+id/name"
         app:layout_constraintStart_toStartOf="@+id/name"
         app:layout_constraintTop_toBottomOf="@+id/name">
@@ -89,24 +89,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="1dp"
-                              android:fontFamily="sans-serif"
-	    android:typeface="sans"
             android:background="@drawable/label_btn_shape"
+            android:fontFamily="sans-serif"
             android:padding="6dp"
             android:text="hometown"
-            android:textColor="@android:color/holo_blue_dark" />
+            android:textColor="@android:color/holo_blue_dark"
+            android:typeface="sans" />
 
         <TextView
             android:id="@+id/nation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="1dp"
-                              android:fontFamily="sans-serif"
-	    android:typeface="sans"
             android:background="@drawable/label_btn_shape"
+            android:fontFamily="sans-serif"
             android:padding="6dp"
             android:text="nation"
-            android:textColor="@android:color/holo_blue_dark" />
+            android:textColor="@android:color/holo_blue_dark"
+            android:typeface="sans" />
 
         <TextView
             android:id="@+id/religion"
@@ -114,14 +114,14 @@
             android:layout_height="wrap_content"
             android:layout_margin="1dp"
             android:background="@drawable/label_btn_shape"
+            android:fontFamily="sans-serif"
             android:padding="6dp"
-                              android:fontFamily="sans-serif"
-	    android:typeface="sans"
             android:text="religion"
-            android:textColor="@android:color/holo_blue_dark" />
+            android:textColor="@android:color/holo_blue_dark"
+            android:typeface="sans" />
     </com.nex3z.flowlayout.FlowLayout>
 
-     <LinearLayout
+    <LinearLayout
         android:id="@+id/education_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -131,7 +131,8 @@
         app:layout_constraintEnd_toEndOf="@+id/name"
         app:layout_constraintStart_toStartOf="@+id/name"
         app:layout_constraintTop_toBottomOf="@+id/additional_info">
-         <TextView
+
+        <TextView
             android:id="@+id/university"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -145,8 +146,8 @@
             android:fontFamily="sans-serif"
             android:text="@string/dot"
             android:typeface="sans" />
-         
-         <TextView
+
+        <TextView
             android:id="@+id/major"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -160,8 +161,8 @@
             android:fontFamily="sans-serif"
             android:text="@string/dot"
             android:typeface="sans" />
-         
-         <TextView
+
+        <TextView
             android:id="@+id/degree"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -169,44 +170,44 @@
             android:text=""
             android:typeface="sans" />
     </LinearLayout>
-    
+
     <LinearLayout
         android:id="@+id/work_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:visibility="gone"
         android:gravity="center"
         android:orientation="horizontal"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="@+id/name"
         app:layout_constraintStart_toStartOf="@+id/name"
         app:layout_constraintTop_toBottomOf="@+id/education_info">
-        
+
         <TextView
             android:id="@+id/position"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:typeface="sans"
             android:fontFamily="sans-serif"
-            android:text="职位" />
+            android:text="职位"
+            android:typeface="sans" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:typeface="sans"
             android:fontFamily="sans-serif"
-            android:text="@string/dot" />
+            android:text="@string/dot"
+            android:typeface="sans" />
+
         <TextView
             android:id="@+id/industry"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:typeface="sans"
             android:fontFamily="sans-serif"
-            android:text="行业" />
-    </LinearLayout> 
-        
+            android:text="行业"
+            android:typeface="sans" />
+    </LinearLayout>
 
-   
+
     <LinearLayout
         android:id="@+id/living_wrap"
         android:layout_width="match_parent"
@@ -239,11 +240,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:padding="8dp"
-                      android:typeface="sans"
         android:fontFamily="sans-serif"
+        android:padding="8dp"
         android:text="@string/archive_details"
         android:textColor="#999"
+        android:typeface="sans"
         app:layout_constraintEnd_toStartOf="@+id/nav_resume"
         app:layout_constraintTop_toBottomOf="@+id/living_wrap" />
 
@@ -253,12 +254,12 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
+        android:fontFamily="sans-serif"
         android:gravity="center"
         android:padding="8dp"
         android:text="@string/chevron_right"
         android:textColor="#999"
-                      android:typeface="sans"
-        android:fontFamily="sans-serif"
+        android:typeface="sans"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/living_wrap" />
 
@@ -357,22 +358,22 @@
                 android:id="@+id/followed_count_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
                 android:text="关注"
-                              android:typeface="sans"
-        android:fontFamily="sans-serif"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:typeface="sans" />
 
             <TextView
                 android:id="@+id/followed_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="3dp"
-                android:textColor="@android:color/holo_blue_dark"
+                android:fontFamily="sans-serif"
                 android:text="0"
-                              android:typeface="sans"
-        android:fontFamily="sans-serif"
+                android:textColor="@android:color/holo_blue_dark"
                 android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:typeface="sans" />
         </LinearLayout>
 
 
@@ -388,22 +389,22 @@
                 android:id="@+id/praised_count_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
                 android:text="赞"
-                              android:typeface="sans"
-        android:fontFamily="sans-serif"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:typeface="sans" />
 
             <TextView
                 android:id="@+id/praised_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="3dp"
-                android:textColor="@android:color/holo_blue_dark"
+                android:fontFamily="sans-serif"
                 android:text="0"
-                              android:typeface="sans"
-        android:fontFamily="sans-serif"
+                android:textColor="@android:color/holo_blue_dark"
                 android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:typeface="sans" />
         </LinearLayout>
 
         <LinearLayout
@@ -426,12 +427,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="3dp"
-                android:textColor="@android:color/holo_blue_dark"
+                android:fontFamily="sans-serif"
                 android:text="0"
-                              android:typeface="sans"
-        android:fontFamily="sans-serif"
+                android:textColor="@android:color/holo_blue_dark"
                 android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:typeface="sans" />
         </LinearLayout>
 
         <LinearLayout
@@ -439,27 +440,27 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
+            android:fontFamily="sans-serif"
             android:orientation="horizontal"
-                              android:typeface="sans"
-        android:fontFamily="sans-serif"
-            android:padding="5dp">
+            android:padding="5dp"
+            android:typeface="sans">
 
             <TextView
                 android:id="@+id/dynamics_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
                 android:text="动态"
-                              android:typeface="sans"
-        android:fontFamily="sans-serif"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:typeface="sans" />
 
             <TextView
                 android:id="@+id/dynamics_count_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="3dp"
-                android:textColor="@android:color/holo_blue_dark"
                 android:text="0"
+                android:textColor="@android:color/holo_blue_dark"
                 android:textSize="18sp"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -470,22 +471,22 @@
         android:id="@+id/my_interact_statistics"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:fontFamily="sans-serif"
+        android:gravity="center"
         android:orientation="horizontal"
         android:paddingLeft="16dp"
         android:paddingTop="8dp"
         android:paddingBottom="3dp"
-        android:gravity="center"
+        android:typeface="sans"
         android:visibility="gone"
-                          android:typeface="sans"
-        android:fontFamily="sans-serif"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/interact_statistics_wrap">
 
         <LinearLayout
             android:id="@+id/following_count_wrap"
-            android:layout_marginLeft="3dp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="3dp">
 
             <TextView
                 android:id="@+id/following_count_title"
@@ -499,19 +500,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="3dp"
-                android:textColor="@android:color/holo_blue_dark"
                 android:text="0"
+                android:textColor="@android:color/holo_blue_dark"
                 android:textSize="18sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/praise_count_wrap"
-            android:layout_marginLeft="10dp"
-                              android:typeface="sans"
-        android:fontFamily="sans-serif"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:fontFamily="sans-serif"
+            android:typeface="sans">
 
             <TextView
                 android:id="@+id/praise_count_title"
@@ -525,19 +526,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="3dp"
-                android:textColor="@android:color/holo_blue_dark"
                 android:text="0"
+                android:textColor="@android:color/holo_blue_dark"
                 android:textSize="18sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/love_count_wrap"
-            android:layout_marginLeft="10dp"
-                              android:typeface="sans"
-        android:fontFamily="sans-serif"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:fontFamily="sans-serif"
+            android:typeface="sans">
 
             <TextView
                 android:id="@+id/love_count_title"
@@ -551,8 +552,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="3dp"
-                android:textColor="@android:color/holo_blue_dark"
                 android:text="0"
+                android:textColor="@android:color/holo_blue_dark"
                 android:textSize="18sp"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -565,11 +566,11 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:background="@color/white"
+        android:fontFamily="sans-serif"
         android:gravity="right"
         android:paddingTop="18dp"
         android:paddingBottom="18dp"
-                          android:typeface="sans"
-        android:fontFamily="sans-serif"
+        android:typeface="sans"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/my_interact_statistics">
@@ -599,7 +600,7 @@
             android:gravity="center"
             android:paddingLeft="20dp"
             android:text="@string/fa_heart_o"
-            android:textColor="@drawable/love_selector"
+            android:textColor="@android:color/holo_red_dark"
             android:textSize="20sp" />
 
         <TextView
@@ -631,4 +632,4 @@
             android:textSize="20sp" />
     </LinearLayout>
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

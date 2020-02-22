@@ -66,7 +66,7 @@ public class HttpUtil {
         String cookie = "";
         String sessionName;
         String sessionId;
-        SharedPreferences preferences = context.getSharedPreferences("session", MODE_PRIVATE);
+        SharedPreferences preferences = context.getSharedPreferences("conversation_fragment", MODE_PRIVATE);
         sessionName = preferences.getString("sessionName", "");
         sessionId = preferences.getString("sessionId", "");
 
@@ -170,28 +170,6 @@ public class HttpUtil {
         }
 
         client.newCall(request).enqueue(callback);
-    }
-    
-    public static int getYunXinAccountExist(Context context, String accid){
-        int exist = 0;
-        RequestBody requestBody = new FormBody.Builder().add("accid", accid).build();
-        Response response = sendOkHttpRequestSync(context, CHECK_YUNXIN_ACCOUNT_EXIST, requestBody, null);
-        if (response != null && response.body() != null) {
-            try {
-            String responseText = response.body().string();
-            Slog.d(TAG, "==========load response text : " + responseText);
-                if (responseText != null && !TextUtils.isEmpty(responseText)) {
-                    exist = new JSONObject(responseText).optInt("exist");
-                    Slog.d(TAG, "----------------->yunxin account exist: "+exist);
-                }
-               }catch (JSONException e){
-                e.printStackTrace();
-            }catch (IOException e){
-                e.printStackTrace();
-            }
-        }
-
-        return exist;
     }
 
 } 

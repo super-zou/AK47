@@ -6,14 +6,13 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.tabs.TabLayout;
 import com.hetang.R;
 import com.hetang.adapter.MainFragmentAdapter;
 import com.hetang.common.BaseAppCompatActivity;
@@ -27,17 +26,16 @@ import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.SharedPreferencesUtils;
 import com.hetang.util.Slog;
-import com.netease.nim.uikit.api.NimUIKit;
-import com.netease.nim.uikit.api.model.main.LoginSyncDataStatusObserver;
-import com.netease.nim.uikit.api.model.session.SessionEventListener;
-import com.netease.nim.uikit.common.ui.dialog.DialogMaker;
-import com.netease.nimlib.sdk.NIMClient;
-import com.netease.nimlib.sdk.NimIntent;
-import com.netease.nimlib.sdk.Observer;
-import com.netease.nimlib.sdk.RequestCallback;
-import com.netease.nimlib.sdk.auth.LoginInfo;
-import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
-import com.netease.nimlib.sdk.msg.model.IMMessage;
+import com.hetang.util.UserProfile;
+import com.hetang.util.Utility;
+import com.tencent.imsdk.TIMCallBack;
+import com.tencent.imsdk.TIMFriendshipManager;
+import com.tencent.imsdk.TIMManager;
+import com.tencent.imsdk.TIMUserProfile;
+import com.tencent.qcloud.tim.uikit.TUIKit;
+import com.tencent.qcloud.tim.uikit.base.IUIKitCallBack;
+import com.tencent.qcloud.tim.uikit.modules.conversation.ConversationManagerKit;
+import com.tencent.qcloud.tim.uikit.utils.ToastUtil;
 import com.xuexiang.xupdate.XUpdate;
 
 import org.json.JSONException;
@@ -46,35 +44,38 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.ViewPager;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static com.hetang.common.Chat.createYunXinUser;
-import static com.hetang.util.HttpUtil.GET_PASSWORD_HASH;
-import static com.hetang.util.HttpUtil.GET_USERINFO_WITH_ACCOUNT;
-import static com.hetang.util.HttpUtil.getYunXinAccountExist;
+import static com.hetang.util.ParseUtils.DEFAULT_FEMALE_AVATAR_URL;
+import static com.hetang.util.ParseUtils.DEFAULT_MALE_AVATAR_URL;
+import static com.hetang.util.ParseUtils.getUserProfile;
 import static com.hetang.util.ParseUtils.startMeetArchiveActivity;
-import static com.hetang.util.SharedPreferencesUtils.getYunXinAccount;
-import static com.hetang.util.SharedPreferencesUtils.getYunXinToken;
-import static com.hetang.util.SharedPreferencesUtils.setYunXinAccount;
-import static com.hetang.util.SharedPreferencesUtils.setYunXinToken;
+import static com.hetang.util.SharedPreferencesUtils.getTuiKitAutoLogin;
+import static com.hetang.util.SharedPreferencesUtils.getUid;
+import static com.hetang.util.SharedPreferencesUtils.setTuiKitAutoLogin;
 
-public class MainActivity extends BaseAppCompatActivity implements CommonDialogFragmentInterface, ReminderManager.UnreadNumChangedCallback {
+public class MainActivity extends BaseAppCompatActivity implements CommonDialogFragmentInterface, ReminderManager.UnreadNumChangedCallback , ConversationManagerKit.MessageUnreadWatcher{
 
     public static final int HAVA_NEW_VERSION = 2;
     private static final String TAG = "MainActivity";
-    private final static boolean isDebug = false;
+    private final static boolean isDebug = true;
     private final static boolean isNimDebug = false;
     private final static boolean isUpdateDebug = false;
     private static final int START_MEET_ARCHIVE_ACTIVITY = 2;
     private static final int START_ARCHIVE_ACTIVITY = 3;
     private static final int REQUEST_CODE_INSTALL_PERMISSION = 107;
     private static MyHandler handler;
+    private static String tuikitId;
     TabLayout.Tab home_tab;
     TabLayout.Tab meet_tab;
     TabLayout.Tab message_tab;
@@ -92,6 +93,9 @@ public class MainActivity extends BaseAppCompatActivity implements CommonDialogF
 
     private int[] mIcons = {R.string.home, R.string.fa_magnet, R.string.message, R.string.contacts, R.string.me};
 
+    private static final String GET_USERSIG = HttpUtil.DOMAIN + "?q=chat/get_userSig";
+    private TIMManager timManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,26 +106,17 @@ public class MainActivity extends BaseAppCompatActivity implements CommonDialogF
         }
 
         init();
-        //avoid activity to be killed, recall processIntent()， also call it in onNewIntent
-        processIntent();
-        //isFirstIn = true;
+
         checkUpdate();
 
-        loginYunXinServer();
+        getUserSig(this);
 
-        if (isNimDebug) Slog.d(TAG, "#####################login status: " + NIMClient.getStatus());
+        timManager = TIMManager.getInstance();
+
+        onPreView();
 
     }
 
-    private void processIntent() {
-        Intent intent = getIntent();
-        if (intent != null) {
-            if (intent.hasExtra(NimIntent.EXTRA_NOTIFY_CONTENT)) {
-                parseNotifyIntent(intent);
-                //finish();
-            }
-        }
-    }
 
     //check interval 24 hours
     private void checkUpdate() {
@@ -142,34 +137,8 @@ public class MainActivity extends BaseAppCompatActivity implements CommonDialogF
         }
     }
 
-    @Override
-    protected void onNewIntent(Intent intent) {
-        if (intent != null) {
-            setIntent(intent);
-            processIntent();
-        }
-    }
-
-
-    private void parseNotifyIntent(Intent intent) {
-
-        ArrayList<IMMessage> messages = (ArrayList<IMMessage>) intent.getSerializableExtra(NimIntent.EXTRA_NOTIFY_CONTENT);
-        if (messages == null || messages.size() > 1) {
-            if (isNimDebug) Slog.d(TAG, "######################parseNotifyIntent initView");
-            initView();
-        } else {
-            //showMainActivity(new Intent().putExtra(NimIntent.EXTRA_NOTIFY_CONTENT, messages.get(0)));
-            if (isNimDebug) Slog.d(TAG, "######################parseNotifyIntent startP2PSession");
-            IMMessage imMessage = messages.get(0);
-            if (imMessage.getSessionType() == SessionTypeEnum.P2P) {
-                NimUIKit.startP2PSession(MyApplication.getContext(), imMessage.getSessionId());
-            }
-        }
-    }
-
     private void init() {
         handler = new MyHandler(this);
-
         initMessage();
         initView();
     }
@@ -255,75 +224,41 @@ public class MainActivity extends BaseAppCompatActivity implements CommonDialogF
             }
         });
 
+        // 未读消息监视器
+        ConversationManagerKit.getInstance().addUnreadWatcher(this);
+
         unReadView = mTabLayout.getTabAt(2).getCustomView().findViewById(R.id.unread);
         contactsAppliedNoticeView = mTabLayout.getTabAt(3).getCustomView().findViewById(R.id.unread);
         FontManager.markAsIconContainer(findViewById(R.id.tabs), font);
     }
 
     private void initMessage() {
-        SessionEventListener listener = new SessionEventListener() {
-            @Override
-            public void onAvatarClicked(Context context, IMMessage message) {
-                // 一般用于打开用户资料页面
-                startArchiveActivityWithAccount(MyApplication.getContext(), message.getFromAccount());
-            }
-
-            @Override
-            public void onAvatarLongClicked(Context context, IMMessage message) {
-                // 一般用于群组@功能，或者弹出菜单，做拉黑，加好友等功能
-            }
-
-            @Override
-            public void onAckMsgClicked(Context context, IMMessage message) {
-            }
-        };
-
-        NimUIKit.setSessionListener(listener);
-
         initSessionMessageObserver();
         MessageFragment.getUnreadNotification(handler);
     }
-
-    //the account is user's phone number
-    private void startArchiveActivityWithAccount(final Context context, String account) {
-        showProgressDialog("");
-
-        final RequestBody requestBody = new FormBody.Builder().add("account", String.valueOf(account)).build();
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                Response response = HttpUtil.sendOkHttpRequestSync(context, GET_USERINFO_WITH_ACCOUNT, requestBody, null);
-                if (response.body() != null) {
-                    try {
-                        String responseText = response.body().string();
-                        int uid = new JSONObject(responseText).optInt("uid");
-                        int cid = new JSONObject(responseText).optInt("cid");
-                        Message message = new Message();
-                        Bundle bundle = new Bundle();
-                        bundle.putInt("uid", uid);
-                        message.what = START_MEET_ARCHIVE_ACTIVITY;
-                        message.setData(bundle);
-                        handler.sendMessage(message);
-                        dismissProgressDialog();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    } catch (IOException i) {
-                        i.printStackTrace();
-                    }
-                }
-
-            }
-        };
-
-        Thread startArchiveThread = new Thread(runnable);
-        startArchiveThread.start();
-    }
-
 
     //未读消息数量观察者实现
     @Override
     public void onUnreadNumChanged(int unReadCount) {
         if (isDebug) Slog.d(TAG, "------------------------->onUnreadNumChanged: " + unReadCount);
+        if (unReadCount > 0) {
+            hasUnreadSessions = true;
+            if (unReadView.getVisibility() == View.GONE) {
+                unReadView.setVisibility(View.VISIBLE);
+            }
+        } else {
+            hasUnreadSessions = false;
+            if (hasUnreadMessage == false) {
+                if (unReadView.getVisibility() != View.GONE) {
+                    unReadView.setVisibility(View.GONE);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void updateUnread(int unReadCount) {
+        if (isDebug) Slog.d(TAG, "------------------------->updateUnread: " + unReadCount);
         if (unReadCount > 0) {
             hasUnreadSessions = true;
             if (unReadView.getVisibility() == View.GONE) {
@@ -362,109 +297,10 @@ public class MainActivity extends BaseAppCompatActivity implements CommonDialogF
         }
     }
 
-    private void loginYunXinServer() {
-        // final int authorUid = SharedPreferencesUtils.getSessionUid(MyApplication.getContext());
-        Runnable loginRunnable = new Runnable() {
-            @Override
-            public void run() {
-                //1.check account registered? only registered account will execute login, not registered will do register when establish chatting
-                final String accid = getYunXinAccount(MyApplication.getContext());
-                final String token = getYunXinToken(MyApplication.getContext());
-                Slog.d(TAG, "------------------------------------>loginYunXinServer with accid: " + accid + "   token: " + token);
 
-                if (!TextUtils.isEmpty(accid) && !TextUtils.isEmpty(token)) {
-                    loginYunXin(accid, token);
-                } else {
-                    int exist = getYunXinAccountExist(MyApplication.getContext(), accid);
-                    if (exist > 0) {//yunxin account exist
-                        //loginYunXin(account, token);
-                        getPassWordHashToLogin(accid);
-                    } else {//not existed, need create here
-                        if (createYunXinUser(accid) > 0) {
-                            getPassWordHashToLogin(accid);
-                        }
-                    }
-                }
-            }
-        };
-
-        Thread loginThread = new Thread(loginRunnable);
-        loginThread.start();
-    }
-
-    public void loginYunXin(String account, final String token) {
-        NimUIKit.login(new LoginInfo(account, token), new RequestCallback<LoginInfo>() {
-            @Override
-            public void onSuccess(LoginInfo param) {
-                Slog.d(TAG, "---------->uikit login success");
-                setYunXinAccount(MyApplication.getContext(), param.getAccount());
-                if (!token.equals(param.getToken())) {
-                    Slog.d(TAG, "-------->token error, rewrite by LoginInfo  param.getToken()");
-                    setYunXinToken(MyApplication.getContext(), param.getToken());
-                }
-            }
-
-            @Override
-            public void onFailed(int code) {
-
-                if (code == 302 || code == 404) {
-                    Toast.makeText(MyApplication.getContext(), R.string.login_failed, Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(MyApplication.getContext(), "云信登录失败: " + code, Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onException(Throwable exception) {
-                Toast.makeText(MyApplication.getContext(), "云信登录异常", Toast.LENGTH_LONG).show();
-            }
-        });
-    }
-
-    private void getPassWordHashToLogin(final String accid) {
-        RequestBody requestBody = new FormBody.Builder().build();
-        HttpUtil.sendOkHttpRequest(MyApplication.getContext(), GET_PASSWORD_HASH, requestBody, new Callback() {
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                String responseText = response.body().string();
-                Slog.d(TAG, "---------------->getPassWordHash response : " + responseText);
-                if (!TextUtils.isEmpty(responseText)) {
-                    try {
-                        JSONObject loginResponse = new JSONObject(responseText);
-                        String passwordHash = loginResponse.getString("password_hash");
-                        Slog.d(TAG, "------------------------------------------->passwordHash: " + passwordHash);
-                        if (!TextUtils.isEmpty(passwordHash)) {
-                            loginYunXin(accid, passwordHash);
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call call, IOException e) {
-            }
-        });
-    }
-
-    private void observerSyncDataComplete() {
-        boolean syncCompleted = LoginSyncDataStatusObserver.getInstance().observeSyncDataCompletedEvent(new Observer<Void>() {
-            @Override
-            public void onEvent(Void v) {
-                DialogMaker.dismissProgressDialog();
-            }
-        });
-
-        //如果数据没有同步完成，弹个进度Dialog
-        if (!syncCompleted) {
-            //DialogMaker.showProgressDialog(MainActivity.this, getString(R.string.prepare_data)).setCanceledOnTouchOutside(false);
-        }
-    }
 
     private void initSessionMessageObserver() {
         //registerMsgUnreadInfoObserver(true);
-        observerSyncDataComplete();
         registerMsgUnreadInfoObserver(true);
         //registerSystemMessageObservers(true);
     }
@@ -484,6 +320,159 @@ public class MainActivity extends BaseAppCompatActivity implements CommonDialogF
 
     @Override
     public void onBackFromDialog(int type, int result, boolean status) {
+    }
+
+    public void getUserSig(final Context context){
+        final RequestBody requestBody = new FormBody.Builder().build();
+        HttpUtil.sendOkHttpRequest(context, GET_USERSIG, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.body() != null) {
+                    String responseText = response.body().string();
+                    Slog.d(TAG, "==========getUserSig response text : " + responseText);
+                    try {
+                        String sig = new JSONObject(responseText).optString("sig");
+                        Slog.d(TAG, "-------------------->uid: "+getUid(context));
+                        tuikitId = String.valueOf(getUid(context));
+                        boolean autoLogin = getTuiKitAutoLogin(context);
+                        Slog.d(TAG, "------------------>tuikit auto login: "+autoLogin);
+                        if (autoLogin){
+                            autoLogin(context, sig);
+                        }else {
+                            login(context, sig);
+                        }
+
+                    }catch (JSONException e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+            }
+        });
+    }
+
+    private void autoLogin(final Context context, final String sig){
+        timManager.autoLogin(tuikitId, new TIMCallBack() {
+            @Override
+            public void onError(int i, String s) {
+                ToastUtil.toastLongMessage("登录失败, errCode = " + i + ", errInfo = " + s);
+                login(context, sig);
+            }
+            @Override
+            public void onSuccess() {
+                Slog.d(TAG, "-------------------------->tuikit autoLogin success with account: "+tuikitId);
+                String userId = timManager.getLoginUser();
+                Slog.d(TAG, "---------------------->login success with user id: "+userId);
+                queryProfile(userId);
+            }
+        });
+    }
+
+    private void login(final Context context, String sig){
+        TUIKit.login(tuikitId, sig, new IUIKitCallBack() {
+            @Override
+            public void onError(String module, final int code, final String desc) {
+                ToastUtil.toastLongMessage("登录失败, errCode = " + code + ", errInfo = " + desc);
+            }
+
+            @Override
+            public void onSuccess(Object data) {
+                Slog.d(TAG, "-------------------------->tuikit login success: ");
+                setTuiKitAutoLogin(context, true);
+                String userId = timManager.getLoginUser();
+                Slog.d(TAG, "---------------------->login success with user id: "+userId);
+                queryProfile(userId);
+            }
+        });
+    }
+
+    public static void queryProfile(String id){
+        TIMUserProfile profile = TIMFriendshipManager.getInstance().queryUserProfile(id);
+        if (profile != null){
+            if (TextUtils.isEmpty(profile.getFaceUrl()) || TextUtils.isEmpty(profile.getNickName())){
+                setTuiKitProfile();
+            }
+        }else {
+            setTuiKitProfile();
+        }
+    }
+
+    public static void setTuiKitProfile(){
+        Runnable loginRunnable = new Runnable() {
+            @Override
+            public void run() {
+                UserProfile userProfile = getUserProfile(-1);
+                if (userProfile != null){
+                    updateProfile(userProfile);
+                }
+            }
+        };
+
+        Thread loginThread = new Thread(loginRunnable);
+        loginThread.start();
+    }
+
+
+    public static void updateProfile(UserProfile userProfile) {
+        String avatarUrl;
+        if (!TextUtils.isEmpty(userProfile.getAvatar())){
+            avatarUrl = HttpUtil.getDomain() + userProfile.getAvatar();
+        }else {
+            if (userProfile.getSex() == 0){
+                avatarUrl = DEFAULT_MALE_AVATAR_URL;
+            }else {
+                avatarUrl = DEFAULT_FEMALE_AVATAR_URL;
+            }
+        }
+
+        //String mIconUrl = String.format("https://picsum.photos/id/%d/200/200", new Random().nextInt(1000));
+        HashMap<String, Object> hashMap = new HashMap<>();
+
+        // 头像
+        if (!TextUtils.isEmpty(avatarUrl)) {
+            hashMap.put(TIMUserProfile.TIM_PROFILE_TYPE_KEY_FACEURL, avatarUrl);
+        }
+
+        hashMap.put(TIMUserProfile.TIM_PROFILE_TYPE_KEY_NICK, userProfile.getNickName());
+
+        TIMFriendshipManager.getInstance().modifySelfProfile(hashMap, new TIMCallBack() {
+            @Override
+            public void onError(int i, String s) {
+                ToastUtil.toastShortMessage("Error code = " + i + ", desc = " + s);
+            }
+            @Override
+            public void onSuccess() {
+                Slog.d(TAG, "---------------->modifySelfProfile success");
+            }
+        });
+    }
+
+    private int getHeight(){
+        //AppBarLayout appBarLayout = findViewById(R.id.appBarLayout);
+        return mTabLayout.getHeight();
+    }
+
+    private void onPreView() {
+        getWindow().getDecorView().getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                int height = getHeight();
+                setHeight(height);
+                getWindow().getDecorView().getViewTreeObserver().removeOnPreDrawListener(this);
+                return false;
+            }
+        });
+    }
+
+    private void setHeight(int height){
+        ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams)mViewPager.getLayoutParams();
+        //layoutParams.setMargins(0,0,0, (int)Utility.dpToPx(getApplicationContext(), height));
+        //mViewPager.setPadding(0, 0, 0, (int)Utility.dpToPx(getApplicationContext(), height));
+        mViewPager.setPadding(0, 0, 0, height);
+        mViewPager.setLayoutParams(layoutParams);
     }
 
     public void handleMessage(Message message) {

@@ -4,8 +4,6 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.constraint.ConstraintLayout;
-import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
@@ -42,6 +40,8 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -49,11 +49,10 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class FillMeetInfoActivity extends BaseAppCompatActivity {
+    //private ArrayList<ArrayList<ArrayList<String>>> options3Items = new ArrayList<>();
+    public static final String FILL_MEET_INFO_BROADCAST = "com.hetang.action.FILL_MEET_INFO";
     private static final String TAG = "FillMeetInfoActivity";
     private static final String FILL_MEET_INFO_URL = HttpUtil.DOMAIN + "?q=meet/look_friend";
-
-    private int mSex = -1;
-    private String selfHometown = "";
     Resources res;
     String[] years;
     String[] constellations;
@@ -62,12 +61,9 @@ public class FillMeetInfoActivity extends BaseAppCompatActivity {
     String[] religions;
     String[] heights;
     String[] degrees;
-
     String[] ages;
-
     SelfCondition selfCondition;
     PartnerRequirement partnerRequirement;
-
     boolean BIRTHYEARSELECTED = false;
     boolean CONSTELLATIONSELECTED = false;
     boolean HOMETOWNSELECTED = false;
@@ -84,30 +80,24 @@ public class FillMeetInfoActivity extends BaseAppCompatActivity {
     String partnerRequirementJson;
     int currentPageIndex = 1;
     int defaultPageCount = 2;
-
     ConstraintLayout fillMeetInfoLayout;
     ConstraintLayout customActionBar;
     LinearLayout setAvatar;
     LinearLayout pageIndicator;
     LinearLayout situationLayout;
-
     Button requireRegionSelection;
-
     TextView leftBack;
     TextView title;
     Button prev;
     Button next;
-
+    boolean isHometownSet = false;
+    boolean isEndPage = false;
+    private int mSex = -1;
+    private String selfHometown = "";
     private ArrayList<CommonBean> industryMainItems = new ArrayList<>();
     private ArrayList<ArrayList<String>> industrySubItems = new ArrayList<>();
     private ArrayList<CommonBean> provinceItems = new ArrayList<>();
     private ArrayList<ArrayList<String>> cityItems = new ArrayList<>();
-    //private ArrayList<ArrayList<ArrayList<String>>> options3Items = new ArrayList<>();
-        public static final String FILL_MEET_INFO_BROADCAST = "com.hetang.action.FILL_MEET_INFO";
-
-    boolean isHometownSet = false;
-    boolean isEndPage = false;
-
     private UserProfile userProfile;
     private Thread threadCity;
 
@@ -118,7 +108,7 @@ public class FillMeetInfoActivity extends BaseAppCompatActivity {
         //if avatar is set, avatarSet will be set true
         userProfile = (UserProfile) getIntent().getSerializableExtra("userProfile");
 
-        Slog.d(TAG, "-------------------userProfile sex: "+userProfile.getSex());
+        Slog.d(TAG, "-------------------userProfile sex: " + userProfile.getSex());
         if (userProfile != null) {
             mSex = userProfile.getSex();
             selfHometown = userProfile.getHometown();
@@ -625,8 +615,8 @@ public class FillMeetInfoActivity extends BaseAppCompatActivity {
 
         return true;
     }
-    
-        private void sendBroadcast() {
+
+    private void sendBroadcast() {
         Intent intent;
         intent = new Intent(FILL_MEET_INFO_BROADCAST);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);

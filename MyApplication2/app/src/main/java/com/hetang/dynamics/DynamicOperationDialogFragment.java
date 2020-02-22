@@ -6,8 +6,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AlertDialog;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.appcompat.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
@@ -34,7 +34,6 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static com.hetang.archive.ArchiveFragment.SET_BLOG_RESULT_OK;
 import static com.hetang.meet.MeetDynamicsFragment.DYNAMICS_DELETE_BROADCAST;
 import static com.hetang.meet.MeetDynamicsFragment.REQUEST_CODE;
 

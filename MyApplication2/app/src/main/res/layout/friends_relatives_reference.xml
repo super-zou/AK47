@@ -29,7 +29,7 @@
             android:textSize="16sp" />
     </LinearLayout>
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorWhite">
@@ -89,7 +89,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/charm_synthesized_rating"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/charm_synthesized_rating" />
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <RelativeLayout
         android:id="@+id/rating_bar_wrapper"
@@ -134,7 +134,7 @@
             android:text="魅力评价" />
     </RelativeLayout>
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/impression_wrapper"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -159,7 +159,7 @@
             app:layout_constraintStart_toEndOf="@+id/impress_icon"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/impression_statistics_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -167,10 +167,10 @@
             android:background="@color/colorWhite"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/impress_icon"></android.support.v7.widget.RecyclerView>
-    </android.support.constraint.ConstraintLayout>
+            app:layout_constraintTop_toBottomOf="@+id/impress_icon"></androidx.recyclerview.widget.RecyclerView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/reference_wrapper"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -195,7 +195,7 @@
             app:layout_constraintStart_toEndOf="@+id/reference_icon"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/reference_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -203,11 +203,11 @@
             android:background="@color/colorWhite"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/reference_icon"></android.support.v7.widget.RecyclerView>
+            app:layout_constraintTop_toBottomOf="@+id/reference_icon"></androidx.recyclerview.widget.RecyclerView>
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/invite_reference"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -244,7 +244,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/invite" />
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
         android:id="@+id/write_reference_wrapper"
@@ -270,7 +270,7 @@
             android:textColor="@color/colorWhite" />
     </LinearLayout>
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/personality_wrapper"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -322,7 +322,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/personality_flow" />
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
         android:layout_width="match_parent"

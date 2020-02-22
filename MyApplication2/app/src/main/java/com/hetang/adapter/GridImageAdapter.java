@@ -1,7 +1,10 @@
 package com.hetang.adapter;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
+
+import android.net.Uri;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,9 +15,12 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.hetang.common.OnItemClickListener;
+import com.hetang.common.OnItemLongClickListener;
 import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
 import com.hetang.R;
+import com.luck.picture.lib.tools.DateUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -25,21 +31,39 @@ import java.util.List;
  */
 
 public class GridImageAdapter extends RecyclerView.Adapter<GridImageAdapter.ViewHolder> {
+    public static final String TAG = "PictureSelector";
     public static final int TYPE_CAMERA = 1;
     public static final int TYPE_PICTURE = 2;
-    protected OnItemClickListener mItemClickListener;
     private LayoutInflater mInflater;
     private List<LocalMedia> list = new ArrayList<>();
     private int selectMax = 9;
-    private Context context;
     /**
      * 点击添加图片跳转
      */
     private onAddPicClickListener mOnAddPicClickListener;
 
+    public interface onAddPicClickListener {
+        void onAddPicClick();
+    }
+
+    /**
+     * 删除
+     */
+    public void delete(int position) {
+        try {
+
+            if (position != RecyclerView.NO_POSITION && list.size() > position) {
+                list.remove(position);
+                notifyItemRemoved(position);
+                notifyItemRangeChanged(position, list.size());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public GridImageAdapter(Context context, onAddPicClickListener mOnAddPicClickListener) {
-        this.context = context;
-        mInflater = LayoutInflater.from(context);
+        this.mInflater = LayoutInflater.from(context);
         this.mOnAddPicClickListener = mOnAddPicClickListener;
     }
 
@@ -49,6 +73,34 @@ public class GridImageAdapter extends RecyclerView.Adapter<GridImageAdapter.View
 
     public void setList(List<LocalMedia> list) {
         this.list = list;
+    }
+
+    public List<LocalMedia> getData() {
+        if (list == null){
+            return new ArrayList<>();
+        }
+
+        return list;
+    }
+
+    public void remove(int position) {
+        if (list != null) {
+            list.remove(position);
+        }
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+
+        ImageView mImg;
+        TextView mIvDel;
+        TextView tvDuration;
+
+        public ViewHolder(View view) {
+            super(view);
+            mImg = view.findViewById(R.id.picture);
+            mIvDel = view.findViewById(R.id.delete_btn);
+            //tvDuration = view.findViewById(R.id.tv_duration);
+        }
     }
 
     @Override
@@ -93,16 +145,17 @@ public class GridImageAdapter extends RecyclerView.Adapter<GridImageAdapter.View
         //少于8张，显示继续添加的图标
         if (getItemViewType(position) == TYPE_CAMERA) {
             viewHolder.mImg.setImageResource(R.drawable.addimg_1x);
-            viewHolder.mImg.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mOnAddPicClickListener.onAddPicClick();
-                }
-            });
-            viewHolder.deleteBtn.setVisibility(View.INVISIBLE);
+            viewHolder.mImg.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            mOnAddPicClickListener.onAddPicClick();
+                        }
+                    });
+            viewHolder.mIvDel.setVisibility(View.INVISIBLE);
         } else {
-            viewHolder.deleteBtn.setVisibility(View.VISIBLE);
-            viewHolder.deleteBtn.setOnClickListener(new View.OnClickListener() {
+            viewHolder.mIvDel.setVisibility(View.VISIBLE);
+            viewHolder.mIvDel.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     int index = viewHolder.getAdapterPosition();
@@ -116,8 +169,12 @@ public class GridImageAdapter extends RecyclerView.Adapter<GridImageAdapter.View
                 }
             });
             LocalMedia media = list.get(position);
-            int mimeType = media.getMimeType();
-            String path = "";
+            if (media == null
+                    || TextUtils.isEmpty(media.getPath())) {
+                return;
+            }
+            int chooseModel = media.getChooseModel();
+            String path;
             if (media.isCut() && !media.isCompressed()) {
                 // 裁剪过
                 path = media.getCutPath();
@@ -128,81 +185,86 @@ public class GridImageAdapter extends RecyclerView.Adapter<GridImageAdapter.View
                 // 原图
                 path = media.getPath();
             }
-            // 图片
+
+            Log.i(TAG, "原图地址::" + media.getPath());
+
+            if (media.isCut()) {
+                Log.i(TAG, "裁剪地址::" + media.getCutPath());
+            }
             if (media.isCompressed()) {
-                Log.i("compress image result:", new File(media.getCompressPath()).length() / 1024 + "k");
-                Log.i("压缩地址::", media.getCompressPath());
+                Log.i(TAG, "压缩地址::" + media.getCompressPath());
+                Log.i(TAG, "压缩后文件大小::" + new File(media.getCompressPath()).length() / 1024 + "k");
+            }
+            if (!TextUtils.isEmpty(media.getAndroidQToPath())) {
+                Log.i(TAG, "Android Q特有地址::" + media.getAndroidQToPath());
+            }
+            if (media.isOriginal()) {
+                Log.i(TAG, "是否开启原图功能::" + true);
+                Log.i(TAG, "开启原图功能后地址::" + media.getOriginalPath());
             }
 
-            Log.i("原图地址::", media.getPath());
-            int pictureType = PictureMimeType.isPictureType(media.getPictureType());
-            if (media.isCut()) {
-                Log.i("裁剪地址::", media.getCutPath());
-            }
-            
             /*
             long duration = media.getDuration();
-            viewHolder.tv_duration.setVisibility(pictureType == PictureConfig.TYPE_VIDEO
+            viewHolder.tvDuration.setVisibility(PictureMimeType.eqVideo(media.getMimeType())
                     ? View.VISIBLE : View.GONE);
-            if (mimeType == PictureMimeType.ofAudio()) {
-                viewHolder.tv_duration.setVisibility(View.VISIBLE);
-                Drawable drawable = ContextCompat.getDrawable(context, R.drawable.picture_audio);
-                StringUtils.modifyTextViewDrawable(viewHolder.tv_duration, drawable, 0);
+            if (chooseModel == PictureMimeType.ofAudio()) {
+                viewHolder.tvDuration.setVisibility(View.VISIBLE);
+                viewHolder.tvDuration.setCompoundDrawablesRelativeWithIntrinsicBounds
+                        (R.drawable.picture_icon_audio, 0, 0, 0);
+
             } else {
-                Drawable drawable = ContextCompat.getDrawable(context, R.drawable.video_icon);
-                StringUtils.modifyTextViewDrawable(viewHolder.tv_duration, drawable, 0);
+                viewHolder.tvDuration.setCompoundDrawablesRelativeWithIntrinsicBounds
+                        (R.drawable.picture_icon_video, 0, 0, 0);
             }
-            viewHolder.tv_duration.setText(DateUtils.timeParse(duration));
+            viewHolder.tvDuration.setText(DateUtils.formatDurationTime(duration));
             */
-                
-            if (mimeType == PictureMimeType.ofAudio()) {
-                viewHolder.mImg.setImageResource(R.drawable.audio_placeholder);
+
+            if (chooseModel == PictureMimeType.ofAudio()) {
+                viewHolder.mImg.setImageResource(R.drawable.picture_audio_placeholder);
             } else {
-                RequestOptions options = new RequestOptions()
-                        .centerCrop()
-                        .placeholder(R.color.color_f6)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL);
+
                 Glide.with(viewHolder.itemView.getContext())
-                        .load(path)
-                        .apply(options)
+                        .load(path.startsWith("content://") && !media.isCut() && !media.isCompressed() ? Uri.parse(path)
+                                : path)
+                        .centerCrop()
+                        .placeholder(R.color.blue_dark)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(viewHolder.mImg);
             }
             //itemView 的点击事件
             if (mItemClickListener != null) {
                 viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(View v) {
+                    public void onClick(View view) {
                         int adapterPosition = viewHolder.getAdapterPosition();
-                        mItemClickListener.onItemClick(adapterPosition, v);
+                        mItemClickListener.onItemClick(adapterPosition, view);
                     }
                 });
+            }
+
+            if (mItemLongClickListener != null) {
+                viewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View view) {
+                        int adapterPosition = viewHolder.getAdapterPosition();
+                        mItemLongClickListener.onItemLongClick(viewHolder, adapterPosition, view);
+                        return true;
+                    }
+                });
+
             }
         }
     }
 
-    public void setOnItemClickListener(OnItemClickListener listener) {
-        this.mItemClickListener = listener;
+    private OnItemClickListener mItemClickListener;
+
+    public void setOnItemClickListener(OnItemClickListener l) {
+        this.mItemClickListener = l;
     }
 
-    public interface onAddPicClickListener {
-        void onAddPicClick();
-    }
+    private OnItemLongClickListener mItemLongClickListener;
 
-    public interface OnItemClickListener {
-        void onItemClick(int position, View v);
-    }
-
-    public class ViewHolder extends RecyclerView.ViewHolder {
-
-        ImageView mImg;
-        TextView deleteBtn;
-       // TextView tv_duration;
-
-        public ViewHolder(View view) {
-            super(view);
-            mImg = view.findViewById(R.id.picture);
-            deleteBtn = view.findViewById(R.id.delete_btn);
-            //tv_duration = (TextView) view.findViewById(R.id.tv_duration);
-        }
+    public void setItemLongClickListener(OnItemLongClickListener l) {
+        this.mItemLongClickListener = l;
     }
 }

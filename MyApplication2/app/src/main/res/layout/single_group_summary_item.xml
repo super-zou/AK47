@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/single_group_summary_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
 
+    android:background="@color/white"
     android:paddingTop="8dp"
-    android:paddingBottom="8dp"
-    android:background="@color/white">
-    
-     <com.hetang.util.RoundImageView
+    android:paddingBottom="8dp">
+
+    <com.hetang.util.RoundImageView
         android:id="@+id/leader_avatar"
         android:layout_width="80dp"
         android:layout_height="80dp"
@@ -34,14 +32,14 @@
         android:textStyle="normal|bold"
         app:layout_constraintStart_toEndOf="@+id/leader_avatar"
         app:layout_constraintTop_toTopOf="@+id/leader_avatar" />
-    
+
     <TextView
         android:id="@+id/university"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:text="@string/university"
-                      android:textColor="@color/disabled"
+        android:textColor="@color/disabled"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="@+id/leader_name"
         app:layout_constraintStart_toEndOf="@+id/leader_name"
@@ -57,15 +55,14 @@
         android:lines="2"
         android:paddingLeft="96dp"
         android:text="@string/introduction"
-        android:textSize="12sp"
         android:textColor="@color/black"
+        android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/leader_name" />
-    
+
     <Button
         android:id="@+id/contact_matchmaker"
-            android:visibility="gone"
         android:layout_width="60dp"
         android:layout_height="30dp"
         android:layout_marginTop="3dp"
@@ -74,6 +71,7 @@
         android:text="@string/contact_matchmaker"
         android:textColor="@color/white"
         android:textSize="12sp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/introduction" />
 
@@ -106,7 +104,7 @@
         android:textSize="10sp"
         app:layout_constraintStart_toEndOf="@+id/male_member_count"
         app:layout_constraintTop_toBottomOf="@+id/introduction" />
-    
+
     <TextView
         android:id="@+id/evaluate_count"
         android:layout_width="wrap_content"
@@ -122,8 +120,8 @@
         android:textSize="10sp"
         app:layout_constraintStart_toEndOf="@+id/female_member_count"
         app:layout_constraintTop_toBottomOf="@+id/introduction" />
-    
-     <HorizontalScrollView
+
+    <HorizontalScrollView
         android:id="@+id/memberScrollView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -142,6 +140,6 @@
             android:paddingRight="16dp"
             android:visibility="gone"></LinearLayout>
     </HorizontalScrollView>
-              
-    
-</android.support.constraint.ConstraintLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

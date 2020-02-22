@@ -2,14 +2,13 @@ package com.hetang.main;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import android.view.View;
 import android.widget.TextView;
 
 import com.hetang.R;
 import com.hetang.common.BaseAppCompatActivity;
-import com.hetang.main.MeetArchiveFragment;
 import com.hetang.meet.UserMeetInfo;
 import com.hetang.util.CommonDialogFragmentInterface;
 import com.hetang.util.FontManager;
@@ -26,7 +25,7 @@ public class MeetArchiveActivity extends BaseAppCompatActivity implements Common
         super.onCreate(savedInstanceState);
         setContentView(R.layout.archive_activity);
 
-        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        androidx.appcompat.app.ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.hide();
         }

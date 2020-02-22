@@ -2,15 +2,13 @@ package com.hetang.group;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import android.view.View;
 import android.widget.TextView;
 
 import com.hetang.R;
 import com.hetang.common.BaseAppCompatActivity;
-import com.hetang.main.MeetArchiveFragment;
-import com.hetang.meet.UserMeetInfo;
 import com.hetang.util.FontManager;
 
 public class GroupActivity extends BaseAppCompatActivity {

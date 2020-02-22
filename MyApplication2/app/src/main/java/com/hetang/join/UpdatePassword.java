@@ -5,8 +5,8 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.design.widget.TextInputEditText;
-import android.support.design.widget.TextInputLayout;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -30,8 +30,6 @@ import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-
-import static com.hetang.util.SharedPreferencesUtils.setYunXinToken;
 
 public class UpdatePassword extends BaseAppCompatActivity {
     private static final String TAG = "UpdatePassword";
@@ -162,9 +160,7 @@ public class UpdatePassword extends BaseAppCompatActivity {
                     try {
                         JSONObject checkResponse = new JSONObject(responseText);
                         boolean status = checkResponse.getBoolean("status");
-                        String yunxinToken = checkResponse.optString("token");
 
-                        setYunXinToken(mContext, yunxinToken);
                         Slog.d(TAG, "resetPassword checkResponse : " + checkResponse + " status: " + status);
                         if (status == true) {
                             Slog.d(TAG, "=====send message");
@@ -198,7 +194,7 @@ public class UpdatePassword extends BaseAppCompatActivity {
         });
 
         Typeface font = Typeface.createFromAsset(getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
-        FontManager.markAsIconContainer(findViewById(R.id.custom_actionbar), font);
+        FontManager.markAsIconContainer(findViewById(R.id.left_back), font);
     }
 
 }

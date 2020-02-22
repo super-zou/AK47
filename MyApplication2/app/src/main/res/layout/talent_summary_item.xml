@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/talent_summary_item"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+
+    android:background="@color/white"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp">
+
+    <com.hetang.util.RoundImageView
+        android:id="@+id/leader_avatar"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:scaleType="centerCrop"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/leader_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:gravity="center"
+        android:text="leader name"
+        android:textColor="@color/blue_dark"
+        android:textSize="15sp"
+        android:textStyle="normal|bold"
+        app:layout_constraintStart_toEndOf="@+id/leader_avatar"
+        app:layout_constraintTop_toTopOf="@+id/leader_avatar" />
+
+    <TextView
+        android:id="@+id/degree"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/degree"
+        android:textColor="@color/disabled"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/leader_name"
+        app:layout_constraintStart_toEndOf="@+id/leader_name"
+        app:layout_constraintTop_toTopOf="@+id/leader_name" />
+
+    <TextView
+        android:id="@+id/university"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:text="@string/university"
+        android:textColor="@color/disabled"
+        android:textSize="12sp"
+        app:layout_constraintStart_toStartOf="@+id/leader_name"
+        app:layout_constraintTop_toBottomOf="@+id/leader_name" />
+
+    <TextView
+        android:id="@+id/introduction"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:ellipsize="end"
+        android:maxLines="3"
+        android:paddingLeft="96dp"
+        android:text="@string/introduction"
+        android:textColor="@color/black"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/university" />
+
+    <TextView
+        android:id="@+id/cny"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:ellipsize="end"
+        android:maxEms="18"
+        android:singleLine="true"
+        android:text="@string/fa_cny"
+        android:textColor="@color/disabled"
+        android:textSize="10sp"
+        app:layout_constraintStart_toEndOf="@+id/leader_avatar"
+        app:layout_constraintTop_toBottomOf="@+id/introduction" />
+
+    <TextView
+        android:id="@+id/charge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="2dp"
+        android:text="charge"
+        android:textColor="@color/disabled"
+        android:textSize="10sp"
+        app:layout_constraintStart_toEndOf="@+id/cny"
+        app:layout_constraintTop_toTopOf="@+id/cny"
+        app:layout_constraintBottom_toBottomOf="@+id/cny" />
+
+    <TextView
+        android:id="@+id/dot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/dot"
+        android:textColor="@color/disabled"
+        android:textSize="10sp"
+        app:layout_constraintStart_toEndOf="@+id/charge"
+        app:layout_constraintTop_toTopOf="@+id/charge"
+        app:layout_constraintBottom_toBottomOf="@+id/charge"/>
+
+    <TextView
+        android:id="@+id/subject"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="subject"
+        android:textColor="@color/disabled"
+        android:textSize="10sp"
+        app:layout_constraintStart_toEndOf="@+id/dot"
+        app:layout_constraintTop_toTopOf="@+id/dot"
+        app:layout_constraintBottom_toBottomOf="@+id/dot"/>
+
+    <TextView
+        android:id="@+id/star"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:text="@string/fa_star"
+        android:textColor="@color/disabled"
+        android:textSize="10sp"
+        app:layout_constraintStart_toEndOf="@+id/subject"
+        app:layout_constraintTop_toTopOf="@+id/subject"
+        app:layout_constraintBottom_toBottomOf="@+id/subject"/>
+
+    <TextView
+        android:id="@+id/evaluate_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="2dp"
+        android:text=""
+        android:textColor="@color/disabled"
+        android:textSize="10sp"
+        app:layout_constraintStart_toEndOf="@+id/star"
+        app:layout_constraintTop_toTopOf="@+id/star"
+        app:layout_constraintBottom_toBottomOf="@+id/star" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

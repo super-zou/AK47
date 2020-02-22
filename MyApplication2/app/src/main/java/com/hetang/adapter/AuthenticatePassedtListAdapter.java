@@ -3,9 +3,9 @@ package com.hetang.adapter;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.NonNull;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -103,7 +103,7 @@ public class AuthenticatePassedtListAdapter extends RecyclerView.Adapter<Authent
             holder.sex.setTextColor(mContext.getResources().getColor(R.color.background));
         }else {
             holder.sex.setText(mContext.getResources().getString(R.string.female));
-            holder.sex.setTextColor(mContext.getResources().getColor(R.color.color_red_ccfa3c55));
+            holder.sex.setTextColor(mContext.getResources().getColor(R.color.color_red));
         }
         
         holder.major.setText(authentication.getMajor());

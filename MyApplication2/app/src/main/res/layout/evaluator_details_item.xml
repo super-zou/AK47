@@ -1,36 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="1dp"
+    android:layout_marginTop="1dp"
     android:background="@color/colorWhite">
+    <com.nex3z.flowlayout.FlowLayout
+        android:id="@+id/features"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        app:flChildSpacing="8dp"
+        app:flChildSpacingForLastRow="align"
+        app:flRowSpacing="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"></com.nex3z.flowlayout.FlowLayout>
 
     <com.hetang.util.RoundImageView
         android:id="@+id/evaluator_picture"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="0dp"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.025"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"></com.hetang.util.RoundImageView>
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/evaluator_name"
+        app:layout_constraintTop_toBottomOf="@+id/features"></com.hetang.util.RoundImageView>
 
     <TextView
         android:id="@+id/evaluator_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="-16dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:text="name"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.205"
+        app:layout_constraintTop_toTopOf="@+id/evaluator_picture" />
+
+    <TextView
+        android:id="@+id/edit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:paddingBottom="8dp"
+        android:text="@string/fa_edit_pencil"
+        android:textSize="18sp"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/features" />
     
     <TextView
         android:id="@+id/uid"
@@ -41,16 +60,14 @@
         android:text="uid"
         app:layout_constraintStart_toEndOf="@+id/evaluator_name"
         app:layout_constraintTop_toTopOf="@+id/evaluator_name" />
-    <com.willy.ratingbar.ScaleRatingBar xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    <com.willy.ratingbar.ScaleRatingBar
+        android:visibility="gone"
         android:id="@+id/charm_rating"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="-16dp"
         android:layout_marginTop="4dp"
-        android:layout_marginEnd="8dp"
         android:gravity="center"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/evaluator_name"
         app:layout_constraintTop_toBottomOf="@+id/evaluator_name"
         app:srb_clearRatingEnabled="false"
@@ -73,17 +90,5 @@
             android:layout_marginLeft="8dp" />
     </com.willy.ratingbar.ScaleRatingBar>
 
-   <com.nex3z.flowlayout.FlowLayout
-        android:id="@+id/features"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="8dp"
-        app:flChildSpacing="8dp"
-        app:flChildSpacingForLastRow="align"
-        app:flRowSpacing="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/evaluator_picture">
-    </com.nex3z.flowlayout.FlowLayout>
-</android.support.constraint.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

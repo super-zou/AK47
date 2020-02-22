@@ -11,31 +11,25 @@ import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.hetang.R;
 import com.hetang.adapter.MeetSingleGroupSummaryAdapter;
-import com.hetang.authenticate.TalentAuthenticationDialogFragment;
 import com.hetang.common.BaseAppCompatActivity;
 import com.hetang.common.MyApplication;
 import com.hetang.common.SetAvatarActivity;
 import com.hetang.meet.UserMeetInfo;
+import com.hetang.talent.TalentAuthenticationDialogFragment;
 import com.hetang.util.CommonDialogFragmentInterface;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.MyLinearLayoutManager;
 import com.hetang.util.ParseUtils;
-import com.hetang.util.RoundImageView;
 import com.hetang.util.SharedPreferencesUtils;
 import com.hetang.util.Slog;
 import com.hetang.util.UserProfile;
@@ -53,32 +47,29 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import static com.hetang.group.SubGroupActivity.ADD_NEW_TALENT_DONE;
-import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
+
+import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static com.hetang.archive.ArchiveFragment.SET_AVATAR_RESULT_OK;
-import static com.hetang.authenticate.TalentAuthenticationDialogFragment.TALENT_AUTHENTICATION_RESULT_OK;
 import static com.hetang.common.MyApplication.getContext;
 import static com.hetang.group.GroupFragment.eden_group;
 import static com.hetang.group.SingleGroupDetailsActivity.GET_SINGLE_GROUP_BY_GID;
+import static com.hetang.group.SubGroupActivity.ADD_NEW_TALENT_DONE;
 import static com.hetang.group.SubGroupActivity.GROUP_ADD_BROADCAST;
+import static com.hetang.talent.TalentAuthenticationDialogFragment.COMMON_TALENT_AUTHENTICATION_RESULT_OK;
+import static com.hetang.talent.TalentAuthenticationDialogFragment.TALENT_AUTHENTICATION_RESULT_OK;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
-
-//import com.netease.nim.uikit.business.robot.parser.elements.group.LinearLayout;
 
 public class SingleGroupActivity extends BaseAppCompatActivity implements CommonDialogFragmentInterface {
     private static final boolean isDebug = true;
     private static final String TAG = "SingleGroupActivity";
     private static final int PAGE_SIZE = 10;
-    private static final String SINGLE_GROUP_ADD = HttpUtil.DOMAIN + "?q=single_group/add";
-    private static final String SINGLE_GROUP_APPLY = HttpUtil.DOMAIN + "?q=single_group/apply";
-    private static final String SINGLE_GROUP_APPROVE = HttpUtil.DOMAIN + "?q=single_group/approve";
-    public static final String SINGLE_GROUP_GET_BY_UID = HttpUtil.DOMAIN + "?q=single_group/get_by_uid";
-    private static final String SINGLE_GROUP_GET_BY_ORG = HttpUtil.DOMAIN + "?q=single_group/get_by_org";
     public static final String SINGLE_GROUP_GET_MY = HttpUtil.DOMAIN + "?q=single_group/get_my";
     private static final String SINGLE_GROUP_GET_ALL = HttpUtil.DOMAIN + "?q=single_group/get_all";
     private static final String SINGLE_GROUP_UPDATE = HttpUtil.DOMAIN + "?q=single_group/update";
@@ -89,8 +80,7 @@ public class SingleGroupActivity extends BaseAppCompatActivity implements Common
     private static final int SET_AVATAR = 5;
     private static final int NO_MORE = 6;
     public static final int GET_MY_GROUP_DONE = 7;
-    public static final int NO_MY_GROUP = 8;
-    private static final int PROCESS_NEW_CREATED = 9;
+    public static final int GET_TALENT_DONE = 15;
     final int itemLimit = 3;
     ImageView progressImageView;
     AnimationDrawable animationDrawable;
@@ -103,57 +93,8 @@ public class SingleGroupActivity extends BaseAppCompatActivity implements Common
     private List<SingleGroup> mSingleGroupList = new ArrayList<>();
     private List<SingleGroup> mLeadGroupList = new ArrayList<>();
     private List<SingleGroup> mJoinGroupList = new ArrayList<>();
-    private int groupType = eden_group;
+    public static int groupType = eden_group;
     private ViewGroup myGroupView;
-
-    public static SingleGroup getSingleGroup(JSONObject group, boolean isSummary) {
-        SingleGroup singleGroup = new SingleGroup();
-        if (group != null) {
-            singleGroup.gid = group.optInt("gid");
-            singleGroup.introduction = group.optString("introduction");
-            singleGroup.created = Utility.timeStampToDay(group.optInt("created"));
-            singleGroup.memberCount = group.optInt("member_count");
-            singleGroup.maleCount = group.optInt("male_count");
-            singleGroup.femaleCount = group.optInt("female_count");
-            singleGroup.authorStatus = group.optInt("author_status");
-            singleGroup.isLeader = group.optBoolean("isLeader");
-            singleGroup.evaluateScores = (float) group.optDouble("scores");
-            singleGroup.evaluateCount = group.optInt("count");
-            JSONArray memberArray = group.optJSONArray("members");
-
-
-            if (memberArray != null) {
-                int count = memberArray.length();
-                if (count > 0) {
-                    singleGroup.memberList = new ArrayList<>();
-                    for (int n = 0; n < count; n++) {
-                        UserMeetInfo userMeetInfo = new UserMeetInfo();
-                        userMeetInfo.setUid(memberArray.optJSONObject(n).optInt("uid"));
-                        userMeetInfo.setNickName(memberArray.optJSONObject(n).optString("nickname"));
-                        userMeetInfo.setAvatar(memberArray.optJSONObject(n).optString("avatar"));
-                        userMeetInfo.setMajor(memberArray.optJSONObject(n).optString("major"));
-                        userMeetInfo.setDegree(memberArray.optJSONObject(n).optString("degree"));
-                        userMeetInfo.setUniversity(memberArray.optJSONObject(n).optString("university"));
-                        userMeetInfo.setSex(memberArray.optJSONObject(n).optInt("sex"));
-                        if (!isSummary) {
-                            userMeetInfo.setBirthYear(memberArray.optJSONObject(n).optInt("birth_year"));
-                            userMeetInfo.setHeight(memberArray.optJSONObject(n).optInt("height"));
-                            userMeetInfo.setLiving(memberArray.optJSONObject(n).optString("living"));
-                        }
-                        singleGroup.memberList.add(userMeetInfo);
-                    }
-                }
-            }
-
-            singleGroup.leader = new UserMeetInfo();
-            ParseUtils.setBaseProfile(singleGroup.leader, group);
-
-            return singleGroup;
-
-        }
-
-        return null;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -365,6 +306,52 @@ public class SingleGroupActivity extends BaseAppCompatActivity implements Common
         return SingleGroupArray != null ? SingleGroupArray.length() : 0;
     }
 
+    public static SingleGroup getSingleGroup(JSONObject group, boolean isSummary) {
+        SingleGroup singleGroup = new SingleGroup();
+        if (group != null) {
+            singleGroup.gid = group.optInt("gid");
+            singleGroup.introduction = group.optString("introduction");
+            singleGroup.created = Utility.timeStampToDay(group.optInt("created"));
+            singleGroup.memberCount = group.optInt("member_count");
+            singleGroup.maleCount = group.optInt("male_count");
+            singleGroup.femaleCount = group.optInt("female_count");
+            singleGroup.authorStatus = group.optInt("author_status");
+            singleGroup.isLeader = group.optBoolean("isLeader");
+            singleGroup.evaluateScores = (float) group.optDouble("scores");
+            singleGroup.evaluateCount = group.optInt("count");
+            JSONArray memberArray = group.optJSONArray("members");
+
+
+            if (memberArray != null) {
+                int count = memberArray.length();
+                if (count > 0) {
+                    singleGroup.memberList = new ArrayList<>();
+                    for (int n = 0; n < count; n++) {
+                        UserMeetInfo userMeetInfo = new UserMeetInfo();
+                        userMeetInfo.setUid(memberArray.optJSONObject(n).optInt("uid"));
+                        userMeetInfo.setNickName(memberArray.optJSONObject(n).optString("nickname"));
+                        userMeetInfo.setAvatar(memberArray.optJSONObject(n).optString("avatar"));
+                        userMeetInfo.setMajor(memberArray.optJSONObject(n).optString("major"));
+                        userMeetInfo.setDegree(memberArray.optJSONObject(n).optString("degree"));
+                        userMeetInfo.setUniversity(memberArray.optJSONObject(n).optString("university"));
+                        userMeetInfo.setSex(memberArray.optJSONObject(n).optInt("sex"));
+                        if (!isSummary) {
+                            userMeetInfo.setBirthYear(memberArray.optJSONObject(n).optInt("birth_year"));
+                            userMeetInfo.setHeight(memberArray.optJSONObject(n).optInt("height"));
+                            userMeetInfo.setLiving(memberArray.optJSONObject(n).optString("living"));
+                        }
+                        singleGroup.memberList.add(userMeetInfo);
+                    }
+                }
+            }
+            singleGroup.leader = new UserMeetInfo();
+            ParseUtils.setBaseProfile(singleGroup.leader, group);
+
+            return singleGroup;
+        }
+        return null;
+    }
+
 
     private void becomeTalent() {
         TalentAuthenticationDialogFragment talentAuthenticationDialogFragment = new TalentAuthenticationDialogFragment();
@@ -574,6 +561,7 @@ public class SingleGroupActivity extends BaseAppCompatActivity implements Common
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (isDebug)
             Slog.d(TAG, "===================onActivityResult requestCode: " + requestCode + " resultCode: " + resultCode);
         if (requestCode == Activity.RESULT_FIRST_USER) {
@@ -590,7 +578,7 @@ public class SingleGroupActivity extends BaseAppCompatActivity implements Common
     @Override
     public void onBackFromDialog(int type, int result, boolean status) {
         switch (type) {
-            case TALENT_AUTHENTICATION_RESULT_OK://For EvaluateDialogFragment back
+            case TALENT_AUTHENTICATION_RESULT_OK:
                 if (status == true) {
                     getMyNewAddedTalent(result);
                 }

@@ -1,13 +1,13 @@
 package com.hetang.adapter;
 
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.PagerAdapter;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.viewpager.widget.PagerAdapter;
 import android.view.ViewGroup;
 
-import com.hetang.message.RecentChatFragment;
+import com.hetang.message.ConversationFragment;
 import com.hetang.message.NotificationFragment;
 
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ import java.util.ArrayList;
                 fragment = new NotificationFragment();
                 break;
             case 1:
-                fragment = new RecentChatFragment();
+                fragment = new ConversationFragment();
                 break;
             default:
                 fragment = new NotificationFragment();
@@ -67,7 +67,7 @@ import java.util.ArrayList;
                 baseFragment = (NotificationFragment) super.instantiateItem(container, position);
                 break;
             case 1:
-                baseFragment = (RecentChatFragment) super.instantiateItem(container, position);
+                baseFragment = (ConversationFragment) super.instantiateItem(container, position);
                 break;
             default:
                 baseFragment = (NotificationFragment) super.instantiateItem(container, position);

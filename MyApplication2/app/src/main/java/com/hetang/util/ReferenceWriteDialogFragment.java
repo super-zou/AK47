@@ -8,7 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.app.DialogFragment;
+import androidx.fragment.app.DialogFragment;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -55,7 +55,10 @@ public class ReferenceWriteDialogFragment extends DialogFragment {
     TextView save;
     private ProgressDialog progressDialog;
     private boolean writeDone = false;
+    private boolean modify = false;
     private static int TYPE_REFERENCE = 1;
+    private String content;
+    private int rid;
 
     @Override
     public void onAttach(Context context) {
@@ -76,7 +79,6 @@ public class ReferenceWriteDialogFragment extends DialogFragment {
                 super.handleMessage(msg);
             }
         };
-
     }
 
     @Override
@@ -84,11 +86,6 @@ public class ReferenceWriteDialogFragment extends DialogFragment {
 
         int uid = -1;
         String name = "";
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            uid = bundle.getInt("uid");
-            name = bundle.getString("name");
-        }
 
         inflater = LayoutInflater.from(mContext);
         mDialog = new Dialog(mContext, android.R.style.Theme_Light_NoTitleBar);
@@ -108,7 +105,23 @@ public class ReferenceWriteDialogFragment extends DialogFragment {
         window.setAttributes(layoutParams);
 
         TextView title = view.findViewById(R.id.write_reference_title);
-        title.setText("给" + name + "写推荐信");
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            uid = bundle.getInt("uid");
+            modify = bundle.getBoolean("modify", false);
+            if (modify){
+                title.setText(getContext().getResources().getString(R.string.modify_reference));
+                rid = bundle.getInt("rid");
+                relation = bundle.getString("relation");
+                content = bundle.getString("content");
+                setRelationShipSelected();
+                setReferenceEditContent();
+            }else {
+                name = bundle.getString("name");
+                title.setText("给" + name + "写推荐信");
+            }
+
+        }
 
         initView(uid);
         return mDialog;
@@ -161,6 +174,13 @@ public class ReferenceWriteDialogFragment extends DialogFragment {
             }
         });
 
+        if (modify){
+            if (!save.isEnabled()) {
+                save.setEnabled(true);
+                save.setTextColor(mContext.getResources().getColor(R.color.color_blue));
+            }
+        }
+
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -194,12 +214,30 @@ public class ReferenceWriteDialogFragment extends DialogFragment {
         });
     }
 
+    private void setRelationShipSelected(){
+        final MyRadioGroup relationGroupOne = view.findViewById(R.id.relation_radiogroup);
+        for (int i=0; i<relationGroupOne.getChildCount(); i++){
+            RadioButton radioButton = (RadioButton) relationGroupOne.getChildAt(i);
+            if (relation.equals(radioButton.getText().toString())){
+                radioButton.setChecked(true);
+            }
+        }
+    }
+
+    private void setReferenceEditContent(){
+        EditText editText = view.findViewById(R.id.reference_edit_text);
+        editText.setText(content);
+    }
+
     private void uploadToServer(String input, int uid, String relation) {
         showProgress(mContext);
-        RequestBody requestBody = new FormBody.Builder()
-                .add("uid", String.valueOf(uid))
-                .add("relation", relation)
-                .add("content", input).build();
+        FormBody.Builder builder = new FormBody.Builder().add("relation", relation)
+                                                         .add("content", input).add("uid", String.valueOf(uid));
+        if (modify){
+            builder.add("rid", String.valueOf(rid));
+        }
+        RequestBody requestBody = builder.build();
+
         HttpUtil.sendOkHttpRequest(getContext(), WRITE_REFERENCE_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {

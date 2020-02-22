@@ -7,7 +7,7 @@
     <string name="title_activity_login">Login</string>
     <string name="app_name">荷塘</string>
     <string name="logo_name">荷塘</string>
-    <string name="slogan">荷你相遇 · 美好开始</string>
+    <string name="slogan">丰富你的生活</string>
     <string name="meet_text">遇见</string>
     <string name="activity_text">活动</string>
     <string name="archive_text">我</string>
@@ -35,8 +35,21 @@
     <string name="approve">认可</string>
     <string name="approved">已同意</string>
     <string name="back">返回</string>
+    <string name="chat_top">置顶</string>
+    <string name="chat_delete">删除聊天</string>
+    <string name="quit_chat_top">取消置顶</string>
     <string name="look_friend">+我要交友</string>
     <string name="look_friend_notice">填写交友条件，匹配更合适的伙伴</string>
+    <string name="talent_explanation_label">什么是达人？</string>
+    <string name="talent_explanation_content">只要你充满热情，期望利用自己的热爱和专长，
+        　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　做一些对别人有帮助或有意义的事情就可以成为达人，还能顺便赚取收入</string>
+    <string name="matchmaker_talent_explanation_label">什么是牵线达人？</string>
+    <string name="matchmaker_talent_explanation_content">只要你乐于助人，愿意帮好友牵线搭桥就可以成为牵线达人。牵线达人可以做哪些事情？
+        \n 1 组建自己的牵线团，招募好友加入
+        \n 2 设置一定的赞赏金额，用于接收赞赏
+        \n 3 给寻求帮忙的人牵线搭桥
+        \n 4 获得帮助的人会支付赞赏金表达感谢</string>
+    <string name="begin_now">现在就开始吧</string>
 
     <!--+Begin: relations, add by zouhaichao 2018.11.27-->
     <string name="classmate">同学</string>
@@ -45,6 +58,7 @@
     <string name="colleague">同事</string>
     <string name="schoolmate">校友</string>
     <string name="relative">亲人</string>
+    <string name="modify_reference">修改推荐信</string>
     <string name="add_member">添加成员</string>
     <string name="added_member">已添加</string>
     <string name="invited_member">已邀请</string>
@@ -117,6 +131,7 @@
     <string name="hetang_introduction">不负青春，让生活更精彩</string>
     <string name="join">加入</string>
     <string name="exit">退出</string>
+    <string name="submit_error">提交失败</string>
     <string name="join_action">+加入</string>
     <string name="confirm">确认</string>
     <string name="or">或</string>
@@ -240,6 +255,7 @@
     <string name="feedback">意见反馈</string>
     <string name="authentication">认证</string>
     <string name="share">分享</string>
+    <string name="edit">编辑</string>
     <string name="share_to">分享到</string>
     <string name="from">来自</string>
     <string name="loved">被喜欢</string>
@@ -267,9 +283,35 @@
     <string name="reward_done">已赞赏</string>
     <string name="wechat_support">请用微信扫码支付</string>
     <string name="submit_payment">上传赞赏码</string>
-    <string name="payment_notice">寻求或得到帮助的人会支付一定的感谢费表示心意。*目前仅支持微信赞赏码收款，在微信收付款里选择赞赏码，设置金额后保存，然后点下面的\"+\"上传*</string>
+    <string name="modify_talent">修改达人信息</string>
+    <string name="setting_payment">设置收款二维码</string>
+    <string name="upload_qr_code">上传微信收款二维码</string>
+    <string name="payment_notice">得到帮助的人会支付一些感谢费表示心意。
+        \n 在微信收付款里选择赞赏码，设置金额后保存，然后点下面的\"+\"上传</string>
     <string name="talent_introduction_title">达人介绍</string>
+    <string name="introduction_title">优势介绍</string>
     <string name="talent_introduction">介绍一下你的优势，能够提供哪些帮助和服务</string>
+    <string name="common_talent_introduction">你的专长和优势，能够提供哪些帮助和服务</string>
+    <string name="qualification_materia">资历证明(可选)</string>
+    <string name="ignore">跳过</string>
+    <string name="proceed">继续</string>
+    <string name="setting_money">设置金额</string>
+    <string name="consultation">咨询</string>
+    <string name="reward_consultation">付款后咨询</string>
+    <string name="material">资历材料</string>
+    <string name="charge_desc">收费说明</string>
+    <string name="all_talents">全部达人</string>
+    <string name="tribe">部落</string>
+    <string name="my_tribe">我的部落</string>
+    <string name="my_talent">我的达人</string>
+    <string name="charge_introduction">收费说明</string>
+    <string name="charge_introduction_hint">对时间、时长等说明</string>
+    <string name="amount_of_money">输入金额</string>
+    <string name="select_subject_title">选择主题</string>
+    <string name="select_subject">+选择一个主题</string>
+    <string name="subject_introduction">选择一个主题，方便其他用户找到你</string>
+    <string name="talent_introduction_empty">请介绍一下你的专长和服务</string>
+    <string name="qualification_materia_introduction">如果有相关的资历材料，会更能获得认可。点击\"+\"上传</string>
     <string name="invite_member_condition">达人申请成功后，需要招募至少3位成员加入你的牵线团</string>
     <string name="reward_content">达人帮你牵线搭桥，极大提高交友成功率。一点赞赏聊表心意，达人更愿意付出时间帮忙。</string>
     <string name="preparation">即将上线，敬请关注。</string>
@@ -279,6 +321,6 @@
     <string name="hobby_group_desc">组建、加入各种兴趣专题，结识相同爱好的伙伴</string>
     <string name="growUp_group_desc">交流经验，疑难咨询解答</string>
     <string name="activity_group_desc">活动达人带你体验各种创意、好玩的活动，结识更多有趣的伙伴。不负青春，留下精彩回忆</string>
-    <string name="foreign_friend_desc">结识异国友人，体验异国友人的Party和活动</string>
+    <string name="foreign_friend_desc">结识异国友人，体验异国友人的派对和活动</string>
     <string name="authentication_introduction">请上传一张清晰的学生证、学生卡或校园卡等带有个人头像和信息的校园证件照，要求证件照与以上信息一致</string>
 </resources>

@@ -3,22 +3,18 @@ package com.hetang.adapter;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Message;
-import android.support.constraint.ConstraintLayout;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
 import com.hetang.R;
 import com.hetang.common.HandlerTemp;
 import com.hetang.group.SingleGroupActivity;
@@ -30,7 +26,6 @@ import com.hetang.util.UserProfile;
 import java.util.List;
 
 import static com.hetang.common.MyApplication.getContext;
-import static com.hetang.util.Utility.dpToPx;
 
 /**
  * Created by super-zou on 18-9-21.

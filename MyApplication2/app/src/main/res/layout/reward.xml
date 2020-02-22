@@ -1,92 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/white"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
     <TextView
         android:id="@+id/reward_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/reward"
+        android:background="@color/blue_dark"
         android:gravity="center"
         android:padding="8dp"
+        android:text="@string/reward"
+        android:textColor="@color/white"
         android:textSize="15sp"
         android:textStyle="bold"
-        android:textColor="@color/white"
-        android:background="@color/blue_dark"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-        
-        <TextView
+
+    <TextView
         android:id="@+id/reward_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:textColor="@color/black"
-        android:text="@string/reward_content"
         android:lineSpacingMultiplier="1.2"
+        android:padding="16dp"
+        android:text="@string/reward_content"
+        android:textColor="@color/black"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/reward_title"/>
+        app:layout_constraintTop_toBottomOf="@+id/reward_title" />
 
     <com.hetang.util.RoundImageView
         android:id="@+id/reward_qr_code"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_marginTop="16dp"
+        android:layout_width="280dp"
+        android:layout_height="280dp"
+        android:layout_marginTop="32dp"
         android:src="@drawable/btn_primary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/reward_content" />
-        
-         <TextView
+
+    <TextView
         android:id="@+id/wechat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="3dp"
         android:text="@string/fa_weixin"
+        android:textSize="16sp"
         android:textColor="@color/color_green"
-        app:layout_constraintStart_toStartOf="@+id/reward_qr_code"
+        app:layout_constraintEnd_toStartOf="@+id/notice"
         app:layout_constraintTop_toBottomOf="@+id/reward_qr_code" />
 
     <TextView
         android:id="@+id/notice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="3dp"
         android:text="@string/wechat_support"
-        android:textColor="@color/disabled"
+        android:textColor="@color/black"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="@+id/wechat"
-        app:layout_constraintStart_toEndOf="@+id/wechat"
+        app:layout_constraintEnd_toEndOf="@+id/reward_qr_code"
+        app:layout_constraintStart_toStartOf="@+id/reward_qr_code"
         app:layout_constraintTop_toTopOf="@+id/wechat" />
-        
-         <Button
+
+    <Button
         android:id="@+id/abandon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginBottom="32dp"
-        android:text="@string/abandon"
-        android:textColor="@color/light_gray"
         android:background="@drawable/btn_disable"
+        android:text="@string/abandon"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-        
-        <Button
+
+    <Button
         android:id="@+id/reward_done"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="32dp"
+        android:background="@drawable/btn_primary"
         android:text="@string/reward_done"
         android:textColor="@color/white"
-        android:background="@drawable/btn_primary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

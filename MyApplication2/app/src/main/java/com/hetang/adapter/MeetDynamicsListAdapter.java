@@ -7,9 +7,9 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Message;
-import android.support.constraint.ConstraintLayout;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -84,7 +84,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
 
     public MeetDynamicsListAdapter(Context context, FragmentManager fragmentManager, boolean specificUser) {
         //Slog.d(TAG, "==============MeetRecommendListAdapter init=================");
-        mContext = context;
+        mContext = MyApplication.getContext();
         if (mContext == null) {
             mContext = MyApplication.getContext();
         }
@@ -209,7 +209,8 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
             }
 
             final RequestOptions requestOptions = new RequestOptions()
-                    .placeholder(mContext.getDrawable(R.mipmap.hetang_icon))
+                    //.placeholder(MyApplication.getContext().getResources().getDrawable(R.mipmap.hetang_icon))
+                    .placeholder(mContext.getResources().getDrawable(R.drawable.icon))
                     .diskCacheStrategy(DiskCacheStrategy.RESOURCE);
             final List<Drawable> drawableList = new ArrayList<>();
             for (int i = 0; i < length; i++) {

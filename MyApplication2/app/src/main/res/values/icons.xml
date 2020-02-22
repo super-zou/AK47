@@ -10,7 +10,8 @@
     <string name="fa_comment_o">&#xf27b;</string>
     <string name="fa_camera_retro">&#xf083;</string>
     <string name="fa_camera">&#xf030;</string>
-    <string name="fa_star_o">&#xf005;</string>
+    <string name="fa_star_o">&#xf006;</string>
+    <string name="fa_star">&#xf005;</string>
     <string name="chevron_right">&#xf054;</string>
     <string name="personality">&#xf02c;</string>
     <string name="certificate">&#xf0a3;</string>
@@ -68,4 +69,6 @@
     <string name="fa_university">&#xf19c;</string>
     <string name="fa_building">&#xf0f7;</string>
     <string name="fa_magnet">&#xf076;</string>
+    <string name="fa_cny">&#xf157;</string>
+    <string name="fa_edit_pencil">&#xf044;</string>
 </resources>

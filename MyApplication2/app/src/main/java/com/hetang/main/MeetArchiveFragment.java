@@ -14,10 +14,10 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.Nullable;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.Nullable;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -33,6 +33,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
 import com.bumptech.glide.Glide;
@@ -42,7 +43,8 @@ import com.hetang.R;
 import com.hetang.adapter.CheeringGroupAdapter;
 import com.hetang.adapter.MeetImpressionStatisticsAdapter;
 import com.hetang.adapter.MeetReferenceAdapter;
-import com.hetang.common.Chat;
+import com.hetang.common.OnItemClickListener;
+import com.hetang.contacts.ChatActivity;
 import com.hetang.dynamics.Dynamic;
 import com.hetang.common.HandlerTemp;
 import com.hetang.common.MyApplication;
@@ -71,6 +73,8 @@ import com.hetang.util.Slog;
 import com.hetang.util.UserProfile;
 import com.hetang.util.Utility;
 import com.nex3z.flowlayout.FlowLayout;
+import com.tencent.imsdk.TIMConversationType;
+import com.tencent.qcloud.tim.uikit.modules.chat.base.ChatInfo;
 import com.willy.ratingbar.BaseRatingBar;
 import com.willy.ratingbar.ScaleRatingBar;
 
@@ -92,17 +96,18 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static com.hetang.common.SetAvatarActivity.AVATAR_SET_ACTION_BROADCAST;
+import static com.hetang.main.MainActivity.setTuiKitProfile;
+import static com.hetang.meet.EvaluateModifyDialogFragment.EVALUATE_MODIFY_ACTION_BROADCAST;
 import static com.hetang.meet.MeetRecommendFragment.GET_MY_CONDITION_URL;
 import static com.hetang.meet.MeetRecommendFragment.MY_CONDITION_NOT_SET;
 import static com.hetang.meet.MeetRecommendFragment.MY_CONDITION_SET_DONE;
 import static com.hetang.util.ParseUtils.startArchiveActivity;
 import static com.hetang.util.ParseUtils.startMeetArchiveActivity;
-import static com.hetang.util.SharedPreferencesUtils.getYunXinAccount;
 import static com.xuexiang.xupdate.utils.DrawableUtils.getDrawable;
 
-public class MeetArchiveFragment extends BaseFragment implements CommonDialogFragmentInterface/*, ViewSwitcher.ViewFactory, View.OnTouchListener*/ {
+public class MeetArchiveFragment extends BaseFragment implements CommonDialogFragmentInterface {
     private static final String TAG = "MeetArchiveFragment";
-    private static final boolean isDebug = false;
+    private static final boolean isDebug = true;
     private static final String GET_ACTIVITIES_COUNT_BY_UID = HttpUtil.DOMAIN + "?q=dynamic/get_count_by_uid";
     private static final String COMMENT_URL = HttpUtil.DOMAIN + "?q=dynamic/interact/get";
     private static final String LOAD_REFERENCE_URL = HttpUtil.DOMAIN + "?q=meet/reference/load";
@@ -121,7 +126,9 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
     public static final String GET_PRAISE_STATISTICS_URL = HttpUtil.DOMAIN + "?q=meet/praise/statistics";
 
     private static final String LOVE_ADD_URL = HttpUtil.DOMAIN + "?q=meet/love/add";
+    private static final String LOVE_CANCEL_URL = HttpUtil.DOMAIN + "?q=meet/love/cancel";
     private static final String PRAISE_ADD_URL = HttpUtil.DOMAIN + "?q=meet/praise/add";
+    private static final String PRAISE_CANCEL_URL = HttpUtil.DOMAIN + "?q=meet/praise/cancel";
     private static final String GET_PROFILE_PICTURES_URL = HttpUtil.DOMAIN + "?q=meet/get_pictures_url";
     private static final String ADD_VISIT_RECORD_URL = HttpUtil.DOMAIN + "?q=visitor_record/add_visit_record";
     private static final String GET_VISIT_RECORD_URL = HttpUtil.DOMAIN + "?q=visitor_record/get_visit_record";
@@ -211,13 +218,14 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
     private boolean isSelf = false;
 
     int mTempSize = 0;
-    Chat chat;
     private UserProfile myProfile;
     private LinearLayout navLayout;
     private List<Drawable> drawableList = new ArrayList<>();
     private View viewContent;
     private Context mContext;
     private AvatarAddBroadcastReceiver mReceiver;
+    private ChatInfo chatInfo;
+    private float ratingAverageRoundUp = 0;
 
 
     @Nullable
@@ -477,7 +485,7 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
             if (mMeetMember.getSex() == 0) {
                 mImageSwitcher.setImageDrawable(MyApplication.getContext().getDrawable(R.drawable.male_default_avator));
             } else {
-                mImageSwitcher.setImageDrawable(MyApplication.getContext().getDrawable(R.drawable.male_default_avator));
+                mImageSwitcher.setImageDrawable(MyApplication.getContext().getDrawable(R.drawable.female_default_avator));
             }
         }
 
@@ -681,14 +689,23 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
             contactBtn.setVisibility(View.GONE);
             followBtn.setVisibility(View.GONE);
 
-            if (null == chat) {
-                chat = new Chat();
-            }
             chatBtn.setVisibility(View.VISIBLE);
             chatBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    chat.processChat(getActivity(), getYunXinAccount(context), mMeetMember.getInit());
+                    //chat.processChat(getActivity(), getYunXinAccount(context), mMeetMember.getInit());
+                    if (chatInfo == null){
+                        chatInfo = new ChatInfo();
+                    }
+                    chatInfo.setType(TIMConversationType.C2C);
+                    chatInfo.setId(String.valueOf(mMeetMember.getUid()));
+                    chatInfo.setChatName(mMeetMember.getNickName());
+
+                    //chatInfo.setId();
+                    Intent intent = new Intent(getContext(), ChatActivity.class);
+                    intent.putExtra("CHAT_INFO", chatInfo);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
                 }
             });
         }
@@ -1178,16 +1195,10 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
     }
 
     private void processLoveAction() {
-
         lovedIcon = mArchiveProfile.findViewById(R.id.loved_icon);
-        final TextView lovedCount = mArchiveProfile.findViewById(R.id.loved_statistics);
         if (isLoved) {
-            lovedIcon.setEnabled(false);
-            lovedCount.setEnabled(false);
             lovedIcon.setText(getResources().getText(R.string.fa_heart));
         } else {
-            lovedIcon.setEnabled(true);
-            lovedCount.setEnabled(true);
             lovedIcon.setText(getResources().getText(R.string.fa_heart_o));
         }
         final RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
@@ -1195,7 +1206,11 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
         lovedIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                HttpUtil.sendOkHttpRequest(mContext, LOVE_ADD_URL, requestBody, new Callback() {
+                String url = LOVE_ADD_URL;
+                if (isLoved){
+                    url = LOVE_CANCEL_URL;
+                }
+                HttpUtil.sendOkHttpRequest(mContext, url, requestBody, new Callback() {
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
                         if (response.body() != null) {
@@ -1209,50 +1224,23 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
                     public void onFailure(Call call, IOException e) {
                     }
                 });
-                isLoved = true;
-                lovedIcon.setEnabled(false);
-                lovedCount.setEnabled(false);
+
+                if (isLoved){
+                    isLoved = false;
+                }else {
+                    isLoved = true;
+                }
                 handler.sendEmptyMessage(UPDATE_LOVED_COUNT);
             }
         });
-
-        lovedCount.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                HttpUtil.sendOkHttpRequest(mContext, LOVE_ADD_URL, requestBody, new Callback() {
-                    @Override
-                    public void onResponse(Call call, Response response) throws IOException {
-                        if (response.body() != null) {
-                            String responseText = response.body().string();
-                            if (isDebug)
-                                Slog.d(TAG, "==========love add response text : " + responseText);
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call call, IOException e) {
-                    }
-                });
-                isLoved = true;
-                lovedIcon.setEnabled(false);
-                lovedCount.setEnabled(false);
-                handler.sendEmptyMessage(UPDATE_LOVED_COUNT);
-            }
-        });
-
     }
 
     private void processPraiseAction() {
         praisedIcon = mArchiveProfile.findViewById(R.id.praised_icon);
-        praisedCount = mArchiveProfile.findViewById(R.id.praised_statistics);
+        praisedCount = mArchiveProfile.findViewById(R.id.praised_count);
         if (isPraised) {
-            praisedCount.setEnabled(false);
-            praisedIcon.setEnabled(false);
             praisedIcon.setText(getResources().getText(R.string.fa_thumbs_up));
         } else {
-            praisedCount.setEnabled(true);
-            praisedIcon.setEnabled(true);
             praisedIcon.setText(getResources().getText(R.string.fa_thumbs_O_up));
         }
 
@@ -1260,7 +1248,11 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
         praisedIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                HttpUtil.sendOkHttpRequest(mContext, PRAISE_ADD_URL, requestBody, new Callback() {
+                String url = PRAISE_ADD_URL;
+                if (isPraised){
+                    url = PRAISE_CANCEL_URL;
+                }
+                HttpUtil.sendOkHttpRequest(mContext, url, requestBody, new Callback() {
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
                         if (response.body() != null) {
@@ -1274,13 +1266,18 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
                     public void onFailure(Call call, IOException e) {
                     }
                 });
-                isPraised = true;
-                praisedIcon.setEnabled(false);
-                praisedCount.setEnabled(false);
+
+                if (isPraised){
+                    isPraised = false;
+                }else {
+                    isPraised = true;
+                }
+
                 handler.sendEmptyMessage(UPDATE_PRAISED_COUNT);
             }
         });
 
+        /*
         praisedCount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1304,6 +1301,7 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
                 handler.sendEmptyMessage(UPDATE_PRAISED_COUNT);
             }
         });
+        */
 
     }
 
@@ -1312,6 +1310,21 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
         RecyclerView recyclerView = mHeaderEvaluation.findViewById(R.id.reference_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         mMeetReferenceAdapter = new MeetReferenceAdapter(mContext);
+        mMeetReferenceAdapter.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(int position, View v) {
+                ReferenceWriteDialogFragment referenceWriteDialogFragment = new ReferenceWriteDialogFragment();
+                referenceWriteDialogFragment.setTargetFragment(MeetArchiveFragment.this, REQUESTCODE);
+                Bundle bundle = new Bundle();
+                bundle.putBoolean("modify", true);
+                bundle.putInt("uid", uid);
+                bundle.putInt("rid", mReferenceList.get(position).getRid());
+                bundle.putString("relation", mReferenceList.get(position).getRelation());
+                bundle.putString("content", mReferenceList.get(position).getContent());
+                referenceWriteDialogFragment.setArguments(bundle);
+                referenceWriteDialogFragment.show(getFragmentManager(), "ReferenceWriteDialogFragment");
+            }
+        });
         recyclerView.setAdapter(mMeetReferenceAdapter);
 
         if (meetReferenceInfoList.size() > 0) {
@@ -1323,6 +1336,14 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
 
     }
 
+    private void setScoreView(float average){
+        TextView ratingAverageTV = mHeaderEvaluation.findViewById(R.id.chram_synthesized_results);
+        ratingAverageTV.setText(average + "分");
+
+        ScaleRatingBar scaleRatingBarCount = mHeaderEvaluation.findViewById(R.id.charm_synthesized_rating);
+        scaleRatingBarCount.setRating(average);
+    }
+
     private void setRatingBarView() {
         JSONArray ratingArray = mRatingObj.optJSONArray("rating");
         TextView ratingMemberCount = mHeaderEvaluation.findViewById(R.id.rating_member_count);
@@ -1330,23 +1351,23 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
             evaluatorDetails.setVisibility(View.VISIBLE);
             ratingMemberCount.setText(ratingArray.length() + "人评价");
             float ratingCount = 0;
+            int nonZeroCount = 0;
             for (int i = 0; i < ratingArray.length(); i++) {
                 JSONObject ratingObj = ratingArray.optJSONObject(i);
                 if (mRatingObj.optInt("visitor_uid") == ratingObj.optInt("evaluator_uid")) {
                     ratingBarWrapper.setVisibility(View.GONE);
                 }
-                ratingCount += ratingObj.optDouble("rating");
+                if (ratingObj.optDouble("rating") > 0){
+                    ratingCount += ratingObj.optDouble("rating");
+                    nonZeroCount++;
+                }
             }
 
-            float ratingAverage = ratingCount / ratingArray.length();
-            float ratingAverageRoundUp = 0;
+            float ratingAverage = ratingCount / nonZeroCount;
             BigDecimal b = new BigDecimal(ratingAverage);
             ratingAverageRoundUp = b.setScale(1, BigDecimal.ROUND_HALF_UP).floatValue();
-            TextView ratingAverageTV = mHeaderEvaluation.findViewById(R.id.chram_synthesized_results);
-            ratingAverageTV.setText(ratingAverageRoundUp + "分");
 
-            ScaleRatingBar scaleRatingBarCount = mHeaderEvaluation.findViewById(R.id.charm_synthesized_rating);
-            scaleRatingBarCount.setRating(ratingAverageRoundUp);
+            setScoreView(ratingAverageRoundUp);
 
         } else {
             ratingMemberCount.setText("暂无评价");
@@ -1428,6 +1449,7 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
             public void onClick(View view) {
                 Intent intent = new Intent(mContext, EvaluatorDetailsActivity.class);
                 intent.putExtra("uid", uid);
+                intent.putExtra("scores", ratingAverageRoundUp);
                 //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
                 startActivity(intent);
             }
@@ -2053,24 +2075,41 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
 
     private void updateLovedCount() {
         lovedStatistics = mArchiveProfile.findViewById(R.id.loved_statistics);
-        lovedCount = mArchiveProfile.findViewById(R.id.loved_count);
+        //lovedCount = mArchiveProfile.findViewById(R.id.loved_count);
         int newLovedStatistics = 0;
         int newLovedCount = 0;
-        if (lovedStatistics.getText().toString().length() == 0) {
-            newLovedStatistics = 1;
-        } else {
-            newLovedStatistics = Integer.parseInt(lovedStatistics.getText().toString()) + 1;
+
+        if (isLoved){//add
+            if (lovedStatistics.getText().toString().length() == 0) {
+                newLovedStatistics = 1;
+            } else {
+                newLovedStatistics = Integer.parseInt(lovedStatistics.getText().toString()) + 1;
+            }
+
+            if (lovedCount.getText().toString().length() == 0) {
+                newLovedCount = 1;
+            } else {
+                newLovedCount = Integer.parseInt(lovedCount.getText().toString()) + 1;
+            }
+            lovedCount.setText(String.valueOf(newLovedCount));
+            lovedIcon.setText(getResources().getText(R.string.fa_heart));
+        }else {//cancel
+            newLovedStatistics = Integer.parseInt(lovedStatistics.getText().toString()) - 1;
+            newLovedCount = Integer.parseInt(lovedCount.getText().toString()) - 1;
+            if (newLovedCount == 0){
+                lovedCount.setText("");
+            }else {
+                lovedCount.setText(String.valueOf(newLovedCount));
+            }
+            lovedIcon.setText(getResources().getText(R.string.fa_heart_o));
         }
 
-        lovedStatistics.setText(String.valueOf(newLovedStatistics));
-
-        if (lovedCount.getText().toString().length() == 0) {
-            newLovedCount = 1;
-        } else {
-            newLovedCount = Integer.parseInt(lovedCount.getText().toString()) + 1;
+        if (newLovedStatistics == 0){
+            lovedStatistics.setText("");
+        }else {
+            lovedStatistics.setText(String.valueOf(newLovedStatistics));
         }
-        lovedCount.setText(String.valueOf(newLovedCount));
-        lovedIcon.setText(getResources().getText(R.string.fa_heart));
+
     }
 
     private void updatePraisedCount() {
@@ -2078,20 +2117,39 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
         //TextView praisedCount = mArchiveProfile.findViewById(R.id.praised_count);
         int newPraisedStatistics = 0;
         int newPraisedCount = 0;
-        if (praisedStatistics.getText().toString().length() == 0) {
-            newPraisedStatistics = 1;
-        } else {
-            newPraisedStatistics = Integer.parseInt(praisedStatistics.getText().toString()) + 1;
-        }
-        praisedStatistics.setText(String.valueOf(newPraisedStatistics));
+        if (isPraised){//add praise
+            if (praisedStatistics.getText().toString().length() == 0) {
+                newPraisedStatistics = 1;
+            } else {
+                newPraisedStatistics = Integer.parseInt(praisedStatistics.getText().toString()) + 1;
+            }
+            praisedIcon.setText(getResources().getText(R.string.fa_thumbs_up));
 
-        if (praisedCount.getText().toString().length() == 0) {
-            newPraisedCount = 1;
-        } else {
-            newPraisedCount = Integer.parseInt(praisedCount.getText().toString());
+            if (praisedCount.getText().toString().length() == 0) {
+                newPraisedCount = 1;
+            } else {
+                newPraisedCount = Integer.parseInt(praisedCount.getText().toString()) + 1;
+            }
+
+            praisedCount.setText(String.valueOf(newPraisedCount));
+
+        }else {//cancel praise
+            newPraisedStatistics = Integer.parseInt(praisedStatistics.getText().toString()) - 1;
+            praisedIcon.setText(getResources().getText(R.string.fa_thumbs_O_up));
+
+            newPraisedCount = Integer.parseInt(praisedCount.getText().toString()) - 1;
+            if (newPraisedCount == 0){
+                praisedCount.setText("");
+            }else {
+                praisedCount.setText(String.valueOf(newPraisedCount));
+            }
         }
-        praisedCount.setText(String.valueOf(newPraisedCount));
-        praisedIcon.setText(getResources().getText(R.string.fa_thumbs_up));
+
+        if (newPraisedStatistics == 0){
+            praisedStatistics.setText("");
+        }else {
+            praisedStatistics.setText(String.valueOf(newPraisedStatistics));
+        }
     }
 
     public void processVisitRecord() {
@@ -2108,7 +2166,6 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
 
             @Override
             public void onFailure(Call call, IOException e) {
-
             }
         });
 
@@ -2381,9 +2438,7 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
                 //downY = event.getY();
                 downX = x;
                 downY = y;
-
                 break;
-
             case MotionEvent.ACTION_MOVE:
                 //获取到距离差
                 float dx = x - downX;
@@ -2413,14 +2468,12 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
                     }
                     //Toast.makeText(mContext, "向" + action + "滑动", Toast.LENGTH_SHORT).show();
                 }
-
                 break;
-
             case MotionEvent.ACTION_UP:
                 if (direction == 0) {
                     if (currentPosition < drawableList.size() - 1) {
-                        mImageSwitcher.setInAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.fade_in));
-                        mImageSwitcher.setOutAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.fade_out));
+                        mImageSwitcher.setInAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.picture_anim_fade_in));
+                        mImageSwitcher.setOutAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.picture_anim_fade_out));
                         currentPosition++;
                         mImageSwitcher.setImageDrawable(drawableList.get(currentPosition));
                         //Toast.makeText(getApplication(), "currentPosition: "+currentPosition, Toast.LENGTH_SHORT).show();
@@ -2430,8 +2483,8 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
                 } else if (direction == 1) {
                     if (currentPosition > 0) {
                         //设置动画，这里的动画比较简单，不明白的去网上看看相关内容
-                        mImageSwitcher.setInAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.fade_in));
-                        mImageSwitcher.setOutAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.fade_out));
+                        mImageSwitcher.setInAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.picture_anim_fade_in));
+                        mImageSwitcher.setOutAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.picture_anim_fade_out));
                         currentPosition--;
                         mImageSwitcher.setImageDrawable(drawableList.get(currentPosition));
                         //Toast.makeText(getApplication(), "currentPosition: "+currentPosition, Toast.LENGTH_SHORT).show();
@@ -2439,8 +2492,8 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
                     }
                 }
                 break;
-
         }
+
         return true;
     }
 
@@ -2494,6 +2547,13 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
                         Glide.with(getContext()).load(url).into(simpleTarget);
                     }
 
+                    //update tuikit chat avatar
+                    setTuiKitProfile();
+                    break;
+                case EVALUATE_MODIFY_ACTION_BROADCAST:
+                    float score = intent.getFloatExtra("score", 0);
+                    setScoreView(score);
+                    ratingAverageRoundUp = score;
                     break;
                 default:
                     break;
@@ -2505,6 +2565,7 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
         mReceiver = new AvatarAddBroadcastReceiver();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(AVATAR_SET_ACTION_BROADCAST);
+        intentFilter.addAction(EVALUATE_MODIFY_ACTION_BROADCAST);
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, intentFilter);
     }
 

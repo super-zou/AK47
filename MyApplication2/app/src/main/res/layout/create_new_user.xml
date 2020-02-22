@@ -1,18 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background">
+    android:fitsSystemWindows="true"
+    android:background="@color/white">
 
-    <include
-        android:id="@+id/custom_actionbar"
-        layout="@layout/custom_actionbar_common"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/left_back"
+        android:layout_width="35dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="3dp"
         android:layout_marginTop="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:paddingLeft="12dp"
+        android:paddingRight="8dp"
+        android:text="@string/left_angle"
+        android:textSize="28sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
     
@@ -24,8 +28,8 @@
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/custom_actionbar">
-        <android.support.design.widget.TextInputLayout
+        app:layout_constraintTop_toBottomOf="@+id/left_back">
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/nickname_input_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -35,15 +39,14 @@
             app:errorTextAppearance="@style/TextErrorAppearance"
             app:hintTextAppearance="@style/HintAppearance">
             
-            <android.support.design.widget.TextInputEditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/nickname_edittext"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/name"
-                android:textColor="@color/white"
                 android:textCursorDrawable="@drawable/cursor_color"
                 android:theme="@style/MyEditText" />
-        </android.support.design.widget.TextInputLayout>
+        </com.google.android.material.textfield.TextInputLayout>
         <RadioGroup
             android:id="@+id/sexRG"
             android:layout_marginTop="8dp"
@@ -56,13 +59,11 @@
                 android:layout_marginRight="16dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/white"
                 android:text="@string/sex" />
             <RadioButton
                 android:id="@+id/radioMale"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/white"
                 android:checked="true"
                 android:text="@string/male"
                 android:theme="@style/MyRadioButton"/>
@@ -72,12 +73,11 @@
                 android:layout_marginLeft="16dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/white"
                 android:text="@string/female"
                 android:theme="@style/MyRadioButton"/>
         </RadioGroup>
         
-        <android.support.design.widget.TextInputLayout
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/password_input_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -88,18 +88,17 @@
             app:errorTextAppearance="@style/TextErrorAppearance"
             app:hintTextAppearance="@style/HintAppearance">
 
-            <android.support.design.widget.TextInputEditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/password_edittext"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/enter_password"
-                android:textColor="@color/white"
                 android:inputType="textPassword"
                 android:textCursorDrawable="@drawable/cursor_color"
                 android:theme="@style/MyEditText" />
-        </android.support.design.widget.TextInputLayout>
+        </com.google.android.material.textfield.TextInputLayout>
         
-        <android.support.design.widget.TextInputLayout
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/repeat_password_input_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -110,16 +109,15 @@
             app:errorTextAppearance="@style/TextErrorAppearance"
             app:hintTextAppearance="@style/HintAppearance">
             
-            <android.support.design.widget.TextInputEditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/repeat_password_edittext"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/register_password_confirm_hint"
-                android:textColor="@color/white"
                 android:inputType="textPassword"
                 android:textCursorDrawable="@drawable/cursor_color"
                 android:theme="@style/MyEditText" />
-        </android.support.design.widget.TextInputLayout>
+        </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>
     
     <LinearLayout
@@ -150,7 +148,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:textColor="@color/white"
                     android:text="@string/situation" />
                 
                 <RadioGroup
@@ -164,7 +161,6 @@
                         android:id="@+id/radioStudent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/white"
                         android:text="@string/student"
                         android:theme="@style/MyRadioButton"/>
                     
@@ -173,7 +169,6 @@
                         android:layout_marginLeft="28dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/white"
                         android:text="@string/incumbency"
                         android:theme="@style/MyRadioButton"/>
                 </RadioGroup>
@@ -186,39 +181,37 @@
                 android:layout_marginTop="18dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <android.support.design.widget.TextInputLayout
+                <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/university_input_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:errorEnabled="true"
                     app:errorTextAppearance="@style/TextErrorAppearance"
                     app:hintTextAppearance="@style/HintAppearance">
-                    <android.support.design.widget.TextInputEditText
+                    <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/university_edittext"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:hint="@string/university"
-                        android:textColor="@color/white"
                         android:textCursorDrawable="@drawable/cursor_color"
                         android:theme="@style/MyEditText" />
-                </android.support.design.widget.TextInputLayout>
+                </com.google.android.material.textfield.TextInputLayout>
                 
-                <android.support.design.widget.TextInputLayout
+                <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/major_input_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:errorEnabled="true"
                     app:errorTextAppearance="@style/TextErrorAppearance"
                     app:hintTextAppearance="@style/HintAppearance">
-                    <android.support.design.widget.TextInputEditText
+                    <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/major_edittext"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/major"
-                        android:textColor="@color/white"
                         android:textCursorDrawable="@drawable/cursor_color"
                         android:theme="@style/MyEditText" />
-                </android.support.design.widget.TextInputLayout>
+                </com.google.android.material.textfield.TextInputLayout>
                 
                 <org.angmarch.views.NiceSpinner
                     android:id="@+id/nice_spinner_degree"
@@ -235,7 +228,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 
-                <android.support.design.widget.TextInputLayout
+                <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/position_input_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -244,16 +237,15 @@
                     app:errorEnabled="true"
                     app:errorTextAppearance="@style/TextErrorAppearance"
                     app:hintTextAppearance="@style/HintAppearance">
-                    <android.support.design.widget.TextInputEditText
+                    <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/position_edittext"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/position_hint"
-                        android:textColor="@color/white"
                         android:textCursorDrawable="@drawable/cursor_color"
                         android:theme="@style/MyEditText" />
-                </android.support.design.widget.TextInputLayout>
-                <android.support.design.widget.TextInputLayout
+                </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/industry_input_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -262,15 +254,14 @@
                     app:errorEnabled="true"
                     app:errorTextAppearance="@style/TextErrorAppearance"
                     app:hintTextAppearance="@style/HintAppearance">
-                    <android.support.design.widget.TextInputEditText
+                    <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/industry_edittext"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/industry"
-                        android:textColor="@color/white"
                         android:textCursorDrawable="@drawable/cursor_color"
                         android:theme="@style/MyEditText" />
-                </android.support.design.widget.TextInputLayout>
+                </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
         </LinearLayout>
         
@@ -284,14 +275,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/location"
-                android:textColor="@color/white" />
+                android:textColor="@color/color_light_grey" />
             <TextView
                 android:id="@+id/living"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
                 android:text="@string/locating"
-                android:textColor="@color/white" />
+                android:textColor="@color/color_light_grey" />
 
             <ProgressBar
                 android:id="@+id/locating_progressbar"
@@ -325,9 +316,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:background="@drawable/btn_default"
+        android:background="@drawable/btn_primary"
         android:text="@string/prev"
-        android:textColor="@color/background"
+        android:textColor="@color/white"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/create_next" />
@@ -338,11 +329,11 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:layout_marginEnd="8dp"
-        android:background="@drawable/btn_default"
+        android:background="@drawable/btn_primary"
         android:text="@string/next"
-        android:textColor="@color/background"
+        android:textColor="@color/white"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/create_next" />
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

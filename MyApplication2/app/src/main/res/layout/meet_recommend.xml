@@ -2,39 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    android:background="@color/color_disabled"
-    android:layout_height="match_parent">
-
-    <LinearLayout
-        android:visibility="gone"
-        android:id="@+id/meet_info_add"
-        android:orientation="vertical"
-        android:layout_marginTop="3dp"
-        android:padding="3dp"
-        android:gravity="center"
-        android:layout_gravity="center_horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <TextView
-            android:id="@+id/look_friend"
-            android:text="@string/look_friend"
-            android:textSize="16sp"
-            android:padding="8dp"
-            android:background="@drawable/label_btn_shape_no_border"
-            android:gravity="center_horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/background" />
-        <TextView
-            android:text="@string/look_friend_notice"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:textSize="13sp"
-            android:layout_marginTop="3dp"
-            android:contextClickable="true" />
-    </LinearLayout>
+    android:background="@color/color_disabled">
     <com.jcodecraeer.xrecyclerview.XRecyclerView
         android:id="@+id/recyclerview"
         android:layout_width="match_parent"

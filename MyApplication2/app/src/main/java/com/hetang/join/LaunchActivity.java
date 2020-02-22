@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.design.widget.TextInputLayout;
+import com.google.android.material.textfield.TextInputLayout;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -30,9 +30,6 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static com.hetang.util.SharedPreferencesUtils.getYunXinToken;
-import static com.hetang.util.SharedPreferencesUtils.setYunXinAccount;
-import static com.hetang.util.SharedPreferencesUtils.setYunXinToken;
 
 public class LaunchActivity extends BaseAppCompatActivity {
     private static final String TAG = "LaunchActivity";
@@ -179,7 +176,7 @@ public class LaunchActivity extends BaseAppCompatActivity {
         //showProgress(context);
         Slog.d(TAG, "====account: "+account+ "password: "+password);
 
-        setYunXinAccount(context, account);
+        //setYunXinAccount(context, account);
         
         RequestBody requestBody = new FormBody.Builder()
                 .add("type", "0")
@@ -259,11 +256,6 @@ public class LaunchActivity extends BaseAppCompatActivity {
         editor.putInt("type", 0);
         editor.apply();
 
-        
-        if (!yunxinToken.equals(getYunXinToken(context))){
-            setYunXinToken(context, yunxinToken);
-        }
-        
         //accessToken(context, userName, password);
         Intent intent = new Intent(context, LoginSplash.class);
         context.startActivity(intent);

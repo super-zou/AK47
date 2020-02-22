@@ -5,17 +5,14 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,12 +22,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.hetang.R;
 import com.hetang.adapter.SubGroupSummaryAdapter;
-import com.hetang.authenticate.TalentAuthenticationDialogFragment;
 import com.hetang.common.BaseAppCompatActivity;
 import com.hetang.common.MyApplication;
 import com.hetang.meet.UserMeetInfo;
+import com.hetang.talent.TalentAuthenticationDialogFragment;
+import com.hetang.talent.TalentDetailsActivity;
+import com.hetang.talent.TalentSummaryListActivity;
 import com.hetang.util.CommonDialogFragmentInterface;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
@@ -54,26 +54,37 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.appcompat.app.ActionBar;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.gridlayout.widget.GridLayout;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
-import static com.hetang.authenticate.TalentAuthenticationDialogFragment.TALENT_AUTHENTICATION_RESULT_OK;
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static com.hetang.common.MyApplication.getContext;
 import static com.hetang.group.GroupFragment.eden_group;
+import static com.hetang.group.GroupFragment.foreign_friend_group;
 import static com.hetang.group.SingleGroupActivity.GET_MY_GROUP_DONE;
+import static com.hetang.group.SingleGroupActivity.GET_TALENT_DONE;
 import static com.hetang.group.SingleGroupActivity.SINGLE_GROUP_GET_MY;
 import static com.hetang.group.SingleGroupActivity.getSingleGroup;
 import static com.hetang.group.SingleGroupDetailsActivity.GET_SINGLE_GROUP_BY_GID;
 import static com.hetang.group.SubGroupDetailsActivity.GET_SUBGROUP_BY_GID;
+import static com.hetang.talent.TalentAuthenticationDialogFragment.COMMON_TALENT_AUTHENTICATION_RESULT_OK;
+import static com.hetang.talent.TalentAuthenticationDialogFragment.TALENT_AUTHENTICATION_RESULT_OK;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
 public class SubGroupActivity extends BaseAppCompatActivity implements CommonDialogFragmentInterface {
     public static final String GET_MY_UNIVERSITY_SUBGROUP = HttpUtil.DOMAIN + "?q=subgroup/get_my_university";
     public static final String GROUP_ADD_BROADCAST = "com.hetang.action.GROUP_ADD";
+    public static final String TALENT_ADD_BROADCAST = "com.hetang.action.TALENT_ADD";
     public static final int ADD_NEW_SUBGROUP_DONE = 8;
     public static final int GET_SINGLE_GROUP_DONE = 9;
     public static final int ADD_NEW_TALENT_DONE = 11;
@@ -84,6 +95,8 @@ public class SubGroupActivity extends BaseAppCompatActivity implements CommonDia
     private static final String SUBGROUP_GET_ALL = HttpUtil.DOMAIN + "?q=subgroup/get_all";
     private static final String SUBGROUP_UPDATE = HttpUtil.DOMAIN + "?q=subgroup/update";
     private static final String ADD_SUBGROUP_VISITOR_RECORD = HttpUtil.DOMAIN + "?q=visitor_record/add_group_visit_record";
+    public static final String GET_TALENTS_BY_TYPE = HttpUtil.DOMAIN + "?q=talent/get_all_by_type";
+    public static final String GET_ALL_TALENTS = HttpUtil.DOMAIN + "?q=talent/get_all";
     private static final int GET_ALL_DONE = 1;
     private static final int UPDATE_ALL = 2;
     private static final int GET_ALL_END = 3;
@@ -104,9 +117,98 @@ public class SubGroupActivity extends BaseAppCompatActivity implements CommonDia
     private SubGroupSummaryAdapter subGroupSummaryAdapter;
     private XRecyclerView recyclerView;
     private List<SubGroup> mSubGroupList = new ArrayList<>();
+    private List<Talent> mTalentList = new ArrayList<>();
     private List<SingleGroupActivity.SingleGroup> mSingleGroupList = new ArrayList<>();
     private List<SingleGroupActivity.SingleGroup> mLeadGroupList = new ArrayList<>();
     private List<SingleGroupActivity.SingleGroup> mJoinGroupList = new ArrayList<>();
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.subgroup_summary);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.hide();
+        }
+
+        handler = new SubGroupActivity.MyHandler(this);
+
+        type = getIntent().getIntExtra("type", 0);
+
+        initView();
+
+        if (type != eden_group) {
+            //loadData();
+            getTalentsByType();
+        } else {
+            getMySingleGroup();
+            getRecommendSingleGroup();
+            loadData();
+            //getRecommendSingleGroup();
+            //loadData();
+        }
+    }
+
+    private void getTalentsByType(){
+        RequestBody requestBody = new FormBody.Builder()
+                                              .add("step", String.valueOf(8))
+                                              .add("page", String.valueOf(0))
+                                              .add("type", String.valueOf(type)).build();
+        HttpUtil.sendOkHttpRequest(getContext(), GET_TALENTS_BY_TYPE, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.body() != null) {
+                    String responseText = response.body().string();
+                    if (isDebug) Slog.d(TAG, "==========getTalentsByType response text : " + responseText);
+                    if (responseText != null && !TextUtils.isEmpty(responseText)) {
+                        JSONObject talentsResponse = null;
+                        try {
+                            talentsResponse = new JSONObject(responseText);
+                            if (talentsResponse != null) {
+                                int loadSize = processTalentsResponse(talentsResponse);
+                                if (loadSize > 0) {
+                                    handler.sendEmptyMessage(GET_TALENT_DONE);
+                                }
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+                loadData();
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+        });
+    }
+
+    public int processTalentsResponse(JSONObject talentsObject){
+        int talentSize = 0;
+        JSONArray talentArray = null;
+
+        if (talentsObject != null) {
+            talentArray = talentsObject.optJSONArray("talents");
+        }
+
+        if (talentArray != null) {
+            talentSize = talentArray.length();
+            if (talentSize > 0) {
+                for (int i = 0; i < talentArray.length(); i++) {
+                    JSONObject talentObject = talentArray.optJSONObject(i);
+                    if (talentObject != null) {
+                        Talent talent = getTalent(talentObject);
+                        mTalentList.add(talent);
+                    }
+                }
+            }
+        }
+
+        return talentSize;
+    }
 
     public static void updateVisitorRecord(int gid) {
 
@@ -181,8 +283,6 @@ public class SubGroupActivity extends BaseAppCompatActivity implements CommonDia
                             e.printStackTrace();
                         }
                     }
-
-                    getRecommendSingleGroup();
                 }
             }
 
@@ -233,34 +333,13 @@ public class SubGroupActivity extends BaseAppCompatActivity implements CommonDia
         return singGroupSize;
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.subgroup_summary);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.hide();
-        }
-
-        handler = new SubGroupActivity.MyHandler(this);
-
-        type = getIntent().getIntExtra("type", 0);
-
-        initView();
-
-        if (type != eden_group) {
-            loadData();
-        } else {
-            getMySingleGroup();
-        }
-    }
-
     private void setMyGroupView() {
         if (myGroupView == null){
+            Slog.d(TAG, "------------------------->myGroupView null");
             myGroupView = (ViewGroup) LayoutInflater.from(getContext()).inflate(R.layout.my_single_group, (ViewGroup) findViewById(android.R.id.content), false);
             recyclerView.addHeaderView(myGroupView);
         }
-        android.widget.LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        android.widget.LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, WRAP_CONTENT);
         layoutParams.setMargins(0, 0, 0, 3);
 
         if (mLeadGroupList.size() > 0) {
@@ -320,8 +399,11 @@ public class SubGroupActivity extends BaseAppCompatActivity implements CommonDia
             TextView evaluateCountTV = view.findViewById(R.id.evaluate_count);
             float scoreFloat = singleGroup.evaluateScores / singleGroup.evaluateCount;
             float score = (float) (Math.round(scoreFloat * 10)) / 10;
-            evaluateCountTV.setText("评价 " + score + getResources().getString(R.string.dot) + singleGroup.evaluateCount);
+            evaluateCountTV.setText(getResources().getString(R.string.fa_star) +" "+ score + getResources().getString(R.string.dot) + singleGroup.evaluateCount);
         }
+
+        Typeface font = Typeface.createFromAsset(MyApplication.getContext().getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
+        FontManager.markAsIconContainer(view.findViewById(R.id.evaluate_count), font);
     }
 
 
@@ -410,15 +492,15 @@ public class SubGroupActivity extends BaseAppCompatActivity implements CommonDia
         });
 
         Button becomeTalentBtn = findViewById(R.id.become_talent);
-        if (type == eden_group) {
+        //if (type == eden_group) {
             becomeTalentBtn.setVisibility(View.VISIBLE);
             becomeTalentBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    becomeTalent();
+                    becomeTalent(type);
                 }
             });
-        }
+        //}
 
 
         //show progressImage before loading done
@@ -459,9 +541,8 @@ public class SubGroupActivity extends BaseAppCompatActivity implements CommonDia
                         }
 
                     }
-
-                    loadData();
                 }
+
             }
 
             @Override
@@ -471,10 +552,10 @@ public class SubGroupActivity extends BaseAppCompatActivity implements CommonDia
         });
     }
 
-    private void becomeTalent() {
+    private void becomeTalent(int type) {
         TalentAuthenticationDialogFragment talentAuthenticationDialogFragment = new TalentAuthenticationDialogFragment();
         Bundle bundle = new Bundle();
-        bundle.putInt("type", eden_group);
+        bundle.putInt("type", type);
         talentAuthenticationDialogFragment.setArguments(bundle);
         //createSingleGroupDialogFragment.setTargetFragment(SingleGroupActivity.this, REQUEST_CODE);
         talentAuthenticationDialogFragment.show(getSupportFragmentManager(), "TalentAuthenticationDialogFragment");
@@ -486,6 +567,11 @@ public class SubGroupActivity extends BaseAppCompatActivity implements CommonDia
             case TALENT_AUTHENTICATION_RESULT_OK://For EvaluateDialogFragment back
                 if (status == true) {
                     getMyNewAdded(result, true);
+                }
+                break;
+            case COMMON_TALENT_AUTHENTICATION_RESULT_OK:
+                if (status == true){
+
                 }
                 break;
             default:
@@ -594,7 +680,102 @@ public class SubGroupActivity extends BaseAppCompatActivity implements CommonDia
         return singleGroupSize;
     }
 
+    private void setRecommendTalentsHeader(){
+        DisplayMetrics dm = getContext().getResources().getDisplayMetrics();
+        int innerWidth = dm.widthPixels - (int) Utility.dpToPx(getContext(), 32f);
+        int height = innerWidth;
+        int wrapperWidth = innerWidth/2;
+        int avatarWidth = wrapperWidth - (int) Utility.dpToPx(getContext(), 12f);
+
+        ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(wrapperWidth, WRAP_CONTENT);
+
+        View talentView = LayoutInflater.from(getContext()).inflate(R.layout.recommend_talent, (ViewGroup) findViewById(android.R.id.content), false);
+        recyclerView.addHeaderView(talentView);
+        TextView moreTalent = talentView.findViewById(R.id.more);
+        moreTalent.setText(getResources().getString(R.string.more_talent));
+        moreTalent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(SubGroupActivity.this, TalentSummaryListActivity.class);
+                intent.putExtra("type", type);
+                startActivity(intent);
+            }
+        });
+
+        GridLayout talentWrapper = talentView.findViewById(R.id.talent_wrapper);
+        if (talentWrapper == null){
+            return;
+        }
+
+        int size = mTalentList.size();
+
+        if (size > 6){
+            size = 6;
+            moreTalent.setVisibility(View.VISIBLE);
+        }
+
+        for (int i = 0; i < size; i++) {
+            View view = LayoutInflater.from(getContext()).inflate(R.layout.recommend_talent_item, null);
+            talentWrapper.addView(view, params);
+            final Talent talent = mTalentList.get(i);
+            RoundImageView avatarRV = view.findViewById(R.id.avatar);
+            ConstraintLayout.LayoutParams layoutParams = new ConstraintLayout.LayoutParams(avatarWidth, avatarWidth);
+            layoutParams.setMargins(0, 0, 2, 2);
+            avatarRV.setLayoutParams(layoutParams);
+            String avatar = talent.profile.getAvatar();
+            if (avatar != null && !"".equals(avatar)) {
+                Glide.with(getContext()).load(HttpUtil.DOMAIN + avatar).into(avatarRV);
+            }
+            TextView nickname = view.findViewById(R.id.name);
+            nickname.setText(talent.profile.getNickName());
+
+            TextView degree = view.findViewById(R.id.degree);
+            TextView university = view.findViewById(R.id.university);
+
+            if (talent.profile.getSituation() == 0){
+                degree.setText(talent.profile.getDegreeName(talent.profile.getDegree()));
+                university.setText(talent.profile.getUniversity());
+            }else {
+                degree.setText(talent.profile.getPosition());
+                university.setText(talent.profile.getIndustry());
+            }
+
+
+            TextView introduction = view.findViewById(R.id.introduction);
+            introduction.setText(talent.introduction);
+
+            TextView charge = view.findViewById(R.id.charge);
+            charge.setText(talent.charge+"元");
+
+            TextView subject = view.findViewById(R.id.subject);
+            subject.setText(talent.subject);
+
+            if (talent.evaluateCount > 0) {
+                TextView evaluateCountTV = view.findViewById(R.id.evaluate_count);
+                float scoreFloat = talent.evaluateScores / talent.evaluateCount;
+                float score = (float) (Math.round(scoreFloat * 10)) / 10;
+                evaluateCountTV.setText(getResources().getString(R.string.fa_star) +" "+ score + getResources().getString(R.string.dot) + talent.evaluateCount);
+            }
+
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(getContext(), TalentDetailsActivity.class);
+                    //intent.putExtra("talent", talent);
+                    intent.putExtra("aid", talent.aid);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                    startActivity(intent);
+                }
+            });
+
+            Typeface font = Typeface.createFromAsset(MyApplication.getContext().getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
+            FontManager.markAsIconContainer(view.findViewById(R.id.evaluate_count), font);
+        }
+
+    }
+
     private void setSingleGroupHeader() {
+        Slog.d(TAG, "-------------------->setSingleGroupHeader");
         View singleGroupView = LayoutInflater.from(getContext()).inflate(R.layout.recommend_group, (ViewGroup) findViewById(android.R.id.content), false);
         recyclerView.addHeaderView(singleGroupView);
         TextView title = singleGroupView.findViewById(R.id.group_recommend_title);
@@ -647,7 +828,7 @@ public class SubGroupActivity extends BaseAppCompatActivity implements CommonDia
                 TextView evaluateCountTV = view.findViewById(R.id.evaluate_count);
                 float scoreFloat = singleGroup.evaluateScores / singleGroup.evaluateCount;
                 float score = (float) (Math.round(scoreFloat * 10)) / 10;
-                evaluateCountTV.setText("评价 " + score + getResources().getString(R.string.dot) + singleGroup.evaluateCount);
+                evaluateCountTV.setText(getResources().getString(R.string.fa_star) +" "+ score + getResources().getString(R.string.dot) + singleGroup.evaluateCount);
             }
 
             view.setOnClickListener(new View.OnClickListener() {
@@ -659,6 +840,9 @@ public class SubGroupActivity extends BaseAppCompatActivity implements CommonDia
                     startActivity(intent);
                 }
             });
+
+            Typeface font = Typeface.createFromAsset(MyApplication.getContext().getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
+            FontManager.markAsIconContainer(view.findViewById(R.id.evaluate_count), font);
         }
     }
 
@@ -887,6 +1071,9 @@ public class SubGroupActivity extends BaseAppCompatActivity implements CommonDia
             case GET_MY_GROUP_DONE:
                 setMyGroupView();
                 break;
+            case GET_TALENT_DONE:
+                setRecommendTalentsHeader();
+                break;
             default:
                 break;
         }
@@ -1001,6 +1188,49 @@ public class SubGroupActivity extends BaseAppCompatActivity implements CommonDia
         public int followed = -1;
         public boolean isLeader = false;
         //public List<UserMeetInfo> memberInfoList;
+    }
+
+    public static class Talent implements Serializable{
+        public int aid;
+        public String introduction;
+        public String created;
+        public UserMeetInfo profile;
+        public String payeeQRCode;
+        public int type;
+        public String subject;
+        public String[] materialArray;
+        public float evaluateScores = 0;
+        public int evaluateCount = 0;
+        public int status = -1;
+        public int charge;
+        public String desc;
+    }
+
+    public static Talent getTalent(JSONObject talentObject){
+        Talent talent = new Talent();
+        if (talentObject != null){
+            talent.aid = talentObject.optInt("aid");
+            talent.charge = talentObject.optInt("charge");
+            talent.introduction = talentObject.optString("introduction");
+            talent.payeeQRCode = talentObject.optString("payee_qr_code");
+            talent.status = talentObject.optInt("status");
+            talent.desc = talentObject.optString("description");
+            talent.subject = talentObject.optString("subject");
+            talent.evaluateCount = talentObject.optInt("count");
+            talent.evaluateScores = (float) talentObject.optDouble("scores");
+            talent.profile = new UserMeetInfo();
+            ParseUtils.setBaseProfile(talent.profile, talentObject);
+
+            JSONArray materialJSONArray = talentObject.optJSONArray("materials");
+            if (materialJSONArray != null && materialJSONArray.length() > 0){
+                talent.materialArray = new String[materialJSONArray.length()];
+                for(int i=0; i<materialJSONArray.length(); i++){
+                    talent.materialArray[i] = materialJSONArray.optString(i);
+                }
+            }
+        }
+
+        return talent;
     }
 
     static class MyHandler extends Handler {

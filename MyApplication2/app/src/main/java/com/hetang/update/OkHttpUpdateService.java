@@ -1,7 +1,7 @@
 package com.hetang.update;
 
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.hetang.util.Slog;
 import com.xuexiang.xupdate.proxy.IUpdateHttpService;

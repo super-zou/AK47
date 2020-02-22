@@ -6,8 +6,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.constraint.ConstraintLayout;
-import android.support.design.widget.TextInputEditText;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import com.google.android.material.textfield.TextInputEditText;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +19,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.hetang.R;
 import com.hetang.common.BaseAppCompatActivity;
-import com.hetang.common.Chat;
 import com.hetang.common.SettingsActivity;
 import com.hetang.util.CommonDialogFragmentInterface;
 import com.hetang.util.FontManager;
@@ -69,7 +68,6 @@ public class ArchiveActivity extends BaseAppCompatActivity implements CommonDial
     long authorUid = 0;
     Typeface font;
     private int contactStatus = -1;
-    Chat chat;
     TextView mSettings;
 
     public static final int GET_USER_PROFILE_DONE = 0;

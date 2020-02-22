@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root_group"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -16,54 +17,79 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingBottom="16dp">
-
-            <TextView
-                android:id="@+id/my_group_label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginRight="8dp"
-                android:background="@color/white"
-                android:textStyle="bold"
-                android:padding="16dp"
-                android:text="我加入和关注的"
-                android:textColor="@color/black"
-                android:textSize="22sp"
-                android:typeface="sans"
-                android:fontFamily="sans-serif"
-                android:visibility="gone" />
-
             <LinearLayout
-                android:id="@+id/my_group"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:divider="@drawable/line_standard"
+                android:id="@+id/my"
                 android:orientation="vertical"
-                android:visibility="gone"></LinearLayout>
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/my_talent_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:background="@color/white"
+                    android:fontFamily="sans-serif"
+                    android:padding="16dp"
+                    android:text="@string/my_talent"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:typeface="sans"
+                    android:visibility="gone" />
+
+                <LinearLayout
+                    android:id="@+id/my_talent_wrapper"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:divider="@drawable/line_standard"
+                    android:orientation="vertical"
+                    android:visibility="gone"></LinearLayout>
+
+                <TextView
+                    android:id="@+id/my_group_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:background="@color/white"
+                    android:fontFamily="sans-serif"
+                    android:padding="16dp"
+                    android:text="@string/my_tribe"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:typeface="sans"
+                    android:visibility="visible" />
+
+                <LinearLayout
+                    android:id="@+id/my_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:divider="@drawable/line_standard"
+                    android:orientation="vertical"
+                    android:visibility="gone"></LinearLayout>
+
+            </LinearLayout>
+
             <!--association_group-->
-            <android.support.constraint.ConstraintLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/association_group"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
                 android:layout_marginTop="10dp"
-                android:layout_marginRight="8dp"
-                android:background="@drawable/round_background"
-                android:padding="16dp">
+                android:background="@color/white"
+                android:padding="8dp">
 
                 <TextView
                     android:id="@+id/association_group_icon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:layout_marginTop="8dp"
+                    android:gravity="center"
                     android:text="@string/fa_organization"
-                    android:textColor="#2196F3"
+                    android:textColor="@color/blue_dark"
                     android:textSize="28sp"
                     android:textStyle="bold"
+                    android:elevation="3dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -75,8 +101,7 @@
                     android:fontFamily="sans-serif"
                     android:text="社团联盟"
                     android:textColor="@color/black"
-                    android:textSize="28sp"
-                    android:textStyle="bold"
+                    android:textSize="18sp"
                     android:typeface="sans"
                     app:layout_constraintStart_toEndOf="@+id/association_group_icon"
                     app:layout_constraintTop_toTopOf="@+id/association_group_icon" />
@@ -85,14 +110,15 @@
                     android:id="@+id/association_group_desc"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:text="@string/association_group_desc"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginStart="38dp"
+                    android:layout_marginTop="3dp"
                     android:layout_marginEnd="8dp"
                     android:ellipsize="end"
                     android:fontFamily="sans-serif"
                     android:lineSpacingMultiplier="1.2"
                     android:maxLines="3"
+                    android:text="@string/association_group_desc"
+                    android:textColor="@color/black"
                     android:textSize="13sp"
                     android:typeface="sans"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -103,9 +129,11 @@
                     android:id="@+id/subGroup_amount_of_association"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginStart="38dp"
+                    android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp"
+                    android:textSize="12sp"
+                    android:typeface="sans"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/association_group_desc" />
@@ -115,6 +143,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
+                    android:textSize="12sp"
+                    android:typeface="sans"
                     app:layout_constraintStart_toEndOf="@+id/subGroup_amount_of_association"
                     app:layout_constraintTop_toTopOf="@+id/subGroup_amount_of_association" />
 
@@ -123,31 +153,32 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
+                    android:textSize="12sp"
+                    android:typeface="sans"
                     app:layout_constraintStart_toEndOf="@+id/member_amount_of_association"
                     app:layout_constraintTop_toTopOf="@+id/subGroup_amount_of_association" />
 
-            </android.support.constraint.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
             <!--fraternity_group-->
-            <android.support.constraint.ConstraintLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/fraternity_group"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="8dp"
-                android:background="@drawable/round_background"
-                android:padding="16dp">
+                android:layout_marginTop="3dp"
+                android:background="@color/white"
+                android:padding="8dp">
 
                 <TextView
                     android:id="@+id/fraternity_group_icon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:layout_marginTop="8dp"
-                    android:text="@string/fa_users"
-                    android:textColor="@color/color_green"
+                    android:gravity="center"
+                    android:text="@string/fa_heart"
+                    android:textColor="@color/color_red"
                     android:textSize="28sp"
                     android:textStyle="bold"
+                    android:elevation="3dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -159,8 +190,7 @@
                     android:fontFamily="sans-serif"
                     android:text="伊甸园"
                     android:textColor="@color/black"
-                    android:textSize="28sp"
-                    android:textStyle="bold"
+                    android:textSize="18sp"
                     android:typeface="sans"
                     app:layout_constraintStart_toEndOf="@+id/fraternity_group_icon"
                     app:layout_constraintTop_toTopOf="@+id/fraternity_group_icon" />
@@ -169,14 +199,15 @@
                     android:id="@+id/fraternity_group_desc"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                          android:text="@string/fraternity_group_desc"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginStart="38dp"
+                    android:layout_marginTop="3dp"
                     android:layout_marginEnd="8dp"
                     android:ellipsize="end"
                     android:fontFamily="sans-serif"
                     android:lineSpacingMultiplier="1.2"
                     android:maxLines="3"
+                    android:text="@string/fraternity_group_desc"
+                    android:textColor="@color/black"
                     android:textSize="13sp"
                     android:typeface="sans"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -187,9 +218,10 @@
                     android:id="@+id/subGroup_amount_of_fraternity"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginStart="38dp"
+                    android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp"
+                    android:textSize="12sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/fraternity_group_desc" />
@@ -199,6 +231,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
+                    android:textSize="12sp"
                     app:layout_constraintStart_toEndOf="@+id/subGroup_amount_of_fraternity"
                     app:layout_constraintTop_toTopOf="@+id/subGroup_amount_of_fraternity" />
 
@@ -207,19 +240,19 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
+                    android:textSize="12sp"
                     app:layout_constraintStart_toEndOf="@+id/member_amount_of_fraternity"
                     app:layout_constraintTop_toTopOf="@+id/subGroup_amount_of_fraternity" />
-            </android.support.constraint.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
             <!--public_good_group-->
-            <android.support.constraint.ConstraintLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:visibility="gone"
                 android:id="@+id/public_good_group"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="8dp"
-                android:background="@drawable/round_background"
-                android:padding="16dp">
+                android:layout_marginTop="3dp"
+                android:background="@color/white"
+                android:padding="8dp">
 
                 <TextView
                     android:id="@+id/public_good_group_icon"
@@ -252,7 +285,6 @@
                     android:id="@+id/public_good_group_desc"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                          android:text="@string/public_good_group_desc"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="8dp"
@@ -260,6 +292,7 @@
                     android:fontFamily="sans-serif"
                     android:lineSpacingMultiplier="1.2"
                     android:maxLines="3"
+                    android:text="@string/public_good_group_desc"
                     android:textSize="13sp"
                     android:typeface="sans"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -273,6 +306,7 @@
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginBottom="8dp"
+                    android:textSize="12sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/public_good_group_desc" />
@@ -282,6 +316,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
+                    android:textSize="12sp"
                     app:layout_constraintStart_toEndOf="@+id/subGroup_amount_of_public_good"
                     app:layout_constraintTop_toTopOf="@+id/subGroup_amount_of_public_good" />
 
@@ -290,31 +325,31 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
+                    android:textSize="12sp"
                     app:layout_constraintStart_toEndOf="@+id/member_amount_of_public_good"
                     app:layout_constraintTop_toTopOf="@+id/subGroup_amount_of_public_good" />
 
-            </android.support.constraint.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
             <!--hobby_group-->
-            <android.support.constraint.ConstraintLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/hobby_group"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="8dp"
-                android:background="@drawable/round_background"
-                android:padding="16dp">
+                android:layout_marginTop="3dp"
+                android:background="@color/white"
+                android:padding="8dp">
 
                 <TextView
                     android:id="@+id/hobby_group_icon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:layout_marginTop="8dp"
+                    android:gravity="center"
                     android:text="@string/hobby"
                     android:textColor="@color/blue_dark"
                     android:textSize="28sp"
                     android:textStyle="bold"
+                    android:elevation="3dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -326,8 +361,7 @@
                     android:fontFamily="sans-serif"
                     android:text="兴趣爱好"
                     android:textColor="@color/black"
-                    android:textSize="28sp"
-                    android:textStyle="bold"
+                    android:textSize="18sp"
                     android:typeface="sans"
                     app:layout_constraintStart_toEndOf="@+id/hobby_group_icon"
                     app:layout_constraintTop_toTopOf="@+id/hobby_group_icon" />
@@ -336,14 +370,15 @@
                     android:id="@+id/hobby_group_desc"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                          android:text="@string/hobby_group_desc"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginStart="38dp"
+                    android:layout_marginTop="3dp"
                     android:layout_marginEnd="8dp"
                     android:ellipsize="end"
                     android:fontFamily="sans-serif"
                     android:lineSpacingMultiplier="1.2"
                     android:maxLines="3"
+                    android:text="@string/hobby_group_desc"
+                    android:textColor="@color/black"
                     android:textSize="13sp"
                     android:typeface="sans"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -354,9 +389,10 @@
                     android:id="@+id/subGroup_amount_of_hobby"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginStart="38dp"
+                    android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp"
+                    android:textSize="12sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/hobby_group_desc" />
@@ -366,6 +402,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
+                    android:textSize="12sp"
                     app:layout_constraintStart_toEndOf="@+id/subGroup_amount_of_hobby"
                     app:layout_constraintTop_toTopOf="@+id/subGroup_amount_of_hobby" />
 
@@ -374,31 +411,31 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
+                    android:textSize="12sp"
                     app:layout_constraintStart_toEndOf="@+id/member_amount_of_hobby"
                     app:layout_constraintTop_toTopOf="@+id/subGroup_amount_of_hobby" />
 
-            </android.support.constraint.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
             <!--growUp_group-->
-            <android.support.constraint.ConstraintLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/growUp_group"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="8dp"
-                android:background="@drawable/round_background"
-                android:padding="16dp">
+                android:layout_marginTop="3dp"
+                android:background="@color/white"
+                android:padding="8dp">
 
                 <TextView
                     android:id="@+id/growUp_group_icon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:layout_marginTop="8dp"
+                    android:gravity="center"
                     android:text="@string/fa_book"
-                    android:textColor="@color/background"
+                    android:textColor="@color/blue_dark"
                     android:textSize="28sp"
                     android:textStyle="bold"
+                    android:elevation="3dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -410,9 +447,9 @@
                     android:fontFamily="sans-serif"
                     android:text="成长学习"
                     android:textColor="@color/black"
-                    android:textSize="28sp"
-                    android:textStyle="bold"
+                    android:textSize="18sp"
                     android:typeface="sans"
+                    android:gravity="center"
                     app:layout_constraintStart_toEndOf="@+id/growUp_group_icon"
                     app:layout_constraintTop_toTopOf="@+id/growUp_group_icon" />
 
@@ -420,14 +457,15 @@
                     android:id="@+id/growUp_group_desc"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                          android:text="@string/growUp_group_desc"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginStart="38dp"
+                    android:layout_marginTop="5dp"
                     android:layout_marginEnd="8dp"
                     android:ellipsize="end"
                     android:fontFamily="sans-serif"
                     android:lineSpacingMultiplier="1.2"
                     android:maxLines="3"
+                    android:text="@string/growUp_group_desc"
+                    android:textColor="@color/black"
                     android:textSize="13sp"
                     android:typeface="sans"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -438,9 +476,10 @@
                     android:id="@+id/subGroup_amount_of_growUp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginStart="38dp"
+                    android:layout_marginTop="8dp"
                     android:layout_marginBottom="16dp"
+                    android:textSize="12sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/growUp_group_desc" />
@@ -450,6 +489,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
+                    android:textSize="12sp"
                     app:layout_constraintStart_toEndOf="@+id/subGroup_amount_of_growUp"
                     app:layout_constraintTop_toTopOf="@+id/subGroup_amount_of_growUp" />
 
@@ -458,31 +498,31 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
+                    android:textSize="12sp"
                     app:layout_constraintStart_toEndOf="@+id/member_amount_of_growUp"
                     app:layout_constraintTop_toTopOf="@+id/subGroup_amount_of_growUp" />
 
-            </android.support.constraint.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
             <!--activity_group-->
-            <android.support.constraint.ConstraintLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/activity_group"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="8dp"
-                android:background="@drawable/round_background"
-                android:padding="16dp">
+                android:layout_marginTop="3dp"
+                android:background="@color/white"
+                android:padding="8dp">
 
                 <TextView
                     android:id="@+id/activity_group_icon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:layout_marginTop="8dp"
+                    android:gravity="center"
                     android:text="@string/fa_fire"
-                    android:textColor="@color/color_red"
+                    android:textColor="@color/color_green"
                     android:textSize="28sp"
                     android:textStyle="bold"
+                    android:elevation="3dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -494,8 +534,7 @@
                     android:fontFamily="sans-serif"
                     android:text="精彩活动"
                     android:textColor="@color/black"
-                    android:textSize="28sp"
-                    android:textStyle="bold"
+                    android:textSize="18sp"
                     android:typeface="sans"
                     app:layout_constraintStart_toEndOf="@+id/activity_group_icon"
                     app:layout_constraintTop_toTopOf="@+id/activity_group_icon" />
@@ -504,27 +543,29 @@
                     android:id="@+id/activity_group_desc"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                          android:text="@string/activity_group_desc"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginStart="38dp"
+                    android:layout_marginTop="5dp"
                     android:layout_marginEnd="8dp"
                     android:ellipsize="end"
                     android:fontFamily="sans-serif"
                     android:lineSpacingMultiplier="1.2"
                     android:maxLines="3"
+                    android:text="@string/activity_group_desc"
+                    android:textColor="@color/black"
                     android:textSize="13sp"
                     android:typeface="sans"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/activity_group_name" />
+                    app:layout_constraintTop_toBottomOf="@+id/activity_group_icon" />
 
                 <TextView
                     android:id="@+id/subGroup_amount_of_activity"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginStart="38dp"
+                    android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp"
+                    android:textSize="12sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/activity_group_desc" />
@@ -534,6 +575,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
+                    android:textSize="12sp"
                     app:layout_constraintStart_toEndOf="@+id/subGroup_amount_of_activity"
                     app:layout_constraintTop_toTopOf="@+id/subGroup_amount_of_activity" />
 
@@ -542,31 +584,31 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
+                    android:textSize="12sp"
                     app:layout_constraintStart_toEndOf="@+id/member_amount_of_activity"
                     app:layout_constraintTop_toTopOf="@+id/subGroup_amount_of_activity" />
 
-            </android.support.constraint.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
             <!--foreign_friend_group-->
-            <android.support.constraint.ConstraintLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/foreign_friend_group"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="8dp"
-                android:background="@drawable/round_background"
-                android:padding="16dp">
+                android:layout_marginTop="3dp"
+                android:background="@color/white"
+                android:padding="8dp">
 
                 <TextView
                     android:id="@+id/foreign_friend_group_icon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:layout_marginTop="8dp"
+                    android:gravity="center"
                     android:text="@string/fa_coffee"
-                    android:textColor="#613232"
+                    android:textColor="@color/blue_dark"
                     android:textSize="28sp"
                     android:textStyle="bold"
+                    android:elevation="3dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -578,8 +620,7 @@
                     android:fontFamily="sans-serif"
                     android:text="国际友人"
                     android:textColor="@color/black"
-                    android:textSize="28sp"
-                    android:textStyle="bold"
+                    android:textSize="18sp"
                     android:typeface="sans"
                     app:layout_constraintStart_toEndOf="@+id/foreign_friend_group_icon"
                     app:layout_constraintTop_toTopOf="@+id/foreign_friend_group_icon" />
@@ -588,27 +629,29 @@
                     android:id="@+id/foreign_friend_desc"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                          android:text="@string/foreign_friend_desc"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginStart="38dp"
+                    android:layout_marginTop="5dp"
                     android:layout_marginEnd="8dp"
                     android:ellipsize="end"
                     android:fontFamily="sans-serif"
                     android:lineSpacingMultiplier="1.2"
                     android:maxLines="3"
+                    android:text="@string/foreign_friend_desc"
+                    android:textColor="@color/black"
                     android:textSize="13sp"
                     android:typeface="sans"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/foreign_friend_group_name" />
+                    app:layout_constraintTop_toBottomOf="@+id/foreign_friend_group_icon" />
 
                 <TextView
                     android:id="@+id/subGroup_amount_of_foreign_friend"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginStart="38dp"
+                    android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp"
+                    android:textSize="12sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/foreign_friend_desc" />
@@ -618,6 +661,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
+                    android:textSize="12sp"
                     app:layout_constraintStart_toEndOf="@+id/subGroup_amount_of_foreign_friend"
                     app:layout_constraintTop_toTopOf="@+id/subGroup_amount_of_foreign_friend" />
 
@@ -626,11 +670,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
+                    android:textSize="12sp"
                     app:layout_constraintStart_toEndOf="@+id/member_amount_of_foreign_friend"
                     app:layout_constraintTop_toTopOf="@+id/subGroup_amount_of_foreign_friend" />
 
-
-            </android.support.constraint.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

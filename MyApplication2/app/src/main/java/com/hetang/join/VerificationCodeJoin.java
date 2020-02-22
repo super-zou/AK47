@@ -4,9 +4,9 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.os.Handler;
-import android.support.design.widget.TextInputEditText;
-import android.support.design.widget.TextInputLayout;
+
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -164,7 +164,7 @@ public class VerificationCodeJoin extends BaseAppCompatActivity {
         });
 
         Typeface font = Typeface.createFromAsset(getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
-        FontManager.markAsIconContainer(findViewById(R.id.custom_actionbar), font);
+        FontManager.markAsIconContainer(findViewById(R.id.left_back), font);
     }
     
     private void checkRigister(final String account) {

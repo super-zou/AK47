@@ -12,16 +12,21 @@ import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.gridlayout.widget.GridLayout;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,6 +43,8 @@ import com.hetang.group.SubGroupActivity;
 import com.hetang.group.SubGroupDetailsActivity;
 import com.hetang.home.CommonContactsActivity;
 import com.hetang.main.MeetArchiveActivity;
+import com.hetang.talent.TalentDetailsActivity;
+import com.hetang.talent.TalentSummaryListActivity;
 import com.hetang.util.BaseFragment;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
@@ -47,6 +54,7 @@ import com.hetang.util.RoundImageView;
 import com.hetang.util.SharedPreferencesUtils;
 import com.hetang.util.Slog;
 import com.hetang.util.UserProfile;
+import com.hetang.util.Utility;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
@@ -64,13 +72,17 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
-import static android.view.ViewGroup.getChildMeasureSpec;
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static com.hetang.common.AddPictureActivity.ADD_PICTURE_BROADCAST;
+import static com.hetang.common.MyApplication.getContext;
 import static com.hetang.dynamics.DynamicsInteractDetailsActivity.MEET_RECOMMEND_COMMENT;
 import static com.hetang.dynamics.DynamicsInteractDetailsActivity.MY_CONDITION_COMMENT;
 import static com.hetang.common.SetAvatarActivity.AVATAR_SET_ACTION_BROADCAST;
+import static com.hetang.group.SingleGroupActivity.GET_TALENT_DONE;
 import static com.hetang.group.SubGroupActivity.GET_MY_UNIVERSITY_SUBGROUP;
+import static com.hetang.group.SubGroupActivity.GET_TALENTS_BY_TYPE;
+import static com.hetang.group.SubGroupActivity.getTalent;
 import static com.hetang.home.HomeFragment.COMMENT_UPDATE_RESULT;
 import static com.hetang.home.HomeFragment.LOVE_UPDATE_RESULT;
 import static com.hetang.home.HomeFragment.MY_COMMENT_UPDATE_RESULT;
@@ -93,7 +105,6 @@ public class MeetRecommendFragment extends BaseFragment {
     private static final int PAGE_SIZE = 8;//page size
     private static final int GET_RECOMMEND_DONE = 1;
     private static final int GET_RECOMMEND_UPDATE = 2;
-    private static final int GET_USER_PROFILE_DONE = 3;
     public static final int MY_CONDITION_SET_DONE = 30;
     public static final int MY_CONDITION_NOT_SET = 31;
     public static final int MY_UNIVERSITY_GROUP_GET_DONE = 32;
@@ -106,21 +117,23 @@ public class MeetRecommendFragment extends BaseFragment {
     private static final int MY_CONDITION_PRAISE_UPDATE = 12;
     private static final String GET_RECOMMEND_URL = HttpUtil.DOMAIN + "?q=meet/get_recommend";
     public static final String GET_MY_CONDITION_URL = HttpUtil.DOMAIN + "?q=meet/get_my_condition";
-    private static final String GET_USER_PROFILE_URL = HttpUtil.DOMAIN + "?q=account_manager/get_user_profile";
     public static final String GET_RECOMMEND_PERSON_URL = HttpUtil.DOMAIN + "?q=contacts/recommend_person";
     private List<UserMeetInfo> meetList = new ArrayList<>();
     private UserProfile userProfile;
     private XRecyclerView recyclerView;
     private int mResponseSize;
+    private View lookFriend;
     private int currentPage = 0;
     private int currentPosition = -1;
+    private static final int any = -1;
     private Handler handler = new MyHandler(this);
     private boolean avatarSet = false;
-    private LinearLayout addMeetInfo;
+    private RelativeLayout addMeetInfo;
     private PictureAddBroadcastReceiver mReceiver;
     private MeetRecommendListAdapter meetRecommendListAdapter;
     private List<ContactsApplyListActivity.Contacts> contactsList = new ArrayList<>();
     private List<SubGroupActivity.SubGroup> subGroupList = new ArrayList<>();
+    private List<SubGroupActivity.Talent> mTalentList = new ArrayList<>();
 
     View mMyMeetView;
     View mView;
@@ -227,24 +240,6 @@ public class MeetRecommendFragment extends BaseFragment {
         getMyCondition();
         registerLoginBroadcast();
 
-        addMeetInfo = view.findViewById(R.id.meet_info_add);
-        addMeetInfo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent;
-                if (avatarSet == false) {
-                    intent = new Intent(getContext(), SetAvatarActivity.class);
-                    intent.putExtra("look_friend", true);
-                } else {
-                    intent = new Intent(getContext(), FillMeetInfoActivity.class);
-                }
-                if (userProfile != null) {
-                    intent.putExtra("userProfile", userProfile);
-                }
-                startActivity(intent);
-            }
-        });
-
         //show progressImage before loading done
         progressImageView = view.findViewById(R.id.animal_progress);
         animationDrawable = (AnimationDrawable) progressImageView.getDrawable();
@@ -258,7 +253,6 @@ public class MeetRecommendFragment extends BaseFragment {
 
     @Override
     protected void loadData() {
-        //TODO  first load data, ths "last" not used ?  need sure
         requestData(true);
     }
 
@@ -306,6 +300,68 @@ public class MeetRecommendFragment extends BaseFragment {
             public void onFailure(Call call, IOException e) {
             }
         });
+    }
+
+    private void getRecommendTalent() {
+        RequestBody requestBody = new FormBody.Builder()
+                .add("step", String.valueOf(8))
+                .add("page", String.valueOf(0))
+                .add("type", String.valueOf(any)).build();
+
+        HttpUtil.sendOkHttpRequest(getContext(), GET_TALENTS_BY_TYPE, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.body() != null) {
+                    String responseText = response.body().string();
+                    if (isDebug) Slog.d(TAG, "==========getTalentsByType response text : " + responseText);
+                    if (responseText != null && !TextUtils.isEmpty(responseText)) {
+                        JSONObject talentsResponse = null;
+                        try {
+                            talentsResponse = new JSONObject(responseText);
+                            if (talentsResponse != null) {
+                                int loadSize = processTalentsResponse(talentsResponse);
+                                if (loadSize > 0) {
+                                    handler.sendEmptyMessage(GET_TALENT_DONE);
+                                }
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+                loadData();
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+        });
+    }
+
+    public int processTalentsResponse(JSONObject talentsObject){
+        int talentSize = 0;
+        JSONArray talentArray = null;
+
+        if (talentsObject != null) {
+            talentArray = talentsObject.optJSONArray("talents");
+        }
+
+        if (talentArray != null) {
+            talentSize = talentArray.length();
+            if (talentSize > 0) {
+                for (int i = 0; i < talentArray.length(); i++) {
+                    JSONObject talentObject = talentArray.optJSONObject(i);
+                    if (talentObject != null) {
+                        SubGroupActivity.Talent talent = getTalent(talentObject);
+                        mTalentList.add(talent);
+                    }
+                }
+            }
+        }
+
+        return talentSize;
     }
 
     private void getMyUniversityGroup() {
@@ -464,165 +520,26 @@ public class MeetRecommendFragment extends BaseFragment {
     }
 
     private void setMeetHeaderView() {
-        mMyMeetView = LayoutInflater.from(getContext()).inflate(R.layout.my_meet_item, (ViewGroup) mView.findViewById(android.R.id.content), false);
-        recyclerView.addHeaderView(mMyMeetView);
+        lookFriend = LayoutInflater.from(getContext()).inflate(R.layout.look_friend, (ViewGroup) mView.findViewById(android.R.id.content), false);
+        recyclerView.addHeaderView(lookFriend);
 
-        mMyMeetView.setOnClickListener(new View.OnClickListener() {
+        addMeetInfo = lookFriend.findViewById(R.id.meet_info_add);
+        addMeetInfo.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MyApplication.getContext(), MeetArchiveActivity.class);
-                intent.putExtra("meet", myCondition);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+            public void onClick(View v) {
+                Intent intent;
+                if (avatarSet == false) {
+                    intent = new Intent(getContext(), SetAvatarActivity.class);
+                    intent.putExtra("look_friend", true);
+                } else {
+                    intent = new Intent(getContext(), FillMeetInfoActivity.class);
+                }
+                if (userProfile != null) {
+                    intent.putExtra("userProfile", userProfile);
+                }
                 startActivity(intent);
             }
         });
-
-        TextView selfcondition = mMyMeetView.findViewById(R.id.self_condition);
-        selfcondition.setText(myCondition.getSelfCondition(myCondition.getSituation()));
-        RoundImageView avatar = mMyMeetView.findViewById(R.id.avatar);
-        String avatarUrl = myCondition.getAvatar();
-        if (avatarUrl != null && !"".equals(avatarUrl)) {
-            Glide.with(getContext()).load(HttpUtil.DOMAIN + avatarUrl).into(avatar);
-        } else {
-            if (myCondition.getSex() == 0) {
-                avatar.setImageDrawable(MyApplication.getContext().getDrawable(R.drawable.male_default_avator));
-            } else {
-                avatar.setImageDrawable(MyApplication.getContext().getDrawable(R.drawable.female_default_avator));
-            }
-        }
-        TextView visitIcon = mMyMeetView.findViewById(R.id.eye_icon);
-        TextView visitRecord = mMyMeetView.findViewById(R.id.visit_record);
-
-        if (myCondition.getVisitCount() > 0) {
-            visitRecord.setText(String.valueOf(myCondition.getVisitCount()));
-            visitIcon.setVisibility(View.VISIBLE);
-        } else {
-            visitIcon.setVisibility(View.GONE);
-        }
-
-        TextView degreeView = mMyMeetView.findViewById(R.id.degree);
-        String degree = myCondition.getDegreeName(myCondition.getDegree());
-        if (!TextUtils.isEmpty(degree)) {
-            degreeView.setText(degree);
-        }
-
-        if (!TextUtils.isEmpty(myCondition.getUniversity())) {
-            TextView university = mMyMeetView.findViewById(R.id.university);
-            university.setText(myCondition.getUniversity() + getResources().getString(R.string.dot));
-        }
-
-        //TextView status = mMyMeetView.findViewById(R.id.status);
-        if (myCondition.getSituation() == student) {
-            /*
-            if (status.getVisibility() == View.GONE) {
-                status.setVisibility(View.VISIBLE);
-            }
-
-             */
-        } else {
-            /*
-            if (status.getVisibility() != View.GONE) {
-                status.setVisibility(View.GONE);
-            }
-
-             */
-
-            LinearLayout workInfo = mMyMeetView.findViewById(R.id.work_info);
-            if (workInfo.getVisibility() == View.GONE) {
-                workInfo.setVisibility(View.VISIBLE);
-            }
-            TextView position = mMyMeetView.findViewById(R.id.position);
-            String jobPosition = myCondition.getPosition();
-            if (!TextUtils.isEmpty(jobPosition)) {
-                position.setText(jobPosition);
-            }
-            TextView industryView = mMyMeetView.findViewById(R.id.industry);
-            String industry = myCondition.getIndustry();
-            if (!TextUtils.isEmpty(industry)) {
-                industryView.setText(industry);
-            }
-        }
-
-
-        lovedView = mMyMeetView.findViewById(R.id.loved_statistics);
-        if (myCondition.getLovedCount() > 0) {
-            lovedView.setText(String.valueOf(myCondition.getLovedCount()));
-        }
-        lovedIcon = mMyMeetView.findViewById(R.id.loved_icon);
-        if (myCondition.getLovedCount() > 0) {
-            if (myCondition.getLoved() == 1) {
-                lovedIcon.setText(R.string.fa_heart);
-            }
-        } else {
-            lovedIcon.setText(R.string.fa_heart_o);
-        }
-        thumbsView = mMyMeetView.findViewById(R.id.thumbs_up_statistics);
-        Slog.d(TAG, "--------------------->my condition getPraisedCount: " + myCondition.getPraisedCount());
-        if (myCondition.getPraisedCount() > 0) {
-            thumbsView.setText(String.valueOf(myCondition.getPraisedCount()));
-        }
-
-        thumbsIcon = mMyMeetView.findViewById(R.id.thumbs_up_icon);
-        if (myCondition.getPraisedCount() > 0) {
-            if (myCondition.getPraised() == 1) {
-                thumbsIcon.setText(R.string.fa_thumbs_up);
-            }
-        } else {
-            thumbsIcon.setText(R.string.fa_thumbs_O_up);
-        }
-
-        commentCountView = mMyMeetView.findViewById(R.id.comment_count);
-        int commentCount = myCondition.getCommentCount();
-        if (commentCount > 0) {
-            commentCountView.setText(String.valueOf(commentCount));
-        }
-
-        TextView livingView = mMyMeetView.findViewById(R.id.living);
-        livingView.setText(myCondition.getLiving());
-        TextView homeTown = mMyMeetView.findViewById(R.id.hometown);
-        homeTown.setText(myCondition.getHometown() + "人");
-
-        TextView comment = mMyMeetView.findViewById(R.id.comment);
-        comment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                createCommentDetails(myCondition, MY_CONDITION_COMMENT);
-            }
-        });
-        commentCountView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                createCommentDetails(myCondition, MY_CONDITION_COMMENT);
-            }
-        });
-
-        lovedIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (1 == myCondition.getLoved()) {
-                    Toast.makeText(getContext(), "You have loved it!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                love(myCondition);
-            }
-        });
-
-        thumbsIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //TODO change UI to show parised or no
-                if (1 == myCondition.getPraised()) {
-                    Toast.makeText(getContext(), "You have praised it!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                praiseArchives(myCondition);
-            }
-        });
-
-        Typeface font = Typeface.createFromAsset(getContext().getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
-        FontManager.markAsIconContainer(mMyMeetView.findViewById(R.id.behavior_statistics), font);
-        FontManager.markAsIconContainer(mMyMeetView.findViewById(R.id.name_info), font);
-        FontManager.markAsIconContainer(mMyMeetView.findViewById(R.id.living_icon), font);
     }
 
     private void setRecommendContactsView() {
@@ -701,6 +618,99 @@ public class MeetRecommendFragment extends BaseFragment {
         }
     }
 
+    private void setRecommendTalentsHeader(){
+        DisplayMetrics dm = getContext().getResources().getDisplayMetrics();
+        int innerWidth = dm.widthPixels - (int) Utility.dpToPx(getContext(), 32f);
+        int height = innerWidth;
+        int wrapperWidth = innerWidth/2;
+        int avatarWidth = wrapperWidth - (int) Utility.dpToPx(getContext(), 12f);
+
+        ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(wrapperWidth, WRAP_CONTENT);
+
+        View talentView = LayoutInflater.from(getContext()).inflate(R.layout.recommend_talent, (ViewGroup) mView.findViewById(android.R.id.content), false);
+        recyclerView.addHeaderView(talentView);
+        TextView moreTalent = talentView.findViewById(R.id.more);
+        moreTalent.setText(getResources().getString(R.string.more_talent));
+        moreTalent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), TalentSummaryListActivity.class);
+                //intent.putExtra("type", type);
+                startActivity(intent);
+            }
+        });
+
+        GridLayout talentWrapper = talentView.findViewById(R.id.talent_wrapper);
+        if (talentWrapper == null){
+            return;
+        }
+
+        int size = mTalentList.size();
+        if (size > 6){
+            size = 6;
+            moreTalent.setVisibility(View.VISIBLE);
+        }
+
+        for (int i = 0; i < size; i++) {
+            View view = LayoutInflater.from(getContext()).inflate(R.layout.recommend_talent_item, null);
+            talentWrapper.addView(view, params);
+            final SubGroupActivity.Talent talent = mTalentList.get(i);
+            RoundImageView avatarRV = view.findViewById(R.id.avatar);
+            ConstraintLayout.LayoutParams layoutParams = new ConstraintLayout.LayoutParams(avatarWidth, avatarWidth);
+            layoutParams.setMargins(0, 0, 2, 2);
+            avatarRV.setLayoutParams(layoutParams);
+            String avatar = talent.profile.getAvatar();
+            if (avatar != null && !"".equals(avatar)) {
+                Glide.with(getContext()).load(HttpUtil.DOMAIN + avatar).into(avatarRV);
+            }
+            TextView nickname = view.findViewById(R.id.name);
+            nickname.setText(talent.profile.getNickName());
+
+            TextView degree = view.findViewById(R.id.degree);
+            TextView university = view.findViewById(R.id.university);
+
+            if (talent.profile.getSituation() == student){
+                degree.setText(talent.profile.getDegreeName(talent.profile.getDegree()));
+                university.setText(talent.profile.getUniversity());
+            }else {
+                degree.setText(talent.profile.getPosition());
+                university.setText(talent.profile.getIndustry());
+            }
+
+
+            TextView introduction = view.findViewById(R.id.introduction);
+            introduction.setText(talent.introduction);
+
+            TextView charge = view.findViewById(R.id.charge);
+            charge.setText(talent.charge+"元");
+
+            TextView subject = view.findViewById(R.id.subject);
+            subject.setText(talent.subject);
+
+            if (talent.evaluateCount > 0) {
+                TextView evaluateCountTV = view.findViewById(R.id.evaluate_count);
+                float scoreFloat = talent.evaluateScores / talent.evaluateCount;
+                float score = (float) (Math.round(scoreFloat * 10)) / 10;
+                evaluateCountTV.setText(getResources().getString(R.string.fa_star) +" "+ score + getResources().getString(R.string.dot) + talent.evaluateCount);
+            }
+
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(getContext(), TalentDetailsActivity.class);
+                    //intent.putExtra("talent", talent);
+                    intent.putExtra("aid", talent.aid);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                    startActivity(intent);
+                }
+            });
+
+            Typeface font = Typeface.createFromAsset(MyApplication.getContext().getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
+            FontManager.markAsIconContainer(view.findViewById(R.id.evaluate_count), font);
+        }
+
+    }
+
     private void setMyUniversityGroupRecommendView() {
         mRecommendGroupView = LayoutInflater.from(getContext()).inflate(R.layout.recommend_group, (ViewGroup) mView.findViewById(android.R.id.content), false);
         recyclerView.addHeaderView(mRecommendGroupView);
@@ -718,6 +728,9 @@ public class MeetRecommendFragment extends BaseFragment {
             }
         });
         int size = subGroupList.size();
+        if (size > 3){
+            more.setVisibility(View.VISIBLE);
+        }
         for (int i = 0; i < size; i++) {
             View view = LayoutInflater.from(getContext()).inflate(R.layout.recommend_group_item, null);
             groupWrapper.addView(view);
@@ -763,7 +776,6 @@ public class MeetRecommendFragment extends BaseFragment {
                 }
             });
         }
-
     }
 
     private void love(final UserMeetInfo userMeetInfo) {
@@ -834,11 +846,10 @@ public class MeetRecommendFragment extends BaseFragment {
             switch (intent.getAction()) {
                 case ADD_PICTURE_BROADCAST:
                     if (isDebug) Slog.d(TAG, "==========ADD_PICTURE_BROADCAST");
-                    getMyCondition();
+                    lookFriend.setVisibility(View.GONE);
                     meetList.clear();
-                    //getRecommendContent();
                     //force update data
-                    requestData(false);
+                    loadData();
                     break;
                 case AVATAR_SET_ACTION_BROADCAST:
                     avatarSet = true;
@@ -869,8 +880,8 @@ public class MeetRecommendFragment extends BaseFragment {
         if (isDebug) Slog.d(TAG, "=============onResume");
         //getUserProfile();
         //updateData();
-        meetRecommendListAdapter.setData(meetList);
-        meetRecommendListAdapter.notifyDataSetChanged();
+        //meetRecommendListAdapter.setData(meetList);
+        //meetRecommendListAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -878,10 +889,12 @@ public class MeetRecommendFragment extends BaseFragment {
         super.onDestroy();
         unRegisterLoginBroadcast();
 
+        /*
         if (recyclerView != null) {
             recyclerView.destroy();
             recyclerView = null;
         }
+         */
     }
 
     private void stopLoadProgress() {
@@ -925,41 +938,11 @@ public class MeetRecommendFragment extends BaseFragment {
                 meetRecommendListAdapter.notifyDataSetChanged();
                 recyclerView.refreshComplete();
                 break;
-            case GET_USER_PROFILE_DONE:
-                if (userProfile != null) {
-                    if (isDebug)
-                        Slog.d(TAG, "==============GET_USER_PROFILE_DONE cid: " + userProfile.getCid());
-                    if (userProfile.getCid() == 0) {
-                        if (addMeetInfo.getVisibility() == View.GONE) {
-                            addMeetInfo.setVisibility(View.VISIBLE);
-                        }
-                    } else {
-                        if (addMeetInfo.getVisibility() == View.VISIBLE) {
-                            addMeetInfo.setVisibility(View.GONE);
-                        }
-                        setMeetHeaderView();
-                    }
-
-                    if (!TextUtils.isEmpty(userProfile.getAvatar())) {
-                        avatarSet = true;
-                    }
-                } else {
-                    if (addMeetInfo.getVisibility() == View.GONE) {
-                        addMeetInfo.setVisibility(View.VISIBLE);
-                    }
-                }
-                break;
             case MY_CONDITION_SET_DONE:
-                if (addMeetInfo.getVisibility() == View.VISIBLE) {
-                    addMeetInfo.setVisibility(View.GONE);
-                }
-                setMeetHeaderView();
                 getRecommendContacts();
                 break;
             case MY_CONDITION_NOT_SET:
-                if (addMeetInfo.getVisibility() == View.GONE) {
-                    addMeetInfo.setVisibility(View.VISIBLE);
-                }
+                setMeetHeaderView();
                 if (!TextUtils.isEmpty(userProfile.getAvatar())) {
                     avatarSet = true;
                 }
@@ -1010,10 +993,15 @@ public class MeetRecommendFragment extends BaseFragment {
                 break;
             case GET_RECOMMEND_MEMBER_DONE:
                 setRecommendContactsView();
+                getRecommendTalent();
                 getMyUniversityGroup();
                 break;
             case HAD_NO_RECOMMEND_MEMBER:
+                getRecommendTalent();
                 getMyUniversityGroup();
+                break;
+            case GET_TALENT_DONE:
+                setRecommendTalentsHeader();
                 break;
             default:
                 break;
