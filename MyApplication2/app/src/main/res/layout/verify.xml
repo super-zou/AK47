@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:clickable="true"
+    android:id="@+id/verify"
+    android:orientation="vertical"
+    android:focusable="true">
+
+    <!--user verify-->
+    <TextView
+        android:id="@+id/user_verify_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:text="@string/user_verify"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/user_verify_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:text="0"
+        android:textColor="@color/color_red"
+        app:layout_constraintEnd_toStartOf="@+id/user_verify_nav"
+        app:layout_constraintTop_toTopOf="@+id/user_verify_title" />
+
+    <TextView
+        android:id="@+id/user_verify_nav"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:padding="8dp"
+        android:text="@string/chevron_right"
+        app:layout_constraintBottom_toBottomOf="@+id/user_verify_count"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/user_verify_title" />
+
+    <!--talent verify-->
+    <TextView
+        android:id="@+id/talent_verify_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:text="@string/talent_verify"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/user_verify_title" />
+
+    <TextView
+        android:id="@+id/talent_verify_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:text="0"
+        android:textColor="@color/color_red"
+        app:layout_constraintEnd_toStartOf="@+id/talent_verify_nav"
+        app:layout_constraintTop_toTopOf="@+id/talent_verify_title" />
+
+    <TextView
+        android:id="@+id/talent_verify_nav"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:padding="8dp"
+        android:text="@string/chevron_right"
+        app:layout_constraintBottom_toBottomOf="@+id/talent_verify_count"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/talent_verify_count" />
+
+    <!--activity verify-->
+    <TextView
+        android:id="@+id/activity_verify_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:text="@string/activity_verify"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/talent_verify_title" />
+
+    <TextView
+        android:id="@+id/activity_verify_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:text="0"
+        android:textColor="@color/color_red"
+        app:layout_constraintEnd_toStartOf="@+id/activity_verify_nav"
+        app:layout_constraintTop_toTopOf="@+id/activity_verify_title" />
+
+    <TextView
+        android:id="@+id/activity_verify_nav"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:padding="8dp"
+        android:text="@string/chevron_right"
+        app:layout_constraintBottom_toBottomOf="@+id/activity_verify_count"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/activity_verify_count" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,5 +1,6 @@
 package com.hetang.talent;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -9,17 +10,14 @@ import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -29,11 +27,8 @@ import com.bigkoo.pickerview.builder.OptionsPickerBuilder;
 import com.bigkoo.pickerview.listener.OnOptionsSelectListener;
 import com.bigkoo.pickerview.view.OptionsPickerView;
 import com.bumptech.glide.Glide;
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
 import com.hetang.R;
 import com.hetang.adapter.GridImageAdapter;
-import com.hetang.common.AddPictureActivity;
 import com.hetang.common.MyApplication;
 import com.hetang.common.OnItemClickListener;
 import com.hetang.common.SetAvatarActivity;
@@ -80,7 +75,6 @@ import okhttp3.Response;
 
 import static android.app.Activity.RESULT_OK;
 import static com.hetang.archive.ArchiveFragment.REQUESTCODE;
-import static com.hetang.common.MyApplication.getContext;
 import static com.hetang.common.SetAvatarActivity.SUBMIT_TALENT_AUTHENTICATION_ACTION_BROADCAST;
 import static com.hetang.common.SetAvatarActivity.TALENT_AUTHENTICATION_PHOTO;
 import static com.hetang.group.GroupFragment.eden_group;
@@ -130,6 +124,54 @@ public class TalentAuthenticationDialogFragment extends BaseDialogFragment {
     private Thread threadIndustry = null;
     private ArrayList<CommonBean> subjectMainItems = new ArrayList<>();
     private ArrayList<ArrayList<String>> subjectSubItems = new ArrayList<>();
+    private GridImageAdapter.onAddPicClickListener onAddPicClickListener = new GridImageAdapter.onAddPicClickListener() {
+        @Override
+        public void onAddPicClick() {
+            if (pictureSelectType == 0) {
+                maxSelectNum = 6;
+            } else {
+                maxSelectNum = 1;
+            }
+            PictureSelectionModel pictureSelectionModel = PictureSelector.create(TalentAuthenticationDialogFragment.this).openGallery(PictureMimeType.ofImage());
+            pictureSelectionModel.loadImageEngine(GlideEngine.createGlideEngine())// 外部传入图片加载引擎，必传项
+                    .theme(R.style.picture_WeChat_style)// 主题样式设置 具体参考 values/styles   用法：R.style.picture.white.style v2.3.3后 建议使用setPictureStyle()动态方式
+                    .isWeChatStyle(true)// 是否开启微信图片选择风格
+                    //.setLanguage(language)// 设置语言，默认中文
+                    .setPictureStyle(addDynamicsActivity.getWeChatStyle())// 动态自定义相册主题
+                    .setPictureCropStyle(addDynamicsActivity.getCropParameterStyle())// 动态自定义裁剪主题
+                    .setPictureWindowAnimationStyle(new PictureWindowAnimationStyle())// 自定义相册启动退出动画
+                    .isWithVideoImage(true)// 图片和视频是否可以同选,只在ofAll模式下有效
+                    .maxSelectNum(maxSelectNum)// 最大图片选择数量
+                    .minSelectNum(1)// 最小选择数量
+                    .imageSpanCount(4)// 每行显示个数
+                    .isReturnEmpty(false)// 未选择数据时点击按钮是否可以返回
+                    //.isAndroidQTransform(false)// 是否需要处理Android Q 拷贝至应用沙盒的操作，只针对compress(false); && enableCrop(false);有效,默认处理
+                    .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)// 设置相册Activity方向，不设置默认使用系统
+                    .selectionMode(PictureConfig.MULTIPLE)// 多选 or 单选
+                    //.isSingleDirectReturn(cb_single_back.isChecked())// 单选模式下是否直接返回，PictureConfig.SINGLE模式下有效
+                    .previewImage(true)// 是否可预览图片
+                    //.previewVideo(cb_preview_video.isChecked())// 是否可预览视频
+                    //.querySpecifiedFormatSuffix(PictureMimeType.ofJPEG())// 查询指定后缀格式资源
+                    //.enablePreviewAudio(cb_preview_audio.isChecked()) // 是否可播放音频
+                    .isCamera(true)// 是否显示拍照按钮
+                    //.isMultipleSkipCrop(false)// 多图裁剪时是否支持跳过，默认支持
+                    //.isMultipleRecyclerAnimation(false)// 多图裁剪底部列表显示动画效果
+                    .isZoomAnim(true)// 图片列表点击 缩放效果 默认true
+                    .compress(true)// 是否压缩
+                    .compressQuality(80)// 图片压缩后输出质量 0~ 100
+                    .synOrAsy(true)//同步true或异步false 压缩 默认同步
+                    .withAspectRatio(1, 1)// 裁剪比例 如16:9 3:2 3:4 1:1 可自定义
+                    .freeStyleCropEnabled(true)// 裁剪框是否可拖拽
+                    .previewEggs(true)// 预览图片时 是否增强左右滑动图片体验(图片滑动一半即可看到上一张是否选中)
+                    .minimumCompressSize(100);
+            Slog.d(TAG, "------------------------------->pictureSelectType: " + pictureSelectType);
+            if (pictureSelectType == 0) {
+                pictureSelectionModel.forResult(PictureConfig.CHOOSE_REQUEST);
+            } else {
+                pictureSelectionModel.forResult(PictureConfig.SINGLE);
+            }
+        }
+    };
 
     @Override
     public void onAttach(Context context) {
@@ -154,10 +196,10 @@ public class TalentAuthenticationDialogFragment extends BaseDialogFragment {
 
         authenObject = new JSONObject();
 
-        if (type == eden_group){
+        if (type == eden_group) {
             mDialog.setContentView(R.layout.match_maker_talent_authentication);
             initMatchMakerTalent();
-        }else {
+        } else {
             mDialog.setContentView(R.layout.talent_authentication);
             initCommonTalent();
         }
@@ -183,14 +225,14 @@ public class TalentAuthenticationDialogFragment extends BaseDialogFragment {
         Typeface font = Typeface.createFromAsset(MyApplication.getContext().getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
         FontManager.markAsIconContainer(mDialog.findViewById(R.id.custom_actionbar), font);
 
-        if (addDynamicsActivity == null){
+        if (addDynamicsActivity == null) {
             addDynamicsActivity = new AddDynamicsActivity();
         }
 
         return mDialog;
     }
 
-    private void initCommonTalent(){
+    private void initCommonTalent() {
         addMateriaRV = mDialog.findViewById(R.id.add_materia);
         addRewardQRRV = mDialog.findViewById(R.id.add_reward_qr);
         chargeSetting = mDialog.findViewById(R.id.charge_setting);
@@ -234,17 +276,17 @@ public class TalentAuthenticationDialogFragment extends BaseDialogFragment {
         prevBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (index > 0){
-                    if (index == 4){
+                if (index > 0) {
+                    if (index == 4) {
                         nextBtn.setText(getContext().getResources().getString(R.string.next));
                     }
                     index--;
-                    if (index == 1){
+                    if (index == 1) {
                         prevBtn.setVisibility(View.GONE);
                     }
                     authenticateWrapper.getChildAt(index).setVisibility(View.VISIBLE);
-                    authenticateWrapper.getChildAt(index+1).setVisibility(View.GONE);
-                    Slog.d(TAG, "-------------------->index: "+index);
+                    authenticateWrapper.getChildAt(index + 1).setVisibility(View.GONE);
+                    Slog.d(TAG, "-------------------->index: " + index);
                 }
             }
         });
@@ -252,43 +294,61 @@ public class TalentAuthenticationDialogFragment extends BaseDialogFragment {
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (validCheck(index)){
-                    if (prevBtn.getVisibility() == View.GONE){
+                if (validCheck(index)) {
+                    if (prevBtn.getVisibility() == View.GONE) {
                         prevBtn.setVisibility(View.VISIBLE);
                     }
-                    if (index < 4){
-                        index ++;
-                        if (index == 4){
+                    if (index < 4) {
+                        index++;
+                        if (index == 4) {
                             nextBtn.setText(getContext().getResources().getString(R.string.done));
                         }
                         authenticateWrapper.getChildAt(index).setVisibility(View.VISIBLE);
-                        authenticateWrapper.getChildAt(index-1).setVisibility(View.GONE);
+                        authenticateWrapper.getChildAt(index - 1).setVisibility(View.GONE);
 
                         processCurrent(index);
 
-                    }else {
-                        submit();
+                    } else {
+                        //submit();
+                        submitNotice();
                     }
                 }
             }
         });
     }
 
-    private void submit(){
+    private void submitNotice() {
+        final AlertDialog.Builder normalDialogBuilder =
+                new AlertDialog.Builder(getContext());
+        normalDialogBuilder.setTitle(getResources().getString(R.string.talent_apply));
+        normalDialogBuilder.setMessage(getResources().getString(R.string.talent_apply_content));
+        normalDialogBuilder.setPositiveButton(getContext().getResources().getString(R.string.submit),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        submit();
+                    }
+                });
+
+        AlertDialog normalDialog = normalDialogBuilder.create();
+        normalDialog.show();
+    }
+
+    private void submit() {
         Map<String, String> authenMap = new HashMap<>();
         authenMap.put("introduction", introductionET.getText().toString());
         authenMap.put("subject", selectSubject.getText().toString());
         authenMap.put("charge", chargeSetting.getText().toString());
-        if (!TextUtils.isEmpty(chargeIntroduction.getText().toString())){
+        if (!TextUtils.isEmpty(chargeIntroduction.getText().toString())) {
             authenMap.put("charge_desc", chargeIntroduction.getText().toString());
         }
 
-        if (selectList.size() > 0){
+        if (selectList.size() > 0) {
             for (LocalMedia media : selectList) {
                 selectFileList.add(new File(media.getCompressPath()));
             }
         }
-        if (selectRewardList.size() > 0){
+        if (selectRewardList.size() > 0) {
             for (LocalMedia media : selectRewardList) {
                 selectFileList.add(new File(media.getCompressPath()));
             }
@@ -296,20 +356,20 @@ public class TalentAuthenticationDialogFragment extends BaseDialogFragment {
 
         authenMap.put("type", String.valueOf(type));
 
-        Slog.d(TAG, "--------------------->file size: "+selectFileList.size());
+        Slog.d(TAG, "--------------------->file size: " + selectFileList.size());
 
         uploadPictures(authenMap, "authen", selectFileList);
     }
 
-    private boolean validCheck(int index){
-        Slog.d(TAG, "------------------------>validCheck: "+index);
+    private boolean validCheck(int index) {
+        Slog.d(TAG, "------------------------>validCheck: " + index);
         boolean valid = false;
-        switch (index){
+        switch (index) {
             case 1:
                 String introduction = introductionET.getText().toString();
-                if (!TextUtils.isEmpty(introduction)){
+                if (!TextUtils.isEmpty(introduction)) {
                     valid = true;
-                }else {
+                } else {
                     introductionET.setError(getContext().getResources().getString(R.string.talent_introduction_empty));
                 }
                 break;
@@ -318,23 +378,49 @@ public class TalentAuthenticationDialogFragment extends BaseDialogFragment {
                 break;
             case 3:
                 valid = isPicked;
+                if (!isPicked){
+                    Toast.makeText(getContext(), getResources().getString(R.string.subject_select_notice), Toast.LENGTH_LONG).show();
+                }
                 break;
             case 4:
                 String chargeAmount = chargeSetting.getText().toString();
-                if (!TextUtils.isEmpty(chargeAmount) && selectRewardList.size() > 0){
+                if (!TextUtils.isEmpty(chargeAmount)) {
                     valid = true;
-                }else {
+                } else {
+                    Toast.makeText(getContext(), getResources().getString(R.string.charge_setting_notice), Toast.LENGTH_LONG).show();
                     valid = false;
+                    return false;
                 }
+
+                String chargeDesc = chargeIntroduction.getText().toString();
+                if (!TextUtils.isEmpty(chargeDesc)) {
+                    valid = true;
+                } else {
+                    Toast.makeText(getContext(), getResources().getString(R.string.charge_introduction_notice), Toast.LENGTH_LONG).show();
+                    valid = false;
+                    return valid;
+                }
+
+                if (selectRewardList.size() == 0){
+                    Toast.makeText(getContext(), getResources().getString(R.string.qr_code_notice), Toast.LENGTH_LONG).show();
+                    valid = false;
+                    return valid;
+                }else {
+                    valid = true;
+                }
+
                 break;
+                default:
+                    valid = false;
+                    break;
         }
 
         return valid;
     }
 
-    private void processCurrent(int index){
-        Slog.d(TAG, "------------------------>processCurrent: "+index);
-        switch (index){
+    private void processCurrent(int index) {
+        Slog.d(TAG, "------------------------>processCurrent: " + index);
+        switch (index) {
             case 2:
                 pictureSelectType = 0;
                 addMateria(adapter);
@@ -346,11 +432,11 @@ public class TalentAuthenticationDialogFragment extends BaseDialogFragment {
         }
     }
 
-    private void initSubjectJsondata(){
+    private void initSubjectJsondata() {
 
         final CommonPickerView commonPickerView = new CommonPickerView();
-        if (threadIndustry == null){
-            Slog.i(TAG,"行业数据开始解析");
+        if (threadIndustry == null) {
+            Slog.i(TAG, "行业数据开始解析");
             threadIndustry = new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -372,9 +458,9 @@ public class TalentAuthenticationDialogFragment extends BaseDialogFragment {
     private void showPickerView() {
         //条件选择器
         OptionsPickerView pvOptions;
-        pvOptions= new OptionsPickerBuilder(getContext(), new OnOptionsSelectListener() {
+        pvOptions = new OptionsPickerBuilder(getContext(), new OnOptionsSelectListener() {
             @Override
-            public void onOptionsSelect(int options1, int option2, int options3 ,View v) {
+            public void onOptionsSelect(int options1, int option2, int options3, View v) {
                 //返回的分别是二个级别的选中位置
                 selectSubject.setText(subjectSubItems.get(options1).get(option2));
                 isPicked = true;
@@ -388,7 +474,7 @@ public class TalentAuthenticationDialogFragment extends BaseDialogFragment {
         pvOptions.show();
     }
 
-    private void addMateria(GridImageAdapter imageAdapter){
+    private void addMateria(GridImageAdapter imageAdapter) {
         imageAdapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(int position, View v) {
@@ -429,55 +515,6 @@ public class TalentAuthenticationDialogFragment extends BaseDialogFragment {
         });
     }
 
-    private GridImageAdapter.onAddPicClickListener onAddPicClickListener = new GridImageAdapter.onAddPicClickListener() {
-        @Override
-        public void onAddPicClick() {
-            if (pictureSelectType == 0){
-                maxSelectNum = 6;
-            }else {
-                maxSelectNum = 1;
-            }
-            PictureSelectionModel pictureSelectionModel = PictureSelector.create(TalentAuthenticationDialogFragment.this).openGallery(PictureMimeType.ofImage());
-            pictureSelectionModel.loadImageEngine(GlideEngine.createGlideEngine())// 外部传入图片加载引擎，必传项
-                    .theme(R.style.picture_WeChat_style)// 主题样式设置 具体参考 values/styles   用法：R.style.picture.white.style v2.3.3后 建议使用setPictureStyle()动态方式
-                    .isWeChatStyle(true)// 是否开启微信图片选择风格
-                    //.setLanguage(language)// 设置语言，默认中文
-                    .setPictureStyle(addDynamicsActivity.getWeChatStyle())// 动态自定义相册主题
-                    .setPictureCropStyle(addDynamicsActivity.getCropParameterStyle())// 动态自定义裁剪主题
-                    .setPictureWindowAnimationStyle(new PictureWindowAnimationStyle())// 自定义相册启动退出动画
-                    .isWithVideoImage(true)// 图片和视频是否可以同选,只在ofAll模式下有效
-                    .maxSelectNum(maxSelectNum)// 最大图片选择数量
-                    .minSelectNum(1)// 最小选择数量
-                    .imageSpanCount(4)// 每行显示个数
-                    .isReturnEmpty(false)// 未选择数据时点击按钮是否可以返回
-                    //.isAndroidQTransform(false)// 是否需要处理Android Q 拷贝至应用沙盒的操作，只针对compress(false); && enableCrop(false);有效,默认处理
-                    .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)// 设置相册Activity方向，不设置默认使用系统
-                    .selectionMode(PictureConfig.MULTIPLE )// 多选 or 单选
-                    //.isSingleDirectReturn(cb_single_back.isChecked())// 单选模式下是否直接返回，PictureConfig.SINGLE模式下有效
-                    .previewImage(true)// 是否可预览图片
-                    //.previewVideo(cb_preview_video.isChecked())// 是否可预览视频
-                    //.querySpecifiedFormatSuffix(PictureMimeType.ofJPEG())// 查询指定后缀格式资源
-                    //.enablePreviewAudio(cb_preview_audio.isChecked()) // 是否可播放音频
-                    .isCamera(true)// 是否显示拍照按钮
-                    //.isMultipleSkipCrop(false)// 多图裁剪时是否支持跳过，默认支持
-                    //.isMultipleRecyclerAnimation(false)// 多图裁剪底部列表显示动画效果
-                    .isZoomAnim(true)// 图片列表点击 缩放效果 默认true
-                    .compress(true)// 是否压缩
-                    .compressQuality(80)// 图片压缩后输出质量 0~ 100
-                    .synOrAsy(true)//同步true或异步false 压缩 默认同步
-                    .withAspectRatio(1, 1)// 裁剪比例 如16:9 3:2 3:4 1:1 可自定义
-                    .freeStyleCropEnabled(true)// 裁剪框是否可拖拽
-                    .previewEggs(true)// 预览图片时 是否增强左右滑动图片体验(图片滑动一半即可看到上一张是否选中)
-                    .minimumCompressSize(100);
-            Slog.d(TAG, "------------------------------->pictureSelectType: "+pictureSelectType);
-            if (pictureSelectType == 0){
-                pictureSelectionModel.forResult(PictureConfig.CHOOSE_REQUEST);
-            }else {
-                pictureSelectionModel.forResult(PictureConfig.SINGLE);
-            }
-        }
-    };
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -485,14 +522,14 @@ public class TalentAuthenticationDialogFragment extends BaseDialogFragment {
             switch (requestCode) {
                 case PictureConfig.CHOOSE_REQUEST:
                     selectList = PictureSelector.obtainMultipleResult(data);
-                    if(selectList.size() > 0){
+                    if (selectList.size() > 0) {
                         adapter.setList(selectList);
                         adapter.notifyDataSetChanged();
                     }
                     break;
                 case PictureConfig.SINGLE:
                     selectRewardList = PictureSelector.obtainMultipleResult(data);
-                    if(selectRewardList.size() > 0){
+                    if (selectRewardList.size() > 0) {
                         adapterReward.setList(selectRewardList);
                         adapterReward.notifyDataSetChanged();
                     }
@@ -519,7 +556,7 @@ public class TalentAuthenticationDialogFragment extends BaseDialogFragment {
     }
 
 
-    private void initMatchMakerTalent(){
+    private void initMatchMakerTalent() {
         LinearLayout explanationLL = mDialog.findViewById(R.id.explanation);
         ConstraintLayout authenticationCL = mDialog.findViewById(R.id.talent_authentication);
 
@@ -534,7 +571,7 @@ public class TalentAuthenticationDialogFragment extends BaseDialogFragment {
         });
     }
 
-    private void initMatchMakerAuthentication(){
+    private void initMatchMakerAuthentication() {
         TextView title = mDialog.findViewById(R.id.title);
         title.setText("提交达人申请");
         Button save = mDialog.findViewById(R.id.submit);
@@ -629,12 +666,12 @@ public class TalentAuthenticationDialogFragment extends BaseDialogFragment {
                 if (response.body() != null) {
                     try {
                         String responseText = response.body().string();
-                        Slog.d(TAG, "---------------->response: "+responseText);
+                        Slog.d(TAG, "---------------->response: " + responseText);
                         int status = new JSONObject(responseText).optInt("status");
                         aid = new JSONObject(responseText).optInt("aid");
                         JSONObject talentobject = new JSONObject(responseText).optJSONObject("talent");
                         talent = getTalent(talentobject);
-                        if(status == 1){
+                        if (status == 1) {
                             isSubmit = true;
                             dismissProgressDialog();
                             selectList.clear();
@@ -644,7 +681,7 @@ public class TalentAuthenticationDialogFragment extends BaseDialogFragment {
                             PictureFileUtils.deleteAllCacheDirFile(getContext());
                             startTalentDetailActivity();
                         }
-                    }catch (JSONException e){
+                    } catch (JSONException e) {
                         e.printStackTrace();
                     }
 
@@ -664,7 +701,7 @@ public class TalentAuthenticationDialogFragment extends BaseDialogFragment {
 
     }
 
-    private void startTalentDetailActivity(){
+    private void startTalentDetailActivity() {
         Intent intent = new Intent(getContext(), TalentDetailsActivity.class);
         //intent.putExtra("talent", talent);
         intent.putExtra("aid", talent.aid);
@@ -691,16 +728,16 @@ public class TalentAuthenticationDialogFragment extends BaseDialogFragment {
         super.onDismiss(dialogInterface);
         unRegisterBroadcast();
         if (commonDialogFragmentInterface != null) {//callback from ArchivesActivity class
-            if (type == eden_group){
+            if (type == eden_group) {
                 commonDialogFragmentInterface.onBackFromDialog(TALENT_AUTHENTICATION_RESULT_OK, gid, isSubmit);
-            }else {
+            } else {
                 //commonDialogFragmentInterface.onBackFromDialog(COMMON_TALENT_AUTHENTICATION_RESULT_OK, aid, isSubmit);
                 sendTalentAddedBroadcast();
             }
         }
     }
 
-    private void sendTalentAddedBroadcast(){
+    private void sendTalentAddedBroadcast() {
         Intent intent = new Intent(TALENT_ADD_BROADCAST);
         intent.putExtra("aid", aid);
         LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);

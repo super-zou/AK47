@@ -107,10 +107,6 @@ public class MeetDiscoveryListAdapter extends RecyclerView.Adapter<MeetDiscovery
             holder.living.setText(meet.getLiving());
         }
 
-        if (meet.getNation() != null && !TextUtils.isEmpty(meet.getNation())) {
-            holder.hometown.setText(mContext.getResources().getString(R.string.dot) + meet.getHometown() + "人");
-        }
-
         if (meet.getAvatar() != null && !"".equals(meet.getAvatar())) {
             Glide.with(mContext).load(HttpUtil.DOMAIN + meet.getAvatar()).into(holder.avatar);
         } else {
@@ -162,7 +158,15 @@ public class MeetDiscoveryListAdapter extends RecyclerView.Adapter<MeetDiscovery
             }
         }
 
-        holder.selfcondition.setText(meet.getSelfCondition(meet.getSituation()));
+        if (meet.getCid() != 0){
+            if (meet.getNation() != null && !TextUtils.isEmpty(meet.getNation())) {
+                holder.hometown.setText(mContext.getResources().getString(R.string.dot) + meet.getHometown() + "人");
+            }
+            holder.selfcondition.setText(meet.getSelfCondition(meet.getSituation()));
+        }else {
+            holder.selfcondition.setText(meet.getMajor());
+            holder.hometown.setText("");
+        }
         //holder.requirement.setText(meet.getRequirement());
 
         if (meet.getLovedCount() > 0 && !isScrolling) {

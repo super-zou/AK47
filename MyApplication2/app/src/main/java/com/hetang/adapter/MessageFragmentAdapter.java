@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 
 import com.hetang.message.ConversationFragment;
 import com.hetang.message.NotificationFragment;
+import com.hetang.message.VerifyFragment;
 
 import java.util.ArrayList;
 
@@ -33,6 +34,9 @@ import java.util.ArrayList;
                 break;
             case 1:
                 fragment = new ConversationFragment();
+                break;
+            case 2:
+                fragment = new VerifyFragment();
                 break;
             default:
                 fragment = new NotificationFragment();
@@ -68,6 +72,9 @@ import java.util.ArrayList;
                 break;
             case 1:
                 baseFragment = (ConversationFragment) super.instantiateItem(container, position);
+                break;
+            case 2:
+                baseFragment = (VerifyFragment) super.instantiateItem(container, position);
                 break;
             default:
                 baseFragment = (NotificationFragment) super.instantiateItem(container, position);

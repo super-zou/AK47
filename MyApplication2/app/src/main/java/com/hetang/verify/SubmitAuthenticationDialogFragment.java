@@ -1,4 +1,4 @@
-package com.hetang.authenticate;
+package com.hetang.verify;
 
 import android.app.Dialog;
 import android.content.BroadcastReceiver;

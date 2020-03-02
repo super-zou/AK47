@@ -11,12 +11,6 @@ import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.appcompat.app.AlertDialog;
-import androidx.gridlayout.widget.GridLayout;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,10 +24,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.hetang.R;
 import com.hetang.adapter.SubGroupDetailsListAdapter;
-import com.hetang.authenticate.SubmitAuthenticationDialogFragment;
+import com.hetang.verify.SubmitAuthenticationDialogFragment;
 import com.hetang.common.BaseAppCompatActivity;
+import com.hetang.common.InvitationDialogFragment;
 import com.hetang.common.MyApplication;
 import com.hetang.common.SetAvatarActivity;
 import com.hetang.dynamics.AddDynamicsActivity;
@@ -50,7 +46,6 @@ import com.hetang.util.CommonUserListDialogFragment;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.InterActInterface;
-import com.hetang.common.InvitationDialogFragment;
 import com.hetang.util.MyLinearLayoutManager;
 import com.hetang.util.ParseUtils;
 import com.hetang.util.RoundImageView;
@@ -71,16 +66,22 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.gridlayout.widget.GridLayout;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import static com.hetang.dynamics.DynamicOperationDialogFragment.DYNAMIC_OPERATION_RESULT;
+
 import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static com.hetang.common.MyApplication.getContext;
 import static com.hetang.common.SetAvatarActivity.MODIFY_LOGO;
 import static com.hetang.common.SetAvatarActivity.MODIFY_SUBGROUP_LOGO_RESULT_OK;
+import static com.hetang.dynamics.DynamicOperationDialogFragment.DYNAMIC_OPERATION_RESULT;
 import static com.hetang.group.GroupFragment.eden_group;
 import static com.hetang.home.CommonContactsActivity.GROUP_MEMBER;
 import static com.hetang.home.CommonContactsActivity.GROUP_MEMBER_CATEGRORY;
@@ -108,18 +109,18 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
     public static final String EXIT_GROUP_BROADCAST = "com.hetang.action.EXIT_GROUP";
     public static final String JOIN_GROUP_BROADCAST = "com.hetang.action.JOIN_GROUP";
     public static final String FOLLOW_GROUP_ACTION_URL = HttpUtil.DOMAIN + "?q=follow/group_action/";
-    private static final String TAG = "subGroupDetailsActivity";
-    private static final boolean isDebug = true;
-    private static final String APPLY_JOIN_SUBGROUP = HttpUtil.DOMAIN + "?q=subgroup/apply";
-    private static final int JOIN_DONE = 10;
-    private static final int ACCEPT_DONE = 11;
-    private static final int GET_GROUP_HEADER_DONE = 12;
     public static final int SHOW_NOTICE_DIALOG = 13;
     public static final int PAGE_SIZE = 6;
     public static final int UNAUTHENTICATED = -1;
     public static final int AUTHENTICATING = 0;
     public static final int VERIFIED = 1;
     public static final int REJECTED = 2;
+    private static final String TAG = "subGroupDetailsActivity";
+    private static final boolean isDebug = true;
+    private static final String APPLY_JOIN_SUBGROUP = HttpUtil.DOMAIN + "?q=subgroup/apply";
+    private static final int JOIN_DONE = 10;
+    private static final int ACCEPT_DONE = 11;
+    private static final int GET_GROUP_HEADER_DONE = 12;
     public static Handler handler = null;
     //MeetsubGroupFragment.subGroup subGroup;
     SubGroupActivity.SubGroup subGroup;
@@ -228,6 +229,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
             public void onRefresh() {
                 //updateData();
             }
+
             @Override
             public void onLoadMore() {
                 loadData();
@@ -352,12 +354,12 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
         loadData();
     }
 
-    public void startPicturePreview(int position, String[] pictureUrlArray){
-        Slog.d(TAG, "------------------->startPicturePreview: "+"position: "+position+" picture array length: "+pictureUrlArray.length);
+    public void startPicturePreview(int position, String[] pictureUrlArray) {
+        Slog.d(TAG, "------------------->startPicturePreview: " + "position: " + position + " picture array length: " + pictureUrlArray.length);
         List<LocalMedia> localMediaList = new ArrayList<>();
-        for (int i=0; i<pictureUrlArray.length; i++){
+        for (int i = 0; i < pictureUrlArray.length; i++) {
             LocalMedia localMedia = new LocalMedia();
-            localMedia.setPath(HttpUtil.getDomain()+pictureUrlArray[i]);
+            localMedia.setPath(HttpUtil.getDomain() + pictureUrlArray[i]);
             localMediaList.add(localMedia);
         }
 
@@ -519,7 +521,6 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
     }
 
     private void setSubGroupHeaderView() {
-        Slog.d(TAG, "-------------------------->setSubGroupHeaderView");
         logoImage = mGroupHeaderView.findViewById(R.id.logo);
         TextView groupName = mGroupHeaderView.findViewById(R.id.group_name);
         TextView groupOrg = mGroupHeaderView.findViewById(R.id.org);
@@ -713,9 +714,9 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
             joinBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (type != eden_group){
+                    if (type != eden_group) {
                         applyJoinGroup();
-                    }else {
+                    } else {
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
@@ -808,14 +809,14 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        if (type != eden_group){
+                        if (type != eden_group) {
                             Intent intent = new Intent(getContext(), CommonContactsActivity.class);
                             intent.putExtra("type", GROUP_MEMBER);
                             intent.putExtra("gid", gid);
                             intent.putExtra("isLeader", subGroup.isLeader);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
                             startActivityForResult(intent, RESULT_FIRST_USER);
-                        }else {
+                        } else {
                             int status = getAuthenticationStatus();
                             Slog.d(TAG, "--------------getAuthenticationStatus: " + status);
                             if (status == 1) {
@@ -1134,7 +1135,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
                 subGroupDetailsListAdapter.setData(dynamicList);
                 subGroupDetailsListAdapter.notifyItemRangeInserted(0, 1);
                 subGroupDetailsListAdapter.notifyDataSetChanged();
-                                if (dynamicList.size() <= PAGE_SIZE){
+                if (dynamicList.size() <= PAGE_SIZE) {
                     recyclerView.loadMoreComplete();
                 }
                 //update activity amount
@@ -1146,7 +1147,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
                 subGroupDetailsListAdapter.setData(dynamicList);
                 subGroupDetailsListAdapter.notifyItemRemoved(currentPos);
                 subGroupDetailsListAdapter.notifyDataSetChanged();
-                                if (dynamicList.size() < PAGE_SIZE - 1){
+                if (dynamicList.size() < PAGE_SIZE - 1) {
                     recyclerView.loadMoreComplete();
                 }
                 break;
@@ -1208,9 +1209,9 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
 
     @Override
     public void onBackFromDialog(int type, int result, boolean status) {
-                switch (type){
+        switch (type) {
             case DYNAMIC_OPERATION_RESULT:
-                if (status){
+                if (status) {
                     Message message = new Message();
                     Bundle bundle = new Bundle();
                     bundle.putInt("did", result);

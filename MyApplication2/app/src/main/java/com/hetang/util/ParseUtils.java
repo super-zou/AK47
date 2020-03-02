@@ -115,6 +115,10 @@ public class ParseUtils {
     public static final int APPLY_JOIN_GROUP_NF = 65;
     public static final int AUTHENTICATION_VERIFIED_NF = 66;
     public static final int AUTHENTICATION_REJECTED_NF = 67;
+    public static final int TALENT_VERIFIED_NF = 68;
+    public static final int TALENT_REJECTED_NF = 69;
+    public static final int ACTIVITY_VERIFIED_NF = 70;
+    public static final int ACTIVITY_REJECTED_NF = 71;
 
     public static final int MALE = 0;
     public static final int FEMALE = 1;

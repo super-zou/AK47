@@ -30,6 +30,13 @@
     <string name="dynamics_empty">未发布动态</string>
     <string name="evaluator_details">评价详情</string>
     <string name="publish">发布</string>
+    <string name="reject_reason">拒绝原因</string>
+    <string name="charge_setting_notice">请设置金额</string>
+    <string name="subject_select_notice">请选择一个主题</string>
+    <string name="qr_code_notice">请设置收款二维码</string>
+    <string name="charge_introduction_notice">请填写收费说明</string>
+    <string name="talent_apply">达人申请</string>
+    <string name="talent_apply_content">申请提交后，需要经过后台审核，请及时关注系统消息</string>
     <string name="save">保存</string>
     <string name="done">完成</string>
     <string name="approve">认可</string>
@@ -63,6 +70,7 @@
     <string name="added_member">已添加</string>
     <string name="invited_member">已邀请</string>
     <string name="invite_through">通过以下方式邀请</string>
+    <string name="save_picture">保存图片</string>
     <!--+End: relations, add by zouhaichao 2018.11.27-->
 
     <!--+Begin: add for archive, by zouhaichao 2018.12.6-->
@@ -323,4 +331,7 @@
     <string name="activity_group_desc">活动达人带你体验各种创意、好玩的活动，结识更多有趣的伙伴。不负青春，留下精彩回忆</string>
     <string name="foreign_friend_desc">结识异国友人，体验异国友人的派对和活动</string>
     <string name="authentication_introduction">请上传一张清晰的学生证、学生卡或校园卡等带有个人头像和信息的校园证件照，要求证件照与以上信息一致</string>
+    <string name="user_verify">用户认证</string>
+    <string name="talent_verify">达人认证</string>
+    <string name="activity_verify">活动认证</string>
 </resources>

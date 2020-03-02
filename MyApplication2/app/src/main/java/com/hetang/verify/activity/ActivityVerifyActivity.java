@@ -1,16 +1,17 @@
-package com.hetang.authenticate;
+package com.hetang.verify.activity;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import com.google.android.material.tabs.TabLayout;
-import androidx.fragment.app.Fragment;
-import androidx.viewpager.widget.ViewPager;
 import android.widget.TextView;
 
+import com.google.android.material.tabs.TabLayout;
 import com.hetang.R;
-import com.hetang.adapter.AuthenticationFragmentAdapter;
+import com.hetang.adapter.verify.VerifyFragmentAdapter;
+import com.hetang.verify.talent.TalentPassedFragment;
+import com.hetang.verify.talent.TalentRejectedFragment;
+import com.hetang.verify.talent.TalentRequestFragment;
 import com.hetang.common.BaseAppCompatActivity;
 import com.hetang.common.MyApplication;
 import com.hetang.main.MessageFragment;
@@ -21,45 +22,35 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.hetang.util.ParseUtils.startMeetArchiveActivity;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.ViewPager;
 
-public class AuthenticationActivity extends BaseAppCompatActivity {
+public class ActivityVerifyActivity extends BaseAppCompatActivity {
 
-    private static final String TAG = "AuthenticationActivity";
-    private final static boolean isDebug = false;
+    private static final String TAG = "ActivityVerifyActivity";
+    private final static boolean isDebug = true;
     TabLayout.Tab unverified_tab;
     TabLayout.Tab verified_tab;
     TabLayout.Tab rejected_tab;
-    
-    public static final int unVERIFIED = 0;
-    public static final int PASSED = 1;
-    public static final int REJECTED = 2;
 
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
-    private AuthenticationFragmentAdapter mFragmentAdapter;
+    private VerifyFragmentAdapter mFragmentAdapter;
     private List<Fragment> mFragmentList = new ArrayList<>();
 
     private static MyHandler handler;
 
-    private String[] mTitles = MyApplication.getContext().getResources().getStringArray(R.array.authentication_tabs);
-    
+    private String[] mTitles = MyApplication.getContext().getResources().getStringArray(R.array.verify_tabs);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_authentication);
-
+        setContentView(R.layout.common_user_verify);
+        handler = new MyHandler(this);
         init();
     }
 
-
     private void init() {
-        handler = new MyHandler(this);
-
-        initView();
-    }
-    
-    private void initView() {
         Typeface font = Typeface.createFromAsset(getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
 
         mTabLayout = findViewById(R.id.tabs);
@@ -74,15 +65,15 @@ public class AuthenticationActivity extends BaseAppCompatActivity {
         mTabLayout.addTab(verified_tab);
         mTabLayout.addTab(rejected_tab);
         
-        BaseFragment unVerifiedFragment = new RequestFragment();
+        Fragment unVerifiedFragment = new TalentRequestFragment();
         mFragmentList.add(unVerifiedFragment);
-        BaseFragment passedFragment = new PassedFragment();
+        BaseFragment passedFragment = new TalentPassedFragment();
         mFragmentList.add(passedFragment);
-        Fragment rejectedFragment = new RejectedFragment();
+        Fragment rejectedFragment = new TalentRejectedFragment();
         mFragmentList.add(rejectedFragment);
 
         //创建一个viewpager的adapter
-        mFragmentAdapter = new AuthenticationFragmentAdapter(getSupportFragmentManager(), mFragmentList, mTitles);
+        mFragmentAdapter = new VerifyFragmentAdapter(getSupportFragmentManager(), mFragmentList, mTitles);
         mViewPager.setAdapter(mFragmentAdapter);
         //mViewPager.setOffscreenPageLimit(0);
 
@@ -154,14 +145,14 @@ public class AuthenticationActivity extends BaseAppCompatActivity {
     }
 
     static class MyHandler extends Handler {
-        WeakReference<AuthenticationActivity> authenticationActivityWeakReference;
-        MyHandler(AuthenticationActivity authenticationActivity) {
+        WeakReference<ActivityVerifyActivity> authenticationActivityWeakReference;
+        MyHandler(ActivityVerifyActivity authenticationActivity) {
             authenticationActivityWeakReference = new WeakReference<>(authenticationActivity);
         }
 
         @Override
         public void handleMessage(Message message) {
-            AuthenticationActivity authenticationActivity = authenticationActivityWeakReference.get();
+            ActivityVerifyActivity authenticationActivity = authenticationActivityWeakReference.get();
             if (authenticationActivity != null) {
                 authenticationActivity.handleMessage(message);
             }

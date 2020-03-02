@@ -5,9 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,6 +32,9 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -42,11 +42,30 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE;
+import static com.hetang.group.SubGroupDetailsActivity.PAGE_SIZE;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
 public class ContactsFragment extends BaseFragment {
+    public static final int CONTACTS_DEFAULT = 0;
+    public static final int CONTACTS_NEW_APPLY = 1;
+    public static final int CONTACTS_MY_APPLY = 2;
+    public static final int PAGE_SIZE = 8;
+    public static final String ACCEPT_CONTACTS_APPLY_URL = HttpUtil.DOMAIN + "?q=contacts/accept_apply";
+    public static final String CONTACTS_DISMISS_URL = HttpUtil.DOMAIN + "?q=contacts/dismiss";
+    public static final String GET_APPLY_AND_REQUEST_COUNT = HttpUtil.DOMAIN + "?q=contacts/get_apply_add_request_count";
     private static final boolean isDebug = true;
     private static final String TAG = "ContactsFragment";
+    private static final int GET_CONTACTS_DONE = 0;
+    private static final int GET_CONTACTS_END = 1;
+    private static final int NO_CONTACTS = 2;
+    private static final int HAS_REQUEST_OR_APPLY = 3;
+    private static final String GET_ALL_CONTACTS_URL = HttpUtil.DOMAIN + "?q=contacts/get_all_contacts";
+    TextView newApply;
+    TextView newApplyCountView;
+    TextView myApply;
+    TextView myApplyCountView;
+    View mView;
+    View mRequestHeaderView;
     private XRecyclerView recyclerView;
     private Handler myHandler;
     private int newApplyCount = 0;
@@ -54,20 +73,7 @@ public class ContactsFragment extends BaseFragment {
     private List<ContactsApplyListActivity.Contacts> contactsList = new ArrayList<>();
     private List<ContactsApplyListActivity.Contacts> requestList = new ArrayList<>();
     private ContactsListAdapter contactsListAdapter;
-    private static final int GET_CONTACTS_DONE = 0;
-    private static final int NO_CONTACTS = 1;
-    TextView newApply;
-    TextView newApplyCountView;
-    TextView myApply;
-    TextView myApplyCountView;
-    View mView;
-    View mRequestHeaderView;
-    public static final int CONTACTS_DEFAULT = 0;
-    public static final int CONTACTS_NEW_APPLY = 1;
-    public static final int CONTACTS_MY_APPLY = 2;
-    private static final String GET_ALL_CONTACTS_URL = HttpUtil.DOMAIN + "?q=contacts/get_all_contacts";
-    public static final String ACCEPT_CONTACTS_APPLY_URL = HttpUtil.DOMAIN + "?q=contacts/accept_apply";
-    public static final String CONTACTS_DISMISS_URL = HttpUtil.DOMAIN + "?q=contacts/dismiss";
+
 
     @Nullable
     @Override
@@ -77,6 +83,8 @@ public class ContactsFragment extends BaseFragment {
         mView = convertView;
 
         initContentView(convertView);
+
+        getApplyAndRequestCount();
 
         requestData();
 
@@ -120,8 +128,8 @@ public class ContactsFragment extends BaseFragment {
         recyclerView.getDefaultRefreshHeaderView().setRefreshTimeVisible(false);
         recyclerView.setPullRefreshEnabled(false);
 
-        recyclerView.getDefaultFootView().setLoadingHint(getString(R.string.loading_pull_up_tip));
-        recyclerView.getDefaultFootView().setNoMoreHint(getString(R.string.loading_no_more));
+        //recyclerView.getDefaultFootView().setLoadingHint(getString(R.string.loading_pull_up_tip));
+        //recyclerView.getDefaultFootView().setNoMoreHint(getString(R.string.loading_no_more));
         final int itemLimit = 5;
 
         // When the item number of the screen number is list.size-2,we call the onLoadMore
@@ -162,26 +170,61 @@ public class ContactsFragment extends BaseFragment {
         });
     }
 
-    private void requestData() {
+    private void getApplyAndRequestCount(){
         RequestBody requestBody = new FormBody.Builder().build();
+
+        HttpUtil.sendOkHttpRequest(getContext(), GET_APPLY_AND_REQUEST_COUNT, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+
+                if (response.body() != null) {
+                    String responseText = response.body().string();
+                    try {
+                        JSONObject responseObject = new JSONObject(responseText);
+                        newApplyCount = responseObject.optInt("newApplyCount");
+                        myApplyCount = responseObject.optInt("myApplyCount");
+
+                        if (newApplyCount > 0 || myApplyCount > 0){
+                            myHandler.sendEmptyMessage(HAS_REQUEST_OR_APPLY);
+                        }
+                    }catch (JSONException e){
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+            }
+        });
+    }
+
+    private void requestData() {
+        int page = contactsList.size() / PAGE_SIZE;
+        RequestBody requestBody = new FormBody.Builder()
+                .add("step", String.valueOf(PAGE_SIZE))
+                .add("page", String.valueOf(page))
+                .build();
         HttpUtil.sendOkHttpRequest(getContext(), GET_ALL_CONTACTS_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response != null) {
                     String responseText = response.body().string();
-                    if (isDebug) Slog.d(TAG, "loadData response : " + responseText);
-                    processResponseText(responseText);
+                    int size = processResponseText(responseText);
                     if (isDebug)
                         Slog.d(TAG, "------------------->contactsList size: " + contactsList.size());
-                    if (contactsList.size() > 0) {
-                        myHandler.sendEmptyMessage(GET_CONTACTS_DONE);
-                    } else {
-                        if (newApplyCount > 0 || myApplyCount > 0) {
+                    if (size > 0) {
+                        if (size == PAGE_SIZE){
                             myHandler.sendEmptyMessage(GET_CONTACTS_DONE);
                         }else {
-                            myHandler.sendEmptyMessage(NO_CONTACTS);
+                            myHandler.sendEmptyMessage(GET_CONTACTS_END);
                         }
+                    } else {
+                        myHandler.sendEmptyMessage(NO_CONTACTS);
                     }
+                }else {
+                    myHandler.sendEmptyMessage(NO_CONTACTS);
                 }
             }
 
@@ -192,12 +235,14 @@ public class ContactsFragment extends BaseFragment {
         });
     }
 
-    private void processResponseText(String responseText) {
+    private int processResponseText(String responseText) {
+        int size = 0;
         try {
             JSONObject response = new JSONObject(responseText);
             JSONArray contactsArray = response.optJSONArray("contacts");
             JSONObject contactsObject;
             if (contactsArray != null) {
+                size = contactsArray.length();
                 for (int i = 0; i < contactsArray.length(); i++) {
                     ContactsApplyListActivity.Contacts contacts = new ContactsApplyListActivity.Contacts();
                     contactsObject = contactsArray.getJSONObject(i);
@@ -208,37 +253,14 @@ public class ContactsFragment extends BaseFragment {
                     contactsList.add(contacts);
                 }
             }
-
             newApplyCount = response.optInt("newApplyCount");
             myApplyCount = response.optInt("myApplyCount");
         } catch (JSONException e) {
             e.printStackTrace();
         }
-    }
 
-    public static void accept(Button acceptBtn, int uid) {
-        acceptBtn.setText(MyApplication.getContext().getResources().getString(R.string.acceptted));
-        acceptBtn.setClickable(false);
-        acceptBtn.setBackground(MyApplication.getContext().getDrawable(R.drawable.btn_disable));
-        acceptContactsApply(uid);
-    }
+        return size;
 
-    public static void acceptContactsApply(int uid) {
-        RequestBody requestBody = new FormBody.Builder()
-                .add("uid", String.valueOf(uid)).build();
-        HttpUtil.sendOkHttpRequest(MyApplication.getContext(), ACCEPT_CONTACTS_APPLY_URL, requestBody, new Callback() {
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (response != null) {
-                    String responseText = response.body().string();
-                }
-            }
-
-            @Override
-            public void onFailure(Call call, IOException e) {
-                Log.e(TAG, "onFailure e:" + e);
-            }
-        });
     }
 
     @Override
@@ -250,6 +272,7 @@ public class ContactsFragment extends BaseFragment {
     }
 
     private void reInitView() {
+        Slog.d(TAG, "----------------------------->reInitView");
         contactsList.clear();
         requestData();
     }
@@ -259,10 +282,15 @@ public class ContactsFragment extends BaseFragment {
             case GET_CONTACTS_DONE:
                 contactsListAdapter.setData(contactsList);
                 contactsListAdapter.notifyDataSetChanged();
-                recyclerView.refreshComplete();
-
+                recyclerView.loadMoreComplete();
+                break;
+            case NO_CONTACTS:
+                ReminderManager.getInstance().updateNewContactsApplied(newApplyCount);
+                recyclerView.loadMoreComplete();
+                recyclerView.setNoMore(true);
+                break;
+            case HAS_REQUEST_OR_APPLY:
                 if (newApplyCount > 0) {
-                  
                     newApplyCountView.setText("+" + String.valueOf(newApplyCount));
                 } else {
                     newApplyCountView.setText("");
@@ -270,9 +298,6 @@ public class ContactsFragment extends BaseFragment {
                 if (myApplyCount > 0) {
                     myApplyCountView.setText("+" + String.valueOf(myApplyCount));
                 }
-ReminderManager.getInstance().updateNewContactsApplied(newApplyCount);
-                break;
-                case NO_CONTACTS:
                 ReminderManager.getInstance().updateNewContactsApplied(newApplyCount);
                 break;
             default:

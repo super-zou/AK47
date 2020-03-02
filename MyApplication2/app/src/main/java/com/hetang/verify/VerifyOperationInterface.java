@@ -1,8 +1,8 @@
-package com.hetang.authenticate;
+package com.hetang.verify;
 
 import android.view.View;
 
-public interface AuthenticateOperationInterface {
+public interface VerifyOperationInterface {
     void onPassClick(View view, int position);
     void onRejectClick(View view, int position);
 }

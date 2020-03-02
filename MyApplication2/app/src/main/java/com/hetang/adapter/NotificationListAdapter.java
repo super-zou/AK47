@@ -11,11 +11,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.fragment.app.FragmentManager;
-import androidx.core.app.NotificationCompat;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,12 +22,13 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.hetang.R;
-import com.hetang.authenticate.SubmitAuthenticationDialogFragment;
+import com.hetang.verify.SubmitAuthenticationDialogFragment;
 import com.hetang.common.MyApplication;
 import com.hetang.group.SingleGroupDetailsActivity;
 import com.hetang.group.SubGroupDetailsActivity;
 import com.hetang.main.MeetArchiveActivity;
 import com.hetang.message.NotificationFragment;
+import com.hetang.talent.TalentDetailsActivity;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.ParseUtils;
@@ -45,6 +41,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.NotificationCompat;
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.RecyclerView;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -68,17 +69,16 @@ import static com.hetang.util.ParseUtils.JOIN_SINGLE_GROUP_ACTION;
 import static com.hetang.util.ParseUtils.MODIFY_GROUP_ACTION;
 import static com.hetang.util.ParseUtils.REFEREE_ACTION;
 import static com.hetang.util.ParseUtils.REFEREE_INVITE_NF;
+import static com.hetang.util.ParseUtils.TALENT_REJECTED_NF;
+import static com.hetang.util.ParseUtils.TALENT_VERIFIED_NF;
 import static com.hetang.util.ParseUtils.startMeetArchiveActivity;
 import static com.hetang.util.Utility.drawableToBitmap;
 import static com.hetang.util.Utility.getDateToString;
 
 public class NotificationListAdapter extends RecyclerView.Adapter<NotificationListAdapter.ViewHolder> {
-    private static final String TAG = "NotificationListAdapter";
-    private List<NotificationFragment.Notification> notificationList = new ArrayList<>();
-    private Context mContext;
-    private boolean isScrolling = false;
-    private static final int READ = 0;
     public static final int UNREAD = 1;
+    private static final String TAG = "NotificationListAdapter";
+    private static final int READ = 0;
     private static final int UNPROCESSED = 0;
     private static final int PROCESSED = 1;
     private static final int IGNORED = -1;
@@ -86,6 +86,9 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
     private static final int MAKE_NOTIFICATION_SHOWED = 1;
     private static final int NOT_SHOWED = 0;
     private static final int SHOWED = 1;
+    private List<NotificationFragment.Notification> notificationList = new ArrayList<>();
+    private Context mContext;
+    private boolean isScrolling = false;
     private Handler mHandler;
     private FragmentManager fragmentManager;
 
@@ -97,7 +100,7 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
             public void handleMessage(Message msg) {
                 switch (msg.what) {
                     case UPDATE_PROCESS_BUTTON_STATUS:
-                        case MAKE_NOTIFICATION_SHOWED:
+                    case MAKE_NOTIFICATION_SHOWED:
                         notifyDataSetChanged();
                         break;
                     default:
@@ -139,6 +142,10 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
                 case APPROVE_IMPRESSION_ACTION:
                 case APPROVE_PERSONALITY_ACTION:
                 case JOIN_CHEERING_GROUP_ACTION:
+                case AUTHENTICATION_VERIFIED_NF:
+                case AUTHENTICATION_REJECTED_NF:
+                case TALENT_VERIFIED_NF:
+                case TALENT_REJECTED_NF:
                     if (notification.showed == NOT_SHOWED) {
                         showNotification(notification);
                     }
@@ -181,14 +188,14 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
         String dataString = getDateToString(notification.timeStamp, "yyyy-MM-dd");
         holder.timeStamp.setText(dataString);
 
-        
-        switch (notification.type){
+
+        switch (notification.type) {
             //case ParseUtils.APPLY_CONTACTS_NF:
             case ParseUtils.APPLY_JOIN_SINGLE_GROUP_NF:
             case ParseUtils.INVITE_GROUP_MEMBER_ACTION:
                 holder.acceptBtn.setVisibility(View.VISIBLE);
-                if (notification.processed == UNPROCESSED){
-                holder.acceptBtn.setClickable(true);
+                if (notification.processed == UNPROCESSED) {
+                    holder.acceptBtn.setClickable(true);
                     holder.acceptBtn.setText(MyApplication.getContext().getResources().getString(R.string.accept));
                     holder.acceptBtn.setBackground(MyApplication.getContext().getDrawable(R.drawable.btn_stress));
                     holder.acceptBtn.setOnClickListener(new View.OnClickListener() {
@@ -199,22 +206,22 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
                             //deleteNotification(notification.nid);
                         }
                     });
-                }else {
+                } else {
                     holder.acceptBtn.setText(MyApplication.getContext().getResources().getString(R.string.acceptted));
                     holder.acceptBtn.setClickable(false);
                     holder.acceptBtn.setBackground(MyApplication.getContext().getDrawable(R.drawable.btn_disable));
                 }
 
                 break;
-                default:
-                    holder.acceptBtn.setVisibility(View.GONE);
-                    break;
+            default:
+                holder.acceptBtn.setVisibility(View.GONE);
+                break;
         }
-                
+
         holder.avatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-ParseUtils.startMeetArchiveActivity(mContext, notification.tid);
+                ParseUtils.startMeetArchiveActivity(mContext, notification.tid);
                 markNotificationProcessed(holder.isNew, notification);
             }
         });
@@ -222,11 +229,11 @@ ParseUtils.startMeetArchiveActivity(mContext, notification.tid);
         holder.name.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-ParseUtils.startMeetArchiveActivity(mContext, notification.tid);
+                ParseUtils.startMeetArchiveActivity(mContext, notification.tid);
                 markNotificationProcessed(holder.isNew, notification);
             }
         });
-        
+
         holder.content.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -278,6 +285,11 @@ ParseUtils.startMeetArchiveActivity(mContext, notification.tid);
                         submitAuthenticationDialogFragment.show(fragmentManager, "SubmitAuthenticationDialogFragment");
                         markNotificationProcessed(holder.isNew, notification);
                         break;
+                    case TALENT_VERIFIED_NF:
+                    case TALENT_REJECTED_NF:
+                        startTalentDetailsActivity(notification.id);
+                        markNotificationProcessed(holder.isNew, notification);
+                        break;
                     case INVITE_SINGLE_GROUP_MEMBER_ACTION:
                     case APPLY_JOIN_SINGLE_GROUP_NF:
                     case JOIN_SINGLE_GROUP_ACTION:
@@ -285,7 +297,7 @@ ParseUtils.startMeetArchiveActivity(mContext, notification.tid);
                         markNotificationProcessed(holder.isNew, notification);
                         break;
                     default:
-                        startMeetArchiveActivity(getContext(),notification.tid);
+                        startMeetArchiveActivity(getContext(), notification.tid);
                         markNotificationProcessed(holder.isNew, notification);
                         break;
                 }
@@ -293,6 +305,13 @@ ParseUtils.startMeetArchiveActivity(mContext, notification.tid);
         });
 
 
+    }
+
+    private void startTalentDetailsActivity(int aid){
+        Intent intent = new Intent(getContext(), TalentDetailsActivity.class);
+        intent.putExtra("aid", aid);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+        mContext.startActivity(intent);
     }
 
     private void showNotification(NotificationFragment.Notification NF) {
@@ -317,6 +336,17 @@ ParseUtils.startMeetArchiveActivity(mContext, notification.tid);
                 clickIntent = new Intent(mContext, SingleGroupDetailsActivity.class);
                 clickIntent.putExtra("gid", NF.id);
                 break;
+            case AUTHENTICATION_VERIFIED_NF:
+                clickIntent = new Intent(mContext, SubGroupDetailsActivity.class);
+                clickIntent.putExtra("gid", NF.id);
+                break;
+            case TALENT_REJECTED_NF:
+            case TALENT_VERIFIED_NF:
+                clickIntent = new Intent(mContext, TalentDetailsActivity.class);
+                clickIntent.putExtra("aid", NF.id);
+                break;
+                default:
+                    break;
         }
 
         PendingIntent clickPI = PendingIntent.getActivity(mContext, 1, clickIntent, PendingIntent.FLAG_CANCEL_CURRENT);
@@ -392,9 +422,9 @@ ParseUtils.startMeetArchiveActivity(mContext, notification.tid);
             acceptContactsApply(notification.tid);
         } else if (notification.type == ParseUtils.APPLY_JOIN_GROUP_NF) {
             approveSingleGroupApply(notification.id, notification.tid);
-        }else if (notification.type == ParseUtils.APPLY_JOIN_SINGLE_GROUP_NF){
-            approveSingleGroupApply(notification.id, notification.tid); 
-        }else {
+        } else if (notification.type == ParseUtils.APPLY_JOIN_SINGLE_GROUP_NF) {
+            approveSingleGroupApply(notification.id, notification.tid);
+        } else {
             acceptSingleGroupInvite(notification.id, notification.tid);
         }
     }
@@ -487,7 +517,7 @@ ParseUtils.startMeetArchiveActivity(mContext, notification.tid);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
         mContext.startActivity(intent);
     }
-    
+
     private void startSingleGroupDetails(Context context, int gid) {
         Intent intent = new Intent(context, SingleGroupDetailsActivity.class);
         intent.putExtra("gid", gid);

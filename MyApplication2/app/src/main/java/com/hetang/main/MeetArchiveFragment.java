@@ -1363,12 +1363,12 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
                 }
             }
 
-            float ratingAverage = ratingCount / nonZeroCount;
-            BigDecimal b = new BigDecimal(ratingAverage);
-            ratingAverageRoundUp = b.setScale(1, BigDecimal.ROUND_HALF_UP).floatValue();
-
-            setScoreView(ratingAverageRoundUp);
-
+            if (nonZeroCount != 0){
+                float ratingAverage = ratingCount / nonZeroCount;
+                BigDecimal b = new BigDecimal(ratingAverage);
+                ratingAverageRoundUp = b.setScale(1, BigDecimal.ROUND_HALF_UP).floatValue();
+                setScoreView(ratingAverageRoundUp);
+            }
         } else {
             ratingMemberCount.setText("暂无评价");
         }

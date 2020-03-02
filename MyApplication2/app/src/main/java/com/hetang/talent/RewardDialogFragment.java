@@ -1,13 +1,19 @@
 package com.hetang.talent;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
@@ -31,9 +37,16 @@ import com.tencent.qcloud.tim.uikit.modules.chat.base.ChatInfo;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
 
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -242,7 +255,98 @@ public class RewardDialogFragment extends BaseDialogFragment {
     private void setQRCode(){
         RoundImageView qrCodeView = mDialog.findViewById(R.id.reward_qr_code);
         Glide.with(getContext()).load(HttpUtil.DOMAIN + qrCode).into(qrCodeView);
+        qrCodeView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                qrCodeView.setDrawingCacheEnabled(true);
+                Bitmap bitmap = Bitmap.createBitmap(qrCodeView.getDrawingCache());
+                qrCodeView.setDrawingCacheEnabled(false);
+                savePicture(bitmap);
+                return false;
+            }
+        });
     }
+
+    private void savePicture(Bitmap bitmap){
+        String[] savePicture = {getContext().getResources().getString(R.string.save_picture)};
+        final AlertDialog.Builder normalDialogBuilder =
+                new AlertDialog.Builder(getContext());
+        normalDialogBuilder.setItems(savePicture, new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // TODO Auto-generated method stub
+                Slog.d(TAG, "--------------------click");
+                //saveToSystemGallery(getContext(), bitmap);
+                checkPermission(bitmap);
+            }
+        });
+        AlertDialog normalDialog = normalDialogBuilder.create();
+        normalDialog.show();
+
+        try {
+            Field mAlert = AlertDialog.class.getDeclaredField("mAlert");
+            mAlert.setAccessible(true);
+            Object mAlertController = mAlert.get(normalDialog);
+            Field mMessage = mAlertController.getClass().getDeclaredField("mMessageView");
+            mMessage.setAccessible(true);
+            TextView mMessageView = (TextView) mMessage.get(mAlertController);
+            mMessageView.setTextColor(getResources().getColor(R.color.background));
+            mMessageView.setTextSize(16);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void checkPermission(Bitmap bitmap){
+        String[] PERMISSIONS = {
+                "android.permission.READ_EXTERNAL_STORAGE",
+                "android.permission.WRITE_EXTERNAL_STORAGE" };
+//检测是否有写的权限
+        int permission = ContextCompat.checkSelfPermission(getContext(),
+                "android.permission.WRITE_EXTERNAL_STORAGE");
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // 没有写的权限，去申请写的权限，会弹出对话框
+            ActivityCompat.requestPermissions(getActivity(), PERMISSIONS,1);
+        }else {
+            saveToSystemGallery(getContext(), bitmap);
+        }
+    }
+
+    public static void saveToSystemGallery(Context context, Bitmap bmp) {
+
+        // 首先保存图片
+        File appDir = new File(Environment.getExternalStorageDirectory(), "DCIM");
+        if (!appDir.exists()) {
+            appDir.mkdir();
+        }
+        String fileName = System.currentTimeMillis() + ".jpg";
+        File file = new File(appDir, fileName);
+        try {
+            FileOutputStream fos = new FileOutputStream(file);
+            bmp.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            fos.flush();
+            fos.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // 其次把文件插入到系统图库
+        try {
+            MediaStore.Images.Media.insertImage(context.getContentResolver(),
+                    file.getAbsolutePath(), fileName, null);
+            Slog.d(TAG, "----------------------->fileName: "+fileName+"   path: "+file.getAbsolutePath());
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        // 最后通知图库更新
+        context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse(file.getAbsolutePath())));
+    }
+
 
     @Override
     public void onDismiss(DialogInterface dialogInterface) {

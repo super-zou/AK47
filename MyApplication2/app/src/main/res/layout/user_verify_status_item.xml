@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/authentication_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="2dp"
     android:background="@color/white"
     android:elevation="1dp">
+
     <com.hetang.util.RoundImageView
         android:id="@+id/avatar"
         android:layout_width="100dp"
@@ -16,8 +16,8 @@
         android:layout_marginTop="8dp"
         app:layout_constraintStart_toEndOf="@+id/authenticationImageView"
         app:layout_constraintTop_toTopOf="parent" />
-        
-        <com.hetang.util.RoundImageView
+
+    <com.hetang.util.RoundImageView
         android:id="@+id/authenticationImageView"
         android:layout_width="100dp"
         android:layout_height="100dp"
@@ -25,6 +25,7 @@
         android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/name"
         android:layout_width="wrap_content"
@@ -33,8 +34,8 @@
         android:text="name"
         app:layout_constraintStart_toEndOf="@+id/avatar"
         app:layout_constraintTop_toTopOf="@+id/avatar" />
-        
-        <TextView
+
+    <TextView
         android:id="@+id/sex"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -51,8 +52,8 @@
         android:text="major"
         app:layout_constraintStart_toStartOf="@+id/name"
         app:layout_constraintTop_toBottomOf="@+id/name" />
-        
-        <TextView
+
+    <TextView
         android:id="@+id/degree"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -69,8 +70,8 @@
         android:text="university"
         app:layout_constraintStart_toStartOf="@+id/degree"
         app:layout_constraintTop_toBottomOf="@+id/degree" />
-        
-        <TextView
+
+    <TextView
         android:id="@+id/timestamp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -79,8 +80,8 @@
         app:layout_constraintBottom_toBottomOf="@+id/reject"
         app:layout_constraintEnd_toStartOf="@+id/reject"
         app:layout_constraintTop_toTopOf="@+id/reject" />
-        
-         <Button
+
+    <Button
         android:id="@+id/pass"
         android:layout_width="80dp"
         android:layout_height="30dp"
@@ -95,8 +96,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/authenticationImageView" />
-        
-        <Button
+
+    <Button
         android:id="@+id/reject"
         android:layout_width="50dp"
         android:layout_height="30dp"
@@ -108,5 +109,20 @@
         android:visibility="visible"
         app:layout_constraintEnd_toStartOf="@+id/pass"
         app:layout_constraintTop_toTopOf="@+id/pass" />
+
+    <TextView
+        android:id="@+id/reason"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="reason"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/reject" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

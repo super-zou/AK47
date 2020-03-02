@@ -1,18 +1,23 @@
-package com.hetang.authenticate;
+package com.hetang.verify.user;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import androidx.annotation.Nullable;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.hetang.R;
-import com.hetang.adapter.AuthenticateRejectedListAdapter;
+import com.hetang.adapter.verify.UserRejectedListAdapter;
+import com.hetang.verify.VerifyOperationInterface;
 import com.hetang.common.MyApplication;
 import com.hetang.util.BaseFragment;
 import com.hetang.util.HttpUtil;
@@ -36,14 +41,17 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE;
-import static com.hetang.authenticate.RequestFragment.GET_ALL_AUTHENTICATION_URL;
-import static com.hetang.authenticate.RequestFragment.SET_AUTHENTICATION_STATUS;
-import static com.hetang.authenticate.RequestFragment.parseAuthentication;
+import static com.hetang.verify.user.UserPassedFragment.LOAD_AUTHENTICATE_DONE;
+import static com.hetang.verify.user.UserPassedFragment.getAuthenticateById;
+import static com.hetang.verify.user.UserRequestFragment.GET_ALL_AUTHENTICATION_URL;
+import static com.hetang.verify.user.UserRequestFragment.SET_AUTHENTICATION_STATUS;
+import static com.hetang.verify.user.UserRequestFragment.parseAuthentication;
+import static com.hetang.verify.VerifyActivity.USER_VERIFY_REJECT_BROADCAST;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
-public class RejectedFragment extends BaseFragment {
+public class UserRejectedFragment extends BaseFragment {
     private static final boolean isDebug = true;
-    private static final String TAG = "RequestFragment";
+    private static final String TAG = "UserRejectedFragment";
     private static final int PAGE_SIZE = 5;
     private static final int LOAD_DONE = 0;
     private static final int UPDATE_DONE = 1;
@@ -53,15 +61,14 @@ public class RejectedFragment extends BaseFragment {
     private int mCurrentPos;
     int page = 0;
     private int type;
-    private TextView countTV;
     private int count;
     private static int PASSED = 1;
     private static int REJECTED = 2;
-    private List<RequestFragment.Authentication> authenticationList = new ArrayList<>();
+    private List<UserRequestFragment.Authentication> authenticationList = new ArrayList<>();
     private XRecyclerView xRecyclerView;
-    private AuthenticateRejectedListAdapter authenticationListAdapter;
+    private UserRejectedListAdapter authenticationListAdapter;
     private MyHandler handler;
-
+    private UserRejectedBroadcastReceiver mReceiver;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -71,22 +78,25 @@ public class RejectedFragment extends BaseFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View convertView = inflater.inflate(R.layout.authentication, container, false);
+        View convertView = inflater.inflate(R.layout.user_verify_status, container, false);
         initView(convertView);
+        registerBroadcast();
         return convertView;
     }
 
 
     @Override
     protected int getLayoutId() {
-        return R.layout.authentication;
+        return 0;
     }
+
+    @Override
+    protected void loadData() { }
 
     protected void initView(View view) {
         handler = new MyHandler(this);
-        authenticationListAdapter = new AuthenticateRejectedListAdapter(getContext());
+        authenticationListAdapter = new UserRejectedListAdapter(getContext(), this);
 
-        countTV = view.findViewById(R.id.count);
         xRecyclerView = view.findViewById(R.id.authentication_list);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
@@ -126,29 +136,29 @@ public class RejectedFragment extends BaseFragment {
 
             @Override
             public void onLoadMore() {
-                loadData();
+                requestData();
             }
         });
 
-        authenticationListAdapter.setOnItemClickListener(new AuthenticateOperationInterface() {
+        authenticationListAdapter.setOnItemClickListener(new VerifyOperationInterface() {
             @Override
             public void onPassClick(View view, int position) {
                 mCurrentPos = position;
-                RequestFragment.Authentication authentication = authenticationList.get(position);
+                UserRequestFragment.Authentication authentication = authenticationList.get(position);
                 authenticationOperation(authentication.aid, authentication.getUid(), PASSED);
             }
 
             @Override
             public void onRejectClick(View view, int position) {
                 mCurrentPos = position;
-                RequestFragment.Authentication authentication = authenticationList.get(position);
+                UserRequestFragment.Authentication authentication = authenticationList.get(position);
                 authenticationOperation(authentication.aid, authentication.getUid(), REJECTED);
             }
         });
 
         xRecyclerView.setAdapter(authenticationListAdapter);
 
-        loadData();
+        requestData();
 
     }
 
@@ -190,7 +200,7 @@ public class RejectedFragment extends BaseFragment {
         });
     }
 
-    protected void loadData() {
+    protected void requestData() {
         page = authenticationList.size() / PAGE_SIZE;
         RequestBody requestBody = new FormBody.Builder()
                 .add("step", String.valueOf(PAGE_SIZE))
@@ -209,7 +219,6 @@ public class RejectedFragment extends BaseFragment {
                         int itemCount = processResponseText(responseText);
                         if (itemCount > 0) {
                             if (itemCount < PAGE_SIZE) {
-
                                 handler.sendEmptyMessage(LOAD_COMPLETE_END);
                             } else {
                                 handler.sendEmptyMessage(LOAD_DONE);
@@ -233,12 +242,7 @@ public class RejectedFragment extends BaseFragment {
         try {
             responseObject = new JSONObject(responseText);
             count = responseObject.optInt("count");
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    countTV.setText(String.valueOf(count));
-                }
-            });
+
             authenticationArray = responseObject.optJSONArray("results");
 
             if (isDebug)
@@ -246,7 +250,7 @@ public class RejectedFragment extends BaseFragment {
             if (authenticationArray != null && authenticationArray.length() > 0) {
                 for (int i = 0; i < authenticationArray.length(); i++) {
                     JSONObject authenticationObject = authenticationArray.getJSONObject(i);
-                    RequestFragment.Authentication authentication = parseAuthentication(authenticationObject);
+                    UserRequestFragment.Authentication authentication = parseAuthentication(authenticationObject);
                     authenticationList.add(authentication);
                 }
 
@@ -268,7 +272,6 @@ public class RejectedFragment extends BaseFragment {
                 xRecyclerView.refreshComplete();
                 //xRecyclerView.loadMoreComplete();
                 break;
-
             case LOAD_COMPLETE_END:
                 authenticationListAdapter.setData(authenticationList, REJECTED);
                 authenticationListAdapter.notifyDataSetChanged();
@@ -282,10 +285,18 @@ public class RejectedFragment extends BaseFragment {
                 xRecyclerView.loadMoreComplete();
                 break;
             case OPERATION_DONE:
-                countTV.setText(String.valueOf(count - 1));
                 authenticationList.remove(mCurrentPos);
                 authenticationListAdapter.setData(authenticationList, REJECTED);
                 authenticationListAdapter.notifyItemRemoved(mCurrentPos);
+                authenticationListAdapter.notifyDataSetChanged();
+                break;
+            case LOAD_AUTHENTICATE_DONE:
+                Slog.d(TAG, "--------------------->LOAD_AUTHENTICATE_DONE");
+                Bundle bundle = message.getData();
+                UserRequestFragment.Authentication authentication = (UserRequestFragment.Authentication)bundle.getSerializable("authentication");
+                authenticationList.add(0, authentication);
+                authenticationListAdapter.setData(authenticationList, REJECTED);
+                authenticationListAdapter.notifyItemInserted(0);
                 authenticationListAdapter.notifyDataSetChanged();
                 break;
             default:
@@ -293,23 +304,50 @@ public class RejectedFragment extends BaseFragment {
         }
     }
 
+    private class UserRejectedBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()) {
+                case USER_VERIFY_REJECT_BROADCAST:
+                    Slog.d(TAG, "-------------------->USER_VERIFY_REJECT_BROADCAST");
+                    int aid = intent.getIntExtra("aid", -1);
+                    getAuthenticateById(aid, handler);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    private void registerBroadcast() {
+        mReceiver = new UserRejectedBroadcastReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(USER_VERIFY_REJECT_BROADCAST);
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, intentFilter);
+    }
+
+    //unregister local broadcast
+    private void unRegisterBroadcast() {
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
+        unRegisterBroadcast();
     }
 
     static class MyHandler extends Handler {
-        WeakReference<RejectedFragment> notificationFragmentWeakReference;
-
-        MyHandler(RejectedFragment notificationFragment) {
-            notificationFragmentWeakReference = new WeakReference<>(notificationFragment);
+        WeakReference<UserRejectedFragment> userRejectedFragmentWeakReference;
+        MyHandler(UserRejectedFragment userRejectedFragment) {
+            userRejectedFragmentWeakReference = new WeakReference<>(userRejectedFragment);
         }
 
         @Override
         public void handleMessage(Message message) {
-            RejectedFragment notificationFragment = notificationFragmentWeakReference.get();
-            if (notificationFragment != null) {
-                notificationFragment.handleMessage(message);
+            UserRejectedFragment userRejectedFragment = userRejectedFragmentWeakReference.get();
+            if (userRejectedFragment != null) {
+                userRejectedFragment.handleMessage(message);
             }
         }
     }

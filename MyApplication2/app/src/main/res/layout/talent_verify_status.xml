@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <com.jcodecraeer.xrecyclerview.XRecyclerView
-        android:id="@+id/authentication_list"
+        android:id="@+id/talent_verify_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 </LinearLayout>

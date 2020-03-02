@@ -80,6 +80,7 @@ import static com.hetang.dynamics.DynamicsInteractDetailsActivity.MEET_RECOMMEND
 import static com.hetang.dynamics.DynamicsInteractDetailsActivity.MY_CONDITION_COMMENT;
 import static com.hetang.common.SetAvatarActivity.AVATAR_SET_ACTION_BROADCAST;
 import static com.hetang.group.SingleGroupActivity.GET_TALENT_DONE;
+import static com.hetang.group.SubGroupActivity.GET_ALL_TALENTS;
 import static com.hetang.group.SubGroupActivity.GET_MY_UNIVERSITY_SUBGROUP;
 import static com.hetang.group.SubGroupActivity.GET_TALENTS_BY_TYPE;
 import static com.hetang.group.SubGroupActivity.getTalent;
@@ -201,6 +202,7 @@ public class MeetRecommendFragment extends BaseFragment {
 
             @Override
             public void onLoadMore() {
+                Slog.d(TAG, "----------------------->onLoadMore");
                 requestData(true);
             }
         });
@@ -253,7 +255,8 @@ public class MeetRecommendFragment extends BaseFragment {
 
     @Override
     protected void loadData() {
-        requestData(true);
+        Slog.d(TAG, "------------------------->loadData");
+        //requestData(true);
     }
 
     private void getMyCondition() {
@@ -263,8 +266,8 @@ public class MeetRecommendFragment extends BaseFragment {
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
                     String responseText = response.body().string();
-                    if (isDebug)
-                        Slog.d(TAG, "==========get my condition response text : " + responseText);
+                    //if (isDebug)
+                        //Slog.d(TAG, "==========get my condition response text : " + responseText);
                     if (responseText != null) {
                         if (!TextUtils.isEmpty(responseText)) {
                             try {
@@ -274,7 +277,7 @@ public class MeetRecommendFragment extends BaseFragment {
                                     JSONObject conditionObject = jsonObject.optJSONObject("my_condition");
                                     if (conditionObject != null) {
                                         if (isDebug)
-                                            Slog.d(TAG, "===========isConditionSet: " + isConditionSet + "   conditionObject: " + conditionObject);
+                                            Slog.d(TAG, "===========isConditionSet: " + isConditionSet);
                                         if (isConditionSet > 0) {
                                             myCondition = ParseUtils.setMeetMemberInfo(conditionObject);
                                             handler.sendEmptyMessage(MY_CONDITION_SET_DONE);
@@ -306,14 +309,14 @@ public class MeetRecommendFragment extends BaseFragment {
         RequestBody requestBody = new FormBody.Builder()
                 .add("step", String.valueOf(8))
                 .add("page", String.valueOf(0))
-                .add("type", String.valueOf(any)).build();
+                .build();
 
-        HttpUtil.sendOkHttpRequest(getContext(), GET_TALENTS_BY_TYPE, requestBody, new Callback() {
+        HttpUtil.sendOkHttpRequest(getContext(), GET_ALL_TALENTS, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
                     String responseText = response.body().string();
-                    if (isDebug) Slog.d(TAG, "==========getTalentsByType response text : " + responseText);
+                    if (isDebug) Slog.d(TAG, "==========getRecommendTalent response text: "+responseText);
                     if (responseText != null && !TextUtils.isEmpty(responseText)) {
                         JSONObject talentsResponse = null;
                         try {
@@ -330,7 +333,7 @@ public class MeetRecommendFragment extends BaseFragment {
                     }
                 }
 
-                loadData();
+                requestData(true);
             }
 
             @Override
@@ -419,7 +422,7 @@ public class MeetRecommendFragment extends BaseFragment {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
-                if (isDebug) Slog.d(TAG, "GET RECOMMEND PERSON response : " + responseText);
+                if (isDebug) Slog.d(TAG, "getRecommendContacts response : " + responseText);
                 if (!TextUtils.isEmpty(responseText)) {
                     processResponseText(responseText);
                 }
@@ -440,26 +443,27 @@ public class MeetRecommendFragment extends BaseFragment {
         try {
             JSONArray contactsArray = new JSONObject(responseText).optJSONArray("results");
             JSONObject contactsObject;
-            for (int i = 0; i < contactsArray.length(); i++) {
-                ContactsApplyListActivity.Contacts contacts = new ContactsApplyListActivity.Contacts();
-                contactsObject = contactsArray.getJSONObject(i);
-                contacts.setAvatar(contactsObject.optString("avatar"));
-                contacts.setUid(contactsObject.optInt("uid"));
-                contacts.setNickName(contactsObject.optString("nickname"));
-                contacts.setSex(contactsObject.optInt("sex"));
-                contacts.setSituation(contactsObject.optInt("situation"));
-                contacts.setUniversity(contactsObject.optString("university"));
+            if (contactsArray != null){
+                for (int i = 0; i < contactsArray.length(); i++) {
+                    ContactsApplyListActivity.Contacts contacts = new ContactsApplyListActivity.Contacts();
+                    contactsObject = contactsArray.getJSONObject(i);
+                    contacts.setAvatar(contactsObject.optString("avatar"));
+                    contacts.setUid(contactsObject.optInt("uid"));
+                    contacts.setNickName(contactsObject.optString("nickname"));
+                    contacts.setSex(contactsObject.optInt("sex"));
+                    contacts.setSituation(contactsObject.optInt("situation"));
+                    contacts.setUniversity(contactsObject.optString("university"));
 
-                if (contactsObject.optInt("situation") == 0) {
-                    contacts.setMajor(contactsObject.optString("major"));
-                    contacts.setDegree(contactsObject.optString("degree"));
-                } else {
-                    contacts.setIndustry(contactsObject.optString("industry"));
-                    contacts.setPosition(contactsObject.optString("position"));
+                    if (contactsObject.optInt("situation") == 0) {
+                        contacts.setMajor(contactsObject.optString("major"));
+                        contacts.setDegree(contactsObject.optString("degree"));
+                    } else {
+                        contacts.setIndustry(contactsObject.optString("industry"));
+                        contacts.setPosition(contactsObject.optString("position"));
+                    }
+                    contactsList.add(contacts);
                 }
-                contactsList.add(contacts);
             }
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -778,67 +782,6 @@ public class MeetRecommendFragment extends BaseFragment {
         }
     }
 
-    private void love(final UserMeetInfo userMeetInfo) {
-        RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(userMeetInfo.getUid())).build();
-        HttpUtil.sendOkHttpRequest(getContext(), MeetRecommendListAdapter.LOVED_URL, requestBody, new Callback() {
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                String responseText = response.body().string();
-                if (isDebug) Log.d(TAG, "love responseText" + responseText);
-                if (!TextUtils.isEmpty(responseText)) {
-                    try {
-                        JSONObject commentResponse = new JSONObject(responseText);
-                        int status = commentResponse.optInt("status");
-                        if (isDebug) Log.d(TAG, "love status" + status);
-                        if (1 == status) {
-                            //UserMeetInfo member = getMeetMemberById(userMeetInfo.getUid());
-                            // userMeetInfo.setLoved(1);
-                            // userMeetInfo.setLovedCount(userMeetInfo.getLovedCount() + 1);
-                            sendMessage(MY_CONDITION_LOVE_UPDATE);
-
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call call, IOException e) {
-            }
-        });
-    }
-
-    private void praiseArchives(final UserMeetInfo userMeetInfo) {
-        RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(userMeetInfo.getUid())).build();
-        HttpUtil.sendOkHttpRequest(getContext(), MeetRecommendListAdapter.PRAISED_URL, requestBody, new Callback() {
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                String responseText = response.body().string();
-                if (isDebug) Log.d(TAG, "praiseArchives responseText:" + responseText);
-                if (!TextUtils.isEmpty(responseText)) {
-                    try {
-                        JSONObject commentResponse = new JSONObject(responseText);
-                        int status = commentResponse.optInt("status");
-                        if (isDebug) Log.d(TAG, "praiseArchives status:" + status);
-
-                        if (1 == status) {
-                            //UserMeetInfo member = getMeetMemberById(userMeetInfo.getUid());
-                            //userMeetInfo.setPraised(1);
-                            //userMeetInfo.setPraisedCount(userMeetInfo.getPraisedCount() + 1);
-                            sendMessage(MY_CONDITION_PRAISE_UPDATE);
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call call, IOException e) {
-            }
-        });
-    }
 
     private class PictureAddBroadcastReceiver extends BroadcastReceiver {
         @Override
@@ -916,7 +859,7 @@ public class MeetRecommendFragment extends BaseFragment {
             case GET_RECOMMEND_DONE:
                 meetRecommendListAdapter.setData(meetList);
                 meetRecommendListAdapter.notifyDataSetChanged();
-                recyclerView.refreshComplete();
+                recyclerView.loadMoreComplete();
                 if (mResponseSize < PAGE_SIZE) {
                     //loading finished
                     recyclerView.loadMoreComplete();
@@ -1073,7 +1016,7 @@ public class MeetRecommendFragment extends BaseFragment {
     }
 
     private void parseResponse(String responseText, final boolean isLoadMore) {
-        if (isDebug) Slog.d(TAG, "parseResponse responseText: " + responseText);
+        //if (isDebug) Slog.d(TAG, "parseResponse responseText: " + responseText);
         if (null == responseText) {
             return;
         }

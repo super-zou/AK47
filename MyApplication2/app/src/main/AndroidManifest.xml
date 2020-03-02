@@ -94,7 +94,7 @@
         <activity android:name=".region.activity.BaseActivity" />
         <activity android:name=".dynamics.AddDynamicsActivity" />
         <activity android:name=".common.SettingsActivity" />
-        <activity android:name=".authenticate.AuthenticationActivity" />
+        <activity android:name=".verify.VerifyActivity" />
         <activity android:name=".main.MeetArchiveActivity" />
         <activity
             android:name=".meet.EvaluatorDetailsActivity"
@@ -151,7 +151,15 @@
         <activity
             android:name=".talent.TalentSummaryListActivity"
             android:launchMode="singleTask" />
-
+        <activity
+            android:name=".verify.user.UserVerifyActivity"
+            android:launchMode="singleTask" />
+        <activity
+            android:name=".verify.talent.TalentVerifyActivity"
+            android:launchMode="singleTask" />
+        <activity
+            android:name=".verify.activity.ActivityVerifyActivity"
+            android:launchMode="singleTask" />
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.hetang.fileprovider"

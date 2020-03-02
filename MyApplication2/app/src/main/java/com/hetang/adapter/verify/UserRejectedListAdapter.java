@@ -1,10 +1,10 @@
-package com.hetang.adapter;
+package com.hetang.adapter.verify;
 
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,8 +14,9 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.hetang.R;
-import com.hetang.authenticate.AuthenticateOperationInterface;
-import com.hetang.authenticate.RequestFragment;
+import com.hetang.verify.VerifyOperationInterface;
+import com.hetang.verify.user.UserRequestFragment;
+import com.hetang.verify.user.UserVerifyActivity;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.ParseUtils;
 import com.hetang.util.RoundImageView;
@@ -24,13 +25,13 @@ import com.hetang.util.Utility;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.hetang.authenticate.AuthenticationActivity.unVERIFIED;
+import static com.hetang.verify.VerifyActivity.REQUEST;
 import static com.hetang.common.MyApplication.getContext;
 import static com.hetang.util.Utility.getDateToString;
 
-public class AuthenticatePassedtListAdapter extends RecyclerView.Adapter<AuthenticatePassedtListAdapter.ViewHolder> {
-    private static final String TAG = "AuthenticateRequestListAdapter";
-    private List<RequestFragment.Authentication> authenticationList = new ArrayList<>();
+public class UserRejectedListAdapter extends RecyclerView.Adapter<UserRejectedListAdapter.ViewHolder> {
+    private static final String TAG = "UserRequestListAdapter";
+    private List<UserRequestFragment.Authentication> authenticationList = new ArrayList<>();
     private Context mContext;
     private boolean isScrolling = false;
 
@@ -38,11 +39,13 @@ public class AuthenticatePassedtListAdapter extends RecyclerView.Adapter<Authent
     private static final int MAKE_NOTIFICATION_SHOWED = 1;
     private Handler mHandler;
     private int type;
-    private FragmentManager fragmentManager;
-    private static AuthenticateOperationInterface authenticateOperationInterface;
+    private UserVerifyActivity userVerifyActivity;
+    private Fragment fragment;
+    private static VerifyOperationInterface verifyOperationInterface;
 
-    public AuthenticatePassedtListAdapter(Context context) {
+    public UserRejectedListAdapter(Context context, Fragment fragment) {
         mContext = context;
+        this.fragment = fragment;
         mHandler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
@@ -57,9 +60,13 @@ public class AuthenticatePassedtListAdapter extends RecyclerView.Adapter<Authent
                 super.handleMessage(msg);
             }
         };
+
+        if (userVerifyActivity == null){
+            userVerifyActivity = new UserVerifyActivity();
+        }
     }
 
-    public void setData(List<RequestFragment.Authentication> authenticationList, int type) {
+    public void setData(List<UserRequestFragment.Authentication> authenticationList, int type) {
         this.type = type;
         this.authenticationList = authenticationList;
     }
@@ -69,21 +76,21 @@ public class AuthenticatePassedtListAdapter extends RecyclerView.Adapter<Authent
     }
 
     //register the interActInterface callback, add by zouhaichao 2018/9/16
-    public void setOnItemClickListener(AuthenticateOperationInterface authenticateOperationInterface) {
-        this.authenticateOperationInterface = authenticateOperationInterface;
+    public void setOnItemClickListener(VerifyOperationInterface verifyOperationInterface) {
+        this.verifyOperationInterface = verifyOperationInterface;
     }
 
     @Override
-    public AuthenticatePassedtListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public UserRejectedListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.authentication_item, parent, false);
-        AuthenticatePassedtListAdapter.ViewHolder holder = new AuthenticatePassedtListAdapter.ViewHolder(view);
+                .inflate(R.layout.user_verify_status_item, parent, false);
+        UserRejectedListAdapter.ViewHolder holder = new UserRejectedListAdapter.ViewHolder(view);
         return holder;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final AuthenticatePassedtListAdapter.ViewHolder holder, final int position) {
-        final RequestFragment.Authentication authentication = authenticationList.get(position);
+    public void onBindViewHolder(@NonNull final UserRejectedListAdapter.ViewHolder holder, final int position) {
+        final UserRequestFragment.Authentication authentication = authenticationList.get(position);
 
         if (authentication.getAvatar() != null && !"".equals(authentication.getAvatar())) {
             Glide.with(mContext).load(HttpUtil.DOMAIN + authentication.getAvatar()).into(holder.avatar);
@@ -112,8 +119,11 @@ public class AuthenticatePassedtListAdapter extends RecyclerView.Adapter<Authent
 
         String dataString = getDateToString(authentication.requestTime, "yyyy-MM-dd");
         holder.timeStamp.setText(dataString);
+
+        holder.reason.setVisibility(View.VISIBLE);
+        holder.reason.setText(authentication.reason);
         
-        if (type == unVERIFIED){
+        if (type == REQUEST){
             holder.pass.setVisibility(View.VISIBLE);
             holder.reject.setVisibility(View.VISIBLE);
 
@@ -121,19 +131,35 @@ public class AuthenticatePassedtListAdapter extends RecyclerView.Adapter<Authent
                 @Override
                 public void onClick(View view) {
                     //verifyAction(authentication.aid, authentication.uid);
-                    authenticateOperationInterface.onPassClick(view, position);
+                    verifyOperationInterface.onPassClick(view, position);
                 }
             });
             
             holder.reject.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    authenticateOperationInterface.onRejectClick(view, position);
+                    verifyOperationInterface.onRejectClick(view, position);
                 }
             });
         }
 
         holder.avatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //ParseUtils.startMeetArchiveActivity(mContext, authentication.getUid());
+                userVerifyActivity.startPicturePreview(fragment,HttpUtil.DOMAIN + authentication.getAvatar());
+            }
+        });
+
+        holder.authenticationPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //ParseUtils.startMeetArchiveActivity(mContext, authentication.getUid());
+                userVerifyActivity.startPicturePreview(fragment,HttpUtil.DOMAIN + authentication.authenticationPhotoUrl);
+            }
+        });
+
+        holder.name.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 ParseUtils.startMeetArchiveActivity(mContext, authentication.getUid());
@@ -159,6 +185,7 @@ public class AuthenticatePassedtListAdapter extends RecyclerView.Adapter<Authent
         Button pass;
         Button reject;
         TextView timeStamp;
+        TextView reason;
         
         public ViewHolder(View view) {
             super(view);
@@ -172,6 +199,7 @@ public class AuthenticatePassedtListAdapter extends RecyclerView.Adapter<Authent
             pass = view.findViewById(R.id.pass);
             reject = view.findViewById(R.id.reject);
             timeStamp = view.findViewById(R.id.timestamp);
+            reason = view.findViewById(R.id.reason);
         }
     }
 

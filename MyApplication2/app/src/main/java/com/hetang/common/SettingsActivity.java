@@ -8,8 +8,6 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.appcompat.app.ActionBar;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -18,14 +16,14 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.hetang.R;
-import com.hetang.authenticate.AuthenticationActivity;
+import com.hetang.verify.VerifyActivity;
 import com.hetang.update.UpdateParser;
 import com.hetang.util.FontManager;
+import com.hetang.util.HttpUtil;
 import com.hetang.util.RoundImageView;
 import com.hetang.util.ShareDialogFragment;
 import com.hetang.util.Slog;
 import com.hetang.util.Utility;
-import com.hetang.util.HttpUtil;
 import com.xuexiang.xupdate.XUpdate;
 
 import org.json.JSONException;
@@ -34,27 +32,29 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 
+import androidx.appcompat.app.ActionBar;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static com.hetang.util.HttpUtil.GET_DOWNLOAD_QR;
 import static com.hetang.common.MyApplication.getContext;
+import static com.hetang.util.HttpUtil.GET_DOWNLOAD_QR;
 
 public class SettingsActivity extends BaseAppCompatActivity {
 
-private static final String TAG = "SettingsActivity";
-    private MyHandler myHandler;
-    private String uri;
-    private CheckVersionBroadcastReceiver checkVersionBroadcastReceiver = new CheckVersionBroadcastReceiver();
     public static final String NO_NEW_VERSION_BROADCAST = "com.tongmenhui.action.NO_NEW_VERSION";
     public static final String HAD_NEW_VERSION_BROADCAST = "com.tongmenhui.action.HAD_NEW_VERSION";
     public static final int GET_DOWNLOAD_URI_DOWN = 0;
-        public static final int GET_ADMIN_ROLE_DOWN = 1;
+    public static final int GET_ADMIN_ROLE_DOWN = 2;
     public static final String GET_ADMIN_ROLE_URL = HttpUtil.DOMAIN + "?q=user_extdata/get_admin_role";
-    
+    private static final String TAG = "SettingsActivity";
+    private MyHandler myHandler;
+    private String uri;
+    private CheckVersionBroadcastReceiver checkVersionBroadcastReceiver = new CheckVersionBroadcastReceiver();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,7 +71,7 @@ private static final String TAG = "SettingsActivity";
                 finish();
             }
         });
-        
+
         myHandler = new MyHandler(this);
 
         init();
@@ -80,8 +80,8 @@ private static final String TAG = "SettingsActivity";
         FontManager.markAsIconContainer(findViewById(R.id.settings_layout), font);
 
     }
-    
-    private void init(){
+
+    private void init() {
         TextView share = findViewById(R.id.share_icon);
         share.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,7 +92,7 @@ private static final String TAG = "SettingsActivity";
         });
 
         getDownLoadQR();
-        
+
         RelativeLayout checkUpdate = findViewById(R.id.check_update_wrapper);
         TextView currentVersioin = findViewById(R.id.current_version);
         currentVersioin.setText(Utility.getVersionName(this));
@@ -104,11 +104,11 @@ private static final String TAG = "SettingsActivity";
         });
 
         registerLoginBroadcast();
-        
-                getAdminRole();
+
+        getAdminRole();
     }
-    
-    private void getAdminRole(){
+
+    private void getAdminRole() {
         RequestBody requestBody = new FormBody.Builder().build();
         HttpUtil.sendOkHttpRequest(getContext(), GET_ADMIN_ROLE_URL, requestBody, new Callback() {
             @Override
@@ -116,11 +116,11 @@ private static final String TAG = "SettingsActivity";
                 String responseText = response.body().string();
                 try {
                     int role = new JSONObject(responseText).optInt("role");
-                    if (role >= 0){
+                    if (role >= 0) {
                         myHandler.sendEmptyMessage(GET_ADMIN_ROLE_DOWN);
                     }
-                    
-                    }catch (JSONException e){
+
+                } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
@@ -130,20 +130,20 @@ private static final String TAG = "SettingsActivity";
             }
         });
     }
-    
-    private void setAuthenticationView(){
+
+    private void setAuthenticationView() {
         LinearLayout authenticationWrapper = findViewById(R.id.authentication_wrapper);
         authenticationWrapper.setVisibility(View.VISIBLE);
         authenticationWrapper.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(SettingsActivity.this, AuthenticationActivity.class);
+                Intent intent = new Intent(SettingsActivity.this, VerifyActivity.class);
                 startActivity(intent);
             }
         });
     }
-    
-    private void getDownLoadQR(){
+
+    private void getDownLoadQR() {
         RequestBody requestBody = new FormBody.Builder().build();
         HttpUtil.sendOkHttpRequest(getContext(), GET_DOWNLOAD_QR, requestBody, new Callback() {
             @Override
@@ -152,7 +152,7 @@ private static final String TAG = "SettingsActivity";
                 try {
                     uri = new JSONObject(responseText).optString("uri");
                     myHandler.sendEmptyMessage(GET_DOWNLOAD_URI_DOWN);
-                }catch (JSONException e){
+                } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
@@ -162,8 +162,8 @@ private static final String TAG = "SettingsActivity";
             }
         });
     }
-    
-     private void checkUpdate(){
+
+    private void checkUpdate() {
         showProgressDialog(getResources().getString(R.string.checking));
         XUpdate.newBuild(this)
                 .updateUrl(HttpUtil.CHECK_VERSION_UPDATE)
@@ -179,7 +179,7 @@ private static final String TAG = "SettingsActivity";
         intentFilter.addAction(HAD_NEW_VERSION_BROADCAST);
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(checkVersionBroadcastReceiver, intentFilter);
     }
-    
+
     //unregister local broadcast
     private void unRegisterLoginBroadcast() {
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(checkVersionBroadcastReceiver);
@@ -192,38 +192,21 @@ private static final String TAG = "SettingsActivity";
         unRegisterLoginBroadcast();
         //setResultWrapper();
     }
-    
-    private class CheckVersionBroadcastReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            switch (intent.getAction()){
-                case NO_NEW_VERSION_BROADCAST:
-                    dismissProgressDialog();
-                    Toast.makeText(context, getResources().getString(R.string.no_new_version), Toast.LENGTH_LONG).show();
-                    break;
-                case HAD_NEW_VERSION_BROADCAST:
-                    dismissProgressDialog();
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
-    
-    public void handleMessage(Message msg){
-        switch (msg.what){
+
+    public void handleMessage(Message msg) {
+        switch (msg.what) {
             case GET_DOWNLOAD_URI_DOWN:
                 RoundImageView downLoadQR = findViewById(R.id.download_qr_code);
                 Glide.with(this).load(HttpUtil.DOMAIN + uri).into(downLoadQR);
                 break;
-                            case GET_ADMIN_ROLE_DOWN:
+            case GET_ADMIN_ROLE_DOWN:
                 setAuthenticationView();
                 break;
-                default:
-                    break;
+            default:
+                break;
         }
     }
-    
+
     static class MyHandler extends Handler {
         WeakReference<SettingsActivity> settingsActivityWeakReference;
 
@@ -236,6 +219,23 @@ private static final String TAG = "SettingsActivity";
             SettingsActivity settingsActivity = settingsActivityWeakReference.get();
             if (settingsActivity != null) {
                 settingsActivity.handleMessage(message);
+            }
+        }
+    }
+
+    private class CheckVersionBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()) {
+                case NO_NEW_VERSION_BROADCAST:
+                    dismissProgressDialog();
+                    Toast.makeText(context, getResources().getString(R.string.no_new_version), Toast.LENGTH_LONG).show();
+                    break;
+                case HAD_NEW_VERSION_BROADCAST:
+                    dismissProgressDialog();
+                    break;
+                default:
+                    break;
             }
         }
     }

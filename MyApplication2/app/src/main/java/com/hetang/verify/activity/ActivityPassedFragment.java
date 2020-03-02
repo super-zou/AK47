@@ -1,18 +1,16 @@
-package com.hetang.authenticate;
+package com.hetang.verify.activity;
 
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.hetang.R;
-import com.hetang.adapter.AuthenticatePassedtListAdapter;
+import com.hetang.adapter.verify.UserPassedtListAdapter;
+import com.hetang.verify.VerifyOperationInterface;
+import com.hetang.verify.user.UserRequestFragment;
 import com.hetang.common.MyApplication;
 import com.hetang.util.BaseFragment;
 import com.hetang.util.HttpUtil;
@@ -29,6 +27,9 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -36,14 +37,14 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE;
-import static com.hetang.authenticate.RequestFragment.GET_ALL_AUTHENTICATION_URL;
-import static com.hetang.authenticate.RequestFragment.SET_AUTHENTICATION_STATUS;
-import static com.hetang.authenticate.RequestFragment.parseAuthentication;
+import static com.hetang.verify.user.UserRequestFragment.GET_ALL_AUTHENTICATION_URL;
+import static com.hetang.verify.user.UserRequestFragment.SET_AUTHENTICATION_STATUS;
+import static com.hetang.verify.user.UserRequestFragment.parseAuthentication;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
-public class PassedFragment extends BaseFragment {
+public class ActivityPassedFragment extends BaseFragment {
     private static final boolean isDebug = true;
-    private static final String TAG = "RequestFragment";
+    private static final String TAG = "UserRequestFragment";
     private static final int PAGE_SIZE = 5;
     private static final int LOAD_DONE = 0;
     private static final int UPDATE_DONE = 1;
@@ -53,13 +54,12 @@ public class PassedFragment extends BaseFragment {
     private int mCurrentPos;
     int page = 0;
     private int type;
-    private TextView countTV;
     private int count;
     private static int PASSED = 1;
     private static int REJECTED = 2;
-    private List<RequestFragment.Authentication> authenticationList = new ArrayList<>();
+    private List<UserRequestFragment.Authentication> authenticationList = new ArrayList<>();
     private XRecyclerView xRecyclerView;
-    private AuthenticatePassedtListAdapter authenticationListAdapter;
+    private UserPassedtListAdapter authenticationListAdapter;
     private MyHandler handler;
 
 
@@ -79,14 +79,16 @@ public class PassedFragment extends BaseFragment {
 
     @Override
     protected int getLayoutId() {
-        return R.layout.authentication;
+        return 0;
     }
+
+    @Override
+    protected void loadData() { }
 
     protected void initView(View view) {
         handler = new MyHandler(this);
-        authenticationListAdapter = new AuthenticatePassedtListAdapter(getContext());
+        authenticationListAdapter = new UserPassedtListAdapter(getContext(), this);
 
-        countTV = view.findViewById(R.id.count);
         xRecyclerView = view.findViewById(R.id.authentication_list);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
@@ -130,25 +132,25 @@ public class PassedFragment extends BaseFragment {
             }
         });
 
-        authenticationListAdapter.setOnItemClickListener(new AuthenticateOperationInterface() {
+        authenticationListAdapter.setOnItemClickListener(new VerifyOperationInterface() {
             @Override
             public void onPassClick(View view, int position) {
                 mCurrentPos = position;
-                RequestFragment.Authentication authentication = authenticationList.get(position);
+                UserRequestFragment.Authentication authentication = authenticationList.get(position);
                 authenticationOperation(authentication.aid, authentication.getUid(), PASSED);
             }
 
             @Override
             public void onRejectClick(View view, int position) {
                 mCurrentPos = position;
-                RequestFragment.Authentication authentication = authenticationList.get(position);
+                UserRequestFragment.Authentication authentication = authenticationList.get(position);
                 authenticationOperation(authentication.aid, authentication.getUid(), REJECTED);
             }
         });
 
         xRecyclerView.setAdapter(authenticationListAdapter);
 
-        loadData();
+        requestData();
 
     }
 
@@ -190,7 +192,7 @@ public class PassedFragment extends BaseFragment {
         });
     }
 
-    protected void loadData() {
+    protected void requestData() {
         page = authenticationList.size() / PAGE_SIZE;
         RequestBody requestBody = new FormBody.Builder()
                 .add("step", String.valueOf(PAGE_SIZE))
@@ -233,12 +235,7 @@ public class PassedFragment extends BaseFragment {
         try {
             responseObject = new JSONObject(responseText);
             count = responseObject.optInt("count");
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    countTV.setText(String.valueOf(count));
-                }
-            });
+
             authenticationArray = responseObject.optJSONArray("results");
 
             if (isDebug)
@@ -246,7 +243,7 @@ public class PassedFragment extends BaseFragment {
             if (authenticationArray != null && authenticationArray.length() > 0) {
                 for (int i = 0; i < authenticationArray.length(); i++) {
                     JSONObject authenticationObject = authenticationArray.getJSONObject(i);
-                    RequestFragment.Authentication authentication = parseAuthentication(authenticationObject);
+                    UserRequestFragment.Authentication authentication = parseAuthentication(authenticationObject);
                     authenticationList.add(authentication);
                 }
 
@@ -281,7 +278,6 @@ public class PassedFragment extends BaseFragment {
                 xRecyclerView.loadMoreComplete();
                 break;
             case OPERATION_DONE:
-                countTV.setText(String.valueOf(count - 1));
                 authenticationList.remove(mCurrentPos);
                 authenticationListAdapter.setData(authenticationList, PASSED);
                 authenticationListAdapter.notifyItemRemoved(mCurrentPos);
@@ -299,15 +295,15 @@ public class PassedFragment extends BaseFragment {
 
 
     static class MyHandler extends Handler {
-        WeakReference<PassedFragment> notificationFragmentWeakReference;
+        WeakReference<ActivityPassedFragment> notificationFragmentWeakReference;
 
-        MyHandler(PassedFragment notificationFragment) {
+        MyHandler(ActivityPassedFragment notificationFragment) {
             notificationFragmentWeakReference = new WeakReference<>(notificationFragment);
         }
 
         @Override
         public void handleMessage(Message message) {
-            PassedFragment notificationFragment = notificationFragmentWeakReference.get();
+            ActivityPassedFragment notificationFragment = notificationFragmentWeakReference.get();
             if (notificationFragment != null) {
                 notificationFragment.handleMessage(message);
             }

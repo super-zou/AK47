@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="authentication_tabs">
-        <item>待认证</item>
-        <item>已认证</item>
-        <item>已拒绝</item>
+    <string-array name="verify_tabs">
+        <item>申请</item>
+        <item>通过</item>
+        <item>拒绝</item>
+    </string-array>
+
+    <string-array name="main_verify_tabs">
+        <item>用户</item>
+        <item>达人</item>
+        <item>活动</item>
     </string-array>
 
     <string-array name="main_tabs">
