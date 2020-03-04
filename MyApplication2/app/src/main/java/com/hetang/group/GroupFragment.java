@@ -23,6 +23,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.hetang.R;
 import com.hetang.common.MyApplication;
+import com.hetang.experience.ExperienceSummaryActivity;
 import com.hetang.talent.TalentDetailsActivity;
 import com.hetang.util.BaseFragment;
 import com.hetang.util.FontManager;
@@ -46,7 +47,6 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static com.hetang.common.MyApplication.getContext;
 import static com.hetang.group.SubGroupActivity.GROUP_ADD_BROADCAST;
 import static com.hetang.group.SubGroupActivity.TALENT_ADD_BROADCAST;
 import static com.hetang.group.SubGroupActivity.getSubGroup;
@@ -654,12 +654,19 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
             startActivity(intent);
         }else {
-            PreparationDialogFragment preparationDialogFragment = new PreparationDialogFragment();
-            //preparationDialogFragment.setTargetFragment(MeetArchiveFragment.this, REQUESTCODE);
-            Bundle bundle = new Bundle();
-            bundle.putInt("type", type);
-            preparationDialogFragment.setArguments(bundle);
-            preparationDialogFragment.show(getFragmentManager(), "PreparationDialogFragment");
+            if (type == activity_group){
+                Intent intent = new Intent(MyApplication.getContext(), ExperienceSummaryActivity.class);
+                //intent.putExtra("type", type);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                startActivity(intent);
+            }else {
+                PreparationDialogFragment preparationDialogFragment = new PreparationDialogFragment();
+                //preparationDialogFragment.setTargetFragment(MeetArchiveFragment.this, REQUESTCODE);
+                Bundle bundle = new Bundle();
+                bundle.putInt("type", type);
+                preparationDialogFragment.setArguments(bundle);
+                preparationDialogFragment.show(getFragmentManager(), "PreparationDialogFragment");
+            }
         }
 
     }

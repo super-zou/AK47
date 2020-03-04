@@ -48,8 +48,22 @@
     <string name="look_friend">+我要交友</string>
     <string name="look_friend_notice">填写交友条件，匹配更合适的伙伴</string>
     <string name="talent_explanation_label">什么是达人？</string>
+
     <string name="talent_explanation_content">只要你充满热情，期望利用自己的热爱和专长，
         　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　做一些对别人有帮助或有意义的事情就可以成为达人，还能顺便赚取收入</string>
+    <string name="experience_explanation_label">什么是体验？</string>
+    <string name="experience_explanation_content">体验是由世界各地的学生或当地达人策划并组织开展的活动，通过这些活动，可以让大家对当地风土民俗和饮食文化等有比较深刻的体验。</string>
+    <string name="experience_talent_explanation_label">什么是体验达人？</string>
+    <string name="experience_talent_explanation_content">体验达人有两种方式：伴游向导和开展体验，可根据自身条件选择其中的一种或两种</string>
+    <string name="guide_talent_explanation_label">什么是伴游向导？</string>
+    <string name="guide_talent_explanation">对旅游热爱，喜欢结识新朋友。
+        \n熟悉当地环境，对当地的旅游景点、风土民俗、历史文化等有一定了解。
+        \n利用课余时间，带领大家领略纯粹的民俗文化，品味地道的美食。
+    </string>
+    <string name="develop_explanation_label">如何开展体验？</string>
+    <string name="develop_explanation_details">体验类别丰富，如特色的烹饪、手工艺；分享所在城市历史；组织美食之旅；街头艺术；公益活动；自然与户外等。
+        \n 您可以毫无束缚地尽情发挥，创造有吸引力的体验活动。</string>
+
     <string name="matchmaker_talent_explanation_label">什么是牵线达人？</string>
     <string name="matchmaker_talent_explanation_content">只要你乐于助人，愿意帮好友牵线搭桥就可以成为牵线达人。牵线达人可以做哪些事情？
         \n 1 组建自己的牵线团，招募好友加入
@@ -286,6 +300,8 @@
     <string name="title_activity_picture_preview">照片预览</string>
     <string name="reward">赞赏达人</string>
     <string name="become_talent">成为达人</string>
+    <string name="publish_experience">发布体验</string>
+    <string name="escort_guide">伴游向导</string>
     <string name="no_evaluate">暂无评价</string>
     <string name="abandon">不用了</string>
     <string name="reward_done">已赞赏</string>

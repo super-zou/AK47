@@ -160,6 +160,9 @@
         <activity
             android:name=".verify.activity.ActivityVerifyActivity"
             android:launchMode="singleTask" />
+        <activity
+            android:name=".experience.ExperienceSummaryActivity"
+            android:launchMode="singleTask" />
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.hetang.fileprovider"
