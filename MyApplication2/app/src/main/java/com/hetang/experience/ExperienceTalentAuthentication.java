@@ -198,7 +198,7 @@ public class ExperienceTalentAuthentication extends BaseDialogFragment {
         authenObject = new JSONObject();
 
         mDialog.setContentView(R.layout.experience_talent_authentication);
-        initCommonTalent();
+        initView();
 
         mDialog.setCanceledOnTouchOutside(true);
         window = mDialog.getWindow();
@@ -228,7 +228,7 @@ public class ExperienceTalentAuthentication extends BaseDialogFragment {
         return mDialog;
     }
 
-    private void initCommonTalent() {
+    private void initView() {
         addMateriaRV = mDialog.findViewById(R.id.add_materia);
         addRewardQRRV = mDialog.findViewById(R.id.add_reward_qr);
         chargeSetting = mDialog.findViewById(R.id.charge_setting);
@@ -259,8 +259,18 @@ public class ExperienceTalentAuthentication extends BaseDialogFragment {
 
         initSubjectJsondata();
 
-        Button beginBtn = mDialog.findViewById(R.id.begin_now);
-        beginBtn.setOnClickListener(new View.OnClickListener() {
+        Button applyGuideBtn = mDialog.findViewById(R.id.apply_guide);
+        applyGuideBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                authenticateWrapper.getChildAt(0).setVisibility(View.GONE);
+                authenticateWrapper.getChildAt(1).setVisibility(View.VISIBLE);
+                navigation.setVisibility(View.VISIBLE);
+            }
+        });
+
+        Button developExperienceBtn = mDialog.findViewById(R.id.develop_experience);
+        developExperienceBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 authenticateWrapper.getChildAt(0).setVisibility(View.GONE);
