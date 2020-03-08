@@ -213,7 +213,7 @@ public class ExperienceSummaryActivity extends BaseAppCompatActivity implements 
             }
         });
 
-        Button publishExperienceBtn = findViewById(R.id.publish_experience);
+        Button publishExperienceBtn = findViewById(R.id.develop_experience);
         publishExperienceBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

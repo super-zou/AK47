@@ -1,34 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/dynamics_action_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/dynamics_action_item"
     android:layout_marginTop="3dp"
     android:background="@color/colorWhite">
-    
-        <include
+
+    <include
         android:id="@+id/base_profile"
         layout="@layout/dynamics_action_author_profile"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-        
-            <TextView
-        android:visibility="gone"
+
+    <TextView
         android:id="@+id/author_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/base_profile" />
-        
-            <include
+
+    <include
         android:id="@+id/relate_content"
         layout="@layout/dynamics_item"
         android:layout_width="match_parent"
@@ -40,18 +39,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/author_content" />
-        
-        <include
-        android:visibility="gone"
+
+    <include
         android:id="@+id/dynamics_content_meta"
+        layout="@layout/dynamics_item_interact"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        layout="@layout/dynamics_item_interact"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/relate_content"/>
+        app:layout_constraintTop_toBottomOf="@+id/relate_content" />
 </androidx.constraintlayout.widget.ConstraintLayout>

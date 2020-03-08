@@ -23,12 +23,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.bigkoo.pickerview.builder.OptionsPickerBuilder;
 import com.bigkoo.pickerview.listener.OnOptionsSelectListener;
 import com.bigkoo.pickerview.view.OptionsPickerView;
@@ -58,6 +52,7 @@ import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
 import com.luck.picture.lib.style.PictureWindowAnimationStyle;
 import com.luck.picture.lib.tools.PictureFileUtils;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -68,6 +63,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -82,11 +82,11 @@ import static com.hetang.group.GroupFragment.eden_group;
 import static com.hetang.group.SubGroupActivity.TALENT_ADD_BROADCAST;
 import static com.hetang.group.SubGroupActivity.getTalent;
 
-public class EscortGuideAuthenticationDialogFragment extends BaseDialogFragment {
+public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment {
     public final static int TALENT_AUTHENTICATION_RESULT_OK = 0;
     public final static int COMMON_TALENT_AUTHENTICATION_RESULT_OK = 1;
     private static final boolean isDebug = true;
-    private static final String TAG = "EscortGuideAuthenticationDialogFragment";
+    private static final String TAG = "TravelGuideAuthenticationDialogFragment";
     private static final String SUBMIT_URL = HttpUtil.DOMAIN + "?q=talent/become/apply";
     private int type;
     private int gid;
@@ -103,7 +103,8 @@ public class EscortGuideAuthenticationDialogFragment extends BaseDialogFragment 
     private GridLayout authenticateWrapper;
     private ConstraintLayout navigation;
     private Button prevBtn;
-private int index = 1;
+    private Button nextBtn;
+    private int index = 1;
     private JSONObject authenObject;
     private GridImageAdapter adapter;
     private GridImageAdapter adapterReward;
@@ -124,6 +125,51 @@ private int index = 1;
     private Thread threadIndustry = null;
     private ArrayList<CommonBean> subjectMainItems = new ArrayList<>();
     private ArrayList<ArrayList<String>> subjectSubItems = new ArrayList<>();
+    private GridImageAdapter.onAddPicClickListener onAddPicClickListener = new GridImageAdapter.onAddPicClickListener() {
+        @Override
+        public void onAddPicClick() {
+            if (pictureSelectType == 0) {
+                maxSelectNum = 6;
+            } else {
+                maxSelectNum = 1;
+            }
+            PictureSelectionModel pictureSelectionModel = PictureSelector.create(TravelGuideAuthenticationDialogFragment.this).openGallery(PictureMimeType.ofImage());
+            pictureSelectionModel.loadImageEngine(GlideEngine.createGlideEngine())// 外部传入图片加载引擎，必传项
+                    .theme(R.style.picture_WeChat_style)// 主题样式设置 具体参考 values/styles   用法：R.style.picture.white.style v2.3.3后 建议使用setPictureStyle()动态方式
+                    .isWeChatStyle(true)// 是否开启微信图片选择风格
+                    //.setLanguage(language)// 设置语言，默认中文
+                    .setPictureStyle(addDynamicsActivity.getWeChatStyle())// 动态自定义相册主题
+                    .setPictureCropStyle(addDynamicsActivity.getCropParameterStyle())// 动态自定义裁剪主题
+                    .setPictureWindowAnimationStyle(new PictureWindowAnimationStyle())// 自定义相册启动退出动画
+                    .isWithVideoImage(true)// 图片和视频是否可以同选,只在ofAll模式下有效
+                    .maxSelectNum(maxSelectNum)// 最大图片选择数量
+                    .minSelectNum(1)// 最小选择数量
+                    .imageSpanCount(4)// 每行显示个数
+                    .isReturnEmpty(false)// 未选择数据时点击按钮是否可以返回
+                    //.isAndroidQTransform(false)// 是否需要处理Android Q 拷贝至应用沙盒的操作，只针对compress(false); && enableCrop(false);有效,默认处理
+                    .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)// 设置相册Activity方向，不设置默认使用系统
+                    .selectionMode(PictureConfig.MULTIPLE)// 多选 or 单选
+                    //.isSingleDirectReturn(cb_single_back.isChecked())// 单选模式下是否直接返回，PictureConfig.SINGLE模式下有效
+                    .previewImage(true)// 是否可预览图片
+                    .isCamera(true)// 是否显示拍照按钮
+                    //.isMultipleSkipCrop(false)// 多图裁剪时是否支持跳过，默认支持
+                    //.isMultipleRecyclerAnimation(false)// 多图裁剪底部列表显示动画效果
+                    .isZoomAnim(true)// 图片列表点击 缩放效果 默认true
+                    .compress(true)// 是否压缩
+                    .compressQuality(80)// 图片压缩后输出质量 0~ 100
+                    .synOrAsy(true)//同步true或异步false 压缩 默认同步
+                    .withAspectRatio(1, 1)// 裁剪比例 如16:9 3:2 3:4 1:1 可自定义
+                    .freeStyleCropEnabled(true)// 裁剪框是否可拖拽
+                    .previewEggs(true)// 预览图片时 是否增强左右滑动图片体验(图片滑动一半即可看到上一张是否选中)
+                    .minimumCompressSize(100);
+
+            if (pictureSelectType == 0) {
+                pictureSelectionModel.forResult(PictureConfig.CHOOSE_REQUEST);
+            } else {
+                pictureSelectionModel.forResult(PictureConfig.SINGLE);
+            }
+        }
+    };
 
     @Override
     public void onAttach(Context context) {
@@ -135,7 +181,7 @@ private int index = 1;
             throw new ClassCastException(context.toString() + "must implement commonDialogFragmentInterface");
         }
     }
-    
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
@@ -151,7 +197,7 @@ private int index = 1;
         mDialog.setContentView(R.layout.escort_guide_authentication);
 
         initView();
-        
+
         mDialog.setCanceledOnTouchOutside(true);
         window = mDialog.getWindow();
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
@@ -169,7 +215,7 @@ private int index = 1;
                 dismiss();
             }
         });
-        
+
         Typeface font = Typeface.createFromAsset(MyApplication.getContext().getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
         FontManager.markAsIconContainer(mDialog.findViewById(R.id.custom_actionbar), font);
 
@@ -201,7 +247,7 @@ private int index = 1;
         adapterReward.setList(selectRewardList);
         adapterReward.setSelectMax(1);
         addRewardQRRV.setAdapter(adapterReward);
-        
+
         selectSubject = mDialog.findViewById(R.id.select_subject);
         authenticateWrapper = mDialog.findViewById(R.id.talent_authentication_wrapper);
         navigation = mDialog.findViewById(R.id.navigation);
@@ -211,27 +257,7 @@ private int index = 1;
 
         initSubjectJsondata();
 
-        Button applyGuideBtn = mDialog.findViewById(R.id.apply_guide);
-        applyGuideBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                authenticateWrapper.getChildAt(0).setVisibility(View.GONE);
-                authenticateWrapper.getChildAt(1).setVisibility(View.VISIBLE);
-                navigation.setVisibility(View.VISIBLE);
-            }
-        });
-        
-        Button developExperienceBtn = mDialog.findViewById(R.id.develop_experience);
-        developExperienceBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                authenticateWrapper.getChildAt(0).setVisibility(View.GONE);
-                authenticateWrapper.getChildAt(1).setVisibility(View.VISIBLE);
-                navigation.setVisibility(View.VISIBLE);
-            }
-        });
-        
-         prevBtn.setOnClickListener(new View.OnClickListener() {
+        prevBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (index > 0) {
@@ -248,7 +274,7 @@ private int index = 1;
                 }
             }
         });
-        
+
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -274,53 +300,7 @@ private int index = 1;
             }
         });
     }
-    
-    private GridImageAdapter.onAddPicClickListener onAddPicClickListener = new GridImageAdapter.onAddPicClickListener() {
-        @Override
-        public void onAddPicClick() {
-            if (pictureSelectType == 0) {
-                maxSelectNum = 6;
-            } else {
-                maxSelectNum = 1;
-            }
-            PictureSelectionModel pictureSelectionModel = PictureSelector.create(EscortGuideAuthenticationDialogFragment.this).openGallery(PictureMimeType.ofImage());
-            pictureSelectionModel.loadImageEngine(GlideEngine.createGlideEngine())// 外部传入图片加载引擎，必传项
-                    .theme(R.style.picture_WeChat_style)// 主题样式设置 具体参考 values/styles   用法：R.style.picture.white.style v2.3.3后 建议使用setPictureStyle()动态方式
-                    .isWeChatStyle(true)// 是否开启微信图片选择风格
-                    //.setLanguage(language)// 设置语言，默认中文
-                    .setPictureStyle(addDynamicsActivity.getWeChatStyle())// 动态自定义相册主题
-                    .setPictureCropStyle(addDynamicsActivity.getCropParameterStyle())// 动态自定义裁剪主题
-                    .setPictureWindowAnimationStyle(new PictureWindowAnimationStyle())// 自定义相册启动退出动画
-                    .isWithVideoImage(true)// 图片和视频是否可以同选,只在ofAll模式下有效
-                    .maxSelectNum(maxSelectNum)// 最大图片选择数量
-                    .minSelectNum(1)// 最小选择数量
-       .imageSpanCount(4)// 每行显示个数
-                    .isReturnEmpty(false)// 未选择数据时点击按钮是否可以返回
-                    //.isAndroidQTransform(false)// 是否需要处理Android Q 拷贝至应用沙盒的操作，只针对compress(false); && enableCrop(false);有效,默认处理
-                    .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)// 设置相册Activity方向，不设置默认使用系统
-                    .selectionMode(PictureConfig.MULTIPLE)// 多选 or 单选
-                    //.isSingleDirectReturn(cb_single_back.isChecked())// 单选模式下是否直接返回，PictureConfig.SINGLE模式下有效
-                    .previewImage(true)// 是否可预览图片
-                    .isCamera(true)// 是否显示拍照按钮
-                    //.isMultipleSkipCrop(false)// 多图裁剪时是否支持跳过，默认支持
-                    //.isMultipleRecyclerAnimation(false)// 多图裁剪底部列表显示动画效果
-                    .isZoomAnim(true)// 图片列表点击 缩放效果 默认true
-                    .compress(true)// 是否压缩
-                    .compressQuality(80)// 图片压缩后输出质量 0~ 100
-                    .synOrAsy(true)//同步true或异步false 压缩 默认同步
-                    .withAspectRatio(1, 1)// 裁剪比例 如16:9 3:2 3:4 1:1 可自定义
-                    .freeStyleCropEnabled(true)// 裁剪框是否可拖拽
-                    .previewEggs(true)// 预览图片时 是否增强左右滑动图片体验(图片滑动一半即可看到上一张是否选中)
-                    .minimumCompressSize(100);
-                    
-                    if (pictureSelectType == 0) {
-                pictureSelectionModel.forResult(PictureConfig.CHOOSE_REQUEST);
-            } else {
-                pictureSelectionModel.forResult(PictureConfig.SINGLE);
-            }
-        }
-    };
-    
+
     private void submitNotice() {
         final AlertDialog.Builder normalDialogBuilder =
                 new AlertDialog.Builder(getContext());
@@ -337,7 +317,7 @@ private int index = 1;
         AlertDialog normalDialog = normalDialogBuilder.create();
         normalDialog.show();
     }
-    
+
     private void submit() {
         Map<String, String> authenMap = new HashMap<>();
         authenMap.put("introduction", introductionET.getText().toString());
@@ -346,8 +326,8 @@ private int index = 1;
         if (!TextUtils.isEmpty(chargeIntroduction.getText().toString())) {
             authenMap.put("charge_desc", chargeIntroduction.getText().toString());
         }
-        
-         if (selectList.size() > 0) {
+
+        if (selectList.size() > 0) {
             for (LocalMedia media : selectList) {
                 selectFileList.add(new File(media.getCompressPath()));
             }
@@ -365,7 +345,7 @@ private int index = 1;
         uploadPictures(authenMap, "authen", selectFileList);
     }
 
-private boolean validCheck(int index) {
+    private boolean validCheck(int index) {
         Slog.d(TAG, "------------------------>validCheck: " + index);
         boolean valid = false;
         switch (index) {
@@ -377,17 +357,17 @@ private boolean validCheck(int index) {
                     introductionET.setError(getContext().getResources().getString(R.string.talent_introduction_empty));
                 }
                 break;
-                case 2:
+            case 2:
                 valid = true;
                 break;
             case 3:
                 valid = isPicked;
-                if (!isPicked){
+                if (!isPicked) {
                     Toast.makeText(getContext(), getResources().getString(R.string.subject_select_notice), Toast.LENGTH_LONG).show();
                 }
                 break;
-                
-                case 4:
+
+            case 4:
                 String chargeAmount = chargeSetting.getText().toString();
                 if (!TextUtils.isEmpty(chargeAmount)) {
                     valid = true;
@@ -405,24 +385,24 @@ private boolean validCheck(int index) {
                     valid = false;
                     return valid;
                 }
-                
-                if (selectRewardList.size() == 0){
+
+                if (selectRewardList.size() == 0) {
                     Toast.makeText(getContext(), getResources().getString(R.string.qr_code_notice), Toast.LENGTH_LONG).show();
                     valid = false;
                     return valid;
-                }else {
+                } else {
                     valid = true;
                 }
 
                 break;
-                default:
-                    valid = false;
-                    break;
+            default:
+                valid = false;
+                break;
         }
 
         return valid;
     }
-    
+
     private void processCurrent(int index) {
         Slog.d(TAG, "------------------------>processCurrent: " + index);
         switch (index) {
@@ -438,7 +418,7 @@ private boolean validCheck(int index) {
     }
 
 
-private void initSubjectJsondata() {
+    private void initSubjectJsondata() {
 
         final CommonPickerView commonPickerView = new CommonPickerView();
         if (threadIndustry == null) {
@@ -452,7 +432,7 @@ private void initSubjectJsondata() {
             });
             threadIndustry.start();
         }
-        
+
         selectSubject.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -479,7 +459,7 @@ private void initSubjectJsondata() {
         pvOptions.setPicker(subjectMainItems, subjectSubItems);
         pvOptions.show();
     }
-    
+
     private void addMateria(GridImageAdapter imageAdapter) {
         imageAdapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
@@ -491,7 +471,7 @@ private void initSubjectJsondata() {
                     switch (mediaType) {
                         case PictureConfig.TYPE_IMAGE:
                             //PictureSelector.create(MainActivity.this).externalPicturePreview(position, "/custom_file", selectList);
-                            PictureSelector.create(EscortGuideAuthenticationDialogFragment.this)
+                            PictureSelector.create(TravelGuideAuthenticationDialogFragment.this)
                                     .themeStyle(R.style.picture_WeChat_style) // xml设置主题
                                     .setPictureStyle(addDynamicsActivity.getWeChatStyle())// 动态自定义相册主题
                                     //.setPictureWindowAnimationStyle(animationStyle)// 自定义页面启动动画
@@ -502,16 +482,16 @@ private void initSubjectJsondata() {
                                     .openExternalPreview(position, selectList);
                             break;
                         case PictureConfig.TYPE_VIDEO:
-                            PictureSelector.create(EscortGuideAuthenticationDialogFragment.this).externalPictureVideo(media.getPath());
+                            PictureSelector.create(TravelGuideAuthenticationDialogFragment.this).externalPictureVideo(media.getPath());
                             // 预览视频
-                            PictureSelector.create(EscortGuideAuthenticationDialogFragment.this)
+                            PictureSelector.create(TravelGuideAuthenticationDialogFragment.this)
                                     .themeStyle(R.style.picture_WeChat_style)
                                     .setPictureStyle(addDynamicsActivity.getWeChatStyle())// 动态自定义相册主题
                                     .externalPictureVideo(media.getPath());
                             break;
-                             case PictureConfig.TYPE_AUDIO:
+                        case PictureConfig.TYPE_AUDIO:
                             // 预览音频
-                            PictureSelector.create(EscortGuideAuthenticationDialogFragment.this)
+                            PictureSelector.create(TravelGuideAuthenticationDialogFragment.this)
                                     .externalPictureAudio(
                                             media.getPath().startsWith("content://") ? media.getAndroidQToPath() : media.getPath());
                             break;
@@ -520,8 +500,8 @@ private void initSubjectJsondata() {
             }
         });
     }
-    
-     @Override
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
@@ -543,7 +523,7 @@ private void initSubjectJsondata() {
             }
         }
     }
-    
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -560,7 +540,7 @@ private void initSubjectJsondata() {
                 break;
         }
     }
-    
+
     private void initMatchMakerTalent() {
         LinearLayout explanationLL = mDialog.findViewById(R.id.explanation);
         ConstraintLayout authenticationCL = mDialog.findViewById(R.id.talent_authentication);
@@ -576,7 +556,7 @@ private void initSubjectJsondata() {
         });
     }
 
-private void initMatchMakerAuthentication() {
+    private void initMatchMakerAuthentication() {
         TextView title = mDialog.findViewById(R.id.title);
         title.setText("提交达人申请");
         Button save = mDialog.findViewById(R.id.submit);
@@ -590,7 +570,7 @@ private void initMatchMakerAuthentication() {
                 }
             }
         });
-        
+
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -612,7 +592,7 @@ private void initMatchMakerAuthentication() {
 
         registerBroadcast();
     }
-    
+
     private void submitMatchMaker() {
         showProgressDialog("");
         FormBody.Builder builder = new FormBody.Builder()
@@ -621,7 +601,7 @@ private void initMatchMakerAuthentication() {
                 .add("type", String.valueOf(type));
 
         RequestBody requestBody = builder.build();
-        
+
         HttpUtil.sendOkHttpRequest(mContext, SUBMIT_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
@@ -638,8 +618,8 @@ private void initMatchMakerAuthentication() {
                     mDialog.dismiss();
                 }
             }
-            
-             @Override
+
+            @Override
             public void onFailure(Call call, IOException e) {
 
             }
@@ -661,14 +641,14 @@ private void initMatchMakerAuthentication() {
 
         return true;
     }
-    
-     private void uploadPictures(Map<String, String> params, String picKey, List<File> files) {
+
+    private void uploadPictures(Map<String, String> params, String picKey, List<File> files) {
         showProgressDialog("");
         HttpUtil.uploadPictureHttpRequest(getContext(), params, picKey, files, SUBMIT_URL, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-            
-            if (response.body() != null) {
+
+                if (response.body() != null) {
                     try {
                         String responseText = response.body().string();
                         Slog.d(TAG, "---------------->response: " + responseText);
@@ -684,7 +664,7 @@ private void initMatchMakerAuthentication() {
                             selectRewardList.clear();
                             selectRewardFileList.clear();
                             PictureFileUtils.deleteAllCacheDirFile(getContext());
-                 startTalentDetailActivity();
+                            startTalentDetailActivity();
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -705,7 +685,7 @@ private void initMatchMakerAuthentication() {
         });
 
     }
-    
+
     private void startTalentDetailActivity() {
         Intent intent = new Intent(getContext(), TalentDetailsActivity.class);
         //intent.putExtra("talent", talent);
@@ -722,7 +702,7 @@ private void initMatchMakerAuthentication() {
         intentFilter.addAction(SUBMIT_TALENT_AUTHENTICATION_ACTION_BROADCAST);
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, intentFilter);
     }
-    
+
     //unregister local broadcast
     private void unRegisterBroadcast() {
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
@@ -741,8 +721,8 @@ private void initMatchMakerAuthentication() {
             }
         }
     }
-    
-     private void sendTalentAddedBroadcast() {
+
+    private void sendTalentAddedBroadcast() {
         Intent intent = new Intent(TALENT_ADD_BROADCAST);
         intent.putExtra("aid", aid);
         LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
@@ -752,7 +732,7 @@ private void initMatchMakerAuthentication() {
     public void onCancel(DialogInterface dialogInterface) {
         super.onCancel(dialogInterface);
     }
-    
+
     private class QRCodeSetBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {

@@ -297,14 +297,12 @@ public class AddPictureActivity extends BaseAppCompatActivity {
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case PictureConfig.CHOOSE_REQUEST:
-                    // Í¼Æ¬Ñ¡Ôñ½á¹û»Øµ÷
-                    selectList = PictureSelector.obtainMultipleResult(data);
-                    // ÀýÈç LocalMedia ÀïÃæ·µ»ØÈýÖÖpath
-                    // 1.media.getPath(); ÎªÔ­Í¼path
-                    // 2.media.getCutPath();Îª²Ã¼ôºópath£¬ÐèÅÐ¶Ïmedia.isCut();ÊÇ·ñÎªtrue
-                    // 3.media.getCompressPath();ÎªÑ¹Ëõºópath£¬ÐèÅÐ¶Ïmedia.isCompressed();ÊÇ·ñÎªtrue
-                    // Èç¹û²Ã¼ô²¢Ñ¹ËõÁË£¬ÒÑÈ¡Ñ¹ËõÂ·¾¶Îª×¼£¬ÒòÎªÊÇÏÈ²Ã¼ôºóÑ¹ËõµÄ
-                    
+                    if (selectList.size() == 0){
+                        selectList = PictureSelector.obtainMultipleResult(data);
+                    }else {
+                        selectList.addAll(PictureSelector.obtainMultipleResult(data));
+                    }
+
                     Slog.d(TAG, "Selected pictures: " + selectList.size());
                     //activity_picture_array = new String[selectList.size()];
                     if(selectList.size() > 0){

@@ -239,6 +239,8 @@ public class SubGroupDetailsListAdapter extends RecyclerView.Adapter<SubGroupDet
             holder.dynamicsComment.setText("");
             holder.dynamicsComment.setText(mContext.getResources().getString(R.string.fa_comment_o));
         }
+
+        holder.createdView.setText(dynamic.getCreatedString());
     }
 
     private static void setContentView(SubGroupActivityVH holder, String pictures, Dynamic dynamic, final int position) {
@@ -406,7 +408,7 @@ public class SubGroupDetailsListAdapter extends RecyclerView.Adapter<SubGroupDet
         TextView operation;
         GridLayout dynamicsGrid;
         LinearLayout commentList;
-        LinearLayout contentMeta;
+        ConstraintLayout contentMeta;
 
         public SubGroupActivityVH(View view) {
             super(view);
@@ -417,7 +419,7 @@ public class SubGroupDetailsListAdapter extends RecyclerView.Adapter<SubGroupDet
             profile = (TextView) view.findViewById(R.id.profile);
             contentView = (TextView) view.findViewById(R.id.dynamics_content);
             dynamicsGrid = (GridLayout) view.findViewById(R.id.dynamics_picture_grid);
-            //createdView = (TextView) view.findViewById(R.id.dynamic_time);
+            createdView = (TextView) view.findViewById(R.id.dynamic_created);
             dynamicsPraiseCount = (TextView) view.findViewById(R.id.dynamic_praise_count);
             dynamicsPraise = (TextView) view.findViewById(R.id.dynamic_praise);
             dynamicsComment = (TextView) view.findViewById(R.id.dynamic_comment);

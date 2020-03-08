@@ -404,7 +404,12 @@ public class AddDynamicsActivity extends BaseAppCompatActivity {
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case PictureConfig.CHOOSE_REQUEST:
-                    selectList = PictureSelector.obtainMultipleResult(data);
+                    if (selectList.size() > 0){
+                        selectList.addAll(PictureSelector.obtainMultipleResult(data));
+                    }else {
+                        selectList = PictureSelector.obtainMultipleResult(data);
+                    }
+
                     Slog.d(TAG, "Selected pictures: " + selectList.size());
                     for (LocalMedia media : selectList) {
                         Log.i(TAG, "是否压缩:" + media.isCompressed());
