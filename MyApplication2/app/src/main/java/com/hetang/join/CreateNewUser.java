@@ -9,13 +9,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import androidx.annotation.NonNull;
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -35,14 +28,16 @@ import com.amap.api.location.AMapLocationListener;
 import com.bigkoo.pickerview.builder.OptionsPickerBuilder;
 import com.bigkoo.pickerview.listener.OnOptionsSelectListener;
 import com.bigkoo.pickerview.view.OptionsPickerView;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.hetang.R;
 import com.hetang.common.BaseAppCompatActivity;
 import com.hetang.common.HandlerTemp;
+import com.hetang.common.MyApplication;
 import com.hetang.util.CommonBean;
 import com.hetang.util.CommonPickerView;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
-import com.hetang.common.MyApplication;
 import com.hetang.util.Slog;
 
 import org.angmarch.views.NiceSpinner;
@@ -51,10 +46,12 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
-
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -72,38 +69,18 @@ public class CreateNewUser extends BaseAppCompatActivity {
     private static final String TAG = "CreateNewUser";
 
     private static final String CREATE_USER_URL = HttpUtil.DOMAIN + "?q=account_manager/create_user";
-    private String account;
-
-    TextView statusBarBack;
-    private LinearLayout createInitLayout;
-    private LinearLayout createNextLayout;
-    private TextInputLayout nickNameInputLayout;
-    private TextInputEditText nickNameEditText;
-    private TextInputLayout passwordInputLayout;
-    private TextInputEditText passwordEditText;
-    private TextInputLayout repeatPasswordInputLayout;
-    private TextInputEditText repeatPasswordEditText;
-    private Button prevBtn;
-    private Button actionBtn;
-    private Button manualSelectBtn;
-    private RadioGroup sexSelect;
-    private TextView livingTextView;
-    private ProgressBar locatingProgressBar;
-    private TextView livingSelectNotice;
-    private Context mContext;
-
-    private boolean actionDone = false;
-    private String nickName;
-    private String password;
-    private String repeatPassword;
-    private int sex = 0;
-    private String living;
-    private boolean permissionsAcquired = true;
-    private boolean isLocated = false;
-    private Handler handler;
     private static final int USER_CREATE_DONE = 0;
-    
-    private int mSituation = 0;
+    private static final int MSG_LOAD_INDUSTRY_DATA = 0x0001;
+    private static final int MSG_LOAD_CITY_DATA = 0x0002;
+    private static final int MSG_LOAD_SUCCESS = 0x0003;
+    private static final int MSG_LOAD_FAILED = 0x0004;
+    //声明AMapLocationClient类对象
+    public AMapLocationClient mLocationClient = null;
+    //声明定位回调监听器
+    public AMapLocationListener mLocationListener;
+    //声明AMapLocationClientOption对象
+    public AMapLocationClientOption mLocationOption = null;
+    TextView statusBarBack;
     boolean SITUATIONSELECTED = false;
     boolean isDegreeSelected = false;
     boolean isIndustrySelected = false;
@@ -120,28 +97,42 @@ public class CreateNewUser extends BaseAppCompatActivity {
     TextInputEditText industryEditText;
     String[] degrees;
     String degree = "";
-
-    private static final int MSG_LOAD_INDUSTRY_DATA = 0x0001;
-    private static final int MSG_LOAD_CITY_DATA = 0x0002;
-    private static final int MSG_LOAD_SUCCESS = 0x0003;
-    private static final int MSG_LOAD_FAILED = 0x0004;
-
+    private String account;
+    private LinearLayout createInitLayout;
+    private LinearLayout createNextLayout;
+    private TextInputLayout nickNameInputLayout;
+    private TextInputEditText nickNameEditText;
+    private TextInputLayout passwordInputLayout;
+    private TextInputEditText passwordEditText;
+    private TextInputLayout repeatPasswordInputLayout;
+    private TextInputEditText repeatPasswordEditText;
+    private Button prevBtn;
+    private Button actionBtn;
+    private Button manualSelectBtn;
+    private RadioGroup sexSelect;
+    private TextView livingTextView;
+    private ProgressBar locatingProgressBar;
+    private TextView livingSelectNotice;
+    private Context mContext;
+    private boolean actionDone = false;
+    private String nickName;
+    private String password;
+    private String repeatPassword;
+    private int sex = 0;
+    private String living;
+    private boolean permissionsAcquired = true;
+    private boolean isLocated = false;
+    private Handler handler;
+    private int mSituation = 0;
     private Thread threadIndustry;
     private Thread threadCity;
-    
     private ArrayList<CommonBean> industryMainItems = new ArrayList<>();
     private ArrayList<ArrayList<String>> industrySubItems = new ArrayList<>();
-    //声明AMapLocationClient类对象
-    public AMapLocationClient mLocationClient = null;
-    //声明定位回调监听器
-    public AMapLocationListener mLocationListener;
-    //声明AMapLocationClientOption对象
-    public AMapLocationClientOption mLocationOption = null;
     private ArrayList<CommonBean> provinceItems = new ArrayList<>();
     private ArrayList<ArrayList<String>> cityItems = new ArrayList<>();
-    
-    private String[] permissions = { Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_WIFI_STATE};
-    
+
+    private String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_WIFI_STATE};
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -157,7 +148,7 @@ public class CreateNewUser extends BaseAppCompatActivity {
         createNextLayout = findViewById(R.id.create_next);
         nickNameInputLayout = findViewById(R.id.nickname_input_layout);
         nickNameEditText = findViewById(R.id.nickname_edittext);
-        
+
         passwordInputLayout = findViewById(R.id.password_input_layout);
         passwordEditText = findViewById(R.id.password_edittext);
         repeatPasswordInputLayout = findViewById(R.id.repeat_password_input_layout);
@@ -170,7 +161,7 @@ public class CreateNewUser extends BaseAppCompatActivity {
         locatingProgressBar = findViewById(R.id.locating_progressbar);
         livingSelectNotice = findViewById(R.id.living_select_notice);
         studentLayout = findViewById(R.id.student);
-        
+
         workLayout = findViewById(R.id.work);
         situationSelect = findViewById(R.id.situationRG);
         majorInputLayout = findViewById(R.id.major_input_layout);
@@ -182,35 +173,35 @@ public class CreateNewUser extends BaseAppCompatActivity {
         industryInputLayout = findViewById(R.id.industry_input_layout);
         industryEditText = findViewById(R.id.industry_edittext);
         degrees = getResources().getStringArray(R.array.degrees);
-        
+
         sexSelect.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-            int id = group.getCheckedRadioButtonId();
-            if(id == R.id.radioMale){
-                sex = 0;
-            }else {
-                sex = 1;
-            }
+                int id = group.getCheckedRadioButtonId();
+                if (id == R.id.radioMale) {
+                    sex = 0;
+                } else {
+                    sex = 1;
+                }
             }
         });
-        
+
         actionBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(actionDone == false){//not complete
-                    if(firstPageInitAndCheck() == true){
-                        if(prevBtn.getVisibility() == View.INVISIBLE){
+                if (actionDone == false) {//not complete
+                    if (firstPageInitAndCheck() == true) {
+                        if (prevBtn.getVisibility() == View.INVISIBLE) {
                             prevBtn.setVisibility(View.VISIBLE);
                         }
-                        
+
                         createInitLayout.setVisibility(View.GONE);
                         createNextLayout.setVisibility(View.VISIBLE);
                         actionBtn.setText(getResources().getText(R.string.done));
                         actionBtn.setBackground(getDrawable(R.drawable.btn_stress));
                         actionBtn.setTextColor(getResources().getColor(R.color.white));
                         actionDone = true;
-                        
+
                         NiceSpinner niceSpinnerDegree = findViewById(R.id.nice_spinner_degree);
                         final List<String> degreeList = new LinkedList<>(Arrays.asList(degrees));
                         niceSpinnerDegree.setBackgroundResource(R.drawable.border_all);
@@ -224,30 +215,30 @@ public class CreateNewUser extends BaseAppCompatActivity {
                             }
 
                         });
-                        
+
                         handler.sendEmptyMessage(MSG_LOAD_INDUSTRY_DATA);
 
                         situationSelect.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                             @Override
                             public void onCheckedChanged(RadioGroup group, int checkedId) {
                                 int id = group.getCheckedRadioButtonId();
-                                if(id == R.id.radioStudent){
+                                if (id == R.id.radioStudent) {
                                     mSituation = 0;
-                                    if(studentLayout.getVisibility() == View.GONE){
+                                    if (studentLayout.getVisibility() == View.GONE) {
                                         studentLayout.setVisibility(View.VISIBLE);
                                     }
-                                    if(workLayout.getVisibility() != View.GONE){
+                                    if (workLayout.getVisibility() != View.GONE) {
                                         workLayout.setVisibility(View.GONE);
                                     }
-                                    
-                                    }else {
+
+                                } else {
                                     mSituation = 1;
 
-                                    if(workLayout.getVisibility() == View.GONE){
+                                    if (workLayout.getVisibility() == View.GONE) {
                                         workLayout.setVisibility(View.VISIBLE);
                                     }
 
-                                    if(studentLayout.getVisibility() != View.GONE){
+                                    if (studentLayout.getVisibility() != View.GONE) {
                                         studentLayout.setVisibility(View.GONE);
                                     }
 
@@ -257,33 +248,33 @@ public class CreateNewUser extends BaseAppCompatActivity {
                                 SITUATIONSELECTED = true;
                             }
                         });
-                        
+
                         industryEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                             @Override
                             public void onFocusChange(View view, boolean b) {
-                                if(b){
-                                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                                    imm.hideSoftInputFromWindow(industryEditText.getWindowToken(),0);
+                                if (b) {
+                                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                                    imm.hideSoftInputFromWindow(industryEditText.getWindowToken(), 0);
                                     showPickerView(true);
                                 }
                             }
                         });
 
                     }
-                    
-                    if(statusBarBack.getVisibility() != View.INVISIBLE){
+
+                    if (statusBarBack.getVisibility() != View.INVISIBLE) {
                         statusBarBack.setVisibility(View.INVISIBLE);
                     }
 
-                }else {
-                    if(checkNextInput() == true){
+                } else {
+                    if (checkNextInput() == true) {
                         saveUserInfo();
                     }
                 }
 
             }
         });
-        
+
         prevBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -295,16 +286,16 @@ public class CreateNewUser extends BaseAppCompatActivity {
                 actionBtn.setTextColor(getResources().getColor(R.color.background));
                 actionDone = false;
 
-                if(statusBarBack.getVisibility() == View.INVISIBLE){
+                if (statusBarBack.getVisibility() == View.INVISIBLE) {
                     statusBarBack.setVisibility(View.VISIBLE);
                 }
 
             }
         });
-        
-        }
-    
-    private boolean firstPageInitAndCheck(){
+
+    }
+
+    private boolean firstPageInitAndCheck() {
 
         nickName = nickNameEditText.getText().toString();
         //realName = realNameEditText.getText().toString();
@@ -312,26 +303,26 @@ public class CreateNewUser extends BaseAppCompatActivity {
         repeatPassword = repeatPasswordEditText.getText().toString();
 
         getLocation();
-        
-        if(TextUtils.isEmpty(nickName)){
+
+        if (TextUtils.isEmpty(nickName)) {
             nickNameInputLayout.setError(getResources().getString(R.string.nickname_is_empty));
             return false;
         }
-        
-        if(password.length() < 6){
+
+        if (password.length() < 6) {
             passwordInputLayout.setError(getResources().getString(R.string.password_length_error));
             return false;
         }
 
-        if(!password.equals(repeatPassword)){
+        if (!password.equals(repeatPassword)) {
             repeatPasswordInputLayout.setError(getResources().getString(R.string.password_repeat_error));
             return false;
         }
 
         return true;
     }
-    
-    private void getLocation(){
+
+    private void getLocation() {
         //初始化AMapLocationClientOption对象
         mLocationOption = new AMapLocationClientOption();
 
@@ -341,16 +332,16 @@ public class CreateNewUser extends BaseAppCompatActivity {
                 if (aMapLocation != null) {
                     if (aMapLocation.getErrorCode() == 0) {
                         String city = aMapLocation.getCity();
-                        living = city.substring(0, city.length()-1);
-                        livingTextView.setText(getResources().getString(R.string.living)+":"+living);
+                        living = city.substring(0, city.length() - 1);
+                        livingTextView.setText(getResources().getString(R.string.living) + ":" + living);
                         isLocated = true;
                         locatingProgressBar.setVisibility(View.GONE);
                         manualSelectBtn.setText(getResources().getString(R.string.correction));
 
-                    }else {
-                        
+                    } else {
+
                         //定位失败时，可通过ErrCode（错误码）信息来确定失败的原因，errInfo是错误信息，详见错误码表。
-                        Slog.e("AmapError","location Error, ErrCode:"
+                        Slog.e("AmapError", "location Error, ErrCode:"
                                 + aMapLocation.getErrorCode() + ", errInfo:"
                                 + aMapLocation.getErrorInfo());
                         livingTextView.setText(getResources().getString(R.string.location_error));
@@ -361,7 +352,7 @@ public class CreateNewUser extends BaseAppCompatActivity {
                 }
             }
         };
-        
+
         //初始化定位
         mLocationClient = new AMapLocationClient(getApplicationContext());
         //设置定位回调监听
@@ -373,7 +364,7 @@ public class CreateNewUser extends BaseAppCompatActivity {
         mLocationOption.setOnceLocationLatest(true);
         //单位是毫秒，默认30000毫秒，建议超时时间不要低于8000毫秒。
         mLocationOption.setHttpTimeOut(80000);
-        
+
         //给定位客户端对象设置定位参数
         mLocationClient.setLocationOption(mLocationOption);
         //启动定位
@@ -388,55 +379,55 @@ public class CreateNewUser extends BaseAppCompatActivity {
             }
         });
     }
-    
-    private boolean checkNextInput(){
 
-        if(SITUATIONSELECTED == true){
-            if(mSituation == 0){
-                if(TextUtils.isEmpty(universityEditText.getText().toString())){
+    private boolean checkNextInput() {
+
+        if (SITUATIONSELECTED == true) {
+            if (mSituation == 0) {
+                if (TextUtils.isEmpty(universityEditText.getText().toString())) {
                     universityInputLayout.setError(getResources().getString(R.string.university_empty));
                     return false;
                 }
-                if(TextUtils.isEmpty(majorEditText.getText().toString())){
+                if (TextUtils.isEmpty(majorEditText.getText().toString())) {
                     majorInputLayout.setError(getResources().getString(R.string.major_empty));
                     return false;
                 }
-                
+
                 if (isDegreeSelected == false) {
                     Toast.makeText(this, "请选择学历", Toast.LENGTH_LONG).show();
                     return false;
-                }else {
-                    if (degree.equals(getResources().getString(R.string.degree))){
+                } else {
+                    if (degree.equals(getResources().getString(R.string.degree))) {
                         Toast.makeText(this, "请选择学历", Toast.LENGTH_LONG).show();
                         return false;
                     }
                 }
-                
-                }else {
-                if(TextUtils.isEmpty(positionEditText.getText().toString())){
+
+            } else {
+                if (TextUtils.isEmpty(positionEditText.getText().toString())) {
                     positionInputLayout.setError(getResources().getString(R.string.profession_empty));
                     return false;
                 }
 
-                if(TextUtils.isEmpty(industryEditText.getText().toString())){
+                if (TextUtils.isEmpty(industryEditText.getText().toString())) {
                     industryInputLayout.setError(getResources().getString(R.string.industry_empty));
                     return false;
                 }
             }
-        }else {
+        } else {
             Toast.makeText(this, "请选择当前状态", Toast.LENGTH_LONG).show();
             return false;
         }
-        
-        if(isLocated == false){
+
+        if (isLocated == false) {
             livingSelectNotice.setVisibility(View.VISIBLE);
             return false;
         }
 
         return true;
     }
-    
-    private void saveUserInfo(){
+
+    private void saveUserInfo() {
         RequestBody requestBody = new FormBody.Builder()
                 .add("user_info", getUserInfoJsonObject().toString())
                 .build();
@@ -445,14 +436,14 @@ public class CreateNewUser extends BaseAppCompatActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
-                Slog.d(TAG, "saveUserInfo response : "+responseText);
+                Slog.d(TAG, "saveUserInfo response : " + responseText);
                 if (!TextUtils.isEmpty(responseText)) {
                     try {
                         JSONObject createUser = new JSONObject(responseText);
                         boolean status = createUser.getBoolean("saved");
 
-                        Slog.d(TAG, " saveUserInfo response status: " +status);
-                        if(status == true){
+                        Slog.d(TAG, " saveUserInfo response status: " + status);
+                        if (status == true) {
                             Slog.d(TAG, "=====send message");
                             handler.sendEmptyMessage(USER_CREATE_DONE);
                         }
@@ -462,27 +453,28 @@ public class CreateNewUser extends BaseAppCompatActivity {
                 }
                 finish();
             }
+
             @Override
             public void onFailure(Call call, IOException e) {
 
             }
         });
     }
-    
+
     private JSONObject getUserInfoJsonObject() {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("account", account);
             jsonObject.put("name", nickName);
             jsonObject.put("situation", mSituation);
-             if (mSituation == 0){
-                 jsonObject.put("university", universityEditText.getText().toString());
-                 jsonObject.put("major", majorEditText.getText().toString());
-                 jsonObject.put("degree", getDegreeIndex(degree));
-             }else {
-                 jsonObject.put("position", positionEditText.getText().toString());
-                 jsonObject.put("industry", industryEditText.getText().toString());
-             }
+            if (mSituation == 0) {
+                jsonObject.put("university", universityEditText.getText().toString());
+                jsonObject.put("major", majorEditText.getText().toString());
+                jsonObject.put("degree", getDegreeIndex(degree));
+            } else {
+                jsonObject.put("position", positionEditText.getText().toString());
+                jsonObject.put("industry", industryEditText.getText().toString());
+            }
             jsonObject.put("password", password);
             jsonObject.put("sex", sex);
             jsonObject.put("living", living);
@@ -491,29 +483,29 @@ public class CreateNewUser extends BaseAppCompatActivity {
         }
         return jsonObject;
     }
-    
-    private void initJsondata(String jsonFile, boolean isIndustry){
+
+    private void initJsondata(String jsonFile, boolean isIndustry) {
         CommonPickerView commonPickerView = new CommonPickerView();
-        if(isIndustry == true){
+        if (isIndustry == true) {
             industryMainItems = commonPickerView.getOptionsMainItem(this, jsonFile);
             industrySubItems = commonPickerView.getOptionsSubItems(industryMainItems);
-        }else {
+        } else {
             provinceItems = commonPickerView.getOptionsMainItem(this, jsonFile);
             cityItems = commonPickerView.getOptionsSubItems(provinceItems);
         }
 
         handler.sendEmptyMessage(MSG_LOAD_SUCCESS);
     }
-    
+
     private void showPickerView(boolean isIndustry) {// 弹出行业选择器
 
         //条件选择器
         OptionsPickerView pvOptions;
-        if(isIndustry){
-            pvOptions= new OptionsPickerBuilder(this, new OnOptionsSelectListener() {
+        if (isIndustry) {
+            pvOptions = new OptionsPickerBuilder(this, new OnOptionsSelectListener() {
 
                 @Override
-                public void onOptionsSelect(int options1, int option2, int options3 ,View v) {
+                public void onOptionsSelect(int options1, int option2, int options3, View v) {
                     //返回的分别是二个级别的选中位置
                     String tx = industryMainItems.get(options1).getPickerViewText()
                             + industrySubItems.get(options1).get(option2);
@@ -523,13 +515,13 @@ public class CreateNewUser extends BaseAppCompatActivity {
 
                 }
             }).build();
-            
+
             pvOptions.setPicker(industryMainItems, industrySubItems);
-        }else {
-            pvOptions= new OptionsPickerBuilder(this, new OnOptionsSelectListener() {
+        } else {
+            pvOptions = new OptionsPickerBuilder(this, new OnOptionsSelectListener() {
 
                 @Override
-                public void onOptionsSelect(int options1, int option2, int options3 ,View v) {
+                public void onOptionsSelect(int options1, int option2, int options3, View v) {
                     //返回的分别是二个级别的选中位置
                     isLocated = true;
                     String city = cityItems.get(options1).get(option2);
@@ -544,9 +536,9 @@ public class CreateNewUser extends BaseAppCompatActivity {
         pvOptions.show();
 
     }
-    
-    private void handleMessage(Message message){
-        switch (message.what){
+
+    private void handleMessage(Message message) {
+        switch (message.what) {
             case USER_CREATE_DONE:
                 Slog.d(TAG, "============handle message");
                 setAccount(MyApplication.getContext(), account);
@@ -559,9 +551,9 @@ public class CreateNewUser extends BaseAppCompatActivity {
                 startActivity(intent);
                 finish();
                 break;
-             case MSG_LOAD_INDUSTRY_DATA:
-                if (threadIndustry == null){
-                    Slog.i(TAG,"行业数据开始解析");
+            case MSG_LOAD_INDUSTRY_DATA:
+                if (threadIndustry == null) {
+                    Slog.i(TAG, "行业数据开始解析");
                     threadIndustry = new Thread(new Runnable() {
                         @Override
                         public void run() {
@@ -571,10 +563,10 @@ public class CreateNewUser extends BaseAppCompatActivity {
                     threadIndustry.start();
                 }
                 break;
-                
-                case MSG_LOAD_CITY_DATA:
-                if (threadCity == null){
-                    Slog.i(TAG,"city数据开始解析");
+
+            case MSG_LOAD_CITY_DATA:
+                if (threadCity == null) {
+                    Slog.i(TAG, "city数据开始解析");
                     threadCity = new Thread(new Runnable() {
 
                         @Override
@@ -585,18 +577,18 @@ public class CreateNewUser extends BaseAppCompatActivity {
                     threadCity.start();
                 }
                 break;
-                
-                case MSG_LOAD_SUCCESS:
-                Slog.i(TAG,"数据获取成功");
+
+            case MSG_LOAD_SUCCESS:
+                Slog.i(TAG, "数据获取成功");
                 //isLoaded = true;
                 break;
 
             case MSG_LOAD_FAILED:
-                Log.i(TAG,"数据获取失败");
+                Log.i(TAG, "数据获取失败");
                 break;
         }
     }
-    
+
     // 开始提交请求权限
     private void startRequestPermission() {
         ActivityCompat.requestPermissions(this, permissions, 001);
@@ -606,21 +598,21 @@ public class CreateNewUser extends BaseAppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        
+
         if (requestCode == 001) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                for (int i=0; i<permissions.length; i++){
+                for (int i = 0; i < permissions.length; i++) {
                     if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
                         //boolean b = shouldShowRequestPermissionRationale(permissions[0]);
-                        Toast.makeText(this, "权限"+permissions[i]+"获取失败", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "权限" + permissions[i] + "获取失败", Toast.LENGTH_SHORT).show();
                         permissionsAcquired = false;
                     }
                 }
             }
         }
     }
-    
-     private void setCustomActionbar(){
+
+    private void setCustomActionbar() {
         statusBarBack = findViewById(R.id.left_back);
         statusBarBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -633,9 +625,9 @@ public class CreateNewUser extends BaseAppCompatActivity {
         FontManager.markAsIconContainer(findViewById(R.id.left_back), font);
         FontManager.markAsIconContainer(findViewById(R.id.create_next), font);
     }
-    
+
     static class MyHandler extends HandlerTemp<CreateNewUser> {
-        public MyHandler(CreateNewUser cls){
+        public MyHandler(CreateNewUser cls) {
             super(cls);
         }
 
@@ -647,6 +639,6 @@ public class CreateNewUser extends BaseAppCompatActivity {
             }
         }
     }
-        
+
 }
         

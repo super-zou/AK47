@@ -56,7 +56,7 @@
     <string name="experience_talent_explanation_label">什么是体验达人？</string>
     <string name="experience_talent_explanation_content">体验达人有两种方式：旅行向导和开展体验，可根据自身条件选择其中的一种或两种</string>
     <string name="guide_talent_explanation_label">什么是旅行向导？</string>
-    <string name="guide_talent_explanation">只要你对旅游热爱，喜欢结识新朋友，有充裕业余时间的学生。
+    <string name="guide_talent_explanation">只要你对旅游热爱，喜欢结识新朋友，有充裕的业余时间。
         \n熟悉当地旅游环境，对当地知名旅游景点、风土民俗、历史文化等有一定了解。
         \n可以协助游客制定旅游攻略，提供伴游、旅拍等帮助。
         \n可以带领大家领略纯粹的民俗文化，品味地道的美食。
@@ -178,6 +178,31 @@
     <string name="living">居住地</string>
     <string name="locating">正在定位</string>
     <string name="select_living">选择居住地</string>
+    <string name="select_city">选择城市</string>
+    <string name="service_introduction_title">旅行向导服务介绍</string>
+    <string name="guide_service_introduction">介绍一下你做为旅行向导可以提供哪些服务和帮助，生动的描述或许能够吸引浏览人的预订，不妨在这里突出您的服务亮点。</string>
+    <string name="guide_service_introduction_suggestion">建议：
+          \n1.可以写明活动的行程，让参与者了解他们可以期待的内容
+          \n2.写出您的服务独特的亮点
+          \n3.能够给参与者提供哪些便利
+          \n4.根据活动顺序，为每项活动撰写简介</string>
+    <string name="additional_service_introduction_title">可提供的额外服务</string>
+    <string name="additional_service_edit">更多服务</string>
+    <string name="follow_shot">跟拍</string>
+    <string name="travel_plan">行程规划</string>
+    <string name="chartered_car">包车服务</string>
+    <string name="ticket">购票服务</string>
+    <string name="ferry">接送站</string>
+    <string name="self_introduction_title">向大家介绍自己</string>
+    <string name="self_introduction_notice">向大家展示您的过往经历，不用太客气，这是一个很好的展示自己的机会。
+     \n 建议：突出您做为旅行向导，具备的能力或经验</string>
+    <string name="self_introduction">自我介绍</string>
+    <string name="create_headline_title">给服务内容想个标题</string>
+    <string name="create_headline_notice">标题尽量简短、生动描述且引人入胜</string>
+    <string name="headline">输入标题</string>
+    <string name="select_picture_title">选择一些很棒的照片</string>
+    <string name="select_one_typical_picture">选一张最具代表性的封面照</string>
+    <string name="select_more_pictures">上传更多有吸引力的活动或景点照片</string>
     <string name="nickname_is_empty">请输入姓名</string>
     <string name="location_service_not_available">定位功能申请</string>
     <string name="location_permission_request">荷塘将使用手机的定位功能，帮您定位地址信息；\n如果禁用则部分功能不可用</string>
@@ -192,6 +217,9 @@
     <string name="age">年龄</string>
     <string name="years_old">岁</string>
     <string name="cm">CM</string>
+    <string name="location">地点</string>
+    <string name="location_guide_desc">您将在哪个城市提供旅游向导服务？</string>
+    <string name="location_experience_desc">您将在哪个城市开展体验？</string>
     <string name="location_error">定位失败，请手动选择</string>
     <string name="correction">更正</string>
     <string name="location_select_notice">请选择居住地</string>

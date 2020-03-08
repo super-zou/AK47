@@ -117,7 +117,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:text="@string/location"
+        android:text="@string/fa_location"
         android:textColor="@color/blue_dark"
         app:layout_constraintBottom_toBottomOf="@+id/editTextOrgCity"
         app:layout_constraintStart_toStartOf="parent"

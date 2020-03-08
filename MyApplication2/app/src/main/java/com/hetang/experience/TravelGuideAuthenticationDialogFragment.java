@@ -11,11 +11,14 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridLayout;
@@ -58,6 +61,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -88,6 +92,8 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
     private static final boolean isDebug = true;
     private static final String TAG = "TravelGuideAuthenticationDialogFragment";
     private static final String SUBMIT_URL = HttpUtil.DOMAIN + "?q=talent/become/apply";
+    private static final int MSG_LOAD_SUCCESS = 0x0003;
+    private Thread threadCity;
     private int type;
     private int gid;
     private int aid;
@@ -123,8 +129,9 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
     private int pictureSelectType = 0;//default 0 for materia
     private boolean isPicked = false;
     private Thread threadIndustry = null;
-    private ArrayList<CommonBean> subjectMainItems = new ArrayList<>();
-    private ArrayList<ArrayList<String>> subjectSubItems = new ArrayList<>();
+    private boolean isLocated = false;
+    private ArrayList<CommonBean> provinceItems = new ArrayList<>();
+    private ArrayList<ArrayList<String>> cityItems = new ArrayList<>();
     private GridImageAdapter.onAddPicClickListener onAddPicClickListener = new GridImageAdapter.onAddPicClickListener() {
         @Override
         public void onAddPicClick() {
@@ -194,7 +201,7 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
 
         authenObject = new JSONObject();
 
-        mDialog.setContentView(R.layout.escort_guide_authentication);
+        mDialog.setContentView(R.layout.travel_guide_authentication);
 
         initView();
 
@@ -255,7 +262,17 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
         nextBtn = mDialog.findViewById(R.id.next);
         introductionET = mDialog.findViewById(R.id.introduction_edittext);
 
-        initSubjectJsondata();
+        //init city data in thread
+        if (threadCity == null) {
+            threadCity = new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+                    initCityJsondata("city.json");
+                }
+            });
+            threadCity.start();
+        }
 
         prevBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -299,6 +316,27 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
                 }
             }
         });
+    }
+
+    private void initCityJsondata(String jsonFile) {
+        CommonPickerView commonPickerView = new CommonPickerView();
+        provinceItems = commonPickerView.getOptionsMainItem(getContext(), jsonFile);
+        cityItems = commonPickerView.getOptionsSubItems(provinceItems);
+    }
+
+    private void showCityPickerView() {// 弹出地址选择器
+        //条件选择器
+        OptionsPickerView pvOptions;
+        pvOptions= new OptionsPickerBuilder(getContext(), new OnOptionsSelectListener() {
+            @Override
+            public void onOptionsSelect(int options1, int option2, int options3 ,View v) {
+                //返回的分别是二个级别的选中位置
+                isLocated = true;
+                String city = cityItems.get(options1).get(option2);
+            }
+        }).build();
+        pvOptions.setPicker(provinceItems, cityItems);
+        pvOptions.show();
     }
 
     private void submitNotice() {
@@ -415,49 +453,6 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
                 addMateria(adapterReward);
                 break;
         }
-    }
-
-
-    private void initSubjectJsondata() {
-
-        final CommonPickerView commonPickerView = new CommonPickerView();
-        if (threadIndustry == null) {
-            Slog.i(TAG, "行业数据开始解析");
-            threadIndustry = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    subjectMainItems = commonPickerView.getOptionsMainItem(MyApplication.getContext(), "subject.json");
-                    subjectSubItems = commonPickerView.getOptionsSubItems(subjectMainItems);
-                }
-            });
-            threadIndustry.start();
-        }
-
-        selectSubject.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showPickerView();
-            }
-        });
-    }
-
-    private void showPickerView() {
-        //条件选择器
-        OptionsPickerView pvOptions;
-        pvOptions = new OptionsPickerBuilder(getContext(), new OnOptionsSelectListener() {
-            @Override
-            public void onOptionsSelect(int options1, int option2, int options3, View v) {
-                //返回的分别是二个级别的选中位置
-                selectSubject.setText(subjectSubItems.get(options1).get(option2));
-                isPicked = true;
-
-            }
-        }).setDecorView(window.getDecorView().findViewById(R.id.talent_authentication))
-                .isDialog(true).setLineSpacingMultiplier(1.2f).isCenterLabel(false).build();
-
-        pvOptions.getDialog().getWindow().setGravity(Gravity.CENTER);
-        pvOptions.setPicker(subjectMainItems, subjectSubItems);
-        pvOptions.show();
     }
 
     private void addMateria(GridImageAdapter imageAdapter) {
@@ -743,6 +738,27 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
                     break;
                 default:
                     break;
+            }
+        }
+    }
+
+    public void handleMessage(Message msg) {
+        switch (msg.what) {
+
+        }
+    }
+
+    static class MyHandler extends Handler {
+        WeakReference<TravelGuideAuthenticationDialogFragment> travelGuideAuthenticationDialogFragmentWeakReference;
+        MyHandler(TravelGuideAuthenticationDialogFragment travelGuideAuthenticationDialogFragment) {
+            travelGuideAuthenticationDialogFragmentWeakReference = new WeakReference<TravelGuideAuthenticationDialogFragment>(travelGuideAuthenticationDialogFragment);
+        }
+
+        @Override
+        public void handleMessage(Message message) {
+            TravelGuideAuthenticationDialogFragment travelGuideAuthenticationDialogFragment = travelGuideAuthenticationDialogFragmentWeakReference.get();
+            if (travelGuideAuthenticationDialogFragment != null) {
+                travelGuideAuthenticationDialogFragment.handleMessage(message);
             }
         }
     }
