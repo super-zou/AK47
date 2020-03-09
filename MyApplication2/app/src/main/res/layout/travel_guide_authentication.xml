@@ -341,6 +341,106 @@
                     android:theme="@style/MyEditText" />
             </LinearLayout>
 
+            <RelativeLayout
+                android:id="@+id/charge_wrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="36dp"
+                android:layout_marginLeft="16dp"
+                android:visibility="visible"
+                android:layout_row="6"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/charge_desc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:textSize="22sp"
+                    android:text="@string/charge_desc_title"
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
+<TextView
+                    android:id="@+id/charge_amount_setting"
+                    android:text="@string/charge_amount_setting"
+                    android:layout_marginTop="32dp"
+                    android:layout_marginStart="16dp"
+                    android:textColor="@color/black"
+                    android:layout_below="@+id/charge_desc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:id="@+id/cny"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/charge_amount_setting"
+                    android:gravity="center"
+                    android:layout_alignBottom="@+id/charge_setting_edit"
+                    android:layout_alignTop="@+id/charge_setting_edit"
+                    android:layout_marginStart="16dp"
+                          android:textSize="18sp"
+                    android:text="@string/fa_cny"
+                    android:textColor="@color/black" />
+
+                <EditText
+                    android:id="@+id/charge_setting_edit"
+                    style="@style/EditTextCustom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:minWidth="150dp"
+                    android:layout_below="@+id/charge_amount_setting"
+                    android:layout_toRightOf="@+id/cny"
+                    android:hint="@string/amount_of_money"
+                    android:inputType="number"
+                    android:textColor="@color/blue_dark"
+                    android:textCursorDrawable="@drawable/cursor_color"
+                    android:theme="@style/MyEditText" />
+                <TextView
+                    android:id="@+id/unit_divider"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_alignBottom="@+id/charge_setting_edit"
+                    android:layout_alignTop="@+id/charge_setting_edit"
+                    android:layout_toRightOf="@+id/charge_setting_edit"
+                    android:layout_marginStart="8dp"
+                    android:textSize="18sp"
+                    android:text="@string/unit_divider"
+                    android:textColor="@color/black" />
+
+                <androidx.appcompat.widget.AppCompatSpinner
+                    android:layout_alignBottom="@+id/unit_divider"
+                    android:layout_alignTop="@+id/unit_divider"
+                    android:layout_toRightOf="@+id/unit_divider"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:id="@+id/charge_supplement_title"
+                    android:text="@string/charge_supplement_title"
+                    android:layout_marginTop="64dp"
+                    android:layout_marginStart="16dp"
+                    android:textColor="@color/black"
+                    android:layout_below="@+id/cny"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+                 <EditText
+                    android:id="@+id/charge_supplement_edit"
+                    style="@style/EditTextCustom"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    android:layout_below="@+id/charge_supplement_title"
+                    android:hint="@string/charge_supplement"
+                    android:textColor="@color/blue_dark"
+                    android:textCursorDrawable="@drawable/cursor_color"
+                    android:theme="@style/MyEditText" />
+
+            </RelativeLayout>
+                
 
             <RelativeLayout
                 android:id="@+id/charge_wrapper"
