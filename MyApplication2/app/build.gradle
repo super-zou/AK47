@@ -60,6 +60,7 @@ dependencies {
     implementation 'com.parkingwang:okhttp3-loginterceptor:latest.integration'
     implementation 'com.amap.api:location:latest.integration'
     implementation 'com.contrarywind:Android-PickerView:4.1.8'
+    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.1'
 
     // 小米、华为、魅族、fcm 推送
     implementation 'com.netease.nimlib:push:6.6.7'
