@@ -333,7 +333,14 @@
     <string name="reward">赞赏达人</string>
     <string name="become_talent">成为达人</string>
     <string name="develop_experience">开展体验</string>
+    <string name="charge_desc_title">收费说明</string>
+    <string name="charge_amount_setting">设置收费金额</string>
+    <string name="charge_notice">如有必要，可以说明收费包含的项目有哪些</string>
     <string name="travel_guide">申请旅行向导</string>
+    <string name="unit_divider"> / </string>
+    <string name="duration">时长</string>
+    <string name="charge_supplement_title">收费补充说明（选填）</string>
+    <string name="charge_supplement">如时长、所含项目、超时费等</string>
     <string name="no_evaluate">暂无评价</string>
     <string name="abandon">不用了</string>
     <string name="reward_done">已赞赏</string>
