@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string-array name="duration">
+        <item>天</item>
+        <item>小时</item>
+    </string-array>
+    
     <string-array name="verify_tabs">
         <item>申请</item>
         <item>通过</item>
