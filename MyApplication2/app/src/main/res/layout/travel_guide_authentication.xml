@@ -23,46 +23,52 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:columnCount="1">
+
             <LinearLayout
                 android:id="@+id/location_wrapper"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="36dp"
-                android:layout_marginLeft="16dp"
                 android:layout_row="1"
-                android:visibility="gone"
-                android:orientation="vertical">
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="36dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
                 <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:text="@string/location"
-                    android:textStyle="bold"
+                    android:textColor="@color/black"
                     android:textSize="22sp"
-                    android:textColor="@color/black"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:textStyle="bold" />
+
                 <TextView
-                    android:text="@string/location_guide_desc"
-                    android:layout_marginTop="8dp"
-                    android:textColor="@color/black"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/location_guide_desc"
+                    android:textColor="@color/black" />
+
                 <Button
-                    android:layout_marginTop="16dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginLeft="16dp"
+                    android:layout_marginTop="16dp"
                     android:background="@drawable/btn_big_radius_primary"
                     android:text="@string/select_city"
-                    android:textColor="@color/white"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:textColor="@color/white" />
             </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/introduction_wrapper"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="36dp"
-                android:layout_marginLeft="16dp"
-                android:visibility="gone"
                 android:layout_row="2"
-                android:orientation="vertical">
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="36dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
                 <TextView
                     android:id="@+id/service_introduction_title"
                     android:layout_width="match_parent"
@@ -70,24 +76,26 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="16dp"
-                    android:textSize="22sp"
                     android:text="@string/service_introduction_title"
                     android:textColor="@color/black"
+                    android:textSize="22sp"
                     android:textStyle="bold" />
+
                 <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
                     android:text="@string/guide_service_introduction"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginStart="16dp"
-                    android:textColor="@color/black"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:textColor="@color/black" />
+
                 <TextView
-                    android:text="@string/guide_service_introduction_suggestion"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginEnd="16dp"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:text="@string/guide_service_introduction_suggestion" />
 
                 <EditText
                     android:id="@+id/introduction_edittext"
@@ -107,11 +115,12 @@
                 android:id="@+id/additional_introduction_wrapper"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="36dp"
-                android:layout_marginLeft="16dp"
-                android:visibility="gone"
                 android:layout_row="3"
-                android:orientation="vertical">
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="36dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
                 <TextView
                     android:id="@+id/additional_service_introduction_title"
                     android:layout_width="match_parent"
@@ -119,36 +128,41 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="16dp"
-                    android:textSize="22sp"
                     android:text="@string/additional_service_introduction_title"
                     android:textColor="@color/black"
+                    android:textSize="22sp"
                     android:textStyle="bold" />
+
                 <androidx.appcompat.widget.AppCompatCheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
-                    android:text="@string/follow_shot"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:text="@string/follow_shot" />
+
                 <androidx.appcompat.widget.AppCompatCheckBox
-                    android:layout_marginStart="16dp"
-                    android:text="@string/travel_plan"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:text="@string/travel_plan" />
+
                 <androidx.appcompat.widget.AppCompatCheckBox
-                    android:layout_marginStart="16dp"
-                    android:text="@string/chartered_car"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:text="@string/chartered_car" />
+
                 <androidx.appcompat.widget.AppCompatCheckBox
-                    android:layout_marginStart="16dp"
-                    android:text="@string/ticket"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:text="@string/ticket" />
+
                 <androidx.appcompat.widget.AppCompatCheckBox
-                    android:layout_marginStart="16dp"
-                    android:text="@string/ferry"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:text="@string/ferry" />
 
                 <EditText
                     android:id="@+id/additional_service_edit"
@@ -168,11 +182,12 @@
                 android:id="@+id/self_introduction_wrapper"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="36dp"
-                android:layout_marginLeft="16dp"
-                android:visibility="gone"
                 android:layout_row="4"
-                android:orientation="vertical">
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="36dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
                 <TextView
                     android:id="@+id/self_introduction_title"
                     android:layout_width="match_parent"
@@ -180,17 +195,18 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="16dp"
-                    android:textSize="22sp"
                     android:text="@string/self_introduction_title"
                     android:textColor="@color/black"
+                    android:textSize="22sp"
                     android:textStyle="bold" />
+
                 <TextView
-                    android:text="@string/self_introduction_notice"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginStart="16dp"
-                    android:textColor="@color/black"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/self_introduction_notice"
+                    android:textColor="@color/black" />
 
                 <EditText
                     android:id="@+id/self_introduction"
@@ -210,11 +226,12 @@
                 android:id="@+id/create_headline_wrapper"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="36dp"
-                android:layout_marginLeft="16dp"
-                android:visibility="gone"
                 android:layout_row="5"
-                android:orientation="vertical">
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="36dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
                 <TextView
                     android:id="@+id/create_headline_title"
                     android:layout_width="match_parent"
@@ -222,17 +239,18 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="16dp"
-                    android:textSize="22sp"
                     android:text="@string/create_headline_title"
                     android:textColor="@color/black"
+                    android:textSize="22sp"
                     android:textStyle="bold" />
+
                 <TextView
-                    android:text="@string/create_headline_notice"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginStart="16dp"
-                    android:textColor="@color/black"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/create_headline_notice"
+                    android:textColor="@color/black" />
 
                 <EditText
                     android:id="@+id/create_headline_edit"
@@ -252,11 +270,12 @@
                 android:id="@+id/select_picture_wrapper"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="36dp"
-                android:layout_marginLeft="16dp"
-                android:visibility="gone"
                 android:layout_row="5"
-                android:orientation="vertical">
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="36dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
                 <TextView
                     android:id="@+id/select_picture_title"
                     android:layout_width="match_parent"
@@ -264,92 +283,54 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="16dp"
-                    android:textSize="22sp"
                     android:text="@string/select_picture_title"
                     android:textColor="@color/black"
+                    android:textSize="22sp"
                     android:textStyle="bold" />
+
                 <TextView
-                    android:text="@string/select_one_typical_picture"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginStart="16dp"
-                    android:textColor="@color/black"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/select_one_typical_picture"
+                    android:textColor="@color/black" />
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/select_one"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
                     android:layout_marginLeft="16dp"
-                    android:overScrollMode="never"/>
+                    android:layout_marginTop="8dp"
+                    android:overScrollMode="never" />
 
                 <TextView
-                    android:text="@string/select_more_pictures"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginStart="16dp"
-                    android:textColor="@color/black"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/select_more_pictures"
+                    android:textColor="@color/black" />
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/select_more"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
                     android:layout_marginLeft="16dp"
-                    android:overScrollMode="never"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/self_introduction_wrapper"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="36dp"
-                android:layout_marginLeft="16dp"
-                android:visibility="visible"
-                android:layout_row="4"
-                android:orientation="vertical">
-                <TextView
-                    android:id="@+id/self_introduction_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:textSize="22sp"
-                    android:text="@string/self_introduction_title"
-                    android:textColor="@color/black"
-                    android:textStyle="bold" />
-                <TextView
-                    android:text="@string/self_introduction_notice"
                     android:layout_marginTop="8dp"
-                    android:layout_marginStart="16dp"
-                    android:textColor="@color/black"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-
-                <EditText
-                    android:id="@+id/self_introduction"
-                    style="@style/EditTextCustom"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="32dp"
-                    android:layout_marginEnd="16dp"
-                    android:hint="@string/self_introduction"
-                    android:textColor="@color/blue_dark"
-                    android:textCursorDrawable="@drawable/cursor_color"
-                    android:theme="@style/MyEditText" />
+                    android:overScrollMode="never" />
             </LinearLayout>
 
             <RelativeLayout
                 android:id="@+id/charge_wrapper"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="36dp"
-                android:layout_marginLeft="16dp"
-                android:visibility="visible"
                 android:layout_row="6"
-                android:orientation="vertical">
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="36dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
                 <TextView
                     android:id="@+id/charge_desc"
                     android:layout_width="match_parent"
@@ -357,182 +338,121 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="16dp"
-                    android:textSize="22sp"
                     android:text="@string/charge_desc_title"
                     android:textColor="@color/black"
+                    android:textSize="22sp"
                     android:textStyle="bold" />
-<TextView
+
+                <TextView
                     android:id="@+id/charge_amount_setting"
-                    android:text="@string/charge_amount_setting"
-                    android:layout_marginTop="32dp"
-                    android:layout_marginStart="16dp"
-                    android:textColor="@color/black"
-                    android:layout_below="@+id/charge_desc"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/charge_desc"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="32dp"
+                    android:text="@string/charge_amount_setting"
+                    android:textColor="@color/black" />
 
                 <TextView
                     android:id="@+id/cny"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/charge_amount_setting"
-                    android:gravity="center"
-                    android:layout_alignBottom="@+id/charge_setting_edit"
                     android:layout_alignTop="@+id/charge_setting_edit"
+                    android:layout_alignBottom="@+id/charge_setting_edit"
                     android:layout_marginStart="16dp"
-                          android:textSize="18sp"
+                    android:gravity="center"
                     android:text="@string/fa_cny"
-                    android:textColor="@color/black" />
+                    android:textColor="@color/black"
+                    android:textSize="18sp" />
 
                 <EditText
                     android:id="@+id/charge_setting_edit"
                     style="@style/EditTextCustom"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:minWidth="150dp"
                     android:layout_below="@+id/charge_amount_setting"
+                    android:layout_marginTop="16dp"
                     android:layout_toRightOf="@+id/cny"
                     android:hint="@string/amount_of_money"
                     android:inputType="number"
+                    android:minWidth="150dp"
                     android:textColor="@color/blue_dark"
                     android:textCursorDrawable="@drawable/cursor_color"
                     android:theme="@style/MyEditText" />
+
                 <TextView
                     android:id="@+id/unit_divider"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:layout_alignBottom="@+id/charge_setting_edit"
                     android:layout_alignTop="@+id/charge_setting_edit"
-                    android:layout_toRightOf="@+id/charge_setting_edit"
+                    android:layout_alignBottom="@+id/charge_setting_edit"
                     android:layout_marginStart="8dp"
-                    android:textSize="18sp"
+                    android:layout_toRightOf="@+id/charge_setting_edit"
+                    android:gravity="center"
                     android:text="@string/unit_divider"
-                    android:textColor="@color/black" />
+                    android:textColor="@color/black"
+                    android:textSize="18sp" />
 
                 <androidx.appcompat.widget.AppCompatSpinner
-                    android:layout_alignBottom="@+id/unit_divider"
-                    android:layout_alignTop="@+id/unit_divider"
-                    android:layout_toRightOf="@+id/unit_divider"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:layout_alignTop="@+id/unit_divider"
+                    android:layout_alignBottom="@+id/unit_divider"
+                    android:layout_toRightOf="@+id/unit_divider" />
 
                 <TextView
                     android:id="@+id/charge_supplement_title"
-                    android:text="@string/charge_supplement_title"
-                    android:layout_marginTop="64dp"
-                    android:layout_marginStart="16dp"
-                    android:textColor="@color/black"
-                    android:layout_below="@+id/cny"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-                 <EditText
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/cny"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="64dp"
+                    android:text="@string/charge_supplement_title"
+                    android:textColor="@color/black" />
+
+                <EditText
                     android:id="@+id/charge_supplement_edit"
                     style="@style/EditTextCustom"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="16dp"
                     android:layout_below="@+id/charge_supplement_title"
+                    android:layout_margin="16dp"
                     android:hint="@string/charge_supplement"
                     android:textColor="@color/blue_dark"
                     android:textCursorDrawable="@drawable/cursor_color"
                     android:theme="@style/MyEditText" />
-
             </RelativeLayout>
-                
-
-            <RelativeLayout
-                android:id="@+id/charge_wrapper"
+            <LinearLayout
+                android:id="@+id/appoint_date_wrapper"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_row="4"
+                android:layout_row="7"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="36dp"
                 android:orientation="vertical"
-                android:visibility="gone">
+                android:visibility="visible">
 
                 <TextView
-                    android:id="@+id/charge_introduction_title"
+                    android:id="@+id/appoint_date_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="32dp"
+                    android:layout_marginTop="16dp"
                     android:layout_marginEnd="16dp"
-                    android:text="@string/charge_introduction"
+                    android:text="@string/appoint_date_title"
                     android:textColor="@color/black"
+                    android:textSize="22sp"
                     android:textStyle="bold" />
 
-                <EditText
-                    android:id="@+id/charge_setting"
-                    style="@style/EditTextCustom"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/charge_introduction_title"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="32dp"
-                    android:hint="@string/amount_of_money"
-                    android:inputType="number"
-                    android:textColor="@color/blue_dark"
-                    android:textCursorDrawable="@drawable/cursor_color"
-                    android:theme="@style/MyEditText" />
-
                 <TextView
-                    android:id="@+id/cny"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignTop="@+id/charge_setting"
-                    android:layout_alignBottom="@+id/charge_setting"
-                    android:layout_marginStart="3dp"
-                    android:layout_toRightOf="@+id/charge_setting"
-                    android:gravity="center"
-                    android:text="元"
+                    android:layout_margin="16dp"
+                    android:text="@string/appoint_date"
                     android:textColor="@color/black" />
 
-                <EditText
-                    android:id="@+id/charge_introduction"
-                    style="@style/EditTextCustom"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/cny"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:hint="@string/charge_introduction_hint"
-                    android:textColor="@color/blue_dark"
-                    android:textCursorDrawable="@drawable/cursor_color"
-                    android:textSize="15sp"
-                    android:theme="@style/MyEditText" />
-
-                <TextView
-                    android:id="@+id/setting_payment"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/charge_introduction"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="32dp"
-                    android:layout_marginEnd="16dp"
-                    android:text="@string/setting_payment"
-                    android:textColor="@color/black"
-                    android:textStyle="bold" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/add_reward_qr"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/setting_payment"
-                    android:layout_centerInParent="true"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginTop="16dp"
-                    android:overScrollMode="never" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/add_reward_qr"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
-                    android:text="@string/upload_qr_code"
-                    android:textColor="@color/color_light_grey" />
-            </RelativeLayout>
+            </LinearLayout>
 
         </GridLayout>
     </ScrollView>
