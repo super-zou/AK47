@@ -342,22 +342,125 @@
                     android:textColor="@color/black"
                     android:textSize="22sp"
                     android:textStyle="bold" />
-
                 <TextView
-                    android:id="@+id/charge_amount_setting"
+                    android:id="@+id/charge_mode_introduction"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/charge_desc"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="32dp"
-                    android:text="@string/charge_amount_setting"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/charge_mode_introduction"
                     android:textColor="@color/black" />
+                
+                <TextView
+                    android:id="@+id/consultation_service"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/charge_mode_introduction"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="32dp"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:text="@string/consultation_service"
+                    android:textColor="@color/black" />
+                
+                <TextView
+                    android:id="@+id/cny_consultation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/consultation_service"
+                    android:layout_alignTop="@+id/consultation_charge_setting_edit"
+                    android:layout_alignBottom="@+id/consultation_charge_setting_edit"
+                    android:layout_marginStart="16dp"
+                    android:gravity="center"
+                    android:text="@string/fa_cny"
+                    android:textColor="@color/black"
+                    android:textSize="18sp" />
+                
+                <EditText
+                    android:id="@+id/consultation_charge_setting_edit"
+                    style="@style/EditTextCustom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/consultation_service"
+                    android:layout_marginTop="16dp"
+                    android:layout_toRightOf="@+id/cny_consultation"
+                    android:hint="@string/amount_of_money"
+                    android:inputType="number"
+                    android:minWidth="150dp"
+                    android:textColor="@color/blue_dark"
+                    android:textCursorDrawable="@drawable/cursor_color"
+                    android:theme="@style/MyEditText" />
+                
+                <TextView
+                    android:id="@+id/consultation_unit_divider"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignTop="@+id/consultation_charge_setting_edit"
+                    android:layout_alignBottom="@+id/consultation_charge_setting_edit"
+                    android:layout_marginStart="8dp"
+                    android:layout_toRightOf="@+id/consultation_charge_setting_edit"
+                    android:gravity="center"
+                    android:text="@string/unit_divider"
+                    android:textColor="@color/black"
+                    android:textSize="18sp" />
+                
+                <androidx.appcompat.widget.AppCompatSpinner
+                    android:id="@+id/consultation_unit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignTop="@+id/consultation_unit_divider"
+                    android:layout_alignBottom="@+id/consultation_unit_divider"
+                    android:layout_toRightOf="@+id/consultation_unit_divider" />
 
+                <TextView
+                    android:id="@+id/consultation_charge_supplement_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/cny_consultation"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/charge_supplement_title"
+                    android:textColor="@color/black" />
+                
+                <EditText
+                    android:id="@+id/consultation_charge_supplement_edit"
+                    style="@style/EditTextCustom"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/consultation_charge_supplement_title"
+                    android:layout_margin="16dp"
+                    android:hint="@string/charge_supplement"
+                    android:textColor="@color/blue_dark"
+                    android:textCursorDrawable="@drawable/cursor_color"
+                    android:theme="@style/MyEditText" />
+                
+                <!--escort guide-->
+                <View
+                    android:id="@+id/divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_margin="16dp"
+                    android:layout_below="@+id/consultation_charge_supplement_edit"
+                    android:background="@color/divider" />
+                
+                <TextView
+                    android:id="@+id/escort_service"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/divider"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:text="@string/escort_service"
+                    android:textColor="@color/black" />
+                
                 <TextView
                     android:id="@+id/cny"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/charge_amount_setting"
+                    android:layout_below="@+id/escort_service"
                     android:layout_alignTop="@+id/charge_setting_edit"
                     android:layout_alignBottom="@+id/charge_setting_edit"
                     android:layout_marginStart="16dp"
@@ -365,13 +468,13 @@
                     android:text="@string/fa_cny"
                     android:textColor="@color/black"
                     android:textSize="18sp" />
-
+                
                 <EditText
                     android:id="@+id/charge_setting_edit"
                     style="@style/EditTextCustom"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/charge_amount_setting"
+                    android:layout_below="@+id/escort_service"
                     android:layout_marginTop="16dp"
                     android:layout_toRightOf="@+id/cny"
                     android:hint="@string/amount_of_money"
@@ -380,7 +483,7 @@
                     android:textColor="@color/blue_dark"
                     android:textCursorDrawable="@drawable/cursor_color"
                     android:theme="@style/MyEditText" />
-
+                
                 <TextView
                     android:id="@+id/unit_divider"
                     android:layout_width="wrap_content"
@@ -393,7 +496,7 @@
                     android:text="@string/unit_divider"
                     android:textColor="@color/black"
                     android:textSize="18sp" />
-
+                
                 <androidx.appcompat.widget.AppCompatSpinner
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -407,10 +510,10 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/cny"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="64dp"
+                    android:layout_marginTop="16dp"
                     android:text="@string/charge_supplement_title"
                     android:textColor="@color/black" />
-
+                
                 <EditText
                     android:id="@+id/charge_supplement_edit"
                     style="@style/EditTextCustom"
@@ -451,6 +554,13 @@
                     android:layout_margin="16dp"
                     android:text="@string/appoint_date"
                     android:textColor="@color/black" />
+                
+                <CalendarView
+                    android:id="@+id/appoint_calendar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/appoint_calendar_bg">
+                </CalendarView>
 
             </LinearLayout>
 
