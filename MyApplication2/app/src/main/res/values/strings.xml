@@ -1,6 +1,11 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="app_name1">LaunchAK47</string>
     <string name="action_settings">Settings</string>
+    <string name="year">年</string>
+    <string name="month">月</string>
+    <string name="day">日</string>
+    <string name="hour">时</string>
+    <string name="minute">分</string>
     <string name="login">登录</string>
     <string name="login_phone">手机号登录</string>
     <string name="register">注册</string>
@@ -54,13 +59,14 @@
     <string name="experience_explanation_label">什么是体验？</string>
     <string name="experience_explanation_content">体验是由世界各地的学生或当地达人策划并组织开展的活动，通过这些活动，可以让大家对当地风土民俗和饮食文化等有比较深刻的体验。</string>
     <string name="experience_talent_explanation_label">什么是体验达人？</string>
-    <string name="experience_talent_explanation_content">体验达人有两种方式：旅行向导和开展体验，可根据自身条件选择其中的一种或两种</string>
+    <string name="experience_talent_explanation_content">体验达人有两种方式：旅行向导和开展线下体验，可根据自身条件选择其中的一种或两种</string>
     <string name="guide_talent_explanation_label">什么是旅行向导？</string>
-    <string name="guide_talent_explanation">只要你对旅游热爱，喜欢结识新朋友，有充裕的业余时间。
-        \n熟悉当地旅游环境，对当地知名旅游景点、风土民俗、历史文化等有一定了解。
-        \n可以协助游客制定旅游攻略，提供伴游、旅拍等帮助。
-        \n可以带领大家领略纯粹的民俗文化，品味地道的美食。
-        \n服务对象是全国各地热爱旅游的大学生。
+    <string name="guide_talent_explanation">旅行向导工作形式多样，如果您时间充裕，喜欢旅游，喜欢结识新朋友，可以提供一些线下服务，带领游客进行实地体验；^M
+        也可以只开展线上咨询，协助游客制定旅行攻略等。服务对象是全国各地热爱旅游的大学生。
+        \n旅行向导要求：
+        \n熟悉当地旅游环境。
+        \n能够制定合理的旅游攻略。
+        \n能够让游客体验纯粹的民俗文化，品味地道的美食。
     </string>
     <string name="develop_explanation_label">什么是体验及如何开展体验？</string>
     <string name="develop_explanation_details">体验是由世界各地的学生或当地达人策划并组织开展的活动，通过这些活动，
@@ -180,7 +186,7 @@
     <string name="select_living">选择居住地</string>
     <string name="select_city">选择城市</string>
     <string name="service_introduction_title">旅行向导服务介绍</string>
-    <string name="guide_service_introduction">介绍一下你做为旅行向导可以提供哪些服务和帮助，生动的描述或许能够吸引浏览人的预订，不妨在这里突出您的服务亮点。</string>
+    <string name="guide_service_introduction">介绍一下你做为旅行向导可以提供哪些服务和帮助，生动、详实的描述或许能够吸引浏览人的预订，不妨在这里突出您的服务亮点。</string>
     <string name="guide_service_introduction_suggestion">建议：
           \n1.可以写明活动的行程，让参与者了解他们可以期待的内容
           \n2.写出您的服务独特的亮点
@@ -220,8 +226,11 @@
     <string name="years_old">岁</string>
     <string name="cm">CM</string>
     <string name="location">地点</string>
-    <string name="location_guide_desc">您将在哪个城市提供旅游向导服务？</string>
+    <string name="location_guide_desc">提供旅游向导服务的是哪个城市？</string>
     <string name="location_experience_desc">您将在哪个城市开展体验？</string>
+    <string name="charge_mode_introduction">旅行向导支持线上的咨询服务和线下的伴游向导服务，可以选择其中一种或两种服务方式。</string>
+     <string name="consultation_service">咨询服务收费设置</string>
+    <string name="escort_service">伴游向导收费设置</string>
     <string name="location_error">定位失败，请手动选择</string>
     <string name="correction">更正</string>
     <string name="location_select_notice">请选择居住地</string>
