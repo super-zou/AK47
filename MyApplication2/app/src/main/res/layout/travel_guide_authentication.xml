@@ -532,6 +532,7 @@
                 android:layout_height="wrap_content"
                 android:layout_row="7"
                 android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
                 android:layout_marginTop="36dp"
                 android:orientation="vertical"
                 android:visibility="visible">
@@ -555,12 +556,12 @@
                     android:text="@string/appoint_date"
                     android:textColor="@color/black" />
                 
-                <CalendarView
+                <com.hetang.widget.CalendarView
                     android:id="@+id/appoint_calendar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/appoint_calendar_bg">
-                </CalendarView>
+                </com.hetang.widget.CalendarView>
 
             </LinearLayout>
 

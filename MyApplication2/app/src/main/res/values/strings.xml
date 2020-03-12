@@ -210,7 +210,7 @@
     <string name="select_one_typical_picture">选一张最具代表性的封面照</string>
     <string name="select_more_pictures">上传更多有吸引力的活动或景点照片</string>
     <string name="appoint_date_title">预约时间设置</string>
-    <string name="appoint_date">点选可预约的时间，支持3个月内的时间设置，3个月到期后需要再次设置预约时间。</string>
+    <string name="appoint_date">请设置未来3个月您可以预约的时间，3个月到期后需要再次设置预约时间。</string>
     <string name="nickname_is_empty">请输入姓名</string>
     <string name="location_service_not_available">定位功能申请</string>
     <string name="location_permission_request">荷塘将使用手机的定位功能，帮您定位地址信息；\n如果禁用则部分功能不可用</string>

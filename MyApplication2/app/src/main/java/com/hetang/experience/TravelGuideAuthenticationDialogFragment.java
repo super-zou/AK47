@@ -48,6 +48,7 @@ import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.RoundImageView;
 import com.hetang.util.Slog;
+import com.hetang.widget.CalendarView;
 import com.luck.picture.lib.PictureSelectionModel;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
@@ -63,6 +64,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -203,7 +205,9 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
 
         mDialog.setContentView(R.layout.travel_guide_authentication);
 
-        initView();
+        //initView();
+
+        initCalendarView();
 
         mDialog.setCanceledOnTouchOutside(true);
         window = mDialog.getWindow();
@@ -313,6 +317,28 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
                         //submit();
                         submitNotice();
                     }
+                }
+            }
+        });
+    }
+
+    private void initCalendarView() {
+        CalendarView mCalendarView=mDialog.findViewById(R.id.appoint_calendar);
+        mCalendarView.setETimeSelListener(new CalendarView.CalendatEtimSelListener() {
+            @Override
+            public void onETimeSelect(Date date) {
+                if (date != null) {
+                    String etimestr = (date.getYear() + 1900) + getString(R.string.year) + (date.getMonth() + 1) + getString(R.string.month) + date.getDate() + getString(R.string.day);
+                    //Toast.makeText(getContext(),"结束时间"+etimestr,Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        mCalendarView.setSTimeSelListener(new CalendarView.CalendarSTimeSelListener() {
+            @Override
+            public void onSTimeSelect(Date date) {
+                if (date != null) {
+                    String stimestr = (date.getYear() + 1900) + getString(R.string.year) + (date.getMonth() + 1) + getString(R.string.month) + date.getDate() + getString(R.string.day);
+                    //Toast.makeText(getContext(),"开始时间"+stimestr,Toast.LENGTH_SHORT).show();
                 }
             }
         });
