@@ -15,6 +15,7 @@ import com.hetang.R;
 import com.hetang.common.MyApplication;
 import com.hetang.util.BaseDialogFragment;
 import com.hetang.util.FontManager;
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
 public class ExperienceTalentAuthentication extends BaseDialogFragment {
     private static final boolean isDebug = true;

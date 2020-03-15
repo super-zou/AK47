@@ -80,4 +80,11 @@ dependencies {
 
     //tim sdk
     implementation 'com.tencent.imsdk:tuikit:4.6.51'
+
+    //calendar
+    implementation "com.github.prolificinteractive:material-calendarview:2.0.0"
+    implementation rootProject.ext.threeTenAbp
+    implementation rootProject.ext.butterknife
+    annotationProcessor rootProject.ext.butterknifeCompiler
+
 }

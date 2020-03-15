@@ -61,7 +61,7 @@
     <string name="experience_talent_explanation_label">什么是体验达人？</string>
     <string name="experience_talent_explanation_content">体验达人有两种方式：旅行向导和开展线下体验，可根据自身条件选择其中的一种或两种</string>
     <string name="guide_talent_explanation_label">什么是旅行向导？</string>
-    <string name="guide_talent_explanation">旅行向导工作形式多样，如果您时间充裕，喜欢旅游，喜欢结识新朋友，可以提供一些线下服务，带领游客进行实地体验；^M
+    <string name="guide_talent_explanation">旅行向导工作形式多样，如果您时间充裕，喜欢旅游，喜欢结识新朋友，可以提供一些线下服务，带领游客进行实地体验；
         也可以只开展线上咨询，协助游客制定旅行攻略等。服务对象是全国各地热爱旅游的大学生。
         \n旅行向导要求：
         \n熟悉当地旅游环境。
@@ -400,4 +400,13 @@
     <string name="user_verify">用户认证</string>
     <string name="talent_verify">达人认证</string>
     <string name="activity_verify">活动认证</string>
+    <string-array name="custom_weekdays">
+        <item>M</item>
+        <item>Tu</item>
+        <item>W</item>
+        <item>Th</item>
+        <item>F</item>
+        <item>Sa</item>
+        <item>Su</item>
+    </string-array>
 </resources>

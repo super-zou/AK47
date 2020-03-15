@@ -56,9 +56,15 @@ import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
 import com.luck.picture.lib.style.PictureWindowAnimationStyle;
 import com.luck.picture.lib.tools.PictureFileUtils;
+import com.prolificinteractive.materialcalendarview.CalendarDay;
+import com.prolificinteractive.materialcalendarview.DayViewDecorator;
+import com.prolificinteractive.materialcalendarview.DayViewFacade;
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.threeten.bp.LocalDate;
+import org.threeten.bp.Month;
 
 import java.io.File;
 import java.io.IOException;
@@ -74,6 +80,9 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -134,6 +143,11 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
     private boolean isLocated = false;
     private ArrayList<CommonBean> provinceItems = new ArrayList<>();
     private ArrayList<ArrayList<String>> cityItems = new ArrayList<>();
+
+    //@BindView(R.id.calendarView)
+    MaterialCalendarView widget;
+    CalendarDay today;
+
     private GridImageAdapter.onAddPicClickListener onAddPicClickListener = new GridImageAdapter.onAddPicClickListener() {
         @Override
         public void onAddPicClick() {
@@ -184,6 +198,7 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
     public void onAttach(Context context) {
         super.onAttach(context);
         mContext = context;
+
         try {
             commonDialogFragmentInterface = (CommonDialogFragmentInterface) context;
         } catch (ClassCastException e) {
@@ -323,25 +338,31 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
     }
 
     private void initCalendarView() {
-        CalendarView mCalendarView=mDialog.findViewById(R.id.appoint_calendar);
-        mCalendarView.setETimeSelListener(new CalendarView.CalendatEtimSelListener() {
-            @Override
-            public void onETimeSelect(Date date) {
-                if (date != null) {
-                    String etimestr = (date.getYear() + 1900) + getString(R.string.year) + (date.getMonth() + 1) + getString(R.string.month) + date.getDate() + getString(R.string.day);
-                    //Toast.makeText(getContext(),"结束时间"+etimestr,Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-        mCalendarView.setSTimeSelListener(new CalendarView.CalendarSTimeSelListener() {
-            @Override
-            public void onSTimeSelect(Date date) {
-                if (date != null) {
-                    String stimestr = (date.getYear() + 1900) + getString(R.string.year) + (date.getMonth() + 1) + getString(R.string.month) + date.getDate() + getString(R.string.day);
-                    //Toast.makeText(getContext(),"开始时间"+stimestr,Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+        //widget = mDialog.findViewById(R.id.calendarView);
+        //unbinder = ButterKnife.bind(getActivity());
+        today = CalendarDay.today();
+        widget = mDialog.findViewById(R.id.calendarView);
+        //widget.setCurrentDate(today);
+        //widget.setSelectedDate(today);
+        //widget.addDecorator(new DisabledDecorator());
+
+        final LocalDate min = LocalDate.of(today.getYear(), today.getMonth(), today.getDay());
+        final LocalDate max = LocalDate.of(today.getYear(), today.getMonth()+3, today.getDay());
+
+        widget.state().edit()
+                .setMinimumDate(min)
+                .setMaximumDate(max)
+                .commit();
+    }
+
+    private static class DisabledDecorator implements DayViewDecorator{
+        @Override public boolean shouldDecorate(final CalendarDay day) {
+            return true;
+        }
+
+        @Override public void decorate(final DayViewFacade view) {
+            view.setDaysDisabled(true);
+        }
     }
 
     private void initCityJsondata(String jsonFile) {

@@ -31,12 +31,14 @@
                 android:textStyle="bold"
                 android:padding="16dp"
                 android:textSize="18sp"
+                android:textAppearance="@style/CustomTextAppearance"
                 android:text="@string/experience_talent_explanation_label"/>
             <TextView
                 android:id="@+id/experience_talent_explanation_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:lineSpacingMultiplier="1.2"
+                android:textAppearance="@style/CustomTextAppearance"
                 android:padding="16dp"
                 android:textColor="@color/black"
                 android:text="@string/experience_talent_explanation_content" />
@@ -49,6 +51,7 @@
                 android:textStyle="bold"
                 android:padding="16dp"
                 android:textSize="18sp"
+                android:textAppearance="@style/CustomTextAppearance"
                 android:text="@string/guide_talent_explanation_label"/>
             <TextView
                 android:id="@+id/guide_talent_explanation"
@@ -57,6 +60,7 @@
                 android:lineSpacingMultiplier="1.2"
                 android:padding="16dp"
                 android:textColor="@color/black"
+                android:textAppearance="@style/CustomTextAppearance"
                 android:text="@string/guide_talent_explanation" />
 
             <TextView
@@ -67,6 +71,7 @@
                 android:textStyle="bold"
                 android:padding="16dp"
                 android:textSize="18sp"
+                android:textAppearance="@style/CustomTextAppearance"
                 android:text="@string/develop_explanation_label"/>
             <TextView
                 android:id="@+id/develop_explanation_details"
@@ -75,6 +80,7 @@
                 android:lineSpacingMultiplier="1.2"
                 android:padding="16dp"
                 android:textColor="@color/black"
+                android:textAppearance="@style/CustomTextAppearance"
                 android:text="@string/develop_explanation_details" />
             <LinearLayout
                 android:layout_width="match_parent"
@@ -84,24 +90,26 @@
                     android:id="@+id/apply_guide"
                     android:text="@string/travel_guide"
                     android:background="@drawable/btn_big_radius_stress"
-                    android:layout_margin="32dp"
+                    android:layout_margin="16dp"
                     android:textColor="@color/white"
                     android:padding="8dp"
                     android:textStyle="bold"
                     android:layout_weight="1"
                     android:layout_width="0dp"
+                    android:textAppearance="@style/CustomTextAppearance"
                     android:layout_height="wrap_content"/>
 
                 <Button
                     android:id="@+id/develop_experience"
                     android:text="@string/develop_experience"
                     android:background="@drawable/btn_big_radius_primary"
-                    android:layout_margin="32dp"
+                    android:layout_margin="16dp"
                     android:textColor="@color/white"
                     android:padding="8dp"
                     android:textStyle="bold"
                     android:layout_weight="1"
                     android:layout_width="0dp"
+                    android:textAppearance="@style/CustomTextAppearance"
                     android:layout_height="wrap_content"/>
             </LinearLayout>
         </LinearLayout>

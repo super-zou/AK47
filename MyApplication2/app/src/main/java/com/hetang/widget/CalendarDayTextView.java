@@ -18,6 +18,7 @@ public class CalendarDayTextView extends AppCompatTextView {
     public boolean isToday;
     private boolean isSTime;
     private boolean isETime;
+    private boolean isSelectTime;
     private Context context;
 
     public void setEmptyColor(int emptyColor) {
@@ -82,6 +83,17 @@ public class CalendarDayTextView extends AppCompatTextView {
             //此处必须将圆移动回开始位置，否则文本显示会受到影响
             canvas.translate(0, 0);
         }
+
+        if (isSelectTime){
+            canvas.save();
+            //移动到当前控件的中心，以中心为圆点绘制实心圆
+            canvas.translate(getWidth() / 2, getHeight() / 2);
+            canvas.drawCircle(0, 0, getWidth() / 2 , mPaintSTime);
+            canvas.restore();
+            //此处必须将圆移动回开始位置，否则文本显示会受到影响
+            canvas.translate(0, 0);
+        }
+
         super.onDraw(canvas);
     }
 
@@ -97,6 +109,11 @@ public class CalendarDayTextView extends AppCompatTextView {
 
     public void isSTime(boolean stime) {
         isSTime = stime;
+        this.setTextColor(context.getResources().getColor(R.color.date_time_tv));
+    }
+
+    public void isSelectTime(boolean isSelectTime) {
+        this.isSelectTime = isSelectTime;
         this.setTextColor(context.getResources().getColor(R.color.date_time_tv));
     }
 

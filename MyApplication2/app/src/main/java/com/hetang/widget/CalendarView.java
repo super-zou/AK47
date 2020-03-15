@@ -50,6 +50,7 @@ public class CalendarView extends LinearLayout {
     private MainRvAdapter mainAdapter;
     private List<CalendarCell> months = new ArrayList<>();
     private Context context;
+    private List<Date> selectedDates = new ArrayList<>();
 
     //相关属性
     private int titleColor;
@@ -75,7 +76,6 @@ public class CalendarView extends LinearLayout {
 
     private HashMap<Integer, SubRvAdapter> allAdapters = new HashMap<>();
 
-
     public CalendarView(Context context) {
         this(context, null);
     }
@@ -83,7 +83,6 @@ public class CalendarView extends LinearLayout {
     public CalendarView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
-
 
     public CalendarView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
@@ -222,6 +221,7 @@ public class CalendarView extends LinearLayout {
                             || (date.getDate() > dateFromServer.getDate() && date.getMonth() == firstMonth)
                             || (date.getDate() <= dateFromServer.getDate() && date.getMonth() == thirdMonth)) {
                         //可点击数据
+                        /*
                         if (isSelectingSTime) {
                             //正在选择开始时间
                             selectSDate(item.getCells().get(position));
@@ -229,6 +229,21 @@ public class CalendarView extends LinearLayout {
                             //正在选择结束时间
                             selectEDate(item.getCells().get(position));
                         }
+                         */
+                        int size = selectedDates.size();
+                        if (size == 0){
+                            selectDate(date);
+                        }else {
+                            for (int i=0; i<size; i++){
+                                if (date.getTime() == selectedDates.get(i).getTime()){
+                                    unSelectDate(date);
+                                }else {
+                                    selectDate(date);
+                                    ((CalendarDayTextView) helper.getView(R.id.calendar_day_tv)).isSelectTime(true);
+                                }
+                            }
+                        }
+
                     }
                     //更新所有的adapter，比如今天6月，需要更新6、7、8三个月份不同adapter
                     Iterator iterator = allAdapters.entrySet().iterator();
@@ -263,6 +278,16 @@ public class CalendarView extends LinearLayout {
             }
         }
 
+    }
+
+    public void selectDate(Date date){
+        selectedDates.add(date);
+        //notifyDateSelectChanged();
+    }
+
+    public void unSelectDate(Date date){
+        selectedDates.remove(date);
+        notifyDateSelectChanged();
     }
 
     /**
@@ -302,6 +327,8 @@ public class CalendarView extends LinearLayout {
                 //不可选时间
                 ((CalendarDayTextView) helper.getView(R.id.calendar_day_tv)).setTextColor(disableSeletColor);
             }
+
+            /*
             if (eDateTime != null && date.getTime() == eDateTime.getTime()) {
                 //结束时间
                 ((CalendarDayTextView) helper.getView(R.id.calendar_day_tv)).isETime(true);
@@ -325,6 +352,22 @@ public class CalendarView extends LinearLayout {
                     helper.getView(R.id.calendar_day_rl).setBackgroundColor(getResources().getColor(R.color.date_duration_bg));
                 }
             }
+            */
+
+            /*
+            int size = selectedDates.size();
+
+            if (size > 0){
+                for (int i=0; i<size; i++){
+                    if (date.getTime() == selectedDates.get(i).getTime()){
+                        ((CalendarDayTextView) helper.getView(R.id.calendar_day_tv)).isSelectTime(true);
+                    }
+                }
+            }
+            */
+
+           // ((CalendarDayTextView) helper.getView(R.id.calendar_day_tv)).isSelectTime(true);
+
             if (date.getDate() == dateFromServer.getDate() && date.getMonth() == firstMonth) {
                 ((CalendarDayTextView) helper.getView(R.id.calendar_day_tv)).setToday(true);
             }

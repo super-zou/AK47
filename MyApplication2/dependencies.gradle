@@ -1,0 +1,8 @@
+ext {
+
+  // Other
+  threeTenAbp = 'com.jakewharton.threetenabp:threetenabp:1.1.1'
+  butterknife = 'com.jakewharton:butterknife:8.5.1'
+  butterknifeCompiler = 'com.jakewharton:butterknife-compiler:10.1.0'
+
+}

@@ -531,8 +531,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_row="7"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
                 android:layout_marginTop="36dp"
                 android:orientation="vertical"
                 android:visibility="visible">
@@ -541,9 +539,9 @@
                     android:id="@+id/appoint_date_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
+                    android:layout_marginLeft="32dp"
+                    android:layout_marginRight="32dp"
                     android:layout_marginTop="16dp"
-                    android:layout_marginEnd="16dp"
                     android:text="@string/appoint_date_title"
                     android:textColor="@color/black"
                     android:textSize="22sp"
@@ -552,17 +550,38 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="16dp"
+                    android:layout_marginLeft="32dp"
+                    android:layout_marginRight="32dp"
+                    android:layout_marginTop="16dp"
+                    android:textAppearance="@style/CustomTextAppearance"
                     android:text="@string/appoint_date"
                     android:textColor="@color/black" />
-                
+                <!--
                 <com.hetang.widget.CalendarView
                     android:id="@+id/appoint_calendar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/appoint_calendar_bg">
                 </com.hetang.widget.CalendarView>
+                -->
 
+                <com.prolificinteractive.materialcalendarview.MaterialCalendarView
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/calendarView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="32dp"
+                    app:mcv_showOtherDates="all"
+                    app:mcv_selectionColor="@color/color_blue"
+                    app:mcv_selectionMode="multiple"
+                    app:mcv_dateTextAppearance="@style/CustomDateAppearance"
+                    app:mcv_headerTextAppearance="@style/CustomTextAppearance"
+                    app:mcv_weekDayTextAppearance="@style/CustomTextAppearance"
+                    app:mcv_monthLabels="@array/custom_months"
+                    app:mcv_weekDayLabels="@array/custom_weekdays"
+                    app:mcv_rightArrowMask="@drawable/ic_arrow_forward"
+                    app:mcv_leftArrowMask="@drawable/ic_arrow_back"
+                    />
             </LinearLayout>
 
         </GridLayout>
