@@ -344,20 +344,23 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
         widget = mDialog.findViewById(R.id.calendarView);
         //widget.setCurrentDate(today);
         //widget.setSelectedDate(today);
-        //widget.addDecorator(new DisabledDecorator());
+        widget.addDecorator(new DisabledDecorator());
 
         final LocalDate min = LocalDate.of(today.getYear(), today.getMonth(), today.getDay());
-        final LocalDate max = LocalDate.of(today.getYear(), today.getMonth()+3, today.getDay());
+        //final LocalDate max = LocalDate.of(today.getYear(), today.getMonth()+3, today.getDay());
 
         widget.state().edit()
                 .setMinimumDate(min)
-                .setMaximumDate(max)
+               //.setMaximumDate(max)
                 .commit();
     }
 
     private static class DisabledDecorator implements DayViewDecorator{
         @Override public boolean shouldDecorate(final CalendarDay day) {
-            return true;
+            if (day.getMonth() == CalendarDay.today().getMonth()){
+                return true;
+            }
+            return false;
         }
 
         @Override public void decorate(final DayViewFacade view) {
