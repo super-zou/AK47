@@ -18,10 +18,11 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/custom_actionbar">
 
-        <GridLayout
+        <LinearLayout
             android:id="@+id/travel_guide_wrapper"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
             android:columnCount="1">
 
             <LinearLayout
@@ -725,21 +726,21 @@
                 android:id="@+id/cancellation_policy_wrapper"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_row="8"
+                android:layout_row="9"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 android:layout_marginTop="36dp"
                 android:orientation="vertical"
-                android:visibility="gone">
+                android:visibility="visible">
                 
                 <TextView
-                    android:id="@+id/appointment_conditipon"
+                    android:id="@+id/cancellation_policy_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="16dp"
-                    android:text="@string/appointment_conditipon"
+                    android:text="@string/cancellation_policy_title"
                     android:textColor="@color/black"
                     android:textSize="22sp"
                     android:textStyle="bold" />
@@ -750,74 +751,68 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="8dp"
                     android:textAppearance="@style/CustomTextAppearance"
-                    android:text="@string/appointment_conditipon_desc"
+                    android:text="@string/cancellation_policy_summary"
                     android:textColor="@color/black" />
                 
+                                 <TextView
+                    android:id="@+id/cancellation_by_weather"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:text="@string/cancellation_by_weather"
+                    android:textColor="@color/black"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:textAppearance="@style/CustomTextAppearance"
+                    android:text="@string/cancellation_by_weather_desc"
+                    android:textColor="@color/black" />
+                 <TextView
+                    android:id="@+id/cancellation_by_talent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:text="@string/cancellation_by_talent"
+                    android:textColor="@color/black"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
                  <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="32dp"
+                    android:layout_marginTop="8dp"
                     android:textAppearance="@style/CustomTextAppearance"
-                    android:textStyle="bold"
-                    android:text="@string/appointment_sex"
+                    android:text="@string/cancellation_by_talent_desc"
                     android:textColor="@color/black" />
                 
-                <RadioGroup
-                    android:id="@+id/sexRG"
+                 <androidx.appcompat.widget.AppCompatCheckBox
+                    android:id="@+id/understand_cancellation"
+                    android:layout_marginStart="32dp"
                     android:layout_marginTop="16dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-                    <RadioButton
-                        android:id="@+id/radioNo"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="true"
-                        android:text="@string/no_condition"
-                        android:theme="@style/MyRadioButton"/>
-                    
-                    <RadioButton
-                        android:id="@+id/radioMale"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/only_female"
-                        android:theme="@style/MyRadioButton"/>
-
-                    <RadioButton
-                        android:id="@+id/radioFemale"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/only_male"
-                        android:theme="@style/MyRadioButton"/>
-                </RadioGroup>
+                    android:textColor="@color/black"
+                    android:buttonTint="@color/disabled"
+                    android:text="@string/understand_cancellation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                </androidx.appcompat.widget.AppCompatCheckBox>
                 
-                <EditText
-                    android:id="@+id/other_condition"
-                    style="@style/EditTextCustom"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="32dp"
-                    android:layout_marginEnd="16dp"
-                    android:hint="@string/other_condition"
-                    android:textColor="@color/blue_dark"
-                    android:textCursorDrawable="@drawable/cursor_color"
-                    android:theme="@style/MyEditText" />
-            </LinearLayout>
-                                       
-        </GridLayout>
-    </ScrollView>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
+                 </LinearLayout>
+                
+                <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:visibility="visible">
-
-        <Button
+<Button
             android:id="@+id/prev"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -829,8 +824,7 @@
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
-
-        <!--
+                    <!--
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -839,8 +833,7 @@
         app:layout_constraintStart_toEndOf="@+id/cancel"
         app:layout_constraintTop_toTopOf="@+id/cancel" />
     -->
-
-        <Button
+           <Button
             android:id="@+id/next"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -851,7 +844,12 @@
             android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>         
+                    
+                
+            </LinearLayout>
+                                    
+    </ScrollView>
 </RelativeLayout>
 
                
