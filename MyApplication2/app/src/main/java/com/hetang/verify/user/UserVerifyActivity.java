@@ -167,6 +167,7 @@ public class UserVerifyActivity extends BaseAppCompatActivity {
         PictureSelector.create(fragment)
                 .themeStyle(R.style.picture_WeChat_style) // xml设置主题
                 .loadImageEngine(GlideEngine.createGlideEngine())// 外部传入图片加载引擎，必传项
+                .isNotPreviewDownload(true)
                 .openExternalPreview(0, localMediaList);
 
     }
