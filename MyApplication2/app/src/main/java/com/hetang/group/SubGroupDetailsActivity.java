@@ -366,6 +366,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
         PictureSelector.create(this)
                 .themeStyle(R.style.picture_default_style) // xml设置主题
                 .loadImageEngine(GlideEngine.createGlideEngine())// 外部传入图片加载引擎，必传项
+                .isNotPreviewDownload(true)
                 .openExternalPreview(position, localMediaList);
 
     }
