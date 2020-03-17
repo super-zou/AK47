@@ -226,18 +226,18 @@
     <string name="cancellation_policy_summary">所有预订都可以在支付确认后的24小时内取消或至少提前7天取消并获得全额退款</string>
     <string name="cancellation_by_weather">因天气原因取消预订</string>
     <string name="cancellation_by_weather_desc">无论是体验开始之前还是体验开展期间，如果由于天气原因造成安全隐患，体验达人可以取消体验。如果发生这种情况，您将获得全额退款。</string>
-    <string name="cancellation_by_emergency">因紧急期刊取消预订</string>
-    <string name="cancellation_by_emergency_desc">因紧急期刊取消预订</string>
+    <string name="cancellation_by_emergency">因紧急情况取消预订</string>
+    <string name="cancellation_by_emergency_desc">因紧急情况取消预订</string>
     <string name="cancellation_by_talent">体验达人取消政策</string>
     <string name="cancellation_by_talent_desc">若要取消体验场次，请在日历中找到该体验，然后选择【取消体验】。参与者将收到通知并获得全额退款。
         \n 取消预订可能会打乱参与者计划。有鉴于此，如果您取消已经获得预订的体验，可能会受到处罚。
-        \n 取消体验可能会产生高达该体验预订价格的20%费用，这笔款项将从您今后的收款中扣除。在您完成取消预订之前，我们会通知您是否需要收取费用。
+        \n 取消体验可能会产生高达该体验预订价格的20%费用。在您完成取消预订之前，我们会通知您是否需要收取费用。
         \n 频繁取消预订，或不兑现预订承诺，都是违反荷塘服务条款的行为，可能会导致体验在荷塘下架。
     </string>
     <string name="cancellation_by_weather_talent">如果您的体验是在户外进行，而天气状况会让参与者处在不安全的或不舒适的环境中，那么您可以取消体验，并免收处罚。
     \n我们可能会请您提供相关证明，以确认因天气不佳而取消的理由属实。
     </string>
-    <string name="understand_cancellation">是否熟悉了相关政策？</string>
+    <string name="understand_cancellation">是否已熟悉并同意相关政策？</string>
     <string name="nickname_is_empty">请输入姓名</string>
     <string name="location_service_not_available">定位功能申请</string>
     <string name="location_permission_request">荷塘将使用手机的定位功能，帮您定位地址信息；\n如果禁用则部分功能不可用</string>
