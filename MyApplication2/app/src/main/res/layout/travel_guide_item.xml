@@ -1,0 +1,47 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="32dp">
+
+    <TextView
+        android:id="@+id/item_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textAppearance="@style/CustomTextAppearance"
+        android:text="" />
+        <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:textSize="16sp"
+        android:textAppearance="@style/CustomTextAppearance"
+        android:text="@string/route_introduction_edit" />
+    <EditText
+        style="@style/EditTextCustom"
+        android:minLines="6"
+        android:gravity="top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="@string/route_introduction_title"
+        android:textColor="@color/blue_dark"
+        android:background="@drawable/shape"
+        android:textCursorDrawable="@drawable/cursor_color"
+        android:theme="@style/MyEditText" />
+        <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:textSize="16sp"
+        android:textAppearance="@style/CustomTextAppearance"
+        android:text="@string/route_picture" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:overScrollMode="never" />
+</LinearLayout>
