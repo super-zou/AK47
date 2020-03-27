@@ -38,10 +38,15 @@
     <string name="reject_reason">拒绝原因</string>
     <string name="charge_setting_notice">请设置金额</string>
     <string name="subject_select_notice">请选择一个主题</string>
+        <string name="city_select_notice">请选择一个城市</string>
+    <string name="route_name_empty_notice">请输入线路名称</string>
+    <string name="route_introduction_empty_notice">请描述一下线路</string>
+    <string name="route_picture_empty_notice">请选择一些线路照片</string>
     <string name="qr_code_notice">请设置收款二维码</string>
     <string name="charge_introduction_notice">请填写收费说明</string>
     <string name="talent_apply">达人申请</string>
-    <string name="talent_apply_content">申请提交后，需要经过后台审核，请及时关注系统消息</string>
+    <string name="experience_talent_apply">体验达人审核</string>
+    <string name="talent_apply_content">您的申请提交后，需要经过平台审核，请及时关注系统消息</string>
     <string name="save">保存</string>
     <string name="done">完成</string>
     <string name="approve">认可</string>
@@ -184,16 +189,43 @@
     <string name="living">居住地</string>
     <string name="locating">正在定位</string>
     <string name="select_living">选择居住地</string>
-    <string name="select_city">选择城市</string>
-    <string name="service_introduction_title">旅行向导服务介绍</string>
-    <string name="guide_service_introduction">介绍一下你做为旅行向导可以提供哪些服务和帮助，生动、详实的描述或许能够吸引浏览人的预订，不妨在这里突出您的服务亮点。</string>
+    <string name="select_city">+选择城市</string>
+    <string name="service_introduction_title">旅行向导介绍</string>
+    <string name="service_introduction_notice">向导介绍不能为空</string>
+    <string name="self_introduction_empty_notice">自我介绍不能为空</string>
+    <string name="headline_empty_notice">标题不能为空</string>
+    <string name="charge_empty_notice">请设置收费金额</string>
+    <string name="select_date_empty_notice">请设置可预约时间</string>
+    <string name="understand_cancellation_notice">请勾选已熟悉相关政策</string>
+    <string name="route_introduction_title">线路、行程介绍</string>
+    <string name="route_introduction_edit">线路、行程介绍</string>
+    <string name="route_picture">选择一些很棒的照片</string>
+    <string name="route_cover_picture">第一张会做为封面照</string>
+    <string name="route_introduction">介绍一下您熟悉的线路或行程，为每一项撰写简介</string>
+    <string name="route_introduction_suggestion">建议：
+          \n1. 提供清晰、有代表性的图片
+          \n2. 描述生动、详实，突出亮点
+          \n3. 每条线路和行程逐项介绍
+    </string>
+    <string name="route_one">第一项</string>
+    <string name="route_two">第二项</string>
+    <string name="route_three">第三项</string>
+    <string name="route_new">新增项</string>
+    <string name="route_four">第四项</string>
+    <string name="route_five">第五项</string>
+    <string name="route_six">第六项</string>
+    <string name="add_route_item">+增加一项</string>
+    <string name="route_name">线路、行程名字</string>
+    <string name="enter_route_name">输入线路、行程名字</string>
+    <string name="estimate_duration">预计用时</string>
+    <string name="add_item">+添加线路或行程</string>
+    <string name="guide_service_introduction">介绍一下您做为旅行向导可以提供哪些服务，生动、详实的描述或许能够吸引浏览人的预订，不妨在这里突出您的服务亮点。</string>
     <string name="guide_service_introduction_suggestion">建议：
-          \n1.可以写明活动的行程，让参与者了解他们可以期待的内容
-          \n2.写出您的服务独特的亮点
-          \n3.能够给参与者提供哪些便利
-          \n4.根据活动顺序，为每项活动撰写简介</string>
+          \n1. 写出您的服务独特的亮点
+          \n2. 能够给参与者提供哪些便利和体验
+    </string>
     <string name="additional_service_introduction_title">可提供的额外服务</string>
-    <string name="additional_service_edit">更多服务</string>
+    <string name="additional_service_edit">其它服务</string>
     <string name="follow_shot">跟拍</string>
     <string name="travel_plan">行程规划</string>
     <string name="chartered_car">包车服务</string>
@@ -201,7 +233,7 @@
     <string name="ferry">接送站</string>
     <string name="self_introduction_title">向大家介绍自己</string>
     <string name="self_introduction_notice">向大家展示您的过往经历，不用太客气，这是一个很好的展示自己的机会。
-     \n 建议：突出您做为旅行向导，具备的能力或经验</string>
+     \n 建议：突出您做为旅行向导，具备的经验和能力</string>
     <string name="self_introduction">自我介绍</string>
     <string name="create_headline_title">给服务内容想个标题</string>
     <string name="create_headline_notice">标题尽量简短、生动描述且引人入胜</string>
@@ -210,7 +242,7 @@
     <string name="select_one_typical_picture">选一张最具代表性的封面照</string>
     <string name="select_more_pictures">上传更多有吸引力的活动或景点照片</string>
     <string name="appoint_date_title">预约时间设置</string>
-    <string name="appoint_date">请在日历上选择设置您可以被预约的时间。</string>
+    <string name="appoint_date">请在日历上选择您可以被预约的时间。</string>
     <string name="contact_way_title">联系方式</string>
     <string name="contact_way_desc">联系方式只对预约用户可见。已预约用户可以在荷塘上直接和您联系，也可能会通过其它方式联系您。如果您不能保证很及时地关注预约情况，建议您预留一个常用的联系方式。</string>
     <string name="wechat">微信号</string>
@@ -253,9 +285,13 @@
     <string name="years_old">岁</string>
     <string name="cm">CM</string>
     <string name="location">地点</string>
-    <string name="location_guide_desc">提供旅游向导服务的是哪个城市？</string>
+    <string name="location_guide_desc">选择您提供旅行向导服务的城市？</string>
     <string name="location_experience_desc">您将在哪个城市开展体验？</string>
-    <string name="charge_mode_introduction">旅行向导支持线上的咨询服务和线下的伴游向导服务，可以选择其中一种或两种服务方式。</string>
+        <string name="charge_mode_introduction">您可以开展线上咨询和线下向导两种服务：
+        \n*咨询服务指帮助旅行者制定合理行程，在线解答旅行者的咨询
+        \n*伴游向导则需要亲自带领旅行者实地体验
+        \n*伴游向导服务默认包含咨询服务
+        \n*您可以选择其中一种或两种服务方式</string>
      <string name="consultation_service">咨询服务收费设置</string>
     <string name="escort_service">伴游向导收费设置</string>
     <string name="location_error">定位失败，请手动选择</string>
@@ -386,6 +422,7 @@
     <string name="submit_payment">上传赞赏码</string>
     <string name="modify_talent">修改达人信息</string>
     <string name="setting_payment">设置收款二维码</string>
+    <string name="modify_route">修改</string>
     <string name="upload_qr_code">上传微信收款二维码</string>
     <string name="payment_notice">得到帮助的人会支付一些感谢费表示心意。
         \n 在微信收付款里选择赞赏码，设置金额后保存，然后点下面的\"+\"上传</string>
@@ -427,13 +464,4 @@
     <string name="user_verify">用户认证</string>
     <string name="talent_verify">达人认证</string>
     <string name="activity_verify">活动认证</string>
-    <string-array name="custom_weekdays">
-        <item>M</item>
-        <item>Tu</item>
-        <item>W</item>
-        <item>Th</item>
-        <item>F</item>
-        <item>Sa</item>
-        <item>Su</item>
-    </string-array>
 </resources>
