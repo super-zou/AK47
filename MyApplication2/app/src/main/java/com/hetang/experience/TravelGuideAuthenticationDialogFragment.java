@@ -13,15 +13,24 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.text.TextUtils;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.GridLayout;
+
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +40,7 @@ import com.bigkoo.pickerview.view.OptionsPickerView;
 import com.bumptech.glide.Glide;
 import com.hetang.R;
 import com.hetang.adapter.GridImageAdapter;
+
 import com.hetang.common.MyApplication;
 import com.hetang.common.OnItemClickListener;
 import com.hetang.common.SetAvatarActivity;
@@ -47,6 +57,7 @@ import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.RoundImageView;
 import com.hetang.util.Slog;
+
 import com.luck.picture.lib.PictureSelectionModel;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
@@ -58,24 +69,40 @@ import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.DayViewDecorator;
 import com.prolificinteractive.materialcalendarview.DayViewFacade;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
+import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
+import com.prolificinteractive.materialcalendarview.format.ArrayWeekDayFormatter;
+import com.prolificinteractive.materialcalendarview.format.MonthArrayTitleFormatter;
 
+import org.angmarch.views.NiceSpinner;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.threeten.bp.LocalDate;
+import org.threeten.bp.Month;
+import org.threeten.bp.format.DateTimeFormatter;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatCheckBox;
+import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.gridlayout.widget.GridLayout;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -86,13 +113,15 @@ import static android.app.Activity.RESULT_OK;
 import static com.hetang.archive.ArchiveFragment.REQUESTCODE;
 import static com.hetang.common.SetAvatarActivity.SUBMIT_TALENT_AUTHENTICATION_ACTION_BROADCAST;
 import static com.hetang.common.SetAvatarActivity.TALENT_AUTHENTICATION_PHOTO;
+import static com.hetang.experience.RouteItemEditDF.newInstance;
 import static com.hetang.group.GroupFragment.eden_group;
 import static com.hetang.group.SubGroupActivity.TALENT_ADD_BROADCAST;
 import static com.hetang.group.SubGroupActivity.getTalent;
+import static com.hetang.meet.MeetDynamicsFragment.REQUEST_CODE;
 
-public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment {
+public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment implements CompoundButton.OnCheckedChangeListener, OnDateSelectedListener {
     public final static int TALENT_AUTHENTICATION_RESULT_OK = 0;
-    public final static int COMMON_TALENT_AUTHENTICATION_RESULT_OK = 1;
+    public final static int ROUTE_REQUEST_CODE = 1;
     private static final boolean isDebug = true;
     private static final String TAG = "TravelGuideAuthenticationDialogFragment";
     private static final String SUBMIT_URL = HttpUtil.DOMAIN + "?q=talent/become/apply";
@@ -101,92 +130,58 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
     private int type;
     private int gid;
     private int aid;
+    private TextView leftBack;
     private SubGroupActivity.Talent talent;
     private Dialog mDialog;
     private Context mContext;
     private String uri;
     private boolean isSubmit = false;
     private EditText introductionET;
-    private RoundImageView rewardQRCode;
-    private QRCodeSetBroadcastReceiver mReceiver;
+    private EditText selfIntroductionET;
+    private EditText headLineET;
+    private GridLayout mRouteItemGL;
     private CommonDialogFragmentInterface commonDialogFragmentInterface;
-    private GridLayout authenticateWrapper;
+    private LinearLayout authenticateWrapper;
     private ConstraintLayout navigation;
+    private TextView addRouteItem;
     private Button prevBtn;
     private Button nextBtn;
     private int index = 1;
     private JSONObject authenObject;
-    private GridImageAdapter adapter;
-    private GridImageAdapter adapterReward;
+    
     private List<LocalMedia> selectList = new ArrayList<>();
     private List<File> selectFileList = new ArrayList<>();
-    private List<LocalMedia> selectRewardList = new ArrayList<>();
-    private List<File> selectRewardFileList = new ArrayList<>();
+    private List<Route> routeList = new ArrayList<>();
+    private Map<String, String> additionalServices = new HashMap<String, String>();
+    private List<String> selectedDateList = new ArrayList<>();
     private AddDynamicsActivity addDynamicsActivity;
-    private RecyclerView addMateriaRV;
-    private RecyclerView addRewardQRRV;
-    private Button selectSubject;
-    private EditText chargeSetting;
-    private EditText chargeIntroduction;
+    private Button selectCityBtn;
+    private EditText consultationChargeNumber;
+    private EditText consultationChargeDesc;
+    private EditText escortChargeSettingNumber;
+    private EditText escortChargeDesc;
+    private AppCompatCheckBox understandCancellation;
+    
     private Window window;
     private int maxSelectNum = 6;
     private int pictureSelectType = 0;//default 0 for materia
-    private boolean isPicked = false;
+    private boolean isCityPicked = false;
     private Thread threadIndustry = null;
     private boolean isLocated = false;
+    private Typeface font;
     private ArrayList<CommonBean> provinceItems = new ArrayList<>();
     private ArrayList<ArrayList<String>> cityItems = new ArrayList<>();
+    AppCompatCheckBox followShot;
+    AppCompatCheckBox travelPlan;
+    AppCompatCheckBox charteredCar;
+    AppCompatCheckBox ticket;
+    AppCompatCheckBox ferry;
+    private EditText additionalServiceET;
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("EEE, d MMM yyyy");
 
     //@BindView(R.id.calendarView)
     MaterialCalendarView widget;
     CalendarDay today;
-
-    private GridImageAdapter.onAddPicClickListener onAddPicClickListener = new GridImageAdapter.onAddPicClickListener() {
-        @Override
-        public void onAddPicClick() {
-            if (pictureSelectType == 0) {
-                maxSelectNum = 6;
-            } else {
-                maxSelectNum = 1;
-            }
-            PictureSelectionModel pictureSelectionModel = PictureSelector.create(TravelGuideAuthenticationDialogFragment.this).openGallery(PictureMimeType.ofImage());
-            pictureSelectionModel.loadImageEngine(GlideEngine.createGlideEngine())// 外部传入图片加载引擎，必传项
-                    .theme(R.style.picture_WeChat_style)// 主题样式设置 具体参考 values/styles   用法：R.style.picture.white.style v2.3.3后 建议使用setPictureStyle()动态方式
-                    .isWeChatStyle(true)// 是否开启微信图片选择风格
-                    //.setLanguage(language)// 设置语言，默认中文
-                    .setPictureStyle(addDynamicsActivity.getWeChatStyle())// 动态自定义相册主题
-                    .setPictureCropStyle(addDynamicsActivity.getCropParameterStyle())// 动态自定义裁剪主题
-                    .setPictureWindowAnimationStyle(new PictureWindowAnimationStyle())// 自定义相册启动退出动画
-                    .isWithVideoImage(true)// 图片和视频是否可以同选,只在ofAll模式下有效
-                    .maxSelectNum(maxSelectNum)// 最大图片选择数量
-                    .minSelectNum(1)// 最小选择数量
-                    .imageSpanCount(4)// 每行显示个数
-                    .isReturnEmpty(false)// 未选择数据时点击按钮是否可以返回
-                    //.isAndroidQTransform(false)// 是否需要处理Android Q 拷贝至应用沙盒的操作，只针对compress(false); && enableCrop(false);有效,默认处理
-                    .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)// 设置相册Activity方向，不设置默认使用系统
-                    .selectionMode(PictureConfig.MULTIPLE)// 多选 or 单选
-                    //.isSingleDirectReturn(cb_single_back.isChecked())// 单选模式下是否直接返回，PictureConfig.SINGLE模式下有效
-                    .previewImage(true)// 是否可预览图片
-                    .isCamera(true)// 是否显示拍照按钮
-                    //.isMultipleSkipCrop(false)// 多图裁剪时是否支持跳过，默认支持
-                    //.isMultipleRecyclerAnimation(false)// 多图裁剪底部列表显示动画效果
-                    .isZoomAnim(true)// 图片列表点击 缩放效果 默认true
-                    .compress(true)// 是否压缩
-                    .compressQuality(80)// 图片压缩后输出质量 0~ 100
-                    .synOrAsy(true)//同步true或异步false 压缩 默认同步
-                    .withAspectRatio(1, 1)// 裁剪比例 如16:9 3:2 3:4 1:1 可自定义
-                    .freeStyleCropEnabled(true)// 裁剪框是否可拖拽
-                    .previewEggs(true)// 预览图片时 是否增强左右滑动图片体验(图片滑动一半即可看到上一张是否选中)
-                    .minimumCompressSize(100);
-
-            if (pictureSelectType == 0) {
-                pictureSelectionModel.forResult(PictureConfig.CHOOSE_REQUEST);
-            } else {
-                pictureSelectionModel.forResult(PictureConfig.SINGLE);
-            }
-        }
-    };
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -198,7 +193,7 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
             throw new ClassCastException(context.toString() + "must implement commonDialogFragmentInterface");
         }
     }
-
+    
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
@@ -213,10 +208,10 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
 
         mDialog.setContentView(R.layout.travel_guide_authentication);
 
-        //initView();
+        initView();
 
         initCalendarView();
-
+        
         mDialog.setCanceledOnTouchOutside(true);
         window = mDialog.getWindow();
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
@@ -225,9 +220,8 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
         layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
         layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT;
         window.setAttributes(layoutParams);
-
-        //subGroup = (SubGroupActivity.SubGroup) bundle.getSerializable("subGroup");
-        TextView leftBack = mDialog.findViewById(R.id.left_back);
+        
+        leftBack = mDialog.findViewById(R.id.left_back);
         leftBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -235,8 +229,10 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
             }
         });
 
-        Typeface font = Typeface.createFromAsset(MyApplication.getContext().getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
+        font = Typeface.createFromAsset(MyApplication.getContext().getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
         FontManager.markAsIconContainer(mDialog.findViewById(R.id.custom_actionbar), font);
+        FontManager.markAsIconContainer(mDialog.findViewById(R.id.add_travel_guide_items), font);
+        FontManager.markAsIconContainer(mDialog.findViewById(R.id.charge_wrapper), font);
 
         if (addDynamicsActivity == null) {
             addDynamicsActivity = new AddDynamicsActivity();
@@ -244,36 +240,107 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
 
         return mDialog;
     }
-
+    
     private void initView() {
-        addMateriaRV = mDialog.findViewById(R.id.add_materia);
-        addRewardQRRV = mDialog.findViewById(R.id.add_reward_qr);
-        chargeSetting = mDialog.findViewById(R.id.charge_setting);
-        chargeIntroduction = mDialog.findViewById(R.id.charge_introduction);
-        FullyGridLayoutManager manager = new FullyGridLayoutManager(getContext(), 3, GridLayoutManager.VERTICAL, false);
-        FullyGridLayoutManager managerReward = new FullyGridLayoutManager(getContext(), 3, GridLayoutManager.VERTICAL, false);
-        addMateriaRV.setLayoutManager(manager);
-        addRewardQRRV.setLayoutManager(managerReward);
-
-        //for authentication materia
-        adapter = new GridImageAdapter(getContext(), onAddPicClickListener);
-        adapter.setList(selectList);
-        adapter.setSelectMax(6);
-        addMateriaRV.setAdapter(adapter);
-
-        //for reward qr code
-        adapterReward = new GridImageAdapter(getContext(), onAddPicClickListener);
-        adapterReward.setList(selectRewardList);
-        adapterReward.setSelectMax(1);
-        addRewardQRRV.setAdapter(adapterReward);
-
-        selectSubject = mDialog.findViewById(R.id.select_subject);
-        authenticateWrapper = mDialog.findViewById(R.id.talent_authentication_wrapper);
-        navigation = mDialog.findViewById(R.id.navigation);
-        prevBtn = mDialog.findViewById(R.id.prev);
-        nextBtn = mDialog.findViewById(R.id.next);
+        selectCityBtn = mDialog.findViewById(R.id.select_city);
+        authenticateWrapper = mDialog.findViewById(R.id.travel_guide_wrapper);
         introductionET = mDialog.findViewById(R.id.introduction_edittext);
+        selfIntroductionET = mDialog.findViewById(R.id.self_introduction);
+        headLineET = mDialog.findViewById(R.id.create_headline_edit);
+        mRouteItemGL = mDialog.findViewById(R.id.add_travel_guide_items);
+        addRouteItem = mDialog.findViewById(R.id.add_route_item);
+        understandCancellation = mDialog.findViewById(R.id.understand_cancellation);
+        prevBtn = mDialog.findViewById(R.id.prevBtn);
+        nextBtn = mDialog.findViewById(R.id.nextBtn);
 
+        selectCity();
+        initRouteItem();
+        setAdditionalServices();
+        initChargeSetting();
+        navigationProcess();
+
+    }
+    
+    private void navigationProcess(){
+        prevBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (index > 0) {
+
+                    nextBtn.setText(getContext().getResources().getString(R.string.next));
+                    index--;
+                    if (index == 1) {
+                        prevBtn.setVisibility(View.GONE);
+                        leftBack.setVisibility(View.VISIBLE);
+                    }
+                    authenticateWrapper.getChildAt(index - 1).setVisibility(View.VISIBLE);
+                    authenticateWrapper.getChildAt(index).setVisibility(View.GONE);
+                    Slog.d(TAG, "-------------------->index: " + index);
+                }
+            }
+        });
+        
+        nextBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (validCheck(index)) {
+                    if (leftBack.getVisibility() == View.VISIBLE){
+                        leftBack.setVisibility(View.GONE);
+                    }
+                    if (prevBtn.getVisibility() == View.GONE) {
+                        prevBtn.setVisibility(View.VISIBLE);
+                    }
+                    if (index < authenticateWrapper.getChildCount() - 1) {
+                        if (index == authenticateWrapper.getChildCount() - 2) {
+                            nextBtn.setText(getContext().getResources().getString(R.string.done));
+                        }
+                        Slog.d(TAG, "---------------------current index: "+index);
+                        authenticateWrapper.getChildAt(index).setVisibility(View.VISIBLE);
+                        authenticateWrapper.getChildAt(index - 1).setVisibility(View.GONE);
+
+                        index++;
+
+                        processCurrent(index);
+
+                    } else {
+                        submitNotice();
+                    }
+                }
+            }
+        });
+    }
+    
+    private void addRouteItem(){
+        View view = LayoutInflater.from(MyApplication.getContext())
+                .inflate(R.layout.route_item_index, (ViewGroup) mDialog.findViewById(android.R.id.content), false);
+        mRouteItemGL.addView(view);
+    }
+
+    private void initRouteItem(){
+        addRouteItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addRouteItem();
+                initRouteItem();
+            }
+        });
+        
+        int size = mRouteItemGL.getChildCount();
+        Slog.d(TAG, "--------------------->size: "+size);
+        for (int i=0; i<size; i++){
+            final int index = i;
+            mRouteItemGL.getChildAt(i).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    startRouteItemEditDF(index);
+                }
+            });
+        }
+
+        FontManager.markAsIconContainer(mDialog.findViewById(R.id.add_travel_guide_items), font);
+    }
+    
+    private void selectCity(){
         //init city data in thread
         if (threadCity == null) {
             threadCity = new Thread(new Runnable() {
@@ -286,59 +353,140 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
             threadCity.start();
         }
 
-        prevBtn.setOnClickListener(new View.OnClickListener() {
+        selectCityBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (index > 0) {
-                    if (index == 4) {
-                        nextBtn.setText(getContext().getResources().getString(R.string.next));
-                    }
-                    index--;
-                    if (index == 1) {
-                        prevBtn.setVisibility(View.GONE);
-                    }
-                    authenticateWrapper.getChildAt(index).setVisibility(View.VISIBLE);
-                    authenticateWrapper.getChildAt(index + 1).setVisibility(View.GONE);
-                    Slog.d(TAG, "-------------------->index: " + index);
-                }
-            }
-        });
-
-        nextBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (validCheck(index)) {
-                    if (prevBtn.getVisibility() == View.GONE) {
-                        prevBtn.setVisibility(View.VISIBLE);
-                    }
-                    if (index < 4) {
-                        index++;
-                        if (index == 4) {
-                            nextBtn.setText(getContext().getResources().getString(R.string.done));
-                        }
-                        authenticateWrapper.getChildAt(index).setVisibility(View.VISIBLE);
-                        authenticateWrapper.getChildAt(index - 1).setVisibility(View.GONE);
-
-                        processCurrent(index);
-
-                    } else {
-                        //submit();
-                        submitNotice();
-                    }
-                }
+                showCityPickerView();
             }
         });
     }
 
+    
+    private void setAdditionalServices(){
+        followShot = mDialog.findViewById(R.id.follow_shot);
+        travelPlan = mDialog.findViewById(R.id.travel_plan);
+        charteredCar = mDialog.findViewById(R.id.chartered_car);
+        ticket = mDialog.findViewById(R.id.ticket);
+        ferry = mDialog.findViewById(R.id.ferry);
+        additionalServiceET = mDialog.findViewById(R.id.additional_service_edit);
+
+        followShot.setOnCheckedChangeListener(this);
+        travelPlan.setOnCheckedChangeListener(this);
+        charteredCar.setOnCheckedChangeListener(this);
+        ticket.setOnCheckedChangeListener(this);
+        ferry.setOnCheckedChangeListener(this);
+
+    }
+    
+    @Override
+    public void onCheckedChanged(CompoundButton checkBox, boolean checked) {
+        Slog.d(TAG, "--------------checkbox text: "+checkBox.getText().toString());
+        switch (checkBox.getId()){
+            case R.id.follow_shot:
+                if (checked){
+                    additionalServices.put("1", checkBox.getText().toString());
+                }else {
+                    additionalServices.remove("1");
+                }
+                break;
+            case R.id.travel_plan:
+                if (checked){
+                    additionalServices.put("2", checkBox.getText().toString());
+                }else {
+                    additionalServices.remove("2");
+                }
+                break;
+                case R.id.chartered_car:
+                if (checked){
+                    additionalServices.put("3", checkBox.getText().toString());
+                }else {
+                    additionalServices.remove("3");
+                }
+                break;
+            case R.id.ticket:
+                if (checked){
+                    additionalServices.put("4", checkBox.getText().toString());
+                }else {
+                    additionalServices.remove("4");
+                }
+                break;
+                case R.id.ferry:
+                if (checked){
+                    additionalServices.put("5", checkBox.getText().toString());
+                }else {
+                    additionalServices.remove("5");
+                }
+                break;
+                default:
+                    break;
+        }
+    }
+    
+    private void initChargeSetting(){
+        Button consultationServiceBtn = mDialog.findViewById(R.id.consultation_service);
+        Button escortServiceBtn = mDialog.findViewById(R.id.escort_service);
+        RelativeLayout consultationServiceSetting = mDialog.findViewById(R.id.consultation_charge_setting);
+        RelativeLayout escortServiceSetting = mDialog.findViewById(R.id.escort_charge_setting);
+        consultationChargeNumber = mDialog.findViewById(R.id.consultation_charge_setting_edit);
+        consultationChargeDesc = mDialog.findViewById(R.id.consultation_charge_supplement_edit);
+        escortChargeSettingNumber = mDialog.findViewById(R.id.charge_setting_edit);
+        escortChargeDesc = mDialog.findViewById(R.id.charge_supplement_edit);
+
+        consultationServiceBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                consultationServiceBtn.setBackground(getContext().getResources().getDrawable(R.drawable.btn_primary));
+                consultationServiceBtn.setTextColor(getContext().getResources().getColor(R.color.white));
+                consultationServiceSetting.setVisibility(View.VISIBLE);
+            }
+        });
+
+        escortServiceBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                escortServiceBtn.setBackground(getContext().getResources().getDrawable(R.drawable.btn_primary));
+                escortServiceBtn.setTextColor(getContext().getResources().getColor(R.color.white));
+                escortServiceSetting.setVisibility(View.VISIBLE);
+            }
+        });
+        
+        String[] units = getResources().getStringArray(R.array.duration);
+        NiceSpinner consultationUnitSpinner = (NiceSpinner) mDialog.findViewById(R.id.consultation_unit);
+        NiceSpinner escortUnitSpinner = (NiceSpinner) mDialog.findViewById(R.id.escort_unit);
+        final List<String> unitList = new LinkedList<>(Arrays.asList(units));
+        consultationUnitSpinner.attachDataSource(unitList);
+        escortUnitSpinner.attachDataSource(unitList);
+        
+        consultationUnitSpinner.addOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+            }
+
+        });
+
+        escortUnitSpinner.addOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+            }
+
+        });
+    }
+    
     private void initCalendarView() {
         //widget = mDialog.findViewById(R.id.calendarView);
         //unbinder = ButterKnife.bind(getActivity());
+
         today = CalendarDay.today();
         widget = mDialog.findViewById(R.id.calendarView);
+        widget.setOnDateChangedListener(this);
         //widget.setCurrentDate(today);
         //widget.setSelectedDate(today);
+        widget.setTitleFormatter(new MonthArrayTitleFormatter(getResources().getTextArray(R.array.custom_months)));
+        widget.setWeekDayFormatter(new ArrayWeekDayFormatter(getResources().getTextArray(R.array.custom_weekdays)));
         widget.addDecorator(new DisabledDecorator());
-
+        
         final LocalDate min = LocalDate.of(today.getYear(), today.getMonth(), today.getDay());
         //final LocalDate max = LocalDate.of(today.getYear(), today.getMonth()+3, today.getDay());
 
@@ -348,11 +496,37 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
                 .commit();
     }
 
+    @Override
+    public void onDateSelected(
+            @NonNull MaterialCalendarView widget,
+            @NonNull CalendarDay date,
+            boolean selected) {
+
+        String dataStr;
+        dataStr = FORMATTER.format(date.getDate());
+        Slog.d(TAG, "----------------------------------->selected: "+selected+"   data: "+dataStr);
+        if (selected){
+            selectedDateList.add(dataStr);
+        }else {
+            selectedDateList.remove(dataStr);
+        }
+    }
+    
+    private void startRouteItemEditDF(int index){
+        Slog.d(TAG, "--------------------->index: "+index+" size: "+routeList.size());
+        RouteItemEditDF routeItemEditDF;
+        if (routeList.size() > index){
+            routeItemEditDF = newInstance(index, routeList.get(index));
+        }else {
+            routeItemEditDF = newInstance(index, null);
+        }
+
+        routeItemEditDF.setTargetFragment(this, ROUTE_REQUEST_CODE);
+        routeItemEditDF.show(getFragmentManager(), "RouteItemEditDF");
+    }
+    
     private static class DisabledDecorator implements DayViewDecorator{
         @Override public boolean shouldDecorate(final CalendarDay day) {
-            if (day.getMonth() == CalendarDay.today().getMonth()){
-                return true;
-            }
             return false;
         }
 
@@ -366,7 +540,7 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
         provinceItems = commonPickerView.getOptionsMainItem(getContext(), jsonFile);
         cityItems = commonPickerView.getOptionsSubItems(provinceItems);
     }
-
+    
     private void showCityPickerView() {// 弹出地址选择器
         //条件选择器
         OptionsPickerView pvOptions;
@@ -374,18 +548,21 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
             @Override
             public void onOptionsSelect(int options1, int option2, int options3 ,View v) {
                 //返回的分别是二个级别的选中位置
-                isLocated = true;
+                isCityPicked = true;
                 String city = cityItems.get(options1).get(option2);
+                selectCityBtn.setText(city);
             }
-        }).build();
+        }).setDecorView(window.getDecorView().findViewById(R.id.travel_guide_authentication))
+                .isDialog(true).setLineSpacingMultiplier(1.2f).isCenterLabel(false).build();
+        pvOptions.getDialog().getWindow().setGravity(Gravity.CENTER);
         pvOptions.setPicker(provinceItems, cityItems);
         pvOptions.show();
     }
-
+    
     private void submitNotice() {
         final AlertDialog.Builder normalDialogBuilder =
                 new AlertDialog.Builder(getContext());
-        normalDialogBuilder.setTitle(getResources().getString(R.string.talent_apply));
+        normalDialogBuilder.setTitle(getResources().getString(R.string.experience_talent_apply));
         normalDialogBuilder.setMessage(getResources().getString(R.string.talent_apply_content));
         normalDialogBuilder.setPositiveButton(getContext().getResources().getString(R.string.submit),
                 new DialogInterface.OnClickListener() {
@@ -398,8 +575,10 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
         AlertDialog normalDialog = normalDialogBuilder.create();
         normalDialog.show();
     }
-
+    
     private void submit() {
+        Toast.makeText(getContext(), "submit", Toast.LENGTH_LONG).show();
+        /*
         Map<String, String> authenMap = new HashMap<>();
         authenMap.put("introduction", introductionET.getText().toString());
         authenMap.put("subject", selectSubject.getText().toString());
@@ -413,155 +592,201 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
                 selectFileList.add(new File(media.getCompressPath()));
             }
         }
-        if (selectRewardList.size() > 0) {
-            for (LocalMedia media : selectRewardList) {
-                selectFileList.add(new File(media.getCompressPath()));
-            }
-        }
 
         authenMap.put("type", String.valueOf(type));
 
         Slog.d(TAG, "--------------------->file size: " + selectFileList.size());
 
         uploadPictures(authenMap, "authen", selectFileList);
+        */
     }
-
+    
     private boolean validCheck(int index) {
         Slog.d(TAG, "------------------------>validCheck: " + index);
         boolean valid = false;
         switch (index) {
             case 1:
-                String introduction = introductionET.getText().toString();
-                if (!TextUtils.isEmpty(introduction)) {
-                    valid = true;
-                } else {
-                    introductionET.setError(getContext().getResources().getString(R.string.talent_introduction_empty));
+                valid = isCityPicked;
+                if (!isCityPicked) {
+                    Toast.makeText(getContext(), getResources().getString(R.string.city_select_notice), Toast.LENGTH_LONG).show();
                 }
                 break;
             case 2:
-                valid = true;
+                if (!TextUtils.isEmpty(introductionET.getText().toString())){
+                    valid = true;
+                }else {
+                    valid = false;
+                    Toast.makeText(getContext(), getResources().getString(R.string.service_introduction_notice), Toast.LENGTH_LONG).show();
+                }
                 break;
-            case 3:
-                valid = isPicked;
-                if (!isPicked) {
-                    Toast.makeText(getContext(), getResources().getString(R.string.subject_select_notice), Toast.LENGTH_LONG).show();
+                case 3:
+                if (routeList.size() == 0){
+                    valid = false;
+                    Toast.makeText(getContext(), getResources().getString(R.string.route_introduction_empty_notice), Toast.LENGTH_LONG).show();
+                }else {
+                    valid = true;
                 }
                 break;
 
-            case 4:
-                String chargeAmount = chargeSetting.getText().toString();
-                if (!TextUtils.isEmpty(chargeAmount)) {
+            case 5:
+                if (!TextUtils.isEmpty(selfIntroductionET.getText().toString())){
                     valid = true;
-                } else {
-                    Toast.makeText(getContext(), getResources().getString(R.string.charge_setting_notice), Toast.LENGTH_LONG).show();
+                }else {
                     valid = false;
-                    return false;
+                    Toast.makeText(getContext(), getResources().getString(R.string.self_introduction_empty_notice), Toast.LENGTH_LONG).show();
                 }
 
-                String chargeDesc = chargeIntroduction.getText().toString();
-                if (!TextUtils.isEmpty(chargeDesc)) {
+                break;
+                case 6:
+                if (!TextUtils.isEmpty(headLineET.getText().toString())){
                     valid = true;
-                } else {
-                    Toast.makeText(getContext(), getResources().getString(R.string.charge_introduction_notice), Toast.LENGTH_LONG).show();
+                }else {
                     valid = false;
-                    return valid;
+                    Toast.makeText(getContext(), getResources().getString(R.string.headline_empty_notice), Toast.LENGTH_LONG).show();
                 }
 
-                if (selectRewardList.size() == 0) {
-                    Toast.makeText(getContext(), getResources().getString(R.string.qr_code_notice), Toast.LENGTH_LONG).show();
-                    valid = false;
-                    return valid;
-                } else {
+                break;
+            case 7:
+                if(!TextUtils.isEmpty(consultationChargeNumber.getText()) || !TextUtils.isEmpty(escortChargeSettingNumber.getText())){
                     valid = true;
+                }else {
+                    valid = false;
+                    Toast.makeText(getContext(), getResources().getString(R.string.charge_empty_notice), Toast.LENGTH_LONG).show();
                 }
-
+                break;
+                case 8:
+                if (selectedDateList.size() > 0){
+                    valid = true;
+                }else {
+                    valid = false;
+                    Toast.makeText(getContext(), getResources().getString(R.string.select_date_empty_notice), Toast.LENGTH_LONG).show();
+                }
+                break;
+            case 10:
+                if (understandCancellation.isChecked()){
+                    valid = true;
+                }else {
+                    valid = false;
+                    Toast.makeText(getContext(), getResources().getString(R.string.understand_cancellation_notice), Toast.LENGTH_LONG).show();
+                }
                 break;
             default:
-                valid = false;
+                valid = true;
                 break;
         }
 
         return valid;
     }
-
+    
     private void processCurrent(int index) {
         Slog.d(TAG, "------------------------>processCurrent: " + index);
         switch (index) {
-            case 2:
-                pictureSelectType = 0;
-                addMateria(adapter);
-                break;
-            case 4:
-                pictureSelectType = 1;
-                addMateria(adapterReward);
+            case 5:
+                if (!TextUtils.isEmpty(additionalServiceET.getText())){
+                    additionalServices.put("addition", additionalServiceET.getText().toString());
+                }
+                StringBuilder sb = new StringBuilder();
+                for (String key : additionalServices.keySet()) {
+                    sb.append(additionalServices.get(key) + "\t");
+                }
+                Slog.d(TAG, "---------------------------->additionalServices: "+sb);
                 break;
         }
     }
-
-    private void addMateria(GridImageAdapter imageAdapter) {
-        imageAdapter.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(int position, View v) {
-                if (selectList.size() > 0) {
-                    LocalMedia media = selectList.get(position);
-                    String pictureType = media.getMimeType();
-                    int mediaType = PictureMimeType.getMimeType(pictureType);
-                    switch (mediaType) {
-                        case PictureConfig.TYPE_IMAGE:
-                            //PictureSelector.create(MainActivity.this).externalPicturePreview(position, "/custom_file", selectList);
-                            PictureSelector.create(TravelGuideAuthenticationDialogFragment.this)
-                                    .themeStyle(R.style.picture_WeChat_style) // xml设置主题
-                                    .setPictureStyle(addDynamicsActivity.getWeChatStyle())// 动态自定义相册主题
-                                    //.setPictureWindowAnimationStyle(animationStyle)// 自定义页面启动动画
-                                    .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)// 设置相册Activity方向，不设置默认使用系统
-                                    .isNotPreviewDownload(true)// 预览图片长按是否可以下载
-                                    //.bindCustomPlayVideoCallback(callback)// 自定义播放回调控制，用户可以使用自己的视频播放界面
-                                    .loadImageEngine(GlideEngine.createGlideEngine())// 外部传入图片加载引擎，必传项
-                                    .openExternalPreview(position, selectList);
-                            break;
-                        case PictureConfig.TYPE_VIDEO:
-                            PictureSelector.create(TravelGuideAuthenticationDialogFragment.this).externalPictureVideo(media.getPath());
-                            // 预览视频
-                            PictureSelector.create(TravelGuideAuthenticationDialogFragment.this)
-                                    .themeStyle(R.style.picture_WeChat_style)
-                                    .setPictureStyle(addDynamicsActivity.getWeChatStyle())// 动态自定义相册主题
-                                    .externalPictureVideo(media.getPath());
-                            break;
-                        case PictureConfig.TYPE_AUDIO:
-                            // 预览音频
-                            PictureSelector.create(TravelGuideAuthenticationDialogFragment.this)
-                                    .externalPictureAudio(
-                                            media.getPath().startsWith("content://") ? media.getAndroidQToPath() : media.getPath());
-                            break;
-                    }
-                }
-            }
-        });
-    }
-
+    
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
-                case PictureConfig.CHOOSE_REQUEST:
-                    selectList = PictureSelector.obtainMultipleResult(data);
-                    if (selectList.size() > 0) {
-                        adapter.setList(selectList);
-                        adapter.notifyDataSetChanged();
+                case ROUTE_REQUEST_CODE:
+                    Bundle bundle = data.getExtras();
+                    int index = bundle.getInt("index");
+                    Route route = bundle.getParcelable("route");
+                    if(bundle.getBoolean("isModify")){
+                        routeList.remove(index);
                     }
-                    break;
-                case PictureConfig.SINGLE:
-                    selectRewardList = PictureSelector.obtainMultipleResult(data);
-                    if (selectRewardList.size() > 0) {
-                        adapterReward.setList(selectRewardList);
-                        adapterReward.notifyDataSetChanged();
-                    }
+
+                    routeList.add(index, route);
+                    setRouteName(index, route.name);
                     break;
             }
         }
     }
+    
+    private void setRouteName(int index, String name){
+        ConstraintLayout routeItem = (ConstraintLayout)mRouteItemGL.getChildAt(index);
+        TextView routeName = (TextView)routeItem.getChildAt(0);
+        routeName.setText(name);
+    }
 
+    public static class Route implements Parcelable {
+        public String name;
+        public String introduction;
+        public List<LocalMedia> selectPicture = new ArrayList<>();
+
+        public Route(String name, String introduction, List<LocalMedia> selectPicture) {
+            this.name = name;
+            this.introduction = introduction;
+            this.selectPicture = selectPicture;
+        }
+         protected Route(Parcel in) {
+            name = in.readString();
+            introduction = in.readString();
+            selectPicture = new ArrayList<>();
+            in.readList(selectPicture, getClass().getClassLoader());
+        }
+
+        public static final Creator<Route> CREATOR = new Creator<Route>() {
+            @Override
+            public Route createFromParcel(Parcel in) {
+                return new Route(in);
+            }
+
+            @Override
+            public Route[] newArray(int size) {
+                return new Route[size];
+            }
+        };
+        
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(name);
+            dest.writeString(introduction);
+            dest.writeList(selectPicture);
+        }
+
+        public String getName() {
+            return name;
+        }
+        
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getIntroduction() {
+            return introduction;
+        }
+
+        public void setIntroduction(String introduction) {
+            this.introduction = introduction;
+        }
+
+        @Override
+        public String toString() {
+            return "Route{" +
+                    "name='" + name + '\'' +
+                    ", introduction=" + introduction +
+                    ", selectPicture=" + selectPicture +
+                    '}';
+        }
+    }
+    
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -578,8 +803,8 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
                 break;
         }
     }
-
-    private void initMatchMakerTalent() {
+    
+     private void initMatchMakerTalent() {
         LinearLayout explanationLL = mDialog.findViewById(R.id.explanation);
         ConstraintLayout authenticationCL = mDialog.findViewById(R.id.talent_authentication);
 
@@ -593,7 +818,7 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
             }
         });
     }
-
+    
     private void initMatchMakerAuthentication() {
         TextView title = mDialog.findViewById(R.id.title);
         title.setText("提交达人申请");
@@ -617,20 +842,10 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
         });
 
         introductionET = mDialog.findViewById(R.id.introduction_edittext);
-        rewardQRCode = mDialog.findViewById(R.id.reward_qr_code);
-
-        rewardQRCode.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getContext(), SetAvatarActivity.class);
-                intent.putExtra("type", TALENT_AUTHENTICATION_PHOTO);
-                getActivity().startActivityForResult(intent, REQUESTCODE);
-            }
-        });
 
         registerBroadcast();
     }
-
+    
     private void submitMatchMaker() {
         showProgressDialog("");
         FormBody.Builder builder = new FormBody.Builder()
@@ -652,7 +867,7 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
                         e.printStackTrace();
                     }
                     isSubmit = true;
-                    dismissProgressDialog();
+    dismissProgressDialog();
                     mDialog.dismiss();
                 }
             }
@@ -679,7 +894,7 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
 
         return true;
     }
-
+    
     private void uploadPictures(Map<String, String> params, String picKey, List<File> files) {
         showProgressDialog("");
         HttpUtil.uploadPictureHttpRequest(getContext(), params, picKey, files, SUBMIT_URL, new Callback() {
@@ -699,8 +914,6 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
                             dismissProgressDialog();
                             selectList.clear();
                             selectFileList.clear();
-                            selectRewardList.clear();
-                            selectRewardFileList.clear();
                             PictureFileUtils.deleteAllCacheDirFile(getContext());
                             startTalentDetailActivity();
                         }
@@ -723,7 +936,7 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
         });
 
     }
-
+    
     private void startTalentDetailActivity() {
         Intent intent = new Intent(getContext(), TalentDetailsActivity.class);
         //intent.putExtra("talent", talent);
@@ -735,15 +948,18 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
 
     //register local broadcast to receive DYNAMICS_ADD_BROADCAST
     private void registerBroadcast() {
+        /*
         mReceiver = new QRCodeSetBroadcastReceiver();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(SUBMIT_TALENT_AUTHENTICATION_ACTION_BROADCAST);
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, intentFilter);
-    }
 
-    //unregister local broadcast
+         */
+    }
+    
+     //unregister local broadcast
     private void unRegisterBroadcast() {
-        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
+        //LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
     }
 
     @Override
@@ -759,7 +975,7 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
             }
         }
     }
-
+    
     private void sendTalentAddedBroadcast() {
         Intent intent = new Intent(TALENT_ADD_BROADCAST);
         intent.putExtra("aid", aid);
@@ -777,14 +993,14 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
             switch (intent.getAction()) {
                 case SUBMIT_TALENT_AUTHENTICATION_ACTION_BROADCAST:
                     uri = intent.getStringExtra("uri");
-                    Glide.with(getContext()).load(HttpUtil.DOMAIN + uri).into(rewardQRCode);
+
                     break;
                 default:
                     break;
             }
         }
     }
-
+    
     public void handleMessage(Message msg) {
         switch (msg.what) {
 
