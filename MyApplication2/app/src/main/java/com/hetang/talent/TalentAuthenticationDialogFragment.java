@@ -639,8 +639,6 @@ public class TalentAuthenticationDialogFragment extends BaseDialogFragment {
 
             }
         });
-
-
     }
 
     private boolean checkValid() {

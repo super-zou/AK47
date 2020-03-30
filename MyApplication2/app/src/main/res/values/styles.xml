@@ -5,6 +5,11 @@
         <item name="fontFamily">@font/shirkhand</item>
     </style>
 
+    <style name="CustomTextNoticeAppearance" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:textColor">@color/mcv_text_date_light</item>
+        <item name="fontFamily">@font/shirkhand</item>
+    </style>
+
     <style name="CustomDateAppearance" parent="TextAppearance.AppCompat.Medium">
         <item name="android:textColor">@color/mcv_text_date_light</item>
         <item name="android:textSize">18sp</item>

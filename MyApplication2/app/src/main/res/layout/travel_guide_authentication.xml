@@ -257,7 +257,6 @@
                     android:text="@string/add_route_item" />
 
             </LinearLayout>
-            
             <!--additional service introduction-->
             <LinearLayout
                 android:id="@+id/additional_introduction_wrapper"
@@ -378,7 +377,6 @@
                     android:textCursorDrawable="@drawable/cursor_color"
                     android:theme="@style/MyEditText" />
             </LinearLayout>
-            
              <!--create headline-->
             <LinearLayout
                 android:id="@+id/create_headline_wrapper"
@@ -421,7 +419,7 @@
                  </LinearLayout>
             <!--charge-->
             <LinearLayout
-                          android:id="@+id/charge_wrapper"
+                android:id="@+id/charge_wrapper"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_row="6"
@@ -745,7 +743,6 @@
                     android:textCursorDrawable="@drawable/cursor_color"
                     android:theme="@style/MyEditText" />
             </LinearLayout>
-            
             <!--Cancellation policy-->
             <LinearLayout
                 android:id="@+id/cancellation_policy_wrapper"

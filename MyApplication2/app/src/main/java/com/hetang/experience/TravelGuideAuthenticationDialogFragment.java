@@ -6,8 +6,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -22,14 +20,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-
 import android.widget.LinearLayout;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,17 +33,10 @@ import android.widget.Toast;
 import com.bigkoo.pickerview.builder.OptionsPickerBuilder;
 import com.bigkoo.pickerview.listener.OnOptionsSelectListener;
 import com.bigkoo.pickerview.view.OptionsPickerView;
-import com.bumptech.glide.Glide;
 import com.hetang.R;
-import com.hetang.adapter.GridImageAdapter;
-
 import com.hetang.common.MyApplication;
-import com.hetang.common.OnItemClickListener;
-import com.hetang.common.SetAvatarActivity;
 import com.hetang.dynamics.AddDynamicsActivity;
 import com.hetang.group.SubGroupActivity;
-import com.hetang.main.FullyGridLayoutManager;
-import com.hetang.picture.GlideEngine;
 import com.hetang.talent.TalentDetailsActivity;
 import com.hetang.util.BaseDialogFragment;
 import com.hetang.util.CommonBean;
@@ -55,15 +44,10 @@ import com.hetang.util.CommonDialogFragmentInterface;
 import com.hetang.util.CommonPickerView;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
-import com.hetang.util.RoundImageView;
 import com.hetang.util.Slog;
-
-import com.luck.picture.lib.PictureSelectionModel;
-import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
-import com.luck.picture.lib.style.PictureWindowAnimationStyle;
 import com.luck.picture.lib.tools.PictureFileUtils;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.DayViewDecorator;
@@ -77,16 +61,13 @@ import org.angmarch.views.NiceSpinner;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.threeten.bp.LocalDate;
-import org.threeten.bp.Month;
 import org.threeten.bp.format.DateTimeFormatter;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -94,15 +75,9 @@ import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatCheckBox;
-import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.gridlayout.widget.GridLayout;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -110,14 +85,11 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static android.app.Activity.RESULT_OK;
-import static com.hetang.archive.ArchiveFragment.REQUESTCODE;
 import static com.hetang.common.SetAvatarActivity.SUBMIT_TALENT_AUTHENTICATION_ACTION_BROADCAST;
-import static com.hetang.common.SetAvatarActivity.TALENT_AUTHENTICATION_PHOTO;
 import static com.hetang.experience.RouteItemEditDF.newInstance;
 import static com.hetang.group.GroupFragment.eden_group;
 import static com.hetang.group.SubGroupActivity.TALENT_ADD_BROADCAST;
 import static com.hetang.group.SubGroupActivity.getTalent;
-import static com.hetang.meet.MeetDynamicsFragment.REQUEST_CODE;
 
 public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment implements CompoundButton.OnCheckedChangeListener, OnDateSelectedListener {
     public final static int TALENT_AUTHENTICATION_RESULT_OK = 0;
@@ -126,6 +98,15 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
     private static final String TAG = "TravelGuideAuthenticationDialogFragment";
     private static final String SUBMIT_URL = HttpUtil.DOMAIN + "?q=talent/become/apply";
     private static final int MSG_LOAD_SUCCESS = 0x0003;
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("EEE, d MMM yyyy");
+    AppCompatCheckBox followShot;
+    AppCompatCheckBox travelPlan;
+    AppCompatCheckBox charteredCar;
+    AppCompatCheckBox ticket;
+    AppCompatCheckBox ferry;
+    //@BindView(R.id.calendarView)
+    MaterialCalendarView widget;
+    CalendarDay today;
     private Thread threadCity;
     private int type;
     private int gid;
@@ -148,7 +129,6 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
     private Button nextBtn;
     private int index = 1;
     private JSONObject authenObject;
-    
     private List<LocalMedia> selectList = new ArrayList<>();
     private List<File> selectFileList = new ArrayList<>();
     private List<Route> routeList = new ArrayList<>();
@@ -160,8 +140,12 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
     private EditText consultationChargeDesc;
     private EditText escortChargeSettingNumber;
     private EditText escortChargeDesc;
+    private EditText limitationET;
+    private String consultationUnit;
+    private String escortUnit;
+    private String limitations;
+    private RadioGroup sexSelect;
     private AppCompatCheckBox understandCancellation;
-    
     private Window window;
     private int maxSelectNum = 6;
     private int pictureSelectType = 0;//default 0 for materia
@@ -171,17 +155,8 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
     private Typeface font;
     private ArrayList<CommonBean> provinceItems = new ArrayList<>();
     private ArrayList<ArrayList<String>> cityItems = new ArrayList<>();
-    AppCompatCheckBox followShot;
-    AppCompatCheckBox travelPlan;
-    AppCompatCheckBox charteredCar;
-    AppCompatCheckBox ticket;
-    AppCompatCheckBox ferry;
     private EditText additionalServiceET;
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("EEE, d MMM yyyy");
 
-    //@BindView(R.id.calendarView)
-    MaterialCalendarView widget;
-    CalendarDay today;
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -193,7 +168,7 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
             throw new ClassCastException(context.toString() + "must implement commonDialogFragmentInterface");
         }
     }
-    
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
@@ -211,7 +186,7 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
         initView();
 
         initCalendarView();
-        
+
         mDialog.setCanceledOnTouchOutside(true);
         window = mDialog.getWindow();
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
@@ -220,7 +195,7 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
         layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
         layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT;
         window.setAttributes(layoutParams);
-        
+
         leftBack = mDialog.findViewById(R.id.left_back);
         leftBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -240,7 +215,7 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
 
         return mDialog;
     }
-    
+
     private void initView() {
         selectCityBtn = mDialog.findViewById(R.id.select_city);
         authenticateWrapper = mDialog.findViewById(R.id.travel_guide_wrapper);
@@ -249,6 +224,8 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
         headLineET = mDialog.findViewById(R.id.create_headline_edit);
         mRouteItemGL = mDialog.findViewById(R.id.add_travel_guide_items);
         addRouteItem = mDialog.findViewById(R.id.add_route_item);
+        sexSelect = mDialog.findViewById(R.id.sexRG);
+        limitationET = mDialog.findViewById(R.id.other_condition);
         understandCancellation = mDialog.findViewById(R.id.understand_cancellation);
         prevBtn = mDialog.findViewById(R.id.prevBtn);
         nextBtn = mDialog.findViewById(R.id.nextBtn);
@@ -257,16 +234,35 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
         initRouteItem();
         setAdditionalServices();
         initChargeSetting();
+        initLimitation();
         navigationProcess();
 
     }
-    
-    private void navigationProcess(){
+
+    private void initLimitation(){
+        sexSelect.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                int id = group.getCheckedRadioButtonId();
+                switch (id){
+                    case R.id.radioNo:
+                        break;
+                    case R.id.radioMale:
+                        limitations += "仅限男生"+";";
+                        break;
+                    case R.id.radioFemale:
+                        limitations += "仅限女生"+";";
+                        break;
+                }
+            }
+        });
+    }
+
+    private void navigationProcess() {
         prevBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (index > 0) {
-
                     nextBtn.setText(getContext().getResources().getString(R.string.next));
                     index--;
                     if (index == 1) {
@@ -275,16 +271,15 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
                     }
                     authenticateWrapper.getChildAt(index - 1).setVisibility(View.VISIBLE);
                     authenticateWrapper.getChildAt(index).setVisibility(View.GONE);
-                    Slog.d(TAG, "-------------------->index: " + index);
                 }
             }
         });
-        
+
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (validCheck(index)) {
-                    if (leftBack.getVisibility() == View.VISIBLE){
+                    if (leftBack.getVisibility() == View.VISIBLE) {
                         leftBack.setVisibility(View.GONE);
                     }
                     if (prevBtn.getVisibility() == View.GONE) {
@@ -294,12 +289,9 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
                         if (index == authenticateWrapper.getChildCount() - 2) {
                             nextBtn.setText(getContext().getResources().getString(R.string.done));
                         }
-                        Slog.d(TAG, "---------------------current index: "+index);
                         authenticateWrapper.getChildAt(index).setVisibility(View.VISIBLE);
                         authenticateWrapper.getChildAt(index - 1).setVisibility(View.GONE);
-
                         index++;
-
                         processCurrent(index);
 
                     } else {
@@ -309,14 +301,14 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
             }
         });
     }
-    
-    private void addRouteItem(){
+
+    private void addRouteItem() {
         View view = LayoutInflater.from(MyApplication.getContext())
                 .inflate(R.layout.route_item_index, (ViewGroup) mDialog.findViewById(android.R.id.content), false);
         mRouteItemGL.addView(view);
     }
 
-    private void initRouteItem(){
+    private void initRouteItem() {
         addRouteItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -324,10 +316,10 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
                 initRouteItem();
             }
         });
-        
+
         int size = mRouteItemGL.getChildCount();
-        Slog.d(TAG, "--------------------->size: "+size);
-        for (int i=0; i<size; i++){
+        Slog.d(TAG, "--------------------->size: " + size);
+        for (int i = 0; i < size; i++) {
             final int index = i;
             mRouteItemGL.getChildAt(i).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -339,8 +331,8 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
 
         FontManager.markAsIconContainer(mDialog.findViewById(R.id.add_travel_guide_items), font);
     }
-    
-    private void selectCity(){
+
+    private void selectCity() {
         //init city data in thread
         if (threadCity == null) {
             threadCity = new Thread(new Runnable() {
@@ -352,7 +344,6 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
             });
             threadCity.start();
         }
-
         selectCityBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -361,8 +352,8 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
         });
     }
 
-    
-    private void setAdditionalServices(){
+
+    private void setAdditionalServices() {
         followShot = mDialog.findViewById(R.id.follow_shot);
         travelPlan = mDialog.findViewById(R.id.travel_plan);
         charteredCar = mDialog.findViewById(R.id.chartered_car);
@@ -377,52 +368,52 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
         ferry.setOnCheckedChangeListener(this);
 
     }
-    
+
     @Override
     public void onCheckedChanged(CompoundButton checkBox, boolean checked) {
-        Slog.d(TAG, "--------------checkbox text: "+checkBox.getText().toString());
-        switch (checkBox.getId()){
+        Slog.d(TAG, "--------------checkbox text: " + checkBox.getText().toString());
+        switch (checkBox.getId()) {
             case R.id.follow_shot:
-                if (checked){
+                if (checked) {
                     additionalServices.put("1", checkBox.getText().toString());
-                }else {
+                } else {
                     additionalServices.remove("1");
                 }
                 break;
             case R.id.travel_plan:
-                if (checked){
+                if (checked) {
                     additionalServices.put("2", checkBox.getText().toString());
-                }else {
+                } else {
                     additionalServices.remove("2");
                 }
                 break;
-                case R.id.chartered_car:
-                if (checked){
+            case R.id.chartered_car:
+                if (checked) {
                     additionalServices.put("3", checkBox.getText().toString());
-                }else {
+                } else {
                     additionalServices.remove("3");
                 }
                 break;
             case R.id.ticket:
-                if (checked){
+                if (checked) {
                     additionalServices.put("4", checkBox.getText().toString());
-                }else {
+                } else {
                     additionalServices.remove("4");
                 }
                 break;
-                case R.id.ferry:
-                if (checked){
+            case R.id.ferry:
+                if (checked) {
                     additionalServices.put("5", checkBox.getText().toString());
-                }else {
+                } else {
                     additionalServices.remove("5");
                 }
                 break;
-                default:
-                    break;
+            default:
+                break;
         }
     }
-    
-    private void initChargeSetting(){
+
+    private void initChargeSetting() {
         Button consultationServiceBtn = mDialog.findViewById(R.id.consultation_service);
         Button escortServiceBtn = mDialog.findViewById(R.id.escort_service);
         RelativeLayout consultationServiceSetting = mDialog.findViewById(R.id.consultation_charge_setting);
@@ -449,18 +440,18 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
                 escortServiceSetting.setVisibility(View.VISIBLE);
             }
         });
-        
+
         String[] units = getResources().getStringArray(R.array.duration);
         NiceSpinner consultationUnitSpinner = (NiceSpinner) mDialog.findViewById(R.id.consultation_unit);
         NiceSpinner escortUnitSpinner = (NiceSpinner) mDialog.findViewById(R.id.escort_unit);
         final List<String> unitList = new LinkedList<>(Arrays.asList(units));
         consultationUnitSpinner.attachDataSource(unitList);
         escortUnitSpinner.attachDataSource(unitList);
-        
+
         consultationUnitSpinner.addOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
+                consultationUnit = unitList.get(i);
             }
 
         });
@@ -468,15 +459,13 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
         escortUnitSpinner.addOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
+                escortUnit = unitList.get(i);
             }
 
         });
     }
-    
+
     private void initCalendarView() {
-        //widget = mDialog.findViewById(R.id.calendarView);
-        //unbinder = ButterKnife.bind(getActivity());
 
         today = CalendarDay.today();
         widget = mDialog.findViewById(R.id.calendarView);
@@ -486,13 +475,13 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
         widget.setTitleFormatter(new MonthArrayTitleFormatter(getResources().getTextArray(R.array.custom_months)));
         widget.setWeekDayFormatter(new ArrayWeekDayFormatter(getResources().getTextArray(R.array.custom_weekdays)));
         widget.addDecorator(new DisabledDecorator());
-        
+
         final LocalDate min = LocalDate.of(today.getYear(), today.getMonth(), today.getDay());
         //final LocalDate max = LocalDate.of(today.getYear(), today.getMonth()+3, today.getDay());
 
         widget.state().edit()
                 .setMinimumDate(min)
-               //.setMaximumDate(max)
+                //.setMaximumDate(max)
                 .commit();
     }
 
@@ -504,35 +493,25 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
 
         String dataStr;
         dataStr = FORMATTER.format(date.getDate());
-        Slog.d(TAG, "----------------------------------->selected: "+selected+"   data: "+dataStr);
-        if (selected){
+        Slog.d(TAG, "----------------------------------->selected: " + selected + "   data: " + dataStr);
+        if (selected) {
             selectedDateList.add(dataStr);
-        }else {
+        } else {
             selectedDateList.remove(dataStr);
         }
     }
-    
-    private void startRouteItemEditDF(int index){
-        Slog.d(TAG, "--------------------->index: "+index+" size: "+routeList.size());
+
+    private void startRouteItemEditDF(int index) {
+        Slog.d(TAG, "--------------------->index: " + index + " size: " + routeList.size());
         RouteItemEditDF routeItemEditDF;
-        if (routeList.size() > index){
+        if (routeList.size() > index) {
             routeItemEditDF = newInstance(index, routeList.get(index));
-        }else {
+        } else {
             routeItemEditDF = newInstance(index, null);
         }
 
         routeItemEditDF.setTargetFragment(this, ROUTE_REQUEST_CODE);
         routeItemEditDF.show(getFragmentManager(), "RouteItemEditDF");
-    }
-    
-    private static class DisabledDecorator implements DayViewDecorator{
-        @Override public boolean shouldDecorate(final CalendarDay day) {
-            return false;
-        }
-
-        @Override public void decorate(final DayViewFacade view) {
-            view.setDaysDisabled(true);
-        }
     }
 
     private void initCityJsondata(String jsonFile) {
@@ -540,13 +519,13 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
         provinceItems = commonPickerView.getOptionsMainItem(getContext(), jsonFile);
         cityItems = commonPickerView.getOptionsSubItems(provinceItems);
     }
-    
+
     private void showCityPickerView() {// 弹出地址选择器
         //条件选择器
         OptionsPickerView pvOptions;
-        pvOptions= new OptionsPickerBuilder(getContext(), new OnOptionsSelectListener() {
+        pvOptions = new OptionsPickerBuilder(getContext(), new OnOptionsSelectListener() {
             @Override
-            public void onOptionsSelect(int options1, int option2, int options3 ,View v) {
+            public void onOptionsSelect(int options1, int option2, int options3, View v) {
                 //返回的分别是二个级别的选中位置
                 isCityPicked = true;
                 String city = cityItems.get(options1).get(option2);
@@ -558,7 +537,7 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
         pvOptions.setPicker(provinceItems, cityItems);
         pvOptions.show();
     }
-    
+
     private void submitNotice() {
         final AlertDialog.Builder normalDialogBuilder =
                 new AlertDialog.Builder(getContext());
@@ -575,32 +554,103 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
         AlertDialog normalDialog = normalDialogBuilder.create();
         normalDialog.show();
     }
-    
+
     private void submit() {
-        Toast.makeText(getContext(), "submit", Toast.LENGTH_LONG).show();
-        /*
+        showProgressDialog(getContext().getString(R.string.saving_progress));
         Map<String, String> authenMap = new HashMap<>();
-        authenMap.put("introduction", introductionET.getText().toString());
-        authenMap.put("subject", selectSubject.getText().toString());
-        authenMap.put("charge", chargeSetting.getText().toString());
-        if (!TextUtils.isEmpty(chargeIntroduction.getText().toString())) {
-            authenMap.put("charge_desc", chargeIntroduction.getText().toString());
-        }
+        authenMap.put("base_info", getBaseInfoJsonObject().toString());
 
-        if (selectList.size() > 0) {
-            for (LocalMedia media : selectList) {
-                selectFileList.add(new File(media.getCompressPath()));
-            }
-        }
 
-        authenMap.put("type", String.valueOf(type));
 
-        Slog.d(TAG, "--------------------->file size: " + selectFileList.size());
-
-        uploadPictures(authenMap, "authen", selectFileList);
-        */
     }
-    
+
+    private void submitBaseInfo(){
+        FormBody.Builder builder = new FormBody.Builder()
+                .add("base_info", getBaseInfoJsonObject().toString());
+
+        RequestBody requestBody = builder.build();
+
+        HttpUtil.sendOkHttpRequest(mContext, SUBMIT_URL, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String responseText = response.body().string();
+                Slog.d(TAG, "saveUserInfo response : " + responseText);
+                if (!TextUtils.isEmpty(responseText)) {
+                    try {
+                        gid = new JSONObject(responseText).optInt("gid");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    isSubmit = true;
+                    dismissProgressDialog();
+                    mDialog.dismiss();
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+        });
+    }
+
+    private void submitRoute(){
+        for (int i=0; i<routeList.size(); i++){
+            Map<String, String> authenMap = new HashMap<>();
+            authenMap.put("name", routeList.get(i).name);
+            authenMap.put("introduction", routeList.get(i).introduction);
+            if (routeList.get(i).selectPicture.size() > 0){
+                List<LocalMedia> selectList = routeList.get(i).selectPicture;
+                for (LocalMedia media : selectList) {
+                    selectFileList.add(new File(media.getCompressPath()));
+                }
+
+                uploadPictures(authenMap, "authen", selectFileList);
+            }
+
+        }
+
+    }
+
+    private void uploadPictures(Map<String, String> params, String picKey, List<File> files) {
+
+        HttpUtil.uploadPictureHttpRequest(getContext(), params, picKey, files, SUBMIT_URL, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.body() != null) {
+                    try {
+                        String responseText = response.body().string();
+                        Slog.d(TAG, "---------------->response: " + responseText);
+                        int status = new JSONObject(responseText).optInt("status");
+                        aid = new JSONObject(responseText).optInt("aid");
+                        JSONObject talentobject = new JSONObject(responseText).optJSONObject("talent");
+                        talent = getTalent(talentobject);
+                        if (status == 1) {
+                            isSubmit = true;
+                            dismissProgressDialog();
+                            selectList.clear();
+                            selectFileList.clear();
+                            PictureFileUtils.deleteAllCacheDirFile(getContext());
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getContext(), getContext().getResources().getString(R.string.submit_error), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+
+    }
+
     private boolean validCheck(int index) {
         Slog.d(TAG, "------------------------>validCheck: " + index);
         boolean valid = false;
@@ -612,60 +662,60 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
                 }
                 break;
             case 2:
-                if (!TextUtils.isEmpty(introductionET.getText().toString())){
+                if (!TextUtils.isEmpty(introductionET.getText().toString())) {
                     valid = true;
-                }else {
+                } else {
                     valid = false;
                     Toast.makeText(getContext(), getResources().getString(R.string.service_introduction_notice), Toast.LENGTH_LONG).show();
                 }
                 break;
-                case 3:
-                if (routeList.size() == 0){
+            case 3:
+                if (routeList.size() == 0) {
                     valid = false;
                     Toast.makeText(getContext(), getResources().getString(R.string.route_introduction_empty_notice), Toast.LENGTH_LONG).show();
-                }else {
+                } else {
                     valid = true;
                 }
                 break;
 
             case 5:
-                if (!TextUtils.isEmpty(selfIntroductionET.getText().toString())){
+                if (!TextUtils.isEmpty(selfIntroductionET.getText().toString())) {
                     valid = true;
-                }else {
+                } else {
                     valid = false;
                     Toast.makeText(getContext(), getResources().getString(R.string.self_introduction_empty_notice), Toast.LENGTH_LONG).show();
                 }
 
                 break;
-                case 6:
-                if (!TextUtils.isEmpty(headLineET.getText().toString())){
+            case 6:
+                if (!TextUtils.isEmpty(headLineET.getText().toString())) {
                     valid = true;
-                }else {
+                } else {
                     valid = false;
                     Toast.makeText(getContext(), getResources().getString(R.string.headline_empty_notice), Toast.LENGTH_LONG).show();
                 }
 
                 break;
             case 7:
-                if(!TextUtils.isEmpty(consultationChargeNumber.getText()) || !TextUtils.isEmpty(escortChargeSettingNumber.getText())){
+                if (!TextUtils.isEmpty(consultationChargeNumber.getText()) || !TextUtils.isEmpty(escortChargeSettingNumber.getText())) {
                     valid = true;
-                }else {
+                } else {
                     valid = false;
                     Toast.makeText(getContext(), getResources().getString(R.string.charge_empty_notice), Toast.LENGTH_LONG).show();
                 }
                 break;
-                case 8:
-                if (selectedDateList.size() > 0){
+            case 8:
+                if (selectedDateList.size() > 0) {
                     valid = true;
-                }else {
+                } else {
                     valid = false;
                     Toast.makeText(getContext(), getResources().getString(R.string.select_date_empty_notice), Toast.LENGTH_LONG).show();
                 }
                 break;
             case 10:
-                if (understandCancellation.isChecked()){
+                if (understandCancellation.isChecked()) {
                     valid = true;
-                }else {
+                } else {
                     valid = false;
                     Toast.makeText(getContext(), getResources().getString(R.string.understand_cancellation_notice), Toast.LENGTH_LONG).show();
                 }
@@ -677,23 +727,81 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
 
         return valid;
     }
-    
+
     private void processCurrent(int index) {
         Slog.d(TAG, "------------------------>processCurrent: " + index);
         switch (index) {
             case 5:
-                if (!TextUtils.isEmpty(additionalServiceET.getText())){
+                if (!TextUtils.isEmpty(additionalServiceET.getText())) {
                     additionalServices.put("addition", additionalServiceET.getText().toString());
                 }
                 StringBuilder sb = new StringBuilder();
                 for (String key : additionalServices.keySet()) {
                     sb.append(additionalServices.get(key) + "\t");
                 }
-                Slog.d(TAG, "---------------------------->additionalServices: "+sb);
+                Slog.d(TAG, "---------------------------->additionalServices: " + sb);
                 break;
         }
     }
-    
+
+    private JSONObject getBaseInfoJsonObject() {
+        String additionalServiceStr = "";
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("city", selectCityBtn.getText().toString());
+            jsonObject.put("service_introduction", introductionET.getText().toString());
+            jsonObject.put("self_introduction", selfIntroductionET.getText().toString());
+
+            jsonObject.put("title", headLineET.getText().toString());
+            if (additionalServices.size() > 0){
+                for (Map.Entry<String, String>additionalService:additionalServices.entrySet()){
+                    additionalServiceStr += additionalService.getValue()+";";
+                }
+            }
+
+            if (!TextUtils.isEmpty(additionalServiceET.getText().toString())){
+                additionalServiceStr += additionalServiceET.getText().toString();
+            }
+
+            if (!TextUtils.isEmpty(additionalServiceStr)){
+                jsonObject.put("additional_service", additionalServiceStr);
+            }
+
+            if (!TextUtils.isEmpty(consultationChargeNumber.getText().toString())){
+                jsonObject.put("consultation_charge_amount", consultationChargeNumber.getText().toString());
+                jsonObject.put("consultation_charge_unit", consultationUnit);
+                if (!TextUtils.isEmpty(consultationChargeDesc.getText().toString())){
+                    jsonObject.put("consultation_charge_supplement", consultationChargeDesc.getText().toString());
+                }
+            }
+
+            if (!TextUtils.isEmpty(escortChargeSettingNumber.getText().toString())){
+                jsonObject.put("escort_charge_amount", escortChargeSettingNumber.getText().toString());
+                jsonObject.put("escort_charge_unit", escortUnit);
+                if (!TextUtils.isEmpty(escortChargeDesc.getText().toString())){
+                    jsonObject.put("escort_charge_supplement", escortChargeDesc.getText().toString());
+                }
+            }
+
+            String dateString = "";
+            for (int i=0; i<selectedDateList.size(); i++){
+                dateString += selectedDateList.get(i)+";";
+            }
+
+            jsonObject.put("appoint_date_string", dateString);
+
+            if (!TextUtils.isEmpty(limitationET.getText().toString())){
+                limitations += limitationET.getText().toString();
+            }
+            jsonObject.put("limitations", limitations);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return jsonObject;
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -703,7 +811,7 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
                     Bundle bundle = data.getExtras();
                     int index = bundle.getInt("index");
                     Route route = bundle.getParcelable("route");
-                    if(bundle.getBoolean("isModify")){
+                    if (bundle.getBoolean("isModify")) {
                         routeList.remove(index);
                     }
 
@@ -713,30 +821,73 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
             }
         }
     }
-    
-    private void setRouteName(int index, String name){
-        ConstraintLayout routeItem = (ConstraintLayout)mRouteItemGL.getChildAt(index);
-        TextView routeName = (TextView)routeItem.getChildAt(0);
+
+    private void setRouteName(int index, String name) {
+        ConstraintLayout routeItem = (ConstraintLayout) mRouteItemGL.getChildAt(index);
+        TextView routeName = (TextView) routeItem.getChildAt(0);
         routeName.setText(name);
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case PictureConfig.APPLY_STORAGE_PERMISSIONS_CODE:
+                // 存储权限
+                for (int i = 0; i < grantResults.length; i++) {
+                    if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                        PictureFileUtils.deleteCacheDirFile(getContext(), PictureMimeType.ofImage());
+                    } else {
+                        Toast.makeText(getContext(), getString(R.string.picture_jurisdiction), Toast.LENGTH_SHORT).show();
+                    }
+                }
+                break;
+        }
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialogInterface) {
+        super.onDismiss(dialogInterface);
+        if (commonDialogFragmentInterface != null) {//callback from ArchivesActivity class
+            if (type == eden_group) {
+                commonDialogFragmentInterface.onBackFromDialog(TALENT_AUTHENTICATION_RESULT_OK, gid, isSubmit);
+            } else {
+                //commonDialogFragmentInterface.onBackFromDialog(COMMON_TALENT_AUTHENTICATION_RESULT_OK, aid, isSubmit);
+                sendTalentAddedBroadcast();
+            }
+        }
+    }
+
+    private void sendTalentAddedBroadcast() {
+        Intent intent = new Intent(TALENT_ADD_BROADCAST);
+        intent.putExtra("aid", aid);
+        LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
+    }
+
+    @Override
+    public void onCancel(DialogInterface dialogInterface) {
+        super.onCancel(dialogInterface);
+    }
+
+    public void handleMessage(Message msg) {
+        switch (msg.what) {
+
+        }
+    }
+
+    private static class DisabledDecorator implements DayViewDecorator {
+        @Override
+        public boolean shouldDecorate(final CalendarDay day) {
+            return false;
+        }
+
+        @Override
+        public void decorate(final DayViewFacade view) {
+            view.setDaysDisabled(true);
+        }
+    }
+
     public static class Route implements Parcelable {
-        public String name;
-        public String introduction;
-        public List<LocalMedia> selectPicture = new ArrayList<>();
-
-        public Route(String name, String introduction, List<LocalMedia> selectPicture) {
-            this.name = name;
-            this.introduction = introduction;
-            this.selectPicture = selectPicture;
-        }
-         protected Route(Parcel in) {
-            name = in.readString();
-            introduction = in.readString();
-            selectPicture = new ArrayList<>();
-            in.readList(selectPicture, getClass().getClassLoader());
-        }
-
         public static final Creator<Route> CREATOR = new Creator<Route>() {
             @Override
             public Route createFromParcel(Parcel in) {
@@ -748,7 +899,23 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
                 return new Route[size];
             }
         };
-        
+        public String name;
+        public String introduction;
+        public List<LocalMedia> selectPicture = new ArrayList<>();
+
+        public Route(String name, String introduction, List<LocalMedia> selectPicture) {
+            this.name = name;
+            this.introduction = introduction;
+            this.selectPicture = selectPicture;
+        }
+
+        protected Route(Parcel in) {
+            name = in.readString();
+            introduction = in.readString();
+            selectPicture = new ArrayList<>();
+            in.readList(selectPicture, getClass().getClassLoader());
+        }
+
         @Override
         public int describeContents() {
             return 0;
@@ -764,7 +931,7 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
         public String getName() {
             return name;
         }
-        
+
         public void setName(String name) {
             this.name = name;
         }
@@ -786,229 +953,10 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
                     '}';
         }
     }
-    
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case PictureConfig.APPLY_STORAGE_PERMISSIONS_CODE:
-                // 存储权限
-                for (int i = 0; i < grantResults.length; i++) {
-                    if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
-                        PictureFileUtils.deleteCacheDirFile(getContext(), PictureMimeType.ofImage());
-                    } else {
-                        Toast.makeText(getContext(), getString(R.string.picture_jurisdiction), Toast.LENGTH_SHORT).show();
-                    }
-                }
-                break;
-        }
-    }
-    
-     private void initMatchMakerTalent() {
-        LinearLayout explanationLL = mDialog.findViewById(R.id.explanation);
-        ConstraintLayout authenticationCL = mDialog.findViewById(R.id.talent_authentication);
-
-        Button beginBtn = mDialog.findViewById(R.id.begin_now);
-        beginBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                explanationLL.setVisibility(View.GONE);
-                authenticationCL.setVisibility(View.VISIBLE);
-                initMatchMakerAuthentication();
-            }
-        });
-    }
-    
-    private void initMatchMakerAuthentication() {
-        TextView title = mDialog.findViewById(R.id.title);
-        title.setText("提交达人申请");
-        Button save = mDialog.findViewById(R.id.submit);
-        Button cancel = mDialog.findViewById(R.id.cancel);
-        save.setVisibility(View.VISIBLE);
-        save.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (checkValid()) {
-                    submitMatchMaker();
-                }
-            }
-        });
-
-        cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dismiss();
-            }
-        });
-
-        introductionET = mDialog.findViewById(R.id.introduction_edittext);
-
-        registerBroadcast();
-    }
-    
-    private void submitMatchMaker() {
-        showProgressDialog("");
-        FormBody.Builder builder = new FormBody.Builder()
-                .add("introduction", introductionET.getText().toString())
-                .add("uri", uri)
-                .add("type", String.valueOf(type));
-
-        RequestBody requestBody = builder.build();
-
-        HttpUtil.sendOkHttpRequest(mContext, SUBMIT_URL, requestBody, new Callback() {
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                String responseText = response.body().string();
-                Slog.d(TAG, "saveUserInfo response : " + responseText);
-                if (!TextUtils.isEmpty(responseText)) {
-                    try {
-                        gid = new JSONObject(responseText).optInt("gid");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    isSubmit = true;
-    dismissProgressDialog();
-                    mDialog.dismiss();
-                }
-            }
-
-            @Override
-            public void onFailure(Call call, IOException e) {
-
-            }
-        });
-
-
-    }
-
-    private boolean checkValid() {
-        if (TextUtils.isEmpty(introductionET.getText().toString())) {
-            Toast.makeText(getContext(), "达人介绍不能为空", Toast.LENGTH_LONG).show();
-            return false;
-        }
-
-        if (TextUtils.isEmpty(uri)) {
-            Toast.makeText(getContext(), "请上传赞赏二维码", Toast.LENGTH_LONG).show();
-            return false;
-        }
-
-        return true;
-    }
-    
-    private void uploadPictures(Map<String, String> params, String picKey, List<File> files) {
-        showProgressDialog("");
-        HttpUtil.uploadPictureHttpRequest(getContext(), params, picKey, files, SUBMIT_URL, new Callback() {
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-
-                if (response.body() != null) {
-                    try {
-                        String responseText = response.body().string();
-                        Slog.d(TAG, "---------------->response: " + responseText);
-                        int status = new JSONObject(responseText).optInt("status");
-                        aid = new JSONObject(responseText).optInt("aid");
-                        JSONObject talentobject = new JSONObject(responseText).optJSONObject("talent");
-                        talent = getTalent(talentobject);
-                        if (status == 1) {
-                            isSubmit = true;
-                            dismissProgressDialog();
-                            selectList.clear();
-                            selectFileList.clear();
-                            PictureFileUtils.deleteAllCacheDirFile(getContext());
-                            startTalentDetailActivity();
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                }
-            }
-
-            @Override
-            public void onFailure(Call call, IOException e) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getContext(), getContext().getResources().getString(R.string.submit_error), Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-        });
-
-    }
-    
-    private void startTalentDetailActivity() {
-        Intent intent = new Intent(getContext(), TalentDetailsActivity.class);
-        //intent.putExtra("talent", talent);
-        intent.putExtra("aid", talent.aid);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-        startActivity(intent);
-        mDialog.dismiss();
-    }
-
-    //register local broadcast to receive DYNAMICS_ADD_BROADCAST
-    private void registerBroadcast() {
-        /*
-        mReceiver = new QRCodeSetBroadcastReceiver();
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(SUBMIT_TALENT_AUTHENTICATION_ACTION_BROADCAST);
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, intentFilter);
-
-         */
-    }
-    
-     //unregister local broadcast
-    private void unRegisterBroadcast() {
-        //LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
-    }
-
-    @Override
-    public void onDismiss(DialogInterface dialogInterface) {
-        super.onDismiss(dialogInterface);
-        unRegisterBroadcast();
-        if (commonDialogFragmentInterface != null) {//callback from ArchivesActivity class
-            if (type == eden_group) {
-                commonDialogFragmentInterface.onBackFromDialog(TALENT_AUTHENTICATION_RESULT_OK, gid, isSubmit);
-            } else {
-                //commonDialogFragmentInterface.onBackFromDialog(COMMON_TALENT_AUTHENTICATION_RESULT_OK, aid, isSubmit);
-                sendTalentAddedBroadcast();
-            }
-        }
-    }
-    
-    private void sendTalentAddedBroadcast() {
-        Intent intent = new Intent(TALENT_ADD_BROADCAST);
-        intent.putExtra("aid", aid);
-        LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
-    }
-
-    @Override
-    public void onCancel(DialogInterface dialogInterface) {
-        super.onCancel(dialogInterface);
-    }
-
-    private class QRCodeSetBroadcastReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            switch (intent.getAction()) {
-                case SUBMIT_TALENT_AUTHENTICATION_ACTION_BROADCAST:
-                    uri = intent.getStringExtra("uri");
-
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
-    
-    public void handleMessage(Message msg) {
-        switch (msg.what) {
-
-        }
-    }
 
     static class MyHandler extends Handler {
         WeakReference<TravelGuideAuthenticationDialogFragment> travelGuideAuthenticationDialogFragmentWeakReference;
+
         MyHandler(TravelGuideAuthenticationDialogFragment travelGuideAuthenticationDialogFragment) {
             travelGuideAuthenticationDialogFragmentWeakReference = new WeakReference<TravelGuideAuthenticationDialogFragment>(travelGuideAuthenticationDialogFragment);
         }
@@ -1021,4 +969,5 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
             }
         }
     }
+
 }

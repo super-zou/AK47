@@ -235,7 +235,7 @@
     <string name="self_introduction_notice">向大家展示您的过往经历，不用太客气，这是一个很好的展示自己的机会。
      \n 建议：突出您做为旅行向导，具备的经验和能力</string>
     <string name="self_introduction">自我介绍</string>
-    <string name="create_headline_title">给服务内容想个标题</string>
+    <string name="create_headline_title">给向导服务想个标题</string>
     <string name="create_headline_notice">标题尽量简短、生动描述且引人入胜</string>
     <string name="headline">输入标题</string>
     <string name="select_picture_title">选择一些很棒的照片</string>
