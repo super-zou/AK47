@@ -190,11 +190,12 @@
     <string name="locating">正在定位</string>
     <string name="select_living">选择居住地</string>
     <string name="select_city">+选择城市</string>
-    <string name="service_introduction_title">旅行向导介绍</string>
+    <string name="service_introduction_title">旅行向导服务介绍</string>
     <string name="service_introduction_notice">向导介绍不能为空</string>
     <string name="self_introduction_empty_notice">自我介绍不能为空</string>
     <string name="headline_empty_notice">标题不能为空</string>
     <string name="charge_empty_notice">请设置收费金额</string>
+     <string name="whether_develop_consultation_notice">请选择是否开展咨询</string>
     <string name="select_date_empty_notice">请设置可预约时间</string>
     <string name="understand_cancellation_notice">请勾选已熟悉相关政策</string>
     <string name="route_introduction_title">线路、行程介绍</string>
@@ -219,13 +220,13 @@
     <string name="enter_route_name">输入线路、行程名字</string>
     <string name="estimate_duration">预计用时</string>
     <string name="add_item">+添加线路或行程</string>
-    <string name="guide_service_introduction">介绍一下您做为旅行向导可以提供哪些服务，生动、详实的描述或许能够吸引浏览人的预订，不妨在这里突出您的服务亮点。</string>
+    <string name="guide_service_introduction">介绍一下您做为旅行向导可以提供哪些服务，生动、详实的描述或许能够吸引浏览者的预订，不妨在这里突出您的服务亮点。</string>
     <string name="guide_service_introduction_suggestion">建议：
           \n1. 写出您的服务独特的亮点
           \n2. 能够给参与者提供哪些便利和体验
     </string>
     <string name="additional_service_introduction_title">可提供的额外服务</string>
-    <string name="additional_service_edit">其它服务</string>
+    <string name="additional_service_edit">其它服务，请以“;”分隔每项服务</string>
     <string name="follow_shot">跟拍</string>
     <string name="travel_plan">行程规划</string>
     <string name="chartered_car">包车服务</string>
@@ -251,6 +252,9 @@
     <string name="appointment_conditipon_desc">是否对参与者有预订条件限制？如性别，年龄及人数等有要求</string>
     <string name="appointment_sex">参与者性别要求</string>
     <string name="no_condition">不限</string>
+        <string name="support_consultation">是否开展在线咨询</string>
+    <string name="develop">开展</string>
+    <string name="not_develop">不开展</string>
     <string name="only_male">仅女性</string>
     <string name="only_female">仅男性</string>
     <string name="other_condition">其它限制条件</string>
@@ -287,11 +291,8 @@
     <string name="location">地点</string>
     <string name="location_guide_desc">选择您提供旅行向导服务的城市？</string>
     <string name="location_experience_desc">您将在哪个城市开展体验？</string>
-        <string name="charge_mode_introduction">您可以开展线上咨询和线下向导两种服务：
-        \n*咨询服务指帮助旅行者制定合理行程，在线解答旅行者的咨询
-        \n*伴游向导则需要亲自带领旅行者实地体验
-        \n*伴游向导服务默认包含咨询服务
-        \n*您可以选择其中一种或两种服务方式</string>
+<string name="charge_introduction_desc">您可以选择按天或小时收费</string>
+    <string name="consultation_service">除了带领旅行者实地体验外，您还可以通过在线解答旅行者的咨询，帮助旅行者制定合理行程，来赚取一定的咨询服务费。</string>
      <string name="consultation_service">咨询服务收费设置</string>
     <string name="escort_service">伴游向导收费设置</string>
     <string name="location_error">定位失败，请手动选择</string>
@@ -422,7 +423,7 @@
     <string name="submit_payment">上传赞赏码</string>
     <string name="modify_talent">修改达人信息</string>
     <string name="setting_payment">设置收款二维码</string>
-    <string name="modify_route">修改</string>
+    <string name="modify_route">修改线路</string>
     <string name="upload_qr_code">上传微信收款二维码</string>
     <string name="payment_notice">得到帮助的人会支付一些感谢费表示心意。
         \n 在微信收付款里选择赞赏码，设置金额后保存，然后点下面的\"+\"上传</string>
