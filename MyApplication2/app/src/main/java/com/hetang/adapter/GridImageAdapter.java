@@ -37,6 +37,7 @@ public class GridImageAdapter extends RecyclerView.Adapter<GridImageAdapter.View
     private LayoutInflater mInflater;
     private List<LocalMedia> list = new ArrayList<>();
     private int selectMax = 9;
+    private boolean show = true;
     /**
      * 点击添加图片跳转
      */
@@ -44,6 +45,14 @@ public class GridImageAdapter extends RecyclerView.Adapter<GridImageAdapter.View
 
     public interface onAddPicClickListener {
         void onAddPicClick();
+    }
+    
+        public interface OnPicDeleteListener{
+        void onPicDelete();
+    }
+
+    public void setDeleteBtnStatus(boolean show){
+        this.show = show;
     }
 
     /**
@@ -153,8 +162,17 @@ public class GridImageAdapter extends RecyclerView.Adapter<GridImageAdapter.View
                         }
                     });
             viewHolder.mIvDel.setVisibility(View.INVISIBLE);
+            if (show){
+                viewHolder.mImg.setVisibility(View.VISIBLE);
+            }else {
+                viewHolder.mImg.setVisibility(View.GONE);
+            }
         } else {
-            viewHolder.mIvDel.setVisibility(View.VISIBLE);
+            if (show){
+                viewHolder.mIvDel.setVisibility(View.VISIBLE);
+            }else {
+                viewHolder.mIvDel.setVisibility(View.GONE);
+            }
             viewHolder.mIvDel.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -165,6 +183,7 @@ public class GridImageAdapter extends RecyclerView.Adapter<GridImageAdapter.View
                         list.remove(index);
                         notifyItemRemoved(index);
                         notifyItemRangeChanged(index, list.size());
+                        mOnPicDeleteListener.onPicDelete();
                     }
                 }
             });
@@ -266,5 +285,10 @@ public class GridImageAdapter extends RecyclerView.Adapter<GridImageAdapter.View
 
     public void setItemLongClickListener(OnItemLongClickListener l) {
         this.mItemLongClickListener = l;
+    }
+    
+    private OnPicDeleteListener mOnPicDeleteListener;
+    public void setItemDeleteListener(OnPicDeleteListener l){
+        this.mOnPicDeleteListener = l;
     }
 }
