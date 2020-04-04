@@ -96,8 +96,17 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
     public final static int ROUTE_REQUEST_CODE = 1;
     private static final boolean isDebug = true;
     private static final String TAG = "TravelGuideAuthenticationDialogFragment";
-    private static final String SUBMIT_URL = HttpUtil.DOMAIN + "?q=talent/become/apply";
-    private static final int MSG_LOAD_SUCCESS = 0x0003;
+    private static final String SUBMIT_BASE_INFO_URL = HttpUtil.DOMAIN + "?q=travel_guide/write_base_info";
+    private static final String MODIFY_BASE_INFO_URL = HttpUtil.DOMAIN + "?q=travel_guide/modify_base_info";
+    public static final String SUBMIT_ROUTE_INFO_URL = HttpUtil.DOMAIN + "?q=travel_guide/write_route_info";
+    public static final String MODIFY_ROUTE_INFO_URL = HttpUtil.DOMAIN + "?q=travel_guide/modify_route_info";
+    private static final String SUBMIT_CHARGE_AND_LIMIT_URL = HttpUtil.DOMAIN + "?q=travel_guide/write_charge_limit_info";
+    private static final String SUBMIT_APPOINTMENT_DATE_URL = HttpUtil.DOMAIN + "?q=travel_guide/write_appoinment_date";
+    private static final int WRITE_BASE_INFO_SUCCESS = 1;
+    public static final int WRITE_ROUTE_INFO_SUCCESS = 2;
+    private static final int WRITE_CHARGE_AND_LIMIT_SUCCESS = 3;
+    private static final int WRITE_APPOINT_DATE_SUCCESS = 4;
+    private static final int DELETE_ROUTE_INFO_SUCCESS = 5;
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("EEE, d MMM yyyy");
     AppCompatCheckBox followShot;
     AppCompatCheckBox travelPlan;
@@ -116,6 +125,7 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
     private Dialog mDialog;
     private Context mContext;
     private String uri;
+    private int tid;
     private boolean isSubmit = false;
     private EditText introductionET;
     private EditText selfIntroductionET;
@@ -156,6 +166,11 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
     private ArrayList<CommonBean> provinceItems = new ArrayList<>();
     private ArrayList<ArrayList<String>> cityItems = new ArrayList<>();
     private EditText additionalServiceET;
+        private MyHandler myHandler;
+    private int developConsultation = -1;
+    private String mBaseInfoString = "";
+    private boolean routeModified = false;
+    private boolean routeSubmitted = false;
 
     @Override
     public void onAttach(Context context) {
@@ -173,7 +188,7 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         mDialog = new Dialog(getActivity(), R.style.Theme_MaterialComponents_DialogWhenLarge);
-
+myHandler = new MyHandler(this);
         Bundle bundle = getArguments();
         if (bundle != null) {
             type = bundle.getInt("type", 0);
@@ -279,27 +294,52 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
             @Override
             public void onClick(View view) {
                 if (validCheck(index)) {
-                    if (leftBack.getVisibility() == View.VISIBLE) {
-                        leftBack.setVisibility(View.GONE);
-                    }
-                    if (prevBtn.getVisibility() == View.GONE) {
-                        prevBtn.setVisibility(View.VISIBLE);
-                    }
-                    if (index < authenticateWrapper.getChildCount() - 1) {
-                        if (index == authenticateWrapper.getChildCount() - 2) {
-                            nextBtn.setText(getContext().getResources().getString(R.string.done));
-                        }
-                        authenticateWrapper.getChildAt(index).setVisibility(View.VISIBLE);
-                        authenticateWrapper.getChildAt(index - 1).setVisibility(View.GONE);
-                        index++;
-                        processCurrent(index);
-
-                    } else {
-                        submitNotice();
+                                        switch (index){
+                        case 5://self introduction
+                            if (TextUtils.isEmpty(mBaseInfoString)){
+                                submitBaseInfo(false);
+                            }else {
+                                if (!mBaseInfoString.equals(getBaseInfoJsonObject().toString())){
+                                    submitBaseInfo(true);
+                                }else {
+                                    processNextBtn();
+                                }
+                            }
+                            break;
+                                                case 8:
+                            submitChargeAndLimitations();
+                            break;
+                        case 9:
+                            submitAppointDate();
+                            break;
+                            default:
+                                processNextBtn();
+                                break;
                     }
                 }
             }
         });
+    }
+    
+        private void processNextBtn(){
+        if (leftBack.getVisibility() == View.VISIBLE) {
+            leftBack.setVisibility(View.GONE);
+        }
+        if (prevBtn.getVisibility() == View.GONE) {
+            prevBtn.setVisibility(View.VISIBLE);
+        }
+        if (index < authenticateWrapper.getChildCount() - 1) {
+            if (index == authenticateWrapper.getChildCount() - 2) {
+                nextBtn.setText(getContext().getResources().getString(R.string.done));
+            }
+            authenticateWrapper.getChildAt(index).setVisibility(View.VISIBLE);
+            authenticateWrapper.getChildAt(index - 1).setVisibility(View.GONE);
+            index++;
+            processCurrent(index);
+
+        } else {
+            submitNotice();
+        }
     }
 
     private void addRouteItem() {
@@ -314,6 +354,9 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
             public void onClick(View view) {
                 addRouteItem();
                 initRouteItem();
+                                if (routeSubmitted){
+                    routeModified = true;
+                }
             }
         });
 
@@ -414,47 +457,15 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
     }
 
     private void initChargeSetting() {
-        Button consultationServiceBtn = mDialog.findViewById(R.id.consultation_service);
-        Button escortServiceBtn = mDialog.findViewById(R.id.escort_service);
-        RelativeLayout consultationServiceSetting = mDialog.findViewById(R.id.consultation_charge_setting);
         RelativeLayout escortServiceSetting = mDialog.findViewById(R.id.escort_charge_setting);
-        consultationChargeNumber = mDialog.findViewById(R.id.consultation_charge_setting_edit);
-        consultationChargeDesc = mDialog.findViewById(R.id.consultation_charge_supplement_edit);
         escortChargeSettingNumber = mDialog.findViewById(R.id.charge_setting_edit);
         escortChargeDesc = mDialog.findViewById(R.id.charge_supplement_edit);
-
-        consultationServiceBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                consultationServiceBtn.setBackground(getContext().getResources().getDrawable(R.drawable.btn_primary));
-                consultationServiceBtn.setTextColor(getContext().getResources().getColor(R.color.white));
-                consultationServiceSetting.setVisibility(View.VISIBLE);
-            }
-        });
-
-        escortServiceBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                escortServiceBtn.setBackground(getContext().getResources().getDrawable(R.drawable.btn_primary));
-                escortServiceBtn.setTextColor(getContext().getResources().getColor(R.color.white));
-                escortServiceSetting.setVisibility(View.VISIBLE);
-            }
-        });
-
+        RadioGroup consultationRG = mDialog.findViewById(R.id.consultationRG);
+        
         String[] units = getResources().getStringArray(R.array.duration);
-        NiceSpinner consultationUnitSpinner = (NiceSpinner) mDialog.findViewById(R.id.consultation_unit);
         NiceSpinner escortUnitSpinner = (NiceSpinner) mDialog.findViewById(R.id.escort_unit);
         final List<String> unitList = new LinkedList<>(Arrays.asList(units));
-        consultationUnitSpinner.attachDataSource(unitList);
         escortUnitSpinner.attachDataSource(unitList);
-
-        consultationUnitSpinner.addOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                consultationUnit = unitList.get(i);
-            }
-
-        });
 
         escortUnitSpinner.addOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -462,6 +473,21 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
                 escortUnit = unitList.get(i);
             }
 
+        });
+        
+        consultationRG.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                int id = group.getCheckedRadioButtonId();
+                switch (id){
+                    case R.id.develop:
+                        developConsultation = 0;
+                        break;
+                    case R.id.not_develop:
+                        developConsultation = 1;
+                        break;
+                }
+            }
         });
     }
 
@@ -505,9 +531,9 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
         Slog.d(TAG, "--------------------->index: " + index + " size: " + routeList.size());
         RouteItemEditDF routeItemEditDF;
         if (routeList.size() > index) {
-            routeItemEditDF = newInstance(index, routeList.get(index));
+            routeItemEditDF = newInstance(index, tid,routeList.get(index));
         } else {
-            routeItemEditDF = newInstance(index, null);
+            routeItemEditDF = newInstance(index, tid,null);
         }
 
         routeItemEditDF.setTargetFragment(this, ROUTE_REQUEST_CODE);
@@ -547,8 +573,7 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        submit();
-                    }
+mDialog.dismiss();                    }
                 });
 
         AlertDialog normalDialog = normalDialogBuilder.create();
@@ -557,80 +582,99 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
 
     private void submit() {
         showProgressDialog(getContext().getString(R.string.saving_progress));
-        Map<String, String> authenMap = new HashMap<>();
-        authenMap.put("base_info", getBaseInfoJsonObject().toString());
+            }
 
-
-
-    }
-
-    private void submitBaseInfo(){
-        FormBody.Builder builder = new FormBody.Builder()
-                .add("base_info", getBaseInfoJsonObject().toString());
-
+    private void submitBaseInfo(boolean modified){
+        Slog.d(TAG, "------------------>submitBaseInfo modified: "+modified);
+        mBaseInfoString = getBaseInfoJsonObject().toString();
+        showProgressDialog(getContext().getString(R.string.saving_progress));
+        FormBody.Builder builder;
+        String uri = "";
+        if (modified){
+            builder = new FormBody.Builder()
+                    .add("tid", String.valueOf(tid))
+                    .add("base_info", mBaseInfoString);
+            uri = MODIFY_BASE_INFO_URL;
+        }else {
+            builder = new FormBody.Builder()
+                    .add("base_info", mBaseInfoString);
+            uri = SUBMIT_BASE_INFO_URL;
+        }
+        
         RequestBody requestBody = builder.build();
 
-        HttpUtil.sendOkHttpRequest(mContext, SUBMIT_URL, requestBody, new Callback() {
+        HttpUtil.sendOkHttpRequest(mContext, uri, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
-                Slog.d(TAG, "saveUserInfo response : " + responseText);
+                Slog.d(TAG, "submitBaseInfo response : " + responseText);
                 if (!TextUtils.isEmpty(responseText)) {
                     try {
-                        gid = new JSONObject(responseText).optInt("gid");
+                        if (!modified){
+                            tid = new JSONObject(responseText).optInt("tid");
+                        }
+                        dismissProgressDialog();
+                        myHandler.sendEmptyMessage(WRITE_BASE_INFO_SUCCESS);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    isSubmit = true;
-                    dismissProgressDialog();
-                    mDialog.dismiss();
                 }
             }
-
+            
             @Override
             public void onFailure(Call call, IOException e) {
 
             }
         });
     }
-
-    private void submitRoute(){
-        for (int i=0; i<routeList.size(); i++){
-            Map<String, String> authenMap = new HashMap<>();
-            authenMap.put("name", routeList.get(i).name);
-            authenMap.put("introduction", routeList.get(i).introduction);
-            if (routeList.get(i).selectPicture.size() > 0){
-                List<LocalMedia> selectList = routeList.get(i).selectPicture;
-                for (LocalMedia media : selectList) {
-                    selectFileList.add(new File(media.getCompressPath()));
+    
+    private JSONObject getChargeAndLimit(){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            if (!TextUtils.isEmpty(escortChargeSettingNumber.getText().toString())){
+                jsonObject.put("escort_charge_amount", escortChargeSettingNumber.getText().toString());
+                jsonObject.put("escort_charge_unit", escortUnit);
+                if (!TextUtils.isEmpty(escortChargeDesc.getText().toString())){
+                    jsonObject.put("escort_charge_supplement", escortChargeDesc.getText().toString());
                 }
-
-                uploadPictures(authenMap, "authen", selectFileList);
+            }
+            jsonObject.put("developConsultation", developConsultation);
+            if (!TextUtils.isEmpty(limitationET.getText().toString())){
+                limitations += limitationET.getText().toString();
             }
 
+            if (!TextUtils.isEmpty(limitations)){
+                jsonObject.put("limitations", limitations);
+            }
+
+        }catch (JSONException e){
+            e.printStackTrace();
         }
 
+        return jsonObject;
+
     }
+    
+    private void submitChargeAndLimitations(){
+        showProgressDialog(getContext().getString(R.string.saving_progress));
+        FormBody.Builder builder = new FormBody.Builder()
+                .add("tid", String.valueOf(tid))
+                .add("charge_and_limit", getChargeAndLimit().toString());
 
-    private void uploadPictures(Map<String, String> params, String picKey, List<File> files) {
-
-        HttpUtil.uploadPictureHttpRequest(getContext(), params, picKey, files, SUBMIT_URL, new Callback() {
+        RequestBody requestBody = builder.build();
+        
+        HttpUtil.sendOkHttpRequest(mContext, SUBMIT_CHARGE_AND_LIMIT_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                if (response.body() != null) {
+                String responseText = response.body().string();
+                Slog.d(TAG, "submitChargeAndLimitations response : " + responseText);
+                if (!TextUtils.isEmpty(responseText)) {
                     try {
-                        String responseText = response.body().string();
-                        Slog.d(TAG, "---------------->response: " + responseText);
-                        int status = new JSONObject(responseText).optInt("status");
-                        aid = new JSONObject(responseText).optInt("aid");
-                        JSONObject talentobject = new JSONObject(responseText).optJSONObject("talent");
-                        talent = getTalent(talentobject);
-                        if (status == 1) {
-                            isSubmit = true;
+                        int result = new JSONObject(responseText).optInt("result");
+                        
+                         if (result == 1){
                             dismissProgressDialog();
-                            selectList.clear();
-                            selectFileList.clear();
-                            PictureFileUtils.deleteAllCacheDirFile(getContext());
+                            myHandler.sendEmptyMessage(WRITE_BASE_INFO_SUCCESS);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -640,16 +684,53 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
 
             @Override
             public void onFailure(Call call, IOException e) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getContext(), getContext().getResources().getString(R.string.submit_error), Toast.LENGTH_SHORT).show();
-                    }
-                });
+
             }
         });
-
     }
+    
+    private void submitAppointDate(){
+        showProgressDialog(getContext().getString(R.string.saving_progress));
+        String dateString = "";
+        for (int i=0; i<selectedDateList.size(); i++){
+            if (i == selectedDateList.size() - 1){
+                dateString += selectedDateList.get(i);
+            }else {
+                dateString += selectedDateList.get(i)+";";
+            }
+        }
+        
+        FormBody.Builder builder = new FormBody.Builder()
+                .add("tid", String.valueOf(tid))
+                .add("date_string", dateString);
+
+        RequestBody requestBody = builder.build();
+        
+        HttpUtil.sendOkHttpRequest(mContext, SUBMIT_APPOINTMENT_DATE_URL, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String responseText = response.body().string();
+                Slog.d(TAG, "submitAppointDate response : " + responseText);
+                if (!TextUtils.isEmpty(responseText)) {
+                    try {
+                        int result = new JSONObject(responseText).optInt("result");
+                        if (result == 1){
+                            dismissProgressDialog();
+                            myHandler.sendEmptyMessage(WRITE_APPOINT_DATE_SUCCESS);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+        });
+    }
+     
 
     private boolean validCheck(int index) {
         Slog.d(TAG, "------------------------>validCheck: " + index);
@@ -662,19 +743,19 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
                 }
                 break;
             case 2:
-                if (!TextUtils.isEmpty(introductionET.getText().toString())) {
+                if (!TextUtils.isEmpty(headLineET.getText().toString())) {
+                    valid = true;
+                } else {
+                    valid = false;
+                    Toast.makeText(getContext(), getResources().getString(R.string.headline_empty_notice), Toast.LENGTH_LONG).show();
+                }
+                break;
+            case 3:
+                 if (!TextUtils.isEmpty(introductionET.getText().toString())) {
                     valid = true;
                 } else {
                     valid = false;
                     Toast.makeText(getContext(), getResources().getString(R.string.service_introduction_notice), Toast.LENGTH_LONG).show();
-                }
-                break;
-            case 3:
-                if (routeList.size() == 0) {
-                    valid = false;
-                    Toast.makeText(getContext(), getResources().getString(R.string.route_introduction_empty_notice), Toast.LENGTH_LONG).show();
-                } else {
-                    valid = true;
                 }
                 break;
 
@@ -688,11 +769,11 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
 
                 break;
             case 6:
-                if (!TextUtils.isEmpty(headLineET.getText().toString())) {
-                    valid = true;
-                } else {
+                if (routeList.size() == 0) {
                     valid = false;
-                    Toast.makeText(getContext(), getResources().getString(R.string.headline_empty_notice), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), getResources().getString(R.string.route_introduction_empty_notice), Toast.LENGTH_LONG).show();
+                } else {
+                    valid = true;
                 }
 
                 break;
@@ -703,8 +784,15 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
                     valid = false;
                     Toast.makeText(getContext(), getResources().getString(R.string.charge_empty_notice), Toast.LENGTH_LONG).show();
                 }
+                
+                                if (developConsultation == -1){
+                    valid = false;
+                    Toast.makeText(getContext(), getResources().getString(R.string.whether_develop_consultation_notice), Toast.LENGTH_LONG).show();
+                }else {
+                    valid = true;
+                }
                 break;
-            case 8:
+            case 9:
                 if (selectedDateList.size() > 0) {
                     valid = true;
                 } else {
@@ -731,7 +819,7 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
     private void processCurrent(int index) {
         Slog.d(TAG, "------------------------>processCurrent: " + index);
         switch (index) {
-            case 5:
+            case 3:
                 if (!TextUtils.isEmpty(additionalServiceET.getText())) {
                     additionalServices.put("addition", additionalServiceET.getText().toString());
                 }
@@ -749,6 +837,7 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("city", selectCityBtn.getText().toString());
+            jsonObject.put("title", headLineET.getText().toString());
             jsonObject.put("service_introduction", introductionET.getText().toString());
             jsonObject.put("self_introduction", selfIntroductionET.getText().toString());
 
@@ -767,34 +856,6 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
                 jsonObject.put("additional_service", additionalServiceStr);
             }
 
-            if (!TextUtils.isEmpty(consultationChargeNumber.getText().toString())){
-                jsonObject.put("consultation_charge_amount", consultationChargeNumber.getText().toString());
-                jsonObject.put("consultation_charge_unit", consultationUnit);
-                if (!TextUtils.isEmpty(consultationChargeDesc.getText().toString())){
-                    jsonObject.put("consultation_charge_supplement", consultationChargeDesc.getText().toString());
-                }
-            }
-
-            if (!TextUtils.isEmpty(escortChargeSettingNumber.getText().toString())){
-                jsonObject.put("escort_charge_amount", escortChargeSettingNumber.getText().toString());
-                jsonObject.put("escort_charge_unit", escortUnit);
-                if (!TextUtils.isEmpty(escortChargeDesc.getText().toString())){
-                    jsonObject.put("escort_charge_supplement", escortChargeDesc.getText().toString());
-                }
-            }
-
-            String dateString = "";
-            for (int i=0; i<selectedDateList.size(); i++){
-                dateString += selectedDateList.get(i)+";";
-            }
-
-            jsonObject.put("appoint_date_string", dateString);
-
-            if (!TextUtils.isEmpty(limitationET.getText().toString())){
-                limitations += limitationET.getText().toString();
-            }
-            jsonObject.put("limitations", limitations);
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -811,11 +872,13 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
                     Bundle bundle = data.getExtras();
                     int index = bundle.getInt("index");
                     Route route = bundle.getParcelable("route");
-                    if (bundle.getBoolean("isModify")) {
+                    if (bundle.getBoolean("isModified")) {
                         routeList.remove(index);
+                        routeModified = true;
                     }
 
                     routeList.add(index, route);
+                    Slog.d(TAG, "------------------->select picture size: "+route.selectPicture.size());
                     setRouteName(index, route.name);
                     break;
             }
@@ -871,7 +934,24 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
 
     public void handleMessage(Message msg) {
         switch (msg.what) {
-
+            case WRITE_BASE_INFO_SUCCESS:
+                processNextBtn();
+                //Bundle bundle = msg.getData();
+                //int tid = bundle.getInt("tid");
+                //submitRoute(tid);
+                break;
+            case WRITE_ROUTE_INFO_SUCCESS:
+                processNextBtn();
+                break;
+            case WRITE_CHARGE_AND_LIMIT_SUCCESS:
+                processNextBtn();
+                break;
+            case WRITE_APPOINT_DATE_SUCCESS:
+                processNextBtn();
+                break;
+            case DELETE_ROUTE_INFO_SUCCESS:
+                //submitRoute(false);
+                break;
         }
     }
 
@@ -899,17 +979,19 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
                 return new Route[size];
             }
         };
+        public int tid = 0;
+        public int rid = 0;
         public String name;
         public String introduction;
         public List<LocalMedia> selectPicture = new ArrayList<>();
 
-        public Route(String name, String introduction, List<LocalMedia> selectPicture) {
-            this.name = name;
-            this.introduction = introduction;
-            this.selectPicture = selectPicture;
+        public Route() {
+
         }
 
         protected Route(Parcel in) {
+                        tid = in.readInt();
+            rid = in.readInt();
             name = in.readString();
             introduction = in.readString();
             selectPicture = new ArrayList<>();
@@ -923,10 +1005,16 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
 
         @Override
         public void writeToParcel(Parcel dest, int flags) {
+                        dest.writeInt(tid);
+            dest.writeInt(rid);
             dest.writeString(name);
             dest.writeString(introduction);
             dest.writeList(selectPicture);
         }
+        
+                public int getTid(){ return tid; }
+
+        public int getRid(){ return rid; }
 
         public String getName() {
             return name;
@@ -934,6 +1022,14 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
 
         public void setName(String name) {
             this.name = name;
+        }
+        
+        public void setRid(int rid) {
+            this.rid = rid;
+        }
+
+        public void setTid(int tid){
+            this.tid = tid;
         }
 
         public String getIntroduction() {
