@@ -7,8 +7,13 @@ import android.content.pm.ActivityInfo;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.os.Handler;
+import android.os.Message;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -30,31 +35,48 @@ import com.hetang.main.FullyGridLayoutManager;
 import com.hetang.picture.GlideEngine;
 import com.hetang.util.BaseDialogFragment;
 import com.hetang.util.FontManager;
+import com.hetang.util.HttpUtil;
 import com.hetang.util.Slog;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
 import com.luck.picture.lib.style.PictureWindowAnimationStyle;
+import com.luck.picture.lib.tools.PictureFileUtils;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 import static android.app.Activity.RESULT_OK;
+import static com.hetang.experience.TravelGuideAuthenticationDialogFragment.MODIFY_ROUTE_INFO_URL;
 import static com.hetang.experience.TravelGuideAuthenticationDialogFragment.ROUTE_REQUEST_CODE;
+import static com.hetang.experience.TravelGuideAuthenticationDialogFragment.SUBMIT_ROUTE_INFO_URL;
+import static com.hetang.experience.TravelGuideAuthenticationDialogFragment.WRITE_ROUTE_INFO_SUCCESS;
 
 public class RouteItemEditDF extends BaseDialogFragment {
     private static final boolean isDebug = true;
-    private static final String TAG = "ExperienceTalentAuthentication";
+    private static final String TAG = "RouteItemEditDF";
     private Dialog mDialog;
     private Window window;
     private Button saveBtn;
     private EditText routeNameEdit;
     private EditText routeIntroductionEdit;
-    private TextView modify;
+    private Button modify;
     private int index;
-    private boolean isModify = false;
+        private int tid;
+    private boolean isModified = false;
     private boolean isFilled = false;
     private AddDynamicsActivity addDynamicsActivity;
     private RecyclerView recyclerView;
@@ -62,17 +84,37 @@ public class RouteItemEditDF extends BaseDialogFragment {
     private TravelGuideAuthenticationDialogFragment.Route route;
     private List<LocalMedia> selectList = new ArrayList<>();
     private List<File> selectFileList = new ArrayList<>();
+    private MyHandler myHandler;
+    
+    
+    public static RouteItemEditDF newInstance(int index, int tid,TravelGuideAuthenticationDialogFragment.Route initRoute){
+        RouteItemEditDF routeItemEditDF = new RouteItemEditDF();
+        Bundle bundle = new Bundle();
+        bundle.putInt("index", index);
+        bundle.putInt("tid", tid);
+        if (initRoute != null){
+            bundle.putParcelable("route", initRoute);
+        }
+        routeItemEditDF.setArguments(bundle);
+
+        return routeItemEditDF;
+    }
     
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         mDialog = new Dialog(getActivity(), R.style.Theme_MaterialComponents_DialogWhenLarge);
         mDialog.setContentView(R.layout.route_item_edit);
-
+myHandler = new MyHandler(this);
         Bundle bundle = getArguments();
         if (bundle != null){
+            tid = bundle.getInt("tid");
             index = bundle.getInt("index");
             route = bundle.getParcelable("route");
+
+            if (route != null){
+                isFilled = true;
+            }
         }
         initView();
         
@@ -90,7 +132,7 @@ public class RouteItemEditDF extends BaseDialogFragment {
             @Override
             public void onClick(View view) {
                 if (checkFillStatus()){
-                    if (!isFilled || isModify){
+                    if (isModified){
                         showNoticeDialog();
                     }else {
                         dismiss();
@@ -101,25 +143,9 @@ public class RouteItemEditDF extends BaseDialogFragment {
             }
         });
         
-        TextView modify = mDialog.findViewById(R.id.save);
-        modify.setText(getContext().getResources().getString(R.string.modify_route));
+        modify = mDialog.findViewById(R.id.route_modify);
 
-        if (route != null){
-            isFilled = true;
-            saveBtn.setVisibility(View.GONE);
-            modify.setVisibility(View.VISIBLE);
-            routeNameEdit.setEnabled(false);
-            routeIntroductionEdit.setEnabled(false);
-            modify.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    isModify = true;
-                    saveBtn.setVisibility(View.VISIBLE);
-                    routeNameEdit.setEnabled(true);
-                    routeIntroductionEdit.setEnabled(true);
-                }
-            });
-        }
+        initView();
         
         Typeface font = Typeface.createFromAsset(MyApplication.getContext().getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
         FontManager.markAsIconContainer(mDialog.findViewById(R.id.custom_actionbar), font);
@@ -181,38 +207,166 @@ public class RouteItemEditDF extends BaseDialogFragment {
             }
         });
         
-        saveBtn.setOnClickListener(new View.OnClickListener() {
+        adapter.setItemDeleteListener(new GridImageAdapter.OnPicDeleteListener() {
             @Override
-            public void onClick(View view) {
-                if (validCheck()){
-                    route = new TravelGuideAuthenticationDialogFragment.Route(routeNameEdit.getText().toString(),
-                            routeIntroductionEdit.getText().toString(), selectList);
-                    route.name = routeNameEdit.getText().toString();
-                    route.introduction = routeIntroductionEdit.getText().toString();
-                    route.selectPicture = selectList;
-                    
-                    if (getTargetFragment() != null){
-                        Intent intent = new Intent();
-                        intent.putExtra("route", route);
-                        intent.putExtra("index", index);
-                        intent.putExtra("isModify", isModify);
-                        getTargetFragment().onActivityResult(ROUTE_REQUEST_CODE, RESULT_OK, intent);
-                        mDialog.dismiss();
-                    }
+            public void onPicDelete() {
+                Slog.d(TAG, "pic delete");
+                if (route != null){
+                    isModified = true;
                 }
             }
         });
         
-        if (route != null){
+        saveBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (validCheck()){
+                    submitRoute();
+                }
+            }
+        });
+        
+if (isFilled){
             routeNameEdit.setText(route.name);
             routeIntroductionEdit.setText(route.introduction);
+            Slog.d(TAG, "----------------------->route.selectPicture.size: "+route.selectPicture.size());
             if (route.selectPicture.size() > 0){
-                selectList = route.selectPicture;
+                selectList.clear();
+                selectList.addAll(route.selectPicture);
                 adapter.setList(selectList);
                 adapter.notifyDataSetChanged();
             }
+     saveBtn.setVisibility(View.GONE);
+            modify.setVisibility(View.VISIBLE);
+            modify.setBackground(getContext().getResources().getDrawable(R.drawable.btn_stress));
+            routeNameEdit.setEnabled(false);
+            routeIntroductionEdit.setEnabled(false);
+            adapter.setDeleteBtnStatus(false);
+    
+    modify.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    saveBtn.setVisibility(View.VISIBLE);
+                    routeNameEdit.setEnabled(true);
+                    routeIntroductionEdit.setEnabled(true);
+                    adapter.setDeleteBtnStatus(true);
+                    adapter.notifyDataSetChanged();
+                }
+            });
+            routeNameEdit.addTextChangedListener(textWatcher);
+            routeIntroductionEdit.addTextChangedListener(textWatcher);
+        }
+    
+    }
+    
+        private TextWatcher textWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            isModified = true;
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {}
+    };
+    
+    private void submitRoute(){
+        showProgressDialog(getContext().getString(R.string.saving_progress));
+        if (route == null){
+            route = new TravelGuideAuthenticationDialogFragment.Route();
+        }
+        route.name = routeNameEdit.getText().toString();
+        route.introduction = routeIntroductionEdit.getText().toString();
+
+        if (isModified || route.selectPicture.size() > 0){
+            route.selectPicture.clear();
+        }
+        
+        route.selectPicture.addAll(selectList);
+
+        Map<String, String> authenMap = new HashMap<>();
+        if (isModified){
+            authenMap.put("rid", String.valueOf(route.getRid()));
+        }else {
+            authenMap.put("tid", String.valueOf(tid));
+        }
+        
+         authenMap.put("name", routeNameEdit.getText().toString());
+        authenMap.put("introduction", routeIntroductionEdit.getText().toString());
+        if (selectList.size() > 0){
+            Slog.d(TAG, "----------------->submitRoute selectList: "+selectList);
+            for (LocalMedia media : selectList) {
+                selectFileList.add(new File(media.getCompressPath()));
+            }
+            uploadPictures(authenMap, "authen", selectFileList, isModified);
+        }
+
+    }
+    
+    private void uploadPictures(Map<String, String> params, String picKey, List<File> files, boolean isModified) {
+        Slog.d(TAG, "--------------------->uploadPictures file size: "+files.size());
+        String uri = SUBMIT_ROUTE_INFO_URL;
+
+        if (isModified){
+            uri = MODIFY_ROUTE_INFO_URL;
+        }
+        
+        HttpUtil.uploadPictureHttpRequest(getContext(), params, picKey, files, uri, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.body() != null) {
+                    try {
+                        String responseText = response.body().string();
+                        Slog.d(TAG, "---------------->uploadPictures response: " + responseText);
+                        int result = new JSONObject(responseText).optInt("result");
+                        if (!isModified){
+                            int rid = new JSONObject(responseText).optInt("rid");
+                            route.setRid(rid);
+                        }
+                        
+                        if (result == 1) {
+                            dismissProgressDialog();
+                            selectList.clear();
+                            selectFileList.clear();
+                            //PictureFileUtils.deleteAllCacheDirFile(MyApplication.getContext());
+                            myHandler.sendEmptyMessage(WRITE_ROUTE_INFO_SUCCESS);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getContext(), getContext().getResources().getString(R.string.submit_error), Toast.LENGTH_SHORT).show();
+                    }
+                });
+                e.printStackTrace();
+
+            }
+        });
+
+    }
+    
+    private void callBacktoCaller(){
+
+        if (getTargetFragment() != null){
+            Intent intent = new Intent();
+            intent.putExtra("route", route);
+            intent.putExtra("index", index);
+            intent.putExtra("isModified", isModified);
+            getTargetFragment().onActivityResult(ROUTE_REQUEST_CODE, RESULT_OK, intent);
+            mDialog.dismiss();
         }
     }
+    
+    
     
     private void showNoticeDialog() {
         final AlertDialog.Builder normalDialog =
@@ -220,20 +374,20 @@ public class RouteItemEditDF extends BaseDialogFragment {
         normalDialog.setTitle("确认放弃本次编辑吗？");
         normalDialog.setMessage("编辑尚未保存，若返回将会丢弃。");
 
-        normalDialog.setPositiveButton("取消",
+        normalDialog.setPositiveButton("放弃",
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
+ mDialog.dismiss();
                     }
                 });
                 
-                 normalDialog.setNegativeButton("确认",
+                 normalDialog.setNegativeButton("保存",
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         //saveBtn.callOnClick();
-                        mDialog.dismiss();
+                        submitRoute();
                     }
                 });
 
@@ -290,6 +444,9 @@ public class RouteItemEditDF extends BaseDialogFragment {
                     Slog.d(TAG, "Selected pictures: " + selectList.size());
                     adapter.setList(selectList);
                     adapter.notifyDataSetChanged();
+                                        if (isFilled){
+                        isModified = true;
+                    }
                     break;
             }
         }
@@ -333,6 +490,15 @@ public class RouteItemEditDF extends BaseDialogFragment {
 
     };
     
+        public void handleMessage(Message msg) {
+        switch (msg.what) {
+            case WRITE_ROUTE_INFO_SUCCESS:
+                callBacktoCaller();
+                break;
+
+        }
+    }
+    
     @Override
     public void onDismiss(DialogInterface dialogInterface) {
         super.onDismiss(dialogInterface);
@@ -342,5 +508,21 @@ public class RouteItemEditDF extends BaseDialogFragment {
     @Override
     public void onCancel(DialogInterface dialogInterface) {
         super.onCancel(dialogInterface);
+    }
+    
+        static class MyHandler extends Handler {
+        WeakReference<RouteItemEditDF> routeItemEditDFWeakReference;
+
+        MyHandler(RouteItemEditDF routeItemEditDF) {
+            routeItemEditDFWeakReference = new WeakReference<RouteItemEditDF>(routeItemEditDF);
+        }
+
+        @Override
+        public void handleMessage(Message message) {
+            RouteItemEditDF routeItemEditDF = routeItemEditDFWeakReference.get();
+            if (routeItemEditDF != null) {
+                routeItemEditDF.handleMessage(message);
+            }
+        }
     }
 }
