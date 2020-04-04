@@ -62,6 +62,44 @@
                     android:text="@string/select_city"
                     android:textColor="@color/white" />
        </LinearLayout>
+             <!--create headline-->
+            <LinearLayout
+                android:id="@+id/create_headline_wrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="36dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+                <TextView
+                    android:id="@+id/create_headline_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/create_headline_title"
+                    android:textColor="@color/black"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:textSize="16sp"
+                    android:textAppearance="@style/CustomTextNoticeAppearance"
+                    android:text="@string/create_headline_notice"
+                    android:textColor="@color/black" />
+                
+                <EditText
+                    android:id="@+id/create_headline_edit"
+                    style="@style/EditTextCustom"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:hint="@string/headline"
+                    android:textColor="@color/blue_dark"
+                    android:textCursorDrawable="@drawable/cursor_color"
+                    android:theme="@style/MyEditText" />
+
+            </LinearLayout>
             <!--service introduction-->
             <LinearLayout
                 android:id="@+id/introduction_wrapper"
@@ -105,6 +143,123 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="32dp"
                     android:hint="@string/service_introduction_title"
+                    android:textColor="@color/blue_dark"
+                    android:background="@drawable/shape"
+                    android:textCursorDrawable="@drawable/cursor_color"
+                    android:theme="@style/MyEditText" />
+            </LinearLayout>
+            <!--additional service introduction-->
+            <LinearLayout
+                android:id="@+id/additional_introduction_wrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+                <TextView
+                    android:id="@+id/additional_service_introduction_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:text="@string/additional_service_introduction_title"
+                    android:textColor="@color/black"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+                <androidx.appcompat.widget.AppCompatCheckBox
+                    android:id="@+id/follow_shot"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:textColor="@color/black"
+                    android:buttonTintMode="multiply"
+                    android:text="@string/follow_shot" />
+
+                <androidx.appcompat.widget.AppCompatCheckBox
+                    android:id="@+id/travel_plan"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:textColor="@color/black"
+                    android:buttonTintMode="multiply"
+                    android:text="@string/travel_plan" />
+                
+                <androidx.appcompat.widget.AppCompatCheckBox
+                    android:id="@+id/chartered_car"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:textColor="@color/black"
+                    android:buttonTintMode="multiply"
+                    android:text="@string/chartered_car" />
+
+                <androidx.appcompat.widget.AppCompatCheckBox
+                    android:id="@+id/ticket"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:textColor="@color/black"
+                    android:buttonTintMode="multiply"
+                    android:text="@string/ticket" />
+                
+                <androidx.appcompat.widget.AppCompatCheckBox
+                    android:id="@+id/ferry"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:textColor="@color/black"
+                    android:buttonTintMode="multiply"
+                    android:text="@string/ferry" />
+                
+                <EditText
+                    android:id="@+id/additional_service_edit"
+                    style="@style/EditTextCustom"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="32dp"
+                    android:layout_marginEnd="16dp"
+                    android:hint="@string/additional_service_edit"
+                    android:textColor="@color/blue_dark"
+                    android:textCursorDrawable="@drawable/cursor_color"
+                    android:theme="@style/MyEditText" />
+            </LinearLayout>
+            <!--self introduction-->
+            <LinearLayout
+                android:id="@+id/self_introduction_wrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/self_introduction_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/self_introduction_title"
+                    android:textColor="@color/black"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+                
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:textSize="16sp"
+                    android:textAppearance="@style/CustomTextNoticeAppearance"
+                    android:text="@string/self_introduction_notice"
+                    android:textColor="@color/black" />
+                
+                <EditText
+                    android:id="@+id/self_introduction"
+                    style="@style/EditTextCustom"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minLines="6"
+                    android:gravity="top"
+                    android:layout_marginTop="32dp"
+                    android:hint="@string/self_introduction"
                     android:textColor="@color/blue_dark"
                     android:background="@drawable/shape"
                     android:textCursorDrawable="@drawable/cursor_color"
@@ -257,172 +412,12 @@
                     android:text="@string/add_route_item" />
 
             </LinearLayout>
-            <!--additional service introduction-->
-            <LinearLayout
-                android:id="@+id/additional_introduction_wrapper"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_row="3"
-                android:orientation="vertical"
-                android:visibility="gone">
-                <TextView
-                    android:id="@+id/additional_service_introduction_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:text="@string/additional_service_introduction_title"
-                    android:textColor="@color/black"
-                    android:textSize="22sp"
-                    android:textStyle="bold" />
-
-                <androidx.appcompat.widget.AppCompatCheckBox
-                    android:id="@+id/follow_shot"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
-                    android:textColor="@color/black"
-              android:buttonTintMode="multiply"
-                    android:text="@string/follow_shot" />
-
-                <androidx.appcompat.widget.AppCompatCheckBox
-                    android:id="@+id/travel_plan"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:textColor="@color/black"
-                    android:buttonTintMode="multiply"
-                    android:text="@string/travel_plan" />
-                
-                <androidx.appcompat.widget.AppCompatCheckBox
-                    android:id="@+id/chartered_car"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:textColor="@color/black"
-                    android:buttonTintMode="multiply"
-                    android:text="@string/chartered_car" />
-
-                <androidx.appcompat.widget.AppCompatCheckBox
-                    android:id="@+id/ticket"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:textColor="@color/black"
-                    android:buttonTintMode="multiply"
-                    android:text="@string/ticket" />
-                
-                <androidx.appcompat.widget.AppCompatCheckBox
-                    android:id="@+id/ferry"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:textColor="@color/black"
-                    android:buttonTintMode="multiply"
-                    android:text="@string/ferry" />
-                
-                <EditText
-                    android:id="@+id/additional_service_edit"
-                    style="@style/EditTextCustom"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="32dp"
-                    android:layout_marginEnd="16dp"
-                    android:hint="@string/additional_service_edit"
-                    android:textColor="@color/blue_dark"
-                    android:textCursorDrawable="@drawable/cursor_color"
-                    android:theme="@style/MyEditText" />
-            </LinearLayout>
-            <!--self introduction-->
-            <LinearLayout
-                android:id="@+id/self_introduction_wrapper"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_row="4"
-                android:orientation="vertical"
-                android:visibility="gone">
-
-                <TextView
-                    android:id="@+id/self_introduction_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/self_introduction_title"
-                    android:textColor="@color/black"
-                    android:textSize="22sp"
-                    android:textStyle="bold" />
-                
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:textSize="16sp"
-                    android:textAppearance="@style/CustomTextNoticeAppearance"
-                    android:text="@string/self_introduction_notice"
-                    android:textColor="@color/black" />
-                
-                <EditText
-                    android:id="@+id/self_introduction"
-                    style="@style/EditTextCustom"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:minLines="6"
-                    android:gravity="top"
-                    android:layout_marginTop="32dp"
-                    android:hint="@string/self_introduction"
-                    android:textColor="@color/blue_dark"
-                    android:background="@drawable/shape"
-                    android:textCursorDrawable="@drawable/cursor_color"
-                    android:theme="@style/MyEditText" />
-            </LinearLayout>
-             <!--create headline-->
-            <LinearLayout
-                android:id="@+id/create_headline_wrapper"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_row="5"
-                android:layout_marginTop="36dp"
-                android:orientation="vertical"
-                android:visibility="gone">
-
-                <TextView
-                    android:id="@+id/create_headline_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/create_headline_title"
-                    android:textColor="@color/black"
-                    android:textSize="22sp"
-                    android:textStyle="bold" />
-                
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:textSize="16sp"
-                    android:textAppearance="@style/CustomTextNoticeAppearance"
-                    android:text="@string/create_headline_notice"
-                    android:textColor="@color/black" />
-
-                <EditText
-                    android:id="@+id/create_headline_edit"
-                    style="@style/EditTextCustom"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="32dp"
-                    android:hint="@string/headline"
-                    android:textColor="@color/blue_dark"
-                    android:textCursorDrawable="@drawable/cursor_color"
-                    android:theme="@style/MyEditText" />
-                
-                 </LinearLayout>
+            
             <!--charge-->
             <LinearLayout
                 android:id="@+id/charge_wrapper"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_row="6"
                 android:orientation="vertical"
                 android:visibility="gone">
 
@@ -439,117 +434,22 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:textSize="16sp"
-                    android:lineSpacingMultiplier="1.5"
                     android:textAppearance="@style/CustomTextAppearance"
-                    android:text="@string/charge_mode_introduction"
+                    android:text="@string/charge_introduction_desc"
                     android:textColor="@color/black" />
                 
-                <Button
-                    android:id="@+id/consultation_service"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/charge_mode_introduction"
-                    android:layout_marginTop="32dp"
-                    android:textStyle="bold"
-                    android:padding="8dp"
-                    android:textColor="@color/background"
-                    android:text="@string/consultation_service"
-                    android:background="@drawable/btn_default" />
                 
-                <RelativeLayout
-                    android:id="@+id/consultation_charge_setting"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone">
-                    <TextView
-                        android:id="@+id/cny_consultation"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignTop="@+id/consultation_charge_setting_edit"
-                        android:layout_alignBottom="@+id/consultation_charge_setting_edit"
-                        android:gravity="center"
-                        android:text="@string/fa_cny"
-                        android:textColor="@color/black"
-                        android:textSize="18sp" />
-                    
-                    <EditText
-                        android:id="@+id/consultation_charge_setting_edit"
-                        style="@style/EditTextCustom"
-                        android:layout_width="wrap_content"
-                        android:layout_height="50dp"
-                        android:layout_marginTop="16dp"
-                        android:layout_toRightOf="@+id/cny_consultation"
-                        android:hint="@string/amount_of_money"
-                        android:inputType="number"
-                        android:minWidth="100dp"
-                        android:textColor="@color/blue_dark"
-                        android:textCursorDrawable="@drawable/cursor_color"
-                        android:theme="@style/MyEditText" />
-                    
-                     <TextView
-                        android:id="@+id/consultation_unit_divider"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignTop="@+id/consultation_charge_setting_edit"
-                        android:layout_alignBottom="@+id/consultation_charge_setting_edit"
-                        android:layout_marginStart="8dp"
-                        android:layout_toRightOf="@+id/consultation_charge_setting_edit"
-                        android:gravity="center"
-                        android:text="@string/unit_divider"
-                        android:textColor="@color/black"
-                        android:textSize="18sp" />
-                    
-                     <org.angmarch.views.NiceSpinner
-                        android:id="@+id/consultation_unit"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignTop="@+id/consultation_unit_divider"
-                        android:layout_alignBottom="@+id/consultation_unit_divider"
-                        android:layout_toRightOf="@+id/consultation_unit_divider"
-                        app:textTint="@color/black"
-                        app:backgroundSelector="@color/white"
-                        android:entries="@array/duration"/>
-
-                    <TextView
-                        android:id="@+id/consultation_charge_supplement_title"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/cny_consultation"
-                        android:layout_marginTop="32dp"
-                        android:text="@string/charge_supplement_title"
-                        android:textColor="@color/black" />
-                    
-                    <EditText
-                        android:id="@+id/consultation_charge_supplement_edit"
-                        style="@style/EditTextCustom"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/consultation_charge_supplement_title"
-                        android:layout_marginTop="16dp"
-                        android:hint="@string/charge_supplement"
-                        android:textColor="@color/blue_dark"
-                        android:textCursorDrawable="@drawable/cursor_color"
-                        android:theme="@style/MyEditText" />
-                </RelativeLayout>
                 
-                <Button
-                    android:id="@+id/escort_service"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/consultation_charge_setting"
-                    android:layout_marginTop="32dp"
-                    android:textStyle="bold"
-                    android:padding="8dp"
-                    android:text="@string/escort_service"
-                    android:textColor="@color/background"
-                    android:background="@drawable/btn_default"/>
+                
+                
+                
                 
                 <RelativeLayout
                     android:id="@+id/escort_charge_setting"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:visibility="gone">
+                                android:background="@color/white"
+                    android:layout_marginTop="8dp">
                     <TextView
                         android:id="@+id/cny"
                         android:layout_width="wrap_content"
@@ -596,6 +496,7 @@
                         android:layout_alignBottom="@+id/unit_divider"
                         android:layout_toRightOf="@+id/unit_divider"
                         app:textTint="@color/black"
+                                                    android:layout_marginStart="8dp"
                         app:backgroundSelector="@color/white"
                         android:entries="@array/duration"/>
 
@@ -619,58 +520,55 @@
                         android:textColor="@color/blue_dark"
                         android:textCursorDrawable="@drawable/cursor_color"
                         android:theme="@style/MyEditText" />
-                </RelativeLayout>
-                
-                </LinearLayout>
-            <!--appoint date-->
-            <LinearLayout
-                android:id="@+id/appoint_date_wrapper"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_row="7"
-                android:layout_marginTop="36dp"
-                android:orientation="vertical"
-                android:visibility="gone">
-                <TextView
-                    android:id="@+id/appoint_date_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/appoint_date_title"
-                    android:textColor="@color/black"
-                    android:textSize="22sp"
-                    android:textStyle="bold" />
-                
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:textAppearance="@style/CustomTextAppearance"
-                    android:text="@string/appoint_date"
-                    android:textColor="@color/black" />
-                
-                <com.prolificinteractive.materialcalendarview.MaterialCalendarView
-                    xmlns:app="http://schemas.android.com/apk/res-auto"
-                    android:id="@+id/calendarView"
+                    </RelativeLayout>
+                    <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="32dp"
-                    app:mcv_firstDayOfWeek="monday"
-                    app:mcv_showOtherDates="all"
-                    app:mcv_selectionColor="@color/color_blue"
-                    app:mcv_selectionMode="multiple"
-                    app:mcv_dateTextAppearance="@style/CustomDateAppearance"
-                    app:mcv_headerTextAppearance="@style/CustomTextAppearance"
-                    app:mcv_weekDayTextAppearance="@style/CustomTextAppearance"
-                    app:mcv_rightArrowMask="@drawable/ic_arrow_forward"
-                    app:mcv_leftArrowMask="@drawable/ic_arrow_back"
-                    />
-           </LinearLayout>
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:text="@string/support_consultation"
+                    android:textColor="@color/black" />
+
+                <TextView
+                    android:id="@+id/consultation_service"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:lineSpacingMultiplier="1.2"
+                    android:textAppearance="@style/CustomTextNoticeAppearance"
+                    android:text="@string/consultation_service"
+                    android:textColor="@color/black" />
+                    
+                    <RadioGroup
+                    android:id="@+id/consultationRG"
+                    android:layout_marginTop="16dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <RadioButton
+                        android:id="@+id/develop"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black"
+                        android:text="@string/develop"
+                        android:theme="@style/MyRadioButton"/>
+                        
+                         <RadioButton
+                        android:id="@+id/not_develop"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black"
+                        android:text="@string/not_develop"
+                        android:theme="@style/MyRadioButton"/>
+                </RadioGroup>
+                                
+                </LinearLayout>
             <!--appointment condition-->
             <LinearLayout
                 android:id="@+id/appoinment_condition_wrapper"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_row="8"
                 android:orientation="vertical"
                 android:visibility="gone">
                 <TextView
@@ -682,7 +580,6 @@
                     android:textColor="@color/black"
                     android:textSize="22sp"
                     android:textStyle="bold" />
-                
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -732,7 +629,7 @@
                         android:theme="@style/MyRadioButton"/>
                 </RadioGroup>
                 
-                <EditText
+                 <EditText
                     android:id="@+id/other_condition"
                     style="@style/EditTextCustom"
                     android:layout_width="match_parent"
@@ -743,6 +640,51 @@
                     android:textCursorDrawable="@drawable/cursor_color"
                     android:theme="@style/MyEditText" />
             </LinearLayout>
+            
+                
+            <!--appoint date-->
+            <LinearLayout
+                android:id="@+id/appoint_date_wrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                
+                android:orientation="vertical"
+                android:visibility="gone">
+                <TextView
+                    android:id="@+id/appoint_date_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/appoint_date_title"
+                    android:textColor="@color/black"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+                
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:textAppearance="@style/CustomTextAppearance"
+                    android:text="@string/appoint_date"
+                    android:textColor="@color/black" />
+                
+                <com.prolificinteractive.materialcalendarview.MaterialCalendarView
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/calendarView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    app:mcv_firstDayOfWeek="monday"
+                    app:mcv_showOtherDates="all"
+                    app:mcv_selectionColor="@color/color_blue"
+                    app:mcv_selectionMode="multiple"
+                    app:mcv_dateTextAppearance="@style/CustomDateAppearance"
+                    app:mcv_headerTextAppearance="@style/CustomTextAppearance"
+                    app:mcv_weekDayTextAppearance="@style/CustomTextAppearance"
+                    app:mcv_rightArrowMask="@drawable/ic_arrow_forward"
+                    app:mcv_leftArrowMask="@drawable/ic_arrow_back"
+                    />
+           </LinearLayout>
+            
             <!--Cancellation policy-->
             <LinearLayout
                 android:id="@+id/cancellation_policy_wrapper"
