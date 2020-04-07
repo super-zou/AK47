@@ -291,9 +291,8 @@
     <string name="location">地点</string>
     <string name="location_guide_desc">选择您提供旅行向导服务的城市？</string>
     <string name="location_experience_desc">您将在哪个城市开展体验？</string>
-<string name="charge_introduction_desc">您可以选择按天或小时收费</string>
+    <string name="charge_introduction_desc">您可以选择按天或小时收费</string>
     <string name="consultation_service">除了带领旅行者实地体验外，您还可以通过在线解答旅行者的咨询，帮助旅行者制定合理行程，来赚取一定的咨询服务费。</string>
-     <string name="consultation_service">咨询服务收费设置</string>
     <string name="escort_service">伴游向导收费设置</string>
     <string name="location_error">定位失败，请手动选择</string>
     <string name="correction">更正</string>

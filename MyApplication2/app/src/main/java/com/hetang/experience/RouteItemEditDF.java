@@ -6,14 +6,12 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.os.Handler;
 import android.os.Message;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -21,10 +19,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.hetang.R;
 import com.hetang.adapter.GridImageAdapter;
@@ -42,7 +36,6 @@ import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
 import com.luck.picture.lib.style.PictureWindowAnimationStyle;
-import com.luck.picture.lib.tools.PictureFileUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -55,6 +48,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
@@ -75,7 +71,7 @@ public class RouteItemEditDF extends BaseDialogFragment {
     private EditText routeIntroductionEdit;
     private Button modify;
     private int index;
-        private int tid;
+    private int tid;
     private boolean isModified = false;
     private boolean isFilled = false;
     private AddDynamicsActivity addDynamicsActivity;
@@ -85,39 +81,59 @@ public class RouteItemEditDF extends BaseDialogFragment {
     private List<LocalMedia> selectList = new ArrayList<>();
     private List<File> selectFileList = new ArrayList<>();
     private MyHandler myHandler;
-    
-    
-    public static RouteItemEditDF newInstance(int index, int tid,TravelGuideAuthenticationDialogFragment.Route initRoute){
+    private TextWatcher textWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            isModified = true;
+        }
+        @Override
+        public void afterTextChanged(Editable editable) {}
+    };
+
+    public static RouteItemEditDF newInstance(int index, int tid, TravelGuideAuthenticationDialogFragment.Route initRoute) {
         RouteItemEditDF routeItemEditDF = new RouteItemEditDF();
         Bundle bundle = new Bundle();
         bundle.putInt("index", index);
         bundle.putInt("tid", tid);
-        if (initRoute != null){
+        if (initRoute != null) {
             bundle.putParcelable("route", initRoute);
         }
         routeItemEditDF.setArguments(bundle);
 
         return routeItemEditDF;
     }
-    
+
+    public static RouteItemEditDF newInstance(int index, TravelGuideAuthenticationDialogFragment.Route route) {
+        RouteItemEditDF routeItemEditDF = new RouteItemEditDF();
+        Bundle bundle = new Bundle();
+        bundle.putInt("index", index);
+        if (route != null) {
+            bundle.putParcelable("route", route);
+        }
+        routeItemEditDF.setArguments(bundle);
+
+        return routeItemEditDF;
+    }
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         mDialog = new Dialog(getActivity(), R.style.Theme_MaterialComponents_DialogWhenLarge);
         mDialog.setContentView(R.layout.route_item_edit);
-myHandler = new MyHandler(this);
+        myHandler = new MyHandler(this);
         Bundle bundle = getArguments();
-        if (bundle != null){
+        if (bundle != null) {
             tid = bundle.getInt("tid");
             index = bundle.getInt("index");
             route = bundle.getParcelable("route");
 
-            if (route != null){
+            if (route != null) {
                 isFilled = true;
             }
         }
-        initView();
-        
+
         mDialog.setCanceledOnTouchOutside(true);
         window = mDialog.getWindow();
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
@@ -126,53 +142,41 @@ myHandler = new MyHandler(this);
         layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
         layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT;
         window.setAttributes(layoutParams);
-        
+
         TextView leftBack = mDialog.findViewById(R.id.left_back);
         leftBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (checkFillStatus()){
-                    if (isModified){
+                if (checkFillStatus()) {
+                    if (isModified) {
                         showNoticeDialog();
-                    }else {
+                    } else {
                         dismiss();
                     }
-                }else {
+                } else {
                     dismiss();
                 }
             }
         });
-        
+
         modify = mDialog.findViewById(R.id.route_modify);
 
         initView();
-        
+
         Typeface font = Typeface.createFromAsset(MyApplication.getContext().getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
         FontManager.markAsIconContainer(mDialog.findViewById(R.id.custom_actionbar), font);
 
         return mDialog;
     }
 
-    public static RouteItemEditDF newInstance(int index, TravelGuideAuthenticationDialogFragment.Route route){
-        RouteItemEditDF routeItemEditDF = new RouteItemEditDF();
-        Bundle bundle = new Bundle();
-        bundle.putInt("index", index);
-        if (route != null){
-            bundle.putParcelable("route", route);
-        }
-        routeItemEditDF.setArguments(bundle);
-
-        return routeItemEditDF;
-    }
-    
     private void initView() {
         saveBtn = mDialog.findViewById(R.id.save_route);
         routeNameEdit = mDialog.findViewById(R.id.route_name_edittext);
         routeIntroductionEdit = mDialog.findViewById(R.id.route_introduction_edittext);
-        if (addDynamicsActivity == null){
+        if (addDynamicsActivity == null) {
             addDynamicsActivity = new AddDynamicsActivity();
         }
-        
+
         recyclerView = mDialog.findViewById(R.id.add_route_picture);
         FullyGridLayoutManager manager = new FullyGridLayoutManager(getContext(), 3, GridLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(manager);
@@ -181,7 +185,7 @@ myHandler = new MyHandler(this);
         adapter.setList(selectList);
         adapter.setSelectMax(8);
         recyclerView.setAdapter(adapter);
-        
+
         adapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(int position, View v) {
@@ -191,7 +195,7 @@ myHandler = new MyHandler(this);
                     int mediaType = PictureMimeType.getMimeType(pictureType);
                     switch (mediaType) {
                         case PictureConfig.TYPE_IMAGE:
-                        //PictureSelector.create(MainActivity.this).externalPicturePreview(position, "/custom_file", selectList);
+                            //PictureSelector.create(MainActivity.this).externalPicturePreview(position, "/custom_file", selectList);
                             PictureSelector.create(RouteItemEditDF.this)
                                     .themeStyle(R.style.picture_WeChat_style)
                                     .setPictureStyle(addDynamicsActivity.getWeChatStyle())
@@ -206,44 +210,44 @@ myHandler = new MyHandler(this);
                 }
             }
         });
-        
+
         adapter.setItemDeleteListener(new GridImageAdapter.OnPicDeleteListener() {
             @Override
             public void onPicDelete() {
                 Slog.d(TAG, "pic delete");
-                if (route != null){
+                if (route != null) {
                     isModified = true;
                 }
             }
         });
-        
+
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (validCheck()){
+                if (validCheck()) {
                     submitRoute();
                 }
             }
         });
-        
-if (isFilled){
+
+        if (isFilled) {
             routeNameEdit.setText(route.name);
             routeIntroductionEdit.setText(route.introduction);
-            Slog.d(TAG, "----------------------->route.selectPicture.size: "+route.selectPicture.size());
-            if (route.selectPicture.size() > 0){
+            Slog.d(TAG, "----------------------->route.selectPicture.size: " + route.selectPicture.size());
+            if (route.selectPicture.size() > 0) {
                 selectList.clear();
                 selectList.addAll(route.selectPicture);
                 adapter.setList(selectList);
                 adapter.notifyDataSetChanged();
             }
-     saveBtn.setVisibility(View.GONE);
+            saveBtn.setVisibility(View.GONE);
             modify.setVisibility(View.VISIBLE);
             modify.setBackground(getContext().getResources().getDrawable(R.drawable.btn_stress));
             routeNameEdit.setEnabled(false);
             routeIntroductionEdit.setEnabled(false);
             adapter.setDeleteBtnStatus(false);
-    
-    modify.setOnClickListener(new View.OnClickListener() {
+
+            modify.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     saveBtn.setVisibility(View.VISIBLE);
@@ -256,47 +260,34 @@ if (isFilled){
             routeNameEdit.addTextChangedListener(textWatcher);
             routeIntroductionEdit.addTextChangedListener(textWatcher);
         }
-    
+
     }
-    
-        private TextWatcher textWatcher = new TextWatcher() {
-        @Override
-        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
 
-        @Override
-        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            isModified = true;
-        }
-
-        @Override
-        public void afterTextChanged(Editable editable) {}
-    };
-    
-    private void submitRoute(){
+    private void submitRoute() {
         showProgressDialog(getContext().getString(R.string.saving_progress));
-        if (route == null){
+        if (route == null) {
             route = new TravelGuideAuthenticationDialogFragment.Route();
         }
         route.name = routeNameEdit.getText().toString();
         route.introduction = routeIntroductionEdit.getText().toString();
 
-        if (isModified || route.selectPicture.size() > 0){
+        if (isModified || route.selectPicture.size() > 0) {
             route.selectPicture.clear();
         }
-        
+
         route.selectPicture.addAll(selectList);
 
         Map<String, String> authenMap = new HashMap<>();
-        if (isModified){
+        if (isModified) {
             authenMap.put("rid", String.valueOf(route.getRid()));
-        }else {
+        } else {
             authenMap.put("tid", String.valueOf(tid));
         }
-        
-         authenMap.put("name", routeNameEdit.getText().toString());
+
+        authenMap.put("name", routeNameEdit.getText().toString());
         authenMap.put("introduction", routeIntroductionEdit.getText().toString());
-        if (selectList.size() > 0){
-            Slog.d(TAG, "----------------->submitRoute selectList: "+selectList);
+        if (selectList.size() > 0) {
+            Slog.d(TAG, "----------------->submitRoute selectList: " + selectList);
             for (LocalMedia media : selectList) {
                 selectFileList.add(new File(media.getCompressPath()));
             }
@@ -304,15 +295,15 @@ if (isFilled){
         }
 
     }
-    
+
     private void uploadPictures(Map<String, String> params, String picKey, List<File> files, boolean isModified) {
-        Slog.d(TAG, "--------------------->uploadPictures file size: "+files.size());
+        Slog.d(TAG, "--------------------->uploadPictures file size: " + files.size());
         String uri = SUBMIT_ROUTE_INFO_URL;
 
-        if (isModified){
+        if (isModified) {
             uri = MODIFY_ROUTE_INFO_URL;
         }
-        
+
         HttpUtil.uploadPictureHttpRequest(getContext(), params, picKey, files, uri, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
@@ -321,11 +312,11 @@ if (isFilled){
                         String responseText = response.body().string();
                         Slog.d(TAG, "---------------->uploadPictures response: " + responseText);
                         int result = new JSONObject(responseText).optInt("result");
-                        if (!isModified){
+                        if (!isModified) {
                             int rid = new JSONObject(responseText).optInt("rid");
                             route.setRid(rid);
                         }
-                        
+
                         if (result == 1) {
                             dismissProgressDialog();
                             selectList.clear();
@@ -353,10 +344,10 @@ if (isFilled){
         });
 
     }
-    
-    private void callBacktoCaller(){
 
-        if (getTargetFragment() != null){
+    private void callBacktoCaller() {
+
+        if (getTargetFragment() != null) {
             Intent intent = new Intent();
             intent.putExtra("route", route);
             intent.putExtra("index", index);
@@ -365,9 +356,7 @@ if (isFilled){
             mDialog.dismiss();
         }
     }
-    
-    
-    
+
     private void showNoticeDialog() {
         final AlertDialog.Builder normalDialog =
                 new AlertDialog.Builder(getContext(), R.style.Theme_MaterialComponents_Light_Dialog_Alert);
@@ -378,11 +367,11 @@ if (isFilled){
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
- mDialog.dismiss();
+                        mDialog.dismiss();
                     }
                 });
-                
-                 normalDialog.setNegativeButton("保存",
+
+        normalDialog.setNegativeButton("保存",
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -393,7 +382,7 @@ if (isFilled){
 
         normalDialog.show();
     }
-    
+
     private boolean validCheck() {
 
         if (TextUtils.isEmpty(routeNameEdit.getText().toString())) {
@@ -406,15 +395,15 @@ if (isFilled){
             return false;
         }
 
-        if (selectList.size() == 0){
+        if (selectList.size() == 0) {
             Toast.makeText(getContext(), getResources().getString(R.string.route_picture_empty_notice), Toast.LENGTH_LONG).show();
             return false;
         }
 
         return true;
     }
-    
-    private boolean checkFillStatus(){
+
+    private boolean checkFillStatus() {
         if (!TextUtils.isEmpty(routeNameEdit.getText().toString())) {
             return true;
         }
@@ -423,35 +412,44 @@ if (isFilled){
             return true;
         }
 
-        if (selectList.size() > 0){
+        if (selectList.size() > 0) {
             return true;
         }
 
         return false;
     }
-    
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case PictureConfig.CHOOSE_REQUEST:
-                    if (selectList.size() > 0){
+                    if (selectList.size() > 0) {
                         selectList.addAll(PictureSelector.obtainMultipleResult(data));
-                    }else {
+                    } else {
                         selectList = PictureSelector.obtainMultipleResult(data);
                     }
                     Slog.d(TAG, "Selected pictures: " + selectList.size());
                     adapter.setList(selectList);
                     adapter.notifyDataSetChanged();
-                                        if (isFilled){
+                    if (isFilled) {
                         isModified = true;
                     }
                     break;
             }
         }
     }
-    
+
+    public void handleMessage(Message msg) {
+        switch (msg.what) {
+            case WRITE_ROUTE_INFO_SUCCESS:
+                callBacktoCaller();
+                break;
+
+        }
+    }
+
     private GridImageAdapter.onAddPicClickListener onAddPicClickListener = new GridImageAdapter.onAddPicClickListener() {
         @Override
         public void onAddPicClick() {
@@ -460,45 +458,35 @@ if (isFilled){
             if (mode) {
                 PictureSelector.create(RouteItemEditDF.this)
                         .openGallery(PictureMimeType.ofImage())
-                        .loadImageEngine(GlideEngine.createGlideEngine())// �ⲿ����ͼƬ�������棬�ش���
-                        .theme(R.style.picture_WeChat_style)// ������ʽ���� ����ο� values/styles   �÷���R.style.picture.white.style v2.3.3�� ����ʹ��setPictureStyle()��̬��ʽ
-                        .isWeChatStyle(true)// �Ƿ���΢��ͼƬѡ����
-                        .setPictureStyle(addDynamicsActivity.getWeChatStyle())// ��̬�Զ����������
-                        .setPictureCropStyle(addDynamicsActivity.getCropParameterStyle())// ��̬�Զ���ü�����
-                        .setPictureWindowAnimationStyle(new PictureWindowAnimationStyle())// �Զ�����������˳�����
-                        .isWithVideoImage(true)// ͼƬ����Ƶ�Ƿ����ͬѡ,ֻ��ofAllģʽ����Ч
-                        .maxSelectNum(8)// ���ͼƬѡ������
-                        .minSelectNum(1)// ��Сѡ������
+                        .loadImageEngine(GlideEngine.createGlideEngine())
+                        .theme(R.style.picture_WeChat_style)
+                        .isWeChatStyle(true)
+                        .setPictureStyle(addDynamicsActivity.getWeChatStyle())
+                        .setPictureCropStyle(addDynamicsActivity.getCropParameterStyle())
+                        .setPictureWindowAnimationStyle(new PictureWindowAnimationStyle())
+                        .isWithVideoImage(true)
+                        .maxSelectNum(8)
+                        .minSelectNum(1)
                         .maxVideoSelectNum(1)
-                        .imageSpanCount(4)// ÿ����ʾ����
-                        .isReturnEmpty(false)// δѡ������ʱ�����ť�Ƿ���Է���
-                        .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)// �������Activity���򣬲�����Ĭ��ʹ��ϵͳ
-                        .selectionMode(PictureConfig.MULTIPLE )// ��ѡ or ��ѡ
-                        .previewImage(true)// �Ƿ��Ԥ��ͼƬ
-                        .isCamera(true)// �Ƿ���ʾ���հ�ť
-                        .isZoomAnim(true)// ͼƬ�б��� ����Ч�� Ĭ��true
-                        .compress(true)// �Ƿ�ѹ��
-                        .compressQuality(100)// ͼƬѹ����������� 0~ 100
-                        .synOrAsy(true)//ͬ��true���첽false ѹ�� Ĭ��ͬ��
-                        .withAspectRatio(1, 1)// �ü����� ��16:9 3:2 3:4 1:1 ���Զ���
-                        .freeStyleCropEnabled(true)// �ü����Ƿ����ק
-                        .previewEggs(true)// Ԥ��ͼƬʱ �Ƿ���ǿ���һ���ͼƬ����(ͼƬ����һ�뼴�ɿ�����һ���Ƿ�ѡ��)
-                        .minimumCompressSize(100)// С��100kb��ͼƬ��ѹ��
-                        .forResult(PictureConfig.CHOOSE_REQUEST);//����ص�onActivityResult code
+                        .imageSpanCount(4)
+                        .isReturnEmpty(false)
+                        .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+                        .selectionMode(PictureConfig.MULTIPLE)
+                        .previewImage(true)
+                        .isCamera(true)
+                        .isZoomAnim(true)
+                        .compress(true)
+                        .compressQuality(100)
+                        .synOrAsy(true)
+                        .withAspectRatio(1, 1)
+                        .freeStyleCropEnabled(true)
+                        .previewEggs(true)
+                        .minimumCompressSize(100)
+                        .forResult(PictureConfig.CHOOSE_REQUEST);
             }
         }
-
     };
-    
-        public void handleMessage(Message msg) {
-        switch (msg.what) {
-            case WRITE_ROUTE_INFO_SUCCESS:
-                callBacktoCaller();
-                break;
 
-        }
-    }
-    
     @Override
     public void onDismiss(DialogInterface dialogInterface) {
         super.onDismiss(dialogInterface);
@@ -509,8 +497,8 @@ if (isFilled){
     public void onCancel(DialogInterface dialogInterface) {
         super.onCancel(dialogInterface);
     }
-    
-        static class MyHandler extends Handler {
+
+    static class MyHandler extends Handler {
         WeakReference<RouteItemEditDF> routeItemEditDFWeakReference;
 
         MyHandler(RouteItemEditDF routeItemEditDF) {

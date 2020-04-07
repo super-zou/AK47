@@ -2,7 +2,6 @@ package com.hetang.experience;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -37,7 +36,6 @@ import com.hetang.R;
 import com.hetang.common.MyApplication;
 import com.hetang.dynamics.AddDynamicsActivity;
 import com.hetang.group.SubGroupActivity;
-import com.hetang.talent.TalentDetailsActivity;
 import com.hetang.util.BaseDialogFragment;
 import com.hetang.util.CommonBean;
 import com.hetang.util.CommonDialogFragmentInterface;
@@ -85,25 +83,25 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static android.app.Activity.RESULT_OK;
-import static com.hetang.common.SetAvatarActivity.SUBMIT_TALENT_AUTHENTICATION_ACTION_BROADCAST;
 import static com.hetang.experience.RouteItemEditDF.newInstance;
 import static com.hetang.group.GroupFragment.eden_group;
 import static com.hetang.group.SubGroupActivity.TALENT_ADD_BROADCAST;
-import static com.hetang.group.SubGroupActivity.getTalent;
 
 public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment implements CompoundButton.OnCheckedChangeListener, OnDateSelectedListener {
     public final static int TALENT_AUTHENTICATION_RESULT_OK = 0;
     public final static int ROUTE_REQUEST_CODE = 1;
+    public static final String SUBMIT_ROUTE_INFO_URL = HttpUtil.DOMAIN + "?q=travel_guide/write_route_info";
+    public static final String MODIFY_ROUTE_INFO_URL = HttpUtil.DOMAIN + "?q=travel_guide/modify_route_info";
+    public static final int WRITE_ROUTE_INFO_SUCCESS = 2;
     private static final boolean isDebug = true;
     private static final String TAG = "TravelGuideAuthenticationDialogFragment";
     private static final String SUBMIT_BASE_INFO_URL = HttpUtil.DOMAIN + "?q=travel_guide/write_base_info";
     private static final String MODIFY_BASE_INFO_URL = HttpUtil.DOMAIN + "?q=travel_guide/modify_base_info";
-    public static final String SUBMIT_ROUTE_INFO_URL = HttpUtil.DOMAIN + "?q=travel_guide/write_route_info";
-    public static final String MODIFY_ROUTE_INFO_URL = HttpUtil.DOMAIN + "?q=travel_guide/modify_route_info";
     private static final String SUBMIT_CHARGE_AND_LIMIT_URL = HttpUtil.DOMAIN + "?q=travel_guide/write_charge_limit_info";
+    private static final String MODIFY_CHARGE_AND_LIMIT_URL = HttpUtil.DOMAIN + "?q=travel_guide/modify_charge_limit_info";
     private static final String SUBMIT_APPOINTMENT_DATE_URL = HttpUtil.DOMAIN + "?q=travel_guide/write_appoinment_date";
+    private static final String MODIFY_APPOINTMENT_DATE_URL = HttpUtil.DOMAIN + "?q=travel_guide/modify_appoinment_date";
     private static final int WRITE_BASE_INFO_SUCCESS = 1;
-    public static final int WRITE_ROUTE_INFO_SUCCESS = 2;
     private static final int WRITE_CHARGE_AND_LIMIT_SUCCESS = 3;
     private static final int WRITE_APPOINT_DATE_SUCCESS = 4;
     private static final int DELETE_ROUTE_INFO_SUCCESS = 5;
@@ -152,7 +150,7 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
     private EditText escortChargeDesc;
     private EditText limitationET;
     private String consultationUnit;
-    private String escortUnit;
+    private String escortUnit = "天";
     private String limitations;
     private RadioGroup sexSelect;
     private AppCompatCheckBox understandCancellation;
@@ -166,9 +164,11 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
     private ArrayList<CommonBean> provinceItems = new ArrayList<>();
     private ArrayList<ArrayList<String>> cityItems = new ArrayList<>();
     private EditText additionalServiceET;
-        private MyHandler myHandler;
+    private MyHandler myHandler;
     private int developConsultation = -1;
     private String mBaseInfoString = "";
+    private String mChargeAndLimitString = "";
+    private List<String> mSelectedDateList = new ArrayList<>();
     private boolean routeModified = false;
     private boolean routeSubmitted = false;
 
@@ -188,7 +188,7 @@ public class TravelGuideAuthenticationDialogFragment extends BaseDialogFragment 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         mDialog = new Dialog(getActivity(), R.style.Theme_MaterialComponents_DialogWhenLarge);
-myHandler = new MyHandler(this);
+        myHandler = new MyHandler(this);
         Bundle bundle = getArguments();
         if (bundle != null) {
             type = bundle.getInt("type", 0);
@@ -254,19 +254,19 @@ myHandler = new MyHandler(this);
 
     }
 
-    private void initLimitation(){
+    private void initLimitation() {
         sexSelect.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 int id = group.getCheckedRadioButtonId();
-                switch (id){
+                switch (id) {
                     case R.id.radioNo:
                         break;
                     case R.id.radioMale:
-                        limitations += "仅限男生"+";";
+                        limitations += "仅限男生" + ";";
                         break;
                     case R.id.radioFemale:
-                        limitations += "仅限女生"+";";
+                        limitations += "仅限女生" + ";";
                         break;
                 }
             }
@@ -294,34 +294,52 @@ myHandler = new MyHandler(this);
             @Override
             public void onClick(View view) {
                 if (validCheck(index)) {
-                                        switch (index){
+                    switch (index) {
                         case 5://self introduction
-                            if (TextUtils.isEmpty(mBaseInfoString)){
+                            if (TextUtils.isEmpty(mBaseInfoString)) {
                                 submitBaseInfo(false);
-                            }else {
-                                if (!mBaseInfoString.equals(getBaseInfoJsonObject().toString())){
+                            } else {
+                                if (!mBaseInfoString.equals(getBaseInfoJsonObject().toString())) {
                                     submitBaseInfo(true);
-                                }else {
+                                } else {
                                     processNextBtn();
                                 }
                             }
                             break;
-                                                case 8:
-                            submitChargeAndLimitations();
+                        case 8:
+                            if (TextUtils.isEmpty(mChargeAndLimitString)){
+                                submitChargeAndLimitations(false);
+                            }else {
+                                if (!mChargeAndLimitString.equals(getChargeAndLimit().toString())) {
+                                    submitChargeAndLimitations(true);
+                                } else {
+                                    processNextBtn();
+                                }
+                            }
+
                             break;
                         case 9:
-                            submitAppointDate();
+                            if (mSelectedDateList.size() == 0){
+                                submitAppointDate(false);
+                            }else {
+                                if (!mSelectedDateList.equals(selectedDateList)){
+                                    submitAppointDate(true);
+                                }else {
+                                    processNextBtn();
+                                }
+                            }
+
                             break;
-                            default:
-                                processNextBtn();
-                                break;
+                        default:
+                            processNextBtn();
+                            break;
                     }
                 }
             }
         });
     }
-    
-        private void processNextBtn(){
+
+    private void processNextBtn() {
         if (leftBack.getVisibility() == View.VISIBLE) {
             leftBack.setVisibility(View.GONE);
         }
@@ -354,7 +372,7 @@ myHandler = new MyHandler(this);
             public void onClick(View view) {
                 addRouteItem();
                 initRouteItem();
-                                if (routeSubmitted){
+                if (routeSubmitted) {
                     routeModified = true;
                 }
             }
@@ -461,7 +479,7 @@ myHandler = new MyHandler(this);
         escortChargeSettingNumber = mDialog.findViewById(R.id.charge_setting_edit);
         escortChargeDesc = mDialog.findViewById(R.id.charge_supplement_edit);
         RadioGroup consultationRG = mDialog.findViewById(R.id.consultationRG);
-        
+
         String[] units = getResources().getStringArray(R.array.duration);
         NiceSpinner escortUnitSpinner = (NiceSpinner) mDialog.findViewById(R.id.escort_unit);
         final List<String> unitList = new LinkedList<>(Arrays.asList(units));
@@ -474,12 +492,12 @@ myHandler = new MyHandler(this);
             }
 
         });
-        
+
         consultationRG.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 int id = group.getCheckedRadioButtonId();
-                switch (id){
+                switch (id) {
                     case R.id.develop:
                         developConsultation = 0;
                         break;
@@ -531,9 +549,9 @@ myHandler = new MyHandler(this);
         Slog.d(TAG, "--------------------->index: " + index + " size: " + routeList.size());
         RouteItemEditDF routeItemEditDF;
         if (routeList.size() > index) {
-            routeItemEditDF = newInstance(index, tid,routeList.get(index));
+            routeItemEditDF = newInstance(index, tid, routeList.get(index));
         } else {
-            routeItemEditDF = newInstance(index, tid,null);
+            routeItemEditDF = newInstance(index, tid, null);
         }
 
         routeItemEditDF.setTargetFragment(this, ROUTE_REQUEST_CODE);
@@ -573,7 +591,8 @@ myHandler = new MyHandler(this);
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-mDialog.dismiss();                    }
+                        mDialog.dismiss();
+                    }
                 });
 
         AlertDialog normalDialog = normalDialogBuilder.create();
@@ -582,25 +601,25 @@ mDialog.dismiss();                    }
 
     private void submit() {
         showProgressDialog(getContext().getString(R.string.saving_progress));
-            }
+    }
 
-    private void submitBaseInfo(boolean modified){
-        Slog.d(TAG, "------------------>submitBaseInfo modified: "+modified);
+    private void submitBaseInfo(boolean modified) {
+        Slog.d(TAG, "------------------>submitBaseInfo modified: " + modified);
         mBaseInfoString = getBaseInfoJsonObject().toString();
         showProgressDialog(getContext().getString(R.string.saving_progress));
         FormBody.Builder builder;
         String uri = "";
-        if (modified){
+        if (modified) {
             builder = new FormBody.Builder()
                     .add("tid", String.valueOf(tid))
                     .add("base_info", mBaseInfoString);
             uri = MODIFY_BASE_INFO_URL;
-        }else {
+        } else {
             builder = new FormBody.Builder()
                     .add("base_info", mBaseInfoString);
             uri = SUBMIT_BASE_INFO_URL;
         }
-        
+
         RequestBody requestBody = builder.build();
 
         HttpUtil.sendOkHttpRequest(mContext, uri, requestBody, new Callback() {
@@ -610,7 +629,7 @@ mDialog.dismiss();                    }
                 Slog.d(TAG, "submitBaseInfo response : " + responseText);
                 if (!TextUtils.isEmpty(responseText)) {
                     try {
-                        if (!modified){
+                        if (!modified) {
                             tid = new JSONObject(responseText).optInt("tid");
                         }
                         dismissProgressDialog();
@@ -620,50 +639,56 @@ mDialog.dismiss();                    }
                     }
                 }
             }
-            
+
             @Override
             public void onFailure(Call call, IOException e) {
 
             }
         });
     }
-    
-    private JSONObject getChargeAndLimit(){
+
+    private JSONObject getChargeAndLimit() {
         JSONObject jsonObject = new JSONObject();
         try {
-            if (!TextUtils.isEmpty(escortChargeSettingNumber.getText().toString())){
+            if (!TextUtils.isEmpty(escortChargeSettingNumber.getText().toString())) {
                 jsonObject.put("escort_charge_amount", escortChargeSettingNumber.getText().toString());
                 jsonObject.put("escort_charge_unit", escortUnit);
-                if (!TextUtils.isEmpty(escortChargeDesc.getText().toString())){
+                Slog.d(TAG, "----------------->getChargeAndLimit unit: "+escortUnit);
+                if (!TextUtils.isEmpty(escortChargeDesc.getText().toString())) {
                     jsonObject.put("escort_charge_supplement", escortChargeDesc.getText().toString());
                 }
             }
             jsonObject.put("developConsultation", developConsultation);
-            if (!TextUtils.isEmpty(limitationET.getText().toString())){
+            if (!TextUtils.isEmpty(limitationET.getText().toString())) {
                 limitations += limitationET.getText().toString();
             }
 
-            if (!TextUtils.isEmpty(limitations)){
+            if (!TextUtils.isEmpty(limitations)) {
                 jsonObject.put("limitations", limitations);
             }
 
-        }catch (JSONException e){
+        } catch (JSONException e) {
             e.printStackTrace();
         }
 
         return jsonObject;
 
     }
-    
-    private void submitChargeAndLimitations(){
+
+    private void submitChargeAndLimitations(boolean isModify) {
         showProgressDialog(getContext().getString(R.string.saving_progress));
+        mChargeAndLimitString = getChargeAndLimit().toString();
         FormBody.Builder builder = new FormBody.Builder()
                 .add("tid", String.valueOf(tid))
-                .add("charge_and_limit", getChargeAndLimit().toString());
+                .add("charge_and_limit", mChargeAndLimitString);
+        String uri = SUBMIT_CHARGE_AND_LIMIT_URL;
+        if (isModify){
+            uri = MODIFY_CHARGE_AND_LIMIT_URL;
+        }
 
         RequestBody requestBody = builder.build();
-        
-        HttpUtil.sendOkHttpRequest(mContext, SUBMIT_CHARGE_AND_LIMIT_URL, requestBody, new Callback() {
+
+        HttpUtil.sendOkHttpRequest(mContext, uri, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
@@ -671,8 +696,8 @@ mDialog.dismiss();                    }
                 if (!TextUtils.isEmpty(responseText)) {
                     try {
                         int result = new JSONObject(responseText).optInt("result");
-                        
-                         if (result == 1){
+
+                        if (result == 1) {
                             dismissProgressDialog();
                             myHandler.sendEmptyMessage(WRITE_BASE_INFO_SUCCESS);
                         }
@@ -688,25 +713,32 @@ mDialog.dismiss();                    }
             }
         });
     }
-    
-    private void submitAppointDate(){
+
+    private void submitAppointDate(boolean isModify) {
         showProgressDialog(getContext().getString(R.string.saving_progress));
         String dateString = "";
-        for (int i=0; i<selectedDateList.size(); i++){
-            if (i == selectedDateList.size() - 1){
+
+        for (int i = 0; i < selectedDateList.size(); i++) {
+            if (i == selectedDateList.size() - 1) {
                 dateString += selectedDateList.get(i);
-            }else {
-                dateString += selectedDateList.get(i)+";";
+            } else {
+                dateString += selectedDateList.get(i) + ";";
             }
         }
-        
+
+        mSelectedDateList = new ArrayList<>(selectedDateList);
+
         FormBody.Builder builder = new FormBody.Builder()
                 .add("tid", String.valueOf(tid))
                 .add("date_string", dateString);
 
         RequestBody requestBody = builder.build();
-        
-        HttpUtil.sendOkHttpRequest(mContext, SUBMIT_APPOINTMENT_DATE_URL, requestBody, new Callback() {
+
+        String uri = SUBMIT_APPOINTMENT_DATE_URL;
+        if (isModify){
+            uri = MODIFY_APPOINTMENT_DATE_URL;
+        }
+        HttpUtil.sendOkHttpRequest(mContext, uri, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
@@ -714,7 +746,7 @@ mDialog.dismiss();                    }
                 if (!TextUtils.isEmpty(responseText)) {
                     try {
                         int result = new JSONObject(responseText).optInt("result");
-                        if (result == 1){
+                        if (result == 1) {
                             dismissProgressDialog();
                             myHandler.sendEmptyMessage(WRITE_APPOINT_DATE_SUCCESS);
                         }
@@ -723,14 +755,14 @@ mDialog.dismiss();                    }
                     }
                 }
             }
-            
+
             @Override
             public void onFailure(Call call, IOException e) {
 
             }
         });
     }
-     
+
 
     private boolean validCheck(int index) {
         Slog.d(TAG, "------------------------>validCheck: " + index);
@@ -751,7 +783,7 @@ mDialog.dismiss();                    }
                 }
                 break;
             case 3:
-                 if (!TextUtils.isEmpty(introductionET.getText().toString())) {
+                if (!TextUtils.isEmpty(introductionET.getText().toString())) {
                     valid = true;
                 } else {
                     valid = false;
@@ -778,17 +810,17 @@ mDialog.dismiss();                    }
 
                 break;
             case 7:
-                if (!TextUtils.isEmpty(consultationChargeNumber.getText()) || !TextUtils.isEmpty(escortChargeSettingNumber.getText())) {
+                if (!TextUtils.isEmpty(escortChargeSettingNumber.getText())) {
                     valid = true;
                 } else {
                     valid = false;
                     Toast.makeText(getContext(), getResources().getString(R.string.charge_empty_notice), Toast.LENGTH_LONG).show();
                 }
-                
-                                if (developConsultation == -1){
+
+                if (developConsultation == -1) {
                     valid = false;
                     Toast.makeText(getContext(), getResources().getString(R.string.whether_develop_consultation_notice), Toast.LENGTH_LONG).show();
-                }else {
+                } else {
                     valid = true;
                 }
                 break;
@@ -842,17 +874,17 @@ mDialog.dismiss();                    }
             jsonObject.put("self_introduction", selfIntroductionET.getText().toString());
 
             jsonObject.put("title", headLineET.getText().toString());
-            if (additionalServices.size() > 0){
-                for (Map.Entry<String, String>additionalService:additionalServices.entrySet()){
-                    additionalServiceStr += additionalService.getValue()+";";
+            if (additionalServices.size() > 0) {
+                for (Map.Entry<String, String> additionalService : additionalServices.entrySet()) {
+                    additionalServiceStr += additionalService.getValue() + ";";
                 }
             }
 
-            if (!TextUtils.isEmpty(additionalServiceET.getText().toString())){
+            if (!TextUtils.isEmpty(additionalServiceET.getText().toString())) {
                 additionalServiceStr += additionalServiceET.getText().toString();
             }
 
-            if (!TextUtils.isEmpty(additionalServiceStr)){
+            if (!TextUtils.isEmpty(additionalServiceStr)) {
                 jsonObject.put("additional_service", additionalServiceStr);
             }
 
@@ -878,7 +910,7 @@ mDialog.dismiss();                    }
                     }
 
                     routeList.add(index, route);
-                    Slog.d(TAG, "------------------->select picture size: "+route.selectPicture.size());
+                    Slog.d(TAG, "------------------->select picture size: " + route.selectPicture.size());
                     setRouteName(index, route.name);
                     break;
             }
@@ -990,7 +1022,7 @@ mDialog.dismiss();                    }
         }
 
         protected Route(Parcel in) {
-                        tid = in.readInt();
+            tid = in.readInt();
             rid = in.readInt();
             name = in.readString();
             introduction = in.readString();
@@ -1005,16 +1037,28 @@ mDialog.dismiss();                    }
 
         @Override
         public void writeToParcel(Parcel dest, int flags) {
-                        dest.writeInt(tid);
+            dest.writeInt(tid);
             dest.writeInt(rid);
             dest.writeString(name);
             dest.writeString(introduction);
             dest.writeList(selectPicture);
         }
-        
-                public int getTid(){ return tid; }
 
-        public int getRid(){ return rid; }
+        public int getTid() {
+            return tid;
+        }
+
+        public void setTid(int tid) {
+            this.tid = tid;
+        }
+
+        public int getRid() {
+            return rid;
+        }
+
+        public void setRid(int rid) {
+            this.rid = rid;
+        }
 
         public String getName() {
             return name;
@@ -1022,14 +1066,6 @@ mDialog.dismiss();                    }
 
         public void setName(String name) {
             this.name = name;
-        }
-        
-        public void setRid(int rid) {
-            this.rid = rid;
-        }
-
-        public void setTid(int tid){
-            this.tid = tid;
         }
 
         public String getIntroduction() {

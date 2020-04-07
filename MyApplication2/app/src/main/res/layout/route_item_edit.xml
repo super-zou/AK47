@@ -1,21 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white">
+
     <include
         android:id="@+id/custom_actionbar"
         layout="@layout/custom_actionbar_common"
-             app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <Button
         android:id="@+id/route_modify"
-        android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="32dp"
         android:layout_marginEnd="8dp"
@@ -23,35 +22,40 @@
         android:padding="3dp"
         android:text="@string/modify_route"
         android:textColor="@color/white"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/custom_actionbar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/custom_actionbar" />
-        <ScrollView
-                    app:layout_constraintTop_toBottomOf="@+id/custom_actionbar"
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_marginTop="50dp"
         android:layout_marginBottom="64dp"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        app:layout_constraintTop_toBottomOf="@+id/custom_actionbar">
+
         <LinearLayout
-            android:orientation="vertical"
-            android:padding="32dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="32dp">
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:textSize="18sp"
-                android:textStyle="bold"
+                android:text="@string/route_name"
                 android:textAppearance="@style/CustomTextAppearance"
-                android:text="@string/route_name" />
-                <EditText
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <EditText
                 android:id="@+id/route_name_edittext"
                 style="@style/EditTextCustom"
-                android:gravity="top"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
+                android:gravity="top"
                 android:hint="@string/enter_route_name"
                 android:textColor="@color/blue_dark"
                 android:textCursorDrawable="@drawable/cursor_color"
@@ -61,45 +65,46 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
-                android:textSize="18sp"
-                android:textStyle="bold"
+                android:text="@string/route_introduction_edit"
                 android:textAppearance="@style/CustomTextAppearance"
-                android:text="@string/route_introduction_edit" />
-                
-                <EditText
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <EditText
                 android:id="@+id/route_introduction_edittext"
                 style="@style/EditTextCustom"
-                android:minLines="6"
-                android:gravity="top"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:hint="@string/route_introduction_title"
-                android:textColor="@color/blue_dark"
                 android:background="@drawable/shape"
+                android:gravity="top"
+                android:hint="@string/route_introduction_title"
+                android:minLines="6"
+                android:textColor="@color/blue_dark"
                 android:textCursorDrawable="@drawable/cursor_color"
                 android:theme="@style/MyEditText" />
-                
-                 <TextView
+
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
-                android:textSize="18sp"
-                android:textStyle="bold"
+                android:text="@string/route_picture"
                 android:textAppearance="@style/CustomTextAppearance"
-                android:text="@string/route_picture" />
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:textSize="16sp"
+                android:text="@string/route_cover_picture"
                 android:textAppearance="@style/CustomTextNoticeAppearance"
-                android:text="@string/route_cover_picture" />
-                
-                <RelativeLayout
+                android:textSize="16sp" />
+
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/add_route_picture"
                     android:layout_width="match_parent"
@@ -107,17 +112,18 @@
                     android:layout_marginTop="8dp"
                     android:overScrollMode="ifContentScrolls" />
             </RelativeLayout>
-            
+
 
         </LinearLayout>
     </ScrollView>
-<Button
+
+    <Button
         android:id="@+id/save_route"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:background="@drawable/btn_big_radius_primary"
-        android:textColor="@color/white"
         android:text="@string/save"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -437,13 +437,6 @@
                     android:textAppearance="@style/CustomTextAppearance"
                     android:text="@string/charge_introduction_desc"
                     android:textColor="@color/black" />
-                
-                
-                
-                
-                
-                
-                
                 <RelativeLayout
                     android:id="@+id/escort_charge_setting"
                     android:layout_width="match_parent"
