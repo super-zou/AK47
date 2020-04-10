@@ -142,6 +142,7 @@
     <string name="matchmaker">牵线达人</string>
     <string name="contact_matchmaker">找达人帮忙</string>
     <string name="evaluate_matchmaker">评价达人</string>
+        <string name="consult">咨询</string>
     <string name="more_talent">更多达人</string>
     <string name="join_group">+申请加入</string>
     <!--+End: add for archive, by zouhaichao 2018.12.6-->
@@ -191,6 +192,8 @@
     <string name="select_living">选择居住地</string>
     <string name="select_city">+选择城市</string>
     <string name="service_introduction_title">旅行向导服务介绍</string>
+        <string name="guide_service">向导服务内容</string>
+    <string name="guide_talent">您的向导达人</string>
     <string name="service_introduction_notice">向导介绍不能为空</string>
     <string name="self_introduction_empty_notice">自我介绍不能为空</string>
     <string name="headline_empty_notice">标题不能为空</string>
@@ -243,6 +246,7 @@
     <string name="select_one_typical_picture">选一张最具代表性的封面照</string>
     <string name="select_more_pictures">上传更多有吸引力的活动或景点照片</string>
     <string name="appoint_date_title">预约时间设置</string>
+        <string name="look_appoint_date">查看可订时间</string>
     <string name="appoint_date">请在日历上选择您可以被预约的时间。</string>
     <string name="contact_way_title">联系方式</string>
     <string name="contact_way_desc">联系方式只对预约用户可见。已预约用户可以在荷塘上直接和您联系，也可能会通过其它方式联系您。如果您不能保证很及时地关注预约情况，建议您预留一个常用的联系方式。</string>
@@ -259,6 +263,7 @@
     <string name="only_female">仅男性</string>
     <string name="other_condition">其它限制条件</string>
     <string name="cancellation_policy_title">取消政策</string>
+        <string name="points_attention">预订注意事项</string>
     <string name="cancellation_policy_summary">所有预订都可以在支付确认后的24小时内取消或至少提前7天取消并获得全额退款</string>
     <string name="cancellation_by_weather">因天气原因取消预订</string>
     <string name="cancellation_by_weather_desc">无论是体验开始之前还是体验开展期间，如果由于天气原因造成安全隐患，体验达人可以取消体验。如果发生这种情况，您将获得全额退款。</string>
