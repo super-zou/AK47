@@ -168,6 +168,10 @@ public class Utility {
         return bitmap;
     }
     
+    public static int dpToPx(Context context, int dp) {
+        return (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics());
+    }
+    
      public static File drawable2File(Context context, Drawable drawable, String fileName){
         Bitmap bitmap = drawableToBitmap(drawable);
         String defaultPath = context.getFilesDir().getAbsolutePath();
