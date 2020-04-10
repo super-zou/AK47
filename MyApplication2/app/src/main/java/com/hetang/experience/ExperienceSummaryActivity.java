@@ -84,8 +84,8 @@ import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
 public class ExperienceSummaryActivity extends BaseAppCompatActivity implements CommonDialogFragmentInterface {
     public static final String GET_MY_UNIVERSITY_SUBGROUP = HttpUtil.DOMAIN + "?q=subgroup/get_my_university";
-    public static final String GROUP_ADD_BROADCAST = "com.hetang.action.GROUP_ADD";
-    public static final String TALENT_ADD_BROADCAST = "com.hetang.action.TALENT_ADD";
+    public static final String GUIDE_ADD_BROADCAST = "com.hetang.action.GUIDE_ADD";
+    public static final String EXPERIENCE_ADD_BROADCAST = "com.hetang.action.EXPERIENCE_ADD";
     public static final int ADD_NEW_SUBGROUP_DONE = 8;
     public static final int GET_SINGLE_GROUP_DONE = 9;
     public static final int ADD_NEW_TALENT_DONE = 11;
@@ -115,7 +115,7 @@ public class ExperienceSummaryActivity extends BaseAppCompatActivity implements 
     private Handler handler;
     private int type = 0;
     private ViewGroup myGroupView;
-    private SingleGroupReceiver mReceiver = new SingleGroupReceiver();
+    private ExperienceSummaryReceiver mReceiver = new ExperienceSummaryReceiver();
     private SubGroupSummaryAdapter subGroupSummaryAdapter;
     private XRecyclerView recyclerView;
     private List<SubGroup> mSubGroupList = new ArrayList<>();
