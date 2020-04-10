@@ -2,6 +2,7 @@ package com.hetang.experience;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -15,7 +16,6 @@ import com.hetang.R;
 import com.hetang.common.MyApplication;
 import com.hetang.util.BaseDialogFragment;
 import com.hetang.util.FontManager;
-import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
 public class ExperienceTalentAuthentication extends BaseDialogFragment {
     private static final boolean isDebug = true;
@@ -58,8 +58,8 @@ public class ExperienceTalentAuthentication extends BaseDialogFragment {
         applyGuideBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                TravelGuideAuthenticationDialogFragment travelGuideAuthenticationDialogFragment = new TravelGuideAuthenticationDialogFragment();
-                travelGuideAuthenticationDialogFragment.show(getFragmentManager(), "TravelGuideAuthenticationDialogFragment");
+               startGuideDetailActivity();
+                mDialog.dismiss();
             }
         });
 
@@ -72,6 +72,11 @@ public class ExperienceTalentAuthentication extends BaseDialogFragment {
         });
     }
 
+   public void startGuideDetailActivity(){
+        Intent intent = new Intent(getContext(), GuideDetailActivity.class);
+        //intent.putExtra("tid", tid);
+        startActivity(intent);
+    }
 
     @Override
     public void onDismiss(DialogInterface dialogInterface) {
