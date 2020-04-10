@@ -1110,10 +1110,26 @@ public class ExperienceSummaryActivity extends BaseAppCompatActivity implements 
             }
         }
     }
+    
+    private class ExperienceSummaryReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()) {
+                case GUIDE_ADD_BROADCAST:
+
+                    break;
+                case EXPERIENCE_ADD_BROADCAST:
+
+                    break;
+            }
+
+        }
+    }
 
     private void registerLoginBroadcast() {
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(GROUP_ADD_BROADCAST);
+        intentFilter.addAction(GUIDE_ADD_BROADCAST);
+        intentFilter.addAction(EXPERIENCE_ADD_BROADCAST);
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, intentFilter);
     }
 
@@ -1231,22 +1247,5 @@ public class ExperienceSummaryActivity extends BaseAppCompatActivity implements 
             }
         }
     }
-
-    private class SingleGroupReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            switch (intent.getAction()) {
-                case GROUP_ADD_BROADCAST:
-                    Slog.d(TAG, "==========GROUP_ADD_BROADCAST");
-                    int gid = intent.getIntExtra("gid", 0);
-                    if (gid > 0) {
-                        getMyNewAdded(gid, false);
-                    }
-                    break;
-            }
-
-        }
-    }
-
 }
              
