@@ -56,10 +56,10 @@ import okhttp3.Callback;
 import okhttp3.Response;
 
 import static android.app.Activity.RESULT_OK;
-import static com.hetang.experience.TravelGuideAuthenticationDialogFragment.MODIFY_ROUTE_INFO_URL;
-import static com.hetang.experience.TravelGuideAuthenticationDialogFragment.ROUTE_REQUEST_CODE;
-import static com.hetang.experience.TravelGuideAuthenticationDialogFragment.SUBMIT_ROUTE_INFO_URL;
-import static com.hetang.experience.TravelGuideAuthenticationDialogFragment.WRITE_ROUTE_INFO_SUCCESS;
+import static com.hetang.experience.GuideAuthenticationDialogFragment.MODIFY_ROUTE_INFO_URL;
+import static com.hetang.experience.GuideAuthenticationDialogFragment.ROUTE_REQUEST_CODE;
+import static com.hetang.experience.GuideAuthenticationDialogFragment.SUBMIT_ROUTE_INFO_URL;
+import static com.hetang.experience.GuideAuthenticationDialogFragment.WRITE_ROUTE_INFO_SUCCESS;
 
 public class RouteItemEditDF extends BaseDialogFragment {
     private static final boolean isDebug = true;
@@ -77,7 +77,7 @@ public class RouteItemEditDF extends BaseDialogFragment {
     private AddDynamicsActivity addDynamicsActivity;
     private RecyclerView recyclerView;
     private GridImageAdapter adapter;
-    private TravelGuideAuthenticationDialogFragment.Route route;
+    private GuideAuthenticationDialogFragment.Route route;
     private List<LocalMedia> selectList = new ArrayList<>();
     private List<File> selectFileList = new ArrayList<>();
     private MyHandler myHandler;
@@ -92,7 +92,7 @@ public class RouteItemEditDF extends BaseDialogFragment {
         public void afterTextChanged(Editable editable) {}
     };
 
-    public static RouteItemEditDF newInstance(int index, int tid, TravelGuideAuthenticationDialogFragment.Route initRoute) {
+    public static RouteItemEditDF newInstance(int index, int tid, GuideAuthenticationDialogFragment.Route initRoute) {
         RouteItemEditDF routeItemEditDF = new RouteItemEditDF();
         Bundle bundle = new Bundle();
         bundle.putInt("index", index);
@@ -105,7 +105,7 @@ public class RouteItemEditDF extends BaseDialogFragment {
         return routeItemEditDF;
     }
 
-    public static RouteItemEditDF newInstance(int index, TravelGuideAuthenticationDialogFragment.Route route) {
+    public static RouteItemEditDF newInstance(int index, GuideAuthenticationDialogFragment.Route route) {
         RouteItemEditDF routeItemEditDF = new RouteItemEditDF();
         Bundle bundle = new Bundle();
         bundle.putInt("index", index);
@@ -266,7 +266,7 @@ public class RouteItemEditDF extends BaseDialogFragment {
     private void submitRoute() {
         showProgressDialog(getContext().getString(R.string.saving_progress));
         if (route == null) {
-            route = new TravelGuideAuthenticationDialogFragment.Route();
+            route = new GuideAuthenticationDialogFragment.Route();
         }
         route.name = routeNameEdit.getText().toString();
         route.introduction = routeIntroductionEdit.getText().toString();
