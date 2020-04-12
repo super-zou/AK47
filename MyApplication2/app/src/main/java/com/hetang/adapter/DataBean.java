@@ -37,27 +37,6 @@ public class DataBean {
         return dataBeanList.size()>0?dataBeanList:null;
     }
 
-    public static List<DataBean> getTestData() {
-        List<DataBean> list = new ArrayList<>();
-        list.add(new DataBean(R.drawable.image1, "相信自己,你努力的样子真的很美", 1));
-        list.add(new DataBean(R.drawable.image2, "极致简约,梦幻小屋", 3));
-        list.add(new DataBean(R.drawable.image3, "超级卖梦人", 3));
-        list.add(new DataBean(R.drawable.image4, "夏季新搭配", 1));
-        list.add(new DataBean(R.drawable.image5, "绝美风格搭配", 1));
-        list.add(new DataBean(R.drawable.image6, "微微一笑 很倾城", 3));
-        return list;
-    }
-    
-    public static List<DataBean> getTestData2() {
-        List<DataBean> list = new ArrayList<>();
-        list.add(new DataBean(R.drawable.image7, "听风.赏雨", 3));
-        list.add(new DataBean(R.drawable.image8, "迪丽热巴.迪力木拉提", 1));
-        list.add(new DataBean(R.drawable.image9, "爱美.人间有之", 3));
-        list.add(new DataBean(R.drawable.image10, "洋洋洋.气质篇", 1));
-        list.add(new DataBean(R.drawable.image11, "生活的态度", 3));
-        return list;
-    }
-
     public static List<String> getColors(int size) {
         List<String> list = new ArrayList<>();
         for(int i = 0; i < size; i++) {

@@ -4,13 +4,18 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.Editable;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.text.style.LineBackgroundSpan;
+import android.text.style.SuperscriptSpan;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
@@ -43,9 +48,13 @@ import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
 import com.luck.picture.lib.style.PictureWindowAnimationStyle;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
+import com.prolificinteractive.materialcalendarview.DayViewDecorator;
+import com.prolificinteractive.materialcalendarview.DayViewFacade;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
+import com.prolificinteractive.materialcalendarview.spans.DotSpan;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.threeten.bp.LocalDate;
@@ -79,6 +88,8 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
     private int tid;
     private MyHandler myHandler;
     MaterialCalendarView widget;
+    private JSONArray dateJSONArray;
+    private static CalendarDay today;
     private static final int GET_AVAILABLE_APPOINTMENT_DATE_DONE = 1;
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("EEE, d MMM yyyy");
     public static final String GET_AVAILABLE_APPOINTMENT_DATE = HttpUtil.DOMAIN + "?q=travel_guide/get_available_appointment_date";
@@ -129,16 +140,34 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
     }
 
     private void setAppointDateView() {
-        CalendarDay today = CalendarDay.today();
+        today = CalendarDay.today();
         widget = mDialog.findViewById(R.id.calendarView);
         final LocalDate min = LocalDate.of(today.getYear(), today.getMonth(), today.getDay());
         final LocalDate max = LocalDate.of(today.getYear(), today.getMonth()+3, today.getDay());
+        widget.addDecorator(new DisabledDecorator());
         widget.state().edit()
                 .setMinimumDate(min)
                 .setMaximumDate(max)
                 .commit();
     }
-    
+
+    private static class DisabledDecorator implements DayViewDecorator {
+        @Override
+        public boolean shouldDecorate(final CalendarDay day) {
+            if (day.getDay() > today.getDay()){
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public void decorate(final DayViewFacade view) {
+            //view.setDaysDisabled(true);
+            view.addSpan(new DotSpan(5, R.color.background));
+            view.setSelectionDrawable(MyApplication.getContext().getResources().getDrawable(R.drawable.today_circle_background));
+        }
+    }
+
     private void getAvailableDate(){
         RequestBody requestBody = new FormBody.Builder()
                 .add("tid", String.valueOf(tid))
@@ -149,10 +178,11 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
                 if (isDebug)
-                    Slog.d(TAG, "==========getBannerPictures response body : " + responseText);
+                    Slog.d(TAG, "==========getAvailableDate response body : " + responseText);
                 if (responseText != null) {
                     try {
                         JSONObject jsonObject = new JSONObject(responseText);
+                        dateJSONArray = jsonObject.optJSONArray("dates");
                         myHandler.sendEmptyMessage(GET_AVAILABLE_APPOINTMENT_DATE_DONE);
                     }catch (JSONException e){
                         e.printStackTrace();
