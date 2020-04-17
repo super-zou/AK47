@@ -80,7 +80,6 @@ public class GuideDetailActivity extends BaseAppCompatActivity {
     private static final String GET_GUIDE_INFO = HttpUtil.DOMAIN + "?q=travel_guide/get_guide_info";
     private static final String GET_LIMIT_INFO = HttpUtil.DOMAIN + "?q=travel_guide/get_limit_info";
     private static final String GET_CHARGE_INFO = HttpUtil.DOMAIN + "?q=travel_guide/get_charge_info";
-    private static final String ADD_SUBGROUP_VISITOR_RECORD = HttpUtil.DOMAIN + "?q=visitor_record/add_group_visit_record";
     private static final int GET_BANNER_PICTURES_DONE = 1;
     private static final int GET_BASE_INFO_DONE = 2;
     private static final int GET_ROUTE_INFO_DONE = 3;
@@ -97,7 +96,7 @@ public class GuideDetailActivity extends BaseAppCompatActivity {
     private Handler handler;
     private int type = 0;
     private ViewGroup myGroupView;
-    private int tid = 1;
+    private int tid;
     private int rid = 1;
     private JSONArray bannerUrlArray;
     private JSONObject guideServiceObject;
@@ -117,7 +116,10 @@ public class GuideDetailActivity extends BaseAppCompatActivity {
         }
 
         handler = new GuideDetailActivity.MyHandler(this);
-
+        if (getIntent() != null){
+            tid = getIntent().getIntExtra("tid", 0);
+        }
+        
         initView();
         getBannerPictures();
         getBaseInformation();
@@ -152,7 +154,7 @@ public class GuideDetailActivity extends BaseAppCompatActivity {
     }
 
     private void checkAppointDate(){
-        CheckAppointDate checkAppointDate = CheckAppointDate.newInstance(tid);
+        CheckAppointDate checkAppointDate = CheckAppointDate.newInstance(tid, chargeObject.optInt("amount"), chargeObject.optString("unit"));
         checkAppointDate.show(getSupportFragmentManager(), "CheckAppointDate");
     }
     
@@ -452,7 +454,7 @@ private void setRouteInfoView(){
         TextView money = findViewById(R.id.money);
         TextView unit = findViewById(R.id.unit);
 
-        money.setText(chargeObject.optString("amount"));
+       money.setText(String.valueOf(chargeObject.optInt("amount")));
         unit.setText(chargeObject.optString("unit"));
     }
     
