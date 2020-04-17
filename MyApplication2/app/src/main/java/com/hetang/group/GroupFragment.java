@@ -47,6 +47,8 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static com.hetang.group.MyParticipationDialogFragment.MY_TALENT;
+import static com.hetang.group.MyParticipationDialogFragment.MY_TRIBE;
 import static com.hetang.group.SubGroupActivity.GROUP_ADD_BROADCAST;
 import static com.hetang.group.SubGroupActivity.TALENT_ADD_BROADCAST;
 import static com.hetang.group.SubGroupActivity.getSubGroup;
@@ -69,12 +71,15 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
     public static final int foreign_friend_group = 6;
     private static final int MAX_ROOT_GROUP = 7;
     private static final int LOAD_DATA_DONE = 8;
-    private static final int LOAD_MY_GROUP_DONE = 9;
+    public static final int LOAD_MY_GROUP_DONE = 9;
     private static final int LOAD_NEW_JOINED_GROUP_DONE = 10;
-    private static final int LOAD_MY_TALENTS_DONE = 11;
+    public static final int LOAD_MY_TALENTS_DONE = 11;
     private static final int LOAD_NEW_ADDED_TALENT_DONE = 12;
     public static final int SINGLE_GROUP = 20;
 
+        private int myTribeSize = 0;
+    private int myTalentSize = 0;
+    
     TextView myTalentLabel;
     LinearLayout myGroupWrap;
     LinearLayout myTalentWrapper;
@@ -85,10 +90,12 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
     ConstraintLayout growUpGroup;
     ConstraintLayout activityGroup;
     ConstraintLayout foreignFriendGroup;
+        TextView talentCountTV;
+    TextView tribeCountTV;
 
     private static final String SUBGROUP_GET_ROOT_SUMMARY = HttpUtil.DOMAIN + "?q=subgroup/get_root_summary";
-    private static final String SUBGROUP_GET_MY_GROUP = HttpUtil.DOMAIN + "?q=subgroup/get_my";
-    private static final String GET_MY_TALENTS = HttpUtil.DOMAIN + "?q=talent/get_my";
+    public static final String SUBGROUP_GET_MY_GROUP = HttpUtil.DOMAIN + "?q=subgroup/get_my";
+    public static final String GET_MY_TALENTS = HttpUtil.DOMAIN + "?q=talent/get_my";
 
     private Handler handler;
     private Context mContext;
@@ -113,7 +120,8 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
         handler = new GroupFragment.MyHandler(this);
         mView = convertView;
 
-        myGroupWrap = convertView.findViewById(R.id.my_group);
+        talentCountTV = mView.findViewById(R.id.talent_count);
+        tribeCountTV = mView.findViewById(R.id.tribe_count);
 
         loadMyTalents();
 
@@ -155,8 +163,8 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
                         try {
                             talentResponse = new JSONObject(responseText);
                             if (talentResponse != null) {
-                                processTalentResponse(talentResponse);
-                                if (talentList.size() > 0){
+                                myTalentSize = processTalentResponse(talentResponse);
+                                if (myTalentSize > 0){
                                     handler.sendEmptyMessage(LOAD_MY_TALENTS_DONE);
                                 }
                             }
@@ -174,7 +182,7 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
         });
     }
 
-    private int processTalentResponse(JSONObject talentResponse) {
+    public int processTalentResponse(JSONObject talentResponse) {
 
         int talentSize = 0;
         JSONArray talentArray = null;
@@ -184,15 +192,6 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
         }
         if (talentArray != null) {
             talentSize = talentArray.length();
-            if (talentSize > 0) {
-                for (int i = 0; i < talentArray.length(); i++) {
-                    JSONObject talentObject = talentArray.optJSONObject(i);
-                    if (talentObject != null) {
-                        SubGroupActivity.Talent talent = getTalent(talentObject);
-                        talentList.add(talent);
-                    }
-                }
-            }
         }
 
         return talentSize;
@@ -211,8 +210,8 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
                         try {
                             subGroupResponse = new JSONObject(responseText);
                             if (subGroupResponse != null) {
-                                processResponse(subGroupResponse);
-                                if (groupList.size() > 0){
+                                myTribeSize = processResponse(subGroupResponse);
+                                if (myTribeSize > 0){
                                     handler.sendEmptyMessage(LOAD_MY_GROUP_DONE);
                                 }
                             }
@@ -240,15 +239,6 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
         }
         if (subGroupArray != null) {
             subGroupSize = subGroupArray.length();
-            if (subGroupSize > 0) {
-                for (int i = 0; i < subGroupArray.length(); i++) {
-                    JSONObject group = subGroupArray.optJSONObject(i);
-                    if (group != null) {
-                        SubGroupActivity.SubGroup subGroup = getSubGroup(group);
-                        groupList.add(subGroup);
-                    }
-                }
-            }
         }
 
         return subGroupSize;
@@ -391,31 +381,49 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
         }
 
     }
+    
+        public void startMyParticipationDF(int type){
+        MyParticipationDialogFragment myParticipationDialogFragment = MyParticipationDialogFragment.newInstance(type);
+        myParticipationDialogFragment.show(getFragmentManager(), "MyParticipationDialogFragment");
+    }
+    
 
     private void setMyTalentViewData(){
-        myTalentLabel = mView.findViewById(R.id.my_talent_label);
-        myTalentWrapper = mView.findViewById(R.id.my_talent_wrapper);
-        myTalentLabel.setVisibility(View.VISIBLE);
-        myTalentWrapper.setVisibility(View.VISIBLE);
+        talentCountTV.setText(String.valueOf(myTalentSize));
 
-        int size = talentList.size();
-        for (int i=0; i<size; i++){
-            SubGroupActivity.Talent talent = talentList.get(i);
-            View talentView = setMyTalentItem(talent);
-            myTalentWrapper.addView(talentView);
-        }
+        TextView talentNavigation = mView.findViewById(R.id.talent_navigation);
+        talentNavigation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startMyParticipationDF(MY_TALENT);
+            }
+        });
+
+        talentCountTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                talentNavigation.callOnClick();
+            }
+        });
     }
 
     private void setMyGroupViewData() {
-        TextView myGroupLabel = mView.findViewById(R.id.my_group_label);
-        myGroupLabel.setVisibility(View.VISIBLE);
-        myGroupWrap.setVisibility(View.VISIBLE);
-        int size = groupList.size();
-        for (int i = 0; i < size; i++) {
-            SubGroupActivity.SubGroup subGroup = groupList.get(i);
-            View subView = setMyGroupItem(subGroup);
-            myGroupWrap.addView(subView);
-        }
+        tribeCountTV.setText(String.valueOf(myTribeSize));
+
+        TextView tribeNavigation = mView.findViewById(R.id.tribe_navigation);
+        tribeNavigation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startMyParticipationDF(MY_TRIBE);
+            }
+        });
+
+        tribeCountTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                tribeNavigation.callOnClick();
+            }
+        });
     }
 
     private View setMyTalentItem(SubGroupActivity.Talent talent) {
@@ -481,19 +489,13 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
     }
 
     private void setNewAddedTalentView(){
-        SubGroupActivity.Talent talent = talentList.get(0);
-        View talentView = setMyTalentItem(talent);
-        myTalentWrapper.addView(talentView, 0);
-        if (myTalentWrapper.getVisibility() == View.GONE){
-            myTalentWrapper.setVisibility(View.VISIBLE);
-            myTalentLabel.setVisibility(View.VISIBLE);
-        }
+        int myTalentSize = Integer.parseInt(talentCountTV.getText().toString());
+        talentCountTV.setText(String.valueOf(myTalentSize+1));
     }
 
     private void setNewJoinedGroupView() {
-        SubGroupActivity.SubGroup subGroup = groupList.get(0);
-        View subView = setMyGroupItem(subGroup);
-        myGroupWrap.addView(subView, 0);
+        int myTribeSize = Integer.parseInt(tribeCountTV.getText().toString());
+        tribeCountTV.setText(String.valueOf(myTribeSize+1));
     }
 
     private View setMyGroupItem(SubGroupActivity.SubGroup subGroup) {
