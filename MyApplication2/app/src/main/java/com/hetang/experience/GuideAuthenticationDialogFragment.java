@@ -92,6 +92,7 @@ public class GuideAuthenticationDialogFragment extends BaseDialogFragment implem
     public static final String MODIFY_ROUTE_INFO_URL = HttpUtil.DOMAIN + "?q=travel_guide/modify_route_info";
     public static final int WRITE_ROUTE_INFO_SUCCESS = 2;
     private static final boolean isDebug = true;
+    public static final String EXPERIENCE_TYPE_GUIDE = "guide";
     public static final String GUIDE_ADD_BROADCAST = "com.hetang.action.GUIDE_ADD";
     private static final String TAG = "GuideAuthenticationDialogFragment";
     private static final String SUBMIT_BASE_INFO_URL = HttpUtil.DOMAIN + "?q=travel_guide/write_base_info";
@@ -104,7 +105,7 @@ public class GuideAuthenticationDialogFragment extends BaseDialogFragment implem
     private static final int WRITE_CHARGE_AND_LIMIT_SUCCESS = 3;
     private static final int WRITE_APPOINT_DATE_SUCCESS = 4;
     private static final int DELETE_ROUTE_INFO_SUCCESS = 5;
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("EEE, d MMM yyyy");
+    public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("EEE, d MMM yyyy");
     AppCompatCheckBox followShot;
     AppCompatCheckBox travelPlan;
     AppCompatCheckBox charteredCar;
@@ -721,6 +722,7 @@ private void initCalendarView() {
 
         FormBody.Builder builder = new FormBody.Builder()
                 .add("tid", String.valueOf(tid))
+                .add("type", EXPERIENCE_TYPE_GUIDE)
                 .add("date_string", dateString);
 
         RequestBody requestBody = builder.build();
