@@ -235,7 +235,9 @@ public class ExperienceSummaryActivity extends BaseAppCompatActivity implements 
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Intent intent = new Intent(MyApplication.getContext(), GuideSummaryActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                startActivity(intent);
             }
         });
     }
