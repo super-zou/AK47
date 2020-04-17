@@ -166,6 +166,12 @@
         <activity
             android:name=".experience.GuideDetailActivity"
             android:launchMode="singleTask" />
+        <activity
+            android:name=".experience.GuideSummaryActivity"
+            android:launchMode="singleTask" />
+        <activity
+            android:name=".experience.OrderSummaryActivity"
+            android:launchMode="singleTask" />
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.hetang.fileprovider"
