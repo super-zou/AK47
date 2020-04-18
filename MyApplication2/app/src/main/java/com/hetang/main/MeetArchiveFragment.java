@@ -50,6 +50,10 @@ import com.hetang.common.HandlerTemp;
 import com.hetang.common.MyApplication;
 import com.hetang.common.SetAvatarActivity;
 import com.hetang.meet.ApprovedUsersActivity;
+import com.hetang.experience.OrderSummaryActivity;
+import com.hetang.group.GroupFragment;
+import com.hetang.group.MyParticipationDialogFragment;
+import com.hetang.group.SubGroupActivity;
 import com.hetang.meet.EvaluateDialogFragment;
 import com.hetang.meet.EvaluatorDetailsActivity;
 import com.hetang.meet.FillMeetInfoActivity;
@@ -96,6 +100,14 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static com.hetang.common.SetAvatarActivity.AVATAR_SET_ACTION_BROADCAST;
+import static com.hetang.experience.OrderSummaryActivity.GET_MY_ORDERS_COUNT;
+import static com.hetang.group.GroupFragment.GET_MY_TALENTS;
+import static com.hetang.group.GroupFragment.LOAD_MY_TALENTS_DONE;
+import static com.hetang.group.GroupFragment.SUBGROUP_GET_MY_GROUP;
+import static com.hetang.group.MyParticipationDialogFragment.MY_TALENT;
+import static com.hetang.group.MyParticipationDialogFragment.MY_TRIBE;
+import static com.hetang.group.SubGroupActivity.getSubGroup;
+import static com.hetang.group.SubGroupActivity.getTalent;
 import static com.hetang.main.MainActivity.setTuiKitProfile;
 import static com.hetang.meet.EvaluateModifyDialogFragment.EVALUATE_MODIFY_ACTION_BROADCAST;
 import static com.hetang.meet.MeetRecommendFragment.GET_MY_CONDITION_URL;
@@ -133,7 +145,6 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
     private static final String ADD_VISIT_RECORD_URL = HttpUtil.DOMAIN + "?q=visitor_record/add_visit_record";
     private static final String GET_VISIT_RECORD_URL = HttpUtil.DOMAIN + "?q=visitor_record/get_visit_record";
     public static final String GET_LOGGEDIN_ACCOUNT = HttpUtil.DOMAIN + "?q=account_manager/get_loggedin_account";
-    public static final String CHECK_YUNXIN_USER = HttpUtil.DOMAIN + "?q=chat/check_yunxin_user";
     private static final String JOIN_CHEERING_GROUP_URL = HttpUtil.DOMAIN + "?q=meet/cheering_group/join";
 
     private static final int DONE = 1;
@@ -159,6 +170,9 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
     private static final int JOIN_CHEERING_GROUP_DONE = 20;
     private static final int GET_ACTIVITIES_COUNT_DONE = 21;
     private static final int GET_MEET_ARCHIVE_DONE = 22;
+        private static final int LOAD_MY_TALENTS_DONE = 23;
+    private static final int LOAD_MY_GROUP_DONE = 24;
+    private static final int LOAD_MY_ORDER_COUNT_DONE = 25;
     public static final int FOLLOWED = 1;
     private static final int FOLLOWING = 2;
     public static final int PRAISED = 3;
@@ -217,7 +231,9 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
     private static int authorUid = -1;
     private boolean isSelf = false;
 
-    int mTempSize = 0;
+    private int myTalentSize = 0;
+    private int myTribeSize = 0;
+    private int myOrdersCount = 0;
     private UserProfile myProfile;
     private LinearLayout navLayout;
     private List<Drawable> drawableList = new ArrayList<>();
@@ -358,7 +374,176 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
         getFollowStatistics();
         getPraiseStatistics();
         getLoveStatistics();
+        loadMyTalentsCount();
+        loadMyTribesCount();
+        loadMyOrdersCount();
+    }
+    
+    private void loadMyOrdersCount(){
+        HttpUtil.sendOkHttpRequest(MyApplication.getContext(), GET_MY_ORDERS_COUNT, new FormBody.Builder().build(), new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.body() != null) {
+                    String responseText = response.body().string();
+                    if (isDebug) Slog.d(TAG, "==========loadMyOrdersCount response text : " + responseText);
+                    if (responseText != null && !TextUtils.isEmpty(responseText)) {
 
+                        try {
+                            myOrdersCount = new JSONObject(responseText).optInt("orders_count");
+                            if (myOrdersCount > 0){
+                                handler.sendEmptyMessage(LOAD_MY_ORDER_COUNT_DONE);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+            }
+        });
+    }
+
+    private void setMyOrdersCountView(){
+        TextView ordersCountTV = mHeaderEvaluation.findViewById(R.id.order_count);
+        ordersCountTV.setText(String.valueOf(myOrdersCount));
+
+        ordersCountTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startMyOrdersActivity();
+            }
+        });
+    }
+    
+    public void startMyOrdersActivity(){
+        Intent intent = new Intent(getContext(), OrderSummaryActivity.class);
+        //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+        startActivity(intent);
+    }
+    
+    private void loadMyTalentsCount(){
+        HttpUtil.sendOkHttpRequest(MyApplication.getContext(), GET_MY_TALENTS, new FormBody.Builder().build(), new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.body() != null) {
+                    String responseText = response.body().string();
+                    if (isDebug) Slog.d(TAG, "==========loadMyTalents response text : " + responseText);
+                    if (responseText != null && !TextUtils.isEmpty(responseText)) {
+                        JSONObject talentResponse = null;
+                        try {
+                            talentResponse = new JSONObject(responseText);
+                            if (talentResponse != null) {
+                                myTalentSize = processTalentResponse(talentResponse);
+                                if (myTalentSize > 0){
+                                    handler.sendEmptyMessage(LOAD_MY_TALENTS_DONE);
+                                }
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+            }
+        });
+    }
+    
+    private void setMyTalentSizeView(){
+        TextView talentCountTV = mHeaderEvaluation.findViewById(R.id.talent_count);
+        talentCountTV.setText(String.valueOf(myTalentSize));
+
+        talentCountTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startMyParticipationDF(MY_TALENT);
+            }
+        });
+    }
+
+    public void startMyParticipationDF(int type){
+        MyParticipationDialogFragment myParticipationDialogFragment = MyParticipationDialogFragment.newInstance(type);
+        myParticipationDialogFragment.show(getFragmentManager(), "MyParticipationDialogFragment");
+    }
+    
+    public int processTalentResponse(JSONObject talentResponse) {
+
+        int talentSize = 0;
+        JSONArray talentArray = null;
+
+        if (talentResponse != null) {
+            talentArray = talentResponse.optJSONArray("talents");
+        }
+        if (talentArray != null) {
+            talentSize = talentArray.length();
+        }
+
+        return talentSize;
+    }
+    
+    private void loadMyTribesCount() {
+
+        HttpUtil.sendOkHttpRequest(MyApplication.getContext(), SUBGROUP_GET_MY_GROUP, new FormBody.Builder().build(), new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.body() != null) {
+                    String responseText = response.body().string();
+                    if (isDebug) Slog.d(TAG, "==========response text : " + responseText);
+                    if (responseText != null && !TextUtils.isEmpty(responseText)) {
+                        JSONObject subGroupResponse = null;
+                        try {
+                            subGroupResponse = new JSONObject(responseText);
+                            if (subGroupResponse != null) {
+                                myTribeSize = processResponse(subGroupResponse);
+                                if (myTribeSize > 0){
+                                    handler.sendEmptyMessage(LOAD_MY_GROUP_DONE);
+                                }
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+            }
+        });
+    }
+    
+    private int processResponse(JSONObject subGroupResponse) {
+
+        int subGroupSize = 0;
+        JSONArray subGroupArray = null;
+
+        if (subGroupResponse != null) {
+            subGroupArray = subGroupResponse.optJSONArray("subgroup");
+        }
+        if (subGroupArray != null) {
+            subGroupSize = subGroupArray.length();
+        }
+
+        return subGroupSize;
+    }
+    
+    private void setMyTribeSizeView(){
+        TextView myTribeSizeTV = mHeaderEvaluation.findViewById(R.id.tribe_count);
+        myTribeSizeTV.setText(String.valueOf(myTribeSize));
+
+        myTribeSizeTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startMyParticipationDF(MY_TRIBE);
+            }
+        });
     }
 
     private void loadProfilePictures() {
@@ -765,7 +950,7 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
     }
 
     private void getDynamicsCount() {
-        dynamicsCount = mArchiveProfile.findViewById(R.id.dynamics_count_text);
+        dynamicsCount = mHeaderEvaluation.findViewById(R.id.dynamics_count_text);
         dynamicsCount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -820,9 +1005,7 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
     }
 
     private void setActivitiesCountView(int count) {
-        if (isDebug) Slog.d(TAG, "====================setActivitiesCountView count: " + count);
-        dynamicsCount.setVisibility(View.VISIBLE);
-        TextView activityCount = mArchiveProfile.findViewById(R.id.dynamics_count_text);
+        TextView activityCount = mHeaderEvaluation.findViewById(R.id.dynamics_count);
         activityCount.setText(String.valueOf(count));
     }
 
@@ -2370,6 +2553,15 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
                 break;
             case MY_CONDITION_NOT_SET:
                 needSetMeetCondition();
+                break;
+            case LOAD_MY_TALENTS_DONE:
+                setMyTalentSizeView();
+                break;
+            case LOAD_MY_GROUP_DONE:
+                setMyTribeSizeView();
+                break;
+            case LOAD_MY_ORDER_COUNT_DONE:
+                setMyOrdersCountView();
                 break;
             default:
                 break;
