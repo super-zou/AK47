@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/order_list_item"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="top"
+    android:layout_marginTop="8dp"
+    android:background="@color/white"
+    app:cardUseCompatPadding="true">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        
+        <ImageView
+            android:id="@+id/head_picture"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/location_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/fa_location"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="@+id/head_picture"
+            app:layout_constraintTop_toBottomOf="@+id/head_picture" />
+            
+        <TextView
+            android:id="@+id/city"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="3dp"
+            android:text="city"
+            android:textSize="12sp"
+            android:textAppearance="@style/CustomTextAppearance"
+            app:layout_constraintBottom_toBottomOf="@+id/location_icon"
+            app:layout_constraintStart_toEndOf="@+id/location_icon"
+            app:layout_constraintTop_toTopOf="@+id/location_icon" />
+            
+         <TextView
+            android:id="@+id/guide_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:ellipsize="end"
+            android:maxLines="3"
+            android:paddingLeft="128dp"
+            android:textAppearance="@style/CustomTextNoticeAppearance"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/head_picture" />
+            
+        <TextView
+            android:id="@+id/cny"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="3dp"
+            android:gravity="center"
+            android:text="@string/fa_cny"
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toStartOf="@+id/money"
+            app:layout_constraintTop_toBottomOf="@+id/guide_title" />
+            
+         <TextView
+            android:id="@+id/money"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="3dp"
+            android:gravity="center"
+            android:text=""
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toBottomOf="@+id/cny"
+            app:layout_constraintEnd_toStartOf="@+id/unit_divider"
+            app:layout_constraintTop_toTopOf="@+id/cny" />
+            
+        <TextView
+            android:id="@+id/unit_divider"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="3dp"
+            android:gravity="center"
+            android:text="@string/unit_divider"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@+id/money"
+            app:layout_constraintEnd_toStartOf="@+id/unit"
+            app:layout_constraintTop_toTopOf="@+id/money" />
+            
+        <TextView
+            android:id="@+id/unit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:gravity="center"
+            android:text=""
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toBottomOf="@+id/unit_divider"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/unit_divider" />
+            
+        <TextView
+            android:id="@+id/actual_payment_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="3dp"
+            android:text="@string/actual_payment"
+            app:layout_constraintBottom_toBottomOf="@+id/actual_payment"
+            app:layout_constraintEnd_toStartOf="@+id/actual_cny"
+            app:layout_constraintTop_toTopOf="@+id/actual_payment" />
+            
+            <TextView
+            android:id="@+id/actual_cny"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="3dp"
+            android:gravity="center"
+            android:text="@string/fa_cny"
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toBottomOf="@+id/actual_payment"
+            app:layout_constraintEnd_toStartOf="@+id/actual_payment"
+            app:layout_constraintTop_toTopOf="@+id/actual_payment" />
+            
+            <TextView
+            android:id="@+id/actual_payment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:gravity="center"
+            android:text=""
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/head_picture" />
+            
+            <TextView
+            android:id="@+id/appointed_date_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="3dp"
+            android:text="@string/appointed_date"
+            app:layout_constraintEnd_toStartOf="@+id/appointed_date"
+            app:layout_constraintTop_toTopOf="@+id/appointed_date" />
+
+        <TextView
+            android:id="@+id/appointed_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:textColor="@android:color/holo_blue_dark"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/actual_payment" />
+            
+            <Button
+            android:id="@+id/unsubscribe"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:layout_marginEnd="16dp"
+            android:text="@string/unsubscribe"
+            android:textColor="@android:color/holo_blue_dark"
+            android:background="@drawable/label_btn_shape"
+            app:layout_constraintEnd_toStartOf="@+id/pay"
+            app:layout_constraintTop_toTopOf="@+id/evaluate" />
+
+        <Button
+            android:id="@+id/pay"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:layout_marginEnd="16dp"
+            android:text="@string/pay"
+            android:textColor="@android:color/holo_blue_dark"
+            android:background="@drawable/label_btn_shape"
+            app:layout_constraintBottom_toBottomOf="@+id/evaluate"
+            app:layout_constraintEnd_toStartOf="@+id/evaluate"
+            app:layout_constraintTop_toTopOf="@+id/evaluate" />
+
+        <Button
+            android:id="@+id/evaluate"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:text="@string/evaluation"
+            android:textColor="@android:color/holo_blue_dark"
+            android:background="@drawable/label_btn_shape"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/appointed_date" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>
