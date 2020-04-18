@@ -17,58 +17,97 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingBottom="16dp">
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/my"
-                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:orientation="vertical">
                 <TextView
-                    android:id="@+id/my_talent_label"
-                    android:layout_width="match_parent"
+                    android:id="@+id/my_tribe_label"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:background="@color/white"
-                    android:fontFamily="sans-serif"
-                    android:padding="16dp"
-                    android:text="@string/my_talent"
-                    android:textColor="@color/black"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:typeface="sans"
-                    android:visibility="gone" />
-
-                <LinearLayout
-                    android:id="@+id/my_talent_wrapper"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:divider="@drawable/line_standard"
-                    android:orientation="vertical"
-                    android:visibility="gone"></LinearLayout>
-
-                <TextView
-                    android:id="@+id/my_group_label"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="3dp"
                     android:background="@color/white"
                     android:fontFamily="sans-serif"
                     android:padding="16dp"
                     android:text="@string/my_tribe"
                     android:textColor="@color/black"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
+                    android:textSize="16sp"
                     android:typeface="sans"
-                    android:visibility="visible" />
-
-                <LinearLayout
-                    android:id="@+id/my_group"
-                    android:layout_width="match_parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+                 <TextView
+                    android:id="@+id/tribe_count"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:divider="@drawable/line_standard"
-                    android:orientation="vertical"
-                    android:visibility="gone"></LinearLayout>
-
-            </LinearLayout>
+                    android:layout_marginEnd="8dp"
+                    android:text="0"
+                    android:textColor="@color/blue_dark"
+                    app:layout_constraintBottom_toBottomOf="@+id/my_tribe_label"
+                    app:layout_constraintEnd_toStartOf="@+id/tribe_navigation"
+                    app:layout_constraintTop_toTopOf="@+id/my_tribe_label" />
+                
+                 <TextView
+                    android:id="@+id/tribe_navigation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:text="@string/chevron_right"
+                    app:layout_constraintBottom_toBottomOf="@+id/my_tribe_label"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/my_tribe_label" />
+                
+                <View
+                    android:id="@+id/divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="@color/line_border"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/my_tribe_label" />
+                
+                 <TextView
+                    android:id="@+id/my_talent_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginBottom="3dp"
+                    android:background="@color/white"
+                    android:fontFamily="sans-serif"
+                    android:padding="16dp"
+                    android:text="@string/my_talent"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:typeface="sans"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/divider" />
+                
+                <TextView
+                    android:id="@+id/talent_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:text="0"
+                    android:textColor="@color/blue_dark"
+                    app:layout_constraintBottom_toBottomOf="@+id/my_talent_label"
+                    app:layout_constraintEnd_toStartOf="@+id/talent_navigation"
+                    app:layout_constraintTop_toTopOf="@+id/my_talent_label" />
+                
+                <TextView
+                    android:id="@+id/talent_navigation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:text="@string/chevron_right"
+                    app:layout_constraintBottom_toBottomOf="@+id/my_talent_label"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/my_talent_label" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <!--association_group-->
             <androidx.constraintlayout.widget.ConstraintLayout
