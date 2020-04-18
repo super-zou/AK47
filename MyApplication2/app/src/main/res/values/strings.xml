@@ -33,6 +33,7 @@
     <string name="loading_no_more_no_update">--都被你看完了--</string>
     <string name="no_more">--能看的都看完了--</string>
     <string name="dynamics_empty">未发布动态</string>
+        <string name="no_more_order">--已显示全部订单--</string>
     <string name="evaluator_details">评价详情</string>
     <string name="publish">发布</string>
     <string name="reject_reason">拒绝原因</string>
@@ -46,6 +47,7 @@
     <string name="charge_introduction_notice">请填写收费说明</string>
     <string name="talent_apply">达人申请</string>
     <string name="experience_talent_apply">体验达人审核</string>
+        <string name="talent">达人</string>
     <string name="talent_apply_content">您的申请提交后，需要经过平台审核，请及时关注系统消息</string>
     <string name="save">保存</string>
     <string name="done">完成</string>
@@ -118,6 +120,7 @@
     <!--+Begin: add for archive, by zouhaichao 2018.12.6-->
     <string name="recommend">推荐</string>
     <string name="dynamics">动态</string>
+        <string name="order">订单</string>
     <string name="single_group">交友团</string>
     <string name="discovery">发现</string>
     <string name="interesting_person">推荐感兴趣的人</string>
@@ -193,7 +196,12 @@
     <string name="select_city">+选择城市</string>
     <string name="service_introduction_title">旅行向导服务介绍</string>
         <string name="guide_service">向导服务内容</string>
-    <string name="guide_talent">您的向导达人</string>
+        <string name="your_guide_talent">您的向导达人</string>
+    <string name="guide_talent">向导达人</string>
+    <string name="my_orders">我的订单</string>
+    <string name="show_evaluation_picture">分享您体验中的图片</string>
+    <string name="order_details">订单详情</string>
+    <string name="order_evaluation">发表评价</string>
     <string name="service_introduction_notice">向导介绍不能为空</string>
     <string name="self_introduction_empty_notice">自我介绍不能为空</string>
     <string name="headline_empty_notice">标题不能为空</string>
@@ -249,6 +257,8 @@
         <string name="look_appoint_date">查看可订时间</string>
     <string name="appoint_date">请在日历上选择您可以被预约的时间。</string>
     <string name="contact_way_title">联系方式</string>
+        <string name="appointed_date">预订时间: </string>
+    <string name="pay_time">支付时间: </string>
     <string name="contact_way_desc">联系方式只对预约用户可见。已预约用户可以在荷塘上直接和您联系，也可能会通过其它方式联系您。如果您不能保证很及时地关注预约情况，建议您预留一个常用的联系方式。</string>
     <string name="wechat">微信号</string>
     <string name="phone">手机号码</string>
@@ -407,6 +417,8 @@
     <string name="follow_action">+关注</string>
     <string name="evaluation">评价</string>
     <string name="setting">设置</string>
+        <string name="unsubscribe">退订</string>
+    <string name="pay">支付</string>
     <string name="submit">提交</string>
     <string name="title_activity_picture_preview">照片预览</string>
     <string name="reward">赞赏达人</string>
@@ -417,11 +429,14 @@
     <string name="charge_notice">如有必要，可以说明收费包含的项目有哪些</string>
     <string name="travel_guide">申请旅行向导</string>
     <string name="unit_divider"> / </string>
+        <string name="appoint_notice">长按可查看预订详情</string>
     <string name="duration">时长</string>
     <string name="charge_supplement_title">收费补充说明（选填）</string>
     <string name="charge_supplement">如时长、所含项目、超时费等</string>
     <string name="no_evaluate">暂无评价</string>
     <string name="abandon">不用了</string>
+        <string name="actual_payment">实付款</string>
+        <string name="select">选择</string>
     <string name="reward_done">已赞赏</string>
     <string name="wechat_support">请用微信扫码支付</string>
     <string name="submit_payment">上传赞赏码</string>
