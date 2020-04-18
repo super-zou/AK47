@@ -97,4 +97,10 @@ public class DateUtil {
         Timestamp ts = Timestamp.valueOf(time);
         return ts;
     }
+    
+    public static String timeStamp2String(Long created) {
+        Date date = new Date(created * 1000);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        return simpleDateFormat.format(date);
+    }
 }
