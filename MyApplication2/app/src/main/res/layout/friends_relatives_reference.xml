@@ -8,11 +8,111 @@
     android:layout_marginTop="8dp"
     android:layout_marginBottom="8dp"
     android:orientation="vertical">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/my_participation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/dynamics_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textSize="18sp"
+            android:textColor="@color/blue_dark"
+            app:layout_constraintEnd_toEndOf="@+id/dynamics_text"
+            app:layout_constraintStart_toStartOf="@+id/dynamics_text"
+            app:layout_constraintTop_toTopOf="parent" />
+        
+        <TextView
+            android:id="@+id/dynamics_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/dynamics"
+            android:textAppearance="@style/CustomTextAppearance"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/tribe_text"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/dynamics_count" />
+        
+        <TextView
+            android:id="@+id/tribe_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textSize="18sp"
+            android:textColor="@color/blue_dark"
+            app:layout_constraintEnd_toEndOf="@+id/tribe_text"
+            app:layout_constraintStart_toStartOf="@+id/tribe_text"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tribe_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/tribe"
+            android:textAppearance="@style/CustomTextAppearance"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/talent_text"
+            app:layout_constraintStart_toEndOf="@+id/dynamics_text"
+            app:layout_constraintTop_toBottomOf="@+id/tribe_count" />
+
+        <TextView
+            android:id="@+id/talent_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textSize="18sp"
+            android:textColor="@color/blue_dark"
+            app:layout_constraintEnd_toEndOf="@+id/talent_text"
+            app:layout_constraintStart_toStartOf="@+id/talent_text"
+            app:layout_constraintTop_toTopOf="parent" />
+        
+        <TextView
+            android:id="@+id/talent_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/talent"
+            android:textAppearance="@style/CustomTextAppearance"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/order_text"
+            app:layout_constraintStart_toEndOf="@+id/tribe_text"
+            app:layout_constraintTop_toBottomOf="@+id/talent_count" />
+        
+         <TextView
+            android:id="@+id/order_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textSize="18sp"
+            android:textColor="@color/blue_dark"
+            app:layout_constraintEnd_toEndOf="@+id/order_text"
+            app:layout_constraintStart_toStartOf="@+id/order_text"
+            app:layout_constraintTop_toTopOf="parent" />
+        
+        <TextView
+            android:id="@+id/order_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/order"
+            android:textAppearance="@style/CustomTextAppearance"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/talent_text"
+            app:layout_constraintTop_toBottomOf="@+id/order_count" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorWhite"
+                  android:layout_marginTop="8dp"
         android:padding="16dp">
 
         <TextView
@@ -25,7 +125,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="3dp"
-            android:text="性格魅力"
+            android:text="个性魅力"
             android:textSize="16sp" />
     </LinearLayout>
 
