@@ -31,6 +31,7 @@ import com.hetang.common.OnItemClickListener;
 import com.hetang.dynamics.AddDynamicsActivity;
 import com.hetang.main.FullyGridLayoutManager;
 import com.hetang.picture.GlideEngine;
+import com.hetang.util.BaseDialogFragment;
 import com.hetang.util.CommonDialogFragmentInterface;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.Slog;
@@ -56,11 +57,10 @@ import okhttp3.Response;
 import static android.app.Activity.RESULT_OK;
 import static com.hetang.group.GroupFragment.eden_group;
 
-public class ExperienceEvaluateDialogFragment extends DialogFragment {
+public class ExperienceEvaluateDialogFragment extends BaseDialogFragment {
     public final static int SET_EVALUATE_RESULT_OK = 7;
     private static final String TAG = "ExperienceEvaluateDialogFragment";
-    private static final int IMPRESSION_PARSE_DONE = 0;
-    private static final String SET_EVALUATION_URL = HttpUtil.DOMAIN + "?q=talent/evaluation/set";
+    private static final String WRITE_EVALUATION_URL = HttpUtil.DOMAIN + "?q=travel_guide/write_evaluate";
     private static final int WRITE_EVALUATE_DONE = 0;
     final List<String> selectedFeatures = new ArrayList<>();
     private Context mContext;
@@ -203,17 +203,16 @@ public class ExperienceEvaluateDialogFragment extends DialogFragment {
     }
     
     private void uploadToServer(String content, float rating) {
-
         showProgress(mContext);
         FormBody.Builder builder = new FormBody.Builder()
-                .add("uid", String.valueOf(order.oid))
+                .add("tid", String.valueOf(order.id))
                 .add("content", content)
                 .add("rating", String.valueOf(rating));
 
 
         RequestBody requestBody = builder.build();
         
-        HttpUtil.sendOkHttpRequest(getContext(), SET_EVALUATION_URL, requestBody, new Callback() {
+        HttpUtil.sendOkHttpRequest(getContext(), WRITE_EVALUATION_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
 
@@ -238,7 +237,6 @@ public class ExperienceEvaluateDialogFragment extends DialogFragment {
      public void handleMessage(Message message) {
         switch (message.what) {
             case WRITE_EVALUATE_DONE:
-
                 mDialog.dismiss();
                 break;
             default:

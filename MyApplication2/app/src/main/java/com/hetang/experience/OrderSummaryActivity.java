@@ -242,6 +242,7 @@ public class OrderSummaryActivity extends BaseAppCompatActivity {
         Order order = new Order();
         if (orderObject != null) {
             order.oid = orderObject.optInt("oid");
+            order.id = orderObject.optInt("id");
             order.city = orderObject.optString("city");
             order.headPictureUrl = orderObject.optString("picture_url");
             order.actualPayment = orderObject.optInt("payment");
@@ -259,6 +260,7 @@ public class OrderSummaryActivity extends BaseAppCompatActivity {
     
     public static class Order implements Serializable {
         public int oid;
+        public int id;
         public String headPictureUrl;
         public int status;
         public String title;

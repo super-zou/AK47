@@ -950,7 +950,8 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
     }
 
     private void getDynamicsCount() {
-        dynamicsCount = mHeaderEvaluation.findViewById(R.id.dynamics_count_text);
+
+        dynamicsCount = mHeaderEvaluation.findViewById(R.id.dynamics_count);
         dynamicsCount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -960,6 +961,7 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
                 startActivity(intent);
             }
         });
+
 
         RequestBody requestBody = new FormBody.Builder()
                 .add("uid", String.valueOf(uid))
