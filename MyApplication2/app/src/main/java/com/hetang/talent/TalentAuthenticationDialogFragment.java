@@ -194,8 +194,6 @@ public class TalentAuthenticationDialogFragment extends BaseDialogFragment {
             type = bundle.getInt("type", 0);
         }
 
-        authenObject = new JSONObject();
-
         if (type == eden_group) {
             mDialog.setContentView(R.layout.match_maker_talent_authentication);
             initMatchMakerTalent();
@@ -235,8 +233,6 @@ public class TalentAuthenticationDialogFragment extends BaseDialogFragment {
     private void initCommonTalent() {
         addMateriaRV = mDialog.findViewById(R.id.add_materia);
         addRewardQRRV = mDialog.findViewById(R.id.add_reward_qr);
-        chargeSetting = mDialog.findViewById(R.id.charge_setting);
-        chargeIntroduction = mDialog.findViewById(R.id.charge_introduction);
         FullyGridLayoutManager manager = new FullyGridLayoutManager(getContext(), 3, GridLayoutManager.VERTICAL, false);
         FullyGridLayoutManager managerReward = new FullyGridLayoutManager(getContext(), 3, GridLayoutManager.VERTICAL, false);
         addMateriaRV.setLayoutManager(manager);
@@ -247,12 +243,6 @@ public class TalentAuthenticationDialogFragment extends BaseDialogFragment {
         adapter.setList(selectList);
         adapter.setSelectMax(6);
         addMateriaRV.setAdapter(adapter);
-
-        //for reward qr code
-        adapterReward = new GridImageAdapter(getContext(), onAddPicClickListener);
-        adapterReward.setList(selectRewardList);
-        adapterReward.setSelectMax(1);
-        addRewardQRRV.setAdapter(adapterReward);
 
         selectSubject = mDialog.findViewById(R.id.select_subject);
         authenticateWrapper = mDialog.findViewById(R.id.talent_authentication_wrapper);
@@ -338,18 +328,9 @@ public class TalentAuthenticationDialogFragment extends BaseDialogFragment {
         Map<String, String> authenMap = new HashMap<>();
         authenMap.put("introduction", introductionET.getText().toString());
         authenMap.put("subject", selectSubject.getText().toString());
-        authenMap.put("charge", chargeSetting.getText().toString());
-        if (!TextUtils.isEmpty(chargeIntroduction.getText().toString())) {
-            authenMap.put("charge_desc", chargeIntroduction.getText().toString());
-        }
 
         if (selectList.size() > 0) {
             for (LocalMedia media : selectList) {
-                selectFileList.add(new File(media.getCompressPath()));
-            }
-        }
-        if (selectRewardList.size() > 0) {
-            for (LocalMedia media : selectRewardList) {
                 selectFileList.add(new File(media.getCompressPath()));
             }
         }
@@ -382,34 +363,7 @@ public class TalentAuthenticationDialogFragment extends BaseDialogFragment {
                     Toast.makeText(getContext(), getResources().getString(R.string.subject_select_notice), Toast.LENGTH_LONG).show();
                 }
                 break;
-            case 4:
-                String chargeAmount = chargeSetting.getText().toString();
-                if (!TextUtils.isEmpty(chargeAmount)) {
-                    valid = true;
-                } else {
-                    Toast.makeText(getContext(), getResources().getString(R.string.charge_setting_notice), Toast.LENGTH_LONG).show();
-                    valid = false;
-                    return false;
-                }
-
-                String chargeDesc = chargeIntroduction.getText().toString();
-                if (!TextUtils.isEmpty(chargeDesc)) {
-                    valid = true;
-                } else {
-                    Toast.makeText(getContext(), getResources().getString(R.string.charge_introduction_notice), Toast.LENGTH_LONG).show();
-                    valid = false;
-                    return valid;
-                }
-
-                if (selectRewardList.size() == 0){
-                    Toast.makeText(getContext(), getResources().getString(R.string.qr_code_notice), Toast.LENGTH_LONG).show();
-                    valid = false;
-                    return valid;
-                }else {
-                    valid = true;
-                }
-
-                break;
+            
                 default:
                     valid = false;
                     break;
@@ -425,10 +379,7 @@ public class TalentAuthenticationDialogFragment extends BaseDialogFragment {
                 pictureSelectType = 0;
                 addMateria(adapter);
                 break;
-            case 4:
-                pictureSelectType = 1;
-                addMateria(adapterReward);
-                break;
+            
         }
     }
 
@@ -528,11 +479,7 @@ public class TalentAuthenticationDialogFragment extends BaseDialogFragment {
                     }
                     break;
                 case PictureConfig.SINGLE:
-                    selectRewardList = PictureSelector.obtainMultipleResult(data);
-                    if (selectRewardList.size() > 0) {
-                        adapterReward.setList(selectRewardList);
-                        adapterReward.notifyDataSetChanged();
-                    }
+                    
                     break;
             }
         }
@@ -594,25 +541,14 @@ public class TalentAuthenticationDialogFragment extends BaseDialogFragment {
         });
 
         introductionET = mDialog.findViewById(R.id.introduction_edittext);
-        rewardQRCode = mDialog.findViewById(R.id.reward_qr_code);
+        
 
-        rewardQRCode.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getContext(), SetAvatarActivity.class);
-                intent.putExtra("type", TALENT_AUTHENTICATION_PHOTO);
-                getActivity().startActivityForResult(intent, REQUESTCODE);
-            }
-        });
-
-        registerBroadcast();
     }
 
     private void submitMatchMaker() {
         showProgressDialog("");
         FormBody.Builder builder = new FormBody.Builder()
                 .add("introduction", introductionET.getText().toString())
-                .add("uri", uri)
                 .add("type", String.valueOf(type));
 
         RequestBody requestBody = builder.build();
@@ -647,11 +583,6 @@ public class TalentAuthenticationDialogFragment extends BaseDialogFragment {
             return false;
         }
 
-        if (TextUtils.isEmpty(uri)) {
-            Toast.makeText(getContext(), "请上传赞赏二维码", Toast.LENGTH_LONG).show();
-            return false;
-        }
-
         return true;
     }
 
@@ -674,8 +605,7 @@ public class TalentAuthenticationDialogFragment extends BaseDialogFragment {
                             dismissProgressDialog();
                             selectList.clear();
                             selectFileList.clear();
-                            selectRewardList.clear();
-                            selectRewardFileList.clear();
+
                             PictureFileUtils.deleteAllCacheDirFile(getContext());
                             startTalentDetailActivity();
                         }
@@ -708,23 +638,11 @@ public class TalentAuthenticationDialogFragment extends BaseDialogFragment {
         mDialog.dismiss();
     }
 
-    //register local broadcast to receive DYNAMICS_ADD_BROADCAST
-    private void registerBroadcast() {
-        mReceiver = new QRCodeSetBroadcastReceiver();
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(SUBMIT_TALENT_AUTHENTICATION_ACTION_BROADCAST);
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, intentFilter);
-    }
 
-    //unregister local broadcast
-    private void unRegisterBroadcast() {
-        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
-    }
 
     @Override
     public void onDismiss(DialogInterface dialogInterface) {
         super.onDismiss(dialogInterface);
-        unRegisterBroadcast();
         if (commonDialogFragmentInterface != null) {//callback from ArchivesActivity class
             if (type == eden_group) {
                 commonDialogFragmentInterface.onBackFromDialog(TALENT_AUTHENTICATION_RESULT_OK, gid, isSubmit);
@@ -746,17 +664,4 @@ public class TalentAuthenticationDialogFragment extends BaseDialogFragment {
         super.onCancel(dialogInterface);
     }
 
-    private class QRCodeSetBroadcastReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            switch (intent.getAction()) {
-                case SUBMIT_TALENT_AUTHENTICATION_ACTION_BROADCAST:
-                    uri = intent.getStringExtra("uri");
-                    Glide.with(getContext()).load(HttpUtil.DOMAIN + uri).into(rewardQRCode);
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
 }
