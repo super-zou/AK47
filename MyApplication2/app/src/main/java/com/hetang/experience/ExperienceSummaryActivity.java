@@ -569,8 +569,8 @@ public class ExperienceSummaryActivity extends BaseAppCompatActivity implements 
     }
 
     private void publishExperience() {
-        ExperienceTalentAuthentication experienceTalentAuthentication = new ExperienceTalentAuthentication();
-        experienceTalentAuthentication.show(getSupportFragmentManager(), "ExperienceTalentAuthentication");
+        ExperienceTalentApplyDF experienceTalentApplyDF = new ExperienceTalentApplyDF();
+        experienceTalentApplyDF.show(getSupportFragmentManager(), "ExperienceTalentApplyDF");
     }
 
     @Override
