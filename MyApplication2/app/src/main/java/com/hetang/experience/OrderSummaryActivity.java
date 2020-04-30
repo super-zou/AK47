@@ -132,6 +132,14 @@ public class OrderSummaryActivity extends BaseAppCompatActivity {
                 orderDetailsDF = newInstance(order);
                 //orderDetailsDF.setTargetFragment(this, ROUTE_REQUEST_CODE);
                 orderDetailsDF.show(getSupportFragmentManager(), "RouteItemEditDF");
+            }, new OrderSummaryAdapter.EvaluateClickListener() {
+            @Override
+            public void onEvaluateClick(View view, int position) {
+                Order order = mOrderList.get(position);
+                ExperienceEvaluateDialogFragment experienceEvaluateDialogFragment;
+                experienceEvaluateDialogFragment = ExperienceEvaluateDialogFragment.newInstance(order);
+                //orderDetailsDF.setTargetFragment(this, ROUTE_REQUEST_CODE);
+                experienceEvaluateDialogFragment.show(getSupportFragmentManager(), "ExperienceEvaluateDialogFragment");
             }
         });
 
@@ -155,13 +163,6 @@ public class OrderSummaryActivity extends BaseAppCompatActivity {
             }
         }, 50);
         
-        FloatingActionButton floatingActionButton = findViewById(R.id.create_activity);
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
     }
 
     private void loadData() {
