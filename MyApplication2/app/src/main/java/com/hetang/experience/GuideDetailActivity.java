@@ -3,6 +3,9 @@ package com.hetang.experience;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.res.Resources;
+import android.util.DisplayMetrics;
+import androidx.gridlayout.widget.GridLayout;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Typeface;
@@ -36,6 +39,15 @@ import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.ParseUtils;
 import com.hetang.util.RoundImageView;
+import com.hetang.consult.ConsultSummaryActivity;
+import com.hetang.picture.GlideEngine;
+import com.hetang.consult.TalentConsultDF;
+import com.hetang.util.CommonDialogFragmentInterface;
+import com.hetang.util.DateUtil;
+import com.hetang.util.Utility;
+import com.luck.picture.lib.PictureSelector;
+import com.luck.picture.lib.entity.LocalMedia;
+import com.willy.ratingbar.RotationRatingBar;
 import com.hetang.util.Slog;
 import com.hetang.util.UserProfile;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
@@ -71,7 +83,7 @@ import static com.hetang.group.SingleGroupActivity.GET_MY_GROUP_DONE;
 import static com.hetang.group.SingleGroupActivity.SINGLE_GROUP_GET_MY;
 import static com.hetang.group.SingleGroupActivity.getSingleGroup;
 
-public class GuideDetailActivity extends BaseAppCompatActivity {
+public class GuideDetailActivity extends BaseAppCompatActivity implements CommonDialogFragmentInterface{
     private static final boolean isDebug = true;
     private static final String TAG = "GuideDetailActivity";
     public static final String GET_BANNER_PICTURES = HttpUtil.DOMAIN + "?q=travel_guide/get_route_pictures";
@@ -80,20 +92,25 @@ public class GuideDetailActivity extends BaseAppCompatActivity {
     private static final String GET_GUIDE_INFO = HttpUtil.DOMAIN + "?q=travel_guide/get_guide_info";
     private static final String GET_LIMIT_INFO = HttpUtil.DOMAIN + "?q=travel_guide/get_limit_info";
     private static final String GET_CHARGE_INFO = HttpUtil.DOMAIN + "?q=travel_guide/get_charge_info";
+        private static final String GET_EVALUATE_INFO = HttpUtil.DOMAIN + "?q=travel_guide/get_evaluate_info";
+    private static final String GET_CONSULT_STATISTICS_INFO = HttpUtil.DOMAIN + "?q=consult/get_consult_statistics";
     private static final int GET_BANNER_PICTURES_DONE = 1;
     private static final int GET_BASE_INFO_DONE = 2;
     private static final int GET_ROUTE_INFO_DONE = 3;
     private static final int GET_GUIDE_INFO_DONE = 4;
     private static final int GET_LIMIT_INFO_DONE = 5;
     private static final int GET_CHARGE_INFO_DONE = 6;
-    private static final int ADD_VISITOR_RECORD_DONE = 7;
-    private static final int NO_SINGLE_GROUP_DONE = 10;
+    private static final int GET_EVALUATE_INFO_DONE = 7;
+    private static final int GET_CONSULT_INFO_DONE = 8;
     final int itemLimit = 3;
     ImageView progressImageView;
     AnimationDrawable animationDrawable;
     private int mLoadSize = 0;
     private int mUpdateSize = 0;
     private Handler handler;
+        private JSONArray evaluateJsonArray;
+    private int evaluateCount;
+    private int consultCount;
     private int type = 0;
     private ViewGroup myGroupView;
     private int tid;
@@ -123,8 +140,10 @@ public class GuideDetailActivity extends BaseAppCompatActivity {
         initView();
         getBannerPictures();
         getBaseInformation();
+        getEvaluateInfo();
         getRouteInfo();
         getGuideIntroduction();
+        getConsultStatisticsInfo();
         getAppointmentLimit();
         getChargeInfo();
     }
@@ -135,6 +154,7 @@ public class GuideDetailActivity extends BaseAppCompatActivity {
         FontManager.markAsIconContainer(findViewById(R.id.cancellation_detail), font);
         FontManager.markAsIconContainer(findViewById(R.id.cny), font);
         FontManager.markAsIconContainer(findViewById(R.id.evaluate_star), font);
+        FontManager.markAsIconContainer(findViewById(R.id.guide_head), font);
 
         TextView leftBack = findViewById(R.id.left_back);
         leftBack.setOnClickListener(new View.OnClickListener() {
@@ -280,6 +300,136 @@ public class GuideDetailActivity extends BaseAppCompatActivity {
 
     }
     
+     private void getEvaluateInfo(){
+        RequestBody requestBody = new FormBody.Builder()
+                .add("tid", String.valueOf(tid))
+                .build();
+
+        HttpUtil.sendOkHttpRequest(getContext(), GET_EVALUATE_INFO, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String responseText = response.body().string();
+                Slog.d(TAG, "==========getEvaluateInfo response body : " + responseText);
+                if (responseText != null) {
+                     try {
+                        JSONObject jsonObject = new JSONObject(responseText);
+                        evaluateJsonArray = jsonObject.optJSONArray("evaluates");
+                        evaluateCount = jsonObject.optInt("count");
+                        handler.sendEmptyMessage(GET_EVALUATE_INFO_DONE);
+                    }catch (JSONException e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+             @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+        });
+    }
+    
+     private void setEvaluateInfoView(){
+        LinearLayout evaluateWrapper = findViewById(R.id.evaluate_wrapper);
+        Resources resources = getResources();
+        DisplayMetrics dm = resources.getDisplayMetrics();
+        int innerWidth = dm.widthPixels - (int) Utility.dpToPx(getContext(), 38f);
+        float ratingSum = 0;
+        if (evaluateJsonArray != null && evaluateJsonArray.length() > 0){
+            for (int i=0; i<evaluateJsonArray.length(); i++){
+                JSONObject evaluateObject = evaluateJsonArray.optJSONObject(i);
+                View evaluateItem = LayoutInflater.from(getContext()).inflate(R.layout.guide_evaluate_item, (ViewGroup) findViewById(android.R.id.content), false);
+                evaluateWrapper.addView(evaluateItem);
+                ImageView evaluateAvatar = evaluateItem.findViewById(R.id.evaluate_avatar);
+                Glide.with(getContext()).load(HttpUtil.DOMAIN+evaluateObject.optString("avatar")).into(evaluateAvatar);
+                TextView evaluateName = evaluateItem.findViewById(R.id.evaluate_name);
+                evaluateName.setText(evaluateObject.optString("nickname"));
+                TextView createdTV = evaluateItem.findViewById(R.id.evaluate_time);
+                createdTV.setText(DateUtil.timeStamp2String(evaluateObject.optLong("created")));
+                TextView evaluateContent = evaluateItem.findViewById(R.id.evaluate_content);
+                evaluateContent.setText(evaluateObject.optString("content"));
+                RotationRatingBar ratingBar = evaluateItem.findViewById(R.id.rating_bar);
+                ratingBar.setRating((float) evaluateObject.optDouble("rating"));
+
+                ratingSum += evaluateObject.optInt("rating");
+                GridLayout evaluatePictureWrapper = evaluateItem.findViewById(R.id.evaluate_picture_grid);
+
+                setEvaluateItemPicture(evaluatePictureWrapper, evaluateObject, innerWidth);
+            }
+            
+            TextView headRatingTV = findViewById(R.id.rating);
+            TextView ratingTV = findViewById(R.id.evaluate_rating);
+            float average = ratingSum / evaluateJsonArray.length();
+            float averageScore = (float) (Math.round(average * 10)) / 10;
+            ratingTV.setText(String.valueOf(averageScore));
+            headRatingTV.setText(String.valueOf(averageScore));
+            
+            TextView headEvaluateCountTV = findViewById(R.id.count);
+            TextView evaluateCountTV = findViewById(R.id.evaluate_count);
+            evaluateCountTV.setText("("+evaluateCount+")");
+            headEvaluateCountTV.setText("("+evaluateCount+")");
+
+            Button showAllEvaluateBtn = findViewById(R.id.show_all);
+            
+             if (evaluateCount > 3){
+                showAllEvaluateBtn.setVisibility(View.VISIBLE);
+                showAllEvaluateBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        ShowAllEvaluateDF showAllEvaluateDF = ShowAllEvaluateDF.newInstance(tid, evaluateCount);
+                        showAllEvaluateDF.show(getSupportFragmentManager(), "ShowAllEvaluateDF");
+                    }
+                });
+            }
+        }
+    }
+    
+    private void setEvaluateItemPicture(GridLayout evaluatePictureWrapper, JSONObject jsonObject, int innerWidth){
+
+        JSONArray pictureArray = jsonObject.optJSONArray("pictures");
+        if (pictureArray != null && pictureArray.length() > 0){
+            for (int i=0; i<pictureArray.length(); i++){
+                //Slog.d(TAG, "-------------->picture uri: "+pictureArray.optString(i));
+                //View pictureItem = LayoutInflater.from(getContext()).inflate(R.layout.route_picture_item, (ViewGroup) findViewById(android.R.id.content), false);
+                RoundImageView imageView = new RoundImageView(this);
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(innerWidth/3, innerWidth/3);
+                layoutParams.setMargins(0, 0, 3, 4);
+                
+                //将以上的属性赋给LinearLayout
+                imageView.setLayoutParams(layoutParams);
+                imageView.setAdjustViewBounds(true);
+                //imageView.setLayoutParams(new ViewGroup.LayoutParams(innerWidth/3, innerWidth/3));
+                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                evaluatePictureWrapper.addView(imageView);
+                Glide.with(getContext()).load(HttpUtil.DOMAIN+pictureArray.optString(i)).into(imageView);
+                
+                imageView.setId(i);;
+                imageView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        startPicturePreview(imageView.getId(), pictureArray);
+                    }
+                });
+            }
+        }
+    }
+    
+    public void startPicturePreview(int position, JSONArray pictureUrlArray){
+
+        List<LocalMedia> localMediaList = new ArrayList<>();
+        for (int i=0; i<pictureUrlArray.length(); i++){
+            LocalMedia localMedia = new LocalMedia();
+            localMedia.setPath(HttpUtil.getDomain()+pictureUrlArray.opt(i));
+            localMediaList.add(localMedia);
+        }
+
+        PictureSelector.create(this)
+                .themeStyle(R.style.picture_default_style) // xml设置主题
+                .loadImageEngine(GlideEngine.createGlideEngine())// 外部传入图片加载引擎，必传项
+                .isNotPreviewDownload(true)
+                .openExternalPreview(position, localMediaList);
+
+    }
+    
      private void getRouteInfo(){
         RequestBody requestBody = new FormBody.Builder()
                 .add("tid", String.valueOf(tid))
@@ -375,6 +525,58 @@ private void setRouteInfoView(){
         name.setText(guideObject.optString("realname"));
         TextView selfIntroduction = findViewById(R.id.guide_self_introduction);
         selfIntroduction.setText(guideObject.optString("self_introduction"));
+        
+        Button consultBtn = findViewById(R.id.consult_talent);
+        consultBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                TalentConsultDF talentConsultDF = TalentConsultDF.newInstance(tid, guideObject.optString("realname"));
+                talentConsultDF.show(getSupportFragmentManager(), "TalentConsultDF");
+            }
+        });
+    }
+    
+    private void getConsultStatisticsInfo(){
+        RequestBody requestBody = new FormBody.Builder()
+                .add("tid", String.valueOf(tid))
+                .build();
+
+        HttpUtil.sendOkHttpRequest(getContext(), GET_CONSULT_STATISTICS_INFO, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String responseText = response.body().string();
+                Slog.d(TAG, "==========getAppointmentLimit response body : " + responseText);
+                if (responseText != null) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(responseText);
+                        consultCount = jsonObject.optInt("count");
+                        if (consultCount > 0){
+                            handler.sendEmptyMessage(GET_CONSULT_INFO_DONE);
+                        }
+                    }catch (JSONException e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+            
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+        });
+    }
+
+    private void setConsultInfoView(){
+        TextView consultCountTV = findViewById(R.id.consultation_count);
+        consultCountTV.setText("已解答"+consultCount);
+        consultCountTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(GuideDetailActivity.this, ConsultSummaryActivity.class);
+                intent.putExtra("tid", tid);
+                startActivity(intent);
+            }
+        });
     }
 
     private void getAppointmentLimit(){
@@ -478,6 +680,12 @@ private void setRouteInfoView(){
             case GET_CHARGE_INFO_DONE:
                 setChargeView();
                 break;
+                case GET_EVALUATE_INFO_DONE:
+                setEvaluateInfoView();
+                break;
+            case GET_CONSULT_INFO_DONE:
+                setConsultInfoView();
+                break;
             default:
                 break;
         }
@@ -495,6 +703,14 @@ private void setRouteInfoView(){
                     break;
             }
         }
+    }
+    
+        @Override
+    public void onBackFromDialog(int cid, int tid, boolean status) {
+        Slog.d(TAG, "-------------------onBackFromDialog cid: "+cid+"  tid: "+tid+"  status: "+status);
+        Intent intent = new Intent(GuideDetailActivity.this, ConsultSummaryActivity.class);
+        intent.putExtra("tid", tid);
+        startActivity(intent);
     }
 
     @Override
