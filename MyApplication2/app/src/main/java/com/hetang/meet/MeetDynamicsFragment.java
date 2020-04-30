@@ -20,11 +20,13 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.hetang.R;
 import com.hetang.adapter.MeetDynamicsListAdapter;
 import com.hetang.common.PicturePreviewActivity;
 import com.hetang.dynamics.AddDynamicsActivity;
+import com.hetang.consult.ConsultSummaryActivity;
 import com.hetang.dynamics.Dynamic;
 import com.hetang.dynamics.DynamicsInteractDetailsActivity;
 import com.hetang.common.MyApplication;
@@ -240,6 +242,16 @@ public class MeetDynamicsFragment extends BaseFragment implements CommonDialogFr
         recyclerView.setAdapter(meetDynamicsListAdapter);
 
         final FloatingActionButton dynamicCreate = convertView.findViewById(R.id.dynamic_create);
+        
+                TextView consultTV = convertView.findViewById(R.id.consult);
+        consultTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MyApplication.getContext(), ConsultSummaryActivity.class);
+                //intent.putExtra("type", ParseUtils.ADD_MEET_DYNAMIC_ACTION);
+                startActivity(intent);
+            }
+        });
 
         dynamicCreate.setOnClickListener(new View.OnClickListener() {
             @Override
