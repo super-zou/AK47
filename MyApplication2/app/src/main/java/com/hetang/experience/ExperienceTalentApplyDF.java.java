@@ -17,9 +17,9 @@ import com.hetang.common.MyApplication;
 import com.hetang.util.BaseDialogFragment;
 import com.hetang.util.FontManager;
 
-public class ExperienceTalentAuthentication extends BaseDialogFragment {
+public class ExperienceTalentApplyDF extends BaseDialogFragment {
     private static final boolean isDebug = true;
-    private static final String TAG = "ExperienceTalentAuthentication";
+    private static final String TAG = "ExperienceTalentApplyDF";
     private Dialog mDialog;
     private Window window;
 
@@ -58,7 +58,7 @@ public class ExperienceTalentAuthentication extends BaseDialogFragment {
         applyGuideBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               startGuideDetailActivity();
+               startGuideAuthenticationDF();
                 mDialog.dismiss();
             }
         });
@@ -67,15 +67,19 @@ public class ExperienceTalentAuthentication extends BaseDialogFragment {
         developExperienceBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+developExperienceDF();
             }
         });
     }
 
-   public void startGuideDetailActivity(){
-        Intent intent = new Intent(getContext(), GuideDetailActivity.class);
-        //intent.putExtra("tid", tid);
-        startActivity(intent);
+    private void startGuideAuthenticationDF(){
+        GuideApplyDialogFragment guideApplyDialogFragment = new GuideApplyDialogFragment();
+        guideApplyDialogFragment.show(getFragmentManager(), "GuideApplyDialogFragment");
+    }
+
+   public void developExperienceDF(){
+        DevelopExperienceDialogFragment developExperienceDialogFragment = new DevelopExperienceDialogFragment();
+        developExperienceDialogFragment.show(getFragmentManager(), "DevelopExperienceDialogFragment");
     }
 
     @Override
