@@ -47,6 +47,9 @@ import static com.hetang.common.MyApplication.getContext;
 public class Utility {
     private static final String TAG = "Utility";
     public static final int MALE = 0;
+        public enum TalentType {
+        GUIDE, EXPERIENCE, MATCHMAKER, STUDY, HOBBY
+    }
     public static boolean handleLoginResponse(String response) {
         if (!TextUtils.isEmpty(response)) {
             /*
