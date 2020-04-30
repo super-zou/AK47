@@ -85,7 +85,7 @@ import okhttp3.Response;
 import static android.app.Activity.RESULT_OK;
 import static com.hetang.experience.RouteItemEditDF.newInstance;
 
-public class GuideAuthenticationDialogFragment extends BaseDialogFragment implements CompoundButton.OnCheckedChangeListener, OnDateSelectedListener {
+public class GuideApplyDialogFragment extends BaseDialogFragment implements CompoundButton.OnCheckedChangeListener, OnDateSelectedListener {
     public final static int TALENT_AUTHENTICATION_RESULT_OK = 0;
     public final static int ROUTE_REQUEST_CODE = 1;
     public static final String SUBMIT_ROUTE_INFO_URL = HttpUtil.DOMAIN + "?q=travel_guide/write_route_info";
@@ -94,7 +94,7 @@ public class GuideAuthenticationDialogFragment extends BaseDialogFragment implem
     private static final boolean isDebug = true;
     public static final String EXPERIENCE_TYPE_GUIDE = "guide";
     public static final String GUIDE_ADD_BROADCAST = "com.hetang.action.GUIDE_ADD";
-    private static final String TAG = "GuideAuthenticationDialogFragment";
+    private static final String TAG = "GuideApplyDialogFragment";
     private static final String SUBMIT_BASE_INFO_URL = HttpUtil.DOMAIN + "?q=travel_guide/write_base_info";
     private static final String MODIFY_BASE_INFO_URL = HttpUtil.DOMAIN + "?q=travel_guide/modify_base_info";
     private static final String SUBMIT_CHARGE_AND_LIMIT_URL = HttpUtil.DOMAIN + "?q=travel_guide/write_charge_limit_info";
