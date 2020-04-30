@@ -1,6 +1,7 @@
 package com.hetang.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Message;
 import android.view.LayoutInflater;
@@ -17,6 +18,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.hetang.R;
 import com.hetang.common.HandlerTemp;
+import com.hetang.experience.ExperienceEvaluateDialogFragment;
+import com.hetang.experience.GuideDetailActivity;
 import com.hetang.experience.GuideSummaryActivity;
 import com.hetang.experience.OrderSummaryActivity;
 import com.hetang.util.FontManager;
@@ -38,6 +41,7 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
     private List<OrderSummaryActivity.Order> mOrderList;
     private boolean isScrolling = false;
     private MyItemClickListener mItemClickListener;
+    private EvaluateClickListener mEvaluateClickListener;
 
     public OrderSummaryAdapter(Context context) {
         mContext = context;
@@ -51,7 +55,7 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.order_list_item, parent, false);
-        ViewHolder holder = new ViewHolder(view, mItemClickListener);
+        ViewHolder holder = new ViewHolder(view, mItemClickListener, mEvaluateClickListener);
         return holder;
     }
     
@@ -60,6 +64,13 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
         final OrderSummaryActivity.Order order = mOrderList.get(position);
         setContentView(holder, order);
 
+        holder.evaluateBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mEvaluateClickListener.onEvaluateClick(view, position);
+            }
+        });
+        
         holder.itemLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -82,6 +93,21 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
         holder.unitTV.setText(order.unit);
         holder.actualPaymentTV.setText(String.valueOf(order.actualPayment));
         holder.appointedDateTV.setText(order.appointmentDate);
+        
+        switch (order.status){
+            case 0:
+                holder.unsubscribeBtn.setVisibility(View.GONE);
+                holder.evaluateBtn.setVisibility(View.GONE);
+                break;
+            case 1:
+                holder.payBtn.setVisibility(View.GONE);
+                break;
+            case 3:
+                holder.payBtn.setVisibility(View.GONE);
+                holder.evaluateBtn.setText(getContext().getResources().getString(R.string.append_evaluation));
+                break;
+        }
+        
         holder.unsubscribeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -96,14 +122,21 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
             }
         });
 
-        holder.evaluateBtn.setOnClickListener(new View.OnClickListener() {
+        holder.headUri.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Intent intent = new Intent(getContext(), GuideDetailActivity.class);
+                intent.putExtra("tid", order.id);
+                mContext.startActivity(intent);
             }
         });
-
-
+        holder.titleTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                holder.headUri.callOnClick();
+            }
+        });
+          
     }
     
     @Override
@@ -118,6 +151,7 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         MyItemClickListener mListener;
         ImageView headUri;
+        EvaluateClickListener evaluateClickListener;
         TextView titleTV;
         TextView cityTV;
         TextView actualPaymentTV;
@@ -129,7 +163,7 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
         Button evaluateBtn;
         CardView itemLayout;
         
-        public ViewHolder(View view, MyItemClickListener myItemClickListener) {
+        public ViewHolder(View view, MyItemClickListener myItemClickListener, EvaluateClickListener evaluateClickListener) {
             super(view);
             itemLayout = view.findViewById(R.id.order_list_item);
             headUri = view.findViewById(R.id.head_picture);
@@ -145,6 +179,7 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
             
             //将全局的监听赋值给接口
             this.mListener = myItemClickListener;
+            this.evaluateClickListener = evaluateClickListener;
             Typeface font = Typeface.createFromAsset(getContext().getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
             FontManager.markAsIconContainer(view.findViewById(R.id.order_list_item), font);
         }
@@ -166,14 +201,19 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
     public interface MyItemClickListener {
         void onItemClick(View view, int position);
     }
+    
+    public interface EvaluateClickListener{
+        void onEvaluateClick(View view, int position);
+    }
 
     /**
      * 在activity里面adapter就是调用的这个方法,将点击事件监听传递过来,并赋值给全局的监听
      *
      * @param myItemClickListener
      */
-    public void setItemClickListener(OrderSummaryAdapter.MyItemClickListener myItemClickListener) {
+    public void setItemClickListener(OrderSummaryAdapter.MyItemClickListener myItemClickListener, EvaluateClickListener evaluateClickListener) {
         this.mItemClickListener = myItemClickListener;
+        this.mEvaluateClickListener = evaluateClickListener;
     }
     
 }
