@@ -1,0 +1,962 @@
+package com.hetang.experience;
+
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
+import android.graphics.Typeface;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.text.TextUtils;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatCheckBox;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.gridlayout.widget.GridLayout;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.bigkoo.pickerview.builder.OptionsPickerBuilder;
+import com.bigkoo.pickerview.listener.OnOptionsSelectListener;
+import com.bigkoo.pickerview.view.OptionsPickerView;
+import com.hetang.R;
+import com.hetang.adapter.GridImageAdapter;
+import com.hetang.common.MyApplication;
+import com.hetang.common.OnItemClickListener;
+import com.hetang.dynamics.AddDynamicsActivity;
+import com.hetang.group.SubGroupActivity;
+import com.hetang.main.FullyGridLayoutManager;
+import com.hetang.picture.GlideEngine;
+import com.hetang.util.BaseDialogFragment;
+
+import com.hetang.util.CommonBean;
+import com.hetang.util.CommonDialogFragmentInterface;
+import com.hetang.util.CommonPickerView;
+import com.hetang.util.FontManager;
+import com.hetang.util.HttpUtil;
+import com.hetang.util.Slog;
+import com.luck.picture.lib.PictureSelector;
+import com.luck.picture.lib.config.PictureConfig;
+import com.luck.picture.lib.config.PictureMimeType;
+import com.luck.picture.lib.entity.LocalMedia;
+
+import com.luck.picture.lib.style.PictureWindowAnimationStyle;
+import com.luck.picture.lib.tools.PictureFileUtils;
+import com.prolificinteractive.materialcalendarview.CalendarDay;
+import com.prolificinteractive.materialcalendarview.DayViewDecorator;
+import com.prolificinteractive.materialcalendarview.DayViewFacade;
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
+import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
+import com.prolificinteractive.materialcalendarview.format.ArrayWeekDayFormatter;
+import com.prolificinteractive.materialcalendarview.format.MonthArrayTitleFormatter;
+
+import org.angmarch.views.NiceSpinner;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.threeten.bp.LocalDate;
+import org.threeten.bp.format.DateTimeFormatter;
+
+import java.io.File;
+import java.io.IOException;
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
+import static android.app.Activity.RESULT_OK;
+import static com.hetang.experience.RouteItemEditDF.newInstance;
+
+public class DevelopExperienceDialogFragment extends BaseDialogFragment implements OnDateSelectedListener {
+    public final static int TALENT_AUTHENTICATION_RESULT_OK = 0;
+    public final static int ROUTE_REQUEST_CODE = 1;
+    public static final String SUBMIT_ROUTE_INFO_URL = HttpUtil.DOMAIN + "?q=travel_guide/write_route_info";
+    public static final String MODIFY_ROUTE_INFO_URL = HttpUtil.DOMAIN + "?q=travel_guide/modify_route_info";
+    public static final int WRITE_ROUTE_INFO_SUCCESS = 2;
+    private static final boolean isDebug = true;
+    public static final String EXPERIENCE_TYPE_GUIDE = "guide";
+    public static final String GUIDE_ADD_BROADCAST = "com.hetang.action.GUIDE_ADD";
+    private static final String TAG = "DevelopExperienceDialogFragment";
+    
+    private static final String SUBMIT_BASE_INFO_URL = HttpUtil.DOMAIN + "?q=travel_guide/write_base_info";
+    private static final String MODIFY_BASE_INFO_URL = HttpUtil.DOMAIN + "?q=travel_guide/modify_base_info";
+    private static final String SUBMIT_CHARGE_AND_LIMIT_URL = HttpUtil.DOMAIN + "?q=travel_guide/write_charge_limit_info";
+    private static final String MODIFY_CHARGE_AND_LIMIT_URL = HttpUtil.DOMAIN + "?q=travel_guide/modify_charge_limit_info";
+    private static final String SUBMIT_APPOINTMENT_DATE_URL = HttpUtil.DOMAIN + "?q=travel_guide/write_appoinment_date";
+    private static final String MODIFY_APPOINTMENT_DATE_URL = HttpUtil.DOMAIN + "?q=travel_guide/modify_appoinment_date";
+    private static final int WRITE_BASE_INFO_SUCCESS = 1;
+    private static final int WRITE_CHARGE_AND_LIMIT_SUCCESS = 3;
+    private static final int WRITE_APPOINT_DATE_SUCCESS = 4;
+    private static final int DELETE_ROUTE_INFO_SUCCESS = 5;
+    
+    public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("EEE, d MMM yyyy");
+    AppCompatCheckBox followShot;
+    AppCompatCheckBox travelPlan;
+    AppCompatCheckBox charteredCar;
+    AppCompatCheckBox ticket;
+    AppCompatCheckBox ferry;
+
+    MaterialCalendarView widget;
+    CalendarDay today;
+    private Thread threadCity;
+    private int type;
+    private int gid;
+    private int aid;
+    private TextView leftBack;
+    private SubGroupActivity.Talent talent;
+    private Dialog mDialog;
+    private Context mContext;
+    
+    private String uri;
+    private int tid;
+    private boolean isSubmit = false;
+    private EditText introductionET;
+    private EditText selfIntroductionET;
+    private EditText headLineET;
+    private EditText groupCountET;
+    private RecyclerView recyclerView;
+    private GridImageAdapter adapter;
+    private GridLayout mExperienceItemGL;
+    private CommonDialogFragmentInterface commonDialogFragmentInterface;
+    private LinearLayout authenticateWrapper;
+    private ConstraintLayout navigation;
+    private TextView addExperienceItem;
+    private Button prevBtn;
+    private Button nextBtn;
+    private int index = 1;
+    
+    private JSONObject authenObject;
+    private List<LocalMedia> selectList = new ArrayList<>();
+    private List<File> selectFileList = new ArrayList<>();
+    private List<GuideApplyDialogFragment.Route> routeList = new ArrayList<>();
+    private Map<String, String> additionalServices = new HashMap<String, String>();
+    private List<String> selectedDateList = new ArrayList<>();
+    private AddDynamicsActivity addDynamicsActivity;
+    private Button selectCityBtn;
+    private EditText consultationChargeNumber;
+    private EditText consultationChargeDesc;
+    private EditText mChargeAmount;
+    private EditText escortChargeDesc;
+    private EditText durationET;
+    private EditText limitationET;
+    private String consultationUnit;
+    private String escortUnit = "天";
+    
+    private String limitations;
+    private RadioGroup sexSelect;
+    private AppCompatCheckBox understandCancellation;
+    private Window window;
+    private int maxSelectNum = 6;
+    private int pictureSelectType = 0;//default 0 for materia
+    private boolean isCityPicked = false;
+    private Thread threadIndustry = null;
+    private boolean isLocated = false;
+    private Typeface font;
+    private ArrayList<CommonBean> provinceItems = new ArrayList<>();
+    private ArrayList<ArrayList<String>> cityItems = new ArrayList<>();
+    private EditText additionalServiceET;
+    private MyHandler myHandler;
+    private int developConsultation = -1;
+    private String mBaseInfoString = "";
+    private String mChargeAndLimitString = "";
+    private List<String> mSelectedDateList = new ArrayList<>();
+    
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mContext = context;
+
+        try {
+            commonDialogFragmentInterface = (CommonDialogFragmentInterface) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString() + "must implement commonDialogFragmentInterface");
+        }
+    }
+    
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+
+        mDialog = new Dialog(getActivity(), R.style.Theme_MaterialComponents_DialogWhenLarge);
+        myHandler = new MyHandler(this);
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            type = bundle.getInt("type", 0);
+        }
+
+        authenObject = new JSONObject();
+
+        mDialog.setContentView(R.layout.develop_experience);
+
+        initView();
+        
+        mDialog.setCanceledOnTouchOutside(true);
+        window = mDialog.getWindow();
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+        WindowManager.LayoutParams layoutParams = window.getAttributes();
+        layoutParams.gravity = Gravity.CENTER;
+        layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
+        layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT;
+        window.setAttributes(layoutParams);
+
+        leftBack = mDialog.findViewById(R.id.left_back);
+        leftBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dismiss();
+            }
+        });
+        
+         font = Typeface.createFromAsset(MyApplication.getContext().getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
+        FontManager.markAsIconContainer(mDialog.findViewById(R.id.custom_actionbar), font);
+        FontManager.markAsIconContainer(mDialog.findViewById(R.id.charge_duration_wrapper), font);
+
+        if (addDynamicsActivity == null) {
+            addDynamicsActivity = new AddDynamicsActivity();
+        }
+
+        return mDialog;
+    }
+    
+    private void initView() {
+        authenticateWrapper = mDialog.findViewById(R.id.experience_apply_form_wrapper);
+        selectCityBtn = mDialog.findViewById(R.id.select_city);
+        headLineET = mDialog.findViewById(R.id.create_headline_edit);
+        introductionET = mDialog.findViewById(R.id.introduction_edittext);
+        selfIntroductionET = mDialog.findViewById(R.id.self_introduction);
+        
+        mExperienceItemGL = mDialog.findViewById(R.id.contain_items_gridlayout);
+        addExperienceItem = mDialog.findViewById(R.id.add_new_item);
+        mChargeAmount = mDialog.findViewById(R.id.charge_setting_edit);
+        durationET = mDialog.findViewById(R.id.duration_edit);
+        groupCountET = mDialog.findViewById(R.id.group_count_limit_edit);
+        limitationET = mDialog.findViewById(R.id.condition_edit);
+        understandCancellation = mDialog.findViewById(R.id.understand_cancellation);
+        prevBtn = mDialog.findViewById(R.id.prevBtn);
+        nextBtn = mDialog.findViewById(R.id.nextBtn);
+        
+        selectCity();
+        initPictureSelectWidget();
+        initExperienceItem();
+        initCalendarView();
+        navigationProcess();
+    }
+    
+     private void navigationProcess() {
+        prevBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (index > 0) {
+                    nextBtn.setText(getContext().getResources().getString(R.string.next));
+                    index--;
+                    if (index == 1) {
+                        prevBtn.setVisibility(View.GONE);
+                        leftBack.setVisibility(View.VISIBLE);
+                    }
+                    authenticateWrapper.getChildAt(index - 1).setVisibility(View.VISIBLE);
+                    authenticateWrapper.getChildAt(index).setVisibility(View.GONE);
+                }
+            }
+        });
+        
+         nextBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (validCheck(index)) {
+                    switch (index) {
+                        case 5://self introduction
+                            if (TextUtils.isEmpty(mBaseInfoString)) {
+                                submitBaseInfo(false);
+                            } else {
+                                if (!mBaseInfoString.equals(getBaseInfoJsonObject().toString())) {
+                                    submitBaseInfo(true);
+                                } else {
+                                    processNextBtn();
+                                }
+                            }
+                            break;
+                            
+                            case 8:
+                            if (TextUtils.isEmpty(mChargeAndLimitString)) {
+                                submitChargeAndLimitations(false);
+                            } else {
+                                if (!mChargeAndLimitString.equals(getChargeAndLimit().toString())) {
+                                    submitChargeAndLimitations(true);
+                                } else {
+                                    processNextBtn();
+                                }
+                            }
+                            
+                            break;
+                        case 9:
+                            if (mSelectedDateList.size() == 0) {
+                                submitAppointDate(false);
+                            } else {
+                                if (!mSelectedDateList.equals(selectedDateList)) {
+                                    submitAppointDate(true);
+                                } else {
+                                    processNextBtn();
+                                }
+                            }
+
+                            break;
+                            default:
+                            processNextBtn();
+                            break;
+                    }
+                }
+            }
+        });
+    }
+    
+    private void processNextBtn() {
+        if (leftBack.getVisibility() == View.VISIBLE) {
+            leftBack.setVisibility(View.GONE);
+        }
+        if (prevBtn.getVisibility() == View.GONE) {
+            prevBtn.setVisibility(View.VISIBLE);
+        }
+        if (index < authenticateWrapper.getChildCount() - 1) {
+            if (index == authenticateWrapper.getChildCount() - 2) {
+                nextBtn.setText(getContext().getResources().getString(R.string.done));
+            }
+            authenticateWrapper.getChildAt(index).setVisibility(View.VISIBLE);
+            authenticateWrapper.getChildAt(index - 1).setVisibility(View.GONE);
+            index++;
+            processCurrent(index);
+
+        } else {
+            submitNotice();
+        }
+    }
+    
+    private void initExperienceItem() {
+        addExperienceItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addExperienceItem();
+            }
+        });
+    }
+
+    private void addExperienceItem() {
+        View view = LayoutInflater.from(MyApplication.getContext())
+                .inflate(R.layout.experience_contain_item, (ViewGroup) mDialog.findViewById(android.R.id.content), false);
+        mExperienceItemGL.addView(view);
+    }
+    
+    private void selectCity() {
+        //init city data in thread
+        if (threadCity == null) {
+            threadCity = new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+                    initCityJsondata("city.json");
+                }
+            });
+            threadCity.start();
+        }
+        selectCityBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showCityPickerView();
+            }
+        });
+    }
+    
+    private void initPictureSelectWidget() {
+        recyclerView = mDialog.findViewById(R.id.add_route_picture);
+        FullyGridLayoutManager manager = new FullyGridLayoutManager(getContext(), 3, GridLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(manager);
+
+        adapter = new GridImageAdapter(getContext(), onAddPicClickListener);
+        adapter.setList(selectList);
+        adapter.setSelectMax(9);
+        recyclerView.setAdapter(adapter);
+        
+        adapter.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(int position, View v) {
+                if (selectList.size() > 0) {
+                    LocalMedia media = selectList.get(position);
+                    String pictureType = media.getMimeType();
+                    int mediaType = PictureMimeType.getMimeType(pictureType);
+                    switch (mediaType) {
+                        case PictureConfig.TYPE_IMAGE:
+                            //PictureSelector.create(MainActivity.this).externalPicturePreview(position, "/custom_file", selectList);
+                            PictureSelector.create(DevelopExperienceDialogFragment.this)
+                                    .themeStyle(R.style.picture_WeChat_style)
+                                    .setPictureStyle(addDynamicsActivity.getWeChatStyle())
+                                    //.setPictureWindowAnimationStyle(animationStyle)//
+                   .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+                                    .isNotPreviewDownload(true)
+                                    //.bindCustomPlayVideoCallback(callback)
+                                    .loadImageEngine(GlideEngine.createGlideEngine())
+                                    .openExternalPreview(position, selectList);
+                            break;
+                    }
+                }
+            }
+        });
+    }
+    
+    private void initCalendarView() {
+
+        today = CalendarDay.today();
+        widget = mDialog.findViewById(R.id.calendarView);
+        widget.setOnDateChangedListener(this);
+        //widget.setCurrentDate(today);
+        //widget.setSelectedDate(today);
+        widget.setTitleFormatter(new MonthArrayTitleFormatter(getResources().getTextArray(R.array.custom_months)));
+        widget.setWeekDayFormatter(new ArrayWeekDayFormatter(getResources().getTextArray(R.array.custom_weekdays)));
+        widget.addDecorator(new DisabledDecorator());
+
+        final LocalDate min = LocalDate.of(today.getYear(), today.getMonth(), today.getDay());
+        //final LocalDate max = LocalDate.of(today.getYear(), today.getMonth()+3, today.getDay());
+
+        widget.state().edit()
+                .setMinimumDate(min)
+                //.setMaximumDate(max)
+                .commit();
+    }
+    
+     @Override
+    public void onDateSelected(
+            @NonNull MaterialCalendarView widget,
+            @NonNull CalendarDay date,
+            boolean selected) {
+
+        String dataStr;
+        dataStr = FORMATTER.format(date.getDate());
+        Slog.d(TAG, "----------------------------------->selected: " + selected + "   data: " + dataStr);
+        if (selected) {
+            selectedDateList.add(dataStr);
+        } else {
+            selectedDateList.remove(dataStr);
+        }
+    }
+    
+    private void startRouteItemEditDF(int index) {
+        Slog.d(TAG, "--------------------->index: " + index + " size: " + routeList.size());
+        RouteItemEditDF routeItemEditDF;
+        if (routeList.size() > index) {
+            routeItemEditDF = newInstance(index, tid, routeList.get(index));
+        } else {
+            routeItemEditDF = newInstance(index, tid, null);
+        }
+
+        routeItemEditDF.setTargetFragment(this, ROUTE_REQUEST_CODE);
+        routeItemEditDF.show(getFragmentManager(), "RouteItemEditDF");
+    }
+
+private void initCityJsondata(String jsonFile) {
+        CommonPickerView commonPickerView = new CommonPickerView();
+        provinceItems = commonPickerView.getOptionsMainItem(getContext(), jsonFile);
+        cityItems = commonPickerView.getOptionsSubItems(provinceItems);
+    }
+
+    private void showCityPickerView() {// 弹出地址选择器
+        //条件选择器
+        OptionsPickerView pvOptions;
+        pvOptions = new OptionsPickerBuilder(getContext(), new OnOptionsSelectListener() {
+            @Override
+            public void onOptionsSelect(int options1, int option2, int options3, View v) {
+                //返回的分别是二个级别的选中位置
+                isCityPicked = true;
+                String city = cityItems.get(options1).get(option2);
+                selectCityBtn.setText(city);
+            }
+        }).setDecorView(window.getDecorView().findViewById(R.id.develop_experience))
+                .isDialog(true).setLineSpacingMultiplier(1.2f).isCenterLabel(false).build();
+        pvOptions.getDialog().getWindow().setGravity(Gravity.CENTER);
+        pvOptions.setPicker(provinceItems, cityItems);
+        pvOptions.show();
+    }
+    
+    private void submitNotice() {
+        final AlertDialog.Builder normalDialogBuilder =
+                new AlertDialog.Builder(getContext());
+        normalDialogBuilder.setTitle(getResources().getString(R.string.experience_talent_apply));
+        normalDialogBuilder.setMessage(getResources().getString(R.string.talent_apply_content));
+        normalDialogBuilder.setPositiveButton(getContext().getResources().getString(R.string.submit),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mDialog.dismiss();
+                        startGuideDetailActivity();
+                    }
+                });
+
+        AlertDialog normalDialog = normalDialogBuilder.create();
+        normalDialog.show();
+    }
+    
+    private void submitBaseInfo(boolean modified) {
+        Slog.d(TAG, "------------------>submitBaseInfo modified: " + modified);
+        mBaseInfoString = getBaseInfoJsonObject().toString();
+        showProgressDialog(getContext().getString(R.string.saving_progress));
+        FormBody.Builder builder;
+        String uri = "";
+        if (modified) {
+            builder = new FormBody.Builder()
+                    .add("tid", String.valueOf(tid))
+                    .add("base_info", mBaseInfoString);
+            uri = MODIFY_BASE_INFO_URL;
+        } else {
+            builder = new FormBody.Builder()
+                    .add("base_info", mBaseInfoString);
+            uri = SUBMIT_BASE_INFO_URL;
+        }
+        
+        RequestBody requestBody = builder.build();
+
+        HttpUtil.sendOkHttpRequest(mContext, uri, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String responseText = response.body().string();
+                Slog.d(TAG, "submitBaseInfo response : " + responseText);
+                if (!TextUtils.isEmpty(responseText)) {
+                    try {
+                        if (!modified) {
+                            tid = new JSONObject(responseText).optInt("tid");
+                        }
+                        dismissProgressDialog();
+                        myHandler.sendEmptyMessage(WRITE_BASE_INFO_SUCCESS);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+        });
+    }
+
+    private JSONObject getChargeAndLimit() {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            if (!TextUtils.isEmpty(mChargeAmount.getText().toString())) {
+                jsonObject.put("escort_charge_amount", mChargeAmount.getText().toString());
+                jsonObject.put("escort_charge_unit", escortUnit);
+                Slog.d(TAG, "----------------->getChargeAndLimit unit: " + escortUnit);
+                if (!TextUtils.isEmpty(escortChargeDesc.getText().toString())) {
+                    jsonObject.put("escort_charge_supplement", escortChargeDesc.getText().toString());
+                }
+            }
+            
+            jsonObject.put("developConsultation", developConsultation);
+            if (!TextUtils.isEmpty(limitationET.getText().toString())) {
+                limitations += limitationET.getText().toString();
+            }
+
+            if (!TextUtils.isEmpty(limitations)) {
+                jsonObject.put("limitations", limitations);
+            }
+            
+            } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return jsonObject;
+
+    }
+
+    private void submitChargeAndLimitations(boolean isModify) {
+        showProgressDialog(getContext().getString(R.string.saving_progress));
+        mChargeAndLimitString = getChargeAndLimit().toString();
+        FormBody.Builder builder = new FormBody.Builder()
+                .add("tid", String.valueOf(tid))
+                .add("charge_and_limit", mChargeAndLimitString);
+        String uri = SUBMIT_CHARGE_AND_LIMIT_URL;
+        if (isModify) {
+            uri = MODIFY_CHARGE_AND_LIMIT_URL;
+        }
+        
+        RequestBody requestBody = builder.build();
+        HttpUtil.sendOkHttpRequest(mContext, uri, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String responseText = response.body().string();
+                Slog.d(TAG, "submitChargeAndLimitations response : " + responseText);
+                if (!TextUtils.isEmpty(responseText)) {
+                    try {
+                        int result = new JSONObject(responseText).optInt("result");
+                        if (result == 1) {
+                            dismissProgressDialog();
+                            myHandler.sendEmptyMessage(WRITE_BASE_INFO_SUCCESS);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+        });
+    }
+    
+    private void submitAppointDate(boolean isModify) {
+        showProgressDialog(getContext().getString(R.string.saving_progress));
+        String dateString = "";
+
+        for (int i = 0; i < selectedDateList.size(); i++) {
+            if (i == selectedDateList.size() - 1) {
+                dateString += selectedDateList.get(i);
+            } else {
+                dateString += selectedDateList.get(i) + ";";
+            }
+        }
+        
+        mSelectedDateList = new ArrayList<>(selectedDateList);
+
+        FormBody.Builder builder = new FormBody.Builder()
+                .add("tid", String.valueOf(tid))
+                .add("type", EXPERIENCE_TYPE_GUIDE)
+                .add("date_string", dateString);
+
+        RequestBody requestBody = builder.build();
+
+        String uri = SUBMIT_APPOINTMENT_DATE_URL;
+        if (isModify) {
+            uri = MODIFY_APPOINTMENT_DATE_URL;
+        }
+        
+        HttpUtil.sendOkHttpRequest(mContext, uri, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String responseText = response.body().string();
+                Slog.d(TAG, "submitAppointDate response : " + responseText);
+                if (!TextUtils.isEmpty(responseText)) {
+                    try {
+                        int result = new JSONObject(responseText).optInt("result");
+                        if (result == 1) {
+                            dismissProgressDialog();
+                            myHandler.sendEmptyMessage(WRITE_APPOINT_DATE_SUCCESS);
+                        }
+                        } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+        });
+    }
+
+private boolean validCheck(int index) {
+        Slog.d(TAG, "------------------------>validCheck: " + index);
+        boolean valid = false;
+        switch (index) {
+            case 1:
+                valid = isCityPicked;
+                if (!isCityPicked) {
+                    Toast.makeText(getContext(), getResources().getString(R.string.city_select_notice), Toast.LENGTH_LONG).show();
+                }
+                break;
+                case 2:
+                if (!TextUtils.isEmpty(headLineET.getText().toString())) {
+                    valid = true;
+                } else {
+                    valid = false;
+                    Toast.makeText(getContext(), getResources().getString(R.string.headline_empty_notice), Toast.LENGTH_LONG).show();
+                }
+                break;
+            case 3:
+                if (!TextUtils.isEmpty(introductionET.getText().toString())) {
+                    valid = true;
+                } else {
+                    valid = false;
+                    Toast.makeText(getContext(), getResources().getString(R.string.service_introduction_notice), Toast.LENGTH_LONG).show();
+                }
+                break;
+                case 5:
+                if (!TextUtils.isEmpty(selfIntroductionET.getText().toString())) {
+                    valid = true;
+                } else {
+                    valid = false;
+                    Toast.makeText(getContext(), getResources().getString(R.string.self_introduction_empty_notice), Toast.LENGTH_LONG).show();
+                }
+
+                break;
+            case 6:
+                if (routeList.size() == 0) {
+                    valid = false;
+                    Toast.makeText(getContext(), getResources().getString(R.string.route_introduction_empty_notice), Toast.LENGTH_LONG).show();
+                } else {
+                    valid = true;
+                }
+
+                break;
+                case 7:
+                if (!TextUtils.isEmpty(mChargeAmount.getText())) {
+                    valid = true;
+                } else {
+                    valid = false;
+                    Toast.makeText(getContext(), getResources().getString(R.string.charge_empty_notice), Toast.LENGTH_LONG).show();
+                }
+
+                if (developConsultation == -1) {
+                    valid = false;
+                    Toast.makeText(getContext(), getResources().getString(R.string.whether_develop_consultation_notice), Toast.LENGTH_LONG).show();
+                } else {
+                    valid = true;
+                }
+                break;
+                case 9:
+                if (selectedDateList.size() > 0) {
+                    valid = true;
+                } else {
+                    valid = false;
+                    Toast.makeText(getContext(), getResources().getString(R.string.select_date_empty_notice), Toast.LENGTH_LONG).show();
+                }
+                break;
+                case 10:
+                if (understandCancellation.isChecked()) {
+                    valid = true;
+                } else {
+                    valid = false;
+                    Toast.makeText(getContext(), getResources().getString(R.string.understand_cancellation_notice), Toast.LENGTH_LONG).show();
+                }
+                break;
+            default:
+                valid = true;
+                break;
+                }
+
+        return valid;
+    }
+
+    private void processCurrent(int index) {
+        Slog.d(TAG, "------------------------>processCurrent: " + index);
+        switch (index) {
+            case 3:
+                if (!TextUtils.isEmpty(additionalServiceET.getText())) {
+                    additionalServices.put("addition", additionalServiceET.getText().toString());
+                }
+                StringBuilder sb = new StringBuilder();
+                for (String key : additionalServices.keySet()) {
+                    sb.append(additionalServices.get(key) + "\t");
+                }
+                Slog.d(TAG, "---------------------------->additionalServices: " + sb);
+                break;
+        }
+    }
+    
+     private JSONObject getBaseInfoJsonObject() {
+        String additionalServiceStr = "";
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("city", selectCityBtn.getText().toString());
+            jsonObject.put("title", headLineET.getText().toString());
+            jsonObject.put("service_introduction", introductionET.getText().toString());
+            jsonObject.put("self_introduction", selfIntroductionET.getText().toString());
+            
+            jsonObject.put("title", headLineET.getText().toString());
+            if (additionalServices.size() > 0) {
+                for (Map.Entry<String, String> additionalService : additionalServices.entrySet()) {
+                    additionalServiceStr += additionalService.getValue() + ";";
+                }
+            }
+
+            if (!TextUtils.isEmpty(additionalServiceET.getText().toString())) {
+                additionalServiceStr += additionalServiceET.getText().toString();
+            }
+            
+            if (!TextUtils.isEmpty(additionalServiceStr)) {
+                jsonObject.put("additional_service", additionalServiceStr);
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return jsonObject;
+    }
+    
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case PictureConfig.CHOOSE_REQUEST:
+                    if (selectList.size() > 0) {
+                        selectList.addAll(PictureSelector.obtainMultipleResult(data));
+                    } else {
+                        selectList = PictureSelector.obtainMultipleResult(data);
+                    }
+                    Slog.d(TAG, "Selected pictures: " + selectList.size());
+                    adapter.setList(selectList);
+                    adapter.notifyDataSetChanged();
+                    break;
+            }
+        }
+    }
+    
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case PictureConfig.APPLY_STORAGE_PERMISSIONS_CODE:
+                // 存储权限
+                for (int i = 0; i < grantResults.length; i++) {
+                    if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                        PictureFileUtils.deleteCacheDirFile(getContext(), PictureMimeType.ofImage());
+                    } else {
+                        Toast.makeText(getContext(), getString(R.string.picture_jurisdiction), Toast.LENGTH_SHORT).show();
+                    }
+                }
+                break;
+        }
+    }
+    
+    @Override
+    public void onDismiss(DialogInterface dialogInterface) {
+        super.onDismiss(dialogInterface);
+    }
+
+    public void startGuideDetailActivity() {
+        Intent intent = new Intent(getContext(), GuideDetailActivity.class);
+        intent.putExtra("tid", tid);
+        startActivity(intent);
+    }
+
+    private void sendTalentAddedBroadcast() {
+        Intent intent = new Intent(GUIDE_ADD_BROADCAST);
+        intent.putExtra("tid", tid);
+        LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
+    }
+    
+     @Override
+    public void onCancel(DialogInterface dialogInterface) {
+        super.onCancel(dialogInterface);
+    }
+
+    public void handleMessage(Message msg) {
+        switch (msg.what) {
+            case WRITE_BASE_INFO_SUCCESS:
+                processNextBtn();
+                //Bundle bundle = msg.getData();
+                //int tid = bundle.getInt("tid");
+                //submitRoute(tid);
+                break;
+            case WRITE_ROUTE_INFO_SUCCESS:
+                processNextBtn();
+                break;
+            case WRITE_CHARGE_AND_LIMIT_SUCCESS:
+                processNextBtn();
+                break;
+            case WRITE_APPOINT_DATE_SUCCESS:
+                processNextBtn();
+                break;
+            case DELETE_ROUTE_INFO_SUCCESS:
+                //submitRoute(false);
+                break;
+        }
+    }
+    
+    private static class DisabledDecorator implements DayViewDecorator {
+        @Override
+        public boolean shouldDecorate(final CalendarDay day) {
+            return false;
+        }
+
+        @Override
+        public void decorate(final DayViewFacade view) {
+            view.setDaysDisabled(true);
+        }
+    }
+    
+    private GridImageAdapter.onAddPicClickListener onAddPicClickListener = new GridImageAdapter.onAddPicClickListener() {
+        @Override
+        public void onAddPicClick() {
+            //boolean mode = cb_mode.isChecked();
+            boolean mode = true;
+            if (mode) {
+                PictureSelector.create(DevelopExperienceDialogFragment.this)
+                        .openGallery(PictureMimeType.ofImage())
+                        .loadImageEngine(GlideEngine.createGlideEngine())
+                        .theme(R.style.picture_WeChat_style)
+                        .isWeChatStyle(true)
+                        .setPictureStyle(addDynamicsActivity.getWeChatStyle())
+                        .setPictureCropStyle(addDynamicsActivity.getCropParameterStyle())
+                        .setPictureWindowAnimationStyle(new PictureWindowAnimationStyle())
+                        .isWithVideoImage(true)
+                        .maxSelectNum(8)
+                        .minSelectNum(1)
+                        .maxVideoSelectNum(1)
+                        .imageSpanCount(4)
+                        .isReturnEmpty(false)
+                        .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+                        .selectionMode(PictureConfig.MULTIPLE)
+                        .previewImage(true)
+                        .isCamera(true)
+                        .isZoomAnim(true)
+                        .compress(true)
+                        .compressQuality(100)
+                        .synOrAsy(true)
+                        .withAspectRatio(1, 1)
+                        .freeStyleCropEnabled(true)
+                        .previewEggs(true)
+                        .minimumCompressSize(100)
+                        .forResult(PictureConfig.CHOOSE_REQUEST);
+                         }
+        }
+    };
+
+
+    static class MyHandler extends Handler {
+        WeakReference<DevelopExperienceDialogFragment> travelGuideAuthenticationDialogFragmentWeakReference;
+
+        MyHandler(DevelopExperienceDialogFragment guideApplyDialogFragment) {
+            travelGuideAuthenticationDialogFragmentWeakReference = new WeakReference<DevelopExperienceDialogFragment>(guideApplyDialogFragment);
+        }
+        
+        @Override
+        public void handleMessage(Message message) {
+            DevelopExperienceDialogFragment guideApplyDialogFragment = travelGuideAuthenticationDialogFragmentWeakReference.get();
+            if (guideApplyDialogFragment != null) {
+                guideApplyDialogFragment.handleMessage(message);
+            }
+        }
+    }
+
+}
