@@ -40,7 +40,7 @@ import okhttp3.Response;
 
 import static android.app.Activity.RESULT_OK;
 import static com.hetang.common.MyApplication.getContext;
-import static com.hetang.experience.GuideAuthenticationDialogFragment.WRITE_ROUTE_INFO_SUCCESS;
+import static com.hetang.experience.GuideApplyDialogFragment.WRITE_ROUTE_INFO_SUCCESS;
 
 public class OrderDetailsDF extends BaseDialogFragment {
     private static final boolean isDebug = true;
@@ -120,6 +120,20 @@ public class OrderDetailsDF extends BaseDialogFragment {
         appointedDateTV.setText(mOrder.appointmentDate);
         createdTV.setText("订单创建时间："+DateUtil.timeStamp2String((long)mOrder.created));
         paymentTime.setText("订单支付时间："+DateUtil.timeStamp2String((long)mOrder.paymentTime));
+        
+                switch (mOrder.status){
+            case 0:
+                unsubscribeBtn.setVisibility(View.GONE);
+                evaluateBtn.setVisibility(View.GONE);
+                break;
+            case 1:
+                payBtn.setVisibility(View.GONE);
+                break;
+            case 3:
+                payBtn.setVisibility(View.GONE);
+                evaluateBtn.setText(getContext().getResources().getString(R.string.append_evaluation));
+                break;
+        }
 
         unsubscribeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -142,6 +156,21 @@ public class OrderDetailsDF extends BaseDialogFragment {
                 experienceEvaluateDialogFragment = ExperienceEvaluateDialogFragment.newInstance(mOrder);
                 //orderDetailsDF.setTargetFragment(this, ROUTE_REQUEST_CODE);
                 experienceEvaluateDialogFragment.show(getFragmentManager(), "RouteItemEditDF");
+            }
+        });
+        
+                headUri.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), GuideDetailActivity.class);
+                intent.putExtra("tid", mOrder.id);
+                startActivity(intent);
+            }
+        });
+        titleTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                headUri.callOnClick();
             }
         });
     }
