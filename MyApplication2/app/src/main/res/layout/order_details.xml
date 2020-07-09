@@ -140,11 +140,22 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/unit_divider" />
         
+            <TextView
+        android:id="@+id/amount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:textSize="18sp"
+        android:text="amount"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toStartOf="@+id/cny"
+        app:layout_constraintTop_toBottomOf="@+id/cny" />
+        
          <TextView
         android:id="@+id/actual_payment_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="3dp"
+        android:layout_marginEnd="5dp"
         android:text="@string/actual_payment"
         android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="@+id/actual_payment"
@@ -176,6 +187,42 @@
         app:layout_constraintTop_toBottomOf="@+id/head_picture" />
         
         <TextView
+        android:id="@+id/total_price_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="5dp"
+        android:text="@string/total_price"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="@+id/total_price"
+        app:layout_constraintEnd_toStartOf="@+id/total_cny"
+        app:layout_constraintTop_toTopOf="@+id/total_price" />
+        
+        <TextView
+        android:id="@+id/total_cny"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="3dp"
+        android:gravity="center"
+        android:text="@string/fa_cny"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="@+id/total_price"
+        app:layout_constraintEnd_toStartOf="@+id/total_price"
+        app:layout_constraintTop_toTopOf="@+id/total_price" />
+        
+        <TextView
+        android:id="@+id/total_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:gravity="center"
+        android:text=""
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/actual_payment" />
+        
+        
+        <TextView
         android:id="@+id/appointed_date_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -195,7 +242,7 @@
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/actual_payment" />
+        app:layout_constraintTop_toBottomOf="@+id/total_price" />
         
         <TextView
         android:id="@+id/order_created"
@@ -219,28 +266,40 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/order_created" />
         
-        <Button
+         <TextView
+        android:id="@+id/order_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:text=""
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/payment_time" />
+        
+    <Button
         android:id="@+id/unsubscribe"
         android:layout_width="wrap_content"
         android:layout_height="36dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/label_btn_shape_white"
         android:text="@string/unsubscribe"
-        android:textColor="@android:color/holo_blue_dark"
-        android:background="@drawable/label_btn_shape"
-        app:layout_constraintEnd_toStartOf="@+id/pay"
-        app:layout_constraintTop_toTopOf="@+id/evaluate" />
+        android:textColor="@android:color/secondary_text_light_nodisable"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/pay" />
         
-        <Button
+    <Button
         android:id="@+id/pay"
         android:layout_width="wrap_content"
         android:layout_height="36dp"
         android:layout_marginEnd="16dp"
-        android:text="@string/pay"
-        android:textColor="@android:color/holo_blue_dark"
-        android:background="@drawable/label_btn_shape"
-        app:layout_constraintBottom_toBottomOf="@+id/evaluate"
-        app:layout_constraintEnd_toStartOf="@+id/evaluate"
-        app:layout_constraintTop_toTopOf="@+id/evaluate" />
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/label_btn_shape_stress"
+        android:text="@string/waiting_to_pay"
+        android:textColor="@android:color/holo_red_dark"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/evaluate" />
         
          <Button
         android:id="@+id/evaluate"
