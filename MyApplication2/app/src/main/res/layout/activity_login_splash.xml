@@ -29,8 +29,8 @@
         android:layout_marginTop="16dp"
         android:gravity="center"
         android:text="@string/slogan"
-        android:textColor="@color/color_light_grey"
-        android:textSize="16sp"
+        android:textColor="@color/black"
+        android:textSize="18sp"
         app:layout_constraintTop_toBottomOf="@+id/logo" />
 
     <TextView
@@ -40,6 +40,6 @@
         android:gravity="center"
         android:text="@string/beta"
         android:textColor="@color/black"
-        android:textSize="16sp"
+        android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
