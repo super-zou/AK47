@@ -11,6 +11,7 @@
     <include
         android:id="@+id/custom_actionbar"
         layout="@layout/custom_actionbar_common"
+        android:layout_marginTop="8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
@@ -48,102 +49,18 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/cny"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="@string/fa_cny"
-                android:textColor="@color/black"
-                app:layout_constraintStart_toStartOf="@+id/introduction_edit"
-                app:layout_constraintTop_toBottomOf="@+id/introduction_edit" />
-
-            <EditText
-                android:id="@+id/charge_edit"
-                style="@style/EditTextCustom"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="3dp"
-                android:hint="编辑金额"
-                android:inputType="numberDecimal"
-                android:textColor="@color/blue_dark"
-                android:textCursorDrawable="@drawable/cursor_color"
-                android:theme="@style/MyEditText"
-                app:layout_constraintBottom_toBottomOf="@+id/cny"
-                app:layout_constraintStart_toEndOf="@+id/cny"
-                app:layout_constraintTop_toTopOf="@+id/cny" />
-
-            <LinearLayout
-                android:id="@+id/charge_desc_wrapper"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                android:layout_marginTop="16dp"
-                android:background="@color/white"
-                android:orientation="vertical"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/charge_edit">
-
-                <TextView
-                    android:id="@+id/charge_desc_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/charge_desc"
-                    android:textColor="@color/black"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-                <EditText
-                    android:id="@+id/charge_desc"
-                    style="@style/EditTextCustom"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:hint="收费说明"
-                    android:lineSpacingMultiplier="1.5"
-                    android:textColor="@color/blue_dark"
-                    android:textCursorDrawable="@drawable/cursor_color"
-                    android:theme="@style/MyEditText" />
-            </LinearLayout>
-
             <Button
                 android:id="@+id/select_subject"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:background="@drawable/btn_big_radius_stress"
-                android:textColor="@color/white"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/charge_desc_wrapper" />
-
-            <TextView
-                android:id="@+id/setting_payment_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
-                android:text="@string/setting_payment"
-                android:textColor="@color/black"
-                android:textSize="16sp"
-                android:textStyle="bold"
+                android:background="@drawable/btn_big_radius_stress"
+                android:textColor="@color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/select_subject" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/add_reward_qr"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
-                android:overScrollMode="never"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/setting_payment_title" />
+                app:layout_constraintTop_toBottomOf="@+id/introduction_edit" />
 
             <TextView
                 android:id="@+id/material_title"
@@ -152,13 +69,13 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="32dp"
                 android:layout_marginEnd="16dp"
-                android:text="@string/material"
+                android:text="@string/authentication_material"
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/add_reward_qr" />
+                app:layout_constraintTop_toBottomOf="@+id/select_subject" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/add_materia"
