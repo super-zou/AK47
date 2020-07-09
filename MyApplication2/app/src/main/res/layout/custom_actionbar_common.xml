@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:fitsSystemWindows="true"
     android:layout_height="35dp"
-    android:background="@color/blue_dark">
+    android:background="@color/white">
 
     <TextView
         android:id="@+id/left_back"
@@ -17,7 +17,7 @@
         android:paddingLeft="12dp"
         android:paddingRight="8dp"
         android:text="@string/left_angle"
-        android:textColor="@color/white"
+        android:textColor="@color/blue_dark"
         android:textSize="28sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -31,7 +31,7 @@
         android:padding="3dp"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -43,7 +43,7 @@
         android:layout_width="45dp"
         android:layout_height="wrap_content"
         android:text="@string/save"
-        android:textColor="@color/white"
+        android:textColor="@color/blue_dark"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
