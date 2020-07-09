@@ -37,7 +37,7 @@
         android:layout_marginTop="16dp"
         android:textSize="16sp"
         android:textAppearance="@style/CustomTextAppearance"
-        android:text="@string/route_picture" />
+        android:text="@string/select_picture" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
