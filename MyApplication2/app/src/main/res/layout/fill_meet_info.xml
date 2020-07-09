@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/blue_dark"
     android:fitsSystemWindows="true"
     android:id="@+id/fill_meet_info">
     
@@ -13,7 +12,7 @@
         android:id="@+id/custom_actionbar_id"
         layout="@layout/custom_actionbar_common"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -35,7 +34,7 @@
             android:orientation="horizontal">
             <TextView
                 android:text="@string/birthyear"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content" />  
@@ -47,7 +46,7 @@
                 android:entries="@array/years"/>
           <TextView
                 android:text="@string/constellation"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:layout_marginLeft="18dp"
                 android:layout_weight="1"
                 android:layout_width="0dp"
@@ -68,7 +67,7 @@
             android:orientation="horizontal">
             <TextView
                 android:text="@string/height"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content" />
@@ -81,7 +80,7 @@
                 android:entries="@array/heights"/>
             <TextView
                 android:text="@string/hometown"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:layout_marginLeft="18dp"
                 android:layout_width="0dp"
                 android:layout_weight="1"
@@ -105,7 +104,7 @@
             
             <TextView
                 android:text="@string/nation"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content" />
@@ -118,7 +117,7 @@
                 android:entries="@array/nations"/>
             <TextView
                 android:text="@string/religion"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_marginLeft="18dp"
@@ -161,7 +160,7 @@
                     android:id="@+id/require_sex_male"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/white"
+                    android:textColor="@color/black"
                     android:text="@string/male"
                     android:theme="@style/MyRadioButton"/>
                 <RadioButton
@@ -169,7 +168,7 @@
                     android:layout_marginLeft="28dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/white"
+                    android:textColor="@color/black"
                     android:text="@string/female"
                     android:theme="@style/MyRadioButton"/>
             </RadioGroup>
@@ -178,11 +177,11 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
             android:orientation="horizontal">
             <TextView
                 android:text="@string/age"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content" />
@@ -194,7 +193,7 @@
                 android:entries="@array/ages"/>
             <TextView
                 android:text="@string/divider"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:layout_marginLeft="18dp"
                 android:layout_weight="1"
                 android:layout_width="0dp"
@@ -214,7 +213,7 @@
             android:orientation="horizontal">
             <TextView
                 android:text="@string/height"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content" />
@@ -226,7 +225,7 @@
                 android:entries="@array/heights"/>
             <TextView
                 android:text="@string/degree"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_marginLeft="18dp"
@@ -246,7 +245,7 @@
             android:orientation="horizontal">
             <TextView
                 android:text="@string/living"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
             <Button
@@ -259,13 +258,13 @@
         <EditText
             android:id="@+id/illustration"
             android:hint="@string/illustration_hint"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:enabled="true"
             android:gravity="top"
-            android:minLines="5"
-            android:maxLines="8"
+            android:minLines="8"
+            android:maxLines="10"
             android:textSize="12sp"
             android:scrollbars="vertical"
             android:background="@drawable/shape"/>
