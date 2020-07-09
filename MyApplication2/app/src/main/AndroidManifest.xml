@@ -101,6 +101,10 @@
             android:label="@string/evaluator_details"
             android:parentActivityName=".main.MeetArchiveActivity" />
         <activity
+            android:name=".meet.MeetRecommendActivity"
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustPan"/>
+        <activity
             android:name=".meet.ApprovedUsersActivity"
             android:label="@string/evaluator_details"
             android:parentActivityName=".main.MeetArchiveActivity" />
@@ -132,6 +136,9 @@
             android:launchMode="singleTask" />
         <activity
             android:name=".contacts.ContactsApplyListActivity"
+            android:launchMode="singleTask" />
+        <activity
+            android:name=".contacts.ContactsActivity"
             android:launchMode="singleTask" />
         <activity
             android:name=".group.SubGroupActivity"
@@ -170,13 +177,19 @@
             android:name=".experience.GuideSummaryActivity"
             android:launchMode="singleTask" />
         <activity
-            android:name=".experience.OrderSummaryActivity"
+            android:name=".order.OrderSummaryActivity"
             android:launchMode="singleTask" />
         <activity
             android:name=".consult.ConsultDetailActivity"
             android:launchMode="singleTask" />
         <activity
             android:name=".consult.ConsultSummaryActivity"
+            android:launchMode="singleTask" />
+        <activity
+            android:name=".experience.ExperienceDetailActivity"
+            android:launchMode="singleTask" />
+        <activity
+            android:name=".experience.WriteShareActivity"
             android:launchMode="singleTask" />
         <provider
             android:name="androidx.core.content.FileProvider"
