@@ -71,12 +71,15 @@
                 android:singleLine="true"
                 android:text="" />
 
-            <TextView
+           <TextView
                 android:id="@+id/university"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
-                android:textSize="12sp"
+                android:textColor="@color/black"
+                android:maxLines="1"
+                android:textSize="13sp"
+                android:layout_marginTop="6dp"
                 android:gravity="center_horizontal"
                 android:maxEms="10"
                 android:singleLine="true"
@@ -113,26 +116,6 @@
                 android:gravity="center_horizontal"
                 android:maxEms="10"
                 android:singleLine="true" />
-        </LinearLayout>
-        <LinearLayout
-            android:id="@+id/find_more"
-            android:layout_width="160dp"
-            android:layout_height="260dp"
-            android:background="#88323232"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/transparent"
-                android:gravity="center"
-                android:text="@string/find_more"
-                android:textColor="@color/colorWhite" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>
