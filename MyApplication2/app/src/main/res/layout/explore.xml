@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:id="@+id/friend_recommend_wrapper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+            
+            <TextView
+                android:id="@+id/friend_recommend_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="好友推荐"
+                android:textAppearance="@style/CustomTextAppearance" />
+
+            <androidx.gridlayout.widget.GridLayout
+                android:id="@+id/friend_recommend_gridlayout"
+                android:layout_marginTop="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        
+         <LinearLayout
+            android:id="@+id/experience_wrapper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/friend_recommend_wrapper">
+
+            <TextView
+                android:id="@+id/wonderful_experience_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="美妙体验"
+                android:textAppearance="@style/CustomTextAppearance" />
+                
+            <androidx.gridlayout.widget.GridLayout
+                android:id="@+id/experience_gridlayout"
+                android:layout_marginTop="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/guide_wrapper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/experience_wrapper">
+            
+            <TextView
+                android:id="@+id/travel_guide_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="游玩向导"
+                android:textAppearance="@style/CustomTextAppearance" />
+
+            <androidx.gridlayout.widget.GridLayout
+                android:id="@+id/guide_gridlayout"
+                android:layout_marginTop="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        
+        <LinearLayout
+            android:id="@+id/eden_garden_wrapper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/guide_wrapper">
+            
+            <TextView
+                android:id="@+id/eden_garden_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="伊甸园"
+                android:textAppearance="@style/CustomTextAppearance" />
+
+            <androidx.gridlayout.widget.GridLayout
+                android:id="@+id/eden_garden_gridlayout"
+                android:layout_marginTop="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        
+        <LinearLayout
+            android:id="@+id/growth_wrapper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/eden_garden_wrapper">
+            
+            <TextView
+                android:id="@+id/growth_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="成长达人"
+                android:textAppearance="@style/CustomTextAppearance" />
+
+            <androidx.gridlayout.widget.GridLayout
+                android:id="@+id/growth_gridlayout"
+                android:layout_marginTop="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        
+        <LinearLayout
+            android:id="@+id/hobby_wrapper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/growth_wrapper">
+
+            <TextView
+                android:id="@+id/hobby_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="兴趣达人"
+                android:textAppearance="@style/CustomTextAppearance" />
+                
+                 <androidx.gridlayout.widget.GridLayout
+                android:id="@+id/hobby_gridlayout"
+                android:layout_marginTop="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
