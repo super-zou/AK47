@@ -14,14 +14,14 @@
     <string name="fa_star">&#xf005;</string>
     <string name="chevron_right">&#xf054;</string>
     <string name="personality">&#xf02c;</string>
-    <string name="certificate">&#xf0a3;</string>
+    <string name="fa_certificate">&#xf0a3;</string>
     <string name="hobby">&#xf11e;</string>
     <string name="flag_checkered">&#xf11e;</string>
     <string name="hands">&#xf2a7;</string>
     <string name="hand_holding_heart">&#xf4be;</string>
     <string name="evaluate">&#xf06c;</string>
     <string name="impress">&#xf1b0;</string>
-    <string name="group">&#xf0c0;</string>
+    <string name="fa_group">&#xf0c0;</string>
     <string name="left_angle">&#xf104;</string>
     <string name="right_angle">&#xf105;</string>
     <string name="graduation">&#xf19d;</string>
@@ -71,4 +71,14 @@
     <string name="fa_magnet">&#xf076;</string>
     <string name="fa_cny">&#xf157;</string>
     <string name="fa_edit_pencil">&#xf044;</string>
+        <string name="fa_motorcycle">&#xf21c;</string>
+    <string name="fa_rocket">&#xf135;</string>
+    <string name="fa_clock">&#xf017;</string>
+    <string name="fa_compass">&#xf14e;</string>
+    <string name="fa_bolt">&#xf0e7;</string>
+    <string name="fa_shopping">&#xf291;</string>
+    <string name="fa_sun">&#xf185;</string>
+    <string name="fa_ship">&#xf21a;</string>
+    <string name="fa_tree">&#xf1bb;</string>
+    <string name="fa_music">&#xf001;</string>
 </resources>
