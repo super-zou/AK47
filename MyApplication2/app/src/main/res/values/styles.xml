@@ -9,6 +9,26 @@
         <item name="android:textColor">@color/mcv_text_date_light</item>
         <item name="fontFamily">@font/shirkhand</item>
     </style>
+    
+        <style name="TextALiBaBaAppearance" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:textColor">@color/black</item>
+        <item name="fontFamily">@font/alibaba</item>
+    </style>
+
+    <style name="TextSourceHanSansAppearance" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:textColor">@color/black</item>
+        <item name="fontFamily">@font/sourcehansans</item>
+    </style>
+
+    <style name="TextSourceHanSansLightAppearance" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:textColor">@color/black</item>
+        <item name="fontFamily">@font/sourcehansanslight</item>
+    </style>
+
+    <style name="TextSourceHanSansBoldAppearance" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:textColor">@color/black</item>
+        <item name="fontFamily">@font/sourcehansansbold</item>
+    </style>
 
     <style name="CustomDateAppearance" parent="TextAppearance.AppCompat.Medium">
         <item name="android:textColor">@color/mcv_text_date_light</item>
