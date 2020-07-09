@@ -1,0 +1,9 @@
+<EditText android:id="@+id/contain_item_introduction_edit"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
+    android:hint="@string/contain_item_introduction_hint"
+    android:textColor="@color/blue_dark"
+    android:textCursorDrawable="@drawable/cursor_color"
+    android:theme="@style/MyEditText"
+    xmlns:android="http://schemas.android.com/apk/res/android" />
