@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/blue_dark"
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
@@ -10,8 +9,7 @@
         android:id="@+id/add_dynamics_statusbar"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:layout_marginBottom="18dp"
-        android:background="@color/blue_dark">
+        android:layout_marginBottom="18dp">
 
         <TextView
             android:id="@+id/left_back"
@@ -30,7 +28,7 @@
             android:layout_centerInParent="true"
             android:gravity="center"
             android:text="上传照片"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:textSize="16sp" />
 
         <TextView
@@ -52,7 +50,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:text="@string/set_more_picture"
-        android:textColor="@color/white" />
+        android:textColor="@color/black" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler"
