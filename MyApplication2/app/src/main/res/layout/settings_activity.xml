@@ -212,7 +212,7 @@
             android:textSize="18sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/certificate" />
+            android:text="@string/fa_certificate" />
 
         <TextView
             android:id="@+id/authentication"
