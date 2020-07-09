@@ -8,6 +8,7 @@
 
     <include
         android:id="@+id/custom_actionbar"
+        android:layout_margin="16dp"
         layout="@layout/custom_actionbar_common"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
@@ -132,7 +133,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:textSize="16sp"
-                    android:textAppearance="@style/CustomTextNoticeAppearance"
+                    android:textColor="@color/text_color_gray"
                     android:text="@string/guide_service_introduction_suggestion" />
                     
                     <EditText
@@ -299,7 +300,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:textSize="16sp"
-                    android:textAppearance="@style/CustomTextNoticeAppearance"
+                    android:textColor="@color/text_color_gray"
                     android:text="@string/route_introduction_suggestion" />
                 
                 <androidx.gridlayout.widget.GridLayout
@@ -414,7 +415,7 @@
                     android:textColor="@color/white"
                     android:background="@drawable/btn_big_radius_primary"
                     android:textAppearance="@style/CustomTextAppearance"
-                    android:text="@string/add_route_item" />
+                    android:text="@string/add_new_item" />
                     
                     </LinearLayout>
             
@@ -454,15 +455,15 @@
                         android:id="@+id/cny"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignTop="@+id/charge_setting_edit"
-                        android:layout_alignBottom="@+id/charge_setting_edit"
+                        android:layout_alignTop="@+id/price_setting_edit"
+                        android:layout_alignBottom="@+id/price_setting_edit"
                         android:gravity="center"
                         android:text="@string/fa_cny"
                         android:textColor="@color/black"
                         android:textSize="18sp" />
                         
                         <EditText
-                        android:id="@+id/charge_setting_edit"
+                        android:id="@+id/price_setting_edit"
                         style="@style/EditTextCustom"
                         android:layout_width="wrap_content"
                         android:layout_height="50dp"
@@ -479,10 +480,10 @@
                         android:id="@+id/unit_divider"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignTop="@+id/charge_setting_edit"
-                        android:layout_alignBottom="@+id/charge_setting_edit"
+                        android:layout_alignTop="@+id/price_setting_edit"
+                        android:layout_alignBottom="@+id/price_setting_edit"
                         android:layout_marginStart="8dp"
-                        android:layout_toRightOf="@+id/charge_setting_edit"
+                        android:layout_toRightOf="@+id/price_setting_edit"
                         android:gravity="center"
                         android:text="@string/unit_divider"
                         android:textColor="@color/black"
@@ -564,45 +565,105 @@
                 </RadioGroup>
                 
                 </LinearLayout>
+             <!--limit of group's amount-->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/group_amount_limit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone">
+                <TextView
+                    android:id="@+id/group_count_limit_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:text="@string/group_count_limit"
+                    android:textColor="@color/black"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
+                
+                <TextView
+                    android:id="@+id/group_count_limit_desc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/group_count_limit_desc"
+                    android:textAppearance="@style/CustomTextAppearance"
+                    android:textColor="@color/black"
+                    app:layout_constraintStart_toStartOf="@+id/group_count_limit_title"
+                    app:layout_constraintTop_toBottomOf="@+id/group_count_limit_title"/>
+                
+                <EditText
+                    android:id="@+id/group_count_limit_edit"
+                    style="@style/EditTextCustom"
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
+                    android:textColor="@color/blue_dark"
+                    android:textCursorDrawable="@drawable/cursor_color"
+                    android:theme="@style/MyEditText"
+                    app:layout_constraintStart_toStartOf="@+id/group_count_limit_title"
+                    app:layout_constraintTop_toBottomOf="@+id/group_count_limit_desc" />
+                
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="3dp"
+                    android:text="@string/persons"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/group_count_limit_edit"
+                    app:layout_constraintStart_toEndOf="@+id/group_count_limit_edit"
+                    app:layout_constraintTop_toTopOf="@+id/group_count_limit_edit" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
             <!--appointment condition-->
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/appoinment_condition_wrapper"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:visibility="gone">
                 <TextView
-                    android:id="@+id/appointment_conditipon"
+                    android:id="@+id/appointment_condition"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:text="@string/appointment_conditipon"
+                    android:text="@string/appointment_condition"
                     android:textColor="@color/black"
                     android:textSize="22sp"
-                    android:textStyle="bold" />
-                    <TextView
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
+                <TextView
+                    android:id="@+id/other_condition_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
+                    android:text="@string/appointment_condition_desc"
                     android:textAppearance="@style/CustomTextAppearance"
-                    android:text="@string/appointment_conditipon_desc"
-                    android:textColor="@color/black" />
+                    android:textColor="@color/black"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/appointment_condition"/>
 
                 <TextView
+                    android:id="@+id/sex_requment"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="32dp"
-                    android:textAppearance="@style/CustomTextAppearance"
-                    android:textStyle="bold"
                     android:text="@string/appointment_sex"
-                    android:textColor="@color/black" />
+                    android:textAppearance="@style/CustomTextAppearance"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    app:layout_constraintTop_toBottomOf="@+id/other_condition_title"/>
                     
-                     <RadioGroup
+                <RadioGroup
                     android:id="@+id/sexRG"
-                    android:layout_marginTop="16dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:layout_marginTop="16dp"
+                    android:orientation="vertical"
+                    app:layout_constraintTop_toBottomOf="@+id/sex_requment">
                     <RadioButton
                         android:id="@+id/radioNo"
                         android:layout_width="wrap_content"
@@ -629,7 +690,7 @@
                         android:theme="@style/MyRadioButton"/>
                 </RadioGroup>
                 
-                                 <EditText
+                <EditText
                     android:id="@+id/other_condition"
                     style="@style/EditTextCustom"
                     android:layout_width="match_parent"
@@ -638,8 +699,9 @@
                     android:hint="@string/other_condition"
                     android:textColor="@color/blue_dark"
                     android:textCursorDrawable="@drawable/cursor_color"
-                    android:theme="@style/MyEditText" />
-            </LinearLayout>
+                    android:theme="@style/MyEditText" 
+                    app:layout_constraintTop_toBottomOf="@+id/sexRG"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
             
             <!--appoint date-->
             <LinearLayout
