@@ -9,6 +9,7 @@
     <include
         android:id="@+id/custom_actionbar"
         layout="@layout/custom_actionbar_common"
+        android:layout_margin="16dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
         
@@ -31,6 +32,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:elevation="6dp"
+                android:layout_marginTop="36dp"
                 android:orientation="vertical"
                 android:visibility="visible">
 
@@ -114,7 +116,7 @@
                 android:visibility="gone">
 
                 <TextView
-                    android:id="@+id/service_introduction_title"
+                    android:id="@+id/experience_introduction_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
@@ -136,7 +138,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:text="@string/experience_introduction_suggestion"
-                    android:textAppearance="@style/CustomTextNoticeAppearance"
+                    android:textColor="@color/text_color_gray"
                     android:textSize="16sp" />
                     
                     <EditText
@@ -177,11 +179,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:text="@string/select_picture_suggestion"
-                    android:textAppearance="@style/CustomTextNoticeAppearance"
+                    android:textColor="@color/text_color_gray"
                     android:textSize="16sp" />
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/add_experience_picture"
+                    android:id="@+id/add_experience_pictures"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
@@ -220,36 +222,15 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     app:columnCount="1">
-                 <LinearLayout
+                    <EditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/border_all"
-                        android:orientation="vertical"
-                        android:padding="8dp"
-                        android:visibility="visible"
-                        app:layout_row="0">
-
-                        <EditText
-                            android:id="@+id/contain_item_name_edit"
-                            style="@style/EditTextCustom"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="@string/contain_item_name_hint"
-                            android:textColor="@color/blue_dark"
-                            android:textCursorDrawable="@drawable/cursor_color"
-                            android:theme="@style/MyEditText" />
-
-<EditText
-                            android:id="@+id/contain_item_introduction_edit"
-                            style="@style/EditTextCustom"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:hint="@string/contain_item_introduction_hint"
-                            android:textColor="@color/blue_dark"
-                            android:textCursorDrawable="@drawable/cursor_color"
-                            android:theme="@style/MyEditText" />
-                    </LinearLayout>
+                        android:layout_marginTop="8dp"
+                        android:hint="@string/contain_item_introduction_hint"
+                        android:textColor="@color/blue_dark"
+                        android:textCursorDrawable="@drawable/cursor_color"
+                        android:theme="@style/MyEditText"
+                        app:layout_row="0"/>
                 </androidx.gridlayout.widget.GridLayout>
 
                 <TextView
@@ -264,47 +245,7 @@
                     android:textAppearance="@style/CustomTextAppearance"
                     android:textColor="@color/white"
                     android:textSize="16sp" />
-            </LinearLayout>
-            <!--self introduction-->
-            <LinearLayout
-                android:id="@+id/self_introduction_wrapper"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="gone">
-                <TextView
-                    android:id="@+id/self_introduction_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/self_introduction_title"
-                    android:textColor="@color/black"
-                    android:textSize="22sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="@string/self_introduction_notice"
-                    android:textAppearance="@style/CustomTextNoticeAppearance"
-                    android:textColor="@color/black"
-                    android:textSize="16sp" />
-                    
-                                    <EditText
-                    android:id="@+id/self_introduction"
-                    style="@style/EditTextCustom"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="32dp"
-                    android:background="@drawable/shape"
-                    android:gravity="top"
-                    android:hint="@string/self_introduction"
-                    android:minLines="6"
-                    android:textColor="@color/blue_dark"
-                    android:textCursorDrawable="@drawable/cursor_color"
-                    android:theme="@style/MyEditText" />
-            </LinearLayout>
-            
+            </LinearLayout>           
             <!--charge-->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/charge_duration_wrapper"
@@ -313,31 +254,43 @@
                 android:visibility="gone">
 
                 <TextView
-                    android:id="@+id/charge_desc"
+                    android:id="@+id/price_desc_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:text="@string/charge_duration_title"
+                    android:text="@string/price_setting_title"
                     android:textColor="@color/black"
                     android:textSize="22sp"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
                     
-                    <TextView
+                <TextView
+                    android:id="@+id/price_desc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:text="@string/price_setting"
+                    android:lineSpacingMultiplier="1.2"
+                    android:textAppearance="@style/CustomTextAppearance"
+                    android:textColor="@color/black"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/price_desc_title" />
+
+
+                <TextView
                     android:id="@+id/cny"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="24dp"
                     android:text="@string/fa_cny"
                     android:textColor="@color/black"
                     android:textSize="18sp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/charge_desc" />
-
-
-<EditText
-                    android:id="@+id/charge_setting_edit"
+                    app:layout_constraintTop_toBottomOf="@+id/price_desc" />
+                
+                <EditText
+                    android:id="@+id/price_setting_edit"
                     style="@style/EditTextCustom"
                     android:layout_width="wrap_content"
                     android:layout_height="50dp"
@@ -350,8 +303,8 @@
                     app:layout_constraintBottom_toBottomOf="@+id/cny"
                     app:layout_constraintStart_toEndOf="@+id/cny"
                     app:layout_constraintTop_toTopOf="@+id/cny" />
-                    
-                    <TextView
+                
+                <TextView
                     android:id="@+id/experience_unit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -360,46 +313,67 @@
                     android:textColor="@color/black"
                     android:textSize="18sp"
                     app:layout_constraintBottom_toBottomOf="@+id/cny"
-                    app:layout_constraintStart_toEndOf="@+id/charge_setting_edit"
+                    app:layout_constraintStart_toEndOf="@+id/price_setting_edit"
                     app:layout_constraintTop_toTopOf="@+id/cny" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            <!--time-->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/time_wrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone">
 
                 <TextView
-                    android:id="@+id/duration_title"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/time_title"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="32dp"
-                    android:text="@string/experience_duration"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/experience_time_setting"
                     android:textColor="@color/black"
-                    android:textSize="18sp"
-                    app:layout_constraintStart_toStartOf="@+id/cny"
-                    app:layout_constraintTop_toBottomOf="@+id/cny" />
-
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+                
+                <TextView
+                    android:id="@+id/duration_desc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:lineSpacingMultiplier="1.2"
+                    android:text="@string/experience_duration"
+                    android:textAppearance="@style/CustomTextAppearance"
+                    android:textColor="@color/black"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/time_title" />
+                
                 <EditText
                     android:id="@+id/duration_edit"
                     style="@style/EditTextCustom"
-                    android:layout_width="wrap_content"
+                    android:layout_width="50dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="24dp"
                     android:gravity="bottom"
                     android:inputType="numberDecimal"
                     android:textColor="@color/blue_dark"
                     android:textCursorDrawable="@drawable/cursor_color"
                     android:theme="@style/MyEditText"
-                    app:layout_constraintBottom_toBottomOf="@+id/duration_title"
-                    app:layout_constraintStart_toEndOf="@+id/duration_title"
-                    app:layout_constraintTop_toTopOf="@+id/duration_title" />
-                    
-                    <TextView
+                    app:layout_constraintStart_toStartOf="@+id/duration_desc"
+                    app:layout_constraintTop_toBottomOf="@+id/duration_desc" />
+                
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="3dp"
                     android:text="@string/hours"
                     android:textColor="@color/black"
                     android:textSize="18sp"
-                    app:layout_constraintBottom_toBottomOf="@+id/duration_title"
+                    app:layout_constraintBottom_toBottomOf="@+id/duration_edit"
                     app:layout_constraintStart_toEndOf="@+id/duration_edit"
-                    app:layout_constraintTop_toTopOf="@+id/duration_title" />
+                    app:layout_constraintTop_toTopOf="@+id/duration_edit" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
+                        
             <!--appointment condition-->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/appoinment_condition_wrapper"
@@ -435,7 +409,7 @@
                 <EditText
                     android:id="@+id/group_count_limit_edit"
                     style="@style/EditTextCustom"
-                    android:layout_width="wrap_content"
+                    android:layout_width="50dp"
                     android:layout_height="wrap_content"
                     android:inputType="numberDecimal"
                     android:textColor="@color/blue_dark"
@@ -456,7 +430,8 @@
                     app:layout_constraintStart_toEndOf="@+id/group_count_limit_edit"
                     app:layout_constraintTop_toTopOf="@+id/group_count_limit_title" />
                     
-                     <EditText
+                <EditText
+                    android:visibility="gone"
                     android:id="@+id/condition_edit"
                     style="@style/EditTextCustom"
                     android:layout_width="match_parent"
@@ -470,6 +445,37 @@
                     app:layout_constraintTop_toBottomOf="@+id/group_count_limit_title"/>
             </androidx.constraintlayout.widget.ConstraintLayout>
             
+             <!--experience address-->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/address_wrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+                <TextView
+                    android:id="@+id/address_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/experience_address"
+                    android:textColor="@color/black"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
+                <EditText
+                    android:id="@+id/address_edit"
+                    style="@style/EditTextCustom"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:hint="@string/experience_address_hint"
+                    android:textColor="@color/blue_dark"
+                    android:textCursorDrawable="@drawable/cursor_color"
+                    android:theme="@style/MyEditText"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/address_title"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
              <!--appoint date-->
             <LinearLayout
                 android:id="@+id/appoint_date_wrapper"
@@ -487,15 +493,15 @@
                     android:textSize="22sp"
                     android:textStyle="bold" />
                     
-                     <TextView
+                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:text="@string/appoint_date"
+                    android:text="@string/experience_appoint_date"
                     android:textAppearance="@style/CustomTextAppearance"
                     android:textColor="@color/black" />
                     
-                     <com.prolificinteractive.materialcalendarview.MaterialCalendarView xmlns:app="http://schemas.android.com/apk/res-auto"
+                 <com.prolificinteractive.materialcalendarview.MaterialCalendarView xmlns:app="http://schemas.android.com/apk/res-auto"
                     android:id="@+id/calendarView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -509,6 +515,45 @@
                     app:mcv_selectionMode="multiple"
                     app:mcv_showOtherDates="all"
                     app:mcv_weekDayTextAppearance="@style/CustomTextAppearance" />
+            </LinearLayout>
+            <!--self introduction-->
+            <LinearLayout
+                android:id="@+id/self_introduction_wrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/self_introduction_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/self_introduction_title"
+                    android:textColor="@color/black"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/self_introduction_notice"
+                    android:textAppearance="@style/CustomTextNoticeAppearance"
+                    android:textColor="@color/black"
+                    android:textSize="16sp" />
+
+                <EditText
+                    android:id="@+id/self_introduction"
+                    style="@style/EditTextCustom"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:background="@drawable/shape"
+                    android:gravity="top"
+                    android:hint="@string/self_introduction"
+                    android:minLines="6"
+                    android:textColor="@color/blue_dark"
+                    android:textCursorDrawable="@drawable/cursor_color"
+                    android:theme="@style/MyEditText" />
             </LinearLayout>
             
              <!--Cancellation policy-->
@@ -528,12 +573,14 @@
                     android:textSize="22sp"
                     android:textStyle="bold" />
                     
-                                <TextView
+                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
+                    android:textSize="16sp"
                     android:text="@string/cancellation_policy_summary"
-                    android:textAppearance="@style/CustomTextAppearance"
+                    android:includeFontPadding="false"
+                    android:textAppearance="@style/TextSourceHanSansAppearance"
                     android:textColor="@color/black" />
 
                 <TextView
@@ -546,12 +593,15 @@
                     android:textSize="22sp"
                     android:textStyle="bold" />
                     
-                    <TextView
+                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
+                    android:lineSpacingMultiplier="1.2"
                     android:text="@string/cancellation_by_weather_desc"
-                    android:textAppearance="@style/CustomTextAppearance"
+                    android:includeFontPadding="false"
+                    android:textSize="16sp"
+                    android:textAppearance="@style/TextSourceHanSansAppearance"
                     android:textColor="@color/black" />
 
                 <TextView
@@ -564,13 +614,15 @@
                     android:textSize="22sp"
                     android:textStyle="bold" />
                     
-                     <TextView
+                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
+                    android:lineSpacingMultiplier="1.2"
                     android:text="@string/cancellation_by_talent_desc"
-                    android:textAppearance="@style/CustomTextAppearance"
-                    android:textColor="@color/black" />
+                    android:textSize="16sp"
+                    android:includeFontPadding="false"
+                    android:textAppearance="@style/TextSourceHanSansAppearance"
 
                 <androidx.appcompat.widget.AppCompatCheckBox
                     android:id="@+id/understand_cancellation"
