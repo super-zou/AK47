@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/meet_tab_layout"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:background="@color/colorWhite"
+        app:tabBackground="@color/colorWhite"
+        app:tabIndicatorColor="@color/blue_dark"
+        app:tabIndicatorHeight="2dp"
+        app:tabMode="scrollable"
+        app:tabGravity="center"
+        app:tabSelectedTextColor="@color/blue_dark"
+        app:tabTextColor="@color/blue_dark"
+        app:tabTextAppearance="@style/MyTabLayoutTextAppearance"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/activity_create"/>
+        
+   <TextView
+        android:id="@+id/search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/fa_search"
+        android:textColor="@color/blue_dark"
+        app:layout_constraintBottom_toTopOf="@+id/meet_view_pager"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/meet_tab_layout"></TextView>
+        
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/activity_create"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginEnd="8dp"
+        android:background="@color/background"
+        android:gravity="center"
+        android:text="@string/fa_camera_retro"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+        
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/meet_view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="36dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/meet_tab_layout" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
