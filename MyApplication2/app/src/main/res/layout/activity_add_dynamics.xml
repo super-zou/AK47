@@ -4,19 +4,18 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
     android:fitsSystemWindows="true">
     <RelativeLayout
         android:id="@+id/add_dynamics_statusbar"
         android:layout_width="match_parent"
         android:layout_marginBottom="18dp"
         android:layout_height="48dp"
-        android:background="@color/background">
+        android:background="@color/white">
 
         <TextView
             android:id="@+id/left_back"
             android:text="@string/left_angle"
-            android:textColor="@color/white"
+            android:textColor="@color/blue_dark"
             android:textSize="26sp"
             android:layout_centerVertical="true"
             android:gravity="center"
@@ -31,7 +30,7 @@
             android:layout_marginRight="5dp"
             android:gravity="center"
             android:text="发布"
-            android:textColor="@color/white"
+            android:textColor="@color/blue_dark"
             android:textSize="16sp" />
     </RelativeLayout>
     <com.google.android.material.textfield.TextInputLayout
@@ -51,7 +50,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/dynamics_input_hint"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:textCursorDrawable="@drawable/cursor_color"
             android:theme="@style/MyEditText" />
     </com.google.android.material.textfield.TextInputLayout>
