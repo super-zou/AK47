@@ -1,36 +1,33 @@
-package com.hetang.meet;
+package com.hetang.explore;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.ActivityInfo;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.hetang.R;
 import com.hetang.adapter.MeetDynamicsListAdapter;
-import com.hetang.common.PicturePreviewActivity;
 import com.hetang.dynamics.AddDynamicsActivity;
-import com.hetang.consult.ConsultSummaryActivity;
 import com.hetang.dynamics.Dynamic;
 import com.hetang.dynamics.DynamicsInteractDetailsActivity;
 import com.hetang.common.MyApplication;
-import com.hetang.home.HomeFragment;
+import com.hetang.experience.WriteShareActivity;
+import com.hetang.main.DynamicFragment;
 import com.hetang.picture.GlideEngine;
 import com.hetang.util.BaseFragment;
 import com.hetang.util.CommonDialogFragmentInterface;
@@ -67,20 +64,18 @@ import okhttp3.Response;
 
 import static com.hetang.dynamics.DynamicOperationDialogFragment.DYNAMIC_OPERATION_RESULT;
 import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE;
-import static com.hetang.home.HomeFragment.GET_MY_NEW_ADD_DONE;
-import static com.hetang.home.HomeFragment.GET_MY_NEW_ADD_DYNAMICS_URL;
-import static com.hetang.util.ParseUtils.ADD_SUBGROUP_ACTIVITY_ACTION;
-import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
+import static com.hetang.main.DynamicFragment.GET_MY_NEW_ADD_DONE;
+import static com.hetang.main.DynamicFragment.GET_MY_NEW_ADD_DYNAMICS_URL;
 
 /**
  * Created by haichao.zou on 2017/11/20.
  */
 
-public class MeetDynamicsFragment extends BaseFragment implements CommonDialogFragmentInterface{
+public class ShareFragment extends BaseFragment implements CommonDialogFragmentInterface{
 
     public static final int REQUEST_CODE = 1;
     private static final boolean isDebug = true;
-    private static final String TAG = "MeetDynamicsFragment";
+    private static final String TAG = "ShareFragment";
     public static final int MEET_DYNAMICS = 0;
     private static final int PAGE_SIZE = 6;
     public static final int NO_MORE_DYNAMICS = 0;
@@ -125,7 +120,7 @@ public class MeetDynamicsFragment extends BaseFragment implements CommonDialogFr
 
     @Override
     protected int getLayoutId() {
-        int layoutId = R.layout.meet_dynamics;
+        int layoutId = R.layout.experience_share_fragment;
         return layoutId;
     }
     
@@ -148,7 +143,16 @@ public class MeetDynamicsFragment extends BaseFragment implements CommonDialogFr
         recyclerView = convertView.findViewById(R.id.recyclerview);
         meetDynamicsListAdapter = new MeetDynamicsListAdapter(getActivity(), getFragmentManager(), false);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setLoadingMoreProgressStyle(ProgressStyle.BallRotate);
+        //recyclerView.getDefaultFootView().setLoadingHint(getString(R.string.loading_pull_up_tip));
+        recyclerView.getDefaultFootView().setNoMoreHint(getString(R.string.loading_no_more_no_update));
+        recyclerView.setPullRefreshEnabled(false);
+
+        // When the item number of the screen number is list.size-2,we call the onLoadMore
+        recyclerView.setLimitNumberToCallLoadMore(PAGE_SIZE - 2);
+        recyclerView.setLoadingMoreProgressStyle(ProgressStyle.SquareSpin);
 
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -164,30 +168,11 @@ public class MeetDynamicsFragment extends BaseFragment implements CommonDialogFr
             }
         });
 
-        //+Begin added by xuchunping
-        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        recyclerView.setLayoutManager(linearLayoutManager);
-
-        recyclerView.setRefreshProgressStyle(BallSpinFadeLoader);
-        recyclerView.setLoadingMoreProgressStyle(ProgressStyle.BallRotate);
-        //mRecyclerView.setArrowImageView(R.drawable.);
-
-        recyclerView.getDefaultRefreshHeaderView().setRefreshTimeVisible(true);
-
-        recyclerView.getDefaultFootView().setLoadingHint(getString(R.string.loading_pull_up_tip));
-        recyclerView.getDefaultFootView().setNoMoreHint(getString(R.string.loading_no_more));
-        final int itemLimit = 5;
-
-        // When the item number of the screen number is list.size-2,we call the onLoadMore
-        recyclerView.setLimitNumberToCallLoadMore(PAGE_SIZE - 2);
-        recyclerView.setRefreshProgressStyle(ProgressStyle.BallBeat);
-        recyclerView.setLoadingMoreProgressStyle(ProgressStyle.SquareSpin);
-
         recyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
 
             @Override
             public void onRefresh() {
-                requestData(false);
+                //requestData(false);
             }
 
             @Override
@@ -233,7 +218,7 @@ public class MeetDynamicsFragment extends BaseFragment implements CommonDialogFr
                 currentPos = position;
                 DynamicOperationDialogFragment dynamicOperationDialogFragment = new DynamicOperationDialogFragment();
                 dynamicOperationDialogFragment.setArguments(bundle);
-                dynamicOperationDialogFragment.setTargetFragment(MeetDynamicsFragment.this, REQUEST_CODE);
+                dynamicOperationDialogFragment.setTargetFragment(ShareFragment.this, REQUEST_CODE);
                 dynamicOperationDialogFragment.show(getFragmentManager(), "DynamicOperationDialogFragment");
             }
 
@@ -241,22 +226,12 @@ public class MeetDynamicsFragment extends BaseFragment implements CommonDialogFr
 
         recyclerView.setAdapter(meetDynamicsListAdapter);
 
-        final FloatingActionButton dynamicCreate = convertView.findViewById(R.id.dynamic_create);
+        final Button shareCreateBtn = convertView.findViewById(R.id.share_create_btn);
         
-                TextView consultTV = convertView.findViewById(R.id.consult);
-        consultTV.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MyApplication.getContext(), ConsultSummaryActivity.class);
-                //intent.putExtra("type", ParseUtils.ADD_MEET_DYNAMIC_ACTION);
-                startActivity(intent);
-            }
-        });
-
-        dynamicCreate.setOnClickListener(new View.OnClickListener() {
+        shareCreateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MyApplication.getContext(), AddDynamicsActivity.class);
+                Intent intent = new Intent(MyApplication.getContext(), WriteShareActivity.class);
                 intent.putExtra("type", ParseUtils.ADD_MEET_DYNAMIC_ACTION);
                 startActivityForResult(intent, Activity.RESULT_FIRST_USER);
             }
@@ -347,7 +322,7 @@ public class MeetDynamicsFragment extends BaseFragment implements CommonDialogFr
         dynamic.setNickName(dynamicJSONObject.optString("nickname"));
         dynamic.setUid(dynamicJSONObject.optInt("uid"));
 
-        if(dynamicJSONObject.optInt("type") == ADD_SUBGROUP_ACTIVITY_ACTION){
+        if(dynamicJSONObject.optInt("pid") != 0){
             dynamic.setPid(dynamicJSONObject.optInt("pid"));
         }
 
@@ -586,7 +561,7 @@ public class MeetDynamicsFragment extends BaseFragment implements CommonDialogFr
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == Activity.RESULT_FIRST_USER) {
             switch (resultCode) {
-                case HomeFragment.COMMENT_UPDATE_RESULT:
+                case DynamicFragment.COMMENT_UPDATE_RESULT:
                     int commentCount = data.getIntExtra("commentCount", 0);
                     if (isDebug) Slog.d(TAG, "==========commentCount: " + commentCount);
                     Message msg = new Message();
@@ -597,13 +572,13 @@ public class MeetDynamicsFragment extends BaseFragment implements CommonDialogFr
                     handler.sendMessage(msg);
                     break;
 
-                case HomeFragment.PRAISE_UPDATE_RESULT:
+                case DynamicFragment.PRAISE_UPDATE_RESULT:
                     handler.sendEmptyMessage(PRAISE_UPDATE);
                     break;
-                case HomeFragment.DYNAMICS_UPDATE_RESULT:
+                case DynamicFragment.DYNAMICS_UPDATE_RESULT:
                     getMyNewActivity();
                     break;
-                                    case DYNAMIC_OPERATION_RESULT:
+                case DYNAMIC_OPERATION_RESULT:
                     handler.sendEmptyMessage(DYNAMICS_DELETE);
                     break;
                 default:
@@ -614,7 +589,7 @@ public class MeetDynamicsFragment extends BaseFragment implements CommonDialogFr
 
     private void getMyNewActivity() {
         requestBody = new FormBody.Builder()
-                .add("type", String.valueOf(ParseUtils.ADD_MEET_DYNAMIC_ACTION))
+                .add("type", String.valueOf(ParseUtils.WRITE_SHARE_EXPERIENCE))
                 .add("step", String.valueOf(PAGE_SIZE))
                 .add("page", String.valueOf(0))
                 .build();
@@ -670,17 +645,17 @@ public class MeetDynamicsFragment extends BaseFragment implements CommonDialogFr
 
 
     static class MyHandler extends Handler {
-        WeakReference<MeetDynamicsFragment> meetDynamicsFragmentWeakReference;
+        WeakReference<ShareFragment> meetDynamicsFragmentWeakReference;
 
-        MyHandler(MeetDynamicsFragment meetDynamicsFragment) {
-            meetDynamicsFragmentWeakReference = new WeakReference<MeetDynamicsFragment>(meetDynamicsFragment);
+        MyHandler(ShareFragment shareFragment) {
+            meetDynamicsFragmentWeakReference = new WeakReference<ShareFragment>(shareFragment);
         }
 
         @Override
         public void handleMessage(Message message) {
-            MeetDynamicsFragment mMeetDynamicsFragment = meetDynamicsFragmentWeakReference.get();
-            if (mMeetDynamicsFragment != null) {
-                mMeetDynamicsFragment.handleMessage(message);
+            ShareFragment mShareFragment = meetDynamicsFragmentWeakReference.get();
+            if (mShareFragment != null) {
+                mShareFragment.handleMessage(message);
             }
         }
     }
@@ -728,7 +703,7 @@ public class MeetDynamicsFragment extends BaseFragment implements CommonDialogFr
         if (isLoadMore) {
             page = meetList.size() / PAGE_SIZE;
             requestBody = new FormBody.Builder()
-                    .add("type", String.valueOf(ParseUtils.ADD_MEET_DYNAMIC_ACTION))
+                    .add("type", String.valueOf(ParseUtils.WRITE_SHARE_EXPERIENCE))
                     .add("step", String.valueOf(PAGE_SIZE))
                     .add("page", String.valueOf(page))
                     .build();
@@ -737,7 +712,7 @@ public class MeetDynamicsFragment extends BaseFragment implements CommonDialogFr
             if (isDebug) Slog.d(TAG, "requestData last:" + last);
             requestBody = new FormBody.Builder()
                     .add("last", last)
-                    .add("type", String.valueOf(ParseUtils.ADD_MEET_DYNAMIC_ACTION))
+                    .add("type", String.valueOf(ParseUtils.WRITE_SHARE_EXPERIENCE))
                     .add("step", String.valueOf(PAGE_SIZE))
                     .add("page", String.valueOf(0))
                     .build();
