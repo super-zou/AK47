@@ -1214,9 +1214,8 @@ public class ArchiveFragment extends BaseFragment {
 
 
     private void setFollowedStatistics(final int count) {
-        LinearLayout followedCountWrapper = mView.findViewById(R.id.followed_count_wrap);
         TextView followedCount = mView.findViewById(R.id.followed_count);
-        followedCountWrapper.setOnClickListener(new View.OnClickListener() {
+        followedCount.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
@@ -1234,11 +1233,10 @@ public class ArchiveFragment extends BaseFragment {
     }
 
     private void setPraisedStatistics(final int count) {
-        LinearLayout praisedCountWrapper = mView.findViewById(R.id.praised_count_wrap);
-        TextView praisedCount = mView.findViewById(R.id.praised_count);
+        TextView praisedCount = mView.findViewById(R.id.praised_statistics);
         praisedCount.setText(String.valueOf(count));
 
-        praisedCountWrapper.setOnClickListener(new View.OnClickListener() {
+        praisedCount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Bundle bundle = new Bundle();
