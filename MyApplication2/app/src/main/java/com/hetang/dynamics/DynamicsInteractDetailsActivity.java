@@ -39,7 +39,7 @@ import com.hetang.adapter.MeetDynamicsListAdapter;
 import com.hetang.adapter.MeetRecommendListAdapter;
 import com.hetang.common.BaseAppCompatActivity;
 import com.hetang.common.MyApplication;
-import com.hetang.home.HomeFragment;
+import com.hetang.main.DynamicFragment;
 import com.hetang.meet.MeetRecommendFragment;
 import com.hetang.util.CommonDialogFragmentInterface;
 import com.hetang.util.CommonUserListDialogFragment;
@@ -55,7 +55,7 @@ import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.hetang.R;
 import com.hetang.adapter.DynamicsInteractDetailsAdapter;
 import com.hetang.main.MeetArchiveActivity;
-import com.hetang.meet.MeetDynamicsFragment;
+import com.hetang.explore.ShareFragment;
 import com.hetang.meet.UserMeetInfo;
 
 import org.json.JSONArray;
@@ -75,9 +75,9 @@ import okhttp3.Response;
 
 import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
-import static com.hetang.meet.MeetDynamicsFragment.DYNAMICS_PRAISED;
-import static com.hetang.meet.MeetDynamicsFragment.GET_DYNAMICS_WITH_ID_URL;
-import static com.hetang.meet.MeetDynamicsFragment.REQUEST_INTERACT_URL;
+import static com.hetang.explore.ShareFragment.DYNAMICS_PRAISED;
+import static com.hetang.explore.ShareFragment.GET_DYNAMICS_WITH_ID_URL;
+import static com.hetang.explore.ShareFragment.REQUEST_INTERACT_URL;
 
 public class DynamicsInteractDetailsActivity extends BaseAppCompatActivity implements CommonDialogFragmentInterface {
     private static final String TAG = "DynamicsInteractDetails";
@@ -341,9 +341,9 @@ public class DynamicsInteractDetailsActivity extends BaseAppCompatActivity imple
                 if (!TextUtils.isEmpty(responseText)) {
                     try {
                         JSONObject relatedContentJSONObject = new JSONObject(responseText).optJSONObject("dynamic");
-                        MeetDynamicsFragment meetDynamicsFragment = new MeetDynamicsFragment();
+                        ShareFragment shareFragment = new ShareFragment();
                         if (relatedContentJSONObject != null) {
-                            dynamic = meetDynamicsFragment.setMeetDynamics(relatedContentJSONObject);
+                            dynamic = shareFragment.setMeetDynamics(relatedContentJSONObject);
                         }
                         if (dynamic != null){
                             setDynamicsInteract(dynamic);
@@ -1265,9 +1265,9 @@ private void setDynamicContentView(View view, String pictures){
         Intent intent = new Intent();
         intent.putExtra("commentCount", commentCount+newCommentCount);
         if (type == MY_CONDITION_COMMENT){
-            setResult(HomeFragment.MY_COMMENT_UPDATE_RESULT, intent);
+            setResult(DynamicFragment.MY_COMMENT_UPDATE_RESULT, intent);
         }else {
-            setResult(HomeFragment.COMMENT_UPDATE_RESULT, intent);
+            setResult(DynamicFragment.COMMENT_UPDATE_RESULT, intent);
         }
     }
 
@@ -1275,9 +1275,9 @@ private void setDynamicContentView(View view, String pictures){
         Slog.d(TAG, "----->setPraiseUpdateResult");
         Intent intent = new Intent();
         if (type == MY_CONDITION_COMMENT){
-            setResult(HomeFragment.MY_PRAISE_UPDATE_RESULT, intent);
+            setResult(DynamicFragment.MY_PRAISE_UPDATE_RESULT, intent);
         }else {
-            setResult(HomeFragment.PRAISE_UPDATE_RESULT, intent);
+            setResult(DynamicFragment.PRAISE_UPDATE_RESULT, intent);
         }
     }
     
@@ -1285,9 +1285,9 @@ private void setDynamicContentView(View view, String pictures){
         Slog.d(TAG, "----->setPraiseUpdateResult");
         Intent intent = new Intent();
         if (type == MY_CONDITION_COMMENT){
-            setResult(HomeFragment.MY_LOVE_UPDATE_RESULT, intent);
+            setResult(DynamicFragment.MY_LOVE_UPDATE_RESULT, intent);
         }else {
-            setResult(HomeFragment.LOVE_UPDATE_RESULT, intent);
+            setResult(DynamicFragment.LOVE_UPDATE_RESULT, intent);
         }
     }
 
