@@ -2,7 +2,6 @@ package com.hetang.experience;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -27,7 +26,7 @@ public class ExperienceTalentApplyDF extends BaseDialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         mDialog = new Dialog(getActivity(), R.style.Theme_MaterialComponents_DialogWhenLarge);
-        mDialog.setContentView(R.layout.experience_talent_authentication);
+        mDialog.setContentView(R.layout.experience_talent_introduction);
         initView();
 
         mDialog.setCanceledOnTouchOutside(true);
@@ -54,14 +53,6 @@ public class ExperienceTalentApplyDF extends BaseDialogFragment {
     }
 
     private void initView() {
-        Button applyGuideBtn = mDialog.findViewById(R.id.apply_guide);
-        applyGuideBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-               startGuideAuthenticationDF();
-                mDialog.dismiss();
-            }
-        });
 
         Button developExperienceBtn = mDialog.findViewById(R.id.develop_experience);
         developExperienceBtn.setOnClickListener(new View.OnClickListener() {
@@ -70,11 +61,6 @@ public class ExperienceTalentApplyDF extends BaseDialogFragment {
 developExperienceDF();
             }
         });
-    }
-
-    private void startGuideAuthenticationDF(){
-        GuideApplyDialogFragment guideApplyDialogFragment = new GuideApplyDialogFragment();
-        guideApplyDialogFragment.show(getFragmentManager(), "GuideApplyDialogFragment");
     }
 
    public void developExperienceDF(){
