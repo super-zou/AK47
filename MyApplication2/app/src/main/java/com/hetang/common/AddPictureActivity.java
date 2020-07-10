@@ -66,9 +66,6 @@ public class AddPictureActivity extends BaseAppCompatActivity {
     private List<LocalMedia> selectList = new ArrayList<>();
     //private String[] activity_picture_array;
     private List<File> selectFileList = new ArrayList<>();
-    private Map<String, String> dynamicsText = new HashMap<>();
-    private PictureParameterStyle mPictureParameterStyle;
-    private PictureCropParameterStyle mCropParameterStyle;
     private AddDynamicsActivity addDynamicsActivity;
 
     public static final String ADD_PICTURE_BROADCAST = "com.hetang.action.PICTURE_ADD";
