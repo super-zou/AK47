@@ -65,6 +65,7 @@ import static com.hetang.group.SubGroupActivity.GROUP_ADD_BROADCAST;
 import static com.hetang.talent.TalentAuthenticationDialogFragment.COMMON_TALENT_AUTHENTICATION_RESULT_OK;
 import static com.hetang.talent.TalentAuthenticationDialogFragment.TALENT_AUTHENTICATION_RESULT_OK;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
+import static com.hetang.util.DateUtil.timeStampToDay;
 
 public class SingleGroupActivity extends BaseAppCompatActivity implements CommonDialogFragmentInterface {
     private static final boolean isDebug = true;
@@ -311,7 +312,7 @@ public class SingleGroupActivity extends BaseAppCompatActivity implements Common
         if (group != null) {
             singleGroup.gid = group.optInt("gid");
             singleGroup.introduction = group.optString("introduction");
-            singleGroup.created = Utility.timeStampToDay(group.optInt("created"));
+            singleGroup.created = timeStampToDay(group.optInt("created"));
             singleGroup.memberCount = group.optInt("member_count");
             singleGroup.maleCount = group.optInt("male_count");
             singleGroup.femaleCount = group.optInt("female_count");
