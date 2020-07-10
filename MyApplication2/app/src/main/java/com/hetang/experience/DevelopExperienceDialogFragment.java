@@ -687,29 +687,37 @@ private void initCityJsondata(String jsonFile) {
         });
     }
 
-    private void submitChargeAndLimitations(boolean isModify) {
+    private void saveItemsInfo(String itemString, boolean modified) {
+        Slog.d(TAG, "------------------>saveItemsInfo modified: " + modified);
         showProgressDialog(getContext().getString(R.string.saving_progress));
-        mChargeAndLimitString = getChargeAndLimit().toString();
-        FormBody.Builder builder = new FormBody.Builder()
-                .add("tid", String.valueOf(tid))
-                .add("charge_and_limit", mChargeAndLimitString);
-        String uri = SUBMIT_CHARGE_AND_LIMIT_URL;
-        if (isModify) {
-            uri = MODIFY_CHARGE_AND_LIMIT_URL;
+        FormBody.Builder builder;
+        String uri = "";
+        if (modified) {
+            builder = new FormBody.Builder()
+                    .add("tid", String.valueOf(tid))
+                    .add("item_string", itemString);
+            uri = MODIFY_BASE_INFO_URL;
+        } else {
+            builder = new FormBody.Builder()
+                    .add("eid", String.valueOf(eid))
+                    .add("item_string", itemString);
+            uri = SAVE_ITEMS_URL;
         }
         
         RequestBody requestBody = builder.build();
+
         HttpUtil.sendOkHttpRequest(mContext, uri, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
-                Slog.d(TAG, "submitChargeAndLimitations response : " + responseText);
+                Slog.d(TAG, "submitBaseInfo response : " + responseText);
                 if (!TextUtils.isEmpty(responseText)) {
                     try {
                         int result = new JSONObject(responseText).optInt("result");
-                        if (result == 1) {
+                        if (result == 1){
+                            isItemsSaved = true;
                             dismissProgressDialog();
-                            myHandler.sendEmptyMessage(WRITE_BASE_INFO_SUCCESS);
+                            myHandler.sendEmptyMessage(SAVE_ITEMS_SUCCESS);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -723,6 +731,159 @@ private void initCityJsondata(String jsonFile) {
             }
         });
     }
+    
+    private void submitPrice(boolean isModify) {
+        showProgressDialog(getContext().getString(R.string.saving_progress));
+        FormBody.Builder builder = new FormBody.Builder()
+                .add("eid", String.valueOf(eid))
+                .add("price", mChargeAmount.getText().toString());
+        String uri = SUBMIT_CHARGE_URL;
+        if (isModify) {
+            uri = MODIFY_CHARGE_URL;
+        }
+        
+        RequestBody requestBody = builder.build();
+        HttpUtil.sendOkHttpRequest(mContext, uri, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String responseText = response.body().string();
+                Slog.d(TAG, "submitPrice response : " + responseText);
+                if (!TextUtils.isEmpty(responseText)) {
+                    try {
+                        int result = new JSONObject(responseText).optInt("result");
+
+                        if (result == 1) {
+                            dismissProgressDialog();
+                            isPriceSaved = true;
+                            myHandler.sendEmptyMessage(WRITE_CHARGE_SUCCESS);
+                        }
+                        
+                        } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+        });
+    }
+    
+    private void submitTime(boolean isModify) {
+        showProgressDialog(getContext().getString(R.string.saving_progress));
+        FormBody.Builder builder = new FormBody.Builder()
+                .add("eid", String.valueOf(eid))
+                .add("duration", durationET.getText().toString());
+        String uri = SUBMIT_TIME_URL;
+        if (isModify) {
+            uri = MODIFY_TIME_URL;
+        }
+
+        RequestBody requestBody = builder.build();
+        HttpUtil.sendOkHttpRequest(mContext, uri, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String responseText = response.body().string();
+                Slog.d(TAG, "submitTime response : " + responseText);
+                if (!TextUtils.isEmpty(responseText)) {
+                    try {
+                        int result = new JSONObject(responseText).optInt("result");
+
+                        if (result == 1) {
+                            isTimeSaved = true;
+                            dismissProgressDialog();
+                            myHandler.sendEmptyMessage(WRITE_TIME_SUCCESS);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+        });
+    }
+
+    private void submitLimitation(boolean isModify) {
+        showProgressDialog(getContext().getString(R.string.saving_progress));
+        FormBody.Builder builder = new FormBody.Builder()
+                .add("eid", String.valueOf(eid))
+                .add("amount", groupCountET.getText().toString());
+        String uri = SUBMIT_LIMITATION_URL;
+        if (isModify) {
+            uri = MODIFY_LIMITATION_URL;
+        }
+        
+        RequestBody requestBody = builder.build();
+        HttpUtil.sendOkHttpRequest(mContext, uri, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String responseText = response.body().string();
+                Slog.d(TAG, "submitLimitation response : " + responseText);
+                if (!TextUtils.isEmpty(responseText)) {
+                    try {
+                        int result = new JSONObject(responseText).optInt("result");
+                        if (result == 1) {
+                            isGroupCountSaved = true;
+                            dismissProgressDialog();
+                            myHandler.sendEmptyMessage(WRITE_TIME_SUCCESS);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+        });
+    }
+    
+    private void submitAddress(boolean isModify) {
+        showProgressDialog(getContext().getString(R.string.saving_progress));
+        FormBody.Builder builder = new FormBody.Builder()
+                .add("eid", String.valueOf(eid))
+                .add("address", addressET.getText().toString());
+        String uri = SUBMIT_ADDRESS_URL;
+        if (isModify) {
+            uri = MODIFY_ADDRESS_URL;
+        }
+        
+        RequestBody requestBody = builder.build();
+        HttpUtil.sendOkHttpRequest(mContext, uri, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String responseText = response.body().string();
+                Slog.d(TAG, "submitAddress response : " + responseText);
+                if (!TextUtils.isEmpty(responseText)) {
+                    try {
+                        int result = new JSONObject(responseText).optInt("result");
+                        
+                        if (result == 1) {
+                            isGroupCountSaved = true;
+                            dismissProgressDialog();
+                            myHandler.sendEmptyMessage(WRITE_TIME_SUCCESS);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+        });
+    }
+    
     
     private void submitAppointDate(boolean isModify) {
         showProgressDialog(getContext().getString(R.string.saving_progress));
@@ -739,8 +900,8 @@ private void initCityJsondata(String jsonFile) {
         mSelectedDateList = new ArrayList<>(selectedDateList);
 
         FormBody.Builder builder = new FormBody.Builder()
-                .add("tid", String.valueOf(tid))
-                .add("type", EXPERIENCE_TYPE_GUIDE)
+                .add("eid", String.valueOf(eid))
+                .add("type", String.valueOf(Utility.TalentType.EXPERIENCE.ordinal()))
                 .add("date_string", dateString);
 
         RequestBody requestBody = builder.build();
@@ -774,6 +935,45 @@ private void initCityJsondata(String jsonFile) {
             }
         });
     }
+    
+    private void submitSelfIntroduction(boolean isModify) {
+        showProgressDialog(getContext().getString(R.string.saving_progress));
+        FormBody.Builder builder = new FormBody.Builder()
+                .add("eid", String.valueOf(eid))
+                .add("introduction", selfIntroductionET.getText().toString());
+        String uri = SUBMIT_SELF_INTRODUCTION_URL;
+        if (isModify) {
+            uri = MODIFY_SELF_INTRODUCTION_URL;
+        }
+
+        RequestBody requestBody = builder.build();
+        
+        HttpUtil.sendOkHttpRequest(mContext, uri, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String responseText = response.body().string();
+                Slog.d(TAG, "submitSelfIntroduction response : " + responseText);
+                if (!TextUtils.isEmpty(responseText)) {
+                    try {
+                        int result = new JSONObject(responseText).optInt("result");
+                        if (result == 1) {
+                            isSelfIntroductionSaved = true;
+                            dismissProgressDialog();
+                            myHandler.sendEmptyMessage(WRITE_SELF_INTRODUCTION_SUCCESS);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+        });
+    }
+
 
 private boolean validCheck(int index) {
         Slog.d(TAG, "------------------------>validCheck: " + index);
@@ -801,40 +1001,50 @@ private boolean validCheck(int index) {
                     Toast.makeText(getContext(), getResources().getString(R.string.service_introduction_notice), Toast.LENGTH_LONG).show();
                 }
                 break;
-                case 5:
-                if (!TextUtils.isEmpty(selfIntroductionET.getText().toString())) {
-                    valid = true;
-                } else {
+            case 4://experience pictures
+                if (selectList.size() == 0){
                     valid = false;
-                    Toast.makeText(getContext(), getResources().getString(R.string.self_introduction_empty_notice), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), getResources().getString(R.string.experience_picture_notice), Toast.LENGTH_LONG).show();
+                }else {
+                    valid = true;
                 }
-
                 break;
             case 6:
-                if (routeList.size() == 0) {
-                    valid = false;
-                    Toast.makeText(getContext(), getResources().getString(R.string.route_introduction_empty_notice), Toast.LENGTH_LONG).show();
-                } else {
-                    valid = true;
-                }
-
-                break;
-                case 7:
                 if (!TextUtils.isEmpty(mChargeAmount.getText())) {
                     valid = true;
                 } else {
                     valid = false;
                     Toast.makeText(getContext(), getResources().getString(R.string.charge_empty_notice), Toast.LENGTH_LONG).show();
-                }
-
-                if (developConsultation == -1) {
-                    valid = false;
-                    Toast.makeText(getContext(), getResources().getString(R.string.whether_develop_consultation_notice), Toast.LENGTH_LONG).show();
-                } else {
-                    valid = true;
+                    break;
                 }
                 break;
-                case 9:
+                case 7:
+                if (!TextUtils.isEmpty(durationET.getText())){
+                    valid = true;
+                }else {
+                    valid = false;
+                    Toast.makeText(getContext(), getResources().getString(R.string.duration_empty_notice), Toast.LENGTH_LONG).show();
+                }
+                break;
+                case 8:
+                if (!TextUtils.isEmpty(groupCountET.getText())) {
+                    valid = true;
+                } else {
+                    valid = false;
+                    Toast.makeText(getContext(), getResources().getString(R.string.group_amount_empty_notice), Toast.LENGTH_LONG).show();
+                }
+
+                break;
+            case 9:
+                if (!TextUtils.isEmpty(addressET.getText())) {
+                    valid = true;
+                } else {
+                    valid = false;
+                    Toast.makeText(getContext(), getResources().getString(R.string.address_empty_notice), Toast.LENGTH_LONG).show();
+                }
+
+                break;
+            case 10:
                 if (selectedDateList.size() > 0) {
                     valid = true;
                 } else {
@@ -842,7 +1052,15 @@ private boolean validCheck(int index) {
                     Toast.makeText(getContext(), getResources().getString(R.string.select_date_empty_notice), Toast.LENGTH_LONG).show();
                 }
                 break;
-                case 10:
+            case 11://self introduction
+                if (!TextUtils.isEmpty(selfIntroductionET.getText().toString())) {
+                    valid = true;
+                } else {
+                    valid = false;
+                    Toast.makeText(getContext(), getResources().getString(R.string.self_introduction_empty_notice), Toast.LENGTH_LONG).show();
+                }
+                break;
+            case 12:
                 if (understandCancellation.isChecked()) {
                     valid = true;
                 } else {
@@ -857,22 +1075,6 @@ private boolean validCheck(int index) {
 
         return valid;
     }
-
-    private void processCurrent(int index) {
-        Slog.d(TAG, "------------------------>processCurrent: " + index);
-        switch (index) {
-            case 3:
-                if (!TextUtils.isEmpty(additionalServiceET.getText())) {
-                    additionalServices.put("addition", additionalServiceET.getText().toString());
-                }
-                StringBuilder sb = new StringBuilder();
-                for (String key : additionalServices.keySet()) {
-                    sb.append(additionalServices.get(key) + "\t");
-                }
-                Slog.d(TAG, "---------------------------->additionalServices: " + sb);
-                break;
-        }
-    }
     
      private JSONObject getBaseInfoJsonObject() {
         String additionalServiceStr = "";
@@ -880,24 +1082,7 @@ private boolean validCheck(int index) {
         try {
             jsonObject.put("city", selectCityBtn.getText().toString());
             jsonObject.put("title", headLineET.getText().toString());
-            jsonObject.put("service_introduction", introductionET.getText().toString());
-            jsonObject.put("self_introduction", selfIntroductionET.getText().toString());
-            
-            jsonObject.put("title", headLineET.getText().toString());
-            if (additionalServices.size() > 0) {
-                for (Map.Entry<String, String> additionalService : additionalServices.entrySet()) {
-                    additionalServiceStr += additionalService.getValue() + ";";
-                }
-            }
-
-            if (!TextUtils.isEmpty(additionalServiceET.getText().toString())) {
-                additionalServiceStr += additionalServiceET.getText().toString();
-            }
-            
-            if (!TextUtils.isEmpty(additionalServiceStr)) {
-                jsonObject.put("additional_service", additionalServiceStr);
-            }
-
+            jsonObject.put("introduction", introductionET.getText().toString());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -946,9 +1131,9 @@ private boolean validCheck(int index) {
         super.onDismiss(dialogInterface);
     }
 
-    public void startGuideDetailActivity() {
-        Intent intent = new Intent(getContext(), GuideDetailActivity.class);
-        intent.putExtra("tid", tid);
+    public void startExperienceDetailActivity() {
+        Intent intent = new Intent(getContext(), ExperienceDetailActivity.class);
+        intent.putExtra("eid", eid);
         startActivity(intent);
     }
 
@@ -967,21 +1152,26 @@ private boolean validCheck(int index) {
         switch (msg.what) {
             case WRITE_BASE_INFO_SUCCESS:
                 processNextBtn();
-                //Bundle bundle = msg.getData();
-                //int tid = bundle.getInt("tid");
-                //submitRoute(tid);
                 break;
-            case WRITE_ROUTE_INFO_SUCCESS:
+            case SAVE_PICTURES_SUCCESS:
                 processNextBtn();
                 break;
-            case WRITE_CHARGE_AND_LIMIT_SUCCESS:
+            case SAVE_ITEMS_SUCCESS:
+                processNextBtn();
+                break;
+            case WRITE_CHARGE_SUCCESS:
+                processNextBtn();
+                break;
+            case WRITE_TIME_SUCCESS:
                 processNextBtn();
                 break;
             case WRITE_APPOINT_DATE_SUCCESS:
                 processNextBtn();
                 break;
-            case DELETE_ROUTE_INFO_SUCCESS:
-                //submitRoute(false);
+            case WRITE_SELF_INTRODUCTION_SUCCESS:
+                processNextBtn();
+                break;
+            default:
                 break;
         }
     }
