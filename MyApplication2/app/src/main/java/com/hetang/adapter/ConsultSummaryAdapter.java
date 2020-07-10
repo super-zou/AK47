@@ -47,7 +47,7 @@ import static com.hetang.util.DateUtil.time2Comparison;
  
  public class ConsultSummaryAdapter extends RecyclerView.Adapter<ConsultSummaryAdapter.ViewHolder> {
 
-    private static final String TAG = "GuideSummaryAdapter";
+    private static final String TAG = "ConsultSummaryAdapter";
     private static Context mContext;
     private int innerWidth;
     private List<ConsultSummaryActivity.Consult> mConsultList;
