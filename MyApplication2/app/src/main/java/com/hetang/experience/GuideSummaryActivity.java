@@ -55,6 +55,7 @@ public class GuideSummaryActivity extends BaseAppCompatActivity {
     private static final int GET_ALL_END = 2;
     private static final int NO_MORE = 3;
     final int itemLimit = 1;
+    private int uid = 0;
     ImageView progressImageView;
     AnimationDrawable animationDrawable;
     private int mLoadSize = 0;
@@ -68,6 +69,10 @@ public class GuideSummaryActivity extends BaseAppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.guide_summary);
 
+        if (getIntent() != null){
+            uid = getIntent().getIntExtra("uid", 0);
+        }
+        
         initView();
 
         loadData();
@@ -77,6 +82,9 @@ public class GuideSummaryActivity extends BaseAppCompatActivity {
         Typeface font = Typeface.createFromAsset(MyApplication.getContext().getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
         FontManager.markAsIconContainer(findViewById(R.id.custom_actionbar), font);
 
+                TextView pageTitle = findViewById(R.id.page_title);
+        pageTitle.setText(getResources().getString(R.string.guides));
+        
         handler = new GuideSummaryActivity.MyHandler(this);
         recyclerView = findViewById(R.id.guide_summary_list);
         guideSummaryAdapter = new GuideSummaryAdapter(getContext());
@@ -126,9 +134,9 @@ public class GuideSummaryActivity extends BaseAppCompatActivity {
             @Override
             public void onItemClick(View view, int position) {
                 Slog.d(TAG, "==========click : " + position);
-                int tid = mGuideList.get(position).tid;
+                int sid = mGuideList.get(position).sid;
                 Intent intent = new Intent(getContext(), GuideDetailActivity.class);
-                intent.putExtra("tid", tid);
+                intent.putExtra("sid", sid);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
                 startActivityForResult(intent, RESULT_FIRST_USER);
             }
@@ -154,22 +162,18 @@ public class GuideSummaryActivity extends BaseAppCompatActivity {
             }
         }, 50);
         
-        FloatingActionButton floatingActionButton = findViewById(R.id.create_activity);
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
     }
 
     private void loadData() {
 
         final int page = mGuideList.size() / PAGE_SIZE;
-        RequestBody requestBody = new FormBody.Builder()
-                .add("step", String.valueOf(PAGE_SIZE))
-                .add("page", String.valueOf(page))
-                .build();
+        FormBody.Builder builder = new FormBody.Builder();
+        builder.add("step", String.valueOf(PAGE_SIZE))
+                .add("page", String.valueOf(page));
+        if (uid > 0){
+            builder.add("uid", String.valueOf(uid));
+        }
+        RequestBody requestBody = builder.build();
                 
         HttpUtil.sendOkHttpRequest(getContext(), GUIDE_GET_ALL, requestBody, new Callback() {
             @Override
@@ -242,10 +246,12 @@ public class GuideSummaryActivity extends BaseAppCompatActivity {
         Guide guide = new Guide();
         if (guideObject != null) {
             guide.tid = guideObject.optInt("tid");
+            guide.sid = guideObject.optInt("sid");
             guide.city = guideObject.optString("city");
             guide.headPictureUrl = guideObject.optString("picture_url");
             guide.evaluateScore = guideObject.optInt("score");
             guide.evaluateCount = guideObject.optInt("count");
+            guide.price = guideObject.optInt("price");
             guide.money = guideObject.optInt("amount");
             guide.title = guideObject.optString("title");
             guide.unit = guideObject.optString("unit");
@@ -298,14 +304,9 @@ public class GuideSummaryActivity extends BaseAppCompatActivity {
         }
     }
 
-    public static class Guide implements Serializable {
+    public static class Guide extends ExperienceSummaryActivity.BaseExperience {
         public int tid;
-        public String headPictureUrl;
-        public String city;
-        public String title;
-        public int evaluateScore;
-        public int evaluateCount;
-        public int money;
+        public int sid;
         public String unit;
     }
     
