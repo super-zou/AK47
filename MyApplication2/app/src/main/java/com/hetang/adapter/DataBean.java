@@ -36,6 +36,16 @@ public class DataBean {
      public List<DataBean> getBannerData(){
         return dataBeanList.size()>0?dataBeanList:null;
     }
+    
+   public List<DataBean> getRecommendBannerData() {
+        List<DataBean> list = new ArrayList<>();
+        list.add(new DataBean(R.drawable.banner1, "1", 1));
+        list.add(new DataBean(R.drawable.banner2, "2", 1));
+        list.add(new DataBean(R.drawable.banner3, "3", 1));
+        list.add(new DataBean(R.drawable.banner4, "4", 1));
+        list.add(new DataBean(R.drawable.banner5, "5", 1));
+        return list;
+    }
 
     public static List<String> getColors(int size) {
         List<String> list = new ArrayList<>();
