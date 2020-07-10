@@ -16,6 +16,7 @@ import android.os.Parcelable;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import com.hetang.util.Utility;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -98,33 +99,35 @@ import static android.app.Activity.RESULT_OK;
 import static com.hetang.experience.RouteItemEditDF.newInstance;
 
 public class DevelopExperienceDialogFragment extends BaseDialogFragment implements OnDateSelectedListener {
-    public final static int TALENT_AUTHENTICATION_RESULT_OK = 0;
-    public final static int ROUTE_REQUEST_CODE = 1;
-    public static final String SUBMIT_ROUTE_INFO_URL = HttpUtil.DOMAIN + "?q=travel_guide/write_route_info";
-    public static final String MODIFY_ROUTE_INFO_URL = HttpUtil.DOMAIN + "?q=travel_guide/modify_route_info";
-    public static final int WRITE_ROUTE_INFO_SUCCESS = 2;
     private static final boolean isDebug = true;
     public static final String EXPERIENCE_TYPE_GUIDE = "guide";
     public static final String GUIDE_ADD_BROADCAST = "com.hetang.action.GUIDE_ADD";
     private static final String TAG = "DevelopExperienceDialogFragment";
-    
-    private static final String SUBMIT_BASE_INFO_URL = HttpUtil.DOMAIN + "?q=travel_guide/write_base_info";
-    private static final String MODIFY_BASE_INFO_URL = HttpUtil.DOMAIN + "?q=travel_guide/modify_base_info";
-    private static final String SUBMIT_CHARGE_AND_LIMIT_URL = HttpUtil.DOMAIN + "?q=travel_guide/write_charge_limit_info";
-    private static final String MODIFY_CHARGE_AND_LIMIT_URL = HttpUtil.DOMAIN + "?q=travel_guide/modify_charge_limit_info";
-    private static final String SUBMIT_APPOINTMENT_DATE_URL = HttpUtil.DOMAIN + "?q=travel_guide/write_appoinment_date";
-    private static final String MODIFY_APPOINTMENT_DATE_URL = HttpUtil.DOMAIN + "?q=travel_guide/modify_appoinment_date";
+    private static final String SUBMIT_BASE_INFO_URL = HttpUtil.DOMAIN + "?q=experience/write_base_info";
+    private static final String MODIFY_BASE_INFO_URL = HttpUtil.DOMAIN + "?q=experience/modify_base_info";
+    public static final String SAVE_EXPERIENCE_PICTURES_URL = HttpUtil.DOMAIN + "?q=experience/save_experience_pictures";
+    public static final String MODIFY_EXPERIENCE_PICTURES_URL = HttpUtil.DOMAIN + "?q=experience/modify_experience_pictures";
+    public static final String SAVE_ITEMS_URL = HttpUtil.DOMAIN + "?q=experience/save_experience_items";
+    private static final String SUBMIT_CHARGE_URL = HttpUtil.DOMAIN + "?q=experience/write_charge_info";
+    private static final String SUBMIT_TIME_URL = HttpUtil.DOMAIN + "?q=experience/write_time_info";
+    private static final String MODIFY_TIME_URL = HttpUtil.DOMAIN + "?q=experience/modify_time_info";
+    private static final String SUBMIT_LIMITATION_URL = HttpUtil.DOMAIN + "?q=experience/write_limitation_info";
+    private static final String MODIFY_LIMITATION_URL = HttpUtil.DOMAIN + "?q=experience/modify_limitation_info";
+    private static final String SUBMIT_ADDRESS_URL = HttpUtil.DOMAIN + "?q=experience/write_address_info";
+    private static final String MODIFY_ADDRESS_URL = HttpUtil.DOMAIN + "?q=experience/modify_address_info";
+    private static final String MODIFY_CHARGE_URL = HttpUtil.DOMAIN + "?q=experience/modify_charge_info";
+    private static final String SUBMIT_APPOINTMENT_DATE_URL = HttpUtil.DOMAIN + "?q=experience/write_experience_appointment_date";
+    private static final String MODIFY_APPOINTMENT_DATE_URL = HttpUtil.DOMAIN + "?q=experience/modify_experience_appointment_date";
+    private static final String SUBMIT_SELF_INTRODUCTION_URL = HttpUtil.DOMAIN + "?q=experience/write_self_introduction_info";
+    private static final String MODIFY_SELF_INTRODUCTION_URL = HttpUtil.DOMAIN + "?q=experience/modify_self_introduction_info";
     private static final int WRITE_BASE_INFO_SUCCESS = 1;
-    private static final int WRITE_CHARGE_AND_LIMIT_SUCCESS = 3;
-    private static final int WRITE_APPOINT_DATE_SUCCESS = 4;
-    private static final int DELETE_ROUTE_INFO_SUCCESS = 5;
-    
-    public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("EEE, d MMM yyyy");
-    AppCompatCheckBox followShot;
-    AppCompatCheckBox travelPlan;
-    AppCompatCheckBox charteredCar;
-    AppCompatCheckBox ticket;
-    AppCompatCheckBox ferry;
+    public static final int SAVE_PICTURES_SUCCESS = 2;
+    public static final int SAVE_ITEMS_SUCCESS = 3;
+    private static final int WRITE_CHARGE_SUCCESS = 4;
+    private static final int WRITE_TIME_SUCCESS = 5;
+    private static final int WRITE_APPOINT_DATE_SUCCESS = 7;
+    private static final int WRITE_SELF_INTRODUCTION_SUCCESS = 8;
+    public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     MaterialCalendarView widget;
     CalendarDay today;
@@ -136,10 +139,16 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
     private SubGroupActivity.Talent talent;
     private Dialog mDialog;
     private Context mContext;
-    
     private String uri;
     private int tid;
-    private boolean isSubmit = false;
+    private int eid = 0;
+    private boolean isSaved = false;
+    private boolean isItemsSaved = false;
+    private boolean isPriceSaved = false;
+    private boolean isTimeSaved = false;
+    private boolean isGroupCountSaved = false;
+    private boolean isAddressSaved = false;
+    private boolean isSelfIntroductionSaved = false;
     private EditText introductionET;
     private EditText selfIntroductionET;
     private EditText headLineET;
@@ -166,14 +175,15 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
     private EditText consultationChargeNumber;
     private EditText consultationChargeDesc;
     private EditText mChargeAmount;
-    private EditText escortChargeDesc;
+    private EditText addressET;
     private EditText durationET;
     private EditText limitationET;
     private String consultationUnit;
     private String escortUnit = "天";
     
-    private String limitations;
+     private String limitations;
     private RadioGroup sexSelect;
+    private boolean isModified = false;
     private AppCompatCheckBox understandCancellation;
     private Window window;
     private int maxSelectNum = 6;
@@ -182,6 +192,7 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
     private Thread threadIndustry = null;
     private boolean isLocated = false;
     private Typeface font;
+    
     private ArrayList<CommonBean> provinceItems = new ArrayList<>();
     private ArrayList<ArrayList<String>> cityItems = new ArrayList<>();
     private EditText additionalServiceET;
@@ -190,6 +201,7 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
     private String mBaseInfoString = "";
     private String mChargeAndLimitString = "";
     private List<String> mSelectedDateList = new ArrayList<>();
+    private List<String> mItemList = new ArrayList<>();
     
     @Override
     public void onAttach(Context context) {
@@ -256,10 +268,11 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
         
         mExperienceItemGL = mDialog.findViewById(R.id.contain_items_gridlayout);
         addExperienceItem = mDialog.findViewById(R.id.add_new_item);
-        mChargeAmount = mDialog.findViewById(R.id.charge_setting_edit);
+        mChargeAmount = mDialog.findViewById(R.id.price_setting_edit);
         durationET = mDialog.findViewById(R.id.duration_edit);
         groupCountET = mDialog.findViewById(R.id.group_count_limit_edit);
         limitationET = mDialog.findViewById(R.id.condition_edit);
+        addressET = mDialog.findViewById(R.id.address_edit);
         understandCancellation = mDialog.findViewById(R.id.understand_cancellation);
         prevBtn = mDialog.findViewById(R.id.prevBtn);
         nextBtn = mDialog.findViewById(R.id.nextBtn);
@@ -293,7 +306,7 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
             public void onClick(View view) {
                 if (validCheck(index)) {
                     switch (index) {
-                        case 5://self introduction
+                        case 3:
                             if (TextUtils.isEmpty(mBaseInfoString)) {
                                 submitBaseInfo(false);
                             } else {
@@ -304,20 +317,63 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
                                 }
                             }
                             break;
-                            
-                            case 8:
-                            if (TextUtils.isEmpty(mChargeAndLimitString)) {
-                                submitChargeAndLimitations(false);
-                            } else {
-                                if (!mChargeAndLimitString.equals(getChargeAndLimit().toString())) {
-                                    submitChargeAndLimitations(true);
-                                } else {
-                                    processNextBtn();
+                        case 4:
+                            if (!isSaved && selectList.size() > 0){
+                                saveExperiencePictures();
+                            }else {
+                                processNextBtn();
+                            }
+                            break;
+                       case 5:
+                            String itemString = "";
+                            if(mExperienceItemGL.getRowCount() > 0){
+                                for (int i=0; i<mExperienceItemGL.getRowCount(); i++){
+                                    EditText editText = (EditText) mExperienceItemGL.getChildAt(i);
+                                    if (!TextUtils.isEmpty(editText.getText())){
+                                        itemString += editText.getText().toString();
+                                        if (i < mExperienceItemGL.getRowCount() - 1){
+                                            itemString += ";";
+                                        }
+                                    }
                                 }
                             }
                             
+                            if (!"".equals(itemString) && !isItemsSaved){
+                                saveItemsInfo(itemString, false);
+                            }else {
+                                processNextBtn();
+                            }
+
                             break;
-                        case 9:
+                        case 6:
+                            if (!isPriceSaved && !TextUtils.isEmpty(mChargeAmount.getText().toString())) {
+                                submitPrice(false);
+                            } else {
+                                processNextBtn();
+                            }
+                            break;
+                       case 7:
+                            if (!isTimeSaved && !TextUtils.isEmpty(durationET.getText().toString())) {
+                                submitTime(false);
+                            } else {
+                                processNextBtn();
+                            }
+                            break;
+                        case 8://number of people
+                            if (!isGroupCountSaved && !TextUtils.isEmpty(groupCountET.getText())) {
+                                submitLimitation(false);
+                            } else {
+                                processNextBtn();
+                            }
+                            break;
+                       case 9://number of people
+                            if (!isAddressSaved && !TextUtils.isEmpty(addressET.getText())) {
+                                submitAddress(false);
+                            } else {
+                                processNextBtn();
+                            }
+                            break;
+                            case 10:
                             if (mSelectedDateList.size() == 0) {
                                 submitAppointDate(false);
                             } else {
@@ -327,9 +383,15 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
                                     processNextBtn();
                                 }
                             }
-
                             break;
-                            default:
+                            case 11:
+                            if(!isSelfIntroductionSaved && !TextUtils.isEmpty(selfIntroductionET.getText())){
+                                submitSelfIntroduction(false);
+                            }else {
+                                processNextBtn();
+                            }
+                            break;
+                        default:
                             processNextBtn();
                             break;
                     }
@@ -352,12 +414,78 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
             authenticateWrapper.getChildAt(index).setVisibility(View.VISIBLE);
             authenticateWrapper.getChildAt(index - 1).setVisibility(View.GONE);
             index++;
-            processCurrent(index);
-
         } else {
             submitNotice();
         }
     }
+    
+        private void saveExperiencePictures(){
+        Map<String, String> authenMap = new HashMap<>();
+
+        if (isModified) {
+            //authenMap.put("rid", String.valueOf(route.getRid()));
+        } else {
+            authenMap.put("eid", String.valueOf(eid));
+        }
+
+        if (selectList.size() > 0) {
+            Slog.d(TAG, "----------------->saveExperiencePictures selectList: " + selectList);
+            for (LocalMedia media : selectList) {
+                selectFileList.add(new File(media.getCompressPath()));
+            }
+            uploadPictures(authenMap, "authen", selectFileList, isModified);
+        }
+
+    }
+    
+    private void uploadPictures(Map<String, String> params, String picKey, List<File> files, boolean isModified) {
+        Slog.d(TAG, "--------------------->uploadPictures file size: " + files.size());
+        showProgressDialog("正在保存");
+        String uri = SAVE_EXPERIENCE_PICTURES_URL;
+
+        if (isModified) {
+            uri = MODIFY_EXPERIENCE_PICTURES_URL;
+        }
+        
+        HttpUtil.uploadPictureHttpRequest(getContext(), params, picKey, files, uri, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.body() != null) {
+                    try {
+                        String responseText = response.body().string();
+                        Slog.d(TAG, "---------------->uploadPictures response: " + responseText);
+                        int result = new JSONObject(responseText).optInt("result");
+                        
+                        if (result == 1) {
+                            dismissProgressDialog();
+                            isSaved = true;
+                            //selectList.clear();
+                           // selectFileList.clear();
+                            //PictureFileUtils.deleteAllCacheDirFile(MyApplication.getContext());
+                            myHandler.sendEmptyMessage(SAVE_PICTURES_SUCCESS);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            
+            @Override
+            public void onFailure(Call call, IOException e) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getContext(), getContext().getResources().getString(R.string.submit_error), Toast.LENGTH_SHORT).show();
+                    }
+                });
+                e.printStackTrace();
+
+            }
+        });
+
+    }
+    
+    
     
     private void initExperienceItem() {
         addExperienceItem.setOnClickListener(new View.OnClickListener() {
@@ -370,7 +498,7 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
 
     private void addExperienceItem() {
         View view = LayoutInflater.from(MyApplication.getContext())
-                .inflate(R.layout.experience_contain_item, (ViewGroup) mDialog.findViewById(android.R.id.content), false);
+                .inflate(R.layout.experience_contain_item_edit, (ViewGroup) mDialog.findViewById(android.R.id.content), false);
         mExperienceItemGL.addView(view);
     }
     
@@ -395,7 +523,7 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
     }
     
     private void initPictureSelectWidget() {
-        recyclerView = mDialog.findViewById(R.id.add_route_picture);
+        recyclerView = mDialog.findViewById(R.id.add_experience_pictures);
         FullyGridLayoutManager manager = new FullyGridLayoutManager(getContext(), 3, GridLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(manager);
 
@@ -426,6 +554,13 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
                             break;
                     }
                 }
+            }
+        });
+        
+                adapter.setItemDeleteListener(new GridImageAdapter.OnPicDeleteListener() {
+            @Override
+            public void onPicDelete(int position) {
+                Slog.d(TAG, "pic delete");
             }
         });
     }
@@ -466,19 +601,6 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
         }
     }
     
-    private void startRouteItemEditDF(int index) {
-        Slog.d(TAG, "--------------------->index: " + index + " size: " + routeList.size());
-        RouteItemEditDF routeItemEditDF;
-        if (routeList.size() > index) {
-            routeItemEditDF = newInstance(index, tid, routeList.get(index));
-        } else {
-            routeItemEditDF = newInstance(index, tid, null);
-        }
-
-        routeItemEditDF.setTargetFragment(this, ROUTE_REQUEST_CODE);
-        routeItemEditDF.show(getFragmentManager(), "RouteItemEditDF");
-    }
-
 private void initCityJsondata(String jsonFile) {
         CommonPickerView commonPickerView = new CommonPickerView();
         provinceItems = commonPickerView.getOptionsMainItem(getContext(), jsonFile);
@@ -513,7 +635,7 @@ private void initCityJsondata(String jsonFile) {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         mDialog.dismiss();
-                        startGuideDetailActivity();
+                        startExperienceDetailActivity();
                     }
                 });
 
@@ -548,7 +670,7 @@ private void initCityJsondata(String jsonFile) {
                 if (!TextUtils.isEmpty(responseText)) {
                     try {
                         if (!modified) {
-                            tid = new JSONObject(responseText).optInt("tid");
+                           eid = new JSONObject(responseText).optInt("eid");
                         }
                         dismissProgressDialog();
                         myHandler.sendEmptyMessage(WRITE_BASE_INFO_SUCCESS);
@@ -563,35 +685,6 @@ private void initCityJsondata(String jsonFile) {
 
             }
         });
-    }
-
-    private JSONObject getChargeAndLimit() {
-        JSONObject jsonObject = new JSONObject();
-        try {
-            if (!TextUtils.isEmpty(mChargeAmount.getText().toString())) {
-                jsonObject.put("escort_charge_amount", mChargeAmount.getText().toString());
-                jsonObject.put("escort_charge_unit", escortUnit);
-                Slog.d(TAG, "----------------->getChargeAndLimit unit: " + escortUnit);
-                if (!TextUtils.isEmpty(escortChargeDesc.getText().toString())) {
-                    jsonObject.put("escort_charge_supplement", escortChargeDesc.getText().toString());
-                }
-            }
-            
-            jsonObject.put("developConsultation", developConsultation);
-            if (!TextUtils.isEmpty(limitationET.getText().toString())) {
-                limitations += limitationET.getText().toString();
-            }
-
-            if (!TextUtils.isEmpty(limitations)) {
-                jsonObject.put("limitations", limitations);
-            }
-            
-            } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return jsonObject;
-
     }
 
     private void submitChargeAndLimitations(boolean isModify) {
