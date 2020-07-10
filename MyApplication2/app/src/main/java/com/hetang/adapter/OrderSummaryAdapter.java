@@ -3,7 +3,7 @@ package com.hetang.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
-import android.os.Message;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,13 +17,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.hetang.R;
-import com.hetang.common.HandlerTemp;
-import com.hetang.experience.ExperienceEvaluateDialogFragment;
+import com.hetang.experience.ExperienceDetailActivity;
 import com.hetang.experience.GuideDetailActivity;
-import com.hetang.experience.GuideSummaryActivity;
-import com.hetang.experience.OrderSummaryActivity;
+import com.hetang.order.MyFragment;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
+import com.hetang.util.Utility;
 
 import java.util.List;
 
@@ -35,10 +34,10 @@ import static com.hetang.common.MyApplication.getContext;
 
 public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapter.ViewHolder> {
 
-    private static final String TAG = "GuideSummaryAdapter";
+    private static final String TAG = "OrderSummaryAdapter";
     private static Context mContext;
     private int width;
-    private List<OrderSummaryActivity.Order> mOrderList;
+    private List<MyFragment.Order> mOrderList;
     private boolean isScrolling = false;
     private MyItemClickListener mItemClickListener;
     private EvaluateClickListener mEvaluateClickListener;
@@ -47,7 +46,7 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
         mContext = context;
     }
     
-    public void setData(List<OrderSummaryActivity.Order> orderList) {
+    public void setData(List<MyFragment.Order> orderList) {
         mOrderList = orderList;
     }
 
@@ -61,7 +60,7 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
     
     @Override
     public void onBindViewHolder(@NonNull OrderSummaryAdapter.ViewHolder holder, final int position) {
-        final OrderSummaryActivity.Order order = mOrderList.get(position);
+        final MyFragment.Order order = mOrderList.get(position);
         setContentView(holder, order);
 
         holder.evaluateBtn.setOnClickListener(new View.OnClickListener() {
@@ -81,7 +80,7 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
         });
     }
     
-    public void setContentView(OrderSummaryAdapter.ViewHolder holder, final OrderSummaryActivity.Order order){
+    public void setContentView(OrderSummaryAdapter.ViewHolder holder, final MyFragment.Order order){
 
         if (order.headPictureUrl != null && !"".equals(order.headPictureUrl)) {
             Glide.with(getContext()).load(HttpUtil.DOMAIN + order.headPictureUrl).into(holder.headUri);
@@ -89,8 +88,16 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
 
         holder.titleTV.setText(order.title);
         holder.cityTV.setText(order.city);
-        holder.moneyTV.setText(String.valueOf(order.money));
-        holder.unitTV.setText(order.unit);
+        holder.moneyTV.setText(String.valueOf(order.price));
+        holder.totalPriceTV.setText(String.valueOf(order.totalPrice));
+        if (TextUtils.isEmpty(order.unit)){
+            holder.unitDividerTV.setVisibility(View.GONE);
+        }else {
+            holder.unitDividerTV.setVisibility(View.VISIBLE);
+            holder.unitTV.setText(order.unit);
+        }
+
+        holder.amountTV.setText("x"+order.amount);
         holder.actualPaymentTV.setText(String.valueOf(order.actualPayment));
         holder.appointedDateTV.setText(order.appointmentDate);
         
@@ -98,12 +105,17 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
             case 0:
                 holder.unsubscribeBtn.setVisibility(View.GONE);
                 holder.evaluateBtn.setVisibility(View.GONE);
+                holder.payBtn.setVisibility(View.VISIBLE);
                 break;
             case 1:
                 holder.payBtn.setVisibility(View.GONE);
+                holder.unsubscribeBtn.setVisibility(View.VISIBLE);
+                holder.evaluateBtn.setVisibility(View.VISIBLE);
                 break;
             case 3:
+                holder.unsubscribeBtn.setVisibility(View.GONE);
                 holder.payBtn.setVisibility(View.GONE);
+                holder.evaluateBtn.setVisibility(View.VISIBLE);
                 holder.evaluateBtn.setText(getContext().getResources().getString(R.string.append_evaluation));
                 break;
         }
@@ -125,9 +137,7 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
         holder.headUri.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getContext(), GuideDetailActivity.class);
-                intent.putExtra("tid", order.id);
-                mContext.startActivity(intent);
+                startActivity(order);
             }
         });
         holder.titleTV.setOnClickListener(new View.OnClickListener() {
@@ -137,6 +147,18 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
             }
         });
           
+    }
+    
+   private void startActivity(MyFragment.Order order){
+        if (order.type == Utility.TalentType.GUIDE.ordinal()){
+            Intent intent = new Intent(getContext(), GuideDetailActivity.class);
+            intent.putExtra("sid", order.id);
+            getContext().startActivity(intent);
+        }else {
+            Intent intent = new Intent(getContext(), ExperienceDetailActivity.class);
+            intent.putExtra("eid", order.id);
+            getContext().startActivity(intent);
+        }
     }
     
     @Override
@@ -150,14 +172,17 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
     
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         MyItemClickListener mListener;
-        ImageView headUri;
         EvaluateClickListener evaluateClickListener;
+        ImageView headUri;
         TextView titleTV;
         TextView cityTV;
+        TextView totalPriceTV;
         TextView actualPaymentTV;
         TextView appointedDateTV;
         TextView moneyTV;
+        TextView unitDividerTV;
         TextView unitTV;
+        TextView amountTV;
         Button unsubscribeBtn;
         Button payBtn;
         Button evaluateBtn;
@@ -168,10 +193,13 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
             itemLayout = view.findViewById(R.id.order_list_item);
             headUri = view.findViewById(R.id.head_picture);
             titleTV = view.findViewById(R.id.guide_title);
+            totalPriceTV = view.findViewById(R.id.total_price);
             cityTV = view.findViewById(R.id.city);
             actualPaymentTV = view.findViewById(R.id.actual_payment);
             appointedDateTV = view.findViewById(R.id.appointed_date);
             moneyTV = view.findViewById(R.id.money);
+            unitDividerTV = view.findViewById(R.id.unit_divider);
+            amountTV = view.findViewById(R.id.amount);
             unitTV = view.findViewById(R.id.unit);
             unsubscribeBtn = view.findViewById(R.id.unsubscribe);
             payBtn = view.findViewById(R.id.pay);
