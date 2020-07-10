@@ -1,4 +1,4 @@
-package com.hetang.home;
+package com.hetang.main;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -28,7 +28,7 @@ import com.hetang.dynamics.DynamicsInteractDetailsActivity;
 import com.hetang.common.HandlerTemp;
 import com.hetang.common.MyApplication;
 import com.hetang.group.SubGroupActivity;
-import com.hetang.meet.MeetDynamicsFragment;
+import com.hetang.explore.ShareFragment;
 import com.hetang.util.BaseFragment;
 import com.hetang.util.CommonUserListDialogFragment;
 import com.hetang.util.FontManager;
@@ -62,15 +62,15 @@ import static com.hetang.dynamics.DynamicsInteractDetailsActivity.COMMENT_ADD_BR
 import static com.hetang.dynamics.DynamicsInteractDetailsActivity.DYNAMIC_COMMENT;
 import static com.hetang.group.SubGroupActivity.getSubGroup;
 import static com.hetang.group.SubGroupDetailsActivity.GET_SUBGROUP_BY_GID;
-import static com.hetang.meet.MeetDynamicsFragment.DYNAMICS_DELETE;
-import static com.hetang.meet.MeetDynamicsFragment.COMMENT_COUNT_UPDATE;
-import static com.hetang.meet.MeetDynamicsFragment.GET_DYNAMICS_WITH_ID_URL;
-import static com.hetang.meet.MeetDynamicsFragment.HAVE_UPDATE;
-import static com.hetang.meet.MeetDynamicsFragment.LOAD_DYNAMICS_DONE;
-import static com.hetang.meet.MeetDynamicsFragment.REQUEST_CODE;
-import static com.hetang.meet.MeetDynamicsFragment.NO_MORE_DYNAMICS;
-import static com.hetang.meet.MeetDynamicsFragment.NO_UPDATE;
-import static com.hetang.meet.MeetDynamicsFragment.UPDATE_COMMENT;
+import static com.hetang.explore.ShareFragment.DYNAMICS_DELETE;
+import static com.hetang.explore.ShareFragment.COMMENT_COUNT_UPDATE;
+import static com.hetang.explore.ShareFragment.GET_DYNAMICS_WITH_ID_URL;
+import static com.hetang.explore.ShareFragment.HAVE_UPDATE;
+import static com.hetang.explore.ShareFragment.LOAD_DYNAMICS_DONE;
+import static com.hetang.explore.ShareFragment.REQUEST_CODE;
+import static com.hetang.explore.ShareFragment.NO_MORE_DYNAMICS;
+import static com.hetang.explore.ShareFragment.NO_UPDATE;
+import static com.hetang.explore.ShareFragment.UPDATE_COMMENT;
 import static com.hetang.util.ParseUtils.ADD_INNER_DYNAMIC_ACTION;
 import static com.hetang.util.ParseUtils.CREATE_GROUP_ACTION;
 import static com.hetang.util.ParseUtils.FOLLOW_GROUP_ACTION;
@@ -79,7 +79,7 @@ import static com.hetang.util.ParseUtils.MODIFY_GROUP_ACTION;
 import static com.hetang.util.ParseUtils.PRAISE_DYNAMIC_ACTION;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
-public class HomeFragment extends BaseFragment {
+public class DynamicFragment extends BaseFragment {
     public static final String LOAD_CONCERNED_DYNAMICS_URL = HttpUtil.DOMAIN + "?q=dynamic/load_concerned";
     public static final String LOAD_SPECIFIC_DYNAMICS_URL = HttpUtil.DOMAIN + "?q=dynamic/action/get";
     public static final String GET_UPDATE_CONCERNED_DYNAMICS_URL = HttpUtil.DOMAIN + "?q=dynamic/get_update_concerned";
@@ -94,7 +94,7 @@ public class HomeFragment extends BaseFragment {
     public static final int MY_PRAISE_UPDATE_RESULT = 6;
     public static final int MY_LOVE_UPDATE_RESULT = 7;
     private static final boolean isDebug = true;
-    private static final String TAG = "HomeFragment";
+    private static final String TAG = "DynamicFragment";
     private static final int PAGE_SIZE = 6;
     private static final int GET_RECOMMEND_GROUP_DONE = 7;
     private static final int DYNAMICS_PRAISED = 7;
@@ -113,7 +113,7 @@ public class HomeFragment extends BaseFragment {
     private Context mContext;
     private Handler handler;
     private List<Dynamic> dynamicList = new ArrayList<>();
-    private MeetDynamicsFragment meetDynamicsFragment;
+    private ShareFragment shareFragment;
     private DynamicsAddBroadcastReceiver mReceiver = new DynamicsAddBroadcastReceiver();
     private int currentPos = 0;
     private View mView;
@@ -123,7 +123,7 @@ public class HomeFragment extends BaseFragment {
 
     @Override
     protected int getLayoutId() {
-        return R.layout.home_page;
+        return R.layout.dynamic_page;
     }
 
     @Override
@@ -140,8 +140,8 @@ public class HomeFragment extends BaseFragment {
 
         dynamicsListAdapter = new DynamicsListAdapter(getContext(), specificUser);
 
-        if (meetDynamicsFragment == null) {
-            meetDynamicsFragment = new MeetDynamicsFragment();
+        if (shareFragment == null) {
+            shareFragment = new ShareFragment();
         }
 
         //concernedRecommendAdapter = new ConcernedRecommendAdapter(getContext());
@@ -212,7 +212,7 @@ public class HomeFragment extends BaseFragment {
 
             @Override
             public void onDynamicPictureClick(View view, int position, String[] pictureUrlArray, int index) {
-                meetDynamicsFragment.startPicturePreview(position, pictureUrlArray);
+                shareFragment.startPicturePreview(position, pictureUrlArray);
             }
 
             @Override
@@ -222,7 +222,7 @@ public class HomeFragment extends BaseFragment {
                 currentPos = position;
                 DynamicOperationDialogFragment dynamicOperationDialogFragment = new DynamicOperationDialogFragment();
                 dynamicOperationDialogFragment.setArguments(bundle);
-                dynamicOperationDialogFragment.setTargetFragment(HomeFragment.this, REQUEST_CODE);
+                dynamicOperationDialogFragment.setTargetFragment(DynamicFragment.this, REQUEST_CODE);
                 dynamicOperationDialogFragment.show(getFragmentManager(), "DynamicOperationDialogFragment");
             }
 
@@ -337,12 +337,12 @@ public class HomeFragment extends BaseFragment {
         for (int i = 0; i < length; i++) {
 
             JSONObject dynamicJSONObject = dynamicsArray.optJSONObject(i);
-            if (meetDynamicsFragment == null) {
-                meetDynamicsFragment = new MeetDynamicsFragment();
+            if (shareFragment == null) {
+                shareFragment = new ShareFragment();
             }
             Dynamic dynamic;
             if (dynamicJSONObject != null) {
-                dynamic = meetDynamicsFragment.setMeetDynamics(dynamicJSONObject);
+                dynamic = shareFragment.setMeetDynamics(dynamicJSONObject);
             } else {
                 return null;
             }
@@ -382,7 +382,7 @@ public class HomeFragment extends BaseFragment {
                     break;
             }
 
-            meetDynamicsFragment.setDynamicsInteract(dynamic, handler);
+            shareFragment.setDynamicsInteract(dynamic, handler);
             Slog.d(TAG, "---------------------->dynamic.getUid(): " + dynamic.getUid());
 
 /*
@@ -477,8 +477,8 @@ public class HomeFragment extends BaseFragment {
                     if (responseText != null) {
 
                         //save last update timemills
-                        if (meetDynamicsFragment == null) {
-                            meetDynamicsFragment = new MeetDynamicsFragment();
+                        if (shareFragment == null) {
+                            shareFragment = new ShareFragment();
                         }
                         try {
                             dynamicJSONObject = new JSONObject(responseText).optJSONObject("dynamic");
@@ -486,7 +486,7 @@ public class HomeFragment extends BaseFragment {
                             e.printStackTrace();
                         }
                         if (dynamicJSONObject != null) {
-                            Dynamic dynamic = meetDynamicsFragment.setMeetDynamics(dynamicJSONObject);
+                            Dynamic dynamic = shareFragment.setMeetDynamics(dynamicJSONObject);
                             if (null != dynamic) {
                                 //dynamicList.clear();
                                 dynamicList.add(0, dynamic);
@@ -517,8 +517,8 @@ public class HomeFragment extends BaseFragment {
                     JSONObject relatedContentJSONObject = new JSONObject(responseText).optJSONObject("dynamic");
                     if (relatedContentJSONObject != null) {
                         dynamic.relatedContent = new Dynamic();
-                        dynamic.relatedContent = meetDynamicsFragment.setMeetDynamics(relatedContentJSONObject);
-                        meetDynamicsFragment.setDynamicsInteract(dynamic.relatedContent);
+                        dynamic.relatedContent = shareFragment.setMeetDynamics(relatedContentJSONObject);
+                        shareFragment.setDynamicsInteract(dynamic.relatedContent);
                     }
                 }
             } catch (JSONException e) {
@@ -879,18 +879,18 @@ public class HomeFragment extends BaseFragment {
         public int now = 0;
     }
 
-    static class MyHandler extends HandlerTemp<HomeFragment> {
+    static class MyHandler extends HandlerTemp<DynamicFragment> {
 
-        public MyHandler(HomeFragment cls) {
+        public MyHandler(DynamicFragment cls) {
             super(cls);
         }
 
         @Override
         public void handleMessage(Message message) {
             super.handleMessage(message);
-            HomeFragment homeFragment = ref.get();
-            if (homeFragment != null) {
-                homeFragment.handleMessage(message);
+            DynamicFragment dynamicFragment = ref.get();
+            if (dynamicFragment != null) {
+                dynamicFragment.handleMessage(message);
             }
         }
     }
