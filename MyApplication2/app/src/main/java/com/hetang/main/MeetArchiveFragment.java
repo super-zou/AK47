@@ -15,6 +15,7 @@ import android.os.Message;
 import android.os.Parcel;
 import android.os.Parcelable;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -44,21 +45,26 @@ import com.hetang.adapter.CheeringGroupAdapter;
 import com.hetang.adapter.MeetImpressionStatisticsAdapter;
 import com.hetang.adapter.MeetReferenceAdapter;
 import com.hetang.common.OnItemClickListener;
+import com.hetang.common.ReminderManager;
+import com.hetang.common.SettingsActivity;
+import com.hetang.consult.ConsultSummaryActivity;
+import com.hetang.contacts.ContactsActivity;
 import com.hetang.contacts.ChatActivity;
 import com.hetang.dynamics.Dynamic;
 import com.hetang.common.HandlerTemp;
 import com.hetang.common.MyApplication;
 import com.hetang.common.SetAvatarActivity;
+import com.hetang.experience.ExperienceSummaryActivity;
+import com.hetang.experience.GuideSummaryActivity;
 import com.hetang.meet.ApprovedUsersActivity;
-import com.hetang.experience.OrderSummaryActivity;
-import com.hetang.group.GroupFragment;
 import com.hetang.group.MyParticipationDialogFragment;
 import com.hetang.group.SubGroupActivity;
 import com.hetang.meet.EvaluateDialogFragment;
 import com.hetang.meet.EvaluatorDetailsActivity;
+import com.hetang.explore.ShareFragment;
 import com.hetang.meet.FillMeetInfoActivity;
 import com.hetang.meet.MeetConditionDialogFragment;
-import com.hetang.meet.MeetDynamicsFragment;
+import com.hetang.talent.TalentIntroductionEntryDF;
 import com.hetang.meet.MeetReferenceInfo;
 import com.hetang.dynamics.SpecificUserDynamicsActivity;
 import com.hetang.meet.UserMeetInfo;
@@ -100,14 +106,10 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static com.hetang.common.SetAvatarActivity.AVATAR_SET_ACTION_BROADCAST;
-import static com.hetang.experience.OrderSummaryActivity.GET_MY_ORDERS_COUNT;
+import static com.hetang.contacts.ContactsActivity.GET_APPLY_AND_REQUEST_COUNT;
+import static com.hetang.contacts.ContactsActivity.HAS_REQUEST_OR_APPLY;
 import static com.hetang.group.GroupFragment.GET_MY_TALENTS;
-import static com.hetang.group.GroupFragment.LOAD_MY_TALENTS_DONE;
-import static com.hetang.group.GroupFragment.SUBGROUP_GET_MY_GROUP;
 import static com.hetang.group.MyParticipationDialogFragment.MY_TALENT;
-import static com.hetang.group.MyParticipationDialogFragment.MY_TRIBE;
-import static com.hetang.group.SubGroupActivity.getSubGroup;
-import static com.hetang.group.SubGroupActivity.getTalent;
 import static com.hetang.main.MainActivity.setTuiKitProfile;
 import static com.hetang.meet.EvaluateModifyDialogFragment.EVALUATE_MODIFY_ACTION_BROADCAST;
 import static com.hetang.meet.MeetRecommendFragment.GET_MY_CONDITION_URL;
@@ -117,7 +119,7 @@ import static com.hetang.util.ParseUtils.startArchiveActivity;
 import static com.hetang.util.ParseUtils.startMeetArchiveActivity;
 import static com.xuexiang.xupdate.utils.DrawableUtils.getDrawable;
 
-public class MeetArchiveFragment extends BaseFragment implements CommonDialogFragmentInterface {
+public class MeetArchiveFragment extends BaseFragment implements CommonDialogFragmentInterface, ReminderManager.UnreadNumChangedCallback {
     private static final String TAG = "MeetArchiveFragment";
     private static final boolean isDebug = true;
     private static final String GET_ACTIVITIES_COUNT_BY_UID = HttpUtil.DOMAIN + "?q=dynamic/get_count_by_uid";
@@ -146,6 +148,9 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
     private static final String GET_VISIT_RECORD_URL = HttpUtil.DOMAIN + "?q=visitor_record/get_visit_record";
     public static final String GET_LOGGEDIN_ACCOUNT = HttpUtil.DOMAIN + "?q=account_manager/get_loggedin_account";
     private static final String JOIN_CHEERING_GROUP_URL = HttpUtil.DOMAIN + "?q=meet/cheering_group/join";
+        public static final String GET_EXPERIENCE_STATISTICS_URL = HttpUtil.DOMAIN + "?q=experience/get_experience_statistics";
+    public static final String GET_GUIDE_STATISTICS_URL = HttpUtil.DOMAIN + "?q=travel_guide/get_guide_statistics";
+    public static final String GET_CONSULT_WITH_UID = HttpUtil.DOMAIN + "?q=consult/get_consult_statistics_by_uid";
 
     private static final int DONE = 1;
     private static final int UPDATE = 2;
@@ -171,8 +176,9 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
     private static final int GET_ACTIVITIES_COUNT_DONE = 21;
     private static final int GET_MEET_ARCHIVE_DONE = 22;
         private static final int LOAD_MY_TALENTS_DONE = 23;
-    private static final int LOAD_MY_GROUP_DONE = 24;
-    private static final int LOAD_MY_ORDER_COUNT_DONE = 25;
+private static final int LOAD_MY_EXPERIENCES_DONE = 24;
+    private static final int LOAD_MY_GUIDE_COUNT_DONE = 25;
+    private static final int LOAD_MY_CONSULT_COUNT_DONE = 26;
     public static final int FOLLOWED = 1;
     private static final int FOLLOWING = 2;
     public static final int PRAISED = 3;
@@ -201,8 +207,7 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
     private JSONObject mRatingObj;
     private JSONArray pictureArray = new JSONArray();
     private EvaluateDialogFragment evaluateDialogFragment;
-    private MeetDynamicsFragment meetDynamicsFragment;
-
+    private ShareFragment shareFragment;
     private TextView backLeft;
     private UserMeetInfo mMeetMember;
     private JSONArray personalityResponseArray;
@@ -232,8 +237,10 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
     private boolean isSelf = false;
 
     private int myTalentSize = 0;
-    private int myTribeSize = 0;
-    private int myOrdersCount = 0;
+    private int myExperienceSize = 0;
+    private int myGuideCount = 0;
+    private int myAnswerCount = 0;
+    private int myConsultCount = 0;
     private UserProfile myProfile;
     private LinearLayout navLayout;
     private List<Drawable> drawableList = new ArrayList<>();
@@ -242,6 +249,9 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
     private AvatarAddBroadcastReceiver mReceiver;
     private ChatInfo chatInfo;
     private float ratingAverageRoundUp = 0;
+    private int newApplyCount = 0;
+    private TextView newApplyCountView;
+    private ConstraintLayout serviceWrapper;
 
 
     @Nullable
@@ -250,8 +260,7 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
         viewContent = inflater.inflate(R.layout.meet_archive, container, false);
         mContext = getContext();
         handler = new MyHandler(this);
-        //mMeetMember = (UserMeetInfo) getIntent().getSerializableExtra("meet");
-        //initView();
+        registerMsgUnreadInfoObserver(true);
         setView();
         getLoggedinAccount();
 
@@ -262,6 +271,7 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
     public void onDestroy() {
         super.onDestroy();
         unRegisterLoginBroadcast();
+        registerMsgUnreadInfoObserver(false);
         Slog.d(TAG, "------------------->onDestroy");
     }
 
@@ -280,6 +290,7 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
         mArchiveProfile = viewContent.findViewById(R.id.meet_archive_profile);
         FontManager.markAsIconContainer(mArchiveProfile.findViewById(R.id.meet_archive_profile), font);
         mHeaderEvaluation = viewContent.findViewById(R.id.friends_relatives_reference);
+        serviceWrapper = mHeaderEvaluation.findViewById(R.id.service_wrapper);
         FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_relatives_reference), font);
 
         registerLocalBroadcast();
@@ -348,6 +359,8 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
         }
         if (isDebug) Slog.d(TAG, "==========isSelf : " + isSelf);
 
+        getApplyAndRequestCount();
+        
         setArchiveProfile();
 
         loadRating();
@@ -374,26 +387,34 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
         getFollowStatistics();
         getPraiseStatistics();
         getLoveStatistics();
+        loadConsultsCount();
         loadMyTalentsCount();
-        loadMyTribesCount();
-        loadMyOrdersCount();
+        loadMyExperiencesCount();
+        loadMyGuidesCount();
     }
     
-    private void loadMyOrdersCount(){
-        HttpUtil.sendOkHttpRequest(MyApplication.getContext(), GET_MY_ORDERS_COUNT, new FormBody.Builder().build(), new Callback() {
+    private void loadConsultsCount(){
+        RequestBody requestBody = new FormBody.Builder()
+                .add("uid", String.valueOf(uid))
+                .build();
+
+        HttpUtil.sendOkHttpRequest(MyApplication.getContext(), GET_CONSULT_WITH_UID, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
                     String responseText = response.body().string();
-                    if (isDebug) Slog.d(TAG, "==========loadMyOrdersCount response text : " + responseText);
+                    if (isDebug) Slog.d(TAG, "==========loadConsultsCount response text : " + responseText);
                     if (responseText != null && !TextUtils.isEmpty(responseText)) {
-
+                        JSONObject consultResponse = null;
                         try {
-                            myOrdersCount = new JSONObject(responseText).optInt("orders_count");
-                            if (myOrdersCount > 0){
-                                handler.sendEmptyMessage(LOAD_MY_ORDER_COUNT_DONE);
+                            consultResponse = new JSONObject(responseText);
+                            if (consultResponse != null) {
+                                processConsultResponse(consultResponse);
+                                if (myAnswerCount > 0 || myConsultCount > 0){
+                                    handler.sendEmptyMessage(LOAD_MY_CONSULT_COUNT_DONE);
+                                }
                             }
-                        } catch (JSONException e) {
+                            } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
@@ -405,27 +426,50 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
             }
         });
     }
+    
+    public void processConsultResponse(JSONObject consultResponse) {
+        if (consultResponse != null) {
+            myAnswerCount = consultResponse.optInt("answer_count");
+            myConsultCount = consultResponse.optInt("consult_count");
+        }
+    }
 
-    private void setMyOrdersCountView(){
-        TextView ordersCountTV = mHeaderEvaluation.findViewById(R.id.order_count);
-        ordersCountTV.setText(String.valueOf(myOrdersCount));
 
-        ordersCountTV.setOnClickListener(new View.OnClickListener() {
+    private void setMyConsultView(){
+
+        TextView answerCountTV = mHeaderEvaluation.findViewById(R.id.answer_count);
+        TextView questionCountTV = mHeaderEvaluation.findViewById(R.id.question_count);
+        answerCountTV.setText(String.valueOf(myAnswerCount));
+        questionCountTV.setText(String.valueOf(myConsultCount));
+
+        answerCountTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startMyOrdersActivity();
+                startConsultSummaryActivity(Utility.ConsultType.ANSWERED.ordinal());
+            }
+        });
+
+        questionCountTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startConsultSummaryActivity(Utility.ConsultType.QUESTIONED.ordinal());
             }
         });
     }
     
-    public void startMyOrdersActivity(){
-        Intent intent = new Intent(getContext(), OrderSummaryActivity.class);
+    public void startConsultSummaryActivity(int type){
+        Intent intent = new Intent(getContext(), ConsultSummaryActivity.class);
+        intent.putExtra("uid", uid);
+        intent.putExtra("type", type);
         //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
         startActivity(intent);
     }
     
     private void loadMyTalentsCount(){
-        HttpUtil.sendOkHttpRequest(MyApplication.getContext(), GET_MY_TALENTS, new FormBody.Builder().build(), new Callback() {
+                RequestBody requestBody = new FormBody.Builder()
+                .add("uid", String.valueOf(uid))
+                .build();
+        HttpUtil.sendOkHttpRequest(MyApplication.getContext(), GET_MY_TALENTS, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
@@ -456,10 +500,13 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
     }
     
     private void setMyTalentSizeView(){
-        TextView talentCountTV = mHeaderEvaluation.findViewById(R.id.talent_count);
-        talentCountTV.setText(String.valueOf(myTalentSize));
+        serviceWrapper.setVisibility(View.VISIBLE);
+        LinearLayout talentWrapper = mHeaderEvaluation.findViewById(R.id.common_talents);
+        talentWrapper.setVisibility(View.VISIBLE);
+        TextView talentCountTV = mHeaderEvaluation.findViewById(R.id.talents);
+        talentCountTV.setText("达人 "+String.valueOf(myTalentSize));
 
-        talentCountTV.setOnClickListener(new View.OnClickListener() {
+        talentWrapper.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startMyParticipationDF(MY_TALENT);
@@ -468,7 +515,7 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
     }
 
     public void startMyParticipationDF(int type){
-        MyParticipationDialogFragment myParticipationDialogFragment = MyParticipationDialogFragment.newInstance(type);
+        MyParticipationDialogFragment myParticipationDialogFragment = MyParticipationDialogFragment.newInstance(type, uid);
         myParticipationDialogFragment.show(getFragmentManager(), "MyParticipationDialogFragment");
     }
     
@@ -487,26 +534,27 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
         return talentSize;
     }
     
-    private void loadMyTribesCount() {
-
-        HttpUtil.sendOkHttpRequest(MyApplication.getContext(), SUBGROUP_GET_MY_GROUP, new FormBody.Builder().build(), new Callback() {
+    private void loadMyExperiencesCount(){
+        RequestBody requestBody = new FormBody.Builder()
+                .add("uid", String.valueOf(uid))
+                .build();
+        HttpUtil.sendOkHttpRequest(MyApplication.getContext(), GET_EXPERIENCE_STATISTICS_URL, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
                     String responseText = response.body().string();
-                    if (isDebug) Slog.d(TAG, "==========response text : " + responseText);
+                    if (isDebug) Slog.d(TAG, "==========loadMyExperiencesCount response text : " + responseText);
                     if (responseText != null && !TextUtils.isEmpty(responseText)) {
-                        JSONObject subGroupResponse = null;
+                        JSONObject experienceResponse = null;
                         try {
-                            subGroupResponse = new JSONObject(responseText);
-                            if (subGroupResponse != null) {
-                                myTribeSize = processResponse(subGroupResponse);
-                                if (myTribeSize > 0){
-                                    handler.sendEmptyMessage(LOAD_MY_GROUP_DONE);
+                            experienceResponse = new JSONObject(responseText);
+                            if (experienceResponse != null) {
+                                myExperienceSize = experienceResponse.optInt("count");
+                                if (myExperienceSize > 0){
+                                    handler.sendEmptyMessage(LOAD_MY_EXPERIENCES_DONE);
                                 }
                             }
-
-                        } catch (JSONException e) {
+                            } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
@@ -519,31 +567,81 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
         });
     }
     
-    private int processResponse(JSONObject subGroupResponse) {
+    private void setMyExperienceSizeView(){
+        serviceWrapper.setVisibility(View.VISIBLE);
+        LinearLayout experienceWrapper = mHeaderEvaluation.findViewById(R.id.experience_wrapper);
+        experienceWrapper.setVisibility(View.VISIBLE);
+        TextView experienceCountTV = mHeaderEvaluation.findViewById(R.id.experiences);
+        experienceCountTV.setText("体验 "+String.valueOf(myExperienceSize));
 
-        int subGroupSize = 0;
-        JSONArray subGroupArray = null;
-
-        if (subGroupResponse != null) {
-            subGroupArray = subGroupResponse.optJSONArray("subgroup");
-        }
-        if (subGroupArray != null) {
-            subGroupSize = subGroupArray.length();
-        }
-
-        return subGroupSize;
-    }
-    
-    private void setMyTribeSizeView(){
-        TextView myTribeSizeTV = mHeaderEvaluation.findViewById(R.id.tribe_count);
-        myTribeSizeTV.setText(String.valueOf(myTribeSize));
-
-        myTribeSizeTV.setOnClickListener(new View.OnClickListener() {
+        experienceWrapper.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startMyParticipationDF(MY_TRIBE);
+                startMyExperiencesActivity();
             }
         });
+    }
+    
+    public void startMyExperiencesActivity(){
+        Intent intent = new Intent(getContext(), ExperienceSummaryActivity.class);
+        intent.putExtra("uid", uid);
+        //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+        startActivity(intent);
+    }
+    
+    private void loadMyGuidesCount(){
+        RequestBody requestBody = new FormBody.Builder()
+                .add("uid", String.valueOf(uid))
+                .build();
+        HttpUtil.sendOkHttpRequest(MyApplication.getContext(), GET_GUIDE_STATISTICS_URL, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.body() != null) {
+                    String responseText = response.body().string();
+                    if (isDebug) Slog.d(TAG, "==========loadMyGuidesCount response text : " + responseText);
+                    if (responseText != null && !TextUtils.isEmpty(responseText)) {
+                        JSONObject experienceResponse = null;
+                        try {
+                            experienceResponse = new JSONObject(responseText);
+                            if (experienceResponse != null) {
+                                myGuideCount = experienceResponse.optInt("count");
+                                if (myGuideCount > 0){
+                                    handler.sendEmptyMessage(LOAD_MY_GUIDE_COUNT_DONE);
+                                }
+                            }
+                            } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+            }
+        });
+    }
+       
+    private void setMyGuideSizeView(){
+        serviceWrapper.setVisibility(View.VISIBLE);
+        LinearLayout guideWrapper = mHeaderEvaluation.findViewById(R.id.guide_wrapper);
+        guideWrapper.setVisibility(View.VISIBLE);
+        TextView guideCountTV = mHeaderEvaluation.findViewById(R.id.guides);
+        guideCountTV.setText("向导 "+String.valueOf(myGuideCount));
+
+        guideWrapper.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startMyGuidesActivity();
+            }
+        });
+    }
+    
+    public void startMyGuidesActivity(){
+        Intent intent = new Intent(getContext(), GuideSummaryActivity.class);
+        intent.putExtra("uid", uid);
+        //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+        startActivity(intent);
     }
 
     private void loadProfilePictures() {
@@ -601,6 +699,20 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
         TextView name = mArchiveProfile.findViewById(R.id.name);
         TextView sex = mArchiveProfile.findViewById(R.id.sex);
         Button meet = mArchiveProfile.findViewById(R.id.meet_btn);
+        TextView settingTV = mArchiveProfile.findViewById(R.id.settings);
+        if (isSelf){
+            settingTV.setVisibility(View.VISIBLE);
+        }else {
+            settingTV.setVisibility(View.GONE);
+        }
+        settingTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent();
+                intent.setClass(getContext(), SettingsActivity.class);
+                startActivity(intent);
+            }
+        });
 
         mImageSwitcher = mArchiveProfile.findViewById(R.id.image_switcher);
         mImageSwitcher.requestFocus();
@@ -759,7 +871,39 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
                 }
             });
         }
-
+        
+        ConstraintLayout contactsWrapper = mHeaderEvaluation.findViewById(R.id.contacts_wrapper);
+        if (isSelf){
+            contactsWrapper.setVisibility(View.VISIBLE);
+        }
+        contactsWrapper.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), ContactsActivity.class);
+                startActivity(intent);
+            }
+        });
+        
+        TextView contactsNavTV = mHeaderEvaluation.findViewById(R.id.contacts_nav);
+        contactsNavTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), ContactsActivity.class);
+                startActivity(intent);
+            }
+        });
+        
+        ConstraintLayout talentsWrapper = mHeaderEvaluation.findViewById(R.id.talents_wrapper);
+        if (isSelf){
+            talentsWrapper.setVisibility(View.VISIBLE);
+        }
+        talentsWrapper.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                TalentIntroductionEntryDF talentIntroductionEntryDF = new TalentIntroductionEntryDF();
+                talentIntroductionEntryDF.show(getFragmentManager(), "TalentIntroductionEntryDF");
+            }
+        });
     }
 
     private void checkMyCondition() {
@@ -1080,10 +1224,10 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
         getFollowStatisticsCount();
 
         LinearLayout followingCountWrap = mArchiveProfile.findViewById(R.id.following_count_wrap);
-        LinearLayout followedCountWrap = mArchiveProfile.findViewById(R.id.followed_count_wrap);
-        final TextView followedCount = mArchiveProfile.findViewById(R.id.followed_count);
+       // LinearLayout followedCountWrap = mArchiveProfile.findViewById(R.id.followed_count_wrap);
+        final TextView followedCount = mHeaderEvaluation.findViewById(R.id.followed_count);
         final TextView followingCount = mArchiveProfile.findViewById(R.id.following_count);
-        followedCountWrap.setOnClickListener(new View.OnClickListener() {
+        followedCount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
@@ -1183,11 +1327,10 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
         });
 
         LinearLayout praiseCountWrap = mArchiveProfile.findViewById(R.id.praise_count_wrap);
-        LinearLayout praisedCountWrap = mArchiveProfile.findViewById(R.id.praised_count_wrap);
-        final TextView praisedCount = mArchiveProfile.findViewById(R.id.praised_count);
+        final TextView praisedCount = mArchiveProfile.findViewById(R.id.praised_statistics);
         final TextView praiseCount = mArchiveProfile.findViewById(R.id.praise_count);
 
-        praisedCountWrap.setOnClickListener(new View.OnClickListener() {
+        praisedCount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
@@ -1250,12 +1393,11 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
         });
 
         LinearLayout loveCountWrap = mArchiveProfile.findViewById(R.id.love_count_wrap);
-        LinearLayout lovedCountWrap = mArchiveProfile.findViewById(R.id.loved_count_wrap);
-        TextView lovedTitle = mArchiveProfile.findViewById(R.id.loved_count_title);
-        lovedCount = mArchiveProfile.findViewById(R.id.loved_count);
+        lovedCount = mArchiveProfile.findViewById(R.id.loved_statistics);
+        //lovedCount = mArchiveProfile.findViewById(R.id.loved_count);
         final TextView loveCount = mArchiveProfile.findViewById(R.id.love_count);
 
-        lovedCountWrap.setOnClickListener(new View.OnClickListener() {
+        lovedCount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
@@ -1332,7 +1474,7 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
     }
 
     private void setFollowStatistics(Bundle bundle) {
-        TextView followedCount = mArchiveProfile.findViewById(R.id.followed_count);
+        TextView followedCount = mHeaderEvaluation.findViewById(R.id.followed_count);
         TextView followingCount = mArchiveProfile.findViewById(R.id.following_count);
         if (bundle.getInt("followed_count") > 0) {
             followedCount.setText(String.valueOf(bundle.getInt("followed_count")));
@@ -1345,7 +1487,7 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
 
     private void setPraiseStatistics(Bundle bundle) {
 
-        TextView praisedCount = mArchiveProfile.findViewById(R.id.praised_count);
+        TextView praisedCount = mArchiveProfile.findViewById(R.id.praised_statistics);
         TextView praiseCount = mArchiveProfile.findViewById(R.id.praise_count);
         TextView praisedStatistics = mArchiveProfile.findViewById(R.id.praised_statistics);
 
@@ -1362,7 +1504,7 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
     }
 
     private void setLoveStatistics(Bundle bundle) {
-        lovedCount = mArchiveProfile.findViewById(R.id.loved_count);
+        lovedCount = mArchiveProfile.findViewById(R.id.loved_statistics);
         TextView loveCount = mArchiveProfile.findViewById(R.id.love_count);
         lovedStatistics = mArchiveProfile.findViewById(R.id.loved_statistics);
         if (bundle != null) {
@@ -1422,7 +1564,7 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
 
     private void processPraiseAction() {
         praisedIcon = mArchiveProfile.findViewById(R.id.praised_icon);
-        praisedCount = mArchiveProfile.findViewById(R.id.praised_count);
+        praisedCount = mArchiveProfile.findViewById(R.id.praised_statistics);
         if (isPraised) {
             praisedIcon.setText(getResources().getText(R.string.fa_thumbs_up));
         } else {
@@ -2024,13 +2166,14 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
 
     private void addCheeringGroupMember() {
         final TextView addMember = mHeaderEvaluation.findViewById(R.id.add_cheering_group);
-
+if(getActivity() != null){
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 addMember.setVisibility(View.VISIBLE);
             }
         });
+}
 
         addMember.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -2559,11 +2702,24 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
             case LOAD_MY_TALENTS_DONE:
                 setMyTalentSizeView();
                 break;
-            case LOAD_MY_GROUP_DONE:
-                setMyTribeSizeView();
+            case LOAD_MY_EXPERIENCES_DONE:
+                setMyExperienceSizeView();
                 break;
-            case LOAD_MY_ORDER_COUNT_DONE:
-                setMyOrdersCountView();
+            case LOAD_MY_GUIDE_COUNT_DONE:
+                setMyGuideSizeView();
+                break;
+            case LOAD_MY_CONSULT_COUNT_DONE:
+                setMyConsultView();
+                break;
+            case HAS_REQUEST_OR_APPLY:
+                newApplyCountView = mHeaderEvaluation.findViewById(R.id.count);
+                if (newApplyCount > 0) {
+                    newApplyCountView.setText("+" + String.valueOf(newApplyCount));
+                } else {
+                    newApplyCountView.setText("");
+                }
+
+                ReminderManager.getInstance().updateNewContactsApplied(newApplyCount);
                 break;
             default:
                 break;
@@ -2767,6 +2923,57 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
     private void unRegisterLoginBroadcast() {
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
     }
+    
+    private void getApplyAndRequestCount(){
+        RequestBody requestBody = new FormBody.Builder().build();
+
+        HttpUtil.sendOkHttpRequest(getContext(), GET_APPLY_AND_REQUEST_COUNT, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+
+                if (response.body() != null) {
+                    String responseText = response.body().string();
+                    try {
+                        JSONObject responseObject = new JSONObject(responseText);
+                        newApplyCount = responseObject.optInt("newApplyCount");
+
+                        if (newApplyCount > 0){
+                            handler.sendEmptyMessage(HAS_REQUEST_OR_APPLY);
+                        }
+                    }catch (JSONException e){
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+            }
+        });
+    }
+
+    //未读消息数量观察者实现
+    @Override
+    public void onUnreadNumChanged(int unReadCount) {  }
+
+    @Override
+    public void onNotificationUnreadChanged(int unReadCount) { }
+    
+    @Override
+    public void onNewContactsApplied(int appliedCount) {
+        Slog.d(TAG, "------------------->onNewContactsApplied: " + appliedCount);
+        newApplyCountView.setText(String.valueOf(appliedCount));
+        if (appliedCount > 0) {
+            if (newApplyCountView.getVisibility() == View.GONE) {
+                newApplyCountView.setVisibility(View.VISIBLE);
+            }
+        } else {
+            if (newApplyCountView.getVisibility() == View.VISIBLE) {
+                newApplyCountView.setVisibility(View.GONE);
+            }
+        }
+    }
 
     static class MyHandler extends HandlerTemp<MeetArchiveFragment> {
         public MyHandler(MeetArchiveFragment cls) {
@@ -2779,6 +2986,17 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
             if (meetArchiveFragment != null) {
                 meetArchiveFragment.handleMessage(message);
             }
+        }
+    }
+    
+    /**
+     * 注册未读消息数量观察者
+     */
+    private void registerMsgUnreadInfoObserver(boolean register) {
+        if (register) {
+            ReminderManager.getInstance().registerUnreadNumChangedCallback(this);
+        } else {
+            ReminderManager.getInstance().unregisterUnreadNumChangedCallback(this);
         }
     }
 
