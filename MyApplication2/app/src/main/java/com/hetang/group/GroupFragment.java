@@ -48,7 +48,6 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static com.hetang.group.MyParticipationDialogFragment.MY_TALENT;
-import static com.hetang.group.MyParticipationDialogFragment.MY_TRIBE;
 import static com.hetang.group.SubGroupActivity.GROUP_ADD_BROADCAST;
 import static com.hetang.group.SubGroupActivity.TALENT_ADD_BROADCAST;
 import static com.hetang.group.SubGroupActivity.getSubGroup;
@@ -123,8 +122,6 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
         talentCountTV = mView.findViewById(R.id.talent_count);
         tribeCountTV = mView.findViewById(R.id.tribe_count);
 
-        loadMyTalents();
-
         loadMyGroups();
 
         associationGroup = convertView.findViewById(R.id.association_group);
@@ -149,37 +146,6 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
             loadGroupData(type);
         }
         registerBroadcast();
-    }
-
-    private void loadMyTalents(){
-        HttpUtil.sendOkHttpRequest(MyApplication.getContext(), GET_MY_TALENTS, new FormBody.Builder().build(), new Callback() {
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (response.body() != null) {
-                    String responseText = response.body().string();
-                    if (isDebug) Slog.d(TAG, "==========loadMyTalents response text : " + responseText);
-                    if (responseText != null && !TextUtils.isEmpty(responseText)) {
-                        JSONObject talentResponse = null;
-                        try {
-                            talentResponse = new JSONObject(responseText);
-                            if (talentResponse != null) {
-                                myTalentSize = processTalentResponse(talentResponse);
-                                if (myTalentSize > 0){
-                                    handler.sendEmptyMessage(LOAD_MY_TALENTS_DONE);
-                                }
-                            }
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call call, IOException e) {
-            }
-        });
     }
 
     public int processTalentResponse(JSONObject talentResponse) {
@@ -383,8 +349,7 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
     }
     
         public void startMyParticipationDF(int type){
-        MyParticipationDialogFragment myParticipationDialogFragment = MyParticipationDialogFragment.newInstance(type);
-        myParticipationDialogFragment.show(getFragmentManager(), "MyParticipationDialogFragment");
+
     }
     
 
@@ -414,7 +379,7 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
         tribeNavigation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startMyParticipationDF(MY_TRIBE);
+                //startMyParticipationDF(MY_TRIBE);
             }
         });
 
@@ -475,7 +440,7 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), TalentDetailsActivity.class);
                 //intent.putExtra("talent", talent);
-                intent.putExtra("aid", talent.aid);
+                intent.putExtra("tid", talent.tid);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
                 startActivity(intent);
             }
