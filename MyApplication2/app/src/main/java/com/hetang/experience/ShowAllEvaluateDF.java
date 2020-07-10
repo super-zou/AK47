@@ -1,7 +1,6 @@
 package com.hetang.experience;
 
 import android.app.Dialog;
-import android.content.Intent;
 import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
@@ -18,11 +17,8 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.hetang.R;
-import com.hetang.adapter.GuideSummaryAdapter;
 import com.hetang.adapter.ShowAllEvaluatesAdapter;
-import com.hetang.common.BaseAppCompatActivity;
 import com.hetang.common.MyApplication;
 import com.hetang.picture.GlideEngine;
 import com.hetang.util.BaseDialogFragment;
@@ -31,6 +27,7 @@ import com.hetang.util.HttpUtil;
 import com.hetang.util.MyLinearLayoutManager;
 
 import com.hetang.util.Slog;
+import com.hetang.util.Utility;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.luck.picture.lib.PictureSelector;
@@ -53,7 +50,6 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE;
-import static com.hetang.common.MyApplication.getContext;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
 public class ShowAllEvaluateDF extends BaseDialogFragment {
@@ -61,13 +57,15 @@ public class ShowAllEvaluateDF extends BaseDialogFragment {
     private static final String TAG = "ShowAllEvaluateDF";
     private static final int PAGE_SIZE = 8;
     private static final String GET_ALL_EVALUATES = HttpUtil.DOMAIN + "?q=travel_guide/get_all_evaluates";
+    private static final String GET_EXPERIENCE_ALL_EVALUATES = HttpUtil.DOMAIN + "?q=experience/get_all_experience_evaluates";
     private static final int GET_ALL_DONE = 1;
     private static final int GET_ALL_END = 2;
     private static final int NO_MORE = 3;
     final int itemLimit = 1;
-    int tid;
+    int sid;
+    int eid;
     int count;
-    
+    int mType;
     ImageView progressImageView;
     AnimationDrawable animationDrawable;
     private int mLoadSize = 0;
@@ -79,11 +77,16 @@ public class ShowAllEvaluateDF extends BaseDialogFragment {
     private XRecyclerView recyclerView;
     private List<Evaluate> mEvaluateList = new ArrayList<>();
     
-    public static ShowAllEvaluateDF newInstance(int tid, int count) {
+    public static ShowAllEvaluateDF newInstance(int type, int id, int count) {
         ShowAllEvaluateDF showAllEvaluateDF = new ShowAllEvaluateDF();
         Bundle bundle = new Bundle();
-        bundle.putInt("tid", tid);
+        if (type == Utility.TalentType.GUIDE.ordinal()){
+            bundle.putInt("sid", id);
+        }else {
+            bundle.putInt("eid", id);
+        }
         bundle.putInt("count", count);
+        bundle.putInt("type", type);
         showAllEvaluateDF.setArguments(bundle);
 
         return showAllEvaluateDF;
@@ -97,7 +100,12 @@ public class ShowAllEvaluateDF extends BaseDialogFragment {
         myHandler = new ShowAllEvaluateDF.MyHandler(this);
         Bundle bundle = getArguments();
         if (bundle != null) {
-            tid = bundle.getInt("tid");
+            mType = bundle.getInt("type");
+            if (mType == Utility.TalentType.GUIDE.ordinal()){
+                sid = bundle.getInt("sid");
+            }else {
+                eid = bundle.getInt("eid");
+            }
             count = bundle.getInt("count");
         }
 
@@ -222,14 +230,23 @@ public class ShowAllEvaluateDF extends BaseDialogFragment {
     
     private void loadData() {
 
+        String uri = GET_ALL_EVALUATES;
         final int page = mEvaluateList.size() / PAGE_SIZE;
-        RequestBody requestBody = new FormBody.Builder()
-                .add("tid", String.valueOf(tid))
-                .add("step", String.valueOf(PAGE_SIZE))
-                .add("page", String.valueOf(page))
-                .build();
+        FormBody.Builder builder = new FormBody.Builder();
+        builder.add("step", String.valueOf(PAGE_SIZE))
+                .add("page", String.valueOf(page));
+
+        if (mType == Utility.TalentType.GUIDE.ordinal()){
+            Slog.d(TAG, " sid: "+sid);
+            builder.add("sid", String.valueOf(sid));
+        }else {
+            Slog.d(TAG, " eid: "+eid);
+            builder.add("eid", String.valueOf(eid));
+            uri = GET_EXPERIENCE_ALL_EVALUATES;
+        }
+        RequestBody requestBody = builder.build();
                 
-                 HttpUtil.sendOkHttpRequest(getContext(), GET_ALL_EVALUATES, requestBody, new Callback() {
+        HttpUtil.sendOkHttpRequest(getContext(), uri, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
