@@ -75,25 +75,22 @@ import okhttp3.Response;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static com.hetang.common.AddPictureActivity.ADD_PICTURE_BROADCAST;
-import static com.hetang.common.MyApplication.getContext;
 import static com.hetang.dynamics.DynamicsInteractDetailsActivity.MEET_RECOMMEND_COMMENT;
-import static com.hetang.dynamics.DynamicsInteractDetailsActivity.MY_CONDITION_COMMENT;
 import static com.hetang.common.SetAvatarActivity.AVATAR_SET_ACTION_BROADCAST;
 import static com.hetang.group.SingleGroupActivity.GET_TALENT_DONE;
 import static com.hetang.group.SubGroupActivity.GET_ALL_TALENTS;
 import static com.hetang.group.SubGroupActivity.GET_MY_UNIVERSITY_SUBGROUP;
-import static com.hetang.group.SubGroupActivity.GET_TALENTS_BY_TYPE;
 import static com.hetang.group.SubGroupActivity.getTalent;
-import static com.hetang.home.HomeFragment.COMMENT_UPDATE_RESULT;
-import static com.hetang.home.HomeFragment.LOVE_UPDATE_RESULT;
-import static com.hetang.home.HomeFragment.MY_COMMENT_UPDATE_RESULT;
-import static com.hetang.home.HomeFragment.MY_LOVE_UPDATE_RESULT;
-import static com.hetang.home.HomeFragment.MY_PRAISE_UPDATE_RESULT;
-import static com.hetang.home.HomeFragment.PRAISE_UPDATE_RESULT;
-import static com.hetang.meet.MeetDynamicsFragment.COMMENT_COUNT_UPDATE;
-import static com.hetang.meet.MeetDynamicsFragment.LOVE_UPDATE;
-import static com.hetang.meet.MeetDynamicsFragment.MY_COMMENT_COUNT_UPDATE;
-import static com.hetang.meet.MeetDynamicsFragment.PRAISE_UPDATE;
+import static com.hetang.main.DynamicFragment.COMMENT_UPDATE_RESULT;
+import static com.hetang.main.DynamicFragment.LOVE_UPDATE_RESULT;
+import static com.hetang.main.DynamicFragment.MY_COMMENT_UPDATE_RESULT;
+import static com.hetang.main.DynamicFragment.MY_LOVE_UPDATE_RESULT;
+import static com.hetang.main.DynamicFragment.MY_PRAISE_UPDATE_RESULT;
+import static com.hetang.main.DynamicFragment.PRAISE_UPDATE_RESULT;
+import static com.hetang.explore.ShareFragment.COMMENT_COUNT_UPDATE;
+import static com.hetang.explore.ShareFragment.LOVE_UPDATE;
+import static com.hetang.explore.ShareFragment.MY_COMMENT_COUNT_UPDATE;
+import static com.hetang.explore.ShareFragment.PRAISE_UPDATE;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
 /**
@@ -703,7 +700,7 @@ public class MeetRecommendFragment extends BaseFragment {
                 public void onClick(View view) {
                     Intent intent = new Intent(getContext(), TalentDetailsActivity.class);
                     //intent.putExtra("talent", talent);
-                    intent.putExtra("aid", talent.aid);
+                    intent.putExtra("tid", talent.tid);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
                     startActivity(intent);
                 }
