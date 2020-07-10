@@ -25,9 +25,9 @@ import com.hetang.util.Utility;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.hetang.util.Utility.getDateToString;
 import static com.hetang.verify.VerifyActivity.REQUEST;
 import static com.hetang.common.MyApplication.getContext;
-import static com.hetang.util.Utility.getDateToString;
 
 public class UserPassedtListAdapter extends RecyclerView.Adapter<UserPassedtListAdapter.ViewHolder> {
     private static final String TAG = "UserRequestListAdapter";
