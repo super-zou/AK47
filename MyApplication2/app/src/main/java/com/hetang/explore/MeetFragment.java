@@ -1,4 +1,4 @@
-package com.hetang.meet;
+package com.hetang.explore;
 
 import android.app.Activity;
 import android.content.Context;
@@ -18,8 +18,9 @@ import com.hetang.adapter.MeetDiscoveryListAdapter;
 import com.hetang.common.HandlerTemp;
 import com.hetang.common.MyApplication;
 import com.hetang.dynamics.DynamicsInteractDetailsActivity;
-import com.hetang.home.HomeFragment;
+import com.hetang.main.DynamicFragment;
 import com.hetang.main.MeetArchiveActivity;
+import com.hetang.meet.UserMeetInfo;
 import com.hetang.util.BaseFragment;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.InterActInterface;
@@ -52,10 +53,10 @@ import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
  * Created by haichao.zou on 2017/11/23.
  */
 
-public class MeetDiscoveryFragment extends BaseFragment {
+public class MeetFragment extends BaseFragment {
 
     private static final boolean debug = false;
-    private static final String TAG = "MeetDiscoveryFragment";
+    private static final String TAG = "MeetFragment";
     //+Begin add by xuchunping for use XRecyclerView support loadmore
     //private RecyclerView recyclerView;
     private static final int PAGE_SIZE = 6;
@@ -242,22 +243,22 @@ public class MeetDiscoveryFragment extends BaseFragment {
         Slog.d(TAG, "===================onActivityResult requestCode: " + requestCode + " resultCode: " + resultCode);
         if (requestCode == Activity.RESULT_FIRST_USER) {
             switch (resultCode) {
-                case HomeFragment.COMMENT_UPDATE_RESULT:
+                case DynamicFragment.COMMENT_UPDATE_RESULT:
                     int commentCount = data.getIntExtra("commentCount", 0);
                     Slog.d(TAG, "==========commentCount: " + commentCount);
                     Message msg = new Message();
                     Bundle bundle = new Bundle();
                     bundle.putInt("commentCount", commentCount);
                     msg.setData(bundle);
-                    msg.what = MeetDynamicsFragment.COMMENT_COUNT_UPDATE;
+                    msg.what = ShareFragment.COMMENT_COUNT_UPDATE;
                     handler.sendMessage(msg);
                     break;
 
-                case HomeFragment.PRAISE_UPDATE_RESULT:
-                    handler.sendEmptyMessage(MeetDynamicsFragment.PRAISE_UPDATE);
+                case DynamicFragment.PRAISE_UPDATE_RESULT:
+                    handler.sendEmptyMessage(ShareFragment.PRAISE_UPDATE);
                     break;
-                case HomeFragment.LOVE_UPDATE_RESULT:
-                    handler.sendEmptyMessage(MeetDynamicsFragment.LOVE_UPDATE);
+                case DynamicFragment.LOVE_UPDATE_RESULT:
+                    handler.sendEmptyMessage(ShareFragment.LOVE_UPDATE);
                     break;
                 default:
                     break;
@@ -371,18 +372,18 @@ public class MeetDiscoveryFragment extends BaseFragment {
         }
     }
 
-    static class MyHandler extends HandlerTemp<MeetDiscoveryFragment> {
+    static class MyHandler extends HandlerTemp<MeetFragment> {
 
-        public MyHandler(MeetDiscoveryFragment cls) {
+        public MyHandler(MeetFragment cls) {
             super(cls);
         }
 
         @Override
         public void handleMessage(Message message) {
             super.handleMessage(message);
-            MeetDiscoveryFragment meetDiscoveryFragment = ref.get();
-            if (meetDiscoveryFragment != null) {
-                meetDiscoveryFragment.handleMessage(message);
+            MeetFragment meetFragment = ref.get();
+            if (meetFragment != null) {
+                meetFragment.handleMessage(message);
             }
         }
     }
