@@ -29,6 +29,7 @@ import com.hetang.R;
 import com.hetang.dynamics.Dynamic;
 import com.hetang.common.HandlerTemp;
 import com.hetang.common.MyApplication;
+import com.hetang.experience.ExperienceDetailActivity;
 import com.hetang.group.SubGroupDetailsActivity;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
@@ -52,6 +53,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static com.hetang.util.ParseUtils.ADD_SUBGROUP_ACTIVITY_ACTION;
+import static com.hetang.util.ParseUtils.WRITE_SHARE_EXPERIENCE;
 
 /**
  * Created by haichao.zou on 2017/11/20.
@@ -144,7 +146,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
             }
         }
 
-        if (dynamic.getType() == ADD_SUBGROUP_ACTIVITY_ACTION) {
+        if (dynamic.getType() == ADD_SUBGROUP_ACTIVITY_ACTION || dynamic.getType() == WRITE_SHARE_EXPERIENCE) {
             holder.from.setVisibility(View.VISIBLE);
             if (!TextUtils.isEmpty(dynamic.getAction())){
                 holder.from.setText("#"+dynamic.getAction()+"#");
@@ -152,9 +154,12 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
             holder.from.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent(mContext, SubGroupDetailsActivity.class);
-                    intent.putExtra("gid", dynamic.getPid());
-                    mContext.startActivity(intent);
+                    if (dynamic.getType() == WRITE_SHARE_EXPERIENCE){
+                        Intent intent = new Intent(mContext, ExperienceDetailActivity.class);
+                        intent.putExtra("eid", dynamic.getPid());
+                        mContext.startActivity(intent);
+                        Slog.d(TAG, "----------------------->eid: "+dynamic.getPid());
+                    }
                 }
             });
         } else {
