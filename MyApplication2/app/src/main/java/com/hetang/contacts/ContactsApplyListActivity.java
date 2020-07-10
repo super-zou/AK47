@@ -35,8 +35,8 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static com.hetang.main.ContactsFragment.CONTACTS_DEFAULT;
-import static com.hetang.main.ContactsFragment.CONTACTS_NEW_APPLY;
+import static com.hetang.contacts.ContactsActivity.CONTACTS_DEFAULT;
+import static com.hetang.contacts.ContactsActivity.CONTACTS_NEW_APPLY;
 
 public class ContactsApplyListActivity extends BaseAppCompatActivity {
 
