@@ -119,7 +119,7 @@ public class MessageFragment extends Fragment implements ReminderManager.UnreadN
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
                     String responseText = response.body().string();
-                    if (responseText != null) {
+                    if (responseText != null && !TextUtils.isEmpty(responseText)) {
                         try {
                             JSONObject responseObject = new JSONObject(responseText);
                             int userRequestCount = responseObject.optInt("user_request_count");
@@ -299,15 +299,19 @@ public class MessageFragment extends Fragment implements ReminderManager.UnreadN
     public void handleMessage(Message message) {
         switch (message.what) {
             case HAVE_UNREAD_MESSAGE:
-                if (unReadNotification.getVisibility() == View.GONE) {
-                    unReadNotification.setVisibility(View.VISIBLE);
+                if (unReadNotification != null){
+                    if (unReadNotification.getVisibility() == View.GONE) {
+                        unReadNotification.setVisibility(View.VISIBLE);
+                    }
+                    Bundle bundle = message.getData();
+                    unReadNotification.setText(String.valueOf(bundle.getInt("count")));
                 }
-                Bundle bundle = message.getData();
-                unReadNotification.setText(String.valueOf(bundle.getInt("count")));
                 break;
             case HAVE_NO_UNREAD_MESSAGE:
-                if (unReadNotification.getVisibility() != View.GONE) {
-                    unReadNotification.setVisibility(View.GONE);
+                if (unReadConversation != null){
+                    if (unReadNotification.getVisibility() != View.GONE) {
+                        unReadNotification.setVisibility(View.GONE);
+                    }
                 }
                 break;
             case GET_ADMIN_ROLE_DOWN:
