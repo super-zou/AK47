@@ -25,7 +25,7 @@ import android.widget.Toast;
 import com.hetang.adapter.GridImageAdapter;
 import com.hetang.common.BaseAppCompatActivity;
 import com.hetang.common.OnItemClickListener;
-import com.hetang.home.HomeFragment;
+import com.hetang.main.DynamicFragment;
 import com.hetang.picture.GlideEngine;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
@@ -373,7 +373,7 @@ public class AddDynamicsActivity extends BaseAppCompatActivity {
                             selectFileList.clear();
                             //sendBroadcast();//send broadcast to meetdynamicsfragment notify  meet dynamics to update
                             //setCommentUpdateResult();
-                            myHandler.sendEmptyMessage(HomeFragment.DYNAMICS_UPDATE_RESULT);
+                            myHandler.sendEmptyMessage(DynamicFragment.DYNAMICS_UPDATE_RESULT);
                             PictureFileUtils.deleteAllCacheDirFile(getContext());
                             //dismissProgressDialog();
                            // finish();
@@ -431,7 +431,7 @@ public class AddDynamicsActivity extends BaseAppCompatActivity {
      public void setResultWrapper(){
         Slog.d(TAG, "----->setResultWrapper");
         Intent intent = new Intent();
-        setResult(HomeFragment.DYNAMICS_UPDATE_RESULT, intent);
+        setResult(DynamicFragment.DYNAMICS_UPDATE_RESULT, intent);
     }
 
     @Override
@@ -476,7 +476,7 @@ public class AddDynamicsActivity extends BaseAppCompatActivity {
 
     public void handleMessage(Message msg){
         switch (msg.what){
-            case HomeFragment.DYNAMICS_UPDATE_RESULT:
+            case DynamicFragment.DYNAMICS_UPDATE_RESULT:
                 setResultWrapper();
                 dismissProgressDialog();
                 finish();
