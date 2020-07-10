@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -52,22 +51,25 @@ import static com.hetang.group.GroupFragment.SUBGROUP_GET_MY_GROUP;
 import static com.hetang.group.SubGroupActivity.getSubGroup;
 import static com.hetang.group.SubGroupActivity.getTalent;
 import static com.hetang.group.SubGroupActivity.updateVisitorRecord;
+import static com.hetang.main.MeetArchiveFragment.GET_EXPERIENCE_STATISTICS_URL;
 
 public class MyParticipationDialogFragment extends BaseDialogFragment {
     private Dialog mDialog;
     private static final boolean isDebug = true;
     private MyHandler myHandler;
     private static final String TAG = "MyParticipationDialogFragment";
-    public static final int MY_TRIBE = 0;
+    public static final int MY_EXPERIENCE = 0;
     public static final int MY_TALENT = 1;
+    public static final int MY_GUIDE = 2;
     LinearLayout myParticipationWrapper;
     List<SubGroupActivity.Talent> talentList = new ArrayList<>();
     List<SubGroupActivity.SubGroup> groupList = new ArrayList<>();
     
-        public static MyParticipationDialogFragment newInstance(int type) {
+        public static MyParticipationDialogFragment newInstance(int type, int uid) {
         MyParticipationDialogFragment myParticipationDialogFragment = new MyParticipationDialogFragment();
         Bundle bundle = new Bundle();
         bundle.putInt("type", type);
+        bundle.putInt("uid", uid);
 
         myParticipationDialogFragment.setArguments(bundle);
 
@@ -102,12 +104,14 @@ public class MyParticipationDialogFragment extends BaseDialogFragment {
 
         myHandler = new MyHandler(this);
         Bundle bundle = getArguments();
+        int uid = 0;
         if (bundle != null){
             int type = bundle.getInt("type");
-            if (type == MY_TRIBE){
-                loadMyGroups();
+            uid = bundle.getInt("uid");
+            if (type == MY_EXPERIENCE){
+                loadMyExperiences(uid);
             }else {
-                loadMyTalents();
+                loadMyTalents(uid);
             }
         }
         
@@ -122,8 +126,11 @@ public class MyParticipationDialogFragment extends BaseDialogFragment {
         return mDialog;
     }
 
-    private void loadMyTalents(){
-        HttpUtil.sendOkHttpRequest(MyApplication.getContext(), GET_MY_TALENTS, new FormBody.Builder().build(), new Callback() {
+    private void loadMyTalents(int uid){
+                RequestBody requestBody = new FormBody.Builder()
+                .add("uid", String.valueOf(uid))
+                .build();
+        HttpUtil.sendOkHttpRequest(MyApplication.getContext(), GET_MY_TALENTS,requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
             if (response.body() != null) {
@@ -180,10 +187,20 @@ public class MyParticipationDialogFragment extends BaseDialogFragment {
     
      private void setMyTalentViewData(){
         int size = talentList.size();
-        for (int i=0; i<size; i++){
-            SubGroupActivity.Talent talent = talentList.get(i);
-            View talentView = setMyTalentItem(talent);
-            myParticipationWrapper.addView(talentView);
+        if (size > 1){
+            for (int i=0; i<size; i++){
+                SubGroupActivity.Talent talent = talentList.get(i);
+                View talentView = setMyTalentItem(talent);
+                myParticipationWrapper.addView(talentView);
+            }
+        }else {
+            SubGroupActivity.Talent talent = talentList.get(0);
+            Intent intent = new Intent(getContext(), TalentDetailsActivity.class);
+            //intent.putExtra("talent", talent);
+            intent.putExtra("tid", talent.tid);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+            startActivity(intent);
+            mDialog.dismiss();
         }
     }
 
@@ -205,7 +222,7 @@ public class MyParticipationDialogFragment extends BaseDialogFragment {
         
         TextView university = myTalentView.findViewById(R.id.university);
         TextView degree = myTalentView.findViewById(R.id.degree);
-        TextView charge = myTalentView.findViewById(R.id.charge);
+        TextView majorTV = myTalentView.findViewById(R.id.major);
         TextView subject = myTalentView.findViewById(R.id.subject);
         TextView introduction = myTalentView.findViewById(R.id.introduction);
         TextView star = myTalentView.findViewById(R.id.star);
@@ -213,12 +230,14 @@ public class MyParticipationDialogFragment extends BaseDialogFragment {
         if (talent.profile.getSituation() == 0){
             university.setText(talent.profile.getUniversity().trim());
             degree.setText(talent.profile.getDegreeName(talent.profile.getDegree()));
+            majorTV.setText(talent.profile.getMajor());
         }else {
             university.setText(talent.profile.getIndustry());
             degree.setText(talent.profile.getPosition());
         }
         
-        charge.setText(String.valueOf(talent.charge));
+        TextView titleTV = myTalentView.findViewById(R.id.talent_title);
+        titleTV.setText(talent.title);
         subject.setText(talent.subject);
         introduction.setText(talent.introduction);
         //holder.maleCount.setText(mContext.getResources().getString(R.string.male)+" "+singleGroup.maleCount);
@@ -227,7 +246,16 @@ public class MyParticipationDialogFragment extends BaseDialogFragment {
             float scoreFloat = talent.evaluateScores/talent.evaluateCount;
             float score = (float)(Math.round(scoreFloat*10))/10;
             star.setVisibility(View.VISIBLE);
-            evaluateCount.setText(score+getContext().getResources().getString(R.string.dot)+talent.evaluateCount);
+            evaluateCount.setText(score+"("+talent.evaluateCount+")");
+        }
+        
+                if (talent.answerCount > 0){
+            TextView answerCountTV = myTalentView.findViewById(R.id.answer_count);
+            if(talent.answerCount > 0){
+                answerCountTV.setText(getResources().getString(R.string.dot) + "解答"+talent.answerCount);
+            }else {
+                answerCountTV.setText("解答"+talent.answerCount);
+            }
         }
         
         ConstraintLayout talentItem = myTalentView.findViewById(R.id.talent_summary_item);
@@ -236,7 +264,7 @@ public class MyParticipationDialogFragment extends BaseDialogFragment {
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), TalentDetailsActivity.class);
                 //intent.putExtra("talent", talent);
-                intent.putExtra("aid", talent.aid);
+                intent.putExtra("tid", talent.tid);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
                 startActivity(intent);
             }
@@ -250,8 +278,11 @@ public class MyParticipationDialogFragment extends BaseDialogFragment {
     }
 
 
-    private void loadMyGroups() {
-        HttpUtil.sendOkHttpRequest(MyApplication.getContext(), SUBGROUP_GET_MY_GROUP, new FormBody.Builder().build(), new Callback() {
+    private void loadMyExperiences() {
+                RequestBody requestBody = new FormBody.Builder()
+                .add("uid", String.valueOf(uid))
+                .build();
+        HttpUtil.sendOkHttpRequest(MyApplication.getContext(), GET_EXPERIENCE_STATISTICS_URL, requestBody, new Callback() {
             @Override
              public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
