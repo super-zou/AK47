@@ -1,19 +1,15 @@
 package com.hetang.experience;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.res.Resources;
-import android.util.DisplayMetrics;
-import androidx.gridlayout.widget.GridLayout;
 import android.content.Intent;
-import android.content.IntentFilter;
+import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,43 +19,40 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBar;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.gridlayout.widget.GridLayout;
 
 import com.bumptech.glide.Glide;
 import com.hetang.R;
 import com.hetang.adapter.DataBean;
 import com.hetang.adapter.GuideBannerAdapter;
-import com.hetang.adapter.SubGroupSummaryAdapter;
 import com.hetang.common.BaseAppCompatActivity;
 import com.hetang.common.MyApplication;
-import com.hetang.group.CreateSubGroupDialogFragment;
-import com.hetang.group.SingleGroupActivity;
-import com.hetang.group.SingleGroupDetailsActivity;
-import com.hetang.util.FontManager;
-import com.hetang.util.HttpUtil;
-import com.hetang.util.ParseUtils;
-import com.hetang.util.RoundImageView;
 import com.hetang.consult.ConsultSummaryActivity;
+import com.hetang.contacts.ChatActivity;
 import com.hetang.picture.GlideEngine;
 import com.hetang.consult.TalentConsultDF;
+import com.hetang.talent.TalentDetailsActivity;
 import com.hetang.util.CommonDialogFragmentInterface;
 import com.hetang.util.DateUtil;
+import com.hetang.util.FontManager;
+import com.hetang.util.HttpUtil;
+import com.hetang.util.RoundImageView;
+import com.hetang.util.Slog;
+
 import com.hetang.util.Utility;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.entity.LocalMedia;
+import com.tencent.imsdk.TIMConversationType;
+import com.tencent.qcloud.tim.uikit.modules.chat.base.ChatInfo;
 import com.willy.ratingbar.RotationRatingBar;
-import com.hetang.util.Slog;
-import com.hetang.util.UserProfile;
-import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.youth.banner.Banner;
 import com.youth.banner.config.IndicatorConfig;
 import com.youth.banner.indicator.CircleIndicator;
 
 import com.youth.banner.itemdecoration.MarginDecoration;
 import com.youth.banner.listener.OnBannerListener;
-import com.youth.banner.listener.OnPageChangeListener;
 import com.youth.banner.transformer.DepthPageTransformer;
-import com.youth.banner.transformer.ZoomOutPageTransformer;
 import com.youth.banner.util.BannerUtils;
 
 import org.json.JSONArray;
@@ -77,11 +70,7 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static com.hetang.common.MyApplication.getContext;
-import static com.hetang.group.SingleGroupActivity.GET_MY_GROUP_DONE;
-import static com.hetang.group.SingleGroupActivity.SINGLE_GROUP_GET_MY;
-import static com.hetang.group.SingleGroupActivity.getSingleGroup;
 
 public class GuideDetailActivity extends BaseAppCompatActivity implements CommonDialogFragmentInterface{
     private static final boolean isDebug = true;
@@ -108,20 +97,22 @@ public class GuideDetailActivity extends BaseAppCompatActivity implements Common
     private int mLoadSize = 0;
     private int mUpdateSize = 0;
     private Handler handler;
-        private JSONArray evaluateJsonArray;
-    private int evaluateCount;
-    private int consultCount;
-    private int type = 0;
+    private int type = Utility.TalentType.GUIDE.ordinal();
     private ViewGroup myGroupView;
+        private int sid;
     private int tid;
     private int rid = 1;
     private JSONArray bannerUrlArray;
     private JSONObject guideServiceObject;
     private String additionalServiceStr;
+        private JSONArray evaluateJsonArray;
+    private int evaluateCount;
+    private int consultCount;
     private JSONArray routeJsonArray;
     private JSONObject guideObject;
     private JSONObject limitationsObject;
     private JSONObject chargeObject;
+        private Typeface font;
     
      @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,7 +125,7 @@ public class GuideDetailActivity extends BaseAppCompatActivity implements Common
 
         handler = new GuideDetailActivity.MyHandler(this);
         if (getIntent() != null){
-            tid = getIntent().getIntExtra("tid", 0);
+            sid = getIntent().getIntExtra("sid", 0);
         }
         
         initView();
@@ -149,9 +140,9 @@ public class GuideDetailActivity extends BaseAppCompatActivity implements Common
     }
     
     private void initView() {
-        Typeface font = Typeface.createFromAsset(MyApplication.getContext().getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
+        font = Typeface.createFromAsset(MyApplication.getContext().getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
         FontManager.markAsIconContainer(findViewById(R.id.left_back), font);
-        FontManager.markAsIconContainer(findViewById(R.id.cancellation_detail), font);
+        FontManager.markAsIconContainer(findViewById(R.id.cancellation_detail_nav), font);
         FontManager.markAsIconContainer(findViewById(R.id.cny), font);
         FontManager.markAsIconContainer(findViewById(R.id.evaluate_star), font);
         FontManager.markAsIconContainer(findViewById(R.id.guide_head), font);
@@ -171,16 +162,29 @@ public class GuideDetailActivity extends BaseAppCompatActivity implements Common
                 checkAppointDate();
             }
         });
+        
+                TextView cancellationDetailNavTV = findViewById(R.id.cancellation_detail_nav);
+        cancellationDetailNavTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showCancellationDialog();
+            }
+        });
+    }
+    
+        private void showCancellationDialog(){
+        ExperienceCancellationDF experienceCancellationDF = ExperienceCancellationDF.newInstance();
+        experienceCancellationDF.show(getSupportFragmentManager(), "ExperienceCancellationDF");
     }
 
     private void checkAppointDate(){
-        CheckAppointDate checkAppointDate = CheckAppointDate.newInstance(tid, chargeObject.optInt("amount"), chargeObject.optString("unit"));
+        CheckAppointDate checkAppointDate = CheckAppointDate.newInstance(sid, chargeObject.optInt("price"), chargeObject.optString("unit"), guideServiceObject.optString("title"));
         checkAppointDate.show(getSupportFragmentManager(), "CheckAppointDate");
     }
     
     private void getBannerPictures(){
         RequestBody requestBody = new FormBody.Builder()
-                .add("tid", String.valueOf(tid))
+                .add("sid", String.valueOf(sid))
                 .build();
 
         HttpUtil.sendOkHttpRequest(getContext(), GET_BANNER_PICTURES, requestBody, new Callback() {
@@ -226,6 +230,7 @@ public class GuideDetailActivity extends BaseAppCompatActivity implements Common
         //--------------------------详细使用-------------------------------
         banner.setAdapter(new GuideBannerAdapter(dataBean.getBannerData()));
         banner.setIndicator(new CircleIndicator(this));
+        banner.isAutoLoop(true);
         banner.setIndicatorSelectedColorRes(R.color.background);
         banner.setIndicatorNormalColorRes(R.color.white);
         banner.setIndicatorGravity(IndicatorConfig.Direction.CENTER);
@@ -244,7 +249,7 @@ public class GuideDetailActivity extends BaseAppCompatActivity implements Common
     
      private void getBaseInformation(){
         RequestBody requestBody = new FormBody.Builder()
-                .add("tid", String.valueOf(tid))
+                .add("sid", String.valueOf(sid))
                 .build();
 
         HttpUtil.sendOkHttpRequest(getContext(), GET_BASE_INFO, requestBody, new Callback() {
@@ -287,10 +292,13 @@ public class GuideDetailActivity extends BaseAppCompatActivity implements Common
             String[] additionalServiceArray = additionalServiceStr.split(";");
                 if (additionalServiceArray.length > 0){
                     for (int i=0; i<additionalServiceArray.length; i++){
-                        TextView textView = new TextView(this);
-                        textView.setText(additionalServiceArray[i]);
-                        additionalServiceWrapper.addView(textView);
+                        String content = additionalServiceArray[i];
+                        View itemView = LayoutInflater.from(getContext()).inflate(R.layout.experience_contain_item, (ViewGroup) findViewById(android.R.id.content), false);
+                        additionalServiceWrapper.addView(itemView);
+                        TextView itemContent = itemView.findViewById(R.id.item_content);
+                        itemContent.setText(content);
                     }
+                     FontManager.markAsIconContainer(findViewById(R.id.additional_service), font);
                 }
             }
         }catch (JSONException e){
@@ -302,7 +310,7 @@ public class GuideDetailActivity extends BaseAppCompatActivity implements Common
     
      private void getEvaluateInfo(){
         RequestBody requestBody = new FormBody.Builder()
-                .add("tid", String.valueOf(tid))
+                .add("sid", String.valueOf(sid))
                 .build();
 
         HttpUtil.sendOkHttpRequest(getContext(), GET_EVALUATE_INFO, requestBody, new Callback() {
@@ -330,6 +338,7 @@ public class GuideDetailActivity extends BaseAppCompatActivity implements Common
     
      private void setEvaluateInfoView(){
         LinearLayout evaluateWrapper = findViewById(R.id.evaluate_wrapper);
+         evaluateWrapper.setVisibility(View.VISIBLE);
         Resources resources = getResources();
         DisplayMetrics dm = resources.getDisplayMetrics();
         int innerWidth = dm.widthPixels - (int) Utility.dpToPx(getContext(), 38f);
@@ -356,6 +365,14 @@ public class GuideDetailActivity extends BaseAppCompatActivity implements Common
                 setEvaluateItemPicture(evaluatePictureWrapper, evaluateObject, innerWidth);
             }
             
+                        LinearLayout evaluateLL = findViewById(R.id.evaluate_summary);
+            ConstraintLayout avaluateCL = findViewById(R.id.evaluate_statistics);
+            TextView showAllEvaluateBtn = findViewById(R.id.show_all);
+            if (evaluateCount > 0){
+                evaluateLL.setVisibility(View.VISIBLE);
+                avaluateCL.setVisibility(View.VISIBLE);
+            }
+            
             TextView headRatingTV = findViewById(R.id.rating);
             TextView ratingTV = findViewById(R.id.evaluate_rating);
             float average = ratingSum / evaluateJsonArray.length();
@@ -367,8 +384,6 @@ public class GuideDetailActivity extends BaseAppCompatActivity implements Common
             TextView evaluateCountTV = findViewById(R.id.evaluate_count);
             evaluateCountTV.setText("("+evaluateCount+")");
             headEvaluateCountTV.setText("("+evaluateCount+")");
-
-            Button showAllEvaluateBtn = findViewById(R.id.show_all);
             
              if (evaluateCount > 3){
                 showAllEvaluateBtn.setVisibility(View.VISIBLE);
@@ -379,6 +394,8 @@ public class GuideDetailActivity extends BaseAppCompatActivity implements Common
                         showAllEvaluateDF.show(getSupportFragmentManager(), "ShowAllEvaluateDF");
                     }
                 });
+            }else {
+                showAllEvaluateBtn.setVisibility(View.GONE);
             }
         }
     }
@@ -432,7 +449,7 @@ public class GuideDetailActivity extends BaseAppCompatActivity implements Common
     
      private void getRouteInfo(){
         RequestBody requestBody = new FormBody.Builder()
-                .add("tid", String.valueOf(tid))
+                .add("sid", String.valueOf(sid))
                 .build();
 
         HttpUtil.sendOkHttpRequest(getContext(), GET_ROUTE_INFO, requestBody, new Callback() {
@@ -491,7 +508,7 @@ private void setRouteInfoView(){
     
     private void getGuideIntroduction(){
         RequestBody requestBody = new FormBody.Builder()
-                .add("tid", String.valueOf(tid))
+                .add("sid", String.valueOf(sid))
                 .build();
 
         HttpUtil.sendOkHttpRequest(getContext(), GET_GUIDE_INFO, requestBody, new Callback() {
@@ -504,6 +521,7 @@ private void setRouteInfoView(){
                     JSONObject jsonObject = new JSONObject(responseText);
                         //routeJsonArray = jsonObject.optJSONArray("routes");
                         guideObject = jsonObject.optJSONObject("guide");
+                        tid = guideObject.optInt("tid");
                         handler.sendEmptyMessage(GET_GUIDE_INFO_DONE);
                     }catch (JSONException e){
                         e.printStackTrace();
@@ -524,7 +542,7 @@ private void setRouteInfoView(){
         TextView name = findViewById(R.id.guide_talent_name);
         name.setText(guideObject.optString("realname"));
         TextView selfIntroduction = findViewById(R.id.guide_self_introduction);
-        selfIntroduction.setText(guideObject.optString("self_introduction"));
+        selfIntroduction.setText(guideObject.optString("introduction"));
         
         Button consultBtn = findViewById(R.id.consult_talent);
         consultBtn.setOnClickListener(new View.OnClickListener() {
@@ -534,6 +552,26 @@ private void setRouteInfoView(){
                 talentConsultDF.show(getSupportFragmentManager(), "TalentConsultDF");
             }
         });
+        
+                Button contactBtn = findViewById(R.id.contact_talent);
+        contactBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                contactTalent();
+            }
+        });
+    }
+    
+        private void contactTalent() {
+        ChatInfo chatInfo = new ChatInfo();
+        chatInfo.setType(TIMConversationType.C2C);
+        chatInfo.setId(guideObject.optString("uid"));
+        chatInfo.setChatName(guideObject.optString("realname"));
+
+        Intent intent = new Intent(getContext(), ChatActivity.class);
+        intent.putExtra("CHAT_INFO", chatInfo);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
     
     private void getConsultStatisticsInfo(){
@@ -545,7 +583,7 @@ private void setRouteInfoView(){
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
-                Slog.d(TAG, "==========getAppointmentLimit response body : " + responseText);
+                Slog.d(TAG, "==========getConsultStatisticsInfo response body : " + responseText);
                 if (responseText != null) {
                     try {
                         JSONObject jsonObject = new JSONObject(responseText);
@@ -572,7 +610,7 @@ private void setRouteInfoView(){
         consultCountTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(GuideDetailActivity.this, ConsultSummaryActivity.class);
+                Intent intent = new Intent(GuideDetailActivity.this, TalentDetailsActivity.class);
                 intent.putExtra("tid", tid);
                 startActivity(intent);
             }
@@ -581,7 +619,7 @@ private void setRouteInfoView(){
 
     private void getAppointmentLimit(){
         RequestBody requestBody = new FormBody.Builder()
-                .add("tid", String.valueOf(tid))
+                .add("sid", String.valueOf(sid))
                 .build();
                 
                 HttpUtil.sendOkHttpRequest(getContext(), GET_LIMIT_INFO, requestBody, new Callback() {
@@ -610,13 +648,17 @@ private void setRouteInfoView(){
     }
 
     private void setLimitInfoView(){
-        String limitationStr = limitationsObject.optString("condition");
+        String limitationStr = limitationsObject.optString("limitation");
+        TextView groupLimitTV = findViewById(R.id.group_limit);
+        groupLimitTV.setText(String.valueOf(limitationsObject.optInt("amount")));
         LinearLayout wrapper = findViewById(R.id.limit_condition_wrapper);
         if (!TextUtils.isEmpty(limitationStr)){
-            String[] limitationArray = limitationStr.split("；");
+            String[] limitationArray = limitationStr.split(";");
             for (int i=0; i<limitationArray.length; i++){
                 TextView textView = new TextView(this);
-                textView.setText(limitationArray[i]);
+                textView.setText(getResources().getString(R.string.dot)+" "+limitationArray[i]);
+                textView.setTextColor(getResources().getColor(R.color.black ));
+                textView.setTextSize(16);
                 wrapper.addView(textView);
             }
         }
@@ -624,7 +666,7 @@ private void setRouteInfoView(){
     
     private void getChargeInfo(){
         RequestBody requestBody = new FormBody.Builder()
-                .add("tid", String.valueOf(tid))
+                .add("sid", String.valueOf(sid))
                 .build();
 
         HttpUtil.sendOkHttpRequest(getContext(), GET_CHARGE_INFO, requestBody, new Callback() {
@@ -656,7 +698,7 @@ private void setRouteInfoView(){
         TextView money = findViewById(R.id.money);
         TextView unit = findViewById(R.id.unit);
 
-       money.setText(String.valueOf(chargeObject.optInt("amount")));
+       money.setText(String.valueOf(chargeObject.optInt("price")));
         unit.setText(chargeObject.optString("unit"));
     }
     
@@ -673,6 +715,7 @@ private void setRouteInfoView(){
                 break;
             case GET_GUIDE_INFO_DONE:
                 setGuideIntroductionView();
+                getConsultStatisticsInfo();
                 break;
             case GET_LIMIT_INFO_DONE:
                 setLimitInfoView();
@@ -708,7 +751,7 @@ private void setRouteInfoView(){
         @Override
     public void onBackFromDialog(int cid, int tid, boolean status) {
         Slog.d(TAG, "-------------------onBackFromDialog cid: "+cid+"  tid: "+tid+"  status: "+status);
-        Intent intent = new Intent(GuideDetailActivity.this, ConsultSummaryActivity.class);
+        Intent intent = new Intent(GuideDetailActivity.this, TalentDetailsActivity.class);
         intent.putExtra("tid", tid);
         startActivity(intent);
     }
