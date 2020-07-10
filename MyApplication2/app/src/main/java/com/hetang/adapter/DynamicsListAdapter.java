@@ -28,7 +28,7 @@ import com.hetang.common.HandlerTemp;
 import com.hetang.common.MyApplication;
 import com.hetang.group.SubGroupActivity;
 import com.hetang.group.SubGroupDetailsActivity;
-import com.hetang.home.HomeFragment;
+import com.hetang.main.DynamicFragment;
 import com.hetang.meet.UserMeetInfo;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
@@ -56,6 +56,7 @@ import okhttp3.Response;
 import static com.hetang.util.ParseUtils.ADD_SUBGROUP_ACTIVITY_ACTION;
 import static com.hetang.util.ParseUtils.FOLLOW_GROUP_ACTION;
 import static com.hetang.util.ParseUtils.MODIFY_GROUP_ACTION;
+import static com.hetang.util.ParseUtils.WRITE_SHARE_EXPERIENCE;
 
 /**
  * Created by haichao.zou on 2017/11/20.
@@ -113,6 +114,7 @@ public class DynamicsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             case ParseUtils.ADD_MEET_DYNAMIC_ACTION:
             case ParseUtils.ADD_INNER_DYNAMIC_ACTION:
             case ADD_SUBGROUP_ACTIVITY_ACTION:
+            case WRITE_SHARE_EXPERIENCE:
                 View viewDynamic = LayoutInflater.from(MyApplication.getContext())
                         .inflate(R.layout.dynamics_item, parent, false);
                 holder = new DynamicViewHolder(viewDynamic);
@@ -622,7 +624,7 @@ public class DynamicsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private void setRelatedBackgroudView(final ArchiveViewHolder holder, Dynamic dynamic) {
         holder.relatedContentLayout.setVisibility(View.VISIBLE);
-        HomeFragment.BackgroundDetail backgroundDetail = dynamic.backgroundDetail;
+        DynamicFragment.BackgroundDetail backgroundDetail = dynamic.backgroundDetail;
         holder.title.setText(backgroundDetail.title);
         if (!TextUtils.isEmpty(backgroundDetail.link)) {
             holder.link.setVisibility(View.VISIBLE);
