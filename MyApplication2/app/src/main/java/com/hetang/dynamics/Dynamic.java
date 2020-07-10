@@ -1,7 +1,7 @@
 package com.hetang.dynamics;
 
 import com.hetang.group.SubGroupActivity;
-import com.hetang.home.HomeFragment;
+import com.hetang.main.DynamicFragment;
 import com.hetang.group.SingleGroupActivity;
 import com.hetang.meet.UserMeetInfo;
 import com.hetang.util.UserProfile;
@@ -31,7 +31,7 @@ import java.util.Date;
     public UserMeetInfo relatedMeetContent;
     public SingleGroupActivity.SingleGroup relatedSingleGroupContent;
     public SubGroupActivity.SubGroup relatedSubGroupContent;
-    public HomeFragment.BackgroundDetail backgroundDetail;
+    public DynamicFragment.BackgroundDetail backgroundDetail;
 
     public long getDid() {
         return did;
