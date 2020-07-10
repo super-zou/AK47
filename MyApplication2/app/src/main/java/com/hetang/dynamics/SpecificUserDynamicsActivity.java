@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.hetang.R;
 import com.hetang.common.BaseAppCompatActivity;
-import com.hetang.home.HomeFragment;
+import com.hetang.main.DynamicFragment;
 import com.hetang.util.FontManager;
 
 public class SpecificUserDynamicsActivity extends BaseAppCompatActivity{
@@ -17,7 +17,7 @@ public class SpecificUserDynamicsActivity extends BaseAppCompatActivity{
     private static final boolean isDebug = true;
     FragmentManager fragmentManager;
     FragmentTransaction fragmentTransaction;
-    HomeFragment homeFragment;
+    DynamicFragment dynamicFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,21 +26,21 @@ public class SpecificUserDynamicsActivity extends BaseAppCompatActivity{
 
         int uid = getIntent().getIntExtra("uid", -1);
 
-        if (homeFragment == null){
-            homeFragment = new HomeFragment();
+        if (dynamicFragment == null){
+            dynamicFragment = new DynamicFragment();
         }
         Bundle bundle = new Bundle();
         if (uid != -1){
             bundle.putInt("uid", uid);
             bundle.putBoolean("specific", true);
         }
-        homeFragment.setArguments(bundle);
+        dynamicFragment.setArguments(bundle);
         //1.创建Fragment的管理对象
         fragmentManager = getSupportFragmentManager();
         //2.获取Fragment的事务对象并且开启事务
         fragmentTransaction = fragmentManager.beginTransaction();
         //3.调用事务中动态操作fragment的方法执行 add(添加到哪里，需要添加的fragment对象);
-        fragmentTransaction.add(R.id.fragment_container, homeFragment, "MeetDynamic");
+        fragmentTransaction.add(R.id.fragment_container, dynamicFragment, "MeetDynamic");
         fragmentTransaction.addToBackStack("MeetArchive");
         //4.提交事务
         fragmentTransaction.commit();
