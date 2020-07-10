@@ -78,6 +78,7 @@ import static com.hetang.group.SubGroupDetailsActivity.GET_SUBGROUP_BY_GID;
 import static com.hetang.talent.TalentAuthenticationDialogFragment.COMMON_TALENT_AUTHENTICATION_RESULT_OK;
 import static com.hetang.talent.TalentAuthenticationDialogFragment.TALENT_AUTHENTICATION_RESULT_OK;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
+import static com.hetang.util.DateUtil.timeStampToDay;
 
 public class SubGroupActivity extends BaseAppCompatActivity implements CommonDialogFragmentInterface {
     public static final String GET_MY_UNIVERSITY_SUBGROUP = HttpUtil.DOMAIN + "?q=subgroup/get_my_university";
@@ -158,7 +159,7 @@ public class SubGroupActivity extends BaseAppCompatActivity implements CommonDia
             subGroup.visitRecord = group.optInt("visit_record");
             subGroup.followCount = group.optInt("follow_count");
             subGroup.activityCount = group.optInt("activity_count");
-            subGroup.created = Utility.timeStampToDay(group.optInt("created"));
+            subGroup.created = timeStampToDay(group.optInt("created"));
 
             subGroup.leader = new UserMeetInfo();
             if (group.optJSONObject("leader") != null) {
@@ -170,20 +171,40 @@ public class SubGroupActivity extends BaseAppCompatActivity implements CommonDia
 
         return null;
     }
+    
+    public static class Talent implements Serializable {
+        public int tid;
+        public String introduction;
+        public String created;
+        public UserMeetInfo profile;
+        public int type;
+        public String title;
+        public String subject;
+        public String[] materialArray;
+        public float evaluateScores = 0;
+        public int evaluateCount = 0;
+        public int answerCount = 0;
+        public int questionCount = 0;
+        public int status = -1;
+        public int charge;
+        public String desc;
+        public String reason;
+    }
 
     public static Talent getTalent(JSONObject talentObject) {
         Talent talent = new Talent();
         if (talentObject != null) {
-            talent.aid = talentObject.optInt("aid");
-            talent.charge = talentObject.optInt("charge");
+            talent.tid = talentObject.optInt("tid");
+            talent.title = talentObject.optString("talent_title");
             talent.introduction = talentObject.optString("introduction");
-            talent.payeeQRCode = talentObject.optString("payee_qr_code");
             talent.status = talentObject.optInt("status");
             talent.desc = talentObject.optString("description");
             talent.subject = talentObject.optString("subject");
             talent.evaluateCount = talentObject.optInt("count");
             talent.evaluateScores = (float) talentObject.optDouble("scores");
             talent.reason = talentObject.optString("reason");
+            talent.answerCount = talentObject.optInt("answer_count");
+            talent.questionCount = talentObject.optInt("question_count");
             talent.profile = new UserMeetInfo();
             ParseUtils.setBaseProfile(talent.profile, talentObject);
 
@@ -791,7 +812,7 @@ public class SubGroupActivity extends BaseAppCompatActivity implements CommonDia
                 public void onClick(View view) {
                     Intent intent = new Intent(getContext(), TalentDetailsActivity.class);
                     //intent.putExtra("talent", talent);
-                    intent.putExtra("aid", talent.aid);
+                    intent.putExtra("tid", talent.tid);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
                     startActivity(intent);
                 }
@@ -1216,23 +1237,6 @@ public class SubGroupActivity extends BaseAppCompatActivity implements CommonDia
         public int followed = -1;
         public boolean isLeader = false;
         //public List<UserMeetInfo> memberInfoList;
-    }
-
-    public static class Talent implements Serializable {
-        public int aid;
-        public String introduction;
-        public String created;
-        public UserMeetInfo profile;
-        public String payeeQRCode;
-        public int type;
-        public String subject;
-        public String[] materialArray;
-        public float evaluateScores = 0;
-        public int evaluateCount = 0;
-        public int status = -1;
-        public int charge;
-        public String desc;
-        public String reason;
     }
 
     static class MyHandler extends Handler {
