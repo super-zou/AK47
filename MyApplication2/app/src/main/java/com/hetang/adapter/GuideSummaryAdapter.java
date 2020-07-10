@@ -33,8 +33,6 @@ import com.hetang.util.RoundImageView;
 import java.util.List;
 
 import static com.hetang.common.MyApplication.getContext;
-import static com.hetang.group.GroupFragment.association_group;
-import static com.hetang.util.ParseUtils.startMeetArchiveActivity;
 
 /**
  * Created by super-zou on 18-9-21.
@@ -87,10 +85,15 @@ import static com.hetang.util.ParseUtils.startMeetArchiveActivity;
 
         holder.titleTV.setText(guide.title);
         holder.cityTV.setText(guide.city);
-        holder.scoreTV.setText(String.valueOf(guide.evaluateScore));
-        holder.countTV.setText(guide.evaluateCount+"条评价");
+        if (guide.evaluateCount > 0){
+            holder.evaluateLL.setVisibility(View.VISIBLE);
+            holder.scoreTV.setText(String.valueOf(guide.evaluateScore));
+            holder.countTV.setText(guide.evaluateCount+"条评价");
+        }else {
+            holder.evaluateLL.setVisibility(View.GONE);
+        }
 
-        holder.moneyTV.setText(String.valueOf(guide.money));
+        holder.moneyTV.setText(String.valueOf(guide.price));
         holder.unitTV.setText(guide.unit);
 
     }
@@ -114,6 +117,7 @@ import static com.hetang.util.ParseUtils.startMeetArchiveActivity;
         TextView moneyTV;
         TextView unitTV;
         CardView itemLayout;
+        LinearLayout evaluateLL;
         
         public ViewHolder(View view, MyItemClickListener myItemClickListener) {
             super(view);
@@ -125,6 +129,7 @@ import static com.hetang.util.ParseUtils.startMeetArchiveActivity;
             countTV = view.findViewById(R.id.evaluate_count);
             moneyTV = view.findViewById(R.id.money);
             unitTV = view.findViewById(R.id.unit);
+            evaluateLL = view.findViewById(R.id.evaluate_wrapper);
 
             //将全局的监听赋值给接口
             this.mListener = myItemClickListener;
