@@ -71,7 +71,7 @@ public class RouteItemEditDF extends BaseDialogFragment {
     private EditText routeIntroductionEdit;
     private Button modify;
     private int index;
-    private int tid;
+    private int sid;
     private boolean isModified = false;
     private boolean isFilled = false;
     private AddDynamicsActivity addDynamicsActivity;
@@ -92,11 +92,11 @@ public class RouteItemEditDF extends BaseDialogFragment {
         public void afterTextChanged(Editable editable) {}
     };
 
-    public static RouteItemEditDF newInstance(int index, int tid, GuideApplyDialogFragment.Route initRoute) {
+    public static RouteItemEditDF newInstance(int index, int sid, GuideApplyDialogFragment.Route initRoute) {
         RouteItemEditDF routeItemEditDF = new RouteItemEditDF();
         Bundle bundle = new Bundle();
         bundle.putInt("index", index);
-        bundle.putInt("tid", tid);
+        bundle.putInt("sid", sid);
         if (initRoute != null) {
             bundle.putParcelable("route", initRoute);
         }
@@ -125,7 +125,7 @@ public class RouteItemEditDF extends BaseDialogFragment {
         myHandler = new MyHandler(this);
         Bundle bundle = getArguments();
         if (bundle != null) {
-            tid = bundle.getInt("tid");
+            sid = bundle.getInt("sid");
             index = bundle.getInt("index");
             route = bundle.getParcelable("route");
 
@@ -213,7 +213,7 @@ public class RouteItemEditDF extends BaseDialogFragment {
 
         adapter.setItemDeleteListener(new GridImageAdapter.OnPicDeleteListener() {
             @Override
-            public void onPicDelete() {
+            public void onPicDelete(int position) {
                 Slog.d(TAG, "pic delete");
                 if (route != null) {
                     isModified = true;
@@ -281,7 +281,7 @@ public class RouteItemEditDF extends BaseDialogFragment {
         if (isModified) {
             authenMap.put("rid", String.valueOf(route.getRid()));
         } else {
-            authenMap.put("tid", String.valueOf(tid));
+            authenMap.put("sid", String.valueOf(sid));
         }
 
         authenMap.put("name", routeNameEdit.getText().toString());
