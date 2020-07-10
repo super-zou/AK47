@@ -157,7 +157,7 @@ public class FillMeetInfoActivity extends BaseAppCompatActivity {
             } else {
                 textView.setText(R.string.circle);
             }
-            textView.setTextColor(getResources().getColor(R.color.white));
+            textView.setTextColor(getResources().getColor(R.color.blue_dark));
             textView.setLayoutParams(layoutParams);
 
             pageIndicator.addView(textView);
