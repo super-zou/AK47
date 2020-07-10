@@ -33,11 +33,11 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static com.hetang.main.ContactsFragment.ACCEPT_CONTACTS_APPLY_URL;
-import static com.hetang.main.ContactsFragment.CONTACTS_DEFAULT;
-import static com.hetang.main.ContactsFragment.CONTACTS_DISMISS_URL;
-import static com.hetang.main.ContactsFragment.CONTACTS_MY_APPLY;
-import static com.hetang.main.ContactsFragment.CONTACTS_NEW_APPLY;
+import static com.hetang.contacts.ContactsActivity.ACCEPT_CONTACTS_APPLY_URL;
+import static com.hetang.contacts.ContactsActivity.CONTACTS_DEFAULT;
+import static com.hetang.contacts.ContactsActivity.CONTACTS_DISMISS_URL;
+import static com.hetang.contacts.ContactsActivity.CONTACTS_MY_APPLY;
+import static com.hetang.contacts.ContactsActivity.CONTACTS_NEW_APPLY;
 import static com.hetang.util.ParseUtils.startMeetArchiveActivity;
 
 public class ContactsListAdapter extends RecyclerView.Adapter<ContactsListAdapter.ContactsViewHolder> {
