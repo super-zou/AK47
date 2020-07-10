@@ -15,6 +15,7 @@ import com.hetang.R;
 import com.hetang.common.HandlerTemp;
 import com.hetang.group.SingleGroupActivity;
 import com.hetang.group.SubGroupActivity;
+import com.hetang.talent.TalentDetailsActivity;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.RoundImageView;
@@ -89,14 +90,16 @@ public class TalentSummaryListAdapter extends RecyclerView.Adapter<TalentSummary
 
         holder.name.setText(talent.profile.getNickName().trim());
         if (talent.profile.getSituation() == 0){
+            holder.major.setText(String.valueOf(talent.profile.getMajor()));
             holder.university.setText(talent.profile.getUniversity().trim());
             holder.degree.setText(talent.profile.getDegreeName(talent.profile.getDegree()));
         }else {
             holder.university.setText(talent.profile.getIndustry().trim());
             holder.degree.setText(talent.profile.getPosition());
+            holder.major.setText("");
         }
 
-        holder.charge.setText(String.valueOf(talent.charge));
+        holder.title.setText(talent.title);
         holder.subject.setText(talent.subject);
         holder.introduction.setText(talent.introduction);
         //holder.maleCount.setText(mContext.getResources().getString(R.string.male)+" "+singleGroup.maleCount);
@@ -105,10 +108,16 @@ public class TalentSummaryListAdapter extends RecyclerView.Adapter<TalentSummary
             float scoreFloat = talent.evaluateScores/talent.evaluateCount;
             float score = (float)(Math.round(scoreFloat*10))/10;
             holder.star.setVisibility(View.VISIBLE);
-            holder.evaluateCount.setText(score+mContext.getResources().getString(R.string.dot)+talent.evaluateCount);
+            holder.evaluateCount.setText("("+talent.evaluateCount+")");
         }else {
             holder.star.setVisibility(View.GONE);
             holder.evaluateCount.setText("");
+        }
+        
+        if (talent.answerCount > 0){
+            holder.answerCount.setText(mContext.getResources().getString(R.string.dot)+"解答"+talent.answerCount);
+        }else {
+            holder.answerCount.setText("");
         }
     }
 
@@ -125,13 +134,15 @@ public class TalentSummaryListAdapter extends RecyclerView.Adapter<TalentSummary
        private MyItemClickListener mListener;
        RoundImageView leaderAvatar;
         TextView name;
+        TextView title;
         TextView university;
         TextView introduction;
         TextView degree;
-        TextView charge;
+        TextView major;
         TextView subject;
         TextView star;
         TextView evaluateCount;
+        TextView answerCount;
         ConstraintLayout itemLayout;
 
         public ViewHolder(View view, MyItemClickListener myItemClickListener) {
@@ -140,13 +151,15 @@ public class TalentSummaryListAdapter extends RecyclerView.Adapter<TalentSummary
             leaderAvatar = view.findViewById(R.id.leader_avatar);
             name = view.findViewById(R.id.leader_name);
             university = view.findViewById(R.id.university);
+            title = view.findViewById(R.id.talent_title);
             //created = view.findViewById(R.id.created);
             introduction = view.findViewById(R.id.introduction);
             degree = view.findViewById(R.id.degree);
-            charge = view.findViewById(R.id.charge);
+            major = view.findViewById(R.id.major);
             subject = view.findViewById(R.id.subject);
             star = view.findViewById(R.id.star);
             evaluateCount = view.findViewById(R.id.evaluate_count);
+            answerCount = view.findViewById(R.id.answer_count);
 
             //将全局的监听赋值给接口
             this.mListener = myItemClickListener;
