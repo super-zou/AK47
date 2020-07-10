@@ -22,7 +22,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -34,12 +33,14 @@ import com.hetang.common.MyApplication;
 import com.hetang.common.OnItemClickListener;
 import com.hetang.dynamics.AddDynamicsActivity;
 import com.hetang.main.FullyGridLayoutManager;
+import com.hetang.order.MyFragment;
 import com.hetang.picture.GlideEngine;
 import com.hetang.util.BaseDialogFragment;
 import com.hetang.util.CommonDialogFragmentInterface;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.Slog;
+import com.hetang.util.Utility;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
@@ -65,12 +66,12 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static android.app.Activity.RESULT_OK;
-import static com.hetang.group.GroupFragment.eden_group;
 
 public class ExperienceEvaluateDialogFragment extends BaseDialogFragment {
     public final static int SET_EVALUATE_RESULT_OK = 7;
     private static final String TAG = "ExperienceEvaluateDialogFragment";
-        private static final int IMPRESSION_PARSE_DONE = 0;
+    private static final String WRITE_EXPERIENCE_EVALUATION_URL = HttpUtil.DOMAIN + "?q=experience/write_experience_evaluate";
+    private static final int IMPRESSION_PARSE_DONE = 0;
     private static final String WRITE_EVALUATION_URL = HttpUtil.DOMAIN + "?q=travel_guide/write_evaluate";
     private static final int WRITE_EVALUATE_DONE = 0;
     final List<String> selectedFeatures = new ArrayList<>();
@@ -82,14 +83,14 @@ public class ExperienceEvaluateDialogFragment extends BaseDialogFragment {
     private Handler handler = new ExperienceEvaluateDialogFragment.MyHandler(this);
     private List<String> impressionList = new ArrayList<>();
     private ProgressDialog progressDialog;
-    private OrderSummaryActivity.Order order;
+    private MyFragment.Order order;
     private AddDynamicsActivity addDynamicsActivity;
     private RecyclerView recyclerView;
     private GridImageAdapter adapter;
     private List<LocalMedia> selectList = new ArrayList<>();
     private List<File> selectFileList = new ArrayList<>();
     
-    public static ExperienceEvaluateDialogFragment newInstance(OrderSummaryActivity.Order order) {
+    public static ExperienceEvaluateDialogFragment newInstance(MyFragment.Order order) {
         ExperienceEvaluateDialogFragment experienceEvaluateDialogFragment = new ExperienceEvaluateDialogFragment();
         Bundle bundle = new Bundle();
         bundle.putSerializable("order", order);
@@ -108,7 +109,7 @@ public class ExperienceEvaluateDialogFragment extends BaseDialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Bundle bundle = getArguments();
         if (bundle != null) {
-            order = (OrderSummaryActivity.Order) bundle.getSerializable("order");
+            order = (MyFragment.Order) bundle.getSerializable("order");
         }
         if (addDynamicsActivity == null){
             addDynamicsActivity = new AddDynamicsActivity();
@@ -227,8 +228,6 @@ public class ExperienceEvaluateDialogFragment extends BaseDialogFragment {
             headPicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getContext(), GuideDetailActivity.class);
-                intent.putExtra("tid", order.id);
                 startActivity(intent);
             }
         });
@@ -240,12 +239,28 @@ public class ExperienceEvaluateDialogFragment extends BaseDialogFragment {
         });
     }
     
+        private void startActivity(){
+        if (order.type == Utility.TalentType.GUIDE.ordinal()){
+            Intent intent = new Intent(getContext(), GuideDetailActivity.class);
+            intent.putExtra("sid", order.id);
+            startActivity(intent);
+        }else {
+            Intent intent = new Intent(getContext(), ExperienceDetailActivity.class);
+            intent.putExtra("eid", order.id);
+            startActivity(intent);
+        }
+    }
+    
     private void submitEvaluate(float rating, String content) {
         showProgressDialog(getContext().getString(R.string.saving_progress));
         Map<String, String> evaluateMap = new HashMap<>();
 
         evaluateMap.put("oid", String.valueOf(order.oid));
-        evaluateMap.put("tid", String.valueOf(order.id));
+        if (order.type == Utility.TalentType.GUIDE.ordinal()){
+            evaluateMap.put("sid", String.valueOf(order.id));
+        }else {
+            evaluateMap.put("eid", String.valueOf(order.id));
+        }
         evaluateMap.put("rating", String.valueOf(rating));
         evaluateMap.put("content", content);
         if (selectList.size() > 0) {
@@ -261,8 +276,10 @@ public class ExperienceEvaluateDialogFragment extends BaseDialogFragment {
     
     
 private void uploadPictures(Map<String, String> params, String picKey, List<File> files) {
-        Slog.d(TAG, "--------------------->uploadPictures file size: " + files.size());
         String uri = WRITE_EVALUATION_URL;
+        if (order.type == Utility.TalentType.EXPERIENCE.ordinal()){
+            uri = WRITE_EXPERIENCE_EVALUATION_URL;
+        }
 
         HttpUtil.uploadPictureHttpRequest(getContext(), params, picKey, files, uri, new Callback() {
             @Override
