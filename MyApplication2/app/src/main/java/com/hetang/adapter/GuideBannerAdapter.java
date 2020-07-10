@@ -35,8 +35,12 @@ public class GuideBannerAdapter extends BannerAdapter<DataBean, GuideBannerAdapt
 
     @Override
     public void onBindView(BannerViewHolder holder, DataBean data, int position, int size) {
-        //holder.imageView.setImageResource(data.imageRes);
-        Glide.with(getContext()).load(HttpUtil.DOMAIN+data.imageUrl).into(holder.imageView);
+        if (data.imageRes != null){
+            holder.imageView.setImageResource(data.imageRes);
+        }else {
+            if (data.imageUrl != null)
+            Glide.with(getContext()).load(HttpUtil.DOMAIN+data.imageUrl).into(holder.imageView);
+        }
     }
     
     class BannerViewHolder extends RecyclerView.ViewHolder {
