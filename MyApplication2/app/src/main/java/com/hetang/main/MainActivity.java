@@ -11,14 +11,14 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
-import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.tabs.TabLayout;
 import com.hetang.R;
 import com.hetang.adapter.MainFragmentAdapter;
 import com.hetang.common.BaseAppCompatActivity;
 import com.hetang.common.MyApplication;
 import com.hetang.common.ReminderManager;
-import com.hetang.home.HomeFragment;
+import com.hetang.order.MyFragment;
+import com.hetang.order.OrderFragment;
 import com.hetang.update.UpdateParser;
 import com.hetang.util.BaseFragment;
 import com.hetang.util.CommonDialogFragmentInterface;
@@ -76,10 +76,10 @@ public class MainActivity extends BaseAppCompatActivity implements CommonDialogF
     private static final int REQUEST_CODE_INSTALL_PERMISSION = 107;
     private static MyHandler handler;
     private static String tuikitId;
-    TabLayout.Tab home_tab;
-    TabLayout.Tab meet_tab;
+    TabLayout.Tab dynamic_tab;
+    TabLayout.Tab explore_tab;
     TabLayout.Tab message_tab;
-    TabLayout.Tab contacts_tab;
+    TabLayout.Tab orders_tab;
     TabLayout.Tab me_tab;
     TextView unReadView;
     TextView contactsAppliedNoticeView;
@@ -91,7 +91,7 @@ public class MainActivity extends BaseAppCompatActivity implements CommonDialogF
     private boolean hasUnreadSessions = false;
     private String[] mTitles = MyApplication.getContext().getResources().getStringArray(R.array.main_tabs);
 
-    private int[] mIcons = {R.string.home, R.string.fa_magnet, R.string.message, R.string.contacts, R.string.me};
+    private int[] mIcons = {R.string.fa_compass, R.string.fa_bolt, R.string.message, R.string.fa_shopping, R.string.me};
 
     private static final String GET_USERSIG = HttpUtil.DOMAIN + "?q=chat/get_userSig";
     private TIMManager timManager;
@@ -130,7 +130,7 @@ public class MainActivity extends BaseAppCompatActivity implements CommonDialogF
                     .updateUrl(HttpUtil.CHECK_VERSION_UPDATE)
                     .updateParser(new UpdateParser(this, false))
                     .supportBackgroundUpdate(true)
-                    .themeColor(getResources().getColor(R.color.background))
+                    .themeColor(getResources().getColor(R.color.blue_dark))
                     .update();
 
             SharedPreferencesUtils.setUpdateCheckTimeStamp(this, current);
@@ -150,34 +150,34 @@ public class MainActivity extends BaseAppCompatActivity implements CommonDialogF
         mViewPager = findViewById(R.id.viewpager);
 
         //获取标签数据
-        home_tab = mTabLayout.newTab();
-        meet_tab = mTabLayout.newTab();
-        contacts_tab = mTabLayout.newTab();
+        dynamic_tab = mTabLayout.newTab();
+        explore_tab = mTabLayout.newTab();
+        orders_tab = mTabLayout.newTab();
         message_tab = mTabLayout.newTab();
         me_tab = mTabLayout.newTab();
         //添加tab
-        mTabLayout.addTab(home_tab);
-        mTabLayout.addTab(meet_tab, true);
+        mTabLayout.addTab(explore_tab, true);
+        mTabLayout.addTab(dynamic_tab);
         mTabLayout.addTab(message_tab);
-        mTabLayout.addTab(contacts_tab);
+        mTabLayout.addTab(orders_tab);
         mTabLayout.addTab(me_tab);
 
-        BaseFragment home = new HomeFragment();
-        mFragmentList.add(home);
-        BaseFragment meet = new MeetFragment();
-        mFragmentList.add(meet);
-        Fragment message = new MessageFragment();
-        mFragmentList.add(message);
-        Fragment contacts = new ContactsFragment();
-        mFragmentList.add(contacts);
+        BaseFragment exploreFragment = new ExploreFragment();
+        mFragmentList.add(exploreFragment);
+        BaseFragment dynamicFragment = new DynamicFragment();
+        mFragmentList.add(dynamicFragment);
+        Fragment messageFragment = new MessageFragment();
+        mFragmentList.add(messageFragment);
+        Fragment orderFragment = new OrderFragment();
+        mFragmentList.add(orderFragment);
         //BaseFragment me = new ArchiveFragment();
-        BaseFragment me = new MeetArchiveFragment();
-        mFragmentList.add(me);
+        BaseFragment meetArchiveFragment = new MeetArchiveFragment();
+        mFragmentList.add(meetArchiveFragment);
 
         //创建一个viewpager的adapter
         mFragmentAdapter = new MainFragmentAdapter(getSupportFragmentManager(), mFragmentList, mTitles);
         mViewPager.setAdapter(mFragmentAdapter);
-        mViewPager.setOffscreenPageLimit(3);
+        mViewPager.setOffscreenPageLimit(5);
 
         //将TabLayout和ViewPager关联起来
         mTabLayout.setupWithViewPager(mViewPager);
@@ -192,7 +192,7 @@ public class MainActivity extends BaseAppCompatActivity implements CommonDialogF
             tabIcon.setText(mIcons[i]);
             tabText.setText(mTitles[i]);
 
-            if (i == 1) {
+            if (i == 0) {
                 tabText.setTextColor(getResources().getColor(R.color.blue_dark));
                 tabIcon.setTextColor(getResources().getColor(R.color.blue_dark));
                 tab.select();
@@ -228,7 +228,7 @@ public class MainActivity extends BaseAppCompatActivity implements CommonDialogF
         ConversationManagerKit.getInstance().addUnreadWatcher(this);
 
         unReadView = mTabLayout.getTabAt(2).getCustomView().findViewById(R.id.unread);
-        contactsAppliedNoticeView = mTabLayout.getTabAt(3).getCustomView().findViewById(R.id.unread);
+        contactsAppliedNoticeView = mTabLayout.getTabAt(4).getCustomView().findViewById(R.id.unread);
         FontManager.markAsIconContainer(findViewById(R.id.tabs), font);
     }
 
