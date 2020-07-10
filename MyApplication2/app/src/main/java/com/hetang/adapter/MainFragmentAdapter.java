@@ -4,11 +4,12 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
-import com.hetang.main.ContactsFragment;
-import com.hetang.home.HomeFragment;
-import com.hetang.main.MeetFragment;
+import com.hetang.main.DynamicFragment;
+import com.hetang.main.ExploreFragment;
 import com.hetang.main.MessageFragment;
 import com.hetang.main.MeetArchiveFragment;
+import com.hetang.order.MyFragment;
+import com.hetang.order.OrderFragment;
 
 import java.util.List;
 
@@ -34,22 +35,22 @@ public class MainFragmentAdapter extends FragmentStatePagerAdapter {
         Fragment fragment;
         switch (position) {
             case 0:
-                fragment = new HomeFragment();
+                fragment = new ExploreFragment();
                 break;
             case 1:
-                fragment = new MeetFragment();
+                fragment = new DynamicFragment();
                 break;
             case 2:
                 fragment = new MessageFragment();
                 break;
             case 3:
-                fragment = new ContactsFragment();
+                fragment = new OrderFragment();
                 break;
             case 4:
                 fragment = new MeetArchiveFragment();
                 break;
             default:
-                fragment = new HomeFragment();
+                fragment = new ExploreFragment();
                 break;
 
         }
