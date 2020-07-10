@@ -34,8 +34,8 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static com.hetang.meet.MeetDynamicsFragment.DYNAMICS_DELETE_BROADCAST;
-import static com.hetang.meet.MeetDynamicsFragment.REQUEST_CODE;
+import static com.hetang.explore.ShareFragment.DYNAMICS_DELETE_BROADCAST;
+import static com.hetang.explore.ShareFragment.REQUEST_CODE;
 
 /**
  * Created by super-zou on 18-9-9.
@@ -48,7 +48,7 @@ import static com.hetang.meet.MeetDynamicsFragment.REQUEST_CODE;
     private static final String DELETE_DYNAMIC = HttpUtil.DOMAIN + "?q=dynamic/action/delete";
     private Context mContext;
       private CommonDialogFragmentInterface commonDialogFragmentInterface;
-    public static final int DYNAMIC_OPERATION_RESULT = 0;
+    public static final int DYNAMIC_OPERATION_RESULT = 4;
     private boolean isDeleted = false;
 
     @Override
