@@ -48,7 +48,7 @@ public class GridImageAdapter extends RecyclerView.Adapter<GridImageAdapter.View
     }
     
         public interface OnPicDeleteListener{
-        void onPicDelete();
+        void onPicDelete(int position);
     }
 
     public void setDeleteBtnStatus(boolean show){
@@ -183,7 +183,7 @@ public class GridImageAdapter extends RecyclerView.Adapter<GridImageAdapter.View
                         list.remove(index);
                         notifyItemRemoved(index);
                         notifyItemRangeChanged(index, list.size());
-                        mOnPicDeleteListener.onPicDelete();
+                        mOnPicDeleteListener.onPicDelete(position);
                     }
                 }
             });
