@@ -27,6 +27,8 @@ import com.bumptech.glide.Glide;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.hetang.R;
 import com.hetang.adapter.SubGroupDetailsListAdapter;
+import com.hetang.main.DynamicFragment;
+import com.hetang.explore.ShareFragment;
 import com.hetang.verify.SubmitAuthenticationDialogFragment;
 import com.hetang.common.BaseAppCompatActivity;
 import com.hetang.common.InvitationDialogFragment;
@@ -37,8 +39,6 @@ import com.hetang.dynamics.Dynamic;
 import com.hetang.dynamics.DynamicOperationDialogFragment;
 import com.hetang.dynamics.DynamicsInteractDetailsActivity;
 import com.hetang.home.CommonContactsActivity;
-import com.hetang.home.HomeFragment;
-import com.hetang.meet.MeetDynamicsFragment;
 import com.hetang.meet.UserMeetInfo;
 import com.hetang.picture.GlideEngine;
 import com.hetang.util.CommonDialogFragmentInterface;
@@ -51,7 +51,6 @@ import com.hetang.util.ParseUtils;
 import com.hetang.util.RoundImageView;
 import com.hetang.util.Slog;
 import com.hetang.util.UserProfile;
-import com.hetang.util.Utility;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.luck.picture.lib.PictureSelector;
@@ -85,18 +84,19 @@ import static com.hetang.dynamics.DynamicOperationDialogFragment.DYNAMIC_OPERATI
 import static com.hetang.group.GroupFragment.eden_group;
 import static com.hetang.home.CommonContactsActivity.GROUP_MEMBER;
 import static com.hetang.home.CommonContactsActivity.GROUP_MEMBER_CATEGRORY;
-import static com.hetang.home.HomeFragment.GET_MY_NEW_ADD_DONE;
-import static com.hetang.home.HomeFragment.GET_MY_NEW_ADD_DYNAMICS_URL;
-import static com.hetang.meet.MeetDynamicsFragment.COMMENT_COUNT_UPDATE;
-import static com.hetang.meet.MeetDynamicsFragment.DYNAMICS_DELETE;
-import static com.hetang.meet.MeetDynamicsFragment.DYNAMICS_PRAISED;
-import static com.hetang.meet.MeetDynamicsFragment.GET_DYNAMICS_URL;
-import static com.hetang.meet.MeetDynamicsFragment.HAVE_UPDATE;
-import static com.hetang.meet.MeetDynamicsFragment.LOAD_DYNAMICS_DONE;
-import static com.hetang.meet.MeetDynamicsFragment.NO_MORE_DYNAMICS;
-import static com.hetang.meet.MeetDynamicsFragment.NO_UPDATE;
-import static com.hetang.meet.MeetDynamicsFragment.PRAISE_UPDATE;
-import static com.hetang.meet.MeetDynamicsFragment.UPDATE_COMMENT;
+import static com.hetang.main.DynamicFragment.GET_MY_NEW_ADD_DONE;
+import static com.hetang.main.DynamicFragment.GET_MY_NEW_ADD_DYNAMICS_URL;
+import static com.hetang.explore.ShareFragment.COMMENT_COUNT_UPDATE;
+import static com.hetang.explore.ShareFragment.DYNAMICS_DELETE;
+import static com.hetang.explore.ShareFragment.DYNAMICS_PRAISED;
+import static com.hetang.explore.ShareFragment.GET_DYNAMICS_URL;
+import static com.hetang.explore.ShareFragment.HAVE_UPDATE;
+import static com.hetang.explore.ShareFragment.LOAD_DYNAMICS_DONE;
+import static com.hetang.explore.ShareFragment.NO_MORE_DYNAMICS;
+import static com.hetang.explore.ShareFragment.NO_UPDATE;
+import static com.hetang.explore.ShareFragment.PRAISE_UPDATE;
+import static com.hetang.explore.ShareFragment.UPDATE_COMMENT;
+import static com.hetang.util.DateUtil.timeStampToDay;
 import static com.hetang.util.ParseUtils.FEMALE;
 import static com.hetang.util.ParseUtils.MALE;
 import static com.hetang.util.ParseUtils.startMeetArchiveActivity;
@@ -130,7 +130,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
     Button joinBtn;
     Button followBtn;
     boolean followed = false;
-    MeetDynamicsFragment dynamicsFragment;
+    ShareFragment dynamicsFragment;
     TextView visitRecordTV;
     TextView activityAmount;
     TextView followAmount;
@@ -164,7 +164,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
         type = getIntent().getIntExtra("type", -1);
         handler = new MyHandler(this);
         if (dynamicsFragment == null) {
-            dynamicsFragment = new MeetDynamicsFragment();
+            dynamicsFragment = new ShareFragment();
         }
         //getSubGroupByGid();
         initView();
@@ -476,7 +476,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
             subGroup.org = group.optString("group_org");
             subGroup.region = group.optString("region");
             subGroup.memberCount = group.optInt("member_count");
-            subGroup.created = Utility.timeStampToDay(group.optInt("created"));
+            subGroup.created = timeStampToDay(group.optInt("created"));
             subGroup.followCount = group.optInt("follow_count");
             subGroup.activityCount = group.optInt("activity_count");
             subGroup.visitRecord = group.optInt("visit_record");
@@ -1179,7 +1179,7 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == Activity.RESULT_FIRST_USER) {
             switch (resultCode) {
-                case HomeFragment.COMMENT_UPDATE_RESULT:
+                case DynamicFragment.COMMENT_UPDATE_RESULT:
                     int commentCount = data.getIntExtra("commentCount", 0);
                     if (isDebug) Slog.d(TAG, "==========commentCount: " + commentCount);
                     Message msg = new Message();
@@ -1190,10 +1190,10 @@ public class SubGroupDetailsActivity extends BaseAppCompatActivity implements Co
                     handler.sendMessage(msg);
                     break;
 
-                case HomeFragment.PRAISE_UPDATE_RESULT:
+                case DynamicFragment.PRAISE_UPDATE_RESULT:
                     handler.sendEmptyMessage(PRAISE_UPDATE);
                     break;
-                case HomeFragment.DYNAMICS_UPDATE_RESULT:
+                case DynamicFragment.DYNAMICS_UPDATE_RESULT:
                     getMyNewActivity();
                     break;
                 case MODIFY_SUBGROUP_LOGO_RESULT_OK:
