@@ -43,6 +43,7 @@ import com.hetang.util.CommonPickerView;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.Slog;
+import com.hetang.util.Utility;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
@@ -83,6 +84,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static android.app.Activity.RESULT_OK;
+import static com.hetang.experience.DevelopExperienceDialogFragment.FORMATTER;
 import static com.hetang.experience.RouteItemEditDF.newInstance;
 
 public class GuideApplyDialogFragment extends BaseDialogFragment implements CompoundButton.OnCheckedChangeListener, OnDateSelectedListener {
@@ -99,13 +101,15 @@ public class GuideApplyDialogFragment extends BaseDialogFragment implements Comp
     private static final String MODIFY_BASE_INFO_URL = HttpUtil.DOMAIN + "?q=travel_guide/modify_base_info";
     private static final String SUBMIT_CHARGE_AND_LIMIT_URL = HttpUtil.DOMAIN + "?q=travel_guide/write_charge_limit_info";
     private static final String MODIFY_CHARGE_AND_LIMIT_URL = HttpUtil.DOMAIN + "?q=travel_guide/modify_charge_limit_info";
-    private static final String SUBMIT_APPOINTMENT_DATE_URL = HttpUtil.DOMAIN + "?q=travel_guide/write_appoinment_date";
-    private static final String MODIFY_APPOINTMENT_DATE_URL = HttpUtil.DOMAIN + "?q=travel_guide/modify_appoinment_date";
+    private static final String SUBMIT_GROUP_AMOUNT_LIMIT_URL = HttpUtil.DOMAIN + "?q=travel_guide/write_group_limit_info";
+    private static final String MODIFY_GROUP_AMOUNT_LIMIT_URL = HttpUtil.DOMAIN + "?q=travel_guide/modify_group_limit_info";
+    private static final String SUBMIT_APPOINTMENT_DATE_URL = HttpUtil.DOMAIN + "?q=travel_guide/write_appointment_date";
+    private static final String MODIFY_APPOINTMENT_DATE_URL = HttpUtil.DOMAIN + "?q=travel_guide/modify_appointment_date";
     private static final int WRITE_BASE_INFO_SUCCESS = 1;
     private static final int WRITE_CHARGE_AND_LIMIT_SUCCESS = 3;
     private static final int WRITE_APPOINT_DATE_SUCCESS = 4;
     private static final int DELETE_ROUTE_INFO_SUCCESS = 5;
-    public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("EEE, d MMM yyyy");
+    private static final int WRITE_GROUP_AMOUNT_LIMIT_SUCCESS = 6;
     AppCompatCheckBox followShot;
     AppCompatCheckBox travelPlan;
     AppCompatCheckBox charteredCar;
@@ -115,15 +119,13 @@ public class GuideApplyDialogFragment extends BaseDialogFragment implements Comp
     MaterialCalendarView widget;
     CalendarDay today;
     private Thread threadCity;
-    private int type;
-    private int gid;
-    private int aid;
     private TextView leftBack;
     private SubGroupActivity.Talent talent;
     private Dialog mDialog;
     private Context mContext;
     private String uri;
     private int tid;
+    private int sid;
     private boolean isSubmit = false;
     private EditText introductionET;
     private EditText selfIntroductionET;
@@ -145,13 +147,14 @@ public class GuideApplyDialogFragment extends BaseDialogFragment implements Comp
     private AddDynamicsActivity addDynamicsActivity;
     private Button selectCityBtn;
     private EditText consultationChargeNumber;
+        private EditText groupAmountLimitET;
     private EditText consultationChargeDesc;
     private EditText escortChargeSettingNumber;
     private EditText escortChargeDesc;
     private EditText limitationET;
     private String consultationUnit;
     private String escortUnit = "天";
-    private String limitations;
+    private String limitations = "";
     private RadioGroup sexSelect;
     private AppCompatCheckBox understandCancellation;
     private Window window;
@@ -171,6 +174,7 @@ public class GuideApplyDialogFragment extends BaseDialogFragment implements Comp
     private List<String> mSelectedDateList = new ArrayList<>();
     private boolean routeModified = false;
     private boolean routeSubmitted = false;
+    private int mGroupAmountLimit = 0;
     
     @Override
     public void onAttach(Context context) {
@@ -190,11 +194,6 @@ public class GuideApplyDialogFragment extends BaseDialogFragment implements Comp
         mDialog = new Dialog(getActivity(), R.style.Theme_MaterialComponents_DialogWhenLarge);
         myHandler = new MyHandler(this);
         Bundle bundle = getArguments();
-        if (bundle != null) {
-            type = bundle.getInt("type", 0);
-        }
-
-        authenObject = new JSONObject();
 
         mDialog.setContentView(R.layout.guide_authentication);
 
@@ -241,6 +240,7 @@ public class GuideApplyDialogFragment extends BaseDialogFragment implements Comp
         addRouteItem = mDialog.findViewById(R.id.add_route_item);
         sexSelect = mDialog.findViewById(R.id.sexRG);
         limitationET = mDialog.findViewById(R.id.other_condition);
+         groupAmountLimitET = mDialog.findViewById(R.id.group_count_limit_edit);
         understandCancellation = mDialog.findViewById(R.id.understand_cancellation);
         prevBtn = mDialog.findViewById(R.id.prevBtn);
         nextBtn = mDialog.findViewById(R.id.nextBtn);
@@ -261,12 +261,13 @@ public class GuideApplyDialogFragment extends BaseDialogFragment implements Comp
                 int id = group.getCheckedRadioButtonId();
                 switch (id) {
                     case R.id.radioNo:
+                        limitations = "";
                         break;
                     case R.id.radioMale:
-                        limitations += "仅限男生" + ";";
+                        limitations = "仅限男生;";
                         break;
                     case R.id.radioFemale:
-                        limitations += "仅限女生" + ";";
+                        limitations = "仅限女生;";
                         break;
                 }
             }
@@ -319,6 +320,17 @@ public class GuideApplyDialogFragment extends BaseDialogFragment implements Comp
 
                             break;
                             case 9:
+                            if (mGroupAmountLimit == 0){
+                                submitGroupAmountLimitations(false);
+                            }else {
+                                if (mGroupAmountLimit != Integer.parseInt(groupAmountLimitET.getText().toString())) {
+                                    submitGroupAmountLimitations(true);
+                                } else {
+                                    processNextBtn();
+                                }
+                            }
+                            break;
+                            case 10:
                             if (mSelectedDateList.size() == 0){
                                 submitAppointDate(false);
                             }else {
@@ -328,7 +340,6 @@ public class GuideApplyDialogFragment extends BaseDialogFragment implements Comp
                                     processNextBtn();
                                 }
                             }
-
                             break;
                             default:
                             processNextBtn();
@@ -473,7 +484,7 @@ private void setAdditionalServices() {
 
     private void initChargeSetting() {
         RelativeLayout escortServiceSetting = mDialog.findViewById(R.id.escort_charge_setting);
-        escortChargeSettingNumber = mDialog.findViewById(R.id.charge_setting_edit);
+        escortChargeSettingNumber = mDialog.findViewById(R.id.price_setting_edit);
         escortChargeDesc = mDialog.findViewById(R.id.charge_supplement_edit);
         RadioGroup consultationRG = mDialog.findViewById(R.id.consultationRG);
         String[] units = getResources().getStringArray(R.array.duration);
@@ -545,9 +556,9 @@ private void initCalendarView() {
         Slog.d(TAG, "--------------------->index: " + index + " size: " + routeList.size());
         RouteItemEditDF routeItemEditDF;
         if (routeList.size() > index) {
-            routeItemEditDF = newInstance(index, tid, routeList.get(index));
+            routeItemEditDF = newInstance(index, sid, routeList.get(index));
         } else {
-            routeItemEditDF = newInstance(index, tid, null);
+            routeItemEditDF = newInstance(index, sid, null);
         }
 
         routeItemEditDF.setTargetFragment(this, ROUTE_REQUEST_CODE);
@@ -624,6 +635,7 @@ private void initCalendarView() {
                     try {
                         if (!modified) {
                             tid = new JSONObject(responseText).optInt("tid");
+                            sid = new JSONObject(responseText).optInt("sid");
                         }
                         dismissProgressDialog();
                         myHandler.sendEmptyMessage(WRITE_BASE_INFO_SUCCESS);
@@ -672,7 +684,7 @@ private void initCalendarView() {
         showProgressDialog(getContext().getString(R.string.saving_progress));
         mChargeAndLimitString = getChargeAndLimit().toString();
         FormBody.Builder builder = new FormBody.Builder()
-                .add("tid", String.valueOf(tid))
+                .add("sid", String.valueOf(sid))
                 .add("charge_and_limit", mChargeAndLimitString);
         String uri = SUBMIT_CHARGE_AND_LIMIT_URL;
         if (isModify){
@@ -705,6 +717,45 @@ private void initCalendarView() {
             }
         });
     }
+    
+    private void submitGroupAmountLimitations(boolean isModify){
+        showProgressDialog(getContext().getString(R.string.saving_progress));
+        mGroupAmountLimit = Integer.parseInt(groupAmountLimitET.getText().toString());
+        FormBody.Builder builder = new FormBody.Builder()
+                .add("sid", String.valueOf(sid))
+                .add("group_amount_limit", String.valueOf(mGroupAmountLimit));
+        String uri = SUBMIT_GROUP_AMOUNT_LIMIT_URL;
+        if (isModify){
+            uri = MODIFY_GROUP_AMOUNT_LIMIT_URL;
+        }
+        
+        RequestBody requestBody = builder.build();
+        HttpUtil.sendOkHttpRequest(mContext, uri, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String responseText = response.body().string();
+                Slog.d(TAG, "submitGroupAmountLimitations response : " + responseText);
+                if (!TextUtils.isEmpty(responseText)) {
+                    try {
+                        int result = new JSONObject(responseText).optInt("result");
+                        
+                        if (result == 1) {
+                            dismissProgressDialog();
+                            myHandler.sendEmptyMessage(WRITE_GROUP_AMOUNT_LIMIT_SUCCESS);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+        });
+    }
+    
 
     private void submitAppointDate(boolean isModify) {
         showProgressDialog(getContext().getString(R.string.saving_progress));
@@ -721,8 +772,8 @@ private void initCalendarView() {
         mSelectedDateList = new ArrayList<>(selectedDateList);
 
         FormBody.Builder builder = new FormBody.Builder()
-                .add("tid", String.valueOf(tid))
-                .add("type", EXPERIENCE_TYPE_GUIDE)
+                .add("sid", String.valueOf(sid))
+                .add("type", String.valueOf(Utility.TalentType.GUIDE.ordinal()))
                 .add("date_string", dateString);
 
         RequestBody requestBody = builder.build();
@@ -818,14 +869,21 @@ private void initCalendarView() {
                 }
                 break;
                 case 9:
+                if (TextUtils.isEmpty(groupAmountLimitET.getText())) {
+                    valid = false;
+                    Toast.makeText(getContext(), getResources().getString(R.string.group_amount_limit_empty_notice), Toast.LENGTH_LONG).show();
+                } else {
+                    valid = true;
+                }
+                break;
+            case 10:
                 if (selectedDateList.size() > 0) {
                     valid = true;
                 } else {
                     valid = false;
                     Toast.makeText(getContext(), getResources().getString(R.string.select_date_empty_notice), Toast.LENGTH_LONG).show();
                 }
-                break;
-            case 10:
+                            case 11:
                 if (understandCancellation.isChecked()) {
                     valid = true;
                 } else {
@@ -866,7 +924,6 @@ private void initCalendarView() {
             jsonObject.put("service_introduction", introductionET.getText().toString());
             jsonObject.put("self_introduction", selfIntroductionET.getText().toString());
 
-            jsonObject.put("title", headLineET.getText().toString());
             if (additionalServices.size() > 0) {
                 for (Map.Entry<String, String> additionalService : additionalServices.entrySet()) {
                     additionalServiceStr += additionalService.getValue() + ";";
@@ -940,7 +997,7 @@ private void initCalendarView() {
 
     public void startGuideDetailActivity(){
         Intent intent = new Intent(getContext(), GuideDetailActivity.class);
-        intent.putExtra("tid", tid);
+        intent.putExtra("sid", sid);
         startActivity(intent);
     }
     
@@ -975,6 +1032,9 @@ private void initCalendarView() {
             case DELETE_ROUTE_INFO_SUCCESS:
                 //submitRoute(false);
                 break;
+                        case WRITE_GROUP_AMOUNT_LIMIT_SUCCESS:
+                processNextBtn();
+                break;
         }
     }
     
@@ -1003,7 +1063,7 @@ private void initCalendarView() {
             }
         };
         
-        public int tid = 0;
+        public int sid = 0;
         public int rid = 0;
         public String name;
         public String introduction;
@@ -1014,7 +1074,7 @@ private void initCalendarView() {
         }
 
         protected Route(Parcel in) {
-            tid = in.readInt();
+            sid = in.readInt();
             rid = in.readInt();
             name = in.readString();
             introduction = in.readString();
@@ -1029,19 +1089,19 @@ private void initCalendarView() {
 
         @Override
         public void writeToParcel(Parcel dest, int flags) {
-            dest.writeInt(tid);
+            dest.writeInt(sid);
             dest.writeInt(rid);
             dest.writeString(name);
             dest.writeString(introduction);
             dest.writeList(selectPicture);
         }
 
-        public int getTid() {
-            return tid;
+        public int getSid() {
+            return sid;
         }
         
-         public void setTid(int tid) {
-            this.tid = tid;
+         public void setSid(int sid) {
+            this.sid = sid;
         }
 
         public int getRid() {
@@ -1079,17 +1139,17 @@ private void initCalendarView() {
     }
     
     static class MyHandler extends Handler {
-        WeakReference<GuideAuthenticationDialogFragment> travelGuideAuthenticationDialogFragmentWeakReference;
+        WeakReference<GuideApplyDialogFragment> travelGuideAuthenticationDialogFragmentWeakReference;
 
-        MyHandler(GuideAuthenticationDialogFragment guideAuthenticationDialogFragment) {
-            travelGuideAuthenticationDialogFragmentWeakReference = new WeakReference<GuideAuthenticationDialogFragment>(guideAuthenticationDialogFragment);
+        MyHandler(GuideApplyDialogFragment guideApplyDialogFragment) {
+            travelGuideAuthenticationDialogFragmentWeakReference = new WeakReference<GuideApplyDialogFragment>(guideApplyDialogFragment);
         }
 
         @Override
         public void handleMessage(Message message) {
-            GuideAuthenticationDialogFragment guideAuthenticationDialogFragment = travelGuideAuthenticationDialogFragmentWeakReference.get();
-            if (guideAuthenticationDialogFragment != null) {
-                guideAuthenticationDialogFragment.handleMessage(message);
+            GuideApplyDialogFragment guideApplyDialogFragment = travelGuideAuthenticationDialogFragmentWeakReference.get();
+            if (guideApplyDialogFragment != null) {
+                guideApplyDialogFragment.handleMessage(message);
             }
         }
     }
