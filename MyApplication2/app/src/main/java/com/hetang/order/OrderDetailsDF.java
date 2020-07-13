@@ -1,4 +1,4 @@
-package com.hetang.experience;
+package com.hetang.order;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -20,26 +20,17 @@ import com.bumptech.glide.Glide;
 import com.hetang.R;
 import com.hetang.common.MyApplication;
 import com.hetang.util.BaseDialogFragment;
+import com.hetang.experience.ExperienceDetailActivity;
+import com.hetang.experience.ExperienceEvaluateDialogFragment;
+import com.hetang.experience.GuideDetailActivity;
 import com.hetang.util.DateUtil;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
-import com.hetang.util.Slog;
+import com.hetang.util.Utility;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.lang.ref.WeakReference;
 
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.FormBody;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-
 import static android.app.Activity.RESULT_OK;
-import static com.hetang.common.MyApplication.getContext;
 import static com.hetang.experience.GuideApplyDialogFragment.WRITE_ROUTE_INFO_SUCCESS;
 
 public class OrderDetailsDF extends BaseDialogFragment {
@@ -47,9 +38,9 @@ public class OrderDetailsDF extends BaseDialogFragment {
     private static final String TAG = "OrderDetailsDF";
     private Dialog mDialog;
     private Window window;
-    private OrderSummaryActivity.Order mOrder;
+    private MyFragment.Order mOrder;
     
-    public static OrderDetailsDF newInstance(OrderSummaryActivity.Order order) {
+    public static OrderDetailsDF newInstance(MyFragment.Order order) {
         OrderDetailsDF orderDetailsDF = new OrderDetailsDF();
         Bundle bundle = new Bundle();
         bundle.putSerializable("order", order);
@@ -65,7 +56,7 @@ public class OrderDetailsDF extends BaseDialogFragment {
         mDialog.setContentView(R.layout.order_details);
         Bundle bundle = getArguments();
         if (bundle != null) {
-            mOrder = (OrderSummaryActivity.Order) bundle.getSerializable("order");
+            mOrder = (MyFragment.Order) bundle.getSerializable("order");
         }
         
          mDialog.setCanceledOnTouchOutside(true);
@@ -98,12 +89,16 @@ public class OrderDetailsDF extends BaseDialogFragment {
         ImageView headUri = mDialog.findViewById(R.id.head_picture);
         TextView titleTV = mDialog.findViewById(R.id.guide_title);
         TextView cityTV = mDialog.findViewById(R.id.city);
+        TextView totalPriceTV = mDialog.findViewById(R.id.total_price);
         TextView actualPaymentTV = mDialog.findViewById(R.id.actual_payment);
         TextView appointedDateTV = mDialog.findViewById(R.id.appointed_date);
+        TextView unitDividerTV = mDialog.findViewById(R.id.unit_divider);
+        TextView amountTV = mDialog.findViewById(R.id.amount);
         TextView moneyTV = mDialog.findViewById(R.id.money);
         TextView unitTV = mDialog.findViewById(R.id.unit);
         TextView createdTV = mDialog.findViewById(R.id.order_created);
         TextView paymentTime = mDialog.findViewById(R.id.payment_time);
+        TextView numberTV = mDialog.findViewById(R.id.order_number);
         Button unsubscribeBtn = mDialog.findViewById(R.id.unsubscribe);
         Button payBtn = mDialog.findViewById(R.id.pay);
         Button evaluateBtn = mDialog.findViewById(R.id.evaluate);
@@ -114,12 +109,23 @@ public class OrderDetailsDF extends BaseDialogFragment {
 
         titleTV.setText(mOrder.title);
         cityTV.setText(mOrder.city);
-        moneyTV.setText(String.valueOf(mOrder.money));
-        unitTV.setText(mOrder.unit);
+        moneyTV.setText(String.valueOf(mOrder.price));
+        if (!TextUtils.isEmpty(mOrder.unit)){
+            unitTV.setText(mOrder.unit);
+        }else {
+            unitDividerTV.setVisibility(View.GONE);
+        }
+
+        amountTV.setText("x"+mOrder.amount);
+        totalPriceTV.setText(String.valueOf(mOrder.totalPrice));
         actualPaymentTV.setText(String.valueOf(mOrder.actualPayment));
         appointedDateTV.setText(mOrder.appointmentDate);
         createdTV.setText("订单创建时间："+DateUtil.timeStamp2String((long)mOrder.created));
-        paymentTime.setText("订单支付时间："+DateUtil.timeStamp2String((long)mOrder.paymentTime));
+        if (mOrder.paymentTime != 0){
+            paymentTime.setText("订单支付时间："+DateUtil.timeStamp2String((long)mOrder.paymentTime));
+        }
+
+        numberTV.setText("订单编号："+mOrder.number);
         
                 switch (mOrder.status){
             case 0:
@@ -162,9 +168,7 @@ public class OrderDetailsDF extends BaseDialogFragment {
                 headUri.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getContext(), GuideDetailActivity.class);
-                intent.putExtra("tid", mOrder.id);
-                startActivity(intent);
+                startActivity();
             }
         });
         titleTV.setOnClickListener(new View.OnClickListener() {
@@ -173,6 +177,18 @@ public class OrderDetailsDF extends BaseDialogFragment {
                 headUri.callOnClick();
             }
         });
+    }
+    
+    private void startActivity(){
+        if (mOrder.type == Utility.TalentType.GUIDE.ordinal()){
+            Intent intent = new Intent(getContext(), GuideDetailActivity.class);
+            intent.putExtra("sid", mOrder.id);
+            startActivity(intent);
+        }else {
+            Intent intent = new Intent(getContext(), ExperienceDetailActivity.class);
+            intent.putExtra("eid", mOrder.id);
+            startActivity(intent);
+        }
     }
     
     @Override
