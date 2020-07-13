@@ -29,7 +29,7 @@ import java.util.List;
 
 import static com.hetang.verify.VerifyActivity.REQUEST;
 import static com.hetang.common.MyApplication.getContext;
-import static com.hetang.util.Utility.getDateToString;
+import static com.hetang.util.DateUtil.getDateToString;
 
 public class UserRequestListAdapter extends RecyclerView.Adapter<UserRequestListAdapter.ViewHolder> {
     private static final String TAG = "UserRequestListAdapter";
