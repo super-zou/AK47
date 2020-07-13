@@ -304,8 +304,8 @@
     <string name="phone">手机号码</string>
     <string name="experience_address">体验地址</string>
     <string name="experience_address_hint">请详细描述体验开展的地址</string>
-     <string name="appointment_conditipon">参与者预订条件</string>
-    <string name="appointment_conditipon_desc">是否对参与者有预订条件限制？如性别，年龄及人数等有要求</string>
+     <string name="appointment_condition">参与者预订条件</string>
+    <string name="appointment_condition_desc">是否对参与者有预订条件限制？如性别，年龄及人数等有要求</string>
     <string name="appointment_sex">参与者性别要求</string>
      <string name="condition_notice">若无特殊要求，可以省略</string>
     <string name="no_condition">不限</string>
@@ -453,7 +453,7 @@
     <string name="praised_dynamic">赞了动态</string>
     <string name="no_new_version">当前已是最新版本</string>
     <string name="checking">正在检查新版本</string>
-    <string name="beta">内部测试Beta版 · 邀请用户专享</string>
+    <string name="beta">测试Beta版 · 邀请用户专享</string>
     <string name="delete_query_text">确认删除该动态吗？</string>
     <string name="exit_group_query_text">确认退出此团吗？</string>
     <string name="visit">访问</string>
