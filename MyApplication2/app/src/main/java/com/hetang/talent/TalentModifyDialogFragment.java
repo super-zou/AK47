@@ -178,26 +178,13 @@ public class TalentModifyDialogFragment extends BaseDialogFragment {
     private void initCommonTalent(){
         introductionET = mDialog.findViewById(R.id.introduction_edit);
         introductionET.setText(talent.introduction);
-        chargeSetting = mDialog.findViewById(R.id.charge_edit);
-        chargeSetting.setText(String.valueOf(talent.charge));
-        chargeIntroduction = mDialog.findViewById(R.id.charge_desc);
-        chargeIntroduction.setText(talent.desc);
         selectSubject = mDialog.findViewById(R.id.select_subject);
         selectSubject.setText(talent.subject);
 
         addMateriaRV = mDialog.findViewById(R.id.add_materia);
-        addRewardQRRV = mDialog.findViewById(R.id.add_reward_qr);
         FullyGridLayoutManager manager = new FullyGridLayoutManager(getContext(), 3, GridLayoutManager.VERTICAL, false);
         FullyGridLayoutManager managerReward = new FullyGridLayoutManager(getContext(), 3, GridLayoutManager.VERTICAL, false);
         addMateriaRV.setLayoutManager(manager);
-        addRewardQRRV.setLayoutManager(managerReward);
-
-        //for reward qr code
-        adapterReward = new GridImageAdapter(getContext(), onAddPicClickListener);
-        adapterReward.setList(selectRewardList);
-        adapterReward.setSelectMax(1);
-        addRewardQRRV.setAdapter(adapterReward);
-        addQRClickListen(adapterReward);
 
         //for authentication materia
         adapter = new GridImageAdapter(getContext(), onAddMaterialPicClickListener);
@@ -217,12 +204,6 @@ public class TalentModifyDialogFragment extends BaseDialogFragment {
         if (isPicked){
             authenMap.put("subject", selectSubject.getText().toString());
         }
-        if (!TextUtils.isEmpty(chargeSetting.getText().toString())){
-            authenMap.put("charge", chargeSetting.getText().toString());
-        }
-        if (!TextUtils.isEmpty(chargeIntroduction.getText().toString())){
-            authenMap.put("charge_desc", chargeIntroduction.getText().toString());
-        }
 
         if (selectRewardList.size() > 0){
             for (LocalMedia media : selectRewardList) {
@@ -238,7 +219,7 @@ public class TalentModifyDialogFragment extends BaseDialogFragment {
             authenMap.put("material", "modify");
         }
 
-        authenMap.put("aid", String.valueOf(talent.aid));
+        authenMap.put("tid", String.valueOf(talent.tid));
 
         uploadPictures(authenMap, "authen", selectFileList);
     }
@@ -305,33 +286,6 @@ public class TalentModifyDialogFragment extends BaseDialogFragment {
                                     //.bindCustomPlayVideoCallback(callback)// 自定义播放回调控制，用户可以使用自己的视频播放界面
                                     .loadImageEngine(GlideEngine.createGlideEngine())// 外部传入图片加载引擎，必传项
                                     .openExternalPreview(position, selectList);
-                            break;
-                    }
-                }
-            }
-        });
-    }
-
-    private void addQRClickListen(GridImageAdapter imageAdapter){
-        imageAdapter.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(int position, View v) {
-                if (selectRewardList.size() > 0) {
-                    LocalMedia media = selectRewardList.get(position);
-                    String pictureType = media.getMimeType();
-                    int mediaType = PictureMimeType.getMimeType(pictureType);
-                    switch (mediaType) {
-                        case PictureConfig.TYPE_IMAGE:
-                            //PictureSelector.create(MainActivity.this).externalPicturePreview(position, "/custom_file", selectList);
-                            PictureSelector.create(TalentModifyDialogFragment.this)
-                                    .themeStyle(R.style.picture_WeChat_style) // xml设置主题
-                                    .setPictureStyle(addDynamicsActivity.getWeChatStyle())// 动态自定义相册主题
-                                    //.setPictureWindowAnimationStyle(animationStyle)// 自定义页面启动动画
-                                    .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)// 设置相册Activity方向，不设置默认使用系统
-                                    .isNotPreviewDownload(true)// 预览图片长按是否可以下载
-                                    //.bindCustomPlayVideoCallback(callback)// 自定义播放回调控制，用户可以使用自己的视频播放界面
-                                    .loadImageEngine(GlideEngine.createGlideEngine())// 外部传入图片加载引擎，必传项
-                                    .openExternalPreview(position, selectRewardList);
                             break;
                     }
                 }
@@ -476,8 +430,6 @@ public class TalentModifyDialogFragment extends BaseDialogFragment {
                             dismissProgressDialog();
                             selectList.clear();
                             selectFileList.clear();
-                            selectRewardList.clear();
-                            selectRewardFileList.clear();
                             PictureFileUtils.deleteAllCacheDirFile(getContext());
                             startTalentDetailActivity();
                         }
@@ -503,7 +455,7 @@ public class TalentModifyDialogFragment extends BaseDialogFragment {
 
     private void startTalentDetailActivity(){
         Intent intent = new Intent(getContext(), TalentDetailsActivity.class);
-        intent.putExtra("aid", talent.aid);
+        intent.putExtra("tid", talent.tid);
         //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
         startActivity(intent);
         mDialog.dismiss();
