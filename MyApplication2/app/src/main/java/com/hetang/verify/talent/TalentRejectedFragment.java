@@ -155,7 +155,7 @@ public class TalentRejectedFragment extends BaseFragment {
             public void onPassClick(View view, int position) {
                 mCurrentPos = position;
                 SubGroupActivity.Talent talent = talentList.get(position);
-                authenticationOperation(talent.aid, PASSED, "");
+                authenticationOperation(talent.tid, PASSED, "");
             }
 
             @Override
@@ -180,7 +180,7 @@ public class TalentRejectedFragment extends BaseFragment {
                         // TODO Auto-generated method stub
                         Slog.d(TAG, "-------------------------->reason: " + reason);
                         SubGroupActivity.Talent talent = talentList.get(position);
-                        authenticationOperation(talent.aid, REJECTED, reason);
+                        authenticationOperation(talent.tid, REJECTED, reason);
 
                     }
                 });
@@ -192,7 +192,7 @@ public class TalentRejectedFragment extends BaseFragment {
                 Slog.d(TAG, "==========click : " + position);
                 Intent intent = new Intent(getContext(), TalentDetailsActivity.class);
                 //intent.putExtra("talent", mTalentList.get(position));
-                intent.putExtra("aid", talentList.get(position).aid);
+                intent.putExtra("tid", talentList.get(position).tid);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
                 startActivity(intent);
             }
@@ -387,7 +387,7 @@ public class TalentRejectedFragment extends BaseFragment {
                 xRecyclerView.loadMoreComplete();
                 break;
             case OPERATION_PASSED_DONE:
-                sendPassBroadcast(talentList.get(mCurrentPos).aid);
+                sendPassBroadcast(talentList.get(mCurrentPos).tid);
                 talentList.remove(mCurrentPos);
                 talentRejectedListAdapter.setData(talentList);
                 //userRequestListAdapter.notifyItemRemoved(mCurrentPos, 1);
@@ -398,7 +398,7 @@ public class TalentRejectedFragment extends BaseFragment {
                 }
                 break;
             case OPERATION_REJECTED_DONE:
-                sendRejectBroadcast(talentList.get(mCurrentPos).aid);
+                sendRejectBroadcast(talentList.get(mCurrentPos).tid);
                 talentList.remove(mCurrentPos);
                 talentRejectedListAdapter.setData(talentList);
                 //userRequestListAdapter.notifyItemRemoved(mCurrentPos);
