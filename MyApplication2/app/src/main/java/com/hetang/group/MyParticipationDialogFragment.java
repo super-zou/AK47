@@ -278,7 +278,7 @@ public class MyParticipationDialogFragment extends BaseDialogFragment {
     }
 
 
-    private void loadMyExperiences() {
+    private void loadMyExperiences(int uid) {
                 RequestBody requestBody = new FormBody.Builder()
                 .add("uid", String.valueOf(uid))
                 .build();
