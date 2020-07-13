@@ -32,8 +32,6 @@ import com.hetang.common.HandlerTemp;
 import com.hetang.common.MyApplication;
 import com.hetang.common.OnItemClickListener;
 import com.hetang.dynamics.AddDynamicsActivity;
-import com.hetang.experience.GuideDetailActivity;
-import com.hetang.experience.OrderSummaryActivity;
 import com.hetang.main.FullyGridLayoutManager;
 import com.hetang.picture.GlideEngine;
 import com.hetang.util.BaseDialogFragment;
