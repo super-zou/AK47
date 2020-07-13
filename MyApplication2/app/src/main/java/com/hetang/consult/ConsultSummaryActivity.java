@@ -33,6 +33,7 @@ import com.hetang.util.HttpUtil;
 import com.hetang.util.MyLinearLayoutManager;
 import com.hetang.util.RoundImageView;
 import com.hetang.util.Slog;
+import com.hetang.util.Utility;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.luck.picture.lib.PictureSelector;
@@ -63,9 +64,11 @@ public class ConsultSummaryActivity extends BaseAppCompatActivity implements Com
     private static final boolean isDebug = true;
     private static final String TAG = "ConsultSummaryActivity";
     private static final int PAGE_SIZE = 8;
-    private static final String CONSULT_GET_ALL = HttpUtil.DOMAIN + "?q=consult/get_all_consults";
-    private static final String CONSULT_GET_BY_TID = HttpUtil.DOMAIN + "?q=consult/get_consults_by_tid";
-    private static final String GET_TALENT_BASE_INFO = HttpUtil.DOMAIN + "?q=talent/get_base_info";
+    public static final String CONSULT_GET_ALL = HttpUtil.DOMAIN + "?q=consult/get_all_consults";
+    public static final String CONSULT_GET_BY_TID = HttpUtil.DOMAIN + "?q=consult/get_consults_by_tid";
+    public static final String GET_TALENT_BASE_INFO = HttpUtil.DOMAIN + "?q=talent/get_base_info";
+    public static final String GET_ANSWERS_BY_UID = HttpUtil.DOMAIN + "?q=consult/get_answers_by_uid";
+    public static final String GET_QUESTIONS_BY_UID = HttpUtil.DOMAIN + "?q=consult/get_questions_by_uid";
     private static final int GET_ALL_DONE = 1;
     private static final int GET_ALL_END = 2;
     private static final int NO_MORE = 3;
@@ -75,6 +78,8 @@ public class ConsultSummaryActivity extends BaseAppCompatActivity implements Com
     private JSONObject talentObject;
     final int itemLimit = 1;
     private int tid = 0;
+    private int type = -1;
+    private int uid = 0;
     private boolean isTalent = false;
     ImageView progressImageView;
     AnimationDrawable animationDrawable;
@@ -99,7 +104,13 @@ public class ConsultSummaryActivity extends BaseAppCompatActivity implements Com
                 loadTalentData(tid);
             }else {
                 isTalent = false;
-                loadData();
+                type = getIntent().getIntExtra("type", -1);
+                if (type == -1){
+                    loadData();
+                }else {
+                    uid = getIntent().getIntExtra("uid", -1);
+                    loadDataWithUid(uid, type);
+                }
             }
         }
     }
@@ -152,7 +163,11 @@ public class ConsultSummaryActivity extends BaseAppCompatActivity implements Com
                 if (isTalent){
                     loadTalentData(tid);
                 }else {
-                    loadData();
+                    if (type == -1){
+                        loadData();
+                    }else {
+                        loadDataWithUid(uid, type);
+                    }
                 }
             }
         });
@@ -221,7 +236,7 @@ public void startPicturePreview(int position, List<String> pictureUrlList){
                         try {
                             consultsResponse = new JSONObject(responseText);
                             if (consultsResponse != null) {
-                                mLoadSize = processconsultsResponse(consultsResponse);
+                                mLoadSize = processConsultsResponse(consultsResponse);
 
                                 if (mLoadSize == PAGE_SIZE) {
                                     handler.sendEmptyMessage(GET_ALL_DONE);
@@ -325,7 +340,7 @@ public void startPicturePreview(int position, List<String> pictureUrlList){
                         try {
                             consultsResponse = new JSONObject(responseText);
                             if (consultsResponse != null) {
-                                mLoadSize = processconsultsResponse(consultsResponse);
+                                mLoadSize = processConsultsResponse(consultsResponse);
 
                                 if (mLoadSize == PAGE_SIZE) {
                                     handler.sendEmptyMessage(GET_ALL_DONE);
@@ -355,8 +370,63 @@ public void startPicturePreview(int position, List<String> pictureUrlList){
             }
         });
     }
+    
+    private void loadDataWithUid(int uid, int type) {
 
-    public int processconsultsResponse(JSONObject consultsObject) {
+        final int page = mConsultList.size() / PAGE_SIZE;
+        RequestBody requestBody = new FormBody.Builder()
+                .add("step", String.valueOf(PAGE_SIZE))
+                .add("page", String.valueOf(page))
+                .add("uid", String.valueOf(uid))
+                .build();
+
+        String uri = GET_ANSWERS_BY_UID;
+        if (type == Utility.ConsultType.QUESTIONED.ordinal()){
+            uri = GET_QUESTIONS_BY_UID;
+        }
+        
+        HttpUtil.sendOkHttpRequest(getContext(), uri, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.body() != null) {
+                    String responseText = response.body().string();
+                    if (isDebug) Slog.d(TAG, "==========loadDataWithUid response text : " + responseText);
+                    if (responseText != null && !TextUtils.isEmpty(responseText)) {
+                        JSONObject consultsResponse = null;
+                        try {
+                            consultsResponse = new JSONObject(responseText);
+                            if (consultsResponse != null) {
+                                mLoadSize = 0;
+                                mLoadSize = processConsultsResponse(consultsResponse);
+                                
+                                if (mLoadSize == PAGE_SIZE) {
+                                    handler.sendEmptyMessage(GET_ALL_DONE);
+                                } else {
+                                    if (mLoadSize != 0) {
+                                        handler.sendEmptyMessage(GET_ALL_END);
+                                    } else {
+                                        handler.sendEmptyMessage(NO_MORE);
+                                    }
+                                }
+                            } else {
+                                handler.sendEmptyMessage(NO_MORE);
+                            }
+                            
+                            } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        handler.sendEmptyMessage(NO_MORE);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) { e.printStackTrace(); }
+        });
+    }
+
+    public int processConsultsResponse(JSONObject consultsObject) {
         int consultSize = 0;
         JSONArray consultArray = null;
 
