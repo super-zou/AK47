@@ -8,7 +8,7 @@ public class SharedPreferencesUtils {
     private static final String ACCOUNT_SHARED_NAME = "account_info";
     private static final String YUNXIN_ACCOUNT_SHARED_NAME = "yunxin_account_info";
     private static final String MEET_RECOMMNED_SHARED_NAME = "meet_recommend";
-    private static final String MEET_DYNAMICS_SHARED_NAME = "meet_dynamics";
+    private static final String MEET_DYNAMICS_SHARED_NAME = "experience_share_fragment";
     private static final String CONCERNED_DYNAMICS_SHARED_NAME = "concerned_dynamics";
     private static final String MEET_DISCOVERY_SHARED_NAME = "meet_discovery";
     private static final String SINGLE_GROUP_SHARED_NAME = "single_group";
