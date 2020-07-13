@@ -150,7 +150,7 @@ public class TalentRequestFragment extends BaseFragment {
             public void onPassClick(View view, int position) {
                 mCurrentPos = position;
                 SubGroupActivity.Talent talent = talentList.get(position);
-                authenticationOperation(talent.aid, PASSED, "");
+                authenticationOperation(talent.tid, PASSED, "");
             }
 
             @Override
@@ -182,7 +182,7 @@ public class TalentRequestFragment extends BaseFragment {
                         if (!TextUtils.isEmpty(et.getText().toString())){
                             reason = et.getText().toString();
                         }
-                        authenticationOperation(talent.aid, REJECTED, reason);
+                        authenticationOperation(talent.tid, REJECTED, reason);
 
                     }
                 });
@@ -194,7 +194,7 @@ public class TalentRequestFragment extends BaseFragment {
                 Slog.d(TAG, "==========click : " + position);
                 Intent intent = new Intent(getContext(), TalentDetailsActivity.class);
                 //intent.putExtra("talent", mTalentList.get(position));
-                intent.putExtra("aid", talentList.get(position).aid);
+                intent.putExtra("tid", talentList.get(position).tid);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
                 startActivity(intent);
             }
@@ -315,7 +315,6 @@ public class TalentRequestFragment extends BaseFragment {
                     JSONObject talentObject = talentArray.optJSONObject(i);
                     if (talentObject != null) {
                         SubGroupActivity.Talent talent = getTalent(talentObject);
-                        Slog.d(TAG, "---------------------->aid: "+talent.aid);
                         talentList.add(talent);
                     }
                 }
@@ -348,7 +347,7 @@ public class TalentRequestFragment extends BaseFragment {
                 xRecyclerView.loadMoreComplete();
                 break;
             case OPERATION_PASSED_DONE:
-                sendPassBroadcast(talentList.get(mCurrentPos).aid);
+                sendPassBroadcast(talentList.get(mCurrentPos).tid);
                 talentList.remove(mCurrentPos);
                 talentRequestListAdapter.setData(talentList);
                 //userRequestListAdapter.notifyItemRemoved(mCurrentPos, 1);
@@ -359,7 +358,7 @@ public class TalentRequestFragment extends BaseFragment {
                 }
                 break;
             case OPERATION_REJECTED_DONE:
-                sendRejectBroadcast(talentList.get(mCurrentPos).aid);
+                sendRejectBroadcast(talentList.get(mCurrentPos).tid);
                 talentList.remove(mCurrentPos);
                 talentRequestListAdapter.setData(talentList);
                 //userRequestListAdapter.notifyItemRemoved(mCurrentPos);
