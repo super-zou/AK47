@@ -622,7 +622,7 @@
                     android:text="@string/cancellation_by_talent_desc"
                     android:textSize="16sp"
                     android:includeFontPadding="false"
-                    android:textAppearance="@style/TextSourceHanSansAppearance"
+                    android:textAppearance="@style/TextSourceHanSansAppearance" />
 
                 <androidx.appcompat.widget.AppCompatCheckBox
                     android:id="@+id/understand_cancellation"
