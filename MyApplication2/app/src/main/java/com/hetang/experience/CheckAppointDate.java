@@ -228,7 +228,8 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
         public void decorate(final DayViewFacade view) {
             //view.setDaysDisabled(true);
             //view.addSpan(new DotSpan(5, R.color.background));
-            view.setBackgroundDrawable(MyApplication.getContext().getResources().getDrawable(R.drawable.hollow_circle));        }
+            view.setBackgroundDrawable(MyApplication.getContext().getResources().getDrawable(R.drawable.hollow_circle));        
+        }
     }
     
     private static class DayDisabledDecorator implements DayViewDecorator{
@@ -323,6 +324,26 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
                     Slog.d(TAG, "==========getAvailableDate response body : " + responseText);
                 if (responseText != null) {
                     try {
+                        JSONObject jsonObject = new JSONObject(responseText);
+                        dateJSONArray = jsonObject.optJSONArray("dates");
+                        processResponse();
+                        myHandler.sendEmptyMessage(GET_AVAILABLE_APPOINTMENT_DATE_DONE);
+                    }catch (JSONException e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {}
+        });
+    }
+    
+    private void processResponse(){
+        if (dateJSONArray != null && dateJSONArray.length() > 0){
+            for (int i=0; i<dateJSONArray.length(); i++){
+                AppointDate appointDate = new AppointDate();
+                try {
                     JSONObject dateObject = dateJSONArray.getJSONObject(i);
                     appointDate.setDid(dateObject.optInt("did"));
                     if (mType == Utility.TalentType.GUIDE.ordinal()){
@@ -334,35 +355,11 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
                     appointDate.setCount(dateObject.optInt("count"));
                     appointDate.setLocalDate(LocalDate.parse(timeStampToDay(dateObject.optInt("date")), FORMATTER));
                     appointDateList.add(appointDate);
-                    }catch (JSONException e){
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call call, IOException e) {
-
-            }
-        });
-    }
-    
-    private void processResponse(){
-        if (dateJSONArray != null && dateJSONArray.length() > 0){
-            for (int i=0; i<dateJSONArray.length(); i++){
-                AppointDate appointDate = new AppointDate();
-                try {
-                    JSONObject dateObject = dateJSONArray.getJSONObject(i);
-                    appointDate.setDid(dateObject.optInt("did"));
-                    appointDate.setTid(dateObject.optInt("tid"));
-                    appointDate.setCount(dateObject.optInt("count"));
-                    appointDate.setLocalDate(LocalDate.parse(dateObject.optString("date_string"), FORMATTER));
-                    appointDateList.add(appointDate);
-                }catch (JSONException e){
+            }catch (JSONException e){
                     e.printStackTrace();
-                }
             }
-        }
+         }
+       }
     }
     
     @Override
@@ -370,7 +367,7 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
             @NonNull MaterialCalendarView widget,
             @NonNull CalendarDay date,
             boolean selected) {
- dataStr = FORMATTER.format(date.getDate());
+        dataStr = FORMATTER.format(date.getDate());
         selectWrapper.setVisibility(View.VISIBLE);
 
         if (selected){
