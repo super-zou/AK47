@@ -107,14 +107,6 @@ public class TalentSummaryListActivity extends BaseAppCompatActivity implements 
 
         initView();
 
-        Button floatingActionButton = findViewById(R.id.become_talent);
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                becomeTalent();
-            }
-        });
-
         TextView back = findViewById(R.id.back);
         back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -187,7 +179,7 @@ public class TalentSummaryListActivity extends BaseAppCompatActivity implements 
                 Slog.d(TAG, "==========click : " + position);
                 Intent intent = new Intent(getContext(), TalentDetailsActivity.class);
                 //intent.putExtra("talent", mTalentList.get(position));
-                intent.putExtra("aid", mTalentList.get(position).aid);
+                intent.putExtra("tid", mTalentList.get(position).tid);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
                 startActivity(intent);
             }
@@ -315,15 +307,6 @@ public class TalentSummaryListActivity extends BaseAppCompatActivity implements 
         return talentArray != null ? talentArray.length() : 0;
     }
 
-    private void becomeTalent() {
-        TalentAuthenticationDialogFragment talentAuthenticationDialogFragment = new TalentAuthenticationDialogFragment();
-        Bundle bundle = new Bundle();
-        bundle.putInt("type", type);
-        talentAuthenticationDialogFragment.setArguments(bundle);
-        //createSingleGroupDialogFragment.setTargetFragment(SingleGroupActivity.this, REQUEST_CODE);
-        talentAuthenticationDialogFragment.show(getSupportFragmentManager(), "TalentAuthenticationDialogFragment");
-    }
-
     public void updateData() {
         String last = SharedPreferencesUtils.getSingleGroupLast(getContext());
         RequestBody requestBody = new FormBody.Builder()
@@ -364,9 +347,7 @@ public class TalentSummaryListActivity extends BaseAppCompatActivity implements 
             }
 
             @Override
-            public void onFailure(Call call, IOException e) {
-
-            }
+            public void onFailure(Call call, IOException e) {}
         });
     }
 
