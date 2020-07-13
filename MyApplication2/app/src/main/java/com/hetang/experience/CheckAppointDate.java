@@ -393,6 +393,7 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
             }
         }
     }
+        }
     
         @Override
     public void onDateLongClick(@NonNull MaterialCalendarView widget,
