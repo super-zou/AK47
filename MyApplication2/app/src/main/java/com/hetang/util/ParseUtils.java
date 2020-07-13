@@ -94,6 +94,9 @@ public class ParseUtils {
     public static final int ADD_PAPER_ACTION = 21;
     public static final int ADD_PRIZE_ACTION = 22;
     public static final int ADD_VOLUNTEER_ACTION = 23;
+    
+        //for share experience
+    public static final int WRITE_SHARE_EXPERIENCE = 30;
 
     
     //here only for notification, other notification reused with dynamic
@@ -245,7 +248,7 @@ public class ParseUtils {
         userMeetInfo.setRealName(member.optString("realname"));
         userMeetInfo.setUid(member.optInt("uid"));
         userMeetInfo.setSex(member.optInt("sex"));
-        userMeetInfo.setInit(member.optString("init"));
+        //userMeetInfo.setInit(member.optString("init"));
         if (!member.optString("avatar").equals("null")){
             userMeetInfo.setAvatar(member.optString("avatar"));
         }
