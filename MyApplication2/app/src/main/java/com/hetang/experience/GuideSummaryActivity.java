@@ -252,7 +252,6 @@ public class GuideSummaryActivity extends BaseAppCompatActivity {
             guide.evaluateScore = guideObject.optInt("score");
             guide.evaluateCount = guideObject.optInt("count");
             guide.price = guideObject.optInt("price");
-            guide.money = guideObject.optInt("amount");
             guide.title = guideObject.optString("title");
             guide.unit = guideObject.optString("unit");
         }
