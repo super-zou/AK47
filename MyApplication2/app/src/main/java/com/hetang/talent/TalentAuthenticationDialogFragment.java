@@ -507,5 +507,3 @@ public class TalentAuthenticationDialogFragment extends BaseDialogFragment {
     }
 
 }
-
-}
