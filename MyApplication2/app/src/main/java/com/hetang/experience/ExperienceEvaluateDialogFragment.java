@@ -61,8 +61,6 @@ import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.FormBody;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static android.app.Activity.RESULT_OK;
@@ -228,7 +226,7 @@ public class ExperienceEvaluateDialogFragment extends BaseDialogFragment {
             headPicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(intent);
+                startActivity();
             }
         });
         titleTV.setOnClickListener(new View.OnClickListener() {
