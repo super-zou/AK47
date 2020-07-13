@@ -73,7 +73,7 @@ import static com.hetang.util.ParseUtils.TALENT_REJECTED_NF;
 import static com.hetang.util.ParseUtils.TALENT_VERIFIED_NF;
 import static com.hetang.util.ParseUtils.startMeetArchiveActivity;
 import static com.hetang.util.Utility.drawableToBitmap;
-import static com.hetang.util.Utility.getDateToString;
+import static com.hetang.util.DateUtil.getDateToString;
 
 public class NotificationListAdapter extends RecyclerView.Adapter<NotificationListAdapter.ViewHolder> {
     public static final int UNREAD = 1;
