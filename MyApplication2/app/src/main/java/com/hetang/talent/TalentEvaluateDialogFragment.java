@@ -55,7 +55,7 @@ public class TalentEvaluateDialogFragment extends DialogFragment {
     private int uid;
     private int type;
     private int gid;
-    private int aid;
+    private int tid;
     private CommonDialogFragmentInterface commonDialogFragmentInterface;
 
     @Override
@@ -75,11 +75,7 @@ public class TalentEvaluateDialogFragment extends DialogFragment {
         if (bundle != null) {
             uid = bundle.getInt("uid");
             type = bundle.getInt("type");
-            if (type == eden_group){
-                gid = bundle.getInt("gid");
-            }else {
-                aid = bundle.getInt("aid", -1);
-            }
+            tid = bundle.getInt("tid", -1);
         }
         inflater = LayoutInflater.from(mContext);
         mDialog = new Dialog(mContext, android.R.style.Theme_Light_NoTitleBar_Fullscreen);
@@ -145,13 +141,8 @@ public class TalentEvaluateDialogFragment extends DialogFragment {
                 .add("uid", String.valueOf(uid))
                 .add("type", String.valueOf(type))
                 .add("content", content)
-                .add("rating", String.valueOf(rating));
-
-        if (type == eden_group){
-            builder.add("gid", String.valueOf(gid));
-        }else {
-            builder.add("aid", String.valueOf(aid));
-        }
+                .add("rating", String.valueOf(rating))
+                .add("tid", String.valueOf(tid));
 
         RequestBody requestBody = builder.build();
 
