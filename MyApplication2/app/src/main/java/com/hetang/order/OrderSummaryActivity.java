@@ -1,6 +1,5 @@
-package com.hetang.experience;
+package com.hetang.order;
 
-import android.content.Intent;
 import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
@@ -14,12 +13,11 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.hetang.R;
-import com.hetang.adapter.GuideSummaryAdapter;
 import com.hetang.adapter.OrderSummaryAdapter;
 import com.hetang.common.BaseAppCompatActivity;
 import com.hetang.common.MyApplication;
+import com.hetang.experience.ExperienceEvaluateDialogFragment;
 import com.hetang.util.FontManager;
 import com.hetang.util.HttpUtil;
 import com.hetang.util.MyLinearLayoutManager;
@@ -45,7 +43,7 @@ import okhttp3.Response;
 
 import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static com.hetang.common.MyApplication.getContext;
-import static com.hetang.experience.OrderDetailsDF.newInstance;
+import static com.hetang.order.MyFragment.getOrder;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
 public class OrderSummaryActivity extends BaseAppCompatActivity {
@@ -64,7 +62,7 @@ public class OrderSummaryActivity extends BaseAppCompatActivity {
     private Handler handler;
     private OrderSummaryAdapter orderSummaryAdapter;
     private XRecyclerView recyclerView;
-    private List<Order> mOrderList = new ArrayList<>();
+    private List<MyFragment.Order> mOrderList = new ArrayList<>();
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,19 +125,19 @@ public class OrderSummaryActivity extends BaseAppCompatActivity {
         orderSummaryAdapter.setItemClickListener(new OrderSummaryAdapter.MyItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Order order = mOrderList.get(position);
+                MyFragment.Order order = mOrderList.get(position);
                 OrderDetailsDF orderDetailsDF;
-                orderDetailsDF = newInstance(order);
+                //orderDetailsDF = newInstance(order);
                 //orderDetailsDF.setTargetFragment(this, ROUTE_REQUEST_CODE);
-                orderDetailsDF.show(getSupportFragmentManager(), "RouteItemEditDF");
+                //orderDetailsDF.show(getSupportFragmentManager(), "RouteItemEditDF");
             }, new OrderSummaryAdapter.EvaluateClickListener() {
             @Override
             public void onEvaluateClick(View view, int position) {
-                Order order = mOrderList.get(position);
+                MyFragment.Order order = mOrderList.get(position);
                 ExperienceEvaluateDialogFragment experienceEvaluateDialogFragment;
-                experienceEvaluateDialogFragment = ExperienceEvaluateDialogFragment.newInstance(order);
+                //experienceEvaluateDialogFragment = ExperienceEvaluateDialogFragment.newInstance(order);
                 //orderDetailsDF.setTargetFragment(this, ROUTE_REQUEST_CODE);
-                experienceEvaluateDialogFragment.show(getSupportFragmentManager(), "ExperienceEvaluateDialogFragment");
+                //experienceEvaluateDialogFragment.show(getSupportFragmentManager(), "ExperienceEvaluateDialogFragment");
             }
         });
 
@@ -229,7 +227,7 @@ public class OrderSummaryActivity extends BaseAppCompatActivity {
                 for (int i = 0; i < orderArray.length(); i++) {
                     JSONObject orderObject = orderArray.optJSONObject(i);
                     if (orderObject != null) {
-                        Order order = getOrder(orderObject);
+                        MyFragment.Order order = getOrder(orderObject);
                         mOrderList.add(order);
                     }
                 }
@@ -238,54 +236,19 @@ public class OrderSummaryActivity extends BaseAppCompatActivity {
 
         return orderSize;
     }
-    
-    public static Order getOrder(JSONObject orderObject) {
-        Order order = new Order();
-        if (orderObject != null) {
-            order.oid = orderObject.optInt("oid");
-            order.id = orderObject.optInt("id");
-            order.city = orderObject.optString("city");
-            order.headPictureUrl = orderObject.optString("picture_url");
-            order.actualPayment = orderObject.optInt("payment");
-            order.created = orderObject.optInt("created");
-            order.money = orderObject.optInt("amount");
-            order.title = orderObject.optString("title");
-            order.unit = orderObject.optString("unit");
-            order.status = orderObject.optInt("status");
-            order.appointmentDate = orderObject.optString("date_string");
-            order.paymentTime = orderObject.optInt("payment_time");
-        }
-
-        return order;
-    }
-    
-    public static class Order implements Serializable {
-        public int oid;
-        public int id;
-        public String headPictureUrl;
-        public int status;
-        public String title;
-        public String city;
-        public int created;
-        public int paymentTime;
-        public int money;
-        public String unit;
-        public int actualPayment;
-        public String appointmentDate;
-    }
-    
-     public void handleMessage(Message message) {
+        
+    public void handleMessage(Message message) {
         switch (message.what) {
             case GET_ALL_DONE:
                 Slog.d(TAG, "-------------->GET_ALL_DONE");
-                orderSummaryAdapter.setData(mOrderList);
+                //orderSummaryAdapter.setData(mOrderList);
                 orderSummaryAdapter.notifyDataSetChanged();
                 recyclerView.loadMoreComplete();
                 stopLoadProgress();
                 break;
             case GET_ALL_END:
                 Slog.d(TAG, "-------------->GET_ALL_END");
-                orderSummaryAdapter.setData(mOrderList);
+                //orderSummaryAdapter.setData(mOrderList);
                 orderSummaryAdapter.notifyDataSetChanged();
                 recyclerView.loadMoreComplete();
                 recyclerView.setNoMore(true);
