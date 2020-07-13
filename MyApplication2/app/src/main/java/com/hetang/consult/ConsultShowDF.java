@@ -216,7 +216,7 @@ private void initView() {
 
         adapter.setItemDeleteListener(new GridImageAdapter.OnPicDeleteListener() {
             @Override
-            public void onPicDelete() {
+            public void onPicDelete(int position) {
                 Slog.d(TAG, "pic delete");
                 if (route != null) {
                     isModified = true;
