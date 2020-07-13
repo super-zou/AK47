@@ -47,8 +47,12 @@ import static com.hetang.common.MyApplication.getContext;
 public class Utility {
     private static final String TAG = "Utility";
     public static final int MALE = 0;
-        public enum TalentType {
-        GUIDE, EXPERIENCE, MATCHMAKER, STUDY, HOBBY
+    public enum TalentType {
+        GUIDE, EXPERIENCE, TRAVEL, GROWTH, INTEREST, FOOD, MATCHMAKER
+    }
+
+    public enum ConsultType {
+        ANSWERED, QUESTIONED, ALL
     }
     public static boolean handleLoginResponse(String response) {
         if (!TextUtils.isEmpty(response)) {
@@ -64,30 +68,6 @@ public class Utility {
 
     }
     
-     public static String timeStampToMinute(int created) {
-        Date date = new Date(created * 1000L);
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        return simpleDateFormat.format(date);
-    }
-
-    public static String timeStampToHour(int created) {
-        Date date = new Date(created * 1000L);
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH");
-        return simpleDateFormat.format(date);
-    }
-    
-     public static String timeStampToDay(int created) {
-        Date date = new Date(created * 1000L);
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        return simpleDateFormat.format(date);
-    }
-
-    public static String getDateToString(long milSecond, String pattern) {
-        Date date = new Date(milSecond*1000L);
-        SimpleDateFormat format = new SimpleDateFormat(pattern);
-        return format.format(date);
-    }
-
     public static float dpToPx(Context context, float dp) {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics());
     }
