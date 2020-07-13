@@ -38,7 +38,6 @@
     <string name="no_more">--能看的都看完了--</string>
     <string name="no_more_order">--已显示全部订单--</string>
     <string name="dynamics_empty">未发布动态</string>
-        <string name="no_more_order">--已显示全部订单--</string>
     <string name="evaluator_details">评价详情</string>
     <string name="publish">发布</string>
     <string name="reject_reason">拒绝原因</string>
