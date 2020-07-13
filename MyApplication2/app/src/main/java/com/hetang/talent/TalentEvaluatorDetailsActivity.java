@@ -41,7 +41,7 @@ import okhttp3.Response;
 
 import static com.hetang.common.MyApplication.getContext;
 import static com.hetang.group.GroupFragment.eden_group;
-import static com.hetang.util.Utility.getDateToString;
+import static com.hetang.util.DateUtil.getDateToString;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
 public class TalentEvaluatorDetailsActivity extends BaseAppCompatActivity {
@@ -57,7 +57,7 @@ public class TalentEvaluatorDetailsActivity extends BaseAppCompatActivity {
     AnimationDrawable animationDrawable;
     private Handler handler;
     private int gid;
-    private int aid;
+    private int tid;
     private TalentEvaluatorDetailsAdapter mEvaluatorDetailsAdapter;
 
     @Override
@@ -68,12 +68,7 @@ public class TalentEvaluatorDetailsActivity extends BaseAppCompatActivity {
         final int type = getIntent().getIntExtra("type", -1);
         float scores = getIntent().getFloatExtra("scores", 0);
 
-        if (type == eden_group){
-            gid = getIntent().getIntExtra("gid", 0);
-        }else {
-            aid = getIntent().getIntExtra("aid", 0);
-        }
-
+        tid = getIntent().getIntExtra("tid", 0);
 
         handler = new TalentEvaluatorDetailsActivity.MyHandler(this);
         mEvaluatorDetailsList = new ArrayList<>();
@@ -110,8 +105,7 @@ public class TalentEvaluatorDetailsActivity extends BaseAppCompatActivity {
 
             @Override
             public void onLoadMore() {
-                //loadDynamicsData(mMeetMember.getUid());
-                getEvaluatorDetails(uid, type, gid);
+                getEvaluatorDetails(uid, type);
             }
         });
 
@@ -129,7 +123,7 @@ public class TalentEvaluatorDetailsActivity extends BaseAppCompatActivity {
 
         setScoresView(scores);
 
-        getEvaluatorDetails(uid, type, gid);
+        getEvaluatorDetails(uid, type);
 
         TextView back = findViewById(R.id.back);
         back.setOnClickListener(new View.OnClickListener() {
@@ -152,20 +146,15 @@ public class TalentEvaluatorDetailsActivity extends BaseAppCompatActivity {
         scaleRatingBar.setRating(scores);
     }
 
-    private void getEvaluatorDetails(int uid, int type, int gid) {
+    private void getEvaluatorDetails(int uid, int type) {
         Slog.d(TAG, "------------------------>uid: " + uid);
         int page = mEvaluatorDetailsList.size() / PAGE_SIZE;
         FormBody.Builder builder = new FormBody.Builder()
                 .add("uid", String.valueOf(uid))
                 .add("type", String.valueOf(type))
                 .add("step", String.valueOf(PAGE_SIZE))
-                .add("page", String.valueOf(page));
-
-        if (type == eden_group){
-            builder.add("gid", String.valueOf(gid));
-        }else {
-            builder.add("aid", String.valueOf(aid));
-        }
+                .add("page", String.valueOf(page))
+                .add("tid", String.valueOf(tid));
 
         RequestBody requestBody = builder.build();
         HttpUtil.sendOkHttpRequest(this, GET_IMPRESSION_DETAIL_URL, requestBody, new Callback() {
