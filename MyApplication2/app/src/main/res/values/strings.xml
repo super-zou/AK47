@@ -54,7 +54,6 @@
     <string name="schoolmate_recommend">校友推荐</string>
     <string name="talent_apply">达人申请</string>
     <string name="experience_talent_apply">体验达人审核</string>
-        <string name="talent">达人</string>
     <string name="talent_apply_content">您的申请提交后，需要经过平台审核，请及时关注系统消息</string>
     <string name="save">保存</string>
     <string name="done">完成</string>
@@ -318,7 +317,6 @@
      <string name="other_condition">其它限制条件，如果有多个请以\;分隔</string>
     <string name="condition_introduction">限制条件说明</string>
         <string name="show_all_evaluates">所有评价 >></string>
-    <string name="other_condition">其它限制条件</string>
     <string name="cancellation_policy_title">取消政策</string>
         <string name="points_attention">预订注意事项</string>
     <string name="cancellation_policy_summary">所有预订都可以在支付确认后的24小时内取消或至少提前7天取消并获得全额退款</string>
@@ -497,14 +495,11 @@
     <string name="charge_notice">如有必要，可以说明收费包含的项目有哪些</string>
     <string name="travel_guide">申请旅行向导</string>
     <string name="unit_divider"> / </string>
-        <string name="appoint_notice">长按可查看预订详情</string>
     <string name="duration">时长</string>
     <string name="charge_supplement_title">收费补充说明（选填）</string>
     <string name="charge_supplement">如时长、所含项目、超时费等</string>
     <string name="no_evaluate">暂无评价</string>
     <string name="abandon">不用了</string>
-        <string name="actual_payment">实付款</string>
-        <string name="select">选择</string>
     <string name="reward_done">已赞赏</string>
     <string name="wechat_support">请用微信扫码支付</string>
     <string name="submit_payment">上传赞赏码</string>
