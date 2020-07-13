@@ -32,7 +32,8 @@ import com.hetang.common.HandlerTemp;
 import com.hetang.common.MyApplication;
 import com.hetang.common.OnItemClickListener;
 import com.hetang.dynamics.AddDynamicsActivity;
-import com.hetang.experience.OrderSummaryActivity;
+import com.hetang.order.MyFragment;
+import com.hetang.order.OrderSummaryActivity;
 
 import com.hetang.main.FullyGridLayoutManager;
 import com.hetang.picture.GlideEngine;
@@ -72,6 +73,7 @@ public class TalentConsultDF extends BaseDialogFragment {
     private Dialog mDialog;
     private View view;
     private int tid;
+    private int type = 0;
     private int cid;
     private String name;
     private int rewardIndex = -1;
@@ -81,7 +83,7 @@ public class TalentConsultDF extends BaseDialogFragment {
     private Handler handler = new TalentConsultDF.MyHandler(this);
     private List<String> impressionList = new ArrayList<>();
     private ProgressDialog progressDialog;
-    private OrderSummaryActivity.Order order;
+    private MyFragment.Order order;
     private AddDynamicsActivity addDynamicsActivity;
     private RecyclerView recyclerView;
     private GridImageAdapter adapter;
@@ -92,6 +94,17 @@ public class TalentConsultDF extends BaseDialogFragment {
     public static TalentConsultDF newInstance(int tid, String name) {
         TalentConsultDF experienceEvaluateDialogFragment = new TalentConsultDF();
         Bundle bundle = new Bundle();
+        bundle.putInt("tid", tid);
+        bundle.putString("name", name);
+        experienceEvaluateDialogFragment.setArguments(bundle);
+
+        return experienceEvaluateDialogFragment;
+    }
+    
+    public static TalentConsultDF newInstance(int type, int tid, String name) {
+        TalentConsultDF experienceEvaluateDialogFragment = new TalentConsultDF();
+        Bundle bundle = new Bundle();
+        bundle.putInt("type", type);
         bundle.putInt("tid", tid);
         bundle.putString("name", name);
         experienceEvaluateDialogFragment.setArguments(bundle);
@@ -116,6 +129,7 @@ public class TalentConsultDF extends BaseDialogFragment {
         if (bundle != null) {
             tid = bundle.getInt("tid");
             name = bundle.getString("name");
+            type = bundle.getInt("type", 0);
         }
         if (addDynamicsActivity == null){
             addDynamicsActivity = new AddDynamicsActivity();
@@ -335,7 +349,11 @@ public class TalentConsultDF extends BaseDialogFragment {
     public void handleMessage(Message message) {
         switch (message.what) {
             case PUBLISH_CONSULT_DONE:
-                commonDialogFragmentInterface.onBackFromDialog(cid, tid, true);
+                if (type == 0){
+                    commonDialogFragmentInterface.onBackFromDialog(cid, tid, true);
+                }else {
+                    commonDialogFragmentInterface.onBackFromDialog(type, cid, true);
+                }
                 mDialog.dismiss();
                 break;
             default:
