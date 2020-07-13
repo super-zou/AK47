@@ -130,6 +130,7 @@ public class OrderSummaryActivity extends BaseAppCompatActivity {
                 //orderDetailsDF = newInstance(order);
                 //orderDetailsDF.setTargetFragment(this, ROUTE_REQUEST_CODE);
                 //orderDetailsDF.show(getSupportFragmentManager(), "RouteItemEditDF");
+              }
             }, new OrderSummaryAdapter.EvaluateClickListener() {
             @Override
             public void onEvaluateClick(View view, int position) {
