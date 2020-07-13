@@ -134,7 +134,6 @@ public class GuideDetailActivity extends BaseAppCompatActivity implements Common
         getEvaluateInfo();
         getRouteInfo();
         getGuideIntroduction();
-        getConsultStatisticsInfo();
         getAppointmentLimit();
         getChargeInfo();
     }
@@ -390,7 +389,7 @@ public class GuideDetailActivity extends BaseAppCompatActivity implements Common
                 showAllEvaluateBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        ShowAllEvaluateDF showAllEvaluateDF = ShowAllEvaluateDF.newInstance(tid, evaluateCount);
+                        ShowAllEvaluateDF showAllEvaluateDF = ShowAllEvaluateDF.newInstance(type, sid, evaluateCount);
                         showAllEvaluateDF.show(getSupportFragmentManager(), "ShowAllEvaluateDF");
                     }
                 });
