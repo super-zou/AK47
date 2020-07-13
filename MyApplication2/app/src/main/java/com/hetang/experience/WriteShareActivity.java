@@ -354,7 +354,7 @@ public static final String DYNAMICS_ADD_BROADCAST = "com.hetang.action.DYNAMICS_
         // 外部预览界面是否显示删除按钮
         pictureParameterStyle.pictureExternalPreviewGonePreviewDelete = true;
         // 设置NavBar Color SDK Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP有效
-        pictureParameterStyle.pictureNavBarColor = Color.parseColor("#393a3
+        pictureParameterStyle.pictureNavBarColor = Color.parseColor("#393a3e");
         //getCropParameterStyle();
 
         return pictureParameterStyle;
