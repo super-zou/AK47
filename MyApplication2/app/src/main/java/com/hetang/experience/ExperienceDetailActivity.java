@@ -516,7 +516,7 @@ public class ExperienceDetailActivity extends BaseAppCompatActivity implements C
         RoundImageView avatar = findViewById(R.id.avatar);
         Glide.with(getContext()).load(HttpUtil.DOMAIN + talentObject.optString("avatar")).into(avatar);
         TextView name = findViewById(R.id.guide_talent_name);
-        name.setText(talentObject.optString("realname"));
+        name.setText(talentObject.optString("nickname"));
         TextView selfIntroduction = findViewById(R.id.guide_self_introduction);
         selfIntroduction.setText(talentObject.optString("introduction"));
 
@@ -533,7 +533,7 @@ public class ExperienceDetailActivity extends BaseAppCompatActivity implements C
         ChatInfo chatInfo = new ChatInfo();
         chatInfo.setType(TIMConversationType.C2C);
         chatInfo.setId(talentObject.optString("uid"));
-        chatInfo.setChatName(talentObject.optString("realname"));
+        chatInfo.setChatName(talentObject.optString("nickname"));
 
         Intent intent = new Intent(getContext(), ChatActivity.class);
         intent.putExtra("CHAT_INFO", chatInfo);
