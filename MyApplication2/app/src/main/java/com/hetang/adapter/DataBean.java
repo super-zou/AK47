@@ -44,6 +44,7 @@ public class DataBean {
         list.add(new DataBean(R.drawable.banner3, "3", 1));
         list.add(new DataBean(R.drawable.banner4, "4", 1));
         list.add(new DataBean(R.drawable.banner5, "5", 1));
+        list.add(new DataBean(R.drawable.banner6, "6", 1));
         return list;
     }
 
