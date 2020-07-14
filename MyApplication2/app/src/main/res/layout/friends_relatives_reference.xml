@@ -789,7 +789,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="3dp"
-                android:text="@string/group" />
+                android:text="@string/fa_group" />
 
             <TextView
                 android:layout_width="match_parent"
