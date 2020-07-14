@@ -559,6 +559,20 @@ private void setRouteInfoView(){
                 contactTalent();
             }
         });
+        
+        avatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startMeetArchiveActivity(getContext(), guideObject.optInt("uid"));
+            }
+        });
+
+        name.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                avatar.callOnClick();
+            }
+        });
     }
     
         private void contactTalent() {
