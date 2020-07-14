@@ -2,7 +2,7 @@
 <font-family
     xmlns:app="http://schemas.android.com/apk/res-auto">
   <font
-      app:font="@font/sourcehansans_light"
+      app:font="@font/alifont_light"
       app:fontStyle="normal"
       app:fontWeight="300"/>
 </font-family>
