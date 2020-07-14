@@ -527,6 +527,20 @@ public class ExperienceDetailActivity extends BaseAppCompatActivity implements C
                 contactTalent();
             }
         });
+        
+        avatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startMeetArchiveActivity(getContext(), talentObject.optInt("uid"));
+            }
+        });
+
+        name.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                avatar.callOnClick();
+            }
+        });
     }
     
     private void contactTalent() {
