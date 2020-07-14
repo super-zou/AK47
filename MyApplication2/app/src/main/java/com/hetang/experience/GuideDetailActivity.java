@@ -539,7 +539,7 @@ private void setRouteInfoView(){
         RoundImageView avatar = findViewById(R.id.avatar);
         Glide.with(this).load(HttpUtil.DOMAIN + guideObject.optString("avatar")).into(avatar);
         TextView name = findViewById(R.id.guide_talent_name);
-        name.setText(guideObject.optString("realname"));
+        name.setText(guideObject.optString("nickname"));
         TextView selfIntroduction = findViewById(R.id.guide_self_introduction);
         selfIntroduction.setText(guideObject.optString("introduction"));
         
@@ -547,7 +547,7 @@ private void setRouteInfoView(){
         consultBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                TalentConsultDF talentConsultDF = TalentConsultDF.newInstance(tid, guideObject.optString("realname"));
+                TalentConsultDF talentConsultDF = TalentConsultDF.newInstance(tid, guideObject.optString("nickname"));
                 talentConsultDF.show(getSupportFragmentManager(), "TalentConsultDF");
             }
         });
