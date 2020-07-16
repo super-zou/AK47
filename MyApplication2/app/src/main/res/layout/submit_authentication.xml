@@ -14,7 +14,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.hetang.util.RoundImageView
+    <com.mufu.util.RoundImageView
         android:id="@+id/avatar"
         android:layout_width="120dp"
         android:layout_height="120dp"
@@ -160,7 +160,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/university_edittext" />
 
-    <com.hetang.util.RoundImageView
+    <com.mufu.util.RoundImageView
         android:id="@+id/ID_photo"
         android:layout_width="200dp"
         android:layout_height="200dp"

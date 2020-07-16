@@ -7,7 +7,7 @@
     android:background="@color/white"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     
-        <com.hetang.util.RoundImageView
+        <com.mufu.util.RoundImageView
         android:id="@+id/experience_picture"
         android:layout_width="80dp"
         android:layout_height="80dp"

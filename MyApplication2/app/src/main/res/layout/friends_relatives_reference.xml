@@ -799,7 +799,7 @@
                 android:text="好友团" />
         </LinearLayout>
 
-        <com.hetang.util.HtGridView
+        <com.mufu.util.HtGridView
             android:id="@+id/cheering_group_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -811,7 +811,7 @@
             android:numColumns="2"
             android:scrollbars="none"
             android:transcriptMode="alwaysScroll"
-            android:verticalSpacing="8dp"></com.hetang.util.HtGridView>
+            android:verticalSpacing="8dp"></com.mufu.util.HtGridView>
 
         <TextView
             android:id="@+id/add_cheering_group"

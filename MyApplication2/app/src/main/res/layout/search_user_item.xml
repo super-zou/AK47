@@ -12,7 +12,7 @@
     android:id="@+id/search_user_item"
     android:background="@color/colorWhite">
 
-    <com.hetang.util.RoundImageView
+    <com.mufu.util.RoundImageView
         android:id="@+id/headPic"
         android:layout_width="50dp"
         android:layout_height="50dp"

@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="260dp"
         android:gravity="center_horizontal">
-        <com.hetang.util.RoundImageView
+        <com.mufu.util.RoundImageView
             android:id="@+id/head_uri"
             android:layout_width="160dp"
             android:layout_height="160dp"

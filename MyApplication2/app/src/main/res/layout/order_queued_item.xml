@@ -60,7 +60,7 @@
         app:layout_constraintStart_toStartOf="@+id/title"
         app:layout_constraintTop_toBottomOf="@+id/order_number" />
         
-    <com.hetang.util.RoundImageView
+    <com.mufu.util.RoundImageView
         android:id="@+id/avatar_image"
         android:layout_width="50dp"
         android:layout_height="50dp"

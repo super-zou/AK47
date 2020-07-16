@@ -7,7 +7,7 @@
     android:id="@+id/other_answers_item"
     android:background="@color/colorWhite">
 
-    <com.hetang.util.RoundImageView
+    <com.mufu.util.RoundImageView
         android:id="@+id/answer_avatar"
         android:layout_width="50dp"
         android:layout_height="50dp"

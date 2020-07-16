@@ -8,7 +8,7 @@
     android:background="@color/colorWhite"
     android:elevation="1dp">
 
-    <com.hetang.util.RoundImageView
+    <com.mufu.util.RoundImageView
         android:id="@+id/avatar"
         android:layout_width="150dp"
         android:layout_height="150dp"

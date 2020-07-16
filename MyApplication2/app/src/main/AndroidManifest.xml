@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.hetang">
+    package="com.mufu">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -20,7 +20,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <permission
-        android:name="com.hetang.permission.MIPUSH_RECEIVE"
+        android:name="com.mufu.permission.MIPUSH_RECEIVE"
         android:protectionLevel="signature" />
 
     <uses-permission android:name="com.hetang.permission.MIPUSH_RECEIVE" />
@@ -34,14 +34,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar"
         tools:replace="android:appComponentFactory">
-        <activity android:name=".common.PicturePreviewActivity"></activity>
         <activity
             android:name=".contacts.ChatActivity"
             android:theme="@style/AppTheme.NoActionBar.NoActionBar"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
-            android:name="common.PicturePreviewActivity"
-            android:label="@string/title_activity_picture_preview"
+            android:name=".common.PicturePreviewActivity"
+            android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar.NoActionBar" />
         <activity
             android:name=".join.LoginSplash"
@@ -193,7 +192,7 @@
             android:launchMode="singleTask" />
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.hetang.fileprovider"
+            android:authorities="com.mufu.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
