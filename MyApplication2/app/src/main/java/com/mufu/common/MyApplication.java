@@ -52,7 +52,7 @@ public class MyApplication extends Application {
     public static final String APP_KEY = "5261791687663";
     //-End added by xuchunping for MI push
     //+Begin added for IMSDK by zouhaichao
-    public static final int SDKAPPID = 1400305473;
+    public static final int SDKAPPID = 1400400623;
     //+Begin added by xuchunping for MI push
     private static final String TAG = "MyApplication";
     //+End added for IMSDK by zouhaichao
