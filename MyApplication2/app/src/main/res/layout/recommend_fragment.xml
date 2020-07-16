@@ -184,7 +184,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:includeFontPadding="false"
-                    android:text="@string/eden_garden"
+                    android:text="@string/meet"
                     android:textAppearance="@style/TextSourceHanSansAppearance"
                     android:textSize="20sp"
                     android:textStyle="bold"
