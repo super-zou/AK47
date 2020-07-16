@@ -53,10 +53,10 @@ import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
  * Created by haichao.zou on 2017/11/23.
  */
 
-public class MeetFragment extends BaseFragment {
+public class DiscoveryFragment extends BaseFragment {
 
     private static final boolean debug = false;
-    private static final String TAG = "MeetFragment";
+    private static final String TAG = "DiscoveryFragment";
     //+Begin add by xuchunping for use XRecyclerView support loadmore
     //private RecyclerView recyclerView;
     private static final int PAGE_SIZE = 6;
@@ -372,16 +372,16 @@ public class MeetFragment extends BaseFragment {
         }
     }
 
-    static class MyHandler extends HandlerTemp<MeetFragment> {
+    static class MyHandler extends HandlerTemp<DiscoveryFragment> {
 
-        public MyHandler(MeetFragment cls) {
+        public MyHandler(DiscoveryFragment cls) {
             super(cls);
         }
 
         @Override
         public void handleMessage(Message message) {
             super.handleMessage(message);
-            MeetFragment meetFragment = ref.get();
+            DiscoveryFragment meetFragment = ref.get();
             if (meetFragment != null) {
                 meetFragment.handleMessage(message);
             }
