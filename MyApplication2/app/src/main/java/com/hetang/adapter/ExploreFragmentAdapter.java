@@ -8,7 +8,7 @@ import androidx.viewpager.widget.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.hetang.explore.MeetFragment;
+import com.hetang.explore.DiscoveryFragment;
 import com.hetang.explore.ShareFragment;
 import com.hetang.explore.RecommendFragment;
 import com.hetang.util.BaseFragment;
@@ -42,7 +42,7 @@ public class ExploreFragmentAdapter extends FragmentStatePagerAdapter {
                 fragment = new ShareFragment();
                 break;
             case 2:
-                fragment = new MeetFragment();
+                fragment = new DiscoveryFragment();
                 break;
             default:
                 fragment = new RecommendFragment();
@@ -85,7 +85,7 @@ public class ExploreFragmentAdapter extends FragmentStatePagerAdapter {
                 baseFragment = (ShareFragment) super.instantiateItem(container, position);
                 break;
             case 2:
-                baseFragment = (MeetFragment) super.instantiateItem(container, position);
+                baseFragment = (DiscoveryFragment) super.instantiateItem(container, position);
                 break;
             default:
                 //baseFragment = (MeetRecommendFragment) super.instantiateItem(container, position);
