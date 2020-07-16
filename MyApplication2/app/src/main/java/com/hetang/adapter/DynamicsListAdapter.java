@@ -54,6 +54,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static com.hetang.util.ParseUtils.ADD_SUBGROUP_ACTIVITY_ACTION;
+import static com.hetang.util.ParseUtils.EDEN_GARDEN_DYNAMIC;
 import static com.hetang.util.ParseUtils.FOLLOW_GROUP_ACTION;
 import static com.hetang.util.ParseUtils.MODIFY_GROUP_ACTION;
 import static com.hetang.util.ParseUtils.WRITE_SHARE_EXPERIENCE;
@@ -115,6 +116,7 @@ public class DynamicsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             case ParseUtils.ADD_INNER_DYNAMIC_ACTION:
             case ADD_SUBGROUP_ACTIVITY_ACTION:
             case WRITE_SHARE_EXPERIENCE:
+            case EDEN_GARDEN_DYNAMIC:
                 View viewDynamic = LayoutInflater.from(MyApplication.getContext())
                         .inflate(R.layout.dynamics_item, parent, false);
                 holder = new DynamicViewHolder(viewDynamic);
