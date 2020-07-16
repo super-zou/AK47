@@ -52,9 +52,13 @@
 
     <string-array name="explore_subtabs">
         <item>推荐</item>
-        <!--<item>部落</item>-->
         <item>分享</item>
-        <item>邂逅</item>
+        <item>发现</item>
+    </string-array>
+    
+    <string-array name="meet_subtabs">
+        <item>遇见</item>
+        <item>伊甸园</item>
     </string-array>
     
     <string-array name="male_features">
