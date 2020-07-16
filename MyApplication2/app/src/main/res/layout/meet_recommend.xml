@@ -7,41 +7,6 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:background="@color/color_disabled">
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/custom_actionbar"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:background="@color/colorWhite"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-        <TextView
-            android:id="@+id/back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:padding="8dp"
-            android:text="@string/left_angle"
-            android:textColor="@color/blue_dark"
-            android:textSize="20sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:padding="8dp"
-            android:text="@string/eden_garden"
-            android:textColor="@color/black"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
     <com.jcodecraeer.xrecyclerview.XRecyclerView
         android:id="@+id/recyclerview"
         android:layout_width="match_parent"
