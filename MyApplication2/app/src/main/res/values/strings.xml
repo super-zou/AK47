@@ -50,7 +50,7 @@
     <string name="qr_code_notice">请设置收款二维码</string>
     <string name="charge_introduction_notice">请填写收费说明</string>
         <string name="talent">达人</string>
-    <string name="hetang_talent">牧夫达人</string>
+    <string name="mufu_talent">牧夫达人</string>
     <string name="schoolmate_recommend">校友推荐</string>
     <string name="talent_apply">达人申请</string>
     <string name="experience_talent_apply">体验达人审核</string>
@@ -158,7 +158,7 @@
     <string name="more_talent">更多达人</string>
     <string name="join_group">+申请加入</string>
     <!--+End: add for archive, by zouhaichao 2018.12.6-->
-    <string name="join_hetang">加入牧夫</string>
+    <string name="join_mufu">加入牧夫</string>
     <string name="enter_phone">输入手机号</string>
     <string name="phone_is_empty_error">请输入手机号</string>
     <string name="phone_is_not_exist">输入的手机号不存在</string>
