@@ -97,6 +97,7 @@ public class ParseUtils {
     
         //for share experience
     public static final int WRITE_SHARE_EXPERIENCE = 30;
+    public static final int EDEN_GARDEN_DYNAMIC = 31;
 
     
     //here only for notification, other notification reused with dynamic
