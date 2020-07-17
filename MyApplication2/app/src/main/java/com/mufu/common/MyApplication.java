@@ -48,8 +48,6 @@ import static com.xuexiang.xupdate.entity.UpdateError.ERROR.CHECK_NO_NEW_VERSION
  */
 
 public class MyApplication extends Application {
-    public static final String APP_ID = "2882303761517916663";
-    public static final String APP_KEY = "5261791687663";
     //-End added by xuchunping for MI push
     //+Begin added for IMSDK by zouhaichao
     public static final int SDKAPPID = 1400400623;
