@@ -90,5 +90,8 @@ dependencies {
     //banner
     implementation 'com.youth.banner:banner:2.0.2'
     implementation "androidx.viewpager2:viewpager2:1.0.0"
+    
+    //weixin pay
+    implementation 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:+'
 
 }
