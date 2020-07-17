@@ -7,7 +7,7 @@ android {
         exclude 'META-INF/NOTICE'
     }
     defaultConfig {
-        applicationId "com.hetang"
+        applicationId "com.mufu"
         minSdkVersion 21
         targetSdkVersion 27
         versionCode 11
