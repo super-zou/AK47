@@ -57,7 +57,7 @@ public class MyApplication extends Application {
     private static final String TAG = "MyApplication";
     //+End added for IMSDK by zouhaichao
     //umeng
-    private static final String UMENG_APPKEY = "5de7c0350cafb2d526000a93";
+    private static final String UMENG_APPKEY = "5f1112c5978eea08cad12e4e";
 
     private static Context mContext;
     private Handler handler;
