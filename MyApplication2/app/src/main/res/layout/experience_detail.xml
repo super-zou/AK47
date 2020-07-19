@@ -1,0 +1,588 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+    <TextView
+        android:id="@+id/left_back"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/left_angle"
+        android:textColor="@color/blue_dark"
+        android:textSize="28sp"
+        android:elevation="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+        
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="60dp">
+
+        <LinearLayout
+            android:background="@color/line_border"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/banner_wrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <com.youth.banner.Banner
+                    android:id="@+id/banner"
+                    android:layout_width="match_parent"
+                    android:layout_height="420dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/experience_head"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorWhite"
+                android:padding="16dp">
+                
+            <TextView
+                    android:id="@+id/title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text=""
+                    android:includeFontPadding="false"
+                    android:textAppearance="@style/TextSourceHanSansBoldAppearance"
+                    android:textSize="26sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            <LinearLayout
+                    android:id="@+id/evaluate_summary"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:orientation="horizontal"
+                    app:layout_constraintStart_toStartOf="@+id/title"
+                    app:layout_constraintTop_toBottomOf="@+id/title">
+                    <TextView
+                        android:id="@+id/star"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/fa_star"
+                        android:textColor="@color/blue_dark"
+                        android:textSize="16sp" />
+                    
+                    <TextView
+                        android:id="@+id/rating"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="3dp"
+                        android:textSize="16sp"
+                        android:textColor="@color/blue_dark" />
+
+                    <TextView
+                        android:id="@+id/count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp"
+                        android:layout_marginStart="8dp" />
+                </LinearLayout>
+                
+                <TextView
+                    android:id="@+id/region_icon"
+                    android:layout_width="20dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:text="@string/fa_location"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toStartOf="@+id/title"
+                    app:layout_constraintTop_toBottomOf="@+id/evaluate_summary" />
+
+                <TextView
+                    android:id="@+id/region"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="3dp"
+                    android:text=""
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/region_icon"
+                    app:layout_constraintStart_toEndOf="@+id/region_icon"
+                    app:layout_constraintTop_toTopOf="@+id/region_icon" />
+
+                <TextView
+                    android:id="@+id/duration_icon"
+                    android:layout_width="20dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/fa_clock"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toStartOf="@+id/region_icon"
+                    app:layout_constraintTop_toBottomOf="@+id/region_icon" />
+                
+                <TextView
+                    android:id="@+id/duration_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="3dp"
+                    android:text="体验时长："
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/duration_icon"
+                    app:layout_constraintStart_toEndOf="@+id/duration_icon"
+                    app:layout_constraintTop_toTopOf="@+id/duration_icon" />
+                    
+                <TextView
+                    android:id="@+id/duration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="3dp"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/duration_title"
+                    app:layout_constraintStart_toEndOf="@+id/duration_title"
+                    app:layout_constraintTop_toTopOf="@+id/duration_title" />
+                    
+                <TextView
+                    android:id="@+id/group_limit_icon"
+                    android:layout_width="20dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/fa_group"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toStartOf="@+id/duration_icon"
+                    app:layout_constraintTop_toBottomOf="@+id/duration_icon" />
+                    
+                <TextView
+                    android:id="@+id/group_limit_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="3dp"
+                    android:text="团体人数："
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/group_limit_icon"
+                    app:layout_constraintStart_toEndOf="@+id/group_limit_icon"
+                    app:layout_constraintTop_toTopOf="@+id/group_limit_icon" />
+                    
+                <TextView
+                    android:id="@+id/group_limit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="3dp"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/group_limit_title"
+                    app:layout_constraintStart_toEndOf="@+id/group_limit_title"
+                    app:layout_constraintTop_toTopOf="@+id/group_limit_title" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/experience_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorWhite"
+                android:layout_marginTop="8dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp">
+
+                <TextView
+                    android:id="@+id/service_content_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:includeFontPadding="false"
+                    android:text="@string/experience_content"
+                    android:textAppearance="@style/TextSourceHanSansAppearance"
+                    android:textSize="22sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/service_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:lineSpacingMultiplier="1.5"
+                    android:textSize="16sp"
+                    android:textColor="@color/color_dark_grey"
+                    android:includeFontPadding="false"
+                    android:textAppearance="@style/TextSourceHanSansAppearance"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/service_content_title" />
+                    
+                <TextView
+                    android:id="@+id/contain_items_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:includeFontPadding="false"
+                    android:text="@string/contain_items_title"
+                    android:textAppearance="@style/TextSourceHanSansAppearance"
+                    android:textSize="22sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/service_content" />
+                    
+                <LinearLayout
+                    android:id="@+id/item_wrapper"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:orientation="vertical"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/contain_items_title" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/experience_talent_wrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorWhite"
+                android:layout_marginTop="8dp"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/guide_talent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:includeFontPadding="false"
+                    android:text="@string/your_experience_talent"
+                    android:textAppearance="@style/TextSourceHanSansAppearance"
+                    android:textSize="22sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+                    
+                 <com.mufu.util.RoundImageView
+                    android:id="@+id/avatar"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:layout_marginTop="16dp"
+                    android:scaleType="centerCrop"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/guide_talent" />
+
+                <TextView
+                    android:id="@+id/guide_talent_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:textColor="@color/blue_dark"
+                    android:textAppearance="@style/CustomTextAppearance"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/avatar" />
+
+                <TextView
+                    android:id="@+id/guide_self_introduction"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:includeFontPadding="false"
+                    android:lineSpacingMultiplier="1.5"
+                    android:textAppearance="@style/TextSourceHanSansAppearance"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/guide_talent_name" />
+
+              <Button
+                    android:id="@+id/contact_talent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/btn_primary"
+                    android:padding="3dp"
+                    android:text="@string/contact_talent"
+                    android:textColor="@color/white"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/guide_self_introduction" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/experience_address_wrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorWhite"
+                android:layout_marginTop="8dp"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/address"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/experience_address"
+                    android:includeFontPadding="false"
+                    android:textAppearance="@style/TextSourceHanSansAppearance"
+                    android:textSize="22sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+                    
+                <TextView
+                    android:id="@+id/address_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/address" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/evaluate_statistics"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@color/colorWhite"
+                android:layout_marginTop="8dp"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/evaluate_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="参与者评价"
+                    android:includeFontPadding="false"
+                    android:textAppearance="@style/TextSourceHanSansBoldAppearance"
+                    android:textSize="22sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/evaluate_star"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/fa_star"
+                    android:textColor="@color/blue_dark"
+                    app:layout_constraintStart_toStartOf="@+id/evaluate_title"
+                    app:layout_constraintTop_toBottomOf="@+id/evaluate_title" />
+                    
+                <TextView
+                    android:id="@+id/evaluate_rating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="3dp"
+                    android:textColor="@color/blue_dark"
+                    app:layout_constraintBottom_toBottomOf="@+id/evaluate_star"
+                    app:layout_constraintStart_toEndOf="@+id/evaluate_star"
+                    app:layout_constraintTop_toTopOf="@+id/evaluate_star" />
+
+                <TextView
+                    android:id="@+id/evaluate_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text=""
+                    app:layout_constraintStart_toEndOf="@+id/evaluate_rating"
+                    app:layout_constraintTop_toTopOf="@+id/evaluate_rating" />
+                    
+                <TextView
+                    android:id="@+id/show_all"
+                    android:text="@string/show_all_evaluates"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:textColor="@color/blue_dark"
+                    app:layout_constraintBottom_toBottomOf="@+id/evaluate_title"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/evaluate_title"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            
+            <LinearLayout
+                android:id="@+id/evaluate_wrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@color/colorWhite"
+                android:padding="16dp"></LinearLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/points_attention_wrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorWhite"
+                android:layout_marginTop="8dp"
+                android:padding="16dp">
+                
+           <TextView
+                    android:id="@+id/points_attention_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/points_attention"
+                    android:includeFontPadding="false"
+                    android:textAppearance="@style/TextSourceHanSansAppearance"
+                    android:textSize="22sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/cancellation_policy_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/cancellation_policy_title"
+                    android:textAppearance="@style/CustomTextAppearance"
+                    app:layout_constraintStart_toStartOf="@+id/points_attention_title"
+                    app:layout_constraintTop_toBottomOf="@+id/points_attention_title" />
+
+                <TextView
+                    android:id="@+id/cancellation_detail_nav"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:textSize="16sp"
+                    android:text="@string/chevron_right"
+                    app:layout_constraintBottom_toBottomOf="@+id/cancellation_policy_title"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/cancellation_policy_title" />
+                    
+                    <TextView
+                    android:id="@+id/cancellation_policy_summary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:lineSpacingMultiplier="1.2"
+                    android:paddingRight="32dp"
+                    android:textSize="16sp"
+                    android:text="@string/cancellation_policy_summary"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/points_attention_title"
+                    app:layout_constraintTop_toBottomOf="@+id/cancellation_policy_title" />
+                    
+                    <TextView
+                    android:visibility="gone"
+                    android:id="@+id/limit_condition_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/appointment_condition"
+                    android:textAppearance="@style/CustomTextAppearance"
+                    app:layout_constraintStart_toStartOf="@+id/points_attention_title"
+                    app:layout_constraintTop_toBottomOf="@+id/cancellation_policy_summary" />
+                    
+                    <LinearLayout
+                    android:visibility="gone"
+                    android:id="@+id/limit_condition_wrapper"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="vertical"
+                    app:layout_constraintTop_toBottomOf="@+id/limit_condition_title">
+
+                </LinearLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            
+            <TextView
+                android:id="@+id/recommend_experience"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="recommend_experience" />
+
+            <HorizontalScrollView
+                android:id="@+id/horizontalScrollView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:scrollbars="none">
+                
+                <LinearLayout
+                    android:id="@+id/route_picture_wrapper"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:orientation="horizontal"
+                    android:paddingRight="16dp"></LinearLayout>
+            </HorizontalScrollView>
+        </LinearLayout>
+    </ScrollView>
+    
+     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/appointment_wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent">
+        
+        <TextView
+            android:id="@+id/cny"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:gravity="center"
+            android:text="@string/fa_cny"
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+            
+            <TextView
+            android:id="@+id/money"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="3dp"
+            android:gravity="center"
+            android:text=""
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toBottomOf="@+id/cny"
+            app:layout_constraintStart_toEndOf="@+id/cny"
+            app:layout_constraintTop_toTopOf="@+id/cny" />
+            
+            <TextView
+            android:id="@+id/unit_divider"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="3dp"
+            android:gravity="center"
+            android:text="@string/experience_unit"
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toBottomOf="@+id/money"
+            app:layout_constraintStart_toEndOf="@+id/money"
+            app:layout_constraintTop_toTopOf="@+id/money" />
+            
+             <TextView
+            android:id="@+id/unit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="3dp"
+            android:gravity="center"
+            android:text=""
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toBottomOf="@+id/unit_divider"
+            app:layout_constraintStart_toEndOf="@+id/unit_divider"
+            app:layout_constraintTop_toTopOf="@+id/unit_divider" />
+            
+            <Button
+            android:id="@+id/check_appointment_date"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/btn_stress"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:text="@string/look_appoint_date"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
+            

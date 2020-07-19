@@ -1,0 +1,683 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/develop_experience"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <include
+        android:id="@+id/custom_actionbar"
+        layout="@layout/custom_actionbar_common"
+        android:layout_margin="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+        
+        <ScrollView
+        android:id="@+id/talent_authentication_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/custom_actionbar">
+
+        <LinearLayout
+            android:id="@+id/experience_apply_form_wrapper"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="32dp">
+            
+            <!--city select-->
+            <LinearLayout
+                android:id="@+id/location_wrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:elevation="6dp"
+                android:layout_marginTop="36dp"
+                android:orientation="vertical"
+                android:visibility="visible">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/location"
+                    android:textColor="@color/black"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+                    
+                    <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/location_experience_desc"
+                    android:textAppearance="@style/CustomTextAppearance"
+                    android:textColor="@color/black" />
+
+                <Button
+                    android:id="@+id/select_city"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="32dp"
+                    android:background="@drawable/btn_big_radius_stress"
+                    android:gravity="center"
+                    android:padding="6dp"
+                    android:text="@string/select_city"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
+                    
+                    </LinearLayout>
+
+            <!--create headline-->
+            <LinearLayout
+                android:id="@+id/create_headline_wrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="36dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/create_headline_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/create_experience_headline_title"
+                    android:textColor="@color/black"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+                    
+                     <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/create_headline_notice"
+                    android:textAppearance="@style/CustomTextNoticeAppearance"
+                    android:textColor="@color/black"
+                    android:textSize="16sp" />
+
+                <EditText
+                    android:id="@+id/create_headline_edit"
+                    style="@style/EditTextCustom"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:hint="@string/headline"
+                    android:textColor="@color/blue_dark"
+                    android:textCursorDrawable="@drawable/cursor_color"
+                    android:theme="@style/MyEditText" />
+                    
+                     </LinearLayout>
+
+            <!--experience introduction-->
+            <LinearLayout
+                android:id="@+id/introduction_wrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/experience_introduction_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/experience_introduction_title"
+                    android:textColor="@color/black"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+                    
+                     <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/experience_introduction"
+                    android:textAppearance="@style/CustomTextAppearance"
+                    android:textColor="@color/black" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/experience_introduction_suggestion"
+                    android:textColor="@color/text_color_gray"
+                    android:textSize="16sp" />
+                    
+                    <EditText
+                    android:id="@+id/introduction_edittext"
+                    style="@style/EditTextCustom"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:background="@drawable/shape"
+                    android:gravity="top"
+                    android:hint="@string/experience_introduction_title"
+                    android:minLines="6"
+                    android:textColor="@color/blue_dark"
+                    android:textCursorDrawable="@drawable/cursor_color"
+                    android:theme="@style/MyEditText" />
+            </LinearLayout>
+
+<!--experience picture-->
+            <LinearLayout
+                android:id="@+id/experience_picture_wrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/experience_picture_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/select_picture"
+                    android:textColor="@color/black"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+                    
+                    <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/select_picture_suggestion"
+                    android:textColor="@color/text_color_gray"
+                    android:textSize="16sp" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/add_experience_pictures"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:overScrollMode="ifContentScrolls" />
+            </LinearLayout>
+            
+             <!--contain items-->
+            <LinearLayout
+                android:id="@+id/contain_items_wrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/contain_items_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/contain_items_title"
+                    android:textColor="@color/black"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+                    
+                     <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/contain_items_introduction"
+                    android:textAppearance="@style/CustomTextAppearance"
+                    android:textColor="@color/black" />
+
+                <androidx.gridlayout.widget.GridLayout
+                    android:id="@+id/contain_items_gridlayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    app:columnCount="1">
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:hint="@string/contain_item_introduction_hint"
+                        android:textColor="@color/blue_dark"
+                        android:textCursorDrawable="@drawable/cursor_color"
+                        android:theme="@style/MyEditText"
+                        app:layout_row="0"/>
+                </androidx.gridlayout.widget.GridLayout>
+
+                <TextView
+                    android:id="@+id/add_new_item"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/btn_big_radius_primary"
+                    android:padding="8dp"
+                    android:text="@string/add_new_item"
+                    android:textAppearance="@style/CustomTextAppearance"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
+            </LinearLayout>           
+            <!--charge-->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/charge_duration_wrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/price_desc_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/price_setting_title"
+                    android:textColor="@color/black"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+                    
+                <TextView
+                    android:id="@+id/price_desc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:text="@string/price_setting"
+                    android:lineSpacingMultiplier="1.2"
+                    android:textAppearance="@style/CustomTextAppearance"
+                    android:textColor="@color/black"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/price_desc_title" />
+
+
+                <TextView
+                    android:id="@+id/cny"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:text="@string/fa_cny"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/price_desc" />
+                
+                <EditText
+                    android:id="@+id/price_setting_edit"
+                    style="@style/EditTextCustom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:hint="@string/amount_of_money"
+                    android:inputType="number"
+                    android:minWidth="100dp"
+                    android:textColor="@color/blue_dark"
+                    android:textCursorDrawable="@drawable/cursor_color"
+                    android:theme="@style/MyEditText"
+                    app:layout_constraintBottom_toBottomOf="@+id/cny"
+                    app:layout_constraintStart_toEndOf="@+id/cny"
+                    app:layout_constraintTop_toTopOf="@+id/cny" />
+                
+                <TextView
+                    android:id="@+id/experience_unit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/experience_unit"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/cny"
+                    app:layout_constraintStart_toEndOf="@+id/price_setting_edit"
+                    app:layout_constraintTop_toTopOf="@+id/cny" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            <!--time-->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/time_wrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/time_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/experience_time_setting"
+                    android:textColor="@color/black"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+                
+                <TextView
+                    android:id="@+id/duration_desc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:lineSpacingMultiplier="1.2"
+                    android:text="@string/experience_duration"
+                    android:textAppearance="@style/CustomTextAppearance"
+                    android:textColor="@color/black"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/time_title" />
+                
+                <EditText
+                    android:id="@+id/duration_edit"
+                    style="@style/EditTextCustom"
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:gravity="bottom"
+                    android:inputType="numberDecimal"
+                    android:textColor="@color/blue_dark"
+                    android:textCursorDrawable="@drawable/cursor_color"
+                    android:theme="@style/MyEditText"
+                    app:layout_constraintStart_toStartOf="@+id/duration_desc"
+                    app:layout_constraintTop_toBottomOf="@+id/duration_desc" />
+                
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="3dp"
+                    android:text="@string/hours"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/duration_edit"
+                    app:layout_constraintStart_toEndOf="@+id/duration_edit"
+                    app:layout_constraintTop_toTopOf="@+id/duration_edit" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+                        
+            <!--appointment condition-->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/appoinment_condition_wrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+                
+                <TextView
+                    android:id="@+id/appointment_condition"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/appointment_condition"
+                    android:textColor="@color/black"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    />
+                    
+                     <TextView
+                    android:id="@+id/group_count_limit_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:text="@string/group_count_limit"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/appointment_condition"/>
+
+                <EditText
+                    android:id="@+id/group_count_limit_edit"
+                    style="@style/EditTextCustom"
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
+                    android:textColor="@color/blue_dark"
+                    android:textCursorDrawable="@drawable/cursor_color"
+                    android:theme="@style/MyEditText"
+                    app:layout_constraintBottom_toBottomOf="@+id/group_count_limit_title"
+                    app:layout_constraintStart_toEndOf="@+id/group_count_limit_title"
+                    app:layout_constraintTop_toTopOf="@+id/group_count_limit_title" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="3dp"
+                    android:text="@string/persons"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/group_count_limit_title"
+                    app:layout_constraintStart_toEndOf="@+id/group_count_limit_edit"
+                    app:layout_constraintTop_toTopOf="@+id/group_count_limit_title" />
+                    
+                <EditText
+                    android:visibility="gone"
+                    android:id="@+id/condition_edit"
+                    style="@style/EditTextCustom"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:hint="@string/other_condition"
+                    android:textColor="@color/blue_dark"
+                    android:textCursorDrawable="@drawable/cursor_color"
+                    android:theme="@style/MyEditText"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/group_count_limit_title"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            
+             <!--experience address-->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/address_wrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+                <TextView
+                    android:id="@+id/address_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/experience_address"
+                    android:textColor="@color/black"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
+                <EditText
+                    android:id="@+id/address_edit"
+                    style="@style/EditTextCustom"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:hint="@string/experience_address_hint"
+                    android:textColor="@color/blue_dark"
+                    android:textCursorDrawable="@drawable/cursor_color"
+                    android:theme="@style/MyEditText"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/address_title"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+             <!--appoint date-->
+            <LinearLayout
+                android:id="@+id/appoint_date_wrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/appoint_date_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/appoint_date_title"
+                    android:textColor="@color/black"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+                    
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/experience_appoint_date"
+                    android:textAppearance="@style/CustomTextAppearance"
+                    android:textColor="@color/black" />
+                    
+                 <com.prolificinteractive.materialcalendarview.MaterialCalendarView xmlns:app="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/calendarView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    app:mcv_dateTextAppearance="@style/CustomDateAppearance"
+                    app:mcv_firstDayOfWeek="monday"
+                    app:mcv_headerTextAppearance="@style/CustomTextAppearance"
+                    app:mcv_leftArrowMask="@drawable/ic_arrow_back"
+                    app:mcv_rightArrowMask="@drawable/ic_arrow_forward"
+                    app:mcv_selectionColor="@color/color_blue"
+                    app:mcv_selectionMode="multiple"
+                    app:mcv_showOtherDates="all"
+                    app:mcv_weekDayTextAppearance="@style/CustomTextAppearance" />
+            </LinearLayout>
+            <!--self introduction-->
+            <LinearLayout
+                android:id="@+id/self_introduction_wrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/self_introduction_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/self_introduction_title"
+                    android:textColor="@color/black"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/self_introduction_notice"
+                    android:textAppearance="@style/CustomTextNoticeAppearance"
+                    android:textColor="@color/black"
+                    android:textSize="16sp" />
+
+                <EditText
+                    android:id="@+id/self_introduction"
+                    style="@style/EditTextCustom"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:background="@drawable/shape"
+                    android:gravity="top"
+                    android:hint="@string/self_introduction"
+                    android:minLines="6"
+                    android:textColor="@color/blue_dark"
+                    android:textCursorDrawable="@drawable/cursor_color"
+                    android:theme="@style/MyEditText" />
+            </LinearLayout>
+            
+             <!--Cancellation policy-->
+            <LinearLayout
+                android:id="@+id/cancellation_policy_wrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/cancellation_policy_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/cancellation_policy_title"
+                    android:textColor="@color/black"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+                    
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textSize="16sp"
+                    android:text="@string/cancellation_policy_summary"
+                    android:includeFontPadding="false"
+                    android:textAppearance="@style/TextSourceHanSansAppearance"
+                    android:textColor="@color/black" />
+
+                <TextView
+                    android:id="@+id/cancellation_by_weather"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/cancellation_by_weather"
+                    android:textColor="@color/black"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+                    
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:lineSpacingMultiplier="1.2"
+                    android:text="@string/cancellation_by_weather_desc"
+                    android:includeFontPadding="false"
+                    android:textSize="16sp"
+                    android:textAppearance="@style/TextSourceHanSansAppearance"
+                    android:textColor="@color/black" />
+
+                <TextView
+                    android:id="@+id/cancellation_by_talent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/cancellation_by_talent"
+                    android:textColor="@color/black"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+                    
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:lineSpacingMultiplier="1.2"
+                    android:text="@string/cancellation_by_talent_desc"
+                    android:textSize="16sp"
+                    android:includeFontPadding="false"
+                    android:textAppearance="@style/TextSourceHanSansAppearance" />
+
+                <androidx.appcompat.widget.AppCompatCheckBox
+                    android:id="@+id/understand_cancellation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="32dp"
+                    android:layout_marginTop="16dp"
+                    android:buttonTint="@color/disabled"
+                    android:text="@string/understand_cancellation"
+                    android:textColor="@color/black"></androidx.appcompat.widget.AppCompatCheckBox>
+
+            </LinearLayout>
+            
+            <!--navigation-->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/navigation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="64dp">
+
+                <Button
+                    android:id="@+id/prevBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="32dp"
+                    android:layout_marginBottom="32dp"
+                    android:background="@drawable/btn_big_radius_default"
+                    android:text="@string/prev"
+                    android:textColor="@color/text_default"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+                    
+                     <!--
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@+id/cancel"
+            app:layout_constraintEnd_toStartOf="@+id/submit"
+            app:layout_constraintStart_toEndOf="@+id/cancel"
+            app:layout_constraintTop_toTopOf="@+id/cancel" />
+        -->
+
+                <Button
+                    android:id="@+id/nextBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="32dp"
+                    android:layout_marginBottom="32dp"
+                    android:background="@drawable/btn_big_radius_default"
+                    android:text="@string/next"
+                    android:textColor="@color/text_default"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>

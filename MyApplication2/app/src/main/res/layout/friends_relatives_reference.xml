@@ -20,6 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="0"
+            android:padding="8dp"
             android:textSize="18sp"
             android:textColor="@color/blue_dark"
             app:layout_constraintEnd_toEndOf="@+id/dynamics_text"
@@ -34,80 +35,373 @@
             android:text="@string/dynamics"
             android:textAppearance="@style/CustomTextAppearance"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/tribe_text"
+            app:layout_constraintEnd_toStartOf="@+id/follow_text"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/dynamics_count" />
         
         <TextView
-            android:id="@+id/tribe_count"
+            android:id="@+id/followed_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="0"
             android:textSize="18sp"
+            android:padding="8dp"
             android:textColor="@color/blue_dark"
-            app:layout_constraintEnd_toEndOf="@+id/tribe_text"
-            app:layout_constraintStart_toStartOf="@+id/tribe_text"
+            app:layout_constraintEnd_toEndOf="@+id/follow_text"
+            app:layout_constraintStart_toStartOf="@+id/follow_text"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/tribe_text"
+            android:id="@+id/follow_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="@string/tribe"
+            android:text="@string/follow"
             android:textAppearance="@style/CustomTextAppearance"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/talent_text"
+            app:layout_constraintEnd_toStartOf="@+id/answer_text"
             app:layout_constraintStart_toEndOf="@+id/dynamics_text"
             app:layout_constraintTop_toBottomOf="@+id/tribe_count" />
 
         <TextView
-            android:id="@+id/talent_count"
+            android:id="@+id/answer_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="0"
+            android:padding="8dp"
             android:textSize="18sp"
             android:textColor="@color/blue_dark"
-            app:layout_constraintEnd_toEndOf="@+id/talent_text"
-            app:layout_constraintStart_toStartOf="@+id/talent_text"
+            app:layout_constraintEnd_toEndOf="@+id/answer_text"
+            app:layout_constraintStart_toStartOf="@+id/answer_text"
             app:layout_constraintTop_toTopOf="parent" />
         
         <TextView
-            android:id="@+id/talent_text"
+            android:id="@+id/answer_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="@string/talent"
+            android:text="解答"
             android:textAppearance="@style/CustomTextAppearance"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/order_text"
-            app:layout_constraintStart_toEndOf="@+id/tribe_text"
+            app:layout_constraintEnd_toStartOf="@+id/question_text"
+            app:layout_constraintStart_toEndOf="@+id/follow_text"
             app:layout_constraintTop_toBottomOf="@+id/talent_count" />
         
-         <TextView
-            android:id="@+id/order_count"
+        <TextView
+            android:id="@+id/question_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="0"
+            android:padding="8dp"
             android:textSize="18sp"
             android:textColor="@color/blue_dark"
-            app:layout_constraintEnd_toEndOf="@+id/order_text"
-            app:layout_constraintStart_toStartOf="@+id/order_text"
+            app:layout_constraintEnd_toEndOf="@+id/question_text"
+            app:layout_constraintStart_toStartOf="@+id/question_text"
             app:layout_constraintTop_toTopOf="parent" />
         
         <TextView
-            android:id="@+id/order_text"
+            android:id="@+id/question_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="@string/order"
+            android:text="提问"
             android:textAppearance="@style/CustomTextAppearance"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/talent_text"
-            app:layout_constraintTop_toBottomOf="@+id/order_count" />
+            app:layout_constraintStart_toEndOf="@+id/answer_text"
+            app:layout_constraintTop_toBottomOf="@+id/answer_text" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+    
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:visibility="gone"
+        android:id="@+id/service_wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorWhite"
+        android:layout_marginTop="8dp"
+        android:padding="16dp">
+        <TextView
+            android:id="@+id/service_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/fa_magnet"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:text="开展的服务"
+            android:textSize="16sp"
+            app:layout_constraintStart_toEndOf="@+id/service_icon"
+            app:layout_constraintTop_toTopOf="parent" />
+        
+        <LinearLayout
+            android:visibility="gone"
+            android:id="@+id/common_talents"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/border_all"
+            android:elevation="6dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/service_icon">
+            
+            <TextView
+                android:id="@+id/common_talents_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="@string/fa_certificate"
+                android:textColor="@color/green"
+                android:textSize="22sp" />
+
+            <TextView
+                android:id="@+id/talents"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text="@string/talent"
+                android:textAppearance="@style/TextSourceHanSansBoldAppearance"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+        </LinearLayout>
+        <LinearLayout
+            android:visibility="gone"
+            android:id="@+id/experience_wrapper"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/border_all"
+            android:elevation="6dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/common_talents"
+            app:layout_constraintTop_toBottomOf="@+id/service_icon">
+            <TextView
+                android:id="@+id/experience_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="@string/fa_shopping"
+                android:textColor="@color/blue_dark"
+                android:textSize="22sp" />
+
+            <TextView
+                android:id="@+id/experiences"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text="@string/experience"
+                android:textAppearance="@style/TextSourceHanSansBoldAppearance"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+        </LinearLayout>
+        
+        <LinearLayout
+            android:visibility="gone"
+            android:id="@+id/guide_wrapper"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/border_all"
+            android:elevation="6dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/experience_wrapper"
+            app:layout_constraintTop_toBottomOf="@+id/service_icon">
+            
+            <TextView
+                android:id="@+id/guide_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="@string/fa_compass"
+                android:textColor="@color/background"
+                android:textSize="22sp" />
+
+            <TextView
+                android:id="@+id/guides"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text="@string/guide"
+                android:textAppearance="@style/TextSourceHanSansBoldAppearance"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+        </LinearLayout>
+        
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:visibility="gone"
+        android:id="@+id/talents_wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorWhite"
+        android:layout_marginTop="8dp"
+        android:padding="16dp">
+        
+        <TextView
+            android:id="@+id/talents_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="@string/fa_certificate"
+            android:textColor="@color/blue_dark"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+        
+        <TextView
+            android:id="@+id/talents_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="9dp"
+            android:text="成为达人"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:textAppearance="@style/TextSourceHanSansBoldAppearance"
+            app:layout_constraintBottom_toBottomOf="@+id/talents_icon"
+            app:layout_constraintStart_toEndOf="@+id/talents_icon"
+            app:layout_constraintTop_toTopOf="@+id/talents_icon" />
+        
+        <TextView
+            android:id="@+id/talents_nav"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="@string/chevron_right"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/talents_icon"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/talents_icon" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:visibility="gone"
+        android:id="@+id/contacts_wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorWhite"
+        android:layout_marginTop="8dp"
+        android:padding="16dp">
+        
+        <TextView
+            android:id="@+id/contacts_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="@string/fa_group"
+            android:textSize="16sp"
+            android:textColor="@color/blue_dark"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+<TextView
+            android:id="@+id/contacts_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="9dp"
+            android:text="联系人"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:textAppearance="@style/TextSourceHanSansBoldAppearance"
+            app:layout_constraintBottom_toBottomOf="@+id/contacts_icon"
+            app:layout_constraintStart_toEndOf="@+id/contacts_icon"
+            app:layout_constraintTop_toTopOf="@+id/contacts_icon" />
+        
+        <TextView
+            android:id="@+id/count"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginEnd="3dp"
+            android:background="@drawable/circle_red"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="9sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/contacts_nav"
+            app:layout_constraintEnd_toStartOf="@+id/contacts_nav"
+            app:layout_constraintTop_toTopOf="@+id/contacts_nav" />
+        
+        <TextView
+            android:id="@+id/contacts_nav"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="@string/chevron_right"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/contacts_icon"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/contacts_icon" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:visibility="gone"
+        android:id="@+id/personality_archive_wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorWhite"
+        android:layout_marginTop="8dp"
+        android:padding="16dp">
+        <TextView
+            android:id="@+id/personality_archive_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="@string/fa_key"
+            android:textColor="@color/blue_dark"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+        
+        <TextView
+            android:id="@+id/personality_archive_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="9dp"
+            android:text="个性档案"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:textAppearance="@style/TextSourceHanSansBoldAppearance"
+            app:layout_constraintBottom_toBottomOf="@+id/personality_archive_icon"
+            app:layout_constraintStart_toEndOf="@+id/personality_archive_icon"
+            app:layout_constraintTop_toTopOf="@+id/personality_archive_icon" />
+        
+        <TextView
+            android:id="@+id/personality_archive_nav"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="@string/chevron_right"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/personality_archive_icon"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/personality_archive_icon" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+            
+           
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -495,7 +789,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="3dp"
-                android:text="@string/group" />
+                android:text="@string/fa_group" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -505,7 +799,7 @@
                 android:text="好友团" />
         </LinearLayout>
 
-        <com.hetang.util.HtGridView
+        <com.mufu.util.HtGridView
             android:id="@+id/cheering_group_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -517,7 +811,7 @@
             android:numColumns="2"
             android:scrollbars="none"
             android:transcriptMode="alwaysScroll"
-            android:verticalSpacing="8dp"></com.hetang.util.HtGridView>
+            android:verticalSpacing="8dp"></com.mufu.util.HtGridView>
 
         <TextView
             android:id="@+id/add_cheering_group"

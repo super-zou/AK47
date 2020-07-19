@@ -8,7 +8,7 @@
     android:background="@color/white"
     android:elevation="1dp">
 
-    <com.hetang.util.RoundImageView
+    <com.mufu.util.RoundImageView
         android:id="@+id/avatar"
         android:layout_width="100dp"
         android:layout_height="100dp"
@@ -17,7 +17,7 @@
         app:layout_constraintStart_toEndOf="@+id/authenticationImageView"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.hetang.util.RoundImageView
+    <com.mufu.util.RoundImageView
         android:id="@+id/authenticationImageView"
         android:layout_width="100dp"
         android:layout_height="100dp"

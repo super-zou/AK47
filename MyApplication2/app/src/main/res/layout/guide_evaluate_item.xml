@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/guide_evaluate_item"
+    android:layout_marginBottom="32dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">  
+    
+    <com.mufu.util.RoundImageView
+        android:id="@+id/evaluate_avatar"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+        
+    <TextView
+        android:id="@+id/evaluate_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="evaluate_name"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/evaluate_avatar"
+        app:layout_constraintTop_toTopOf="@+id/evaluate_avatar" />
+        
+    <TextView
+        android:id="@+id/evaluate_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="time"
+        android:textColor="@color/color_light_grey"
+        app:layout_constraintStart_toEndOf="@+id/evaluate_name"
+        app:layout_constraintTop_toTopOf="@+id/evaluate_avatar" />
+        
+    <com.willy.ratingbar.RotationRatingBar
+        android:id="@+id/rating_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:isIndicator="true"
+        android:clickable="false"
+        android:stepSize="0.5"
+        app:layout_constraintStart_toStartOf="@+id/evaluate_name"
+        app:layout_constraintTop_toBottomOf="@+id/evaluate_name"
+        app:srb_starHeight="16dp"
+        app:srb_starWidth="16dp"
+        app:srb_starPadding="3dp"/>
+        
+    <TextView
+        android:id="@+id/evaluate_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="content"
+        android:lineSpacingMultiplier="1.2"
+        android:textAppearance="@style/CustomTextNoticeAppearance"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/evaluate_avatar"
+        app:layout_constraintTop_toBottomOf="@+id/evaluate_avatar" />
+        
+   <androidx.gridlayout.widget.GridLayout
+        android:id="@+id/evaluate_picture_grid"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:numColumns="3"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/evaluate_content" />
+</androidx.constraintlayout.widget.ConstraintLayout>

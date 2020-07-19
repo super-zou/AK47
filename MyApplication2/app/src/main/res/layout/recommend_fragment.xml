@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <ScrollView
+        android:fillViewport="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        
+        <LinearLayout
+            android:background="@color/line_border"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/banner_wrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                
+                <com.youth.banner.Banner
+                    android:id="@+id/banner"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/banner_introduction"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:gravity="center"
+                    android:text="@string/banner_introduction"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="22sp"
+                    android:includeFontPadding="false"
+                    android:textAppearance="@style/TextSourceHanSansBoldAppearance"
+          app:layout_constraintBottom_toBottomOf="@+id/banner"
+                    app:layout_constraintEnd_toEndOf="@+id/banner"
+                    app:layout_constraintStart_toStartOf="@+id/banner" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            <!--experience-->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/experience_recommend"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:background="@color/colorWhite"
+                android:padding="16dp">
+                
+                <TextView
+                    android:id="@+id/experience_recommend_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:includeFontPadding="false"
+                    android:text="@string/experience_recommend_title"
+                    android:textAppearance="@style/TextSourceHanSansAppearance"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+                    
+                    <TextView
+                    android:id="@+id/experience_recommend_introduction"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:lineSpacingMultiplier="1.5"
+                    android:includeFontPadding="false"
+                    android:text="@string/experience_recommend_introduction"
+                    android:textAppearance="@style/TextSourceHanSansAppearance"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/experience_recommend_title" />
+                    
+                    <LinearLayout
+                    android:id="@+id/experience_recommend_wrapper"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:orientation="vertical"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/experience_recommend_introduction" />
+                    
+                    <Button
+                    android:id="@+id/more_experience"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/btn_default"
+                    android:text="@string/find_more_experiences"
+                    android:textColor="@color/blue_dark"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/experience_recommend_wrapper" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+             <!--travel guide-->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/guide_recommend"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorWhite"
+                android:layout_marginTop="8dp"
+                android:visibility="gone"
+                android:padding="16dp">
+                
+                <TextView
+                    android:id="@+id/guide_recommend_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:includeFontPadding="false"
+                    android:text="@string/guide_recommend_title"
+                    android:textAppearance="@style/TextSourceHanSansAppearance"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+                    
+                    <TextView
+                    android:id="@+id/guide_recommend_introduction"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:lineSpacingMultiplier="1.5"
+                    android:includeFontPadding="false"
+                    android:text="@string/guide_recommend_introduction"
+                    android:textAppearance="@style/TextSourceHanSansAppearance"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/guide_recommend_title" />
+                    
+                    <LinearLayout
+                    android:id="@+id/guide_recommend_wrapper"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:orientation="vertical"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/guide_recommend_introduction" />
+                    
+                    <Button
+                    android:id="@+id/more_guide"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/btn_default"
+                    android:text="@string/find_more_guides"
+                    android:textColor="@color/blue_dark"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/guide_recommend_wrapper" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            
+             <!--meet-->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/meet_wrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorWhite"
+                android:visibility="gone"
+                android:layout_marginTop="8dp"
+                android:padding="16dp">
+                
+                <TextView
+                    android:id="@+id/meet_recommend_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:includeFontPadding="false"
+                    android:text="@string/meet"
+                    android:textAppearance="@style/TextSourceHanSansAppearance"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+                    
+                     <TextView
+                    android:id="@+id/meet_recommend_introduction"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:lineSpacingMultiplier="1.5"
+                    android:includeFontPadding="false"
+                    android:text="@string/meet_recommend_introduction"
+                    android:textAppearance="@style/TextSourceHanSansAppearance"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/meet_recommend_title" />
+                    
+                     <LinearLayout
+                    android:id="@+id/meet_recommend_wrapper"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:divider="@color/line_border"
+                    android:orientation="vertical"
+                    android:showDividers="middle"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/meet_recommend_introduction" />
+                    
+                    <Button
+                    android:id="@+id/more_meet"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/btn_default"
+                    android:text="@string/find_more_meets"
+                    android:textColor="@color/blue_dark"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/meet_recommend_wrapper" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+ <!--talents-->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/talent_wrapper"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorWhite"
+                android:layout_marginTop="8dp"
+                android:paddingTop="16dp">
+                
+                <TextView
+                    android:id="@+id/talent_recommend_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:includeFontPadding="false"
+                    android:text="@string/mufu_talent"
+                    android:textAppearance="@style/TextSourceHanSansAppearance"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+                    
+                    <TextView
+                    android:id="@+id/talent_consult"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:text="@string/talent_consults"
+                    android:textColor="@color/blue_dark"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/talent_recommend_title"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/talent_recommend_title" />
+                    
+                     <androidx.gridlayout.widget.GridLayout
+                    android:id="@+id/talent_recommend_wrapper"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
+                    app:columnCount="2"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/talent_recommend_title" />
+                    
+                    <Button
+                    android:id="@+id/more_talent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/btn_default"
+                    android:text="@string/find_more_talents"
+                    android:textColor="@color/blue_dark"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/talent_recommend_wrapper" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            
+            <!--schoolmates-->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/schoolmate_wrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorWhite"
+                android:visibility="gone"
+                android:layout_marginTop="8dp"
+                android:paddingTop="16dp">
+                
+                <TextView
+                    android:id="@+id/schoolmate_recommend_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:includeFontPadding="false"
+                    android:text="@string/schoolmate_recommend"
+                    android:textAppearance="@style/TextSourceHanSansAppearance"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+                    
+                     <HorizontalScrollView
+                    android:id="@+id/horizontalScrollView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:scrollbars="none"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/schoolmate_recommend_title">
+
+                    <LinearLayout
+                        android:id="@+id/contacts_wrapper"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:orientation="horizontal"
+                        android:paddingRight="16dp"></LinearLayout>
+                </HorizontalScrollView>
+                
+                 <Button
+                    android:id="@+id/more_schoolmate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/btn_default"
+                    android:text="@string/find_more_schoolmate"
+                    android:textColor="@color/blue_dark"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/horizontalScrollView" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            
+             </LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

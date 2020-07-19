@@ -10,7 +10,7 @@
         android:id="@+id/custom_actionbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/background"
+        android:background="@color/white"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:padding="8dp"
             android:text="@string/left_angle"
-            android:textColor="@color/white"
+            android:textColor="@color/blue_dark"
             android:textSize="28sp" />
     </LinearLayout>
 

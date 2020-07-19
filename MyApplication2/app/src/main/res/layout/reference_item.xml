@@ -7,7 +7,7 @@
     android:layout_height="wrap_content"
     android:id="@+id/reference_item">
 
-    <com.hetang.util.RoundImageView
+    <com.mufu.util.RoundImageView
         android:id="@+id/referee_head_uri"
         android:layout_width="50dp"
         android:layout_height="50dp"
@@ -15,7 +15,7 @@
         android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-    </com.hetang.util.RoundImageView>
+    </com.mufu.util.RoundImageView>
 
     <TextView
         android:id="@+id/referee_name"

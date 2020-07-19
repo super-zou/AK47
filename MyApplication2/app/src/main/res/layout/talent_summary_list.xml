@@ -9,7 +9,7 @@
         android:id="@+id/custom_actionbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/blue_dark"
+        android:background="@color/white"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -22,7 +22,7 @@
             android:layout_marginStart="8dp"
             android:padding="8dp"
             android:text="@string/left_angle"
-            android:textColor="@color/white"
+            android:textColor="@color/blue_dark"
             android:textSize="28sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -34,26 +34,11 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/all_talents"
-            android:textColor="@color/white"
+            android:textColor="@color/blue_dark"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <Button
-            android:id="@+id/become_talent"
-            android:layout_width="wrap_content"
-            android:layout_height="38dp"
-            android:layout_marginTop="2dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="2dp"
-            android:background="@drawable/label_btn_shape"
-            android:padding="2dp"
-            android:text="@string/become_talent"
-            android:textColor="@android:color/holo_blue_dark"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 

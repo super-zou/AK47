@@ -12,6 +12,7 @@
         android:paddingBottom="60dp">
         
         <LinearLayout
+            android:background="@color/line_border"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -46,62 +47,150 @@
                 android:id="@+id/guide_head"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@color/colorWhite"
                 android:padding="16dp">
                 <TextView
                     android:id="@+id/title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="title"
+                    android:layout_marginTop="16dp"
+                    android:includeFontPadding="false"
+                    android:text=""
+                    android:textAppearance="@style/TextSourceHanSansBoldAppearance"
                     android:textColor="@color/black"
-                    android:textSize="28sp"
-                    android:textStyle="bold"
-                    android:textAppearance="@style/CustomTextAppearance"
+                    android:textSize="26sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
                     
-                     <TextView
-                    android:id="@+id/star"
-                    android:layout_width="wrap_content"
+            <LinearLayout
+                    android:id="@+id/evaluate_summary"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="@string/fa_star"
+                    android:layout_marginTop="16dp"
+                    android:orientation="horizontal"
+                    android:visibility="gone"
                     app:layout_constraintStart_toStartOf="@+id/title"
-                    app:layout_constraintTop_toBottomOf="@+id/title" />
+                    app:layout_constraintTop_toBottomOf="@+id/title">
+
+                    <TextView
+                        android:id="@+id/star"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/fa_star"
+                        android:textColor="@color/blue_dark"
+                        android:textSize="16sp" />
+                
+                <TextView
+                        android:id="@+id/rating"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="3dp"
+                        android:textColor="@color/blue_dark"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:textSize="16sp" />
+                </LinearLayout>
 
                 <TextView
-                    android:id="@+id/score"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/region_icon"
+                    android:layout_width="20dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:text="score"
-                    app:layout_constraintStart_toEndOf="@+id/star"
-                    app:layout_constraintTop_toTopOf="@+id/star" />
-                    
-                     <TextView
-                    android:id="@+id/comment_count"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:text="comment count"
-                    app:layout_constraintStart_toEndOf="@+id/score"
-                    app:layout_constraintTop_toTopOf="@+id/star" />
+                    android:layout_marginTop="32dp"
+                    android:text="@string/fa_location"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toStartOf="@+id/title"
+                    app:layout_constraintTop_toBottomOf="@+id/evaluate_summary" />
 
                 <TextView
                     android:id="@+id/region"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="3dp"
+                    android:text=""
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/region_icon"
+                    app:layout_constraintStart_toEndOf="@+id/region_icon"
+                    app:layout_constraintTop_toTopOf="@+id/region_icon" />
+
+                <TextView
+                    android:visibility="gone"
+                    android:id="@+id/duration_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:text="region"
-                    app:layout_constraintStart_toStartOf="@+id/title"
-                    app:layout_constraintTop_toBottomOf="@+id/star" />
+                    android:text="@string/fa_clock"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toStartOf="@+id/region_icon"
+                    app:layout_constraintTop_toBottomOf="@+id/region_icon" />
+                
+                <TextView
+                    android:visibility="gone"
+                    android:id="@+id/duration_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="3dp"
+                    android:text="体验时长："
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/duration_icon"
+                    app:layout_constraintStart_toEndOf="@+id/duration_icon"
+                    app:layout_constraintTop_toTopOf="@+id/duration_icon" />
+                
+                 <TextView
+                    android:visibility="gone"
+                    android:id="@+id/duration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="3dp"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/duration_title"
+                    app:layout_constraintStart_toEndOf="@+id/duration_title"
+                    app:layout_constraintTop_toTopOf="@+id/duration_title" />
+                
+                <TextView
+                    android:id="@+id/group_limit_icon"
+                    android:layout_width="20dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/fa_group"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toStartOf="@+id/duration_icon"
+                    app:layout_constraintTop_toBottomOf="@+id/duration_icon" />
+                
+                <TextView
+                    android:id="@+id/group_limit_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="3dp"
+                    android:text="团体人数："
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/group_limit_icon"
+                    app:layout_constraintStart_toEndOf="@+id/group_limit_icon"
+                    app:layout_constraintTop_toTopOf="@+id/group_limit_icon" />
+                
+                <TextView
+                    android:id="@+id/group_limit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="3dp"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/group_limit_title"
+                    app:layout_constraintStart_toEndOf="@+id/group_limit_title"
+                    app:layout_constraintTop_toTopOf="@+id/group_limit_title" />
                     
-                    </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/guide_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@color/colorWhite"
+                android:layout_marginTop="8dp"
                 android:padding="16dp">
 
                 <TextView
@@ -109,34 +198,46 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/guide_service"
-                    android:textSize="26sp"
-                    android:textAppearance="@style/CustomTextAppearance"
+                    android:textSize="22sp"
+                    android:includeFontPadding="false"
+                    android:textAppearance="@style/TextSourceHanSansAppearance"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
                     
-                     <TextView
+                <TextView
                     android:id="@+id/service_content"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:text="content"
-                    android:textAppearance="@style/CustomTextAppearance"
-                    android:lineSpacingMultiplier="1.2"
+                    android:lineSpacingMultiplier="1.5"
+                    android:textSize="16sp"
+                    android:textColor="@color/color_dark_grey"
+                    android:includeFontPadding="false"
+                    android:textAppearance="@style/TextSourceHanSansAppearance"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/service_content_title" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/routeCL"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorWhite"
+                android:layout_marginTop="8dp"
+                android:padding="16dp">
                     
-                    <TextView
+                <TextView
                     android:id="@+id/route"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="3dp"
-                    android:layout_marginTop="16dp"
+                    android:includeFontPadding="false"
                     android:text="@string/route_introduction_title"
-                    android:textAppearance="@style/CustomTextAppearance"
-                    android:textSize="26sp"
+                    android:textAppearance="@style/TextSourceHanSansAppearance"
+                    android:textSize="22sp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/service_content" />
+                    app:layout_constraintTop_toTopOf="parent" />
                     
                      <LinearLayout
                     android:id="@+id/route_wrapper"
@@ -147,22 +248,32 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/route" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/additional_serviceCL"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorWhite"
+                android:layout_marginTop="8dp"
+                android:padding="16dp">
 
                 <TextView
                     android:id="@+id/additional_service_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
+                    android:includeFontPadding="false"
                     android:text="@string/additional_service_introduction_title"
-                    android:textSize="26sp"
-                    android:textAppearance="@style/CustomTextAppearance"
+                    android:textAppearance="@style/TextSourceHanSansAppearance"
+                    android:textSize="22sp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/route_wrapper" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <LinearLayout
                     android:id="@+id/additional_service"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
                     android:orientation="vertical"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -174,20 +285,23 @@
                 android:id="@+id/guide_talent_wrapper"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@color/colorWhite"
+                android:layout_marginTop="8dp"
                 android:padding="16dp">
 
                 <TextView
                     android:id="@+id/guide_talent"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:includeFontPadding="false"
                     android:text="@string/your_guide_talent"
-                    android:textSize="26sp"
-                    android:textAppearance="@style/CustomTextAppearance"
+                    android:textAppearance="@style/TextSourceHanSansAppearance"
+                    android:textSize="22sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
                     
-                    <com.hetang.util.RoundImageView
+                    <com.mufu.util.RoundImageView
                     android:id="@+id/avatar"
                     android:layout_width="150dp"
                     android:layout_height="150dp"
@@ -207,14 +321,14 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/avatar" />
                     
-                    <TextView
+                <TextView
                     android:id="@+id/consultation_count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:text="consultation count"
-                    app:layout_constraintEnd_toEndOf="parent"
+                    android:textColor="@color/background"
+                    app:layout_constraintEnd_toEndOf="@+id/consult_talent"
+                    app:layout_constraintStart_toStartOf="@+id/consult_talent"
                     app:layout_constraintTop_toBottomOf="@+id/consult_talent" />
 
                 <TextView
@@ -223,15 +337,17 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="16dp"
-                    android:text="achievement"
+                    android:text=""
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/consultation_count" />
                     
-                    <TextView
+                <TextView
                     android:id="@+id/guide_talent_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/name"
+                    android:layout_marginTop="16dp"
+                    android:textColor="@color/blue_dark"
+                    android:textAppearance="@style/CustomTextAppearance"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/avatar" />
@@ -240,126 +356,96 @@
                     android:id="@+id/guide_self_introduction"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/self_introduction"
+                    android:layout_marginTop="8dp"
+                    android:textSize="16sp"
+                    android:lineSpacingMultiplier="1.5"
+                    android:includeFontPadding="false"
+                    android:textAppearance="@style/TextSourceHanSansAppearance"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/guide_talent_name" />
                     
-                    <Button
+                <Button
                     android:id="@+id/contact_talent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:background="@drawable/label_btn_shape"
-                    android:text="@string/contact_matchmaker"
-                    android:textColor="@color/background"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:background="@drawable/btn_primary"
+                    android:padding="3dp"
+                    android:text="@string/contact_talent"
+                    android:textColor="@color/white"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/guide_self_introduction" />
             </androidx.constraintlayout.widget.ConstraintLayout>
             
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/evaluate_wrapper"
+                android:id="@+id/evaluate_statistics"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp">
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:background="@color/colorWhite"
+                android:layout_marginTop="8dp"
+                android:visibility="gone">
 
                 <TextView
                     android:id="@+id/evaluate_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="参与者评价"
-                    android:textSize="26sp"
-                    android:textAppearance="@style/CustomTextAppearance"
+                    android:includeFontPadding="false"
+                    android:textAppearance="@style/TextSourceHanSansBoldAppearance"
+                    android:textSize="22sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
                     
-                    <TextView
-                    android:id="@+id/evaluate_star"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="@string/fa_star"
-                    app:layout_constraintStart_toStartOf="@+id/evaluate_title"
-                    app:layout_constraintTop_toBottomOf="@+id/evaluate_title" />
-
                 <TextView
-                    android:id="@+id/evaluate_score"
+                    android:id="@+id/evaluate_rating"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:text="score"
+                    android:layout_marginStart="3dp"
+                    android:textColor="@color/blue_dark"
+                    app:layout_constraintBottom_toBottomOf="@+id/evaluate_star"
                     app:layout_constraintStart_toEndOf="@+id/evaluate_star"
                     app:layout_constraintTop_toTopOf="@+id/evaluate_star" />
-                    
-                    <TextView
-                    android:id="@+id/evaluate_comment_count"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:text="comment count"
-                    app:layout_constraintStart_toEndOf="@+id/evaluate_score"
-                    app:layout_constraintTop_toTopOf="@+id/evaluate_score" />
 
-                <com.hetang.util.RoundImageView
-                    android:id="@+id/evaluate_avatar"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginTop="16dp"
-                    app:layout_constraintStart_toStartOf="@+id/evaluate_star"
-                    app:layout_constraintTop_toBottomOf="@+id/evaluate_star" />
-                    
-                    <TextView
-                    android:id="@+id/evaluate_name"
+                <TextView
+                    android:id="@+id/evaluate_count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="evaluate_name"
-                    app:layout_constraintStart_toEndOf="@+id/evaluate_avatar"
-                    app:layout_constraintTop_toTopOf="@+id/evaluate_avatar" />
-
-                <TextView
-                    android:id="@+id/evaluate_time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:text="time"
-                    app:layout_constraintStart_toEndOf="@+id/evaluate_name"
-                    app:layout_constraintTop_toTopOf="@+id/evaluate_avatar" />
-
-
-<RatingBar
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    app:layout_constraintStart_toStartOf="@+id/evaluate_name"
-                    app:layout_constraintTop_toBottomOf="@+id/evaluate_name" />
-
-                <TextView
-                    android:id="@+id/evaluate_content"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="content"
-                    app:layout_constraintStart_toStartOf="@+id/evaluate_avatar"
-                    app:layout_constraintTop_toBottomOf="@+id/evaluate_avatar" />
-                    
-                    <Button
+                    android:text=""
+                    app:layout_constraintStart_toEndOf="@+id/evaluate_rating"
+                    app:layout_constraintTop_toTopOf="@+id/evaluate_rating" />
+                
+               <TextView
                     android:id="@+id/show_all"
+                    android:text="@string/show_all_evaluates"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:background="@drawable/label_btn_shape"
-                    android:text="show all"
-                    android:textColor="@color/background"
-                    app:layout_constraintStart_toStartOf="@+id/evaluate_content"
-                    app:layout_constraintTop_toBottomOf="@+id/evaluate_content" />
+                    android:layout_marginEnd="16dp"
+                    android:textColor="@color/blue_dark"
+                    app:layout_constraintBottom_toBottomOf="@+id/evaluate_title"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/evaluate_title"/>
+                   
             </androidx.constraintlayout.widget.ConstraintLayout>
+            
+            <LinearLayout
+                android:visibility="gone"
+                android:id="@+id/evaluate_wrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@color/colorWhite"
+                android:padding="16dp"></LinearLayout>
             
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/points_attention_wrapper"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@color/colorWhite"
+                android:layout_marginTop="8dp"
                 android:padding="16dp">
 
                 <TextView
@@ -367,8 +453,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/points_attention"
-                    android:textSize="26sp"
-                    android:textAppearance="@style/CustomTextAppearance"
+                    android:includeFontPadding="false"
+                    android:textAppearance="@style/TextSourceHanSansAppearance"
+                    android:textSize="22sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
                     
@@ -376,20 +463,22 @@
                     android:id="@+id/cancellation_policy_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="16dp"
                     android:textAppearance="@style/CustomTextAppearance"
                     android:text="@string/cancellation_policy_title"
                     app:layout_constraintStart_toStartOf="@+id/points_attention_title"
                     app:layout_constraintTop_toBottomOf="@+id/points_attention_title" />
 
                 <TextView
-                    android:id="@+id/cancellation_detail"
+                    android:id="@+id/cancellation_detail_nav"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:textSize="16sp"
                     android:text="@string/chevron_right"
+                    app:layout_constraintBottom_toBottomOf="@+id/cancellation_policy_title"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/points_attention_title" />
+                    app:layout_constraintTop_toTopOf="@+id/cancellation_policy_title" />
 
                 <TextView
                     android:id="@+id/cancellation_policy_summary"
@@ -398,7 +487,7 @@
                     android:layout_marginTop="10dp"
                     android:paddingRight="32dp"
                     android:lineSpacingMultiplier="1.2"
-                    android:textSize="12sp"
+                    android:textSize="16sp"
                     android:text="@string/cancellation_policy_summary"
                     android:textAppearance="@style/CustomTextNoticeAppearance"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -409,8 +498,8 @@
                     android:id="@+id/limit_condition_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="@string/appointment_conditipon"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/appointment_condition"
                     android:textAppearance="@style/CustomTextAppearance"
                     app:layout_constraintStart_toStartOf="@+id/points_attention_title"
                     app:layout_constraintTop_toBottomOf="@+id/cancellation_policy_summary" />
@@ -427,11 +516,11 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
+                 android:visibility="gone"
                 android:id="@+id/recommend_guide"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:text="recommend_guide" />
+                android:padding="16dp"/>
 
             <HorizontalScrollView
                 android:id="@+id/horizontalScrollView"

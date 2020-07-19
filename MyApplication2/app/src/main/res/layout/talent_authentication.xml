@@ -1,287 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     android:id="@+id/talent_authentication"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
+    android:orientation="vertical"
+    android:fitsSystemWindows="true"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+    
     <include
         android:id="@+id/custom_actionbar"
+        android:layout_marginTop="16dp"
         layout="@layout/custom_actionbar_common"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-    <GridLayout
+    <ScrollView
         android:id="@+id/talent_authentication_wrapper"
-        android:columnCount="1"
         android:layout_below="@+id/custom_actionbar"
+        android:layout_marginTop="8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+        
         <LinearLayout
-            android:layout_row="0"
-            android:visibility="visible"
-            android:id="@+id/explanation"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <TextView
-                android:id="@+id/talent_explanation_label"
+            <LinearLayout
+                android:id="@+id/subject_wrapper"
+                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/black"
-                android:textStyle="bold"
-                android:padding="16dp"
-                android:text="@string/talent_explanation_label"/>
-            <TextView
-                android:id="@+id/talent_explanation_content"
+                android:layout_height="wrap_content">
+                
+                <TextView
+                    android:id="@+id/subject_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:textSize="20sp"
+                    android:text="@string/select_subject_title"
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
+                
+                <Button
+                    android:id="@+id/select_subject"
+                    android:layout_marginTop="16dp"
+                    android:layout_gravity="center"
+                    android:padding="10dp"
+                    android:text="@string/select_subject"
+                    android:background="@drawable/btn_big_radius_primary"
+                    android:textColor="@color/white"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+            
+             <LinearLayout
+                android:id="@+id/introduction_wrapper"
+                android:orientation="vertical"
+                android:layout_marginTop="32dp"
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/introduction"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:textSize="20sp"
+                    android:text="@string/introduction_title"
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
+                 
+                 <EditText
+                    android:id="@+id/introduction_edittext"
+                    style="@style/EditTextCustom"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:hint="@string/common_talent_introduction"
+                    android:textColor="@color/blue_dark"
+                    android:textCursorDrawable="@drawable/cursor_color"
+                    android:theme="@style/MyEditText" />
+            </LinearLayout>
+            
+             <Button
+                android:id="@+id/submit"
+                android:layout_gravity="end"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:lineSpacingMultiplier="1.2"
-                android:padding="16dp"
-                android:textColor="@color/black"
-                android:text="@string/talent_explanation_content"
-                android:layout_below="@+id/custom_actionbar"/>
-            <Button
-                android:id="@+id/begin_now"
-                android:text="@string/begin_now"
-                android:background="@drawable/btn_big_radius_stress"
                 android:layout_margin="32dp"
-                android:textColor="@color/white"
-                android:padding="8dp"
-                android:textStyle="bold"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_row="1"
-            android:visibility="gone"
-            android:id="@+id/introduction_wrapper"
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:id="@+id/introduction"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
-                android:text="@string/introduction_title"
-                android:textColor="@color/black"
-                android:textStyle="bold" />
-            <EditText
-                android:id="@+id/introduction_edittext"
-                style="@style/EditTextCustom"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
-                android:hint="@string/common_talent_introduction"
-                android:textColor="@color/blue_dark"
-                android:textCursorDrawable="@drawable/cursor_color"
-                android:theme="@style/MyEditText" />
-        </LinearLayout>
-        <LinearLayout
-            android:visibility="gone"
-            android:layout_row="2"
-            android:id="@+id/qualification_wrapper"
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:id="@+id/qualification_materia"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
-                android:text="@string/qualification_materia"
-                android:textColor="@color/black"
-                android:textStyle="bold" />
-            <TextView
-                android:id="@+id/qualification_materia_introduction"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:lineSpacingMultiplier="1.2"
-                android:padding="16dp"
-                android:textColor="@color/black"
-                android:text="@string/qualification_materia_introduction" />
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/add_materia"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginLeft="16dp"
-                android:overScrollMode="never"/>
-        </LinearLayout>
-        <LinearLayout
-            android:visibility="gone"
-            android:layout_row="3"
-            android:id="@+id/subject_wrapper"
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:id="@+id/subject_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
-                android:text="@string/select_subject_title"
-                android:textColor="@color/black"
-                android:textStyle="bold" />
-            <TextView
-                android:id="@+id/subject_introduction"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:lineSpacingMultiplier="1.2"
-                android:padding="16dp"
-                android:textColor="@color/black"
-                android:text="@string/subject_introduction" />
-            <Button
-                android:id="@+id/select_subject"
-                android:layout_marginTop="16dp"
-                android:layout_gravity="center"
-                android:padding="10dp"
-                android:text="@string/select_subject"
+                android:textSize="18sp"
                 android:background="@drawable/btn_big_radius_primary"
-                android:textColor="@color/white"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:text="@string/submit"
+                android:textColor="@color/white" />
         </LinearLayout>
-        <RelativeLayout
-            android:visibility="gone"
-            android:layout_row="4"
-            android:id="@+id/charge_wrapper"
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:id="@+id/charge_introduction_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="32dp"
-                android:layout_marginEnd="16dp"
-                android:text="@string/charge_introduction"
-                android:textColor="@color/black"
-                android:textStyle="bold" />
-
-            <EditText
-                android:id="@+id/charge_setting"
-                style="@style/EditTextCustom"
-                android:layout_below="@+id/charge_introduction_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="32dp"
-                android:hint="@string/amount_of_money"
-                android:inputType="number"
-                android:textColor="@color/blue_dark"
-                android:textCursorDrawable="@drawable/cursor_color"
-                android:theme="@style/MyEditText" />
-
-            <TextView
-                android:id="@+id/cny"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:textColor="@color/black"
-                android:layout_alignTop="@+id/charge_setting"
-                android:layout_alignBottom="@+id/charge_setting"
-                android:layout_marginStart="3dp"
-                android:layout_toRightOf="@+id/charge_setting"
-                android:text="元" />
-
-            <EditText
-                android:id="@+id/charge_introduction"
-                style="@style/EditTextCustom"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
-                android:textSize="15sp"
-                android:layout_below="@+id/cny"
-                android:hint="@string/charge_introduction_hint"
-                android:textColor="@color/blue_dark"
-                android:textCursorDrawable="@drawable/cursor_color"
-                android:theme="@style/MyEditText" />
-
-            <TextView
-                android:id="@+id/setting_payment"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/charge_introduction"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="32dp"
-                android:layout_marginEnd="16dp"
-                android:text="@string/setting_payment"
-                android:textColor="@color/black"
-                android:textStyle="bold" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/add_reward_qr"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/setting_payment"
-                android:layout_centerInParent="true"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="16dp"
-                android:overScrollMode="never" />
-
-            <TextView
-                android:text="@string/upload_qr_code"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginStart="16dp"
-                android:textColor="@color/color_light_grey"
-                android:layout_below="@+id/add_reward_qr" />
-        </RelativeLayout>
-
-    </GridLayout>
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/navigation"
-        android:visibility="gone"
-        android:layout_alignParentBottom="true"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <Button
-            android:id="@+id/prev"
-            android:visibility="gone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginBottom="32dp"
-            android:background="@drawable/btn_big_radius_default"
-            android:text="@string/prev"
-            android:textColor="@color/text_default"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <!--
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="@+id/cancel"
-            app:layout_constraintEnd_toStartOf="@+id/submit"
-            app:layout_constraintStart_toEndOf="@+id/cancel"
-            app:layout_constraintTop_toTopOf="@+id/cancel" />
-        -->
-
-        <Button
-            android:id="@+id/next"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="32dp"
-            android:layout_marginBottom="32dp"
-            android:background="@drawable/btn_big_radius_primary"
-            android:text="@string/next"
-            android:textColor="@color/white"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</RelativeLayout>
+    </ScrollView>
+</LinearLayout>

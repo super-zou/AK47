@@ -9,7 +9,7 @@
     android:layout_marginBottom="1dp"
     android:background="@color/white">
     
-        <com.hetang.util.RoundImageView
+        <com.mufu.util.RoundImageView
         android:id="@+id/comment_avatar"
         android:layout_width="30dp"
         android:layout_height="30dp"

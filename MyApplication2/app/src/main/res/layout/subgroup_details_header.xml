@@ -7,7 +7,7 @@
     android:background="@color/white"
     android:layout_marginBottom="8dp">
 
-    <com.hetang.util.RoundImageView
+    <com.mufu.util.RoundImageView
         android:id="@+id/logo"
         android:layout_width="100dp"
         android:layout_height="100dp"
@@ -54,7 +54,7 @@
         app:layout_constraintStart_toEndOf="@+id/org"
         app:layout_constraintTop_toTopOf="@+id/org" />
 
-    <com.hetang.util.RoundImageView
+    <com.mufu.util.RoundImageView
         android:id="@+id/leader_avatar"
         android:layout_width="50dp"
         android:layout_height="50dp"

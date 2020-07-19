@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:id="@+id/talent_authentication"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <include
+        android:id="@+id/custom_actionbar"
+        android:layout_marginTop="16dp"
+        layout="@layout/custom_actionbar_common"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+        
+    <ScrollView
+        android:id="@+id/talent_authentication_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/custom_actionbar">
+        <LinearLayout
+            android:layout_row="0"
+            android:visibility="visible"
+            android:id="@+id/explanation"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <TextView
+                android:id="@+id/develop_explanation_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:padding="16dp"
+                android:textSize="18sp"
+                android:textAppearance="@style/CustomTextAppearance"
+                android:text="@string/develop_explanation_label"/>
+        <TextView
+                android:id="@+id/develop_explanation_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:lineSpacingMultiplier="1.5"
+                android:padding="16dp"
+                android:textSize="18sp"
+                android:textColor="@color/black"
+                android:textAppearance="@style/TextSourceHanSansAppearance"
+                android:text="@string/develop_explanation_details" />
+        <Button
+                android:id="@+id/develop_experience"
+                android:layout_gravity="end"
+                android:text="@string/develop_experience"
+                android:background="@drawable/btn_big_radius_primary"
+                android:layout_margin="16dp"
+                android:textColor="@color/white"
+                android:padding="16dp"
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/CustomTextAppearance"/>
+
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>

@@ -31,7 +31,7 @@
             android:layout_height="match_parent"
             android:paddingBottom="58dp">
 
-            <com.hetang.util.RoundImageView
+            <com.mufu.util.RoundImageView
                 android:id="@+id/avatar"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
