@@ -93,5 +93,8 @@ dependencies {
     
     //weixin pay
     implementation 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:+'
+    
+    // 支付宝 SDK AAR 包所需的配置
+    compile (name: 'alipaySdk-15.7.7-20200702160044', ext: 'aar')
 
 }
