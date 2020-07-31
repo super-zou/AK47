@@ -178,6 +178,7 @@
     <string name="login_failed">登录失败</string>
     <string name="logining_progress">正在登陆…</string>
     <string name="saving_progress">正在保存…</string>
+        <string name="submitting_progress">正在提交…</string>
     <string name="hetang_introduction">不负青春，让生活更精彩</string>
     <string name="join">加入</string>
     <string name="exit">退出</string>
@@ -221,6 +222,7 @@
     <string name="other_answers">其它解答</string>
     <string name="show_evaluation_picture">分享您体验中的图片</string>
     <string name="order_details">订单详情</string>
+        <string name="order_payment">支付订单</string>
     <string name="order_evaluation">发表评价</string>
     <string name="service_introduction_notice">向导介绍不能为空</string>
     <string name="experience_introduction_notice">体验介绍不能为空</string>
@@ -484,9 +486,11 @@
     <string name="follow_action">+关注</string>
     <string name="evaluation">评价</string>
     <string name="setting">设置</string>
+        <string name="multiple">×</string>
         <string name="unsubscribe">退订</string>
     <string name="pay">支付</string>
     <string name="submit">提交</string>
+        <string name="submit_order">提交订单</string>
     <string name="title_activity_picture_preview">照片预览</string>
     <string name="reward">赞赏达人</string>
     <string name="become_talent">成为达人</string>
