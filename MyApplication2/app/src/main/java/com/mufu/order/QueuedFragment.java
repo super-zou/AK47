@@ -244,7 +244,7 @@ public class QueuedFragment extends BaseFragment {
             orderManager.number = orderObject.optString("number");
             orderManager.city = orderObject.optString("city");
             orderManager.headPictureUrl = orderObject.optString("picture_url");
-            orderManager.actualPayment = orderObject.optInt("payment");
+            orderManager.actualPayment = orderObject.optInt("actual_payment");
             orderManager.totalPrice = orderObject.optInt("total_price");
             orderManager.created = orderObject.optInt("created");
             orderManager.price = orderObject.optInt("price");
