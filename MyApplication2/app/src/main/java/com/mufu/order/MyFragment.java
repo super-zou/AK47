@@ -1,5 +1,9 @@
 package com.mufu.order;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
@@ -12,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -45,6 +50,9 @@ import okhttp3.Response;
 
 import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static com.mufu.order.OrderDetailsDF.newInstance;
+import static com.mufu.order.PlaceOrderDF.ORDER_PAYMENT_SUCCESS_BROADCAST;
+import static com.mufu.order.PlaceOrderDF.ORDER_SUBMIT_BROADCAST;
+import static com.mufu.util.DateUtil.calendarToDate;
 import static com.mufu.util.DateUtil.timeStampToDay;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
@@ -66,6 +74,7 @@ public class MyFragment extends BaseFragment {
     private XRecyclerView recyclerView;
     private List<Order> mOrderList = new ArrayList<>();
     private View mView;
+    private OrderStatusBroadcastReceiver mReceiver;
     
     @Nullable
     @Override
@@ -77,6 +86,10 @@ public class MyFragment extends BaseFragment {
         initContentView(convertView);
 
         requestData();
+        
+                mReceiver = new OrderStatusBroadcastReceiver();
+
+        registerBroadcast();
 
         return convertView;
     }
@@ -146,6 +159,13 @@ public class MyFragment extends BaseFragment {
                 experienceEvaluateDialogFragment = ExperienceEvaluateDialogFragment.newInstance(order);
                 //orderDetailsDF.setTargetFragment(this, ROUTE_REQUEST_CODE);
              experienceEvaluateDialogFragment.show(getFragmentManager(), "ExperienceEvaluateDialogFragment");
+            }
+        }, new OrderSummaryAdapter.PayClickListener() {
+            @Override
+            public void onPayClick(View view, int position) {
+                Order order = mOrderList.get(position);
+                OrderPaymentDF orderPaymentDF = OrderPaymentDF.newInstance(order);
+                orderPaymentDF.show(getFragmentManager(), "OrderPaymentDF");
             }
         });
 
@@ -247,7 +267,7 @@ public class MyFragment extends BaseFragment {
             order.number = orderObject.optString("number");
             order.city = orderObject.optString("city");
             order.headPictureUrl = orderObject.optString("picture_url");
-            order.actualPayment = orderObject.optInt("payment");
+            order.actualPayment = orderObject.optInt("actual_payment");
             order.totalPrice = orderObject.optInt("total_price");
             order.created = orderObject.optInt("created");
             order.price = orderObject.optInt("price");
@@ -273,11 +293,11 @@ public class MyFragment extends BaseFragment {
         public String city;
         public int created;
         public int paymentTime;
-        public int price;
+        public float price;
         public int amount;
         public String unit;
-        public int actualPayment;
-        public int totalPrice;
+        public float actualPayment;
+        public float totalPrice;
         public String appointmentDate;
         public int type;
     }
@@ -309,6 +329,32 @@ public class MyFragment extends BaseFragment {
                 break;
         }
     }
+    
+    private class OrderStatusBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()) {
+                case ORDER_PAYMENT_SUCCESS_BROADCAST:
+                case ORDER_SUBMIT_BROADCAST:
+                    mOrderList.clear();
+                    recyclerView.reset();
+                    requestData();
+                    break;
+            }
+        }
+    }
+    
+    private void registerBroadcast() {
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ORDER_PAYMENT_SUCCESS_BROADCAST);
+        intentFilter.addAction(ORDER_SUBMIT_BROADCAST);
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, intentFilter);
+    }
+
+    //unregister local broadcast
+    private void unRegisterBroadcast() {
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
+    }
 
     private void stopLoadProgress() {
         if (progressImageView.getVisibility() == View.VISIBLE) {
@@ -325,6 +371,8 @@ public class MyFragment extends BaseFragment {
             recyclerView.destroy();
             recyclerView = null;
         }
+        
+        unRegisterBroadcast();
     }
     
     @Override
