@@ -255,7 +255,7 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
      *
      * @param myItemClickListener
      */
-    public void setItemClickListener(OrderSummaryAdapter.MyItemClickListener myItemClickListener, EvaluateClickListener evaluateClickListener) {
+    public void setItemClickListener(OrderSummaryAdapter.MyItemClickListener myItemClickListener, EvaluateClickListener evaluateClickListener, PayClickListener payClickListener) {
         this.mItemClickListener = myItemClickListener;
         this.mEvaluateClickListener = evaluateClickListener;
         this.mPayClickListener = payClickListener;
