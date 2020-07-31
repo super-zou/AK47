@@ -9,10 +9,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="16dp"
         android:padding="8dp"
-        android:textColor="@color/black"
         android:text="@string/fa_remove"
+        android:textColor="@color/black"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
         
@@ -167,7 +168,7 @@
             app:layout_constraintTop_toTopOf="parent" />
             
       <Button
-            android:id="@+id/pay"
+            android:id="@+id/submit_order"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -175,7 +176,7 @@
             android:layout_marginBottom="8dp"
             android:textStyle="bold"
             android:textSize="18sp"
-            android:text="@string/pay"
+            android:text="@string/submit_order"
             android:textColor="@color/white"
             android:background="@drawable/btn_primary"
             app:layout_constraintBottom_toBottomOf="parent"
