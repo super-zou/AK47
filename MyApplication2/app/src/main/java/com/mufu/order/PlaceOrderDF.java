@@ -1,7 +1,11 @@
 package com.mufu.order;
 
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,6 +16,8 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
+
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.mufu.R;
 import com.mufu.common.MyApplication;
@@ -46,17 +52,21 @@ public class PlaceOrderDF extends BaseDialogFragment {
     private int type;
     private int id;
     private int did;
-    private int uid;
+    private int mOid;
+    private MyFragment.Order order;
     private String title;
     private String date;
     private int mAmountPeople = 1;
-    private Button payBtn;
+    private Button submitOrderBtn;
     private TextView totalPriceTV;
     private TextView totalAmountTV;
     private MyHandler myHandler;
-    private static final int GET_AVAILABLE_APPOINTMENT_DATE_DONE = 1;
+    private static final int SUBMIT_ORDER_DONE = 1;
     public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("EEE, d MMM yyyy");
     public static final String PLACE_ORDER = HttpUtil.DOMAIN + "?q=order_manager/place_order";
+        private OrderStatusBroadcastReceiver mReceiver;
+    public static final String ORDER_PAYMENT_SUCCESS_BROADCAST = "com.mufu.action.ORDER_PAYMENT_SUCCESS";
+    public static final String ORDER_SUBMIT_BROADCAST = "com.mufu.action.ORDER_SUBMIT_BROADCAST";
     
     public static PlaceOrderDF newInstance(String title, int price, int did, String date, int id, int type) {
         mType = Utility.TalentType.GUIDE.ordinal();
@@ -89,7 +99,10 @@ public class PlaceOrderDF extends BaseDialogFragment {
             id = bundle.getInt("id", 0);
         }
         
-        uid = SharedPreferencesUtils.getSessionUid(MyApplication.getContext());
+        order = new MyFragment.Order();
+        mReceiver = new OrderStatusBroadcastReceiver();
+        
+        //uid = SharedPreferencesUtils.getSessionUid(MyApplication.getContext());
         mDialog.setCanceledOnTouchOutside(false);
         window = mDialog.getWindow();
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
@@ -117,8 +130,8 @@ public class PlaceOrderDF extends BaseDialogFragment {
         priceTV.setText(String.valueOf(price));
         totalPriceTV.setText(String.valueOf(price));
 
-        payBtn = mDialog.findViewById(R.id.pay);
-        payBtn.setOnClickListener(new View.OnClickListener() {
+        submitOrderBtn = mDialog.findViewById(R.id.submit_order);
+        submitOrderBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 submitOrder();
@@ -132,6 +145,8 @@ public class PlaceOrderDF extends BaseDialogFragment {
         FontManager.markAsIconContainer(mDialog.findViewById(R.id.dismiss), font);
 
         processPeopleAmountChange();
+        
+        registerBroadcast();
 
         return mDialog;
     }
@@ -167,9 +182,22 @@ public class PlaceOrderDF extends BaseDialogFragment {
             }
         });
     }
+    
+    private void startOrderPaymentDF(){
+        order.oid = mOid;
+        order.type = mType;
+        order.title = title;
+        order.price = price;
+        order.id = id;
+        order.amount = mAmountPeople;
+        order.number = getOrderNumber();
+        order.totalPrice = mAmountPeople * price;
+        OrderPaymentDF orderPaymentDF = OrderPaymentDF.newInstance(order);
+        orderPaymentDF.show(getFragmentManager(), "OrderPaymentDF");
+    }
 
     private void submitOrder(){
-        showProgressDialog(getContext().getString(R.string.saving_progress));
+        showProgressDialog(getContext().getString(R.string.submitting_progress));
         Slog.d(TAG, "--------------------->order number: "+getOrderNumber());
         RequestBody requestBody = new FormBody.Builder()
          .add("did", String.valueOf(did))
@@ -192,8 +220,10 @@ public class PlaceOrderDF extends BaseDialogFragment {
                         dismissProgressDialog();
                         JSONObject jsonObject = new JSONObject(responseText);
                         int result = jsonObject.optInt("result");
-                        //processResponse();
-                        //myHandler.sendEmptyMessage(GET_AVAILABLE_APPOINTMENT_DATE_DONE);
+                        mOid = jsonObject.optInt("oid");
+                        if (result > 0){
+                            myHandler.sendEmptyMessage(SUBMIT_ORDER_DONE);
+                        }
                     }catch (JSONException e){
                         e.printStackTrace();
                     }
@@ -216,20 +246,46 @@ public class PlaceOrderDF extends BaseDialogFragment {
     
     public void handleMessage(Message msg) {
         switch (msg.what) {
-            case GET_AVAILABLE_APPOINTMENT_DATE_DONE:
-
+            case SUBMIT_ORDER_DONE:
+                startOrderPaymentDF();
+                LocalBroadcastManager.getInstance(getContext()).sendBroadcast(new Intent(ORDER_SUBMIT_BROADCAST));
                 break;
         }
+    }
+    
+        private class OrderStatusBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Slog.d(TAG, "-------------->OrderStatusBroadcastReceiver");
+            switch (intent.getAction()) {
+                case ORDER_PAYMENT_SUCCESS_BROADCAST:
+                    mDialog.dismiss();
+                    break;
+            }
+        }
+    }
+    
+        private void registerBroadcast() {
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ORDER_PAYMENT_SUCCESS_BROADCAST);
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, intentFilter);
+    }
+
+    //unregister local broadcast
+    private void unRegisterBroadcast() {
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
     }
     
     @Override
     public void onDismiss(DialogInterface dialogInterface) {
         super.onDismiss(dialogInterface);
+        unRegisterBroadcast();
     }
     
     @Override
     public void onCancel(DialogInterface dialogInterface) {
         super.onCancel(dialogInterface);
+        unRegisterBroadcast();
     }
     
     static class MyHandler extends Handler {
