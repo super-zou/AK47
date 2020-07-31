@@ -139,6 +139,13 @@ public class OrderSummaryActivity extends BaseAppCompatActivity {
                 //orderDetailsDF.setTargetFragment(this, ROUTE_REQUEST_CODE);
                 //experienceEvaluateDialogFragment.show(getSupportFragmentManager(), "ExperienceEvaluateDialogFragment");
             }
+        }, new OrderSummaryAdapter.PayClickListener() {
+            @Override
+            public void onPayClick(View view, int position) {
+                MyFragment.Order order = mOrderList.get(position);
+                OrderPaymentDF orderPaymentDF = OrderPaymentDF.newInstance(order);
+                orderPaymentDF.show(getSupportFragmentManager(), "OrderPaymentDF");
+            }
         });
 
         recyclerView.setAdapter(orderSummaryAdapter);
