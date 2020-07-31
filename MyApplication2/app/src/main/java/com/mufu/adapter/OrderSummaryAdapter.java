@@ -41,6 +41,7 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
     private boolean isScrolling = false;
     private MyItemClickListener mItemClickListener;
     private EvaluateClickListener mEvaluateClickListener;
+    private PayClickListener mPayClickListener;
 
     public OrderSummaryAdapter(Context context) {
         mContext = context;
@@ -54,7 +55,7 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.order_list_item, parent, false);
-        ViewHolder holder = new ViewHolder(view, mItemClickListener, mEvaluateClickListener);
+        ViewHolder holder = new ViewHolder(view, mItemClickListener, mEvaluateClickListener, mPayClickListener);
         return holder;
     }
     
@@ -78,6 +79,15 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
                 }
             }
         });
+        
+        holder.payBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mPayClickListener != null){
+                    mPayClickListener.onPayClick(view, position);
+                }
+            }
+        });
     }
     
     public void setContentView(OrderSummaryAdapter.ViewHolder holder, final MyFragment.Order order){
@@ -88,8 +98,8 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
 
         holder.titleTV.setText(order.title);
         holder.cityTV.setText(order.city);
-        holder.moneyTV.setText(String.valueOf(order.price));
-        holder.totalPriceTV.setText(String.valueOf(order.totalPrice));
+        holder.moneyTV.setText(String.format("%.2f", order.price));
+        holder.totalPriceTV.setText(String.format("%.2f", order.totalPrice));
         if (TextUtils.isEmpty(order.unit)){
             holder.unitDividerTV.setVisibility(View.GONE);
         }else {
@@ -98,7 +108,7 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
         }
 
         holder.amountTV.setText("x"+order.amount);
-        holder.actualPaymentTV.setText(String.valueOf(order.actualPayment));
+        holder.actualPaymentTV.setText(String.format("%.2f",order.actualPayment));
         holder.appointedDateTV.setText(order.appointmentDate);
         
         switch (order.status){
@@ -173,6 +183,7 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         MyItemClickListener mListener;
         EvaluateClickListener evaluateClickListener;
+        PayClickListener payClickListener;
         ImageView headUri;
         TextView titleTV;
         TextView cityTV;
@@ -188,7 +199,7 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
         Button evaluateBtn;
         CardView itemLayout;
         
-        public ViewHolder(View view, MyItemClickListener myItemClickListener, EvaluateClickListener evaluateClickListener) {
+        public ViewHolder(View view, MyItemClickListener myItemClickListener, EvaluateClickListener evaluateClickListener, PayClickListener payClickListener) {
             super(view);
             itemLayout = view.findViewById(R.id.order_list_item);
             headUri = view.findViewById(R.id.head_picture);
@@ -208,6 +219,7 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
             //将全局的监听赋值给接口
             this.mListener = myItemClickListener;
             this.evaluateClickListener = evaluateClickListener;
+            this.payClickListener = payClickListener;
             Typeface font = Typeface.createFromAsset(getContext().getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
             FontManager.markAsIconContainer(view.findViewById(R.id.order_list_item), font);
         }
@@ -233,6 +245,10 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
     public interface EvaluateClickListener{
         void onEvaluateClick(View view, int position);
     }
+    
+    public interface PayClickListener{
+        void onPayClick(View view, int position);
+    }
 
     /**
      * 在activity里面adapter就是调用的这个方法,将点击事件监听传递过来,并赋值给全局的监听
@@ -242,6 +258,7 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
     public void setItemClickListener(OrderSummaryAdapter.MyItemClickListener myItemClickListener, EvaluateClickListener evaluateClickListener) {
         this.mItemClickListener = myItemClickListener;
         this.mEvaluateClickListener = evaluateClickListener;
+        this.mPayClickListener = payClickListener;
     }
     
 }
