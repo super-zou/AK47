@@ -26,24 +26,49 @@ import com.mufu.experience.GuideDetailActivity;
 import com.mufu.util.DateUtil;
 import com.mufu.util.FontManager;
 import com.mufu.util.HttpUtil;
+import com.mufu.util.Slog;
 import com.mufu.util.Utility;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
 import java.lang.ref.WeakReference;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 import static android.app.Activity.RESULT_OK;
 import static com.mufu.experience.GuideApplyDialogFragment.WRITE_ROUTE_INFO_SUCCESS;
+import static com.mufu.order.OrderPaymentDF.GET_ORDER_INFO_DONE;
+import static com.mufu.order.QueuedFragment.getOrderManager;
 
 public class OrderDetailsDF extends BaseDialogFragment {
     private static final boolean isDebug = true;
     private static final String TAG = "OrderDetailsDF";
     private Dialog mDialog;
     private Window window;
+    private int mOid;
+    private MyHandler myHandler;
     private MyFragment.Order mOrder;
+    public static final String GET_ORDER_BY_OID = HttpUtil.DOMAIN + "?q=order_manager/get_order_by_oid";
     
     public static OrderDetailsDF newInstance(MyFragment.Order order) {
         OrderDetailsDF orderDetailsDF = new OrderDetailsDF();
         Bundle bundle = new Bundle();
         bundle.putSerializable("order", order);
+        orderDetailsDF.setArguments(bundle);
+
+        return orderDetailsDF;
+    }
+    
+    public static OrderDetailsDF newInstance(int oid) {
+        OrderDetailsDF orderDetailsDF = new OrderDetailsDF();
+        Bundle bundle = new Bundle();
+        bundle.putInt("oid", oid);
         orderDetailsDF.setArguments(bundle);
 
         return orderDetailsDF;
@@ -54,12 +79,10 @@ public class OrderDetailsDF extends BaseDialogFragment {
 
         mDialog = new Dialog(getActivity(), R.style.Theme_MaterialComponents_DialogWhenLarge);
         mDialog.setContentView(R.layout.order_details);
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            mOrder = (MyFragment.Order) bundle.getSerializable("order");
-        }
         
-         mDialog.setCanceledOnTouchOutside(true);
+        myHandler = new MyHandler(this);
+               
+        mDialog.setCanceledOnTouchOutside(true);
         window = mDialog.getWindow();
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         WindowManager.LayoutParams layoutParams = window.getAttributes();
@@ -76,7 +99,17 @@ public class OrderDetailsDF extends BaseDialogFragment {
             }
         });
         
-        initView();
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            mOrder = (MyFragment.Order) bundle.getSerializable("order");
+
+            if (mOrder == null){
+                mOid = bundle.getInt("oid", 0);
+                getOrderByOid();
+            }else {
+                initView();
+            }
+        }
 
         return mDialog;
     }
@@ -109,7 +142,7 @@ public class OrderDetailsDF extends BaseDialogFragment {
 
         titleTV.setText(mOrder.title);
         cityTV.setText(mOrder.city);
-        moneyTV.setText(String.valueOf(mOrder.price));
+        moneyTV.setText(String.format("%.2f", mOrder.price));
         if (!TextUtils.isEmpty(mOrder.unit)){
             unitTV.setText(mOrder.unit);
         }else {
@@ -117,8 +150,8 @@ public class OrderDetailsDF extends BaseDialogFragment {
         }
 
         amountTV.setText("x"+mOrder.amount);
-        totalPriceTV.setText(String.valueOf(mOrder.totalPrice));
-        actualPaymentTV.setText(String.valueOf(mOrder.actualPayment));
+        totalPriceTV.setText(String.format("%.2f", mOrder.totalPrice));
+        actualPaymentTV.setText(String.format("%.2f", mOrder.actualPayment));
         appointedDateTV.setText(mOrder.appointmentDate);
         createdTV.setText("订单创建时间："+DateUtil.timeStamp2String((long)mOrder.created));
         if (mOrder.paymentTime != 0){
@@ -151,7 +184,9 @@ public class OrderDetailsDF extends BaseDialogFragment {
         payBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                OrderPaymentDF orderPaymentDF = OrderPaymentDF.newInstance(mOrder);
+                orderPaymentDF.show(getFragmentManager(), "OrderPaymentDF");
+                mDialog.dismiss();
             }
         });
 
@@ -191,6 +226,34 @@ public class OrderDetailsDF extends BaseDialogFragment {
         }
     }
     
+    private void getOrderByOid(){
+        RequestBody requestBody = new FormBody.Builder()
+                .add("oid", String.valueOf(mOid))
+                .build();
+
+        HttpUtil.sendOkHttpRequest(getContext(), GET_ORDER_BY_OID, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String responseText = response.body().string();
+                if (isDebug)
+                    Slog.d(TAG, "==========getOrderByOid response body : " + responseText);
+                if (responseText != null) {
+                    try {
+                        dismissProgressDialog();
+                        JSONObject jsonObject = new JSONObject(responseText);
+                        mOrder = getOrderManager(jsonObject.optJSONObject("order"));
+                        myHandler.sendEmptyMessage(GET_ORDER_INFO_DONE);
+                    }catch (JSONException e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {}
+        });
+    }
+    
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -203,8 +266,8 @@ public class OrderDetailsDF extends BaseDialogFragment {
 
     public void handleMessage(Message msg) {
         switch (msg.what) {
-            case WRITE_ROUTE_INFO_SUCCESS:
-
+           case GET_ORDER_INFO_DONE:
+                initView();
                 break;
 
         }
