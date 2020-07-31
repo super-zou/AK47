@@ -62,7 +62,7 @@ import static com.mufu.util.ParseUtils.ADD_SUBGROUP_ACTIVITY_ACTION;
 
 public class AddDynamicsActivity extends BaseAppCompatActivity {
 
-    public static final String DYNAMICS_ADD_BROADCAST = "com.hetang.action.DYNAMICS_ADD";
+    public static final String DYNAMICS_ADD_BROADCAST = "com.mufu.action.DYNAMICS_ADD";
     private static final String TAG = "AddDynamicsActivity";
     private int maxSelectNum = 9;
     private int themeId;
