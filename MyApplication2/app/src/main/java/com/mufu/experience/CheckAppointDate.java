@@ -1,9 +1,12 @@
 package com.mufu.experience;
 
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -17,6 +20,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.mufu.R;
 import com.mufu.common.MyApplication;
@@ -54,6 +58,7 @@ import okhttp3.Response;
 import static android.app.Activity.RESULT_OK;
 import static com.mufu.experience.DevelopExperienceDialogFragment.FORMATTER;
 import static com.mufu.home.CommonContactsActivity.EXPERIENCE_COMPANION;
+import static com.mufu.order.PlaceOrderDF.ORDER_PAYMENT_SUCCESS_BROADCAST;
 import static com.mufu.util.DateUtil.timeStampToDay;
 
 public class CheckAppointDate extends BaseDialogFragment implements OnDateSelectedListener, OnDateLongClickListener {
@@ -77,6 +82,7 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
     private TextView companionsTV;
     private JSONArray dateJSONArray;
     private static CalendarDay today;
+    private OrderStatusBroadcastReceiver mReceiver;
     private static List<LocalDate> availableDateList = new ArrayList<>();
     private static List<AppointDate> appointDateList = new ArrayList<>();
     private static final int GET_AVAILABLE_APPOINTMENT_DATE_DONE = 1;
@@ -166,6 +172,9 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
         Typeface font = Typeface.createFromAsset(MyApplication.getContext().getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
         FontManager.markAsIconContainer(mDialog.findViewById(R.id.custom_actionbar), font);
         FontManager.markAsIconContainer(mDialog.findViewById(R.id.cny), font);
+        
+        mReceiver = new OrderStatusBroadcastReceiver();
+        registerBroadcast();
 
         return mDialog;
     }
@@ -403,6 +412,28 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
             }
         }
     }
+    
+    private class OrderStatusBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()) {
+                case ORDER_PAYMENT_SUCCESS_BROADCAST:
+                    mDialog.dismiss();
+                    break;
+            }
+        }
+    }
+    
+    private void registerBroadcast() {
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ORDER_PAYMENT_SUCCESS_BROADCAST);
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, intentFilter);
+    }
+
+    //unregister local broadcast
+    private void unRegisterBroadcast() {
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
+    }
 
 
     @Override
@@ -426,12 +457,14 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
     @Override
     public void onDismiss(DialogInterface dialogInterface) {
         super.onDismiss(dialogInterface);
+        unRegisterBroadcast();
     }
 
 
     @Override
     public void onCancel(DialogInterface dialogInterface) {
         super.onCancel(dialogInterface);
+        unRegisterBroadcast();
     }
 
     static class MyHandler extends Handler {
