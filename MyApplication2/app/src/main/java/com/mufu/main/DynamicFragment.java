@@ -17,6 +17,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.mufu.R;
@@ -136,6 +137,11 @@ public class DynamicFragment extends BaseFragment {
         if (bundle != null) {
             uid = bundle.getInt("uid");
             specificUser = bundle.getBoolean("specific", false);
+            
+            if (specificUser){
+                RelativeLayout fragmentCustomActionBar = view.findViewById(R.id.fragment_custom_actionbar);
+                fragmentCustomActionBar.setVisibility(View.GONE);
+            }
         }
 
         dynamicsListAdapter = new DynamicsListAdapter(getContext(), specificUser);
@@ -864,7 +870,6 @@ public class DynamicFragment extends BaseFragment {
 
         if (xRecyclerView != null) {
             xRecyclerView.destroy();
-            xRecyclerView = null;
         }
     }
 
