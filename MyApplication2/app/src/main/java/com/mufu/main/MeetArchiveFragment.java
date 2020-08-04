@@ -2189,13 +2189,15 @@ if(getActivity() != null){
 
     private void joinCheeringGroup() {
         final TextView join = mHeaderEvaluation.findViewById(R.id.join_cheering_group);
-
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                join.setVisibility(View.VISIBLE);
-            }
-        });
+        
+        if(getActivity() != null){
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    join.setVisibility(View.VISIBLE);
+                }
+            });
+        }
 
         join.setOnClickListener(new View.OnClickListener() {
 
