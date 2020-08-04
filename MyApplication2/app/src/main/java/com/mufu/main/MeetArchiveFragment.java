@@ -2961,6 +2961,10 @@ if(getActivity() != null){
     @Override
     public void onNewContactsApplied(int appliedCount) {
         Slog.d(TAG, "------------------->onNewContactsApplied: " + appliedCount);
+        if(newApplyCountView == null){
+            return null;
+        }
+        
         newApplyCountView.setText(String.valueOf(appliedCount));
         if (appliedCount > 0) {
             if (newApplyCountView.getVisibility() == View.GONE) {
