@@ -2964,7 +2964,7 @@ if(getActivity() != null){
     public void onNewContactsApplied(int appliedCount) {
         Slog.d(TAG, "------------------->onNewContactsApplied: " + appliedCount);
         if(newApplyCountView == null){
-            return null;
+            return;
         }
         
         newApplyCountView.setText(String.valueOf(appliedCount));
