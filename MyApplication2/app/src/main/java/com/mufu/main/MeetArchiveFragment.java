@@ -103,6 +103,7 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static com.mufu.common.MyApplication.getContext;
 import static com.mufu.common.SetAvatarActivity.AVATAR_SET_ACTION_BROADCAST;
 import static com.mufu.contacts.ContactsActivity.GET_APPLY_AND_REQUEST_COUNT;
 import static com.mufu.contacts.ContactsActivity.HAS_REQUEST_OR_APPLY;
@@ -697,17 +698,27 @@ private static final int LOAD_MY_EXPERIENCES_DONE = 24;
         TextView name = mArchiveProfile.findViewById(R.id.name);
         TextView sex = mArchiveProfile.findViewById(R.id.sex);
         Button meet = mArchiveProfile.findViewById(R.id.meet_btn);
-        TextView settingTV = mArchiveProfile.findViewById(R.id.settings);
+        ConstraintLayout statusBar = mArchiveProfile.findViewById(R.id.statusbar);
+        TextView settingNav = mArchiveProfile.findViewById(R.id.setting);
+        TextView setAvatarTV = mArchiveProfile.findViewById(R.id.set_avatar);
         if (isSelf){
-            settingTV.setVisibility(View.VISIBLE);
+            statusBar.setVisibility(View.VISIBLE);
         }else {
-            settingTV.setVisibility(View.GONE);
+            statusBar.setVisibility(View.GONE);
         }
-        settingTV.setOnClickListener(new View.OnClickListener() {
+        settingNav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent();
                 intent.setClass(getContext(), SettingsActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        setAvatarTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), SetAvatarActivity.class);
                 startActivity(intent);
             }
         });
