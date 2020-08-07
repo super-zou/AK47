@@ -173,32 +173,32 @@ public class MeetDiscoveryListAdapter extends RecyclerView.Adapter<MeetDiscovery
             if (meet.getLoved() == 1) {
                 holder.lovedIcon.setText(R.string.fa_heart);
             }
+            holder.lovedView.setText(String.valueOf(meet.getLovedCount()));
         } else {
             holder.lovedIcon.setText(R.string.fa_heart_o);
-        }
-
-        if (meet.getLovedCount() > 0 && !isScrolling) {
-            holder.lovedView.setText(String.valueOf(meet.getLovedCount()));
+            holder.lovedView.setText("");
         }
 
         if (meet.getPraisedCount() > 0 && !isScrolling) {
             if (meet.getPraised() == 1) {
                 holder.thumbsIcon.setText(R.string.fa_thumbs_up);
             }
+            holder.thumbsView.setText(String.valueOf(meet.getPraisedCount()));
         } else {
             holder.thumbsIcon.setText(R.string.fa_thumbs_O_up);
-        }
-
-        if (meet.getPraisedCount() > 0 && !isScrolling) {
-            holder.thumbsView.setText(String.valueOf(meet.getPraisedCount()));
+             holder.thumbsView.setText("");
         }
 
         if (meet.getVisitCount() > 0 && !isScrolling) {
             holder.visitRecord.setText(String.valueOf(meet.getVisitCount()));
+        }else {
+            holder.visitRecord.setText("");
         }
 
         if (meet.getCommentCount() > 0 && !isScrolling) {
             holder.commentCount.setText(String.valueOf(meet.getCommentCount()));
+        }else {
+            holder.commentCount.setText("");
         }
 
         /*
