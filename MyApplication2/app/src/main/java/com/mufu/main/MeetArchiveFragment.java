@@ -175,8 +175,8 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
     private static final int GET_ACTIVITIES_COUNT_DONE = 21;
     private static final int GET_MEET_ARCHIVE_DONE = 22;
         private static final int LOAD_MY_TALENTS_DONE = 23;
-private static final int LOAD_MY_EXPERIENCES_DONE = 24;
-    private static final int LOAD_MY_GUIDE_COUNT_DONE = 25;
+public static final int LOAD_MY_EXPERIENCES_DONE = 24;
+    public static final int LOAD_MY_GUIDE_COUNT_DONE = 25;
     private static final int LOAD_MY_CONSULT_COUNT_DONE = 26;
     public static final int FOLLOWED = 1;
     private static final int FOLLOWING = 2;
