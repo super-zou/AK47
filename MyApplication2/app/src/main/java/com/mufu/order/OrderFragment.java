@@ -20,6 +20,7 @@ import com.mufu.common.MyApplication;
 import com.mufu.common.ReminderManager;
 import com.mufu.message.NotificationFragment;
 import com.mufu.util.HttpUtil;
+import com.mufu.util.SharedPreferencesUtils;
 import com.mufu.util.Slog;
 import com.tencent.qcloud.tim.uikit.modules.conversation.ConversationManagerKit;
 
@@ -36,6 +37,10 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static com.mufu.main.MeetArchiveFragment.GET_EXPERIENCE_STATISTICS_URL;
+import static com.mufu.main.MeetArchiveFragment.GET_GUIDE_STATISTICS_URL;
+import static com.mufu.main.MeetArchiveFragment.LOAD_MY_EXPERIENCES_DONE;
+import static com.mufu.main.MeetArchiveFragment.LOAD_MY_GUIDE_COUNT_DONE;
 import static com.mufu.verify.VerifyActivity.GET_ALL_REQUEST_COUNT_URL;
 
 public class OrderFragment extends Fragment implements ReminderManager.UnreadNumChangedCallback, ConversationManagerKit.MessageUnreadWatcher {
@@ -55,6 +60,9 @@ public class OrderFragment extends Fragment implements ReminderManager.UnreadNum
     private TextView unReadNotification;
     private TextView unReadConversation;
     private TextView unReadVerifyRequest;
+    private int myExperienceSize = 0;
+    private int myGuideCount = 0;
+    private int mUid = 0;
     
     private View view;
     private MyHandler handler;
@@ -153,6 +161,9 @@ public class OrderFragment extends Fragment implements ReminderManager.UnreadNum
         view = inflater.inflate(R.layout.fragment_order, container, false);
         handler = new MyHandler(this);
         //getAdminRole();
+        mUid = SharedPreferencesUtils.getSessionUid(MyApplication.getContext());
+        loadMyExperiencesCount();
+        loadMyGuidesCount();
         initConentView();
         registerMsgUnreadInfoObserver(true);
         return view;
@@ -164,13 +175,11 @@ public class OrderFragment extends Fragment implements ReminderManager.UnreadNum
 
         //获取标签数据
         myTab = mTabLayout.newTab();
-        tobeDoneTab = mTabLayout.newTab();
-        finishedTab = mTabLayout.newTab();
 
         //添加tab
         mTabLayout.addTab(myTab, 0, true);
-        mTabLayout.addTab(tobeDoneTab, 1, false);
-        mTabLayout.addTab(finishedTab, 1, false);
+         
+         setTalentOrderManagerView();
         
         //创建一个viewpager的adapter
         mFragmentAdapter = new OrderFragmentAdapter(getFragmentManager(), mOrderTitleList);
@@ -220,6 +229,8 @@ public class OrderFragment extends Fragment implements ReminderManager.UnreadNum
         unReadNotification = mTabLayout.getTabAt(0).getCustomView().findViewById(R.id.count);
         unReadConversation = mTabLayout.getTabAt(1).getCustomView().findViewById(R.id.count);
         unReadVerifyRequest = mTabLayout.getTabAt(2).getCustomView().findViewById(R.id.count);
+        mTabLayout.getTabAt(1).getCustomView().setVisibility(View.GONE);
+        mTabLayout.getTabAt(2).getCustomView().setVisibility(View.GONE);
         //getRequestVerifyNumber();
 
         // 未读消息监视器
@@ -310,9 +321,89 @@ public class OrderFragment extends Fragment implements ReminderManager.UnreadNum
                     unReadVerifyRequest.setVisibility(View.VISIBLE);
                 }
                 break;
+            case LOAD_MY_GUIDE_COUNT_DONE:
+            case LOAD_MY_EXPERIENCES_DONE:
+                mTabLayout.getTabAt(1).getCustomView().setVisibility(View.VISIBLE);
+                mTabLayout.getTabAt(2).getCustomView().setVisibility(View.VISIBLE);
+                break;
             default:
                 break;
         }
+    }
+    
+    private void setTalentOrderManagerView(){
+        tobeDoneTab = mTabLayout.newTab();
+        finishedTab = mTabLayout.newTab();
+
+        mTabLayout.addTab(tobeDoneTab, 1, false);
+        mTabLayout.addTab(finishedTab, 1, false);
+
+    }
+    
+    private void loadMyExperiencesCount(){
+        RequestBody requestBody = new FormBody.Builder()
+                .add("uid", String.valueOf(mUid))
+                .build();
+        HttpUtil.sendOkHttpRequest(MyApplication.getContext(), GET_EXPERIENCE_STATISTICS_URL, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.body() != null) {
+                    String responseText = response.body().string();
+                    if (isDebug) Slog.d(TAG, "==========loadMyExperiencesCount response text : " + responseText);
+                    if (responseText != null && !TextUtils.isEmpty(responseText)) {
+                        JSONObject experienceResponse = null;
+                        try {
+                            experienceResponse = new JSONObject(responseText);
+                            if (experienceResponse != null) {
+                                myExperienceSize = experienceResponse.optInt("count");
+                                if (myExperienceSize > 0){
+                                    handler.sendEmptyMessage(LOAD_MY_EXPERIENCES_DONE);
+                                }
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+            }
+        });
+    }
+    
+    private void loadMyGuidesCount(){
+        RequestBody requestBody = new FormBody.Builder()
+                .add("uid", String.valueOf(mUid))
+                .build();
+        HttpUtil.sendOkHttpRequest(MyApplication.getContext(), GET_GUIDE_STATISTICS_URL, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.body() != null) {
+                    String responseText = response.body().string();
+                    if (isDebug) Slog.d(TAG, "==========loadMyGuidesCount response text : " + responseText);
+                    if (responseText != null && !TextUtils.isEmpty(responseText)) {
+                        JSONObject experienceResponse = null;
+                        try {
+                            experienceResponse = new JSONObject(responseText);
+                            if (experienceResponse != null) {
+                                myGuideCount = experienceResponse.optInt("count");
+                                if (myGuideCount > 0){
+                                    handler.sendEmptyMessage(LOAD_MY_GUIDE_COUNT_DONE);
+                                }
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+            }
+        });
     }
     
     @Override
