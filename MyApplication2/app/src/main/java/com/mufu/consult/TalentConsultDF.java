@@ -2,9 +2,11 @@ package com.mufu.consult;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -23,6 +25,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -35,6 +38,7 @@ import com.mufu.dynamics.AddDynamicsActivity;
 import com.mufu.order.MyFragment;
 
 import com.mufu.main.FullyGridLayoutManager;
+import com.mufu.order.OrderPaymentDF;
 import com.mufu.picture.GlideEngine;
 import com.mufu.util.BaseDialogFragment;
 import com.mufu.util.CommonDialogFragmentInterface;
@@ -46,6 +50,7 @@ import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
 import com.luck.picture.lib.style.PictureWindowAnimationStyle;
+import com.mufu.util.Utility;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -60,12 +65,19 @@ import java.util.Map;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
+import okhttp3.FormBody;
+import okhttp3.RequestBody;
 
 import static android.app.Activity.RESULT_OK;
+import static com.mufu.order.PlaceOrderDF.CONSULT_PAYMENT_SUCCESS_BROADCAST;
+import static com.mufu.order.PlaceOrderDF.ORDER_PAYMENT_SUCCESS_BROADCAST;
+import static com.mufu.order.PlaceOrderDF.SUBMIT_ORDER_DONE;
+import static com.mufu.order.PlaceOrderDF.getOrderNumber;
 
 public class TalentConsultDF extends BaseDialogFragment {
     private static final String TAG = "TalentConsultDF";
     private static final String WRITE_CONSULT_URL = HttpUtil.DOMAIN + "?q=consult/write_consult";
+    private static final String CREATE_CONSULT_REWARD_ORDER_URL = HttpUtil.DOMAIN + "?q=consult/create_reward_order";
     private static final int PUBLISH_CONSULT_DONE = 0;
     final List<String> selectedFeatures = new ArrayList<>();
     private Context mContext;
@@ -74,9 +86,11 @@ public class TalentConsultDF extends BaseDialogFragment {
     private int tid;
     private int type = 0;
     private int cid;
+    private int mOid = 0;
     private String name;
     private int rewardIndex = -1;
     private int rewardAmount = -1;
+    private String mQuestion;
     
     private LayoutInflater inflater;
     private Handler handler = new TalentConsultDF.MyHandler(this);
@@ -89,6 +103,7 @@ public class TalentConsultDF extends BaseDialogFragment {
     private List<LocalMedia> selectList = new ArrayList<>();
     private List<File> selectFileList = new ArrayList<>();
     private CommonDialogFragmentInterface commonDialogFragmentInterface;
+    private ConsultPaymentBroadcastReceiver mReceiver;
     
     public static TalentConsultDF newInstance(int tid, String name) {
         TalentConsultDF experienceEvaluateDialogFragment = new TalentConsultDF();
@@ -134,6 +149,9 @@ public class TalentConsultDF extends BaseDialogFragment {
             addDynamicsActivity = new AddDynamicsActivity();
         }
         
+                order = new MyFragment.Order();
+        mReceiver = new ConsultPaymentBroadcastReceiver();
+        
         inflater = LayoutInflater.from(mContext);
         mDialog = new Dialog(mContext, android.R.style.Theme_Light_NoTitleBar_Fullscreen);
         view = inflater.inflate(R.layout.talent_consult_dialog, null);
@@ -163,6 +181,8 @@ public class TalentConsultDF extends BaseDialogFragment {
         setConsultPictureWidget();
         
         initView();
+        
+        registerBroadcast();
 
         Typeface font = Typeface.createFromAsset(MyApplication.getContext().getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
         FontManager.markAsIconContainer(mDialog.findViewById(R.id.custom_actionbar), font);
@@ -263,34 +283,53 @@ public class TalentConsultDF extends BaseDialogFragment {
             }
         });
         
+        AppCompatEditText questionET = mDialog.findViewById(R.id.question_content);
+        
         Button publishBtn = mDialog.findViewById(R.id.publish_consult);
         publishBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                submitConsult();
+                mQuestion = questionET.getText().toString();
+                if (TextUtils.isEmpty(mQuestion)){
+                    Toast.makeText(getContext(), "请输入您要咨询的问题", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                if (rewardIndex == -1){
+                    Toast.makeText(getContext(), "请设置打赏金额", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                showProgressDialog(getContext().getString(R.string.saving_progress));
+
+                if (rewardIndex == 0){
+                    submitConsult();
+                }else {
+                    createRewardOrder();
+                }
+
             }
         });
     }
     
+    private void startOrderPaymentDF(){
+        order.oid = mOid;
+        order.type = type;
+        order.title = "打赏达人"+name;
+        order.price = rewardAmount;
+        order.totalPrice = rewardAmount;
+        order.id = tid;
+        order.number = getOrderNumber(Utility.TalentType.GROWTH.ordinal());
+        OrderPaymentDF orderPaymentDF = OrderPaymentDF.newInstance(order);
+        orderPaymentDF.show(getFragmentManager(), "OrderPaymentDF");
+    }
+    
     private void submitConsult() {
-        AppCompatEditText questionET = mDialog.findViewById(R.id.question_content);
-        String question = questionET.getText().toString();
-        if (TextUtils.isEmpty(question)){
-            Toast.makeText(getContext(), "请输入您要咨询的问题", Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        if (rewardIndex == -1){
-            Toast.makeText(getContext(), "请设置打赏金额", Toast.LENGTH_LONG).show();
-            return;
-        }
-        
-        showProgressDialog(getContext().getString(R.string.saving_progress));
 
         Map<String, String> consultMap = new HashMap<>();
 
         consultMap.put("tid", String.valueOf(tid));
-        consultMap.put("question", String.valueOf(question));
+        consultMap.put("question", String.valueOf(mQuestion));
         consultMap.put("amount", String.valueOf(rewardAmount));
 
         if (selectList.size() > 0) {
@@ -302,6 +341,43 @@ public class TalentConsultDF extends BaseDialogFragment {
         
         uploadPictures(consultMap, "consult", selectFileList);
 
+    }
+    
+    private void createRewardOrder(){
+        showProgressDialog(getContext().getString(R.string.submitting_progress));
+        RequestBody requestBody = new FormBody.Builder()
+                .add("number", getOrderNumber(Utility.TalentType.GROWTH.ordinal()))
+                .add("price", String.valueOf(rewardAmount))
+                .add("type", String.valueOf(type))
+                .add("id", String.valueOf(tid))
+                .add("total_price", String.valueOf(rewardAmount))
+                .build();
+        
+        HttpUtil.sendOkHttpRequest(getContext(), CREATE_CONSULT_REWARD_ORDER_URL, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String responseText = response.body().string();
+                    Slog.d(TAG, "==========submitOrder response body : " + responseText);
+                if (responseText != null) {
+                    try {
+                        dismissProgressDialog();
+                        JSONObject jsonObject = new JSONObject(responseText);
+                        int result = jsonObject.optInt("result");
+                        mOid = jsonObject.optInt("oid");
+                        if (result > 0){
+                            handler.sendEmptyMessage(SUBMIT_ORDER_DONE);
+                        }
+                    }catch (JSONException e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+        @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+        });
     }
 
     private void uploadPictures(Map<String, String> params, String picKey, List<File> files) {
@@ -354,6 +430,9 @@ public class TalentConsultDF extends BaseDialogFragment {
                     commonDialogFragmentInterface.onBackFromDialog(type, cid, true);
                 }
                 mDialog.dismiss();
+                break;
+            case SUBMIT_ORDER_DONE:
+                startOrderPaymentDF();
                 break;
             default:
                 break;
@@ -432,20 +511,36 @@ public class TalentConsultDF extends BaseDialogFragment {
     @Override
     public void onDismiss(DialogInterface dialogInterface) {
         super.onDismiss(dialogInterface);
+        unRegisterBroadcast();
     }
 
     @Override
     public void onCancel(DialogInterface dialogInterface) {
         super.onCancel(dialogInterface);
+        unRegisterBroadcast();
     }
 
-    private void showProgress(Context context) {
-        if (progressDialog == null) {
-            progressDialog = new ProgressDialog(context);
-            progressDialog.setMessage(context.getResources().getString(R.string.saving_progress));
-            progressDialog.setCanceledOnTouchOutside(false);
+    private class ConsultPaymentBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()) {
+                case CONSULT_PAYMENT_SUCCESS_BROADCAST:
+                    submitConsult();
+                    //mDialog.dismiss();
+                    break;
+            }
         }
-        progressDialog.show();
+    }
+
+    private void registerBroadcast() {
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(CONSULT_PAYMENT_SUCCESS_BROADCAST);
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, intentFilter);
+    }
+
+    //unregister local broadcast
+    private void unRegisterBroadcast() {
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
     }
     
     private void closeProgressDialog() {
