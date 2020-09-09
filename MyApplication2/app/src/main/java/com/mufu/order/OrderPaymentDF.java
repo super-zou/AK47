@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.alipay.sdk.app.PayTask;
@@ -50,6 +51,7 @@ import okhttp3.Response;
 import static android.app.Activity.RESULT_OK;
 import static com.mufu.experience.GuideApplyDialogFragment.WRITE_ROUTE_INFO_SUCCESS;
 import static com.mufu.order.OrderDetailsDF.newInstance;
+import static com.mufu.order.PlaceOrderDF.CONSULT_PAYMENT_SUCCESS_BROADCAST;
 import static com.mufu.order.PlaceOrderDF.ORDER_PAYMENT_SUCCESS_BROADCAST;
 
 public class OrderPaymentDF extends BaseDialogFragment {
@@ -114,32 +116,47 @@ public class OrderPaymentDF extends BaseDialogFragment {
         FontManager.markAsIconContainer(mDialog.findViewById(R.id.custom_actionbar), font);
         FontManager.markAsIconContainer(mDialog.findViewById(R.id.order_summary), font);
         FontManager.markAsIconContainer(mDialog.findViewById(R.id.confirm), font);
+        FontManager.markAsIconContainer(mDialog.findViewById(R.id.consult_cny), font);
+
+        ConstraintLayout orderPaymentCL = mDialog.findViewById(R.id.order_summary);
+        ConstraintLayout consultOrderPaymentCL = mDialog.findViewById(R.id.consult_order_summary);
 
         TextView titleTV = mDialog.findViewById(R.id.experience_title);
-        TextView totalPriceTV = mDialog.findViewById(R.id.total);
-        TextView amountTV = mDialog.findViewById(R.id.amount);
         TextView priceTV = mDialog.findViewById(R.id.price);
         Button confirmBtn = mDialog.findViewById(R.id.confirm);
         
-        titleTV.setText(mOrder.title);
-        priceTV.setText(String.format("%.2f", mOrder.price));
+        if (mOrder.type == Utility.TalentType.EXPERIENCE.ordinal() || mOrder.type == Utility.TalentType.GUIDE.ordinal()){
+            TextView totalPriceTV = mDialog.findViewById(R.id.total);
+            TextView amountTV = mDialog.findViewById(R.id.amount);
 
-        amountTV.setText(String.valueOf(mOrder.amount));
-        totalPriceTV.setText(String.format("%.2f", mOrder.totalPrice));
+            titleTV.setText(mOrder.title);
+            priceTV.setText(String.format("%.2f", mOrder.price));
+            amountTV.setText(String.valueOf(mOrder.amount));
+            totalPriceTV.setText(String.format("%.2f", mOrder.totalPrice));
+            confirmBtn.setText("确认支付 "+getContext().getResources().getString(R.string.fa_cny)+String.format("%.2f", mOrder.totalPrice));
 
-        confirmBtn.setText("确认支付 "+getContext().getResources().getString(R.string.fa_cny)+String.format("%.2f", mOrder.totalPrice));
-
+            titleTV.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    startActivity();
+                }
+            });
+        }else {
+            orderPaymentCL.setVisibility(View.INVISIBLE);
+            consultOrderPaymentCL.setVisibility(View.VISIBLE);
+            TextView paymentTitleTV = mDialog.findViewById(R.id.payment_title);
+            paymentTitleTV.setText("打赏");
+            TextView consultTitleTV = mDialog.findViewById(R.id.consult_title);
+            TextView consultPriceTV = mDialog.findViewById(R.id.consult_price);
+            consultTitleTV.setText(mOrder.title);
+            consultPriceTV.setText(String.format("%.2f", mOrder.price));
+            confirmBtn.setText("确认打赏 "+getContext().getResources().getString(R.string.fa_cny)+String.format("%.2f", mOrder.price));
+        }
+        
         confirmBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 getPayOrderInfo();
-            }
-        });
-        
-        titleTV.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity();
             }
         });
     }
@@ -257,9 +274,13 @@ public class OrderPaymentDF extends BaseDialogFragment {
                 break;
                 case UPDATE_ORDER_STATUS_DONE:
                 Slog.d(TAG, "---------------->UPDATE_ORDER_STATUS_DONE");
-                LocalBroadcastManager.getInstance(getContext()).sendBroadcast(new Intent(ORDER_PAYMENT_SUCCESS_BROADCAST));
-                OrderDetailsDF orderDetailsDF = OrderDetailsDF.newInstance(mOrder.oid);
-                orderDetailsDF.show(getFragmentManager(), "OrderDetailsDF");
+                if (mOrder.type <= Utility.TalentType.EXPERIENCE.ordinal()){//experience or guide
+                    LocalBroadcastManager.getInstance(getContext()).sendBroadcast(new Intent(ORDER_PAYMENT_SUCCESS_BROADCAST));
+                    OrderDetailsDF orderDetailsDF = OrderDetailsDF.newInstance(mOrder.oid);
+                    orderDetailsDF.show(getFragmentManager(), "OrderDetailsDF");
+                }else {
+                    LocalBroadcastManager.getInstance(getContext()).sendBroadcast(new Intent(CONSULT_PAYMENT_SUCCESS_BROADCAST));
+                }
                 mDialog.dismiss();
                 break;
         }
