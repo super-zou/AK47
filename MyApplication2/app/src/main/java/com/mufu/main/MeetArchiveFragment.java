@@ -150,6 +150,7 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
         public static final String GET_EXPERIENCE_STATISTICS_URL = HttpUtil.DOMAIN + "?q=experience/get_experience_statistics";
     public static final String GET_GUIDE_STATISTICS_URL = HttpUtil.DOMAIN + "?q=travel_guide/get_guide_statistics";
     public static final String GET_CONSULT_WITH_UID = HttpUtil.DOMAIN + "?q=consult/get_consult_statistics_by_uid";
+    public static final String GET_MY_REVENUE = HttpUtil.DOMAIN + "?q=order_manager/get_my_revenue";
 
     private static final int DONE = 1;
     private static final int UPDATE = 2;
@@ -178,6 +179,7 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
 public static final int LOAD_MY_EXPERIENCES_DONE = 24;
     public static final int LOAD_MY_GUIDE_COUNT_DONE = 25;
     private static final int LOAD_MY_CONSULT_COUNT_DONE = 26;
+    private static final int GET_MY_REVENUE_DONE = 27;
     public static final int FOLLOWED = 1;
     private static final int FOLLOWING = 2;
     public static final int PRAISED = 3;
@@ -251,6 +253,7 @@ public static final int LOAD_MY_EXPERIENCES_DONE = 24;
     private int newApplyCount = 0;
     private TextView newApplyCountView;
     private ConstraintLayout serviceWrapper;
+    private ConstraintLayout revenueWrapper;
 
 
     @Nullable
@@ -290,6 +293,7 @@ public static final int LOAD_MY_EXPERIENCES_DONE = 24;
         FontManager.markAsIconContainer(mArchiveProfile.findViewById(R.id.meet_archive_profile), font);
         mHeaderEvaluation = viewContent.findViewById(R.id.friends_relatives_reference);
         serviceWrapper = mHeaderEvaluation.findViewById(R.id.service_wrapper);
+        revenueWrapper = mHeaderEvaluation.findViewById(R.id.revenue_wrapper);
         FontManager.markAsIconContainer(mHeaderEvaluation.findViewById(R.id.friends_relatives_reference), font);
 
         registerLocalBroadcast();
@@ -500,6 +504,7 @@ public static final int LOAD_MY_EXPERIENCES_DONE = 24;
     
     private void setMyTalentSizeView(){
         serviceWrapper.setVisibility(View.VISIBLE);
+        revenueWrapper.setVisibility(View.VISIBLE);
         LinearLayout talentWrapper = mHeaderEvaluation.findViewById(R.id.common_talents);
         talentWrapper.setVisibility(View.VISIBLE);
         TextView talentCountTV = mHeaderEvaluation.findViewById(R.id.talents);
@@ -2712,6 +2717,7 @@ if(getActivity() != null){
                 break;
             case LOAD_MY_TALENTS_DONE:
                 setMyTalentSizeView();
+                getMyRevenue();
                 break;
             case LOAD_MY_EXPERIENCES_DONE:
                 setMyExperienceSizeView();
@@ -2732,9 +2738,89 @@ if(getActivity() != null){
 
                 ReminderManager.getInstance().updateNewContactsApplied(newApplyCount);
                 break;
+           case GET_MY_REVENUE_DONE:
+                int revenue = bundle.getInt("revenue");
+                setMyRevenueView(revenue);
+                break;
             default:
                 break;
         }
+    }
+    
+    private void getMyRevenue(){
+        HttpUtil.sendOkHttpRequest(getContext(), GET_MY_REVENUE, new FormBody.Builder().build(), new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.body() != null) {
+                    String responseText = response.body().string();
+                    if (isDebug)
+                        Slog.d(TAG, "==========getMyRevenue response text : " + responseText);
+                    if (responseText != null) {
+                        if (!TextUtils.isEmpty(responseText)) {
+                            try {
+
+                                int revenue = new JSONObject(responseText).optInt("revenue");
+                                if (revenue > 0) {
+                                    Message message = new Message();
+                                    Bundle bundle = new Bundle();
+                                    bundle.putInt("revenue", revenue);
+                                    message.setData(bundle);
+                                    message.what = GET_MY_REVENUE_DONE;
+                                    handler.sendMessage(message);
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+            }
+        });
+    }
+    
+    private void setMyRevenueView(int revenue){
+        TextView revenueValueTV = mHeaderEvaluation.findViewById(R.id.revenue_amount);
+        revenueValueTV.setText(revenue+"元");
+
+        TextView revenueNavTV = mHeaderEvaluation.findViewById(R.id.revenue_nav);
+        revenueNavTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showRevenueDialog();
+            }
+        });
+    }
+    
+    private void showRevenueDialog() {
+        final AlertDialog.Builder normalDialogBuilder = new AlertDialog.Builder(getActivity());
+        normalDialogBuilder.setTitle(getResources().getString(R.string.withdrawal_title));
+        normalDialogBuilder.setMessage(getResources().getString(R.string.withdrawal_message));
+
+        AlertDialog normalDialog = normalDialogBuilder.create();
+        normalDialog.show();
+        
+        try {
+            Field mAlert = AlertDialog.class.getDeclaredField("mAlert");
+            mAlert.setAccessible(true);
+            Object mAlertController = mAlert.get(normalDialog);
+            Field mMessage = mAlertController.getClass().getDeclaredField("mMessageView");
+            mMessage.setAccessible(true);
+            TextView mMessageView = (TextView) mMessage.get(mAlertController);
+            mMessageView.setTextColor(getResources().getColor(R.color.background));
+            mMessageView.setTextSize(16);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+        
+        normalDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.color_disabled));
+        normalDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.color_blue));
+        normalDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextSize(18);
     }
 
     public void getMeetArchive(final Context context, final int uid) {
