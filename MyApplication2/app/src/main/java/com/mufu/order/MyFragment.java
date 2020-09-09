@@ -294,10 +294,10 @@ public class MyFragment extends BaseFragment {
         public int created;
         public int paymentTime;
         public float price;
-        public int amount;
+        public int amount = 1;
         public String unit;
         public float actualPayment;
-        public float totalPrice;
+        public float totalPrice = 0;
         public String appointmentDate;
         public int type;
     }
