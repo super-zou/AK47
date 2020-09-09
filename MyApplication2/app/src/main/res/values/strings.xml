@@ -433,6 +433,8 @@
     <string name="avatar_set_request_title">头像未设置</string>
     <string name="avatar_set_request_content">需要先设置头像，才能进一步操作</string>
     <string name="condition_set_request_title">交友条件未设置</string>
+        <string name="withdrawal_title">提款</string>
+    <string name="withdrawal_message">如需提款，请您联系客服（微信：18009270034）并注明“牧夫提款”，每笔提款平台会扣取10%的服务费。</string>
     <string name="condition_set_request_content">需要先设置真实头像和交友条件，才能查看其他用户的交友信息</string>
     <string name="contacts_apply">希望和你建立联系</string>
     <string name="waiting_accept">已申请，待对方通过</string>
