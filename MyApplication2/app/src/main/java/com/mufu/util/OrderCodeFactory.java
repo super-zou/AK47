@@ -19,7 +19,7 @@ public class OrderCodeFactory {
      * 货品类别
      */
     public enum GoodsType {
-        EXPERIENCE, GUIDE
+        EXPERIENCE, GUIDE, CONSULT
     }
     /**
      * 支付类别
