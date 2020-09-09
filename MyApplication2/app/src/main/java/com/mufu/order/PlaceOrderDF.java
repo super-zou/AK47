@@ -21,6 +21,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.mufu.R;
 import com.mufu.common.MyApplication;
+import com.mufu.experience.ExperienceSummaryActivity;
 import com.mufu.util.BaseDialogFragment;
 import com.mufu.util.FontManager;
 import com.mufu.util.HttpUtil;
@@ -61,11 +62,12 @@ public class PlaceOrderDF extends BaseDialogFragment {
     private TextView totalPriceTV;
     private TextView totalAmountTV;
     private MyHandler myHandler;
-    private static final int SUBMIT_ORDER_DONE = 1;
+    public static final int SUBMIT_ORDER_DONE = 1;
     public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("EEE, d MMM yyyy");
     public static final String PLACE_ORDER = HttpUtil.DOMAIN + "?q=order_manager/place_order";
         private OrderStatusBroadcastReceiver mReceiver;
     public static final String ORDER_PAYMENT_SUCCESS_BROADCAST = "com.mufu.action.ORDER_PAYMENT_SUCCESS";
+    public static final String CONSULT_PAYMENT_SUCCESS_BROADCAST = "com.mufu.action.CONSULT_PAYMENT_SUCCESS";
     public static final String ORDER_SUBMIT_BROADCAST = "com.mufu.action.ORDER_SUBMIT_BROADCAST";
     
     public static PlaceOrderDF newInstance(String title, int price, int did, String date, int id, int type) {
@@ -190,7 +192,7 @@ public class PlaceOrderDF extends BaseDialogFragment {
         order.price = price;
         order.id = id;
         order.amount = mAmountPeople;
-        order.number = getOrderNumber();
+        order.number = getOrderNumber(Utility.TalentType.EXPERIENCE.ordinal());
         order.totalPrice = mAmountPeople * price;
         OrderPaymentDF orderPaymentDF = OrderPaymentDF.newInstance(order);
         orderPaymentDF.show(getFragmentManager(), "OrderPaymentDF");
@@ -198,10 +200,9 @@ public class PlaceOrderDF extends BaseDialogFragment {
 
     private void submitOrder(){
         showProgressDialog(getContext().getString(R.string.submitting_progress));
-        Slog.d(TAG, "--------------------->order number: "+getOrderNumber());
         RequestBody requestBody = new FormBody.Builder()
          .add("did", String.valueOf(did))
-                .add("number", getOrderNumber())
+                .add("number", getOrderNumber(Utility.TalentType.EXPERIENCE.ordinal()))
                 .add("price", String.valueOf(price))
                 .add("amount", String.valueOf(mAmountPeople))
                 .add("total_price", totalPriceTV.getText().toString())
@@ -237,9 +238,17 @@ public class PlaceOrderDF extends BaseDialogFragment {
         });
     }
 
-    private String getOrderNumber(){
-        OrderCodeFactory.setGoodsType(OrderCodeFactory.GoodsType.EXPERIENCE);
-        OrderCodeFactory.setPayType(OrderCodeFactory.PayType.WECHAT);
+    public static String getOrderNumber(int type){
+        if (type == Utility.TalentType.EXPERIENCE.ordinal()){
+            OrderCodeFactory.setGoodsType(OrderCodeFactory.GoodsType.EXPERIENCE);
+        }else if (type == Utility.TalentType.GUIDE.ordinal()){
+            OrderCodeFactory.setGoodsType(OrderCodeFactory.GoodsType.GUIDE);
+        }else {
+            OrderCodeFactory.setGoodsType(OrderCodeFactory.GoodsType.CONSULT);
+        }
+
+
+        OrderCodeFactory.setPayType(OrderCodeFactory.PayType.ALIPAY);
 
         return OrderCodeFactory.getOrderCode();
     }
