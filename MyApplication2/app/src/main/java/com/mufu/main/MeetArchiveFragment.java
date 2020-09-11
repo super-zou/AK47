@@ -504,7 +504,13 @@ public static final int LOAD_MY_EXPERIENCES_DONE = 24;
     
     private void setMyTalentSizeView(){
         serviceWrapper.setVisibility(View.VISIBLE);
-        revenueWrapper.setVisibility(View.VISIBLE);
+        
+        if (isSelf){
+            revenueWrapper.setVisibility(View.VISIBLE);
+        }else {
+            revenueWrapper.setVisibility(View.GONE);
+        }
+        
         LinearLayout talentWrapper = mHeaderEvaluation.findViewById(R.id.common_talents);
         talentWrapper.setVisibility(View.VISIBLE);
         TextView talentCountTV = mHeaderEvaluation.findViewById(R.id.talents);
