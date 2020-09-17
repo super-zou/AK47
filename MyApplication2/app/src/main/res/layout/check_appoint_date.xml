@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"                                                   
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white">
@@ -31,17 +32,6 @@
         app:mcv_selectionMode="single"
         app:mcv_showOtherDates="all"
         app:mcv_weekDayTextAppearance="@style/CustomTextAppearance" />
-    <TextView
-        android:id="@+id/appoint_notice"
-        android:visibility="gone"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:text="@string/appoint_notice"
-        android:textColor="@color/color_blue"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/calendarView" />
     
      <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/select_wrapper"
@@ -56,61 +46,77 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
             android:gravity="center"
             android:text="@string/fa_cny"
             android:textColor="@color/black"
             android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-          <TextView
-            android:id="@+id/amount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="2dp"
-            android:textSize="18sp"
-            android:textColor="@color/black"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/cny"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/unit_divider"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="2dp"
-            android:gravity="center"
-            android:text="@string/unit_divider"
-            android:textColor="@color/black"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/amount"
-             app:layout_constraintTop_toTopOf="parent"/>
-
-        <TextView
-            android:id="@+id/unit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="2dp"
-            android:gravity="center"
-            android:text=""
-            android:textColor="@color/black"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/unit_divider"
-            app:layout_constraintTop_toTopOf="parent"/>
          
-      <TextView
-            android:id="@+id/numberOfcompanions"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:textColor="@color/color_green"
-            android:textStyle="bold"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/unit"
-            app:layout_constraintTop_toTopOf="parent" />
+         <TextView
+             android:id="@+id/amount"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_marginStart="2dp"
+             android:textColor="@color/black"
+             android:textSize="18sp"
+             app:layout_constraintStart_toEndOf="@+id/cny"
+             app:layout_constraintTop_toTopOf="@id/cny"
+             app:layout_constraintBottom_toBottomOf="@+id/cny" />
+
+         <TextView
+             android:id="@+id/unit_divider"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_marginStart="2dp"
+             android:gravity="center"
+             android:text="@string/unit_divider"
+             android:textColor="@color/black"
+             android:textSize="18sp"
+             app:layout_constraintStart_toEndOf="@+id/amount"
+             app:layout_constraintTop_toTopOf="@id/cny"
+             app:layout_constraintBottom_toBottomOf="@+id/cny" />
+
+         <TextView
+             android:id="@+id/unit"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_marginStart="2dp"
+             android:gravity="center"
+             android:text=""
+             android:textColor="@color/black"
+             android:textSize="18sp"
+             app:layout_constraintStart_toEndOf="@+id/unit_divider"
+             app:layout_constraintTop_toTopOf="@id/cny"
+             app:layout_constraintBottom_toBottomOf="@+id/cny" />
+         
+       <TextView
+             android:id="@+id/companions"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_marginStart="16dp"
+             android:layout_marginTop="16dp"
+             android:layout_marginBottom="16dp"
+             android:text="同行人数: "
+             android:textColor="@color/color_blue"
+             android:textSize="18sp"
+             app:layout_constraintBottom_toBottomOf="parent"
+             app:layout_constraintStart_toStartOf="parent"
+             app:layout_constraintTop_toBottomOf="@id/cny" />
+         
+         <TextView
+             android:id="@+id/numberOfcompanions"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_marginStart="8dp"
+             android:textColor="@color/blue_dark"
+             android:textStyle="bold"
+             android:textSize="18sp"
+             android:text="0"
+             app:layout_constraintBottom_toBottomOf="@id/companions"
+             app:layout_constraintStart_toEndOf="@+id/companions"
+             app:layout_constraintTop_toTopOf="@id/companions" />
          
          <Button
             android:id="@+id/select"
