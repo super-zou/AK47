@@ -571,4 +571,5 @@
     <string name="experiences">体验</string>
     <string name="guides">旅行向导</string>
     <string name="guide">向导</string>
+    <string name="sliping_to_check">左右滑动查看日期</string>
 </resources>
