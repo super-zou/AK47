@@ -71,7 +71,8 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
     private int eid;
     private int did;
     private int price;
-    private int count = 0;
+    private int mSoldCount = 0;
+    private static int mMaximum = 0;
     private String unit;
     private String title;
     private String dataStr;
@@ -80,11 +81,13 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
     MaterialCalendarView widget;
     private ConstraintLayout selectWrapper;
     private TextView companionsTV;
+    private TextView companionsAmountTV;
     private JSONArray dateJSONArray;
     private static CalendarDay today;
     private OrderStatusBroadcastReceiver mReceiver;
-    private static List<LocalDate> availableDateList = new ArrayList<>();
+    private static List<LocalDate> availableLocalDateList = new ArrayList<>();
     private static List<AppointDate> appointDateList = new ArrayList<>();
+    private static List<AppointDate> bookabledDateList = new ArrayList<>();
     private static final int GET_AVAILABLE_APPOINTMENT_DATE_DONE = 1;
     public static final String GET_AVAILABLE_APPOINTMENT_DATE = HttpUtil.DOMAIN + "?q=travel_guide/get_available_appointment_date";
     public static final String GET_EXPERIENCE_AVAILABLE_APPOINTMENT_DATE = HttpUtil.DOMAIN + "?q=experience/get_experience_available_appointment_date";
@@ -103,13 +106,14 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
         return checkAppointDate;
     }
 
-    public static CheckAppointDate newInstance(int eid, int price, String title) {
+    public static CheckAppointDate newInstance(int eid, int price, String title, int maximum) {
         mType = Utility.TalentType.EXPERIENCE.ordinal();
         CheckAppointDate checkAppointDate = new CheckAppointDate();
         Bundle bundle = new Bundle();
         bundle.putInt("eid", eid);
         bundle.putInt("price", price);
         bundle.putString("title", title);
+        bundle.putInt("maximum", maximum);
         checkAppointDate.setArguments(bundle);
 
         return checkAppointDate;
@@ -132,6 +136,8 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
                 sid = bundle.getInt("sid");
                 unit = bundle.getString("unit");
             }
+            
+            mMaximum = bundle.getInt("maximum");
         }
 
         mDialog.setCanceledOnTouchOutside(true);
@@ -150,6 +156,9 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
                 dismiss();
             }
         });
+        
+        TextView statusbarTitle = mDialog.findViewById(R.id.title);
+        statusbarTitle.setText(getContext().getResources().getString(R.string.sliping_to_check));
 
         getAvailableDate();
 
@@ -160,7 +169,8 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
 
         selectWrapper = mDialog.findViewById(R.id.select_wrapper);
         selectBtn = mDialog.findViewById(R.id.select);
-        companionsTV = mDialog.findViewById(R.id.numberOfcompanions);
+        companionsTV = mDialog.findViewById(R.id.companions);
+        companionsAmountTV = mDialog.findViewById(R.id.numberOfcompanions);
 
         selectBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -189,9 +199,9 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
     private void submitOrder() {
         PlaceOrderDF placeOrderDF;
         if (mType == Utility.TalentType.EXPERIENCE.ordinal()) {
-            placeOrderDF = PlaceOrderDF.newInstance(title, price, did, dataStr, eid, mType);
+            placeOrderDF = PlaceOrderDF.newInstance(title, price, did, dataStr, eid, mSoldCount, mMaximum, mType);
         } else {
-            placeOrderDF = PlaceOrderDF.newInstance(title, price, did, dataStr, sid, mType);
+            placeOrderDF = PlaceOrderDF.newInstance(title, price, did, dataStr, sid, mSoldCount, mMaximum, mType);
         }
 
         placeOrderDF.show(getFragmentManager(), "PlaceOrderDF");
@@ -204,7 +214,8 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
             //JSONObject dateObject = dateJSONArray.getJSONObject(i);
             LocalDate localDate = appointDateList.get(i).getLocalDate();
             if (localDate.getDayOfMonth() >= today.getDay() || localDate.getMonthValue() > today.getMonth()) {
-                availableDateList.add(localDate);
+                availableLocalDateList.add(localDate);
+                bookabledDateList.add(appointDateList.get(i));
             }
         }
 
@@ -215,6 +226,7 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
         final LocalDate max = LocalDate.of(today.getYear(), today.getMonth() + 3, today.getDay());
         widget.addDecorator(new AvailableDecorator());
         widget.addDecorator(new DayDisabledDecorator());
+        widget.addDecorator(new DaySoldOutDecorator());
         widget.state().edit()
                 .setMinimumDate(min)
                 .setMaximumDate(max)
@@ -224,8 +236,8 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
     public static class AvailableDecorator implements DayViewDecorator {
         @Override
         public boolean shouldDecorate(final CalendarDay day) {
-            if (availableDateList.size() > 0) {
-                if (availableDateList.contains(day.getDate())) {
+            if (availableLocalDateList.size() > 0) {
+                if (availableLocalDateList.contains(day.getDate())) {
                     return true;
                 }
             }
@@ -243,8 +255,8 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
     private static class DayDisabledDecorator implements DayViewDecorator {
         @Override
         public boolean shouldDecorate(final CalendarDay day) {
-            if (availableDateList.size() > 0) {
-                if (availableDateList.contains(day.getDate())) {
+            if (availableLocalDateList.size() > 0) {
+                if (availableLocalDateList.contains(day.getDate())) {
                     return false;
                 }
             }
@@ -254,6 +266,30 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
         @Override
         public void decorate(final DayViewFacade view) {
             view.setDaysDisabled(true);
+        }
+    }
+    
+        private static class DaySoldOutDecorator implements DayViewDecorator {
+        @Override
+        public boolean shouldDecorate(final CalendarDay day) {
+            if (bookabledDateList.size() > 0) {
+                if (availableLocalDateList.contains(day.getDate())) {
+                    int index = availableLocalDateList.indexOf(day.getDate());
+                    Slog.d(TAG, "---------->index: "+index+"  count:"+bookabledDateList.get(index).getCount());
+                    if (bookabledDateList.get(index).getCount() == mMaximum){
+                        Slog.d(TAG, "---------->bookable count is maximum: ");
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        @Override
+        public void decorate(final DayViewFacade view) {
+            view.setDaysDisabled(true);
+            view.setBackgroundDrawable(MyApplication.getContext().getResources().getDrawable(R.drawable.sold_out))
         }
     }
 
@@ -307,8 +343,8 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
 
 
     private void getAvailableDate() {
-        availableDateList.clear();
-        appointDateList.clear();
+        clearAllList();
+        
         FormBody.Builder builder = new FormBody.Builder();
         String uri = GET_AVAILABLE_APPOINTMENT_DATE;
         Slog.d(TAG, "-------------------------------->type: " + mType);
@@ -345,6 +381,12 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
             }
         });
     }
+    
+    private void clearAllList(){
+        availableLocalDateList.clear();
+        appointDateList.clear();
+        bookabledDateList.clear();
+    }
 
     private void processResponse() {
         if (dateJSONArray != null && dateJSONArray.length() > 0) {
@@ -354,11 +396,11 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
                     JSONObject dateObject = dateJSONArray.getJSONObject(i);
                     appointDate.setDid(dateObject.optInt("did"));
                     if (mType == Utility.TalentType.GUIDE.ordinal()) {
-                        appointDate.setSid(dateObject.optInt("sid"));
+                        appointDate.setSid(dateObject.optInt("id"));
                     } else {
-                        appointDate.setEid(dateObject.optInt("eid"));
+                        appointDate.setEid(dateObject.optInt("id"));
                     }
-                    Slog.d(TAG, "-------------------count: " + dateObject.optInt("count"));
+
                     appointDate.setCount(dateObject.optInt("count"));
                     appointDate.setLocalDate(LocalDate.parse(timeStampToDay(dateObject.optInt("date")), FORMATTER));
                     appointDateList.add(appointDate);
@@ -383,10 +425,10 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
                     if (appointDateList.get(i).getLocalDate().getDayOfMonth() == date.getDay()) {
                         did = appointDateList.get(i).getDid();
                         Slog.d(TAG, "---------------onDateSelected------------>did: " + did);
-                        count = appointDateList.get(i).getCount();
-                        if (count > 0) {
-                            companionsTV.setText("同行人数" + count);
-                            companionsTV.setOnClickListener(new View.OnClickListener() {
+                        mSoldCount = appointDateList.get(i).getCount();
+                        if (mSoldCount > 0) {
+                            companionsAmountTV.setText(String.valueOf(mSoldCount));
+                            companionsAmountTV.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
                                     getCompanions();
@@ -394,7 +436,7 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
                             });
 
                         } else {
-                            companionsTV.setText("");
+                            companionsAmountTV.setText("0");
                         }
                     }
                 }
