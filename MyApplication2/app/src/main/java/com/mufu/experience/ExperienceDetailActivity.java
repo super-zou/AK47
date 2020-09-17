@@ -178,7 +178,8 @@ public class ExperienceDetailActivity extends BaseAppCompatActivity implements C
     }
 
     private void checkAppointDate(){
-        CheckAppointDate checkAppointDate = CheckAppointDate.newInstance(eid, chargeObject.optInt("price"), experienceObject.optString("title"));
+        CheckAppointDate checkAppointDate = CheckAppointDate.newInstance(eid, chargeObject.optInt("price"),
+                experienceObject.optString("title"), experienceObject.optInt("amount"));
         checkAppointDate.show(getSupportFragmentManager(), "CheckAppointDate");
     }
     
