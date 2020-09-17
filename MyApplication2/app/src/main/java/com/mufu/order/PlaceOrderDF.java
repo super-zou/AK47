@@ -54,6 +54,8 @@ public class PlaceOrderDF extends BaseDialogFragment {
     private int id;
     private int did;
     private int mOid;
+    private int mSoldAmount;
+    private int mMaximumAmount;
     private MyFragment.Order order;
     private String title;
     private String date;
@@ -70,7 +72,7 @@ public class PlaceOrderDF extends BaseDialogFragment {
     public static final String CONSULT_PAYMENT_SUCCESS_BROADCAST = "com.mufu.action.CONSULT_PAYMENT_SUCCESS";
     public static final String ORDER_SUBMIT_BROADCAST = "com.mufu.action.ORDER_SUBMIT_BROADCAST";
     
-    public static PlaceOrderDF newInstance(String title, int price, int did, String date, int id, int type) {
+    public static PlaceOrderDF newInstance(String title, int price, int did, String date, int id, int sold, int maximum, int type) {
         mType = Utility.TalentType.GUIDE.ordinal();
         PlaceOrderDF checkAppointDate = new PlaceOrderDF();
         Bundle bundle = new Bundle();
@@ -80,6 +82,8 @@ public class PlaceOrderDF extends BaseDialogFragment {
         bundle.putInt("type", type);
         bundle.putString("date", date);
         bundle.putInt("id", id);
+        bundle.putInt("sold", sold);
+        bundle.putInt("maximum", maximum);
         checkAppointDate.setArguments(bundle);
 
         return checkAppointDate;
@@ -99,6 +103,8 @@ public class PlaceOrderDF extends BaseDialogFragment {
             title = bundle.getString("title");
             date = bundle.getString("date");
             id = bundle.getInt("id", 0);
+            mSoldAmount = bundle.getInt("sold", 0);
+            mMaximumAmount = bundle.getInt("maximum", 0);
         }
         
         order = new MyFragment.Order();
@@ -127,10 +133,14 @@ public class PlaceOrderDF extends BaseDialogFragment {
         TextView titleTV = mDialog.findViewById(R.id.experience_title);
         TextView dateTV = mDialog.findViewById(R.id.appointment_date);
         TextView priceTV = mDialog.findViewById(R.id.price);
+        TextView remainingTV = mDialog.findViewById(R.id.remaining_amount);
+        TextView maximumTV = mDialog.findViewById(R.id.maximum_amount);
         titleTV.setText(title);
         dateTV.setText(date);
         priceTV.setText(String.valueOf(price));
         totalPriceTV.setText(String.valueOf(price));
+        maximumTV.setText(String.valueOf(mMaximumAmount));
+        remainingTV.setText("余位"+ (mMaximumAmount - mSoldAmount));
 
         submitOrderBtn = mDialog.findViewById(R.id.submit_order);
         submitOrderBtn.setOnClickListener(new View.OnClickListener() {
@@ -168,19 +178,31 @@ public class PlaceOrderDF extends BaseDialogFragment {
                     int totalPrice = mAmountPeople * price;
                     totalPriceTV.setText(String.valueOf(totalPrice));
                     totalAmountTV.setText("("+mAmountPeople+"人)");
+                    
+                    if (!plusBtn.isClickable()){
+                        plusBtn.setClickable(true);
+                    }
                 }
             }
         });
+        
+        int remainingAmount = mMaximumAmount - mSoldAmount;
 
         plusBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
              mAmountPeople = Integer.parseInt(amountTV.getText().toString());
-                mAmountPeople++;
-                amountTV.setText(String.valueOf(mAmountPeople));
-                int totalPrice = mAmountPeople * price;
-                totalPriceTV.setText(String.valueOf(totalPrice));
-                totalAmountTV.setText("("+mAmountPeople+"人)");
+                 if (mAmountPeople < remainingAmount){
+                         mAmountPeople++;
+                         amountTV.setText(String.valueOf(mAmountPeople));
+                         int totalPrice = mAmountPeople * price;
+                         totalPriceTV.setText(String.valueOf(totalPrice));
+                         totalAmountTV.setText("("+mAmountPeople+"人)");
+
+                         if (mAmountPeople == remainingAmount){
+                             plusBtn.setClickable(false);
+                         }
+                 }
             }
         });
     }
