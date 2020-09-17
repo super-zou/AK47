@@ -87,6 +87,8 @@
         android:layout_height="38dp"
         android:gravity="center"
         android:text="-"
+        android:textColor="@color/blue_dark"
+        android:background="@drawable/btn_default"
         app:layout_constraintBottom_toBottomOf="@+id/participants"
         app:layout_constraintEnd_toStartOf="@+id/amount"
         app:layout_constraintTop_toTopOf="@+id/participants" />
@@ -109,10 +111,44 @@
         android:layout_marginEnd="16dp"
         android:text="+"
         android:gravity="center"
+        android:textColor="@color/blue_dark"
+        android:background="@drawable/btn_default"
         app:layout_constraintBottom_toBottomOf="@+id/participants"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/participants" />
-        
+   
+  <TextView
+        android:id="@+id/remaining_amount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="3dp"
+        android:textColor="@color/blue_dark"
+        android:text="余位"
+        app:layout_constraintEnd_toStartOf="@+id/divider"
+        app:layout_constraintTop_toBottomOf="@+id/amount" />
+    
+   <TextView
+        android:id="@+id/divider"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="3dp"
+        android:textColor="@color/blue_dark"
+        android:text="/"
+        app:layout_constraintBottom_toBottomOf="@+id/remaining_amount"
+        app:layout_constraintEnd_toStartOf="@+id/maximum_amount"
+        app:layout_constraintTop_toTopOf="@+id/remaining_amount" />
+    
+   <TextView
+        android:id="@+id/maximum_amount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:textColor="@color/blue_dark"
+        android:text="最大数"
+        app:layout_constraintBottom_toBottomOf="@+id/divider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/divider" />
         
    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/select_wrapper"
