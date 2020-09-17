@@ -83,6 +83,7 @@ import okhttp3.Response;
 
 import static android.app.Activity.RESULT_OK;
 import static com.mufu.experience.CheckAppointDate.GET_EXPERIENCE_AVAILABLE_APPOINTMENT_DATE;
+import static com.mufu.experience.DevelopExperienceDialogFragment.FORMATTER;
 import static com.mufu.experience.ExperienceDetailActivity.GET_APPOINTMENT_DATE_DONE;
 import static com.mufu.experience.ExperienceDetailActivity.GET_BANNER_PICTURES;
 import static com.mufu.experience.ExperienceDetailActivity.GET_BANNER_PICTURES_DONE;
@@ -96,6 +97,7 @@ import static com.mufu.experience.ExperienceDetailActivity.GET_ITEM_INFO_DONE;
 import static com.mufu.experience.ExperienceDetailActivity.GET_LIMIT_INFO;
 import static com.mufu.experience.ExperienceDetailActivity.GET_LIMIT_INFO_DONE;
 import static com.mufu.experience.ExperienceDetailActivity.GET_SELF_INTRODUCTION_DONE;
+import static com.mufu.util.DateUtil.timeStampToDay;
 
 public class ModifyExperienceDF extends BaseDialogFragment implements OnDateSelectedListener {
     private static final boolean isDebug = true;
@@ -113,7 +115,6 @@ public class ModifyExperienceDF extends BaseDialogFragment implements OnDateSele
     private static final String GET_SELF_INTRODUCTION_URL = HttpUtil.DOMAIN + "?q=experience/get_self_introduction_info";
     private static final String MODIFY_SELF_INTRODUCTION_URL = HttpUtil.DOMAIN + "?q=experience/modify_self_introduction_info";
     private static final int WRITE_DONE_SUCCESS = 18;
-    public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("EEE, d MMM yyyy");
     private boolean isBaseInfoModify = false;
     private boolean isPriceModify = false;
     private boolean isDurationModify = false;
@@ -621,10 +622,10 @@ public class ModifyExperienceDF extends BaseDialogFragment implements OnDateSele
                 CheckAppointDate.AppointDate appointDate = new CheckAppointDate.AppointDate();
                 try {
                     JSONObject dateObject = dateJSONArray.getJSONObject(i);
-                    //appointDate.setDid(dateObject.optInt("did"));
-                    appointDate.setEid(dateObject.optInt("eid"));
-                    //appointDate.setCount(dateObject.optInt("count"));
-                    appointDate.setLocalDate(LocalDate.parse(dateObject.optString("date_string"), FORMATTER));
+                    appointDate.setDid(dateObject.optInt("did"));
+                    appointDate.setEid(dateObject.optInt("id"));
+                    //appointDate.setLocalDate(LocalDate.parse(dateObject.optString("date"), FORMATTER));
+                    appointDate.setLocalDate(LocalDate.parse(timeStampToDay(dateObject.optInt("date")), FORMATTER));
                     appointDateList.add(appointDate);
                 }catch (JSONException e){
                     e.printStackTrace();
@@ -639,10 +640,12 @@ public class ModifyExperienceDF extends BaseDialogFragment implements OnDateSele
         for (int i=0; i<appointDateList.size(); i++){
             //JSONObject dateObject = dateJSONArray.getJSONObject(i);
             LocalDate localDate = appointDateList.get(i).getLocalDate();
-            if (localDate.getDayOfMonth() >= today.getDay() || localDate.getMonthValue() > today.getMonth()){
-                availableDateList.add(localDate);
-                CalendarDay calendarDay = CalendarDay.from(localDate);
-                widget.setDateSelected(calendarDay, true);
+            if(localDate != null){
+                if (localDate.getDayOfMonth() >= today.getDay() || localDate.getMonthValue() > today.getMonth()){
+                    availableDateList.add(localDate);
+                    CalendarDay calendarDay = CalendarDay.from(localDate);
+                    widget.setDateSelected(calendarDay, true);
+                }
             }
         }
         
