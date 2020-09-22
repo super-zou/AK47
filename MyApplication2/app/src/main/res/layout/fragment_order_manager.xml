@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/order_wrapper"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    
+    <TextView
+        android:text="@string/order"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="8dp"
+        android:layout_marginTop="16dp"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textAppearance="@style/TextSourceHanSansBoldAppearance" />
+        
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/sold_orders_wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/white">
+        <TextView
+            android:id="@+id/sold_orders"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sold_orders"
+            android:textColor="@color/black"
+            android:textAppearance="@style/TextSourceHanSansAppearance"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+            
+            <TextView
+            android:id="@+id/today_orders_amount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:padding="8dp"
+            android:text="0"
+            android:textColor="@color/blue_dark"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="@+id/today_orders"
+            app:layout_constraintStart_toStartOf="@+id/today_orders"
+            app:layout_constraintTop_toBottomOf="@+id/sold_orders" />
+            
+            <TextView
+            android:id="@+id/today_orders"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/today_development"
+            android:textAppearance="@style/TextSourceHanSansAppearance"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/queued_orders_amount"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/today_orders_amount" />
+            
+            <TextView
+            android:id="@+id/queued_orders_amount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:padding="8dp"
+            android:text="0"
+            android:textColor="@color/blue_dark"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="@+id/queued_orders"
+            app:layout_constraintStart_toStartOf="@+id/queued_orders"
+            app:layout_constraintTop_toBottomOf="@+id/sold_orders" />
+            
+            <TextView
+            android:id="@+id/queued_orders"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/waiting_for_development"
+            android:textAppearance="@style/TextSourceHanSansAppearance"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/finished_orders"
+            app:layout_constraintStart_toEndOf="@id/today_orders"
+            app:layout_constraintTop_toBottomOf="@+id/queued_orders_amount" />
+            
+             <TextView
+            android:id="@+id/finished_orders_amount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:padding="8dp"
+            android:textSize="18sp"
+            android:textColor="@color/blue_dark"
+            app:layout_constraintEnd_toEndOf="@+id/finished_orders"
+            app:layout_constraintStart_toStartOf="@+id/finished_orders"
+            app:layout_constraintTop_toTopOf="@+id/queued_orders_amount" />
+            
+            <TextView
+            android:id="@+id/finished_orders"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/finished_orders"
+            android:textAppearance="@style/TextSourceHanSansAppearance"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/queued_orders"
+            app:layout_constraintTop_toBottomOf="@+id/finished_orders_amount" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    
+     <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/white">
+
+        <TextView
+            android:id="@+id/my_orders"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/my_orders"
+            android:textColor="@color/black"
+            android:textAppearance="@style/TextSourceHanSansAppearance"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+            
+            <TextView
+            android:id="@+id/all_orders"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="3dp"
+            android:text="@string/all_orders"
+            app:layout_constraintBottom_toBottomOf="@+id/my_orders"
+            app:layout_constraintEnd_toStartOf="@+id/all_orders_nav"
+            app:layout_constraintTop_toTopOf="@+id/my_orders" />
+
+        <TextView
+            android:id="@+id/all_orders_nav"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/chevron_right"
+            app:layout_constraintBottom_toBottomOf="@+id/my_orders"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/my_orders" />
+            
+            <TextView
+            android:id="@+id/waiting_to_pay_amount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:padding="8dp"
+            android:text="0"
+            android:textColor="@color/blue_dark"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="@+id/waiting_to_pay"
+            app:layout_constraintStart_toStartOf="@+id/waiting_to_pay"
+            app:layout_constraintTop_toBottomOf="@+id/my_orders" />
+            
+             <TextView
+            android:id="@+id/waiting_to_pay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/waiting_to_pay"
+            android:textAppearance="@style/TextSourceHanSansAppearance"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/booked"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/waiting_to_pay_amount" />
+            
+            <TextView
+            android:id="@+id/booked_amount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textSize="18sp"
+            android:padding="8dp"
+            android:textColor="@color/blue_dark"
+            app:layout_constraintEnd_toEndOf="@+id/booked"
+            app:layout_constraintStart_toStartOf="@+id/booked"
+            app:layout_constraintTop_toTopOf="@+id/waiting_to_pay_amount" />
+
+        <TextView
+            android:id="@+id/booked"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/booked"
+            android:textAppearance="@style/TextSourceHanSansAppearance"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/waiting_for_evaluation"
+app:layout_constraintStart_toEndOf="@+id/waiting_to_pay"
+            app:layout_constraintTop_toBottomOf="@+id/tribe_count" />
+
+        <TextView
+            android:id="@+id/waiting_for_evaluation_amount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:padding="8dp"
+            android:textSize="18sp"
+            android:textColor="@color/blue_dark"
+            app:layout_constraintEnd_toEndOf="@+id/waiting_for_evaluation"
+            app:layout_constraintStart_toStartOf="@+id/waiting_for_evaluation"
+            app:layout_constraintTop_toTopOf="@+id/waiting_to_pay_amount" />
+            
+            <TextView
+            android:id="@+id/waiting_for_evaluation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/waiting_for_evaluation"
+            android:textAppearance="@style/TextSourceHanSansAppearance"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/booked"
+            app:layout_constraintTop_toBottomOf="@+id/booked" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:visibility="visible"
+        android:id="@+id/revenue_wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorWhite"
+        android:layout_marginTop="8dp"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/revenue_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="@string/fa_money"
+            android:textColor="@color/blue_dark"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+            
+            <TextView
+            android:id="@+id/revenue_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="9dp"
+            android:text="我的收入"
+            android:textColor="@color/black"
+            android:textAppearance="@style/TextSourceHanSansBoldAppearance"
+            app:layout_constraintBottom_toBottomOf="@+id/revenue_icon"
+            app:layout_constraintStart_toEndOf="@+id/revenue_icon"
+            app:layout_constraintTop_toTopOf="@+id/revenue_icon" />
+            
+            <TextView
+            android:id="@+id/revenue_amount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:padding="8dp"
+            android:text="0元"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toBottomOf="@+id/revenue_icon"
+            app:layout_constraintStart_toEndOf="@+id/revenue_text"
+            app:layout_constraintTop_toTopOf="@+id/revenue_icon" />
+            
+            <TextView
+            android:id="@+id/revenue_nav"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="@string/chevron_right"
+            app:layout_constraintBottom_toBottomOf="@+id/revenue_icon"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/revenue_icon" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</LinearLayout>
