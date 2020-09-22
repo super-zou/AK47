@@ -467,6 +467,9 @@
     <string name="follow">关注</string>
     <string name="append_evaluation">追加评价</string>
     <string name="waiting_to_pay">待支付</string>
+        <string name="booked">已预订</string>
+    <string name="sold_orders">已售订单</string>
+    <string name="waiting_for_evaluation">待评价</string>
     <string name="appoint_notice">长按可查看预订详情</string>
     <string name="share_title">分享牧夫体验中的美妙时刻</string>
     <string name="select_experience">选择要分享的体验</string>
@@ -572,4 +575,11 @@
     <string name="guides">旅行向导</string>
     <string name="guide">向导</string>
     <string name="sliping_to_check">左右滑动查看日期</string>
+        <string name="all_orders">全部订单</string>
+    <string name="today_development">今日开展</string>
+    <string name="waiting_for_development">等待开展</string>
+    <string name="finished_orders">已完成的</string>
+    <string name="unpaid">待支付订单</string>
+    <string name="booked_orders">已预订订单</string>
+    <string name="waiting_for_evaluation_orders">待评价订单</string>
 </resources>
