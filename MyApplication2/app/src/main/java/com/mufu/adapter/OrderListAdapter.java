@@ -17,8 +17,8 @@ import com.mufu.R;
 import com.mufu.experience.ExperienceDetailActivity;
 import com.mufu.experience.GuideDetailActivity;
 import com.mufu.main.MeetArchiveActivity;
-import com.mufu.order.MyFragment;
-import com.mufu.order.QueuedFragment;
+import com.mufu.order.MyOrdersFragmentDF;
+import com.mufu.order.OrdersListDF;
 import com.mufu.util.FontManager;
 import com.mufu.util.HttpUtil;
 import com.mufu.util.RoundImageView;
@@ -34,20 +34,20 @@ import static com.mufu.util.DateUtil.timeStampToMinute;
  * Created by super-zou on 18-9-21.
  */
 
-public class OrderQueuedAdapter extends RecyclerView.Adapter<OrderQueuedAdapter.ViewHolder> {
+public class OrdersListAdapter extends RecyclerView.Adapter<OrdersListAdapter.ViewHolder> {
 
-    private static final String TAG = "OrderQueuedAdapter";
+    private static final String TAG = "OrdersListAdapter";
     private static Context mContext;
     private int width;
-    private List<QueuedFragment.OrderManager> mOrderList;
+    private List<OrdersListDF.OrderManager> mOrderList;
     private boolean isScrolling = false;
     private MyItemClickListener mItemClickListener;
 
-    public OrderQueuedAdapter(Context context) {
+    public OrdersListAdapter(Context context) {
         mContext = context;
     }
 
-    public void setData(List<QueuedFragment.OrderManager> orderList) {
+    public void setData(List<OrdersListDF.OrderManager> orderList) {
         mOrderList = orderList;
     }
     
@@ -60,8 +60,8 @@ public class OrderQueuedAdapter extends RecyclerView.Adapter<OrderQueuedAdapter.
     }
 
     @Override
-    public void onBindViewHolder(@NonNull OrderQueuedAdapter.ViewHolder holder, final int position) {
-        final QueuedFragment.OrderManager order = mOrderList.get(position);
+    public void onBindViewHolder(@NonNull OrdersListAdapter.ViewHolder holder, final int position) {
+        final OrdersListDF.OrderManager order = mOrderList.get(position);
         setContentView(holder, order);
 
         holder.itemLayout.setOnClickListener(new View.OnClickListener() {
@@ -78,12 +78,12 @@ public class OrderQueuedAdapter extends RecyclerView.Adapter<OrderQueuedAdapter.
         });
     }
     
-    public void setContentView(OrderQueuedAdapter.ViewHolder holder, final QueuedFragment.OrderManager order){
+    public void setContentView(OrdersListDF.ViewHolder holder, final OrdersListDF.OrderManager order){
 
         holder.titleTV.setText(order.title);
         holder.dateTV.setText("预订日期："+order.appointmentDate);
         holder.nameTV.setText(String.valueOf(order.nickname));
-        holder.amountTV.setText("x"+order.amount);
+        holder.amountTV.setText("x"+order.amount+"人");
         holder.orderNumberTV.setText("订单编号："+order.number);
         holder.orderCreatedTV.setText("下单时间："+timeStampToMinute(order.created));
         holder.phoneTV.setText(order.phone);
@@ -116,7 +116,7 @@ public class OrderQueuedAdapter extends RecyclerView.Adapter<OrderQueuedAdapter.
         });
     }
 
-    private void startActivity(MyFragment.Order order){
+    private void startActivity(MyOrdersFragmentDF.Order order){
         Slog.d(TAG, "------------------>type: "+order.type+"      id: "+order.id);
         if (order.type == Utility.TalentType.GUIDE.ordinal()){
             Intent intent = new Intent(getContext(), GuideDetailActivity.class);
@@ -193,7 +193,7 @@ public class OrderQueuedAdapter extends RecyclerView.Adapter<OrderQueuedAdapter.
      *
      * @param myItemClickListener
      */
-    public void setItemClickListener(OrderQueuedAdapter.MyItemClickListener myItemClickListener) {
+    public void setItemClickListener(OrdersListAdapter.MyItemClickListener myItemClickListener) {
         this.mItemClickListener = myItemClickListener;
     }
     
