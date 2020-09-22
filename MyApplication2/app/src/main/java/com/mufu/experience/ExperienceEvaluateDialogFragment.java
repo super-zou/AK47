@@ -22,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -33,7 +34,7 @@ import com.mufu.common.MyApplication;
 import com.mufu.common.OnItemClickListener;
 import com.mufu.dynamics.AddDynamicsActivity;
 import com.mufu.main.FullyGridLayoutManager;
-import com.mufu.order.MyFragment;
+import com.mufu.order.MyOrdersFragmentDF;
 import com.mufu.picture.GlideEngine;
 import com.mufu.util.BaseDialogFragment;
 import com.mufu.util.FontManager;
@@ -63,6 +64,7 @@ import okhttp3.Callback;
 import okhttp3.Response;
 
 import static android.app.Activity.RESULT_OK;
+import static com.mufu.order.PlaceOrderDF.ORDER_EVALUATE_SUCCESS_BROADCAST;
 
 public class ExperienceEvaluateDialogFragment extends BaseDialogFragment {
     public final static int SET_EVALUATE_RESULT_OK = 7;
@@ -80,14 +82,14 @@ public class ExperienceEvaluateDialogFragment extends BaseDialogFragment {
     private Handler handler = new ExperienceEvaluateDialogFragment.MyHandler(this);
     private List<String> impressionList = new ArrayList<>();
     private ProgressDialog progressDialog;
-    private MyFragment.Order order;
+    private MyOrdersFragmentDF.Order order;
     private AddDynamicsActivity addDynamicsActivity;
     private RecyclerView recyclerView;
     private GridImageAdapter adapter;
     private List<LocalMedia> selectList = new ArrayList<>();
     private List<File> selectFileList = new ArrayList<>();
     
-    public static ExperienceEvaluateDialogFragment newInstance(MyFragment.Order order) {
+    public static ExperienceEvaluateDialogFragment newInstance(MyOrdersFragmentDF.Order order) {
         ExperienceEvaluateDialogFragment experienceEvaluateDialogFragment = new ExperienceEvaluateDialogFragment();
         Bundle bundle = new Bundle();
         bundle.putSerializable("order", order);
@@ -106,7 +108,7 @@ public class ExperienceEvaluateDialogFragment extends BaseDialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Bundle bundle = getArguments();
         if (bundle != null) {
-            order = (MyFragment.Order) bundle.getSerializable("order");
+            order = (MyOrdersFragmentDF.Order) bundle.getSerializable("order");
         }
         if (addDynamicsActivity == null){
             addDynamicsActivity = new AddDynamicsActivity();
@@ -317,6 +319,9 @@ private void uploadPictures(Map<String, String> params, String picKey, List<File
      public void handleMessage(Message message) {
         switch (message.what) {
             case WRITE_EVALUATE_DONE:
+                LocalBroadcastManager.getInstance(getContext()).sendBroadcast(new Intent(ORDER_EVALUATE_SUCCESS_BROADCAST));
+                ShowAllEvaluateDF showAllEvaluateDF = ShowAllEvaluateDF.newInstance(order.type, order.id, 0);
+                showAllEvaluateDF.show(getFragmentManager(), "ShowAllEvaluateDF");
                 mDialog.dismiss();
                 break;
             default:
