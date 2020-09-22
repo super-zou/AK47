@@ -35,7 +35,7 @@ import com.mufu.common.HandlerTemp;
 import com.mufu.common.MyApplication;
 import com.mufu.common.OnItemClickListener;
 import com.mufu.dynamics.AddDynamicsActivity;
-import com.mufu.order.MyFragment;
+import com.mufu.order.MyOrdersFragmentDF;
 
 import com.mufu.main.FullyGridLayoutManager;
 import com.mufu.order.OrderPaymentDF;
@@ -70,7 +70,6 @@ import okhttp3.RequestBody;
 
 import static android.app.Activity.RESULT_OK;
 import static com.mufu.order.PlaceOrderDF.CONSULT_PAYMENT_SUCCESS_BROADCAST;
-import static com.mufu.order.PlaceOrderDF.ORDER_PAYMENT_SUCCESS_BROADCAST;
 import static com.mufu.order.PlaceOrderDF.SUBMIT_ORDER_DONE;
 import static com.mufu.order.PlaceOrderDF.getOrderNumber;
 
@@ -96,7 +95,7 @@ public class TalentConsultDF extends BaseDialogFragment {
     private Handler handler = new TalentConsultDF.MyHandler(this);
     private List<String> impressionList = new ArrayList<>();
     private ProgressDialog progressDialog;
-    private MyFragment.Order order;
+    private MyOrdersFragmentDF.Order order;
     private AddDynamicsActivity addDynamicsActivity;
     private RecyclerView recyclerView;
     private GridImageAdapter adapter;
@@ -149,7 +148,7 @@ public class TalentConsultDF extends BaseDialogFragment {
             addDynamicsActivity = new AddDynamicsActivity();
         }
         
-                order = new MyFragment.Order();
+                order = new MyOrdersFragmentDF.Order();
         mReceiver = new ConsultPaymentBroadcastReceiver();
         
         inflater = LayoutInflater.from(mContext);
