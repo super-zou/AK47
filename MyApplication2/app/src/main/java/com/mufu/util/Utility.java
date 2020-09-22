@@ -40,6 +40,45 @@ public class Utility {
     public enum ConsultType {
         ANSWERED, QUESTIONED, ALL
     }
+    
+    public enum OrderType {
+        TODAY("today", 0), QUEUED("queued", 1), FINISHED("finished", 2),
+        UNPAYMENT("unpayment", 3), BOOKED("booked", 4), WAITING_EVALUATION("waiting_evaluation", 5),
+        ALL("all", 10);
+
+        private String _name;
+        private int _type;
+
+        OrderType(String name, int type) {
+            _name = name;
+            _type = type;
+        }
+        
+        public String getName(){ return _name; };
+        public int getType(){ return _type; };
+
+        public static OrderType getOrderType(int type){
+            switch (type){
+                case 0:
+                    return TODAY;
+                case 1:
+                    return QUEUED;
+                case 2:
+                    return FINISHED;
+                case 3:
+                    return UNPAYMENT;
+                case 4:
+                    return BOOKED;
+                case 5:
+                    return WAITING_EVALUATION;
+                case 10:
+                    return ALL;
+                    default:
+                        return TODAY;
+            }
+        }
+    }
+            
     public static boolean handleLoginResponse(String response) {
         if (!TextUtils.isEmpty(response)) {
             /*
