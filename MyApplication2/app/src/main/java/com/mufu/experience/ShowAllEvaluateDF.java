@@ -128,7 +128,11 @@ public class ShowAllEvaluateDF extends BaseDialogFragment {
         });
         
         TextView countTV = mDialog.findViewById(R.id.evaluate_count);
-        countTV.setText(String.valueOf(count)+"条评价");
+        if (count > 0){
+            countTV.setText(String.valueOf(count)+"条评价");
+        }else {
+            countTV.setText("评价");
+        }
 
         initView();
 
