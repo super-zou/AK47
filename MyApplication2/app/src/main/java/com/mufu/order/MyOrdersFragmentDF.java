@@ -1,5 +1,7 @@
 package com.mufu.order;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -10,12 +12,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
+import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.TextView;
 
-import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,13 +28,14 @@ import com.mufu.R;
 import com.mufu.adapter.OrderSummaryAdapter;
 import com.mufu.common.MyApplication;
 import com.mufu.experience.ExperienceEvaluateDialogFragment;
-import com.mufu.util.BaseFragment;
+import com.mufu.util.BaseDialogFragment;
 import com.mufu.util.FontManager;
 import com.mufu.util.HttpUtil;
 import com.mufu.util.MyLinearLayoutManager;
 import com.mufu.util.Slog;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
+import com.mufu.util.Utility;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -39,6 +44,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,18 +56,20 @@ import okhttp3.Response;
 
 import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static com.mufu.order.OrderDetailsDF.newInstance;
+import static com.mufu.order.PlaceOrderDF.ORDER_EVALUATE_SUCCESS_BROADCAST;
 import static com.mufu.order.PlaceOrderDF.ORDER_PAYMENT_SUCCESS_BROADCAST;
 import static com.mufu.order.PlaceOrderDF.ORDER_SUBMIT_BROADCAST;
-import static com.mufu.util.DateUtil.calendarToDate;
 import static com.mufu.util.DateUtil.timeStampToDay;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
-public class MyFragment extends BaseFragment {
+public class MyOrdersFragmentDF extends BaseDialogFragment {
     private static final boolean isDebug = true;
-    private static final String TAG = "MyFragment";
+    private static final String TAG = "MyOrdersFragmentDF";
     private static final int PAGE_SIZE = 8;
     private static final String GET_ALL_ORDERS = HttpUtil.DOMAIN + "?q=order_manager/get_all_orders";
-    public static final String GET_MY_ORDERS_COUNT = HttpUtil.DOMAIN + "?q=order_manager/get_my_orders_count";
+    private static final String GET_MY_UNPAID_ORDERS = HttpUtil.DOMAIN + "?q=order_manager/get_my_unpaid_orders";
+    private static final String GET_MY_BOOKED_ORDERS = HttpUtil.DOMAIN + "?q=order_manager/get_my_booked_orders";
+    private static final String GET_WAITING_FOR_MY_EVALUATION_ORDERS = HttpUtil.DOMAIN + "?q=order_manager/get_waiting_for_my_evaluation_orders";
     private static final int GET_ALL_DONE = 1;
     private static final int GET_ALL_END = 2;
     private static final int NO_MORE = 3;
@@ -75,30 +83,73 @@ public class MyFragment extends BaseFragment {
     private List<Order> mOrderList = new ArrayList<>();
     private View mView;
     private OrderStatusBroadcastReceiver mReceiver;
+        private Dialog mDialog;
+    private Window window;
+    private short mOrderType;
+    private int mItemPosition;
     
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View convertView = inflater.inflate(R.layout.order_summary, container, false);
+        @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-        mView = convertView;
+        mDialog = new Dialog(getActivity(), R.style.Theme_MaterialComponents_DialogWhenLarge);
+        mDialog.setContentView(R.layout.order_summary);
 
-        initContentView(convertView);
-
-        requestData();
+        mDialog.setCanceledOnTouchOutside(true);
+        window = mDialog.getWindow();
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+        WindowManager.LayoutParams layoutParams = window.getAttributes();
+        layoutParams.gravity = Gravity.CENTER;
+        layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
+        layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT;
+        window.setAttributes(layoutParams);
         
-                mReceiver = new OrderStatusBroadcastReceiver();
+        TextView leftBackTV = mDialog.findViewById(R.id.left_back);
+        leftBackTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dismiss();
+            }
+        });
+
+        TextView titleTV = mDialog.findViewById(R.id.title);
+
+        Bundle bundle = getArguments();
+        
+        if (bundle != null){
+            short type = bundle.getShort("type");
+            Slog.d(TAG, "--------------type: "+type);
+            mOrderType = type;
+            Utility.OrderType orderType = Utility.OrderType.getOrderType(type);
+            switch (orderType){
+                case UNPAYMENT:
+                    titleTV.setText(getContext().getResources().getString(R.string.unpaid));
+                    break;
+                    case BOOKED:
+                    titleTV.setText(getContext().getResources().getString(R.string.booked_orders));
+                    break;
+                case WAITING_EVALUATION:
+                    titleTV.setText(getContext().getResources().getString(R.string.waiting_for_evaluation_orders));
+                    break;
+                case ALL:
+                    titleTV.setText(getContext().getResources().getString(R.string.all_orders));
+                    break;
+            }
+            initContentView(type);
+            requestData(type);
+        }
+
+        mReceiver = new OrderStatusBroadcastReceiver();
 
         registerBroadcast();
 
-        return convertView;
+        return mDialog;
     }
-
-    private void initContentView(View view) {
+    
+    private void initContentView(short type) {
         Typeface font = Typeface.createFromAsset(MyApplication.getContext().getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
-        FontManager.markAsIconContainer(view.findViewById(R.id.custom_actionbar), font);
+        FontManager.markAsIconContainer(mDialog.findViewById(R.id.custom_actionbar), font);
         handler = new MyHandler(this);
-        recyclerView = view.findViewById(R.id.order_summary_list);
+        recyclerView = mDialog.findViewById(R.id.order_summary_list);
         orderSummaryAdapter = new OrderSummaryAdapter(getContext());
         MyLinearLayoutManager linearLayoutManager = new MyLinearLayoutManager(getContext());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -138,7 +189,7 @@ public class MyFragment extends BaseFragment {
 
             @Override
             public void onLoadMore() {
-                requestData();
+                requestData(type);
             }
         });
         
@@ -154,6 +205,7 @@ public class MyFragment extends BaseFragment {
         }, new OrderSummaryAdapter.EvaluateClickListener() {
             @Override
             public void onEvaluateClick(View view, int position) {
+                mItemPosition = position;
                 Order order = mOrderList.get(position);
                 ExperienceEvaluateDialogFragment experienceEvaluateDialogFragment;
                 experienceEvaluateDialogFragment = ExperienceEvaluateDialogFragment.newInstance(order);
@@ -163,6 +215,7 @@ public class MyFragment extends BaseFragment {
         }, new OrderSummaryAdapter.PayClickListener() {
             @Override
             public void onPayClick(View view, int position) {
+                mItemPosition = position;
                 Order order = mOrderList.get(position);
                 OrderPaymentDF orderPaymentDF = OrderPaymentDF.newInstance(order);
                 orderPaymentDF.show(getFragmentManager(), "OrderPaymentDF");
@@ -173,7 +226,7 @@ public class MyFragment extends BaseFragment {
 
 
         //show progressImage before loading done
-        progressImageView = view.findViewById(R.id.animal_progress);
+        progressImageView = mDialog.findViewById(R.id.animal_progress);
         animationDrawable = (AnimationDrawable) progressImageView.getDrawable();
         progressImageView.postDelayed(new Runnable() {
             @Override
@@ -183,20 +236,37 @@ public class MyFragment extends BaseFragment {
         }, 50);
     }
     
-    private void requestData() {
+    private void requestData(short type) {
 
         final int page = mOrderList.size() / PAGE_SIZE;
         RequestBody requestBody = new FormBody.Builder()
                 .add("step", String.valueOf(PAGE_SIZE))
                 .add("page", String.valueOf(page))
                 .build();
+        
+        String url = "";
+        Utility.OrderType orderType = Utility.OrderType.getOrderType(type);
+        switch (orderType){
+            case BOOKED:
+                url = GET_MY_BOOKED_ORDERS;
+                break;
+            case UNPAYMENT:
+                url = GET_MY_UNPAID_ORDERS;
+                break;
+            case WAITING_EVALUATION:
+                url = GET_WAITING_FOR_MY_EVALUATION_ORDERS;
+                break;
+            case ALL:
+                url = GET_ALL_ORDERS;
+                break;
+        }
 
-        HttpUtil.sendOkHttpRequest(getContext(), GET_ALL_ORDERS, requestBody, new Callback() {
+        HttpUtil.sendOkHttpRequest(getContext(), url, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
             if (response.body() != null) {
                     String responseText = response.body().string();
-                    if (isDebug) Slog.d(TAG, "==========loadData response text : " + responseText);
+                    if (isDebug) Slog.d(TAG, "==========requestData response text : " + responseText);
                     if (responseText != null && !TextUtils.isEmpty(responseText)) {
                         JSONObject guidesResponse = null;
                         try {
@@ -335,10 +405,17 @@ public class MyFragment extends BaseFragment {
         public void onReceive(Context context, Intent intent) {
             switch (intent.getAction()) {
                 case ORDER_PAYMENT_SUCCESS_BROADCAST:
+                    mOrderList.get(mItemPosition).status = 1;
+                    orderSummaryAdapter.notifyDataSetChanged();
+                    break;
                 case ORDER_SUBMIT_BROADCAST:
-                    mOrderList.clear();
-                    recyclerView.reset();
-                    requestData();
+                    //mOrderList.clear();
+                    //recyclerView.reset();
+                    //requestData();
+                    break;
+                case ORDER_EVALUATE_SUCCESS_BROADCAST:
+                    mOrderList.get(mItemPosition).status = 3;
+                    orderSummaryAdapter.notifyDataSetChanged();
                     break;
             }
         }
@@ -348,6 +425,7 @@ public class MyFragment extends BaseFragment {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ORDER_PAYMENT_SUCCESS_BROADCAST);
         intentFilter.addAction(ORDER_SUBMIT_BROADCAST);
+        intentFilter.addAction(ORDER_EVALUATE_SUCCESS_BROADCAST);
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, intentFilter);
     }
 
@@ -374,34 +452,19 @@ public class MyFragment extends BaseFragment {
         
         unRegisterBroadcast();
     }
-    
-    @Override
-    protected int getLayoutId() {
-        return 0;
-    }
-
-    @Override
-    protected void initView(View view) {
-        return;
-    }
-
-    @Override
-    protected void loadData() {
-        return;
-    }
-    
+       
     static class MyHandler extends Handler {
-        WeakReference<MyFragment> ordersFragmentWeakReference;
+        WeakReference<MyOrdersFragmentDF> myOrdersFragmentDFWeakReference;
 
-        MyHandler(MyFragment ordersFragment) {
-            ordersFragmentWeakReference = new WeakReference<>(ordersFragment);
+        MyHandler(MyOrdersFragmentDF myOrdersFragmentDF) {
+            myOrdersFragmentDFWeakReference = new WeakReference<>(myOrdersFragmentDF);
         }
 
         @Override
         public void handleMessage(Message message) {
-            MyFragment ordersFragment = ordersFragmentWeakReference.get();
-            if (ordersFragment != null) {
-                ordersFragment.handleMessage(message);
+            MyOrdersFragmentDF myOrdersFragmentDF = myOrdersFragmentDFWeakReference.get();
+            if (myOrdersFragmentDF != null) {
+                myOrdersFragmentDF.handleMessage(message);
             }
         }
     }
