@@ -42,9 +42,8 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static android.app.Activity.RESULT_OK;
-import static com.mufu.experience.GuideApplyDialogFragment.WRITE_ROUTE_INFO_SUCCESS;
 import static com.mufu.order.OrderPaymentDF.GET_ORDER_INFO_DONE;
-import static com.mufu.order.QueuedFragment.getOrderManager;
+import static com.mufu.order.OrdersListDF.getOrderManager;
 
 public class OrderDetailsDF extends BaseDialogFragment {
     private static final boolean isDebug = true;
@@ -53,10 +52,10 @@ public class OrderDetailsDF extends BaseDialogFragment {
     private Window window;
     private int mOid;
     private MyHandler myHandler;
-    private MyFragment.Order mOrder;
+    private MyOrdersFragmentDF.Order mOrder;
     public static final String GET_ORDER_BY_OID = HttpUtil.DOMAIN + "?q=order_manager/get_order_by_oid";
     
-    public static OrderDetailsDF newInstance(MyFragment.Order order) {
+    public static OrderDetailsDF newInstance(MyOrdersFragmentDF.Order order) {
         OrderDetailsDF orderDetailsDF = new OrderDetailsDF();
         Bundle bundle = new Bundle();
         bundle.putSerializable("order", order);
@@ -101,7 +100,7 @@ public class OrderDetailsDF extends BaseDialogFragment {
         
         Bundle bundle = getArguments();
         if (bundle != null) {
-            mOrder = (MyFragment.Order) bundle.getSerializable("order");
+            mOrder = (MyOrdersFragmentDF.Order) bundle.getSerializable("order");
 
             if (mOrder == null){
                 mOid = bundle.getInt("oid", 0);
