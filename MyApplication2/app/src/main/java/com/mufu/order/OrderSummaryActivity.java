@@ -42,7 +42,7 @@ import okhttp3.Response;
 
 import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static com.mufu.common.MyApplication.getContext;
-import static com.mufu.order.MyFragment.getOrder;
+import static com.mufu.order.MyOrdersFragmentDF.getOrder;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
 public class OrderSummaryActivity extends BaseAppCompatActivity {
@@ -61,7 +61,7 @@ public class OrderSummaryActivity extends BaseAppCompatActivity {
     private Handler handler;
     private OrderSummaryAdapter orderSummaryAdapter;
     private XRecyclerView recyclerView;
-    private List<MyFragment.Order> mOrderList = new ArrayList<>();
+    private List<MyOrdersFragmentDF.Order> mOrderList = new ArrayList<>();
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,7 +124,7 @@ public class OrderSummaryActivity extends BaseAppCompatActivity {
         orderSummaryAdapter.setItemClickListener(new OrderSummaryAdapter.MyItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                MyFragment.Order order = mOrderList.get(position);
+                MyOrdersFragmentDF.Order order = mOrderList.get(position);
                 OrderDetailsDF orderDetailsDF;
                 //orderDetailsDF = newInstance(order);
                 //orderDetailsDF.setTargetFragment(this, ROUTE_REQUEST_CODE);
@@ -133,7 +133,7 @@ public class OrderSummaryActivity extends BaseAppCompatActivity {
             }, new OrderSummaryAdapter.EvaluateClickListener() {
             @Override
             public void onEvaluateClick(View view, int position) {
-                MyFragment.Order order = mOrderList.get(position);
+                MyOrdersFragmentDF.Order order = mOrderList.get(position);
                 ExperienceEvaluateDialogFragment experienceEvaluateDialogFragment;
                 //experienceEvaluateDialogFragment = ExperienceEvaluateDialogFragment.newInstance(order);
                 //orderDetailsDF.setTargetFragment(this, ROUTE_REQUEST_CODE);
@@ -142,7 +142,7 @@ public class OrderSummaryActivity extends BaseAppCompatActivity {
         }, new OrderSummaryAdapter.PayClickListener() {
             @Override
             public void onPayClick(View view, int position) {
-                MyFragment.Order order = mOrderList.get(position);
+                MyOrdersFragmentDF.Order order = mOrderList.get(position);
                 OrderPaymentDF orderPaymentDF = OrderPaymentDF.newInstance(order);
                 orderPaymentDF.show(getSupportFragmentManager(), "OrderPaymentDF");
             }
@@ -234,7 +234,7 @@ public class OrderSummaryActivity extends BaseAppCompatActivity {
                 for (int i = 0; i < orderArray.length(); i++) {
                     JSONObject orderObject = orderArray.optJSONObject(i);
                     if (orderObject != null) {
-                        MyFragment.Order order = getOrder(orderObject);
+                        MyOrdersFragmentDF.Order order = getOrder(orderObject);
                         mOrderList.add(order);
                     }
                 }
