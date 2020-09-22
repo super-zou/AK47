@@ -19,7 +19,7 @@ import com.bumptech.glide.Glide;
 import com.mufu.R;
 import com.mufu.experience.ExperienceDetailActivity;
 import com.mufu.experience.GuideDetailActivity;
-import com.mufu.order.MyFragment;
+import com.mufu.order.MyOrdersFragmentDF;
 import com.mufu.util.FontManager;
 import com.mufu.util.HttpUtil;
 import com.mufu.util.Utility;
@@ -37,17 +37,20 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
     private static final String TAG = "OrderSummaryAdapter";
     private static Context mContext;
     private int width;
-    private List<MyFragment.Order> mOrderList;
+    private List<MyOrdersFragmentDF.Order> mOrderList;
     private boolean isScrolling = false;
     private MyItemClickListener mItemClickListener;
     private EvaluateClickListener mEvaluateClickListener;
     private PayClickListener mPayClickListener;
+    private static final int UNPAID = 0;
+    private static final int PAID = 1;
+    private static final int EVALUATION = 3;
 
     public OrderSummaryAdapter(Context context) {
         mContext = context;
     }
     
-    public void setData(List<MyFragment.Order> orderList) {
+    public void setData(List<MyOrdersFragmentDF.Order> orderList) {
         mOrderList = orderList;
     }
 
@@ -61,7 +64,7 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
     
     @Override
     public void onBindViewHolder(@NonNull OrderSummaryAdapter.ViewHolder holder, final int position) {
-        final MyFragment.Order order = mOrderList.get(position);
+        final MyOrdersFragmentDF.Order order = mOrderList.get(position);
         setContentView(holder, order);
 
         holder.evaluateBtn.setOnClickListener(new View.OnClickListener() {
@@ -90,7 +93,7 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
         });
     }
     
-    public void setContentView(OrderSummaryAdapter.ViewHolder holder, final MyFragment.Order order){
+    public void setContentView(OrderSummaryAdapter.ViewHolder holder, final MyOrdersFragmentDF.Order order){
 
         if (order.headPictureUrl != null && !"".equals(order.headPictureUrl)) {
             Glide.with(getContext()).load(HttpUtil.DOMAIN + order.headPictureUrl).into(holder.headUri);
@@ -107,22 +110,23 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
             holder.unitTV.setText(order.unit);
         }
 
-        holder.amountTV.setText("x"+order.amount);
+        holder.amountTV.setText("x"+order.amount+"人");
         holder.actualPaymentTV.setText(String.format("%.2f",order.actualPayment));
         holder.appointedDateTV.setText(order.appointmentDate);
         
         switch (order.status){
-            case 0:
+            case UNPAID:
                 holder.unsubscribeBtn.setVisibility(View.GONE);
                 holder.evaluateBtn.setVisibility(View.GONE);
                 holder.payBtn.setVisibility(View.VISIBLE);
                 break;
-            case 1:
+            case PAID:
                 holder.payBtn.setVisibility(View.GONE);
                 holder.unsubscribeBtn.setVisibility(View.VISIBLE);
                 holder.evaluateBtn.setVisibility(View.VISIBLE);
+                holder.evaluateBtn.setText(getContext().getResources().getString(R.string.evaluation));
                 break;
-            case 3:
+            case EVALUATION:
                 holder.unsubscribeBtn.setVisibility(View.GONE);
                 holder.payBtn.setVisibility(View.GONE);
                 holder.evaluateBtn.setVisibility(View.VISIBLE);
@@ -159,7 +163,7 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
           
     }
     
-   private void startActivity(MyFragment.Order order){
+   private void startActivity(MyOrdersFragmentDF.Order order){
         if (order.type == Utility.TalentType.GUIDE.ordinal()){
             Intent intent = new Intent(getContext(), GuideDetailActivity.class);
             intent.putExtra("sid", order.id);
