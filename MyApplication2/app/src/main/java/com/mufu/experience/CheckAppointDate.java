@@ -289,7 +289,7 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
         @Override
         public void decorate(final DayViewFacade view) {
             view.setDaysDisabled(true);
-            view.setBackgroundDrawable(MyApplication.getContext().getResources().getDrawable(R.drawable.sold_out))
+            view.setBackgroundDrawable(MyApplication.getContext().getResources().getDrawable(R.drawable.sold_out));
         }
     }
 
@@ -434,6 +434,11 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
                                     getCompanions();
                                 }
                             });
+                            companionsTV.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    companionsAmountTV.callOnClick();
+                            }
 
                         } else {
                             companionsAmountTV.setText("0");
