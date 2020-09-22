@@ -78,7 +78,7 @@ public class OrdersListAdapter extends RecyclerView.Adapter<OrdersListAdapter.Vi
         });
     }
     
-    public void setContentView(OrdersListDF.ViewHolder holder, final OrdersListDF.OrderManager order){
+    public void setContentView(OrdersListAdapter.ViewHolder holder, final OrdersListDF.OrderManager order){
 
         holder.titleTV.setText(order.title);
         holder.dateTV.setText("预订日期："+order.appointmentDate);
