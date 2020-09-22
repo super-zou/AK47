@@ -439,6 +439,7 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
                                 public void onClick(View view) {
                                     companionsAmountTV.callOnClick();
                             }
+                                });
 
                         } else {
                             companionsAmountTV.setText("0");
