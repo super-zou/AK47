@@ -16,12 +16,13 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
-        android:lineSpacingMultiplier="1.5"
+        android:lineSpacingMultiplier="1.2"
         android:ellipsize="end"
         android:maxLines="3"
-        android:textAppearance="@style/CustomTextNoticeAppearance"
-        android:textSize="16sp"
+        android:textSize="18sp"
         android:textStyle="bold"
+        android:textColor="@color/black"
+        android:textAppearance="@style/TextSourceHanSansAppearance"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -35,6 +36,7 @@
         android:text="date"
         android:textSize="16sp"
         android:textStyle="bold"
+             android:textAppearance="@style/TextSourceHanSansAppearance"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title" />
         
@@ -46,6 +48,7 @@
         android:layout_marginTop="8dp"
         android:text="order_number"
         android:textSize="16sp"
+             android:textAppearance="@style/TextSourceHanSansAppearance"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/date" />
         
@@ -57,6 +60,7 @@
         android:layout_marginBottom="16dp"
         android:text="order_created"
         android:textSize="16sp"
+             android:textAppearance="@style/TextSourceHanSansAppearance"
         app:layout_constraintStart_toStartOf="@+id/title"
         app:layout_constraintTop_toBottomOf="@+id/order_number" />
         
@@ -89,6 +93,7 @@
         android:layout_marginStart="8dp"
         android:text="amount"
         android:textSize="16sp"
+             android:textAppearance="@style/TextSourceHanSansAppearance"
         app:layout_constraintBottom_toBottomOf="@+id/name"
         app:layout_constraintStart_toEndOf="@+id/name"
         app:layout_constraintTop_toTopOf="@+id/name" />
@@ -101,6 +106,7 @@
         android:text="phone_number"
         android:textColor="@color/black"
         android:textSize="16sp"
+            android:textAppearance="@style/TextSourceHanSansAppearance"
         app:layout_constraintStart_toStartOf="@+id/name"
         app:layout_constraintTop_toBottomOf="@+id/name" />
 
