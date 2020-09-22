@@ -21,12 +21,10 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.mufu.R;
 import com.mufu.common.MyApplication;
-import com.mufu.experience.ExperienceSummaryActivity;
 import com.mufu.util.BaseDialogFragment;
 import com.mufu.util.FontManager;
 import com.mufu.util.HttpUtil;
 import com.mufu.util.OrderCodeFactory;
-import com.mufu.util.SharedPreferencesUtils;
 import com.mufu.util.Slog;
 import com.mufu.util.Utility;
 
@@ -56,7 +54,7 @@ public class PlaceOrderDF extends BaseDialogFragment {
     private int mOid;
     private int mSoldAmount;
     private int mMaximumAmount;
-    private MyFragment.Order order;
+    private MyOrdersFragmentDF.Order order;
     private String title;
     private String date;
     private int mAmountPeople = 1;
@@ -71,6 +69,7 @@ public class PlaceOrderDF extends BaseDialogFragment {
     public static final String ORDER_PAYMENT_SUCCESS_BROADCAST = "com.mufu.action.ORDER_PAYMENT_SUCCESS";
     public static final String CONSULT_PAYMENT_SUCCESS_BROADCAST = "com.mufu.action.CONSULT_PAYMENT_SUCCESS";
     public static final String ORDER_SUBMIT_BROADCAST = "com.mufu.action.ORDER_SUBMIT_BROADCAST";
+        public static final String ORDER_EVALUATE_SUCCESS_BROADCAST = "com.mufu.action.ORDER_EVALUATE_SUCCESS_BROADCAST";
     
     public static PlaceOrderDF newInstance(String title, int price, int did, String date, int id, int sold, int maximum, int type) {
         mType = Utility.TalentType.GUIDE.ordinal();
@@ -107,7 +106,7 @@ public class PlaceOrderDF extends BaseDialogFragment {
             mMaximumAmount = bundle.getInt("maximum", 0);
         }
         
-        order = new MyFragment.Order();
+        order = new MyOrdersFragmentDF.Order();
         mReceiver = new OrderStatusBroadcastReceiver();
         
         //uid = SharedPreferencesUtils.getSessionUid(MyApplication.getContext());
