@@ -8,13 +8,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,14 +20,11 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.alipay.sdk.app.PayTask;
-import com.bumptech.glide.Glide;
 import com.mufu.R;
 import com.mufu.common.MyApplication;
 import com.mufu.experience.ExperienceDetailActivity;
-import com.mufu.experience.ExperienceEvaluateDialogFragment;
 import com.mufu.experience.GuideDetailActivity;
 import com.mufu.util.BaseDialogFragment;
-import com.mufu.util.DateUtil;
 import com.mufu.util.FontManager;
 import com.mufu.util.HttpUtil;
 import com.mufu.util.Slog;
@@ -49,7 +44,6 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static android.app.Activity.RESULT_OK;
-import static com.mufu.experience.GuideApplyDialogFragment.WRITE_ROUTE_INFO_SUCCESS;
 import static com.mufu.order.OrderDetailsDF.newInstance;
 import static com.mufu.order.PlaceOrderDF.CONSULT_PAYMENT_SUCCESS_BROADCAST;
 import static com.mufu.order.PlaceOrderDF.ORDER_PAYMENT_SUCCESS_BROADCAST;
@@ -60,7 +54,7 @@ public class OrderPaymentDF extends BaseDialogFragment {
     private Dialog mDialog;
     private Window window;
     private MyHandler myHandler;
-    private MyFragment.Order mOrder;
+    private MyOrdersFragmentDF.Order mOrder;
     private String orderInfo;
     public static final int GET_ORDER_INFO_DONE = 0;
     private static final int SDK_PAY_FLAG = 1;
@@ -68,7 +62,7 @@ public class OrderPaymentDF extends BaseDialogFragment {
     public static final String GET_PAY_ORDER_INFO = HttpUtil.DOMAIN + "?q=payment/get_order_info";
     public static final String UPDATE_ORDER_STATUS = HttpUtil.DOMAIN + "?q=order_manager/update_order_status";
     
-    public static OrderPaymentDF newInstance(MyFragment.Order order) {
+    public static OrderPaymentDF newInstance(MyOrdersFragmentDF.Order order) {
         OrderPaymentDF orderDetailsDF = new OrderPaymentDF();
         Bundle bundle = new Bundle();
         bundle.putSerializable("order", order);
@@ -84,7 +78,7 @@ public class OrderPaymentDF extends BaseDialogFragment {
         mDialog.setContentView(R.layout.order_payment);
         Bundle bundle = getArguments();
         if (bundle != null) {
-            mOrder = (MyFragment.Order) bundle.getSerializable("order");
+            mOrder = (MyOrdersFragmentDF.Order) bundle.getSerializable("order");
         }
         
         mDialog.setCanceledOnTouchOutside(true);
