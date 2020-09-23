@@ -20,6 +20,7 @@
         
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/sold_orders_wrapper"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp"
@@ -223,7 +224,7 @@ app:layout_constraintStart_toEndOf="@+id/waiting_to_pay"
     </androidx.constraintlayout.widget.ConstraintLayout>
     
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:visibility="visible"
+        android:visibility="gone"
         android:id="@+id/revenue_wrapper"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
