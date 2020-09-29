@@ -64,12 +64,29 @@
             android:layout_marginEnd="16dp"
             android:ellipsize="end"
             android:maxLines="2"
-            android:textAppearance="@style/CustomTextNoticeAppearance"
+            android:textAppearance="@style/TextSourceHanSansAppearance"
             android:textSize="15sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+            
+        <TextView
+            android:visibility="gone"
+            android:id="@+id/experience_package_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textColor="@color/divider"
+            android:textAppearance="@style/TextSourceHanSansAppearance"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/experience_title" />
             
             <TextView
             android:id="@+id/cny"
@@ -82,7 +99,7 @@
             android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@+id/experience_title"
-            app:layout_constraintTop_toBottomOf="@+id/experience_title" />
+            app:layout_constraintTop_toBottomOf="@+id/experience_package_title" />
             
              <TextView
             android:id="@+id/price"
