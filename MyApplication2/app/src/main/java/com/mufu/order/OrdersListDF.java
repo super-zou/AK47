@@ -298,6 +298,7 @@ private void requestData(short type) {
             orderManager.price = orderObject.optInt("price");
             orderManager.amount = orderObject.optInt("amount");
             orderManager.title = orderObject.optString("title");
+            orderManager.packageName = orderObject.optString("package_name");
             orderManager.unit = orderObject.optString("unit");
             orderManager.status = orderObject.optInt("status");
             orderManager.appointmentDate = timeStampToDay(orderObject.optInt("date"));
