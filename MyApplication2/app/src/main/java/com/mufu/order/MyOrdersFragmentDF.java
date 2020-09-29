@@ -343,6 +343,7 @@ public class MyOrdersFragmentDF extends BaseDialogFragment {
             order.price = orderObject.optInt("price");
             order.amount = orderObject.optInt("amount");
             order.title = orderObject.optString("title");
+            order.packageName = orderObject.optString("package_name");
             order.unit = orderObject.optString("unit");
             order.status = orderObject.optInt("status");
             order.appointmentDate = timeStampToDay(orderObject.optInt("date"));
@@ -360,6 +361,7 @@ public class MyOrdersFragmentDF extends BaseDialogFragment {
         public String headPictureUrl;
         public int status;
         public String title;
+        public String packageName;
         public String city;
         public int created;
         public int paymentTime;
