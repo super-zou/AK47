@@ -116,6 +116,7 @@ public class OrderPaymentDF extends BaseDialogFragment {
         ConstraintLayout consultOrderPaymentCL = mDialog.findViewById(R.id.consult_order_summary);
 
         TextView titleTV = mDialog.findViewById(R.id.experience_title);
+        TextView packageNameTV = mDialog.findViewById(R.id.experience_package_title);
         TextView priceTV = mDialog.findViewById(R.id.price);
         Button confirmBtn = mDialog.findViewById(R.id.confirm);
         
@@ -124,6 +125,10 @@ public class OrderPaymentDF extends BaseDialogFragment {
             TextView amountTV = mDialog.findViewById(R.id.amount);
 
             titleTV.setText(mOrder.title);
+            if (!TextUtils.isEmpty(mOrder.packageName)){
+                packageNameTV.setVisibility(View.VISIBLE);
+                packageNameTV.setText(mOrder.packageName);
+            }
             priceTV.setText(String.format("%.2f", mOrder.price));
             amountTV.setText(String.valueOf(mOrder.amount));
             totalPriceTV.setText(String.format("%.2f", mOrder.totalPrice));
