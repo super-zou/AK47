@@ -100,6 +100,12 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
         }
 
         holder.titleTV.setText(order.title);
+        if (!TextUtils.isEmpty(order.packageName)){
+            holder.packageNameTV.setVisibility(View.VISIBLE);
+            holder.packageNameTV.setText(order.packageName);
+        }else {
+            holder.packageNameTV.setVisibility(View.GONE);
+        }
         holder.cityTV.setText(order.city);
         holder.moneyTV.setText(String.format("%.2f", order.price));
         holder.totalPriceTV.setText(String.format("%.2f", order.totalPrice));
@@ -190,6 +196,7 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
         PayClickListener payClickListener;
         ImageView headUri;
         TextView titleTV;
+        TextView packageNameTV;
         TextView cityTV;
         TextView totalPriceTV;
         TextView actualPaymentTV;
@@ -208,6 +215,7 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
             itemLayout = view.findViewById(R.id.order_list_item);
             headUri = view.findViewById(R.id.head_picture);
             titleTV = view.findViewById(R.id.guide_title);
+            packageNameTV = view.findViewById(R.id.package_title);
             totalPriceTV = view.findViewById(R.id.total_price);
             cityTV = view.findViewById(R.id.city);
             actualPaymentTV = view.findViewById(R.id.actual_payment);
