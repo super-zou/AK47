@@ -3,6 +3,7 @@ package com.mufu.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -81,6 +82,12 @@ public class OrdersListAdapter extends RecyclerView.Adapter<OrdersListAdapter.Vi
     public void setContentView(OrdersListAdapter.ViewHolder holder, final OrdersListDF.OrderManager order){
 
         holder.titleTV.setText(order.title);
+        if (!TextUtils.isEmpty(order.packageName)){
+            holder.packageNameTV.setVisibility(View.VISIBLE);
+            holder.packageNameTV.setText(order.packageName);
+        }else {
+            holder.packageNameTV.setVisibility(View.GONE);
+        }
         holder.dateTV.setText("预订日期："+order.appointmentDate);
         holder.nameTV.setText(String.valueOf(order.nickname));
         holder.amountTV.setText("x"+order.amount+"人");
@@ -141,6 +148,7 @@ public class OrdersListAdapter extends RecyclerView.Adapter<OrdersListAdapter.Vi
    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         MyItemClickListener mListener;
         TextView titleTV;
+        TextView packageNameTV;
         TextView dateTV;
         TextView nameTV;
         TextView amountTV;
@@ -155,6 +163,7 @@ public class OrdersListAdapter extends RecyclerView.Adapter<OrdersListAdapter.Vi
             itemLayout = view.findViewById(R.id.order_queued_item);
 
             titleTV = view.findViewById(R.id.title);
+            packageNameTV = view.findViewById(R.id.package_title);
             dateTV = view.findViewById(R.id.date);
             nameTV = view.findViewById(R.id.name);
             amountTV = view.findViewById(R.id.amount);
