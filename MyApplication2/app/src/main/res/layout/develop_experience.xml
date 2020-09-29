@@ -9,9 +9,9 @@
     <include
         android:id="@+id/custom_actionbar"
         layout="@layout/custom_actionbar_common"
-        android:layout_margin="16dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp" />
         
         <ScrollView
         android:id="@+id/talent_authentication_scroll"
@@ -270,9 +270,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="32dp"
-                    android:text="@string/price_setting"
                     android:lineSpacingMultiplier="1.2"
-                    android:textAppearance="@style/CustomTextAppearance"
+                    android:text="@string/price_setting"
+                    android:textAppearance="@style/TextSourceHanSansAppearance"
                     android:textColor="@color/black"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/price_desc_title" />
@@ -316,6 +316,21 @@
                     app:layout_constraintStart_toEndOf="@+id/price_setting_edit"
                     app:layout_constraintTop_toTopOf="@+id/cny" />
             </androidx.constraintlayout.widget.ConstraintLayout>
+            
+            <Button
+                    android:id="@+id/package_setting_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:background="@drawable/btn_primary"
+                    android:padding="8dp"
+                    android:text="@string/activity_package_setting"
+                    android:textAppearance="@style/TextSourceHanSansAppearance"
+                    android:textColor="@color/white"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/price_setting_edit" />
+            
             <!--time-->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/time_wrapper"
