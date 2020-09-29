@@ -14,24 +14,34 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-    <com.prolificinteractive.materialcalendarview.MaterialCalendarView
-        android:id="@+id/calendarView"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:padding="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/custom_actionbar"
-        app:mcv_dateTextAppearance="@style/CustomDateAppearance"
-        app:mcv_firstDayOfWeek="monday"
-        app:mcv_headerTextAppearance="@style/CustomTextAppearance"
-        app:mcv_leftArrowMask="@drawable/ic_arrow_back"
-        app:mcv_rightArrowMask="@drawable/ic_arrow_forward"
-        app:mcv_selectionColor="@color/color_blue"
-        app:mcv_selectionMode="single"
-        app:mcv_showOtherDates="all"
-        app:mcv_weekDayTextAppearance="@style/CustomTextAppearance" />
+        app:layout_constraintTop_toBottomOf="@+id/custom_actionbar">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+    <com.prolificinteractive.materialcalendarview.MaterialCalendarView
+                android:id="@+id/calendarView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                app:mcv_dateTextAppearance="@style/CustomDateAppearance"
+                app:mcv_firstDayOfWeek="monday"
+                app:mcv_headerTextAppearance="@style/CustomTextAppearance"
+                app:mcv_leftArrowMask="@drawable/ic_arrow_back"
+                app:mcv_rightArrowMask="@drawable/ic_arrow_forward"
+                app:mcv_selectionColor="@color/color_blue"
+                app:mcv_selectionMode="single"
+                app:mcv_showOtherDates="all"
+                app:mcv_weekDayTextAppearance="@style/CustomTextAppearance" />
+        </LinearLayout>
+    </ScrollView>
     
      <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/select_wrapper"
@@ -40,6 +50,33 @@
         android:background="@color/light_gray"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent">
+         
+         <Button
+             android:id="@+id/package_selector_btn"
+             android:layout_width="wrap_content"
+             android:layout_height="38dp"
+             android:layout_marginTop="16dp"
+             android:layout_marginEnd="16dp"
+             android:background="@drawable/btn_default"
+             android:text="@string/activity_package_selector"
+             android:textColor="@color/blue_dark"
+             android:visibility="gone"
+             app:layout_constraintEnd_toEndOf="parent"
+             app:layout_constraintTop_toTopOf="parent" />
+         
+         <TextView
+             android:id="@+id/package_content"
+             android:visibility="gone"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:layout_marginStart="16dp"
+             android:layout_marginTop="8dp"
+             android:layout_marginEnd="16dp"
+             android:textSize="16sp"
+             android:textColor="@color/black"
+             app:layout_constraintEnd_toEndOf="parent"
+             app:layout_constraintStart_toStartOf="parent"
+             app:layout_constraintTop_toBottomOf="@+id/package_selector_btn" />
 
         <TextView
             android:id="@+id/cny"
@@ -52,10 +89,10 @@
             android:textColor="@color/black"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/package_content" />
          
          <TextView
-             android:id="@+id/amount"
+             android:id="@+id/price"
              android:layout_width="wrap_content"
              android:layout_height="wrap_content"
              android:layout_marginStart="2dp"
@@ -74,7 +111,7 @@
              android:text="@string/unit_divider"
              android:textColor="@color/black"
              android:textSize="18sp"
-             app:layout_constraintStart_toEndOf="@+id/amount"
+             app:layout_constraintStart_toEndOf="@+id/price"
              app:layout_constraintTop_toTopOf="@id/cny"
              app:layout_constraintBottom_toBottomOf="@+id/cny" />
 
@@ -119,17 +156,15 @@
              app:layout_constraintTop_toTopOf="@id/companions" />
          
          <Button
-            android:id="@+id/select"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:text="@string/select"
-            android:textColor="@color/white"
-            android:background="@drawable/btn_primary"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+             android:id="@+id/select"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_marginEnd="8dp"
+             android:layout_marginBottom="8dp"
+             android:background="@drawable/btn_primary"
+             android:text="@string/confirm"
+             android:textColor="@color/white"
+             app:layout_constraintBottom_toBottomOf="parent"
+             app:layout_constraintEnd_toEndOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
