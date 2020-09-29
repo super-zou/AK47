@@ -88,6 +88,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static android.app.Activity.RESULT_OK;
+import static com.mufu.experience.GuideApplyDialogFragment.ROUTE_REQUEST_CODE;
 import static com.mufu.experience.RouteItemEditDF.newInstance;
 
 public class DevelopExperienceDialogFragment extends BaseDialogFragment implements OnDateSelectedListener {
@@ -112,6 +113,7 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
     private static final String MODIFY_APPOINTMENT_DATE_URL = HttpUtil.DOMAIN + "?q=experience/modify_experience_appointment_date";
     private static final String SUBMIT_SELF_INTRODUCTION_URL = HttpUtil.DOMAIN + "?q=experience/write_self_introduction_info";
     private static final String MODIFY_SELF_INTRODUCTION_URL = HttpUtil.DOMAIN + "?q=experience/modify_self_introduction_info";
+        public final static int PACKAGE_REQUEST_CODE = 1;
     private static final int WRITE_BASE_INFO_SUCCESS = 1;
     public static final int SAVE_PICTURES_SUCCESS = 2;
     public static final int SAVE_ITEMS_SUCCESS = 3;
@@ -133,7 +135,8 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
     private Context mContext;
     private String uri;
     private int tid;
-    private int eid = 0;
+    private int mPrice = 0;
+    private int mEid = 0;
     private boolean isSaved = false;
     private boolean isItemsSaved = false;
     private boolean isPriceSaved = false;
@@ -141,6 +144,7 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
     private boolean isGroupCountSaved = false;
     private boolean isAddressSaved = false;
     private boolean isSelfIntroductionSaved = false;
+        private boolean isPackageSaved = false;
     private EditText introductionET;
     private EditText selfIntroductionET;
     private EditText headLineET;
@@ -167,6 +171,7 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
     private EditText consultationChargeNumber;
     private EditText consultationChargeDesc;
     private EditText mChargeAmount;
+        private Button mPackageSettingBtn;
     private EditText addressET;
     private EditText durationET;
     private EditText limitationET;
@@ -261,6 +266,7 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
         mExperienceItemGL = mDialog.findViewById(R.id.contain_items_gridlayout);
         addExperienceItem = mDialog.findViewById(R.id.add_new_item);
         mChargeAmount = mDialog.findViewById(R.id.price_setting_edit);
+                mPackageSettingBtn = mDialog.findViewById(R.id.package_setting_btn);
         durationET = mDialog.findViewById(R.id.duration_edit);
         groupCountET = mDialog.findViewById(R.id.group_count_limit_edit);
         limitationET = mDialog.findViewById(R.id.condition_edit);
@@ -269,11 +275,26 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
         prevBtn = mDialog.findViewById(R.id.prevBtn);
         nextBtn = mDialog.findViewById(R.id.nextBtn);
         
+        mPackageSettingBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //if (mEid > 0){
+                    startPackageSettingDF();
+                //}
+            }
+        });
+        
         selectCity();
         initPictureSelectWidget();
         initExperienceItem();
         initCalendarView();
         navigationProcess();
+    }
+    
+    private void startPackageSettingDF(){
+        PackageSettingDF packageSettingDF = PackageSettingDF.newInstance(mEid, type, isPackageSaved);
+        packageSettingDF.setTargetFragment(this, PACKAGE_REQUEST_CODE);
+        packageSettingDF.show(getFragmentManager(), "PackageSettingDF");
     }
     
      private void navigationProcess() {
@@ -338,7 +359,7 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
 
                             break;
                         case 6:
-                            if (!isPriceSaved && !TextUtils.isEmpty(mChargeAmount.getText().toString())) {
+                            if (!isPriceSaved) {
                                 submitPrice(false);
                             } else {
                                 processNextBtn();
@@ -417,7 +438,7 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
         if (isModified) {
             //authenMap.put("rid", String.valueOf(route.getRid()));
         } else {
-            authenMap.put("eid", String.valueOf(eid));
+            authenMap.put("eid", String.valueOf(mEid));
         }
 
         if (selectList.size() > 0) {
@@ -662,7 +683,7 @@ private void initCityJsondata(String jsonFile) {
                 if (!TextUtils.isEmpty(responseText)) {
                     try {
                         if (!modified) {
-                           eid = new JSONObject(responseText).optInt("eid");
+                           mEid = new JSONObject(responseText).optInt("eid");
                         }
                         dismissProgressDialog();
                         myHandler.sendEmptyMessage(WRITE_BASE_INFO_SUCCESS);
@@ -691,7 +712,7 @@ private void initCityJsondata(String jsonFile) {
             uri = MODIFY_BASE_INFO_URL;
         } else {
             builder = new FormBody.Builder()
-                    .add("eid", String.valueOf(eid))
+                    .add("eid", String.valueOf(mEid))
                     .add("item_string", itemString);
             uri = SAVE_ITEMS_URL;
         }
@@ -725,10 +746,18 @@ private void initCityJsondata(String jsonFile) {
     }
     
     private void submitPrice(boolean isModify) {
+        int price = 0;
         showProgressDialog(getContext().getString(R.string.saving_progress));
+        Slog.d(TAG, "isPackageSaved: "+isPackageSaved+"  mPrice: "+mPrice);
+        if (!TextUtils.isEmpty(mChargeAmount.getText().toString())){
+            price = Integer.parseInt(mChargeAmount.getText().toString());
+        }
+        if (isPackageSaved && mPrice != 0){
+            price = mPrice;
+        }
         FormBody.Builder builder = new FormBody.Builder()
-                .add("eid", String.valueOf(eid))
-                .add("price", mChargeAmount.getText().toString());
+                .add("eid", String.valueOf(mEid))
+                .add("price", String.valueOf(price));
         String uri = SUBMIT_CHARGE_URL;
         if (isModify) {
             uri = MODIFY_CHARGE_URL;
@@ -766,7 +795,7 @@ private void initCityJsondata(String jsonFile) {
     private void submitTime(boolean isModify) {
         showProgressDialog(getContext().getString(R.string.saving_progress));
         FormBody.Builder builder = new FormBody.Builder()
-                .add("eid", String.valueOf(eid))
+                .add("eid", String.valueOf(mEid))
                 .add("duration", durationET.getText().toString());
         String uri = SUBMIT_TIME_URL;
         if (isModify) {
@@ -804,7 +833,7 @@ private void initCityJsondata(String jsonFile) {
     private void submitLimitation(boolean isModify) {
         showProgressDialog(getContext().getString(R.string.saving_progress));
         FormBody.Builder builder = new FormBody.Builder()
-                .add("eid", String.valueOf(eid))
+                .add("eid", String.valueOf(mEid))
                 .add("amount", groupCountET.getText().toString());
         String uri = SUBMIT_LIMITATION_URL;
         if (isModify) {
@@ -841,7 +870,7 @@ private void initCityJsondata(String jsonFile) {
     private void submitAddress(boolean isModify) {
         showProgressDialog(getContext().getString(R.string.saving_progress));
         FormBody.Builder builder = new FormBody.Builder()
-                .add("eid", String.valueOf(eid))
+                .add("eid", String.valueOf(mEid))
                 .add("address", addressET.getText().toString());
         String uri = SUBMIT_ADDRESS_URL;
         if (isModify) {
@@ -892,7 +921,7 @@ private void initCityJsondata(String jsonFile) {
         mSelectedDateList = new ArrayList<>(selectedDateList);
 
         FormBody.Builder builder = new FormBody.Builder()
-                .add("eid", String.valueOf(eid))
+                .add("eid", String.valueOf(mEid))
                 .add("type", String.valueOf(Utility.TalentType.EXPERIENCE.ordinal()))
                 .add("date_string", dateString);
 
@@ -931,7 +960,7 @@ private void initCityJsondata(String jsonFile) {
     private void submitSelfIntroduction(boolean isModify) {
         showProgressDialog(getContext().getString(R.string.saving_progress));
         FormBody.Builder builder = new FormBody.Builder()
-                .add("eid", String.valueOf(eid))
+                .add("eid", String.valueOf(mEid))
                 .add("introduction", selfIntroductionET.getText().toString());
         String uri = SUBMIT_SELF_INTRODUCTION_URL;
         if (isModify) {
@@ -1002,7 +1031,7 @@ private boolean validCheck(int index) {
                 }
                 break;
             case 6:
-                if (!TextUtils.isEmpty(mChargeAmount.getText())) {
+                if (!TextUtils.isEmpty(mChargeAmount.getText()) || isPackageSaved) {
                     valid = true;
                 } else {
                     valid = false;
@@ -1097,6 +1126,11 @@ private boolean validCheck(int index) {
                     adapter.setList(selectList);
                     adapter.notifyDataSetChanged();
                     break;
+                case PACKAGE_REQUEST_CODE:
+                    mPrice = data.getIntExtra("price", 0);
+                    isPackageSaved = true;
+                    mPackageSettingBtn.setText(getContext().getResources().getString(R.string.examine_package_setting));
+                    break;
             }
         }
     }
@@ -1125,7 +1159,7 @@ private boolean validCheck(int index) {
 
     public void startExperienceDetailActivity() {
         Intent intent = new Intent(getContext(), ExperienceDetailActivity.class);
-        intent.putExtra("eid", eid);
+        intent.putExtra("eid", mEid);
         startActivity(intent);
     }
 
