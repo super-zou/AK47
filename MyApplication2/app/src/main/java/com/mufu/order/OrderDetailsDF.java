@@ -120,6 +120,7 @@ public class OrderDetailsDF extends BaseDialogFragment {
         
         ImageView headUri = mDialog.findViewById(R.id.head_picture);
         TextView titleTV = mDialog.findViewById(R.id.guide_title);
+        TextView packageNameTV = mDialog.findViewById(R.id.package_title);
         TextView cityTV = mDialog.findViewById(R.id.city);
         TextView totalPriceTV = mDialog.findViewById(R.id.total_price);
         TextView actualPaymentTV = mDialog.findViewById(R.id.actual_payment);
@@ -141,6 +142,10 @@ public class OrderDetailsDF extends BaseDialogFragment {
 
         titleTV.setText(mOrder.title);
         cityTV.setText(mOrder.city);
+        if (!TextUtils.isEmpty(mOrder.packageName)){
+            packageNameTV.setVisibility(View.VISIBLE);
+            packageNameTV.setText(mOrder.packageName);
+        }
         moneyTV.setText(String.format("%.2f", mOrder.price));
         if (!TextUtils.isEmpty(mOrder.unit)){
             unitTV.setText(mOrder.unit);
