@@ -10,13 +10,16 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -39,6 +42,7 @@ import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateLongClickListener;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 
+import org.angmarch.views.NiceSpinner;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -47,7 +51,9 @@ import org.threeten.bp.LocalDate;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
+import java.util.LinkedList;
+
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -57,9 +63,14 @@ import okhttp3.Response;
 
 import static android.app.Activity.RESULT_OK;
 import static com.mufu.experience.DevelopExperienceDialogFragment.FORMATTER;
+import static com.mufu.experience.DevelopExperienceDialogFragment.PACKAGE_REQUEST_CODE;
+import static com.mufu.experience.PackageSettingDF.GET_PACKAGE_AMOUNT_URL;
+import static com.mufu.experience.PackageSettingDF.GET_PACKAGE_DONE;
+import static com.mufu.experience.PackageSettingDF.GET_PACKAGE_URL;
 import static com.mufu.home.CommonContactsActivity.EXPERIENCE_COMPANION;
 import static com.mufu.order.PlaceOrderDF.ORDER_PAYMENT_SUCCESS_BROADCAST;
 import static com.mufu.util.DateUtil.timeStampToDay;
+import static com.mufu.util.DateUtil.calendarToDate;
 
 public class CheckAppointDate extends BaseDialogFragment implements OnDateSelectedListener, OnDateLongClickListener {
     private static final boolean isDebug = true;
@@ -77,6 +88,10 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
     private String title;
     private String dataStr;
     private Button selectBtn;
+        private String mPackageName;
+    private boolean isPackageSelected = false;
+    private boolean hasPackages = false;
+    private TextView mPackageNameTV;
     private MyHandler myHandler;
     MaterialCalendarView widget;
     private ConstraintLayout selectWrapper;
@@ -88,10 +103,9 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
     private static List<LocalDate> availableLocalDateList = new ArrayList<>();
     private static List<AppointDate> appointDateList = new ArrayList<>();
     private static List<AppointDate> bookabledDateList = new ArrayList<>();
-    private static final int GET_AVAILABLE_APPOINTMENT_DATE_DONE = 1;
+    private static final int GET_AVAILABLE_APPOINTMENT_DATE_DONE = 0;
     public static final String GET_AVAILABLE_APPOINTMENT_DATE = HttpUtil.DOMAIN + "?q=travel_guide/get_available_appointment_date";
     public static final String GET_EXPERIENCE_AVAILABLE_APPOINTMENT_DATE = HttpUtil.DOMAIN + "?q=experience/get_experience_available_appointment_date";
-    public static final String PLACE_ORDER = HttpUtil.DOMAIN + "?q=order_manager/place_order";
 
     public static CheckAppointDate newInstance(int sid, int price, String unit, String title) {
         mType = Utility.TalentType.GUIDE.ordinal();
@@ -161,16 +175,18 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
         statusbarTitle.setText(getContext().getResources().getString(R.string.sliping_to_check));
 
         getAvailableDate();
+        getActivityPackageAmount();
 
-        TextView amountTV = mDialog.findViewById(R.id.amount);
+        TextView priceTV = mDialog.findViewById(R.id.amount);
         TextView unitTV = mDialog.findViewById(R.id.unit);
-        amountTV.setText(String.valueOf(price));
+        priceTV.setText(String.valueOf(price));
         unitTV.setText(unit);
 
         selectWrapper = mDialog.findViewById(R.id.select_wrapper);
         selectBtn = mDialog.findViewById(R.id.select);
         companionsTV = mDialog.findViewById(R.id.companions);
         companionsAmountTV = mDialog.findViewById(R.id.numberOfcompanions);
+        mPackageNameTV = mDialog.findViewById(R.id.package_content);
 
         selectBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -189,6 +205,12 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
         return mDialog;
     }
 
+    private void startPackageSelectorDF(){
+        PackageSelectorDF packageSelectorDF = PackageSelectorDF.newInstance(eid, mType);
+        packageSelectorDF.setTargetFragment(this, PACKAGE_REQUEST_CODE);
+        packageSelectorDF.show(getFragmentManager(), "PackageSelectorDF");
+    }
+    
     private void getCompanions() {
         Intent intent = new Intent(getContext(), CommonContactsActivity.class);
         intent.putExtra("did", did);
@@ -197,13 +219,25 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
     }
 
     private void submitOrder() {
-        PlaceOrderDF placeOrderDF;
-        if (mType == Utility.TalentType.EXPERIENCE.ordinal()) {
-            placeOrderDF = PlaceOrderDF.newInstance(title, price, did, dataStr, eid, mSoldCount, mMaximum, mType);
-        } else {
-            placeOrderDF = PlaceOrderDF.newInstance(title, price, did, dataStr, sid, mSoldCount, mMaximum, mType);
+        PlaceOrderDF placeOrderDF = null;
+        if (hasPackages){
+            if (isPackageSelected){
+                if (mType == Utility.TalentType.EXPERIENCE.ordinal()) {
+                    placeOrderDF = PlaceOrderDF.newInstance(title, mPackageName, price, did, dataStr, eid, mSoldCount, mMaximum, mType);
+                } else {
+                    placeOrderDF = PlaceOrderDF.newInstance(title, mPackageName, price, did, dataStr, sid, mSoldCount, mMaximum, mType);
+                }
+            }else {
+                Toast.makeText(getContext(), "请选择套餐", Toast.LENGTH_LONG).show();
+                return;
+            }
+        }else {
+             if (mType == Utility.TalentType.EXPERIENCE.ordinal()) {
+                placeOrderDF = PlaceOrderDF.newInstance(title, "", price, did, dataStr, eid, mSoldCount, mMaximum, mType);
+            } else {
+                placeOrderDF = PlaceOrderDF.newInstance(title, "", price, did, dataStr, sid, mSoldCount, mMaximum, mType);
+            }
         }
-
         placeOrderDF.show(getFragmentManager(), "PlaceOrderDF");
     }
 
@@ -461,6 +495,40 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
         }
     }
     
+        private void getActivityPackageAmount(){
+        showProgressDialog("");
+
+        RequestBody requestBody = new FormBody.Builder()
+                .add("eid", String.valueOf(eid)).build();
+
+        String uri = GET_PACKAGE_AMOUNT_URL;
+
+        HttpUtil.sendOkHttpRequest(getContext(), uri, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                dismissProgressDialog();
+                String responseText = response.body().string();
+                Slog.d(TAG, "getActivityPackages response : " + responseText);
+                if (!TextUtils.isEmpty(responseText)) {
+                    try {
+                        int amount = new JSONObject(responseText).optInt("amount");
+                        if (amount > 0){
+                            myHandler.sendEmptyMessage(GET_PACKAGE_DONE);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+        });
+    }
+    
+    
     private class OrderStatusBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -489,7 +557,15 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
-
+                                case PACKAGE_REQUEST_CODE:
+                    Slog.d(TAG, "------------>onActivityResult");
+                    mPackageName = data.getStringExtra("name");
+                    price = data.getIntExtra("price", 0);
+                    mPackageNameTV.setVisibility(View.VISIBLE);
+                    mPackageNameTV.setText(mPackageName);
+                    ((TextView)mDialog.findViewById(R.id.price)).setText(String.valueOf(price));
+                    isPackageSelected = true;
+                    break;
             }
         }
     }
@@ -498,6 +574,17 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
         switch (msg.what) {
             case GET_AVAILABLE_APPOINTMENT_DATE_DONE:
                 setAppointDateView();
+                break;
+                       case GET_PACKAGE_DONE:
+                hasPackages = true;
+                Button packageSelectorBtn = mDialog.findViewById(R.id.package_selector_btn);
+                packageSelectorBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        startPackageSelectorDF();
+                    }
+                });
+                packageSelectorBtn.setVisibility(View.VISIBLE);
                 break;
         }
     }
