@@ -53,6 +53,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 
 
 import okhttp3.Call;
@@ -177,7 +178,7 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
         getAvailableDate();
         getActivityPackageAmount();
 
-        TextView priceTV = mDialog.findViewById(R.id.amount);
+        TextView priceTV = mDialog.findViewById(R.id.price);
         TextView unitTV = mDialog.findViewById(R.id.unit);
         priceTV.setText(String.valueOf(price));
         unitTV.setText(unit);
