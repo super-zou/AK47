@@ -45,6 +45,8 @@
     <string name="subject_select_notice">请选择一个主题</string>
         <string name="city_select_notice">请选择一个城市</string>
     <string name="route_name_empty_notice">请输入线路名称</string>
+        <string name="package_name_empty_notice">请输入套餐名称</string>
+    <string name="package_price_empty_notice">请输入套餐价格</string>
     <string name="route_introduction_empty_notice">请描述一下线路</string>
     <string name="route_picture_empty_notice">请选择一些线路照片</string>
     <string name="qr_code_notice">请设置收款二维码</string>
@@ -353,7 +355,11 @@
     <string name="years_old">岁</string>
     <string name="cm">CM</string>
     <string name="location">地点</string>
-    <string name="price_setting">为您开展的体验设置合理且有吸引力的价格</string>
+    <string name="price_setting">为您开展的体验设置合理的价格；如果有多个套餐，请设置套餐</string>
+    <string name="activity_package_setting">+设置套餐</string>
+    <string name="activity_package_title">设置套餐</string>
+    <string name="examine_package_setting">查看套餐</string>
+    <string name="activity_package_selector">+请选择套餐</string>
     <string name="location_guide_desc">选择您提供旅行向导服务的城市？</string>
     <string name="location_experience_desc">您将在哪个城市开展体验？</string>
     <string name="charge_introduction_desc">您可以选择按天或小时收费</string>
