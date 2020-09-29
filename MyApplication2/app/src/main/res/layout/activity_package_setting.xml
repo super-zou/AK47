@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_package_setting"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp"
+    android:background="@color/colorWhite">
+
+    <include
+        android:id="@+id/custom_actionbar"
+        layout="@layout/custom_actionbar_common"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent" />
+        
+    <TextView
+        android:id="@+id/activity_package_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="@string/activity_package_title"
+        android:textAppearance="@style/TextSourceHanSansAppearance"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/custom_actionbar" />
+        
+    <EditText
+        android:id="@+id/activity_package_first_name"
+        style="@style/EditTextCustom"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="套餐名字"
+        android:inputType="textMultiLine"
+        android:textColor="@color/blue_dark"
+        android:textCursorDrawable="@drawable/cursor_color"
+        android:theme="@style/MyEditText"
+        app:layout_constraintEnd_toStartOf="@+id/activity_package_first_price"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/activity_package_title" />
+        
+    <EditText
+        android:id="@+id/activity_package_first_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/EditTextCustom"
+        android:hint="@string/amount_of_money"
+        android:inputType="number"
+        android:textColor="@color/blue_dark"
+        android:textCursorDrawable="@drawable/cursor_color"
+        android:theme="@style/MyEditText"
+        app:layout_constraintStart_toEndOf="@+id/activity_package_first_name"
+        app:layout_constraintEnd_toStartOf="@+id/activity_package_first_unit"
+        app:layout_constraintTop_toTopOf="@+id/activity_package_first_name"
+        app:layout_constraintBottom_toBottomOf="@+id/activity_package_first_name"/>
+        
+    <TextView
+        android:id="@+id/activity_package_first_unit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="元"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="@+id/activity_package_first_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/activity_package_first_name" />
+
+    <EditText
+        android:id="@+id/activity_package_second_name"
+        style="@style/EditTextCustom"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:hint="套餐名字"
+        android:inputType="textMultiLine"
+        android:textColor="@color/blue_dark"
+        android:textCursorDrawable="@drawable/cursor_color"
+        android:theme="@style/MyEditText"
+        app:layout_constraintEnd_toStartOf="@+id/activity_package_second_price"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/activity_package_first_name" />
+
+    <EditText
+        android:id="@+id/activity_package_second_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/EditTextCustom"
+        android:hint="@string/amount_of_money"
+        android:inputType="number"
+        android:textColor="@color/blue_dark"
+        android:textCursorDrawable="@drawable/cursor_color"
+        android:theme="@style/MyEditText"
+        app:layout_constraintStart_toEndOf="@+id/activity_package_second_name"
+        app:layout_constraintEnd_toStartOf="@+id/activity_package_second_unit"
+        app:layout_constraintTop_toTopOf="@+id/activity_package_second_name"
+        app:layout_constraintBottom_toBottomOf="@+id/activity_package_second_name"/>
+        
+    <TextView
+        android:id="@+id/activity_package_second_unit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="元"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="@+id/activity_package_second_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/activity_package_second_name" />
+        
+    <EditText
+        android:id="@+id/activity_package_third_name"
+        style="@style/EditTextCustom"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:hint="套餐名字"
+        android:inputType="textMultiLine"
+        android:textColor="@color/blue_dark"
+        android:textCursorDrawable="@drawable/cursor_color"
+        android:theme="@style/MyEditText"
+        app:layout_constraintEnd_toStartOf="@+id/activity_package_third_price"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/activity_package_second_name" />
+        
+    <EditText
+        android:id="@+id/activity_package_third_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/EditTextCustom"
+        android:hint="@string/amount_of_money"
+        android:inputType="number"
+        android:textColor="@color/blue_dark"
+        android:textCursorDrawable="@drawable/cursor_color"
+        android:theme="@style/MyEditText"
+        app:layout_constraintStart_toEndOf="@+id/activity_package_third_name"
+        app:layout_constraintEnd_toStartOf="@+id/activity_package_third_unit"
+        app:layout_constraintTop_toTopOf="@+id/activity_package_third_name"
+        app:layout_constraintBottom_toBottomOf="@+id/activity_package_third_name"/>
+        
+    <TextView
+        android:id="@+id/activity_package_third_unit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="元"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="@+id/activity_package_third_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/activity_package_third_name" />
+        
+    <Button
+        android:id="@+id/save_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:background="@drawable/btn_primary"
+        android:text="@string/save"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/activity_package_third_name" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
