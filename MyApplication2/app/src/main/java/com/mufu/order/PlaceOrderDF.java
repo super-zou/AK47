@@ -10,6 +10,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
@@ -57,6 +58,7 @@ public class PlaceOrderDF extends BaseDialogFragment {
     private MyOrdersFragmentDF.Order order;
     private String title;
     private String date;
+    private String mPackageName = "";
     private int mAmountPeople = 1;
     private Button submitOrderBtn;
     private TextView totalPriceTV;
@@ -71,11 +73,14 @@ public class PlaceOrderDF extends BaseDialogFragment {
     public static final String ORDER_SUBMIT_BROADCAST = "com.mufu.action.ORDER_SUBMIT_BROADCAST";
         public static final String ORDER_EVALUATE_SUCCESS_BROADCAST = "com.mufu.action.ORDER_EVALUATE_SUCCESS_BROADCAST";
     
-    public static PlaceOrderDF newInstance(String title, int price, int did, String date, int id, int sold, int maximum, int type) {
+    public static PlaceOrderDF newInstance(String title, String packageName, int price, int did, String date, int id, int sold, int maximum, int type) {
         mType = Utility.TalentType.GUIDE.ordinal();
         PlaceOrderDF checkAppointDate = new PlaceOrderDF();
         Bundle bundle = new Bundle();
         bundle.putString("title", title);
+        if (!TextUtils.isEmpty(packageName)){
+            bundle.putString("packageName", packageName);
+        }
         bundle.putInt("price", price);
         bundle.putInt("did", did);
         bundle.putInt("type", type);
@@ -104,6 +109,10 @@ public class PlaceOrderDF extends BaseDialogFragment {
             id = bundle.getInt("id", 0);
             mSoldAmount = bundle.getInt("sold", 0);
             mMaximumAmount = bundle.getInt("maximum", 0);
+            
+            if (!TextUtils.isEmpty(bundle.getString("packageName", ""))){
+                mPackageName = bundle.getString("packageName");
+            }
         }
         
         order = new MyOrdersFragmentDF.Order();
@@ -130,10 +139,15 @@ public class PlaceOrderDF extends BaseDialogFragment {
         totalPriceTV = mDialog.findViewById(R.id.total_price);
         totalAmountTV = mDialog.findViewById(R.id.total_amount);
         TextView titleTV = mDialog.findViewById(R.id.experience_title);
+        TextView packageNameTV = mDialog.findViewById(R.id.experience_package);
         TextView dateTV = mDialog.findViewById(R.id.appointment_date);
         TextView priceTV = mDialog.findViewById(R.id.price);
         TextView remainingTV = mDialog.findViewById(R.id.remaining_amount);
         TextView maximumTV = mDialog.findViewById(R.id.maximum_amount);
+        if (!TextUtils.isEmpty(mPackageName)){
+            packageNameTV.setVisibility(View.VISIBLE);
+            packageNameTV.setText(mPackageName);
+        }
         titleTV.setText(title);
         dateTV.setText(date);
         priceTV.setText(String.valueOf(price));
@@ -212,6 +226,7 @@ public class PlaceOrderDF extends BaseDialogFragment {
         order.title = title;
         order.price = price;
         order.id = id;
+        order.packageName = mPackageName;
         order.amount = mAmountPeople;
         order.number = getOrderNumber(Utility.TalentType.EXPERIENCE.ordinal());
         order.totalPrice = mAmountPeople * price;
@@ -229,6 +244,7 @@ public class PlaceOrderDF extends BaseDialogFragment {
                 .add("total_price", totalPriceTV.getText().toString())
                 .add("type", String.valueOf(mType))
                 .add("id", String.valueOf(id))
+                .add("package_name", String.valueOf(mPackageName))
                 .build();
 
         HttpUtil.sendOkHttpRequest(getContext(), PLACE_ORDER, requestBody, new Callback() {
