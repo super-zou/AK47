@@ -94,6 +94,8 @@ public class OrdersListAdapter extends RecyclerView.Adapter<OrdersListAdapter.Vi
         holder.orderNumberTV.setText("订单编号："+order.number);
         holder.orderCreatedTV.setText("下单时间："+timeStampToMinute(order.created));
         holder.phoneTV.setText(order.phone);
+        holder.universityTV.setText(order.university);
+        holder.majorTV.setText(order.major);
 
         if (order.avatar != null && !"".equals(order.avatar)) {
             Glide.with(getContext()).load(HttpUtil.DOMAIN + order.avatar).into(holder.avatarImg);
@@ -122,6 +124,13 @@ public class OrdersListAdapter extends RecyclerView.Adapter<OrdersListAdapter.Vi
             }
         });
     }
+    
+    holder.customerWrapper.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                holder.avatarImg.callOnClick();
+            }
+    });
 
     private void startActivity(MyOrdersFragmentDF.Order order){
         Slog.d(TAG, "------------------>type: "+order.type+"      id: "+order.id);
@@ -156,6 +165,9 @@ public class OrdersListAdapter extends RecyclerView.Adapter<OrdersListAdapter.Vi
         TextView orderCreatedTV;
         RoundImageView avatarImg;
         TextView phoneTV;
+        TextView universityTV;
+        TextView majorTV;
+        ConstraintLayout customerWrapper;
         ConstraintLayout itemLayout;
         
         public ViewHolder(View view, MyItemClickListener myItemClickListener) {
@@ -171,6 +183,9 @@ public class OrdersListAdapter extends RecyclerView.Adapter<OrdersListAdapter.Vi
             orderCreatedTV = view.findViewById(R.id.order_created);
             avatarImg = view.findViewById(R.id.avatar_image);
             phoneTV = view.findViewById(R.id.phone_number);
+            universityTV = view.findViewById(R.id.university);
+            majorTV = view.findViewById(R.id.major);
+            customerWrapper = view.findViewById(R.id.customer_wrapper);
 
             //将全局的监听赋值给接口
             this.mListener = myItemClickListener;
