@@ -48,7 +48,7 @@ public class SettingsActivity extends BaseAppCompatActivity {
     public static final String NO_NEW_VERSION_BROADCAST = "com.tongmenhui.action.NO_NEW_VERSION";
     public static final String HAD_NEW_VERSION_BROADCAST = "com.tongmenhui.action.HAD_NEW_VERSION";
     public static final int GET_DOWNLOAD_URI_DOWN = 0;
-    public static final int GET_ADMIN_ROLE_DOWN = 2;
+    public static final int GET_ADMIN_ROLE_DOWN = 7;
     public static final String GET_ADMIN_ROLE_URL = HttpUtil.DOMAIN + "?q=user_extdata/get_admin_role";
     private static final String TAG = "SettingsActivity";
     private MyHandler myHandler;
