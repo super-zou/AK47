@@ -89,6 +89,7 @@ public class ExperienceDetailActivity extends BaseAppCompatActivity implements C
     public static final int GET_DURATION_INFO_DONE = 8;
     public static final int GET_APPOINTMENT_DATE_DONE = 9;
     public static final int GET_SELF_INTRODUCTION_DONE = 10;
+    public static final int GET_PACKAGE_AMOUNT_DONE = 11;
     
     final int itemLimit = 3;
     ImageView progressImageView;
