@@ -66,7 +66,7 @@ public class MyOrdersFragmentDF extends BaseDialogFragment {
     private static final boolean isDebug = true;
     private static final String TAG = "MyOrdersFragmentDF";
     private static final int PAGE_SIZE = 8;
-    private static final String GET_ALL_ORDERS = HttpUtil.DOMAIN + "?q=order_manager/get_all_orders";
+    private static final String GET_MY_ALL_ORDERS = HttpUtil.DOMAIN + "?q=order_manager/get_my_all_orders";
     private static final String GET_MY_UNPAID_ORDERS = HttpUtil.DOMAIN + "?q=order_manager/get_my_unpaid_orders";
     private static final String GET_MY_BOOKED_ORDERS = HttpUtil.DOMAIN + "?q=order_manager/get_my_booked_orders";
     private static final String GET_WAITING_FOR_MY_EVALUATION_ORDERS = HttpUtil.DOMAIN + "?q=order_manager/get_waiting_for_my_evaluation_orders";
@@ -130,7 +130,7 @@ public class MyOrdersFragmentDF extends BaseDialogFragment {
                 case WAITING_EVALUATION:
                     titleTV.setText(getContext().getResources().getString(R.string.waiting_for_evaluation_orders));
                     break;
-                case ALL:
+                case MY_ALL:
                     titleTV.setText(getContext().getResources().getString(R.string.all_orders));
                     break;
             }
@@ -256,8 +256,8 @@ public class MyOrdersFragmentDF extends BaseDialogFragment {
             case WAITING_EVALUATION:
                 url = GET_WAITING_FOR_MY_EVALUATION_ORDERS;
                 break;
-            case ALL:
-                url = GET_ALL_ORDERS;
+            case MY_ALL:
+                url = GET_MY_ALL_ORDERS;
                 break;
         }
 
