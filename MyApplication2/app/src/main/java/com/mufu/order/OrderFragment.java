@@ -13,6 +13,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -41,6 +42,8 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static com.mufu.common.SettingsActivity.GET_ADMIN_ROLE_DOWN;
+import static com.mufu.common.SettingsActivity.GET_ADMIN_ROLE_URL;
 import static com.mufu.main.MeetArchiveFragment.GET_EXPERIENCE_STATISTICS_URL;
 import static com.mufu.main.MeetArchiveFragment.GET_GUIDE_STATISTICS_URL;
 import static com.mufu.main.MeetArchiveFragment.LOAD_MY_EXPERIENCES_DONE;
@@ -56,6 +59,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener{
     private int myExperienceSize = 0;
     private int myGuideCount = 0;
     private int mUid = 0;
+    private int mRole = 0;
     private static final int GET_TODAY_ORDERS_AMOUNT_DONE = 0;
     private static final int GET_QUEUED_ORDERS_AMOUNT_DONE = 1;
     private static final int GET_FINISHED_ORDERS_AMOUNT_DONE = 2;
@@ -84,6 +88,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener{
     private TextView mWaitingForMyEvaluationOrdersAmountTV;
     private OrderStatusBroadcastReceiver mReceiver;
     private ConstraintLayout revenueWrapper;
+    private Button mGetAllOrdersBtn;
     
     @Nullable
     @Override
@@ -108,15 +113,18 @@ public class OrderFragment extends Fragment implements View.OnClickListener{
         mMyAllOrdersTV = view.findViewById(R.id.all_orders);
         mMyAllOrdersNavTV = view.findViewById(R.id.all_orders_nav);
         mWaitingForMyEvaluationOrdersAmountTV = view.findViewById(R.id.waiting_for_evaluation_amount);
+        mGetAllOrdersBtn = view.findViewById(R.id.get_all_orders_btn);
 
-        mMyAllOrdersTV.setOnClickListener(this::onClick);
+        mMyAllOrdersTV.setOnClickListener(this);
         mMyAllOrdersNavTV.setOnClickListener(this);
+        mGetAllOrdersBtn.setOnClickListener(this);
 
 
         getMyOrdersAmount();
         loadMyExperiencesCount();
         loadMyGuidesCount();
         processMyRevenue();
+        getAdminRole();
 
         registerBroadcast();
     }
@@ -494,6 +502,28 @@ if (responseText != null && !TextUtils.isEmpty(responseText)) {
         normalDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.color_blue));
         normalDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextSize(18);
     }
+    
+    private void getAdminRole() {
+        RequestBody requestBody = new FormBody.Builder().build();
+        HttpUtil.sendOkHttpRequest(getContext(), GET_ADMIN_ROLE_URL, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String responseText = response.body().string();
+                try {
+                    mRole = new JSONObject(responseText).optInt("role");
+                    if (mRole >= 0){
+                        handler.sendEmptyMessage(GET_ADMIN_ROLE_DOWN);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+            }
+        });
+    }
 
     public void handleMessage(Message message) {
         Bundle bundle = message.getData();
@@ -535,6 +565,9 @@ if (responseText != null && !TextUtils.isEmpty(responseText)) {
                 revenueWrapper.setVisibility(View.VISIBLE);
                 int revenue = bundle.getInt("revenue");
                 setMyRevenueView(revenue);
+                break;
+            case GET_ADMIN_ROLE_DOWN:
+                mGetAllOrdersBtn.setVisibility(View.VISIBLE);
                 break;
             default:
                 break;
@@ -579,9 +612,14 @@ if (responseText != null && !TextUtils.isEmpty(responseText)) {
                 break;
                 case R.id.all_orders:
             case R.id.all_orders_nav:
-                bundle.putShort("type", (short)Utility.OrderType.ALL.getType());
+                bundle.putShort("type", (short)Utility.OrderType.MY_ALL.getType());
                 myOrdersFragmentDF.setArguments(bundle);
                 myOrdersFragmentDF.show(getFragmentManager(), "MyOrdersFragmentDF");
+                break;
+            case R.id.get_all_orders_btn:
+                bundle.putShort("type", (short)Utility.OrderType.ALL_SOLD.getType());
+                queuedFragmentDF.setArguments(bundle);
+                queuedFragmentDF.show(getFragmentManager(), "OrdersListDF");
                 break;
         }
 
