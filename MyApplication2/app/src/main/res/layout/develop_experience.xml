@@ -315,7 +315,6 @@
                     app:layout_constraintBottom_toBottomOf="@+id/cny"
                     app:layout_constraintStart_toEndOf="@+id/price_setting_edit"
                     app:layout_constraintTop_toTopOf="@+id/cny" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
             
             <Button
                     android:id="@+id/package_setting_btn"
@@ -330,6 +329,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/price_setting_edit" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
             
             <!--time-->
             <androidx.constraintlayout.widget.ConstraintLayout
