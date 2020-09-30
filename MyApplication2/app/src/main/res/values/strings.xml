@@ -359,7 +359,9 @@
     <string name="activity_package_setting">+设置套餐</string>
     <string name="activity_package_title">设置套餐</string>
     <string name="examine_package_setting">查看套餐</string>
+        <string name="modify_package_setting">修改套餐</string>
     <string name="activity_package_selector">+请选择套餐</string>
+    <string name="get_all_orders">查看全部订单</string>
     <string name="location_guide_desc">选择您提供旅行向导服务的城市？</string>
     <string name="location_experience_desc">您将在哪个城市开展体验？</string>
     <string name="charge_introduction_desc">您可以选择按天或小时收费</string>
