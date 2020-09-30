@@ -57,6 +57,7 @@ public class OrdersListDF extends BaseDialogFragment {
     private static final String GET_TODAY_ORDERS = HttpUtil.DOMAIN + "?q=order_manager/get_today_orders";
     private static final String GET_QUEUED_ORDERS = HttpUtil.DOMAIN + "?q=order_manager/get_queued_orders";
     public static final String GET_FINISHED_ORDERS = HttpUtil.DOMAIN + "?q=order_manager/get_finished_orders";
+    private static final String GET_ALL_ORDERS = HttpUtil.DOMAIN + "?q=order_manager/get_all_orders";
     private static final int GET_ALL_DONE = 1;
     private static final int GET_ALL_END = 2;
     private static final int NO_MORE = 3;
@@ -110,6 +111,9 @@ public class OrdersListDF extends BaseDialogFragment {
                     break;
                 case TODAY:
                     titleTV.setText(getContext().getResources().getString(R.string.today_development));
+                    break;
+                case ALL_SOLD:
+                    titleTV.setText(getContext().getResources().getString(R.string.all_orders));
                     break;
             }
             initContentView(type);
@@ -203,10 +207,20 @@ private void requestData(short type) {
 
         String url = GET_QUEUED_ORDERS;
 
-        if (type == Utility.OrderType.FINISHED.ordinal()){
-            url = GET_FINISHED_ORDERS;
-        }else if (type == Utility.OrderType.TODAY.ordinal()){
-            url = GET_TODAY_ORDERS;
+        Utility.OrderType orderType = Utility.OrderType.getOrderType(type);
+        switch (orderType){
+            case TODAY:
+                url = GET_TODAY_ORDERS;
+                break;
+            case QUEUED:
+                url = GET_QUEUED_ORDERS;
+                break;
+            case FINISHED:
+                url = GET_FINISHED_ORDERS;
+                break;
+            case ALL_SOLD:
+                url = GET_ALL_ORDERS;
+                break;
         }
         
         HttpUtil.sendOkHttpRequest(getContext(), url, requestBody, new Callback() {
@@ -282,6 +296,8 @@ private void requestData(short type) {
         public int uid;
         public String phone;
         public String appointMentDate;
+        public String university;
+        public String major;
     }
 
     public static OrderManager getOrderManager(JSONObject orderObject) {
@@ -309,6 +325,8 @@ private void requestData(short type) {
             orderManager.avatar = orderObject.optString("avatar");
             orderManager.phone = orderObject.optString("account");
             orderManager.appointMentDate = timeStampToDay(orderObject.optInt("date"));
+            orderManager.university = orderObject.optString("university");
+            orderManager.major = orderObject.optString("major");
         }
 
        return orderManager;
