@@ -15,6 +15,7 @@ import com.mufu.R;
 import com.mufu.common.MyApplication;
 import com.mufu.util.BaseDialogFragment;
 import com.mufu.util.FontManager;
+import com.mufu.util.Utility;
 
 public class ExperienceTalentApplyDF extends BaseDialogFragment {
     private static final boolean isDebug = true;
@@ -65,6 +66,9 @@ developExperienceDF();
 
    public void developExperienceDF(){
         DevelopExperienceDialogFragment developExperienceDialogFragment = new DevelopExperienceDialogFragment();
+       Bundle bundle = new Bundle();
+       bundle.putInt("type", Utility.TalentType.EXPERIENCE.ordinal());
+       developExperienceDialogFragment.setArguments(bundle);
         developExperienceDialogFragment.show(getFragmentManager(), "DevelopExperienceDialogFragment");
     }
 
