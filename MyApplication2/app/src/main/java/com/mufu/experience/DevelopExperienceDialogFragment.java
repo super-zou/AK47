@@ -144,7 +144,8 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
     private boolean isGroupCountSaved = false;
     private boolean isAddressSaved = false;
     private boolean isSelfIntroductionSaved = false;
-        private boolean isPackageSaved = false;
+    private boolean isPackageModified = false;
+    private boolean hasPackage = false;
     private EditText introductionET;
     private EditText selfIntroductionET;
     private EditText headLineET;
@@ -292,7 +293,7 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
     }
     
     private void startPackageSettingDF(){
-        PackageSettingDF packageSettingDF = PackageSettingDF.newInstance(mEid, type, isPackageSaved);
+        PackageSettingDF packageSettingDF = PackageSettingDF.newInstance(mEid, type, mPrice==0 ? false:true);
         packageSettingDF.setTargetFragment(this, PACKAGE_REQUEST_CODE);
         packageSettingDF.show(getFragmentManager(), "PackageSettingDF");
     }
@@ -362,7 +363,20 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
                             if (!isPriceSaved) {
                                 submitPrice(false);
                             } else {
-                                processNextBtn();
+                                if (hasPackage){
+                                    if(isPackageModified){
+                                        submitPrice(true);
+                                        isPackageModified = false;
+                                    }else {
+                                        processNextBtn();
+                                    }
+                                }else {
+                                    if (mPrice != Integer.parseInt(mChargeAmount.getText().toString())){
+                                        submitPrice(true);
+                                    }else {
+                                        processNextBtn();
+                                    }
+                                }
                             }
                             break;
                        case 7:
@@ -748,12 +762,13 @@ private void initCityJsondata(String jsonFile) {
     private void submitPrice(boolean isModify) {
         int price = 0;
         showProgressDialog(getContext().getString(R.string.saving_progress));
-        Slog.d(TAG, "isPackageSaved: "+isPackageSaved+"  mPrice: "+mPrice);
-        if (!TextUtils.isEmpty(mChargeAmount.getText().toString())){
-            price = Integer.parseInt(mChargeAmount.getText().toString());
-        }
-        if (isPackageSaved && mPrice != 0){
+        if (hasPackage){
             price = mPrice;
+        }else {
+            if (!TextUtils.isEmpty(mChargeAmount.getText().toString())){
+                price = Integer.parseInt(mChargeAmount.getText().toString());
+                mPrice = price;
+            }
         }
         FormBody.Builder builder = new FormBody.Builder()
                 .add("eid", String.valueOf(mEid))
@@ -1031,7 +1046,7 @@ private boolean validCheck(int index) {
                 }
                 break;
             case 6:
-                if (!TextUtils.isEmpty(mChargeAmount.getText()) || isPackageSaved) {
+                if (!TextUtils.isEmpty(mChargeAmount.getText()) || mPrice != 0) {
                     valid = true;
                 } else {
                     valid = false;
@@ -1127,8 +1142,9 @@ private boolean validCheck(int index) {
                     adapter.notifyDataSetChanged();
                     break;
                 case PACKAGE_REQUEST_CODE:
+                    hasPackage = true;
                     mPrice = data.getIntExtra("price", 0);
-                    isPackageSaved = true;
+                    isPackageModified = data.getBooleanExtra("isPackageModified", false);
                     mPackageSettingBtn.setText(getContext().getResources().getString(R.string.examine_package_setting));
                     break;
             }
