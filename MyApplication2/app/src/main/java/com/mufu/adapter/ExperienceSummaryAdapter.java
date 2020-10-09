@@ -24,6 +24,7 @@ import com.mufu.experience.ExperienceSummaryActivity;
 import com.mufu.experience.modify.ModifyExperienceDF;
 import com.mufu.util.FontManager;
 import com.mufu.util.HttpUtil;
+import com.mufu.util.Utility;
 
 import java.util.List;
 
@@ -83,6 +84,7 @@ public class ExperienceSummaryAdapter extends RecyclerView.Adapter<ExperienceSum
                     ModifyExperienceDF modifyExperienceDialogFragment = new ModifyExperienceDF();
                     Bundle bundle = new Bundle();
                     bundle.putInt("eid", experience.eid);
+                    bundle.putInt("type", Utility.TalentType.EXPERIENCE.ordinal());
                     modifyExperienceDialogFragment.setArguments(bundle);
                     modifyExperienceDialogFragment.show(((BaseAppCompatActivity)mContext).getSupportFragmentManager(), "ModifyExperienceDF");
                 }
