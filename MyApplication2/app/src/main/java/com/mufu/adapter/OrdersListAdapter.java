@@ -123,15 +123,15 @@ public class OrdersListAdapter extends RecyclerView.Adapter<OrdersListAdapter.Vi
                 holder.avatarImg.callOnClick();
             }
         });
-    }
-    
-    holder.customerWrapper.setOnClickListener(new View.OnClickListener() {
+        
+        holder.customerWrapper.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 holder.avatarImg.callOnClick();
             }
-    });
-
+       });
+    }
+    
     private void startActivity(MyOrdersFragmentDF.Order order){
         Slog.d(TAG, "------------------>type: "+order.type+"      id: "+order.id);
         if (order.type == Utility.TalentType.GUIDE.ordinal()){
