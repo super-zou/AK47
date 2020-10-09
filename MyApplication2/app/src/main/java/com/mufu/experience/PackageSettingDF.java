@@ -74,7 +74,7 @@ public class PackageSettingDF extends BaseDialogFragment {
     private int mThirdPackagePrice = 0;
     private MultipartBody.Builder mMultipartBodyBuilder;
     private static final int SAVE_PACKAGE_DONE = 0;
-    public static final int GET_PACKAGE_DONE = 1;
+    public static final int GET_PACKAGE_DONE = 20;
     private int mPid = 0;
     private Button modify;
     private int mType;
@@ -356,6 +356,7 @@ public class PackageSettingDF extends BaseDialogFragment {
         if (getTargetFragment() != null) {
             Intent intent = new Intent();
             intent.putExtra("price", mMinPrice);
+            intent.putExtra("isModified", isModified);
             getTargetFragment().onActivityResult(PACKAGE_REQUEST_CODE, RESULT_OK, intent);
         }
     }
