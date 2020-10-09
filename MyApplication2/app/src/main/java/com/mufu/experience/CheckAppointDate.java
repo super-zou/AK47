@@ -258,7 +258,15 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
         widget.setOnDateChangedListener(this);
         widget.setOnDateLongClickListener(this);
         final LocalDate min = LocalDate.of(today.getYear(), today.getMonth(), today.getDay());
-        final LocalDate max = LocalDate.of(today.getYear(), today.getMonth() + 3, today.getDay());
+        
+        int month = today.getMonth() + 2;
+        int year = today.getYear();
+        if (month > 12){
+            year += 1;
+            month = month - 12;
+        }
+
+        final LocalDate max = LocalDate.of(year, month, today.getDay());
         widget.addDecorator(new AvailableDecorator());
         widget.addDecorator(new DayDisabledDecorator());
         widget.addDecorator(new DaySoldOutDecorator());
