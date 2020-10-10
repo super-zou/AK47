@@ -282,7 +282,8 @@ public class ModifyExperienceDF extends BaseDialogFragment implements OnDateSele
     }
     
     private void startPackageSettingDF(){
-        PackageSettingDF packageSettingDF = PackageSettingDF.newInstance(mEid, mType, true);
+        boolean isPackageSaved = hasPackage ? true:false;
+        PackageSettingDF packageSettingDF = PackageSettingDF.newInstance(mEid, mType, isPackageSaved);
         packageSettingDF.setTargetFragment(this, PACKAGE_REQUEST_CODE);
         packageSettingDF.show(getFragmentManager(), "PackageSettingDF");
     }
