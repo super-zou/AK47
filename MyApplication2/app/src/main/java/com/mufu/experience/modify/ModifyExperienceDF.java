@@ -42,6 +42,7 @@ import com.mufu.dynamics.AddDynamicsActivity;
 import com.mufu.experience.CheckAppointDate;
 import com.mufu.experience.ExperienceDetailActivity;
 import com.mufu.main.FullyGridLayoutManager;
+import com.mufu.experience.PackageSettingDF;
 import com.mufu.picture.GlideEngine;
 import com.mufu.util.BaseDialogFragment;
 import com.mufu.util.CommonBean;
@@ -84,6 +85,7 @@ import okhttp3.Response;
 import static android.app.Activity.RESULT_OK;
 import static com.mufu.experience.CheckAppointDate.GET_EXPERIENCE_AVAILABLE_APPOINTMENT_DATE;
 import static com.mufu.experience.DevelopExperienceDialogFragment.FORMATTER;
+import static com.mufu.experience.DevelopExperienceDialogFragment.PACKAGE_REQUEST_CODE;
 import static com.mufu.experience.ExperienceDetailActivity.GET_APPOINTMENT_DATE_DONE;
 import static com.mufu.experience.ExperienceDetailActivity.GET_BANNER_PICTURES;
 import static com.mufu.experience.ExperienceDetailActivity.GET_BANNER_PICTURES_DONE;
@@ -98,6 +100,8 @@ import static com.mufu.experience.ExperienceDetailActivity.GET_LIMIT_INFO;
 import static com.mufu.experience.ExperienceDetailActivity.GET_LIMIT_INFO_DONE;
 import static com.mufu.experience.ExperienceDetailActivity.GET_SELF_INTRODUCTION_DONE;
 import static com.mufu.util.DateUtil.timeStampToDay;
+import static com.mufu.experience.PackageSettingDF.GET_PACKAGE_AMOUNT_URL;
+import static com.mufu.experience.PackageSettingDF.GET_PACKAGE_DONE;
 
 public class ModifyExperienceDF extends BaseDialogFragment implements OnDateSelectedListener {
     private static final boolean isDebug = true;
@@ -136,7 +140,6 @@ public class ModifyExperienceDF extends BaseDialogFragment implements OnDateSele
     private JSONArray itemJsonArray;
     private String mSavedItemString = "";
     private String mIntroduction;
-    private int eid = 0;
     private EditText introductionET;
     private EditText selfIntroductionET;
     
@@ -151,6 +154,10 @@ public class ModifyExperienceDF extends BaseDialogFragment implements OnDateSele
     private Button prevBtn;
     private Button nextBtn;
     private int index = 1;
+    private int mEid = 0;
+    private int mType;
+    private int mPrice = 0;
+    private boolean hasPackage = false;
     
     private List<LocalMedia> selectList = new ArrayList<>();
     private List<LocalMedia> newAddList = new ArrayList<>();
@@ -163,6 +170,7 @@ public class ModifyExperienceDF extends BaseDialogFragment implements OnDateSele
     private EditText addressET;
     private EditText durationET;
     private Window window;
+    private Button mPackageSettingBtn;
     
     private boolean isCityPicked = false;
     private Typeface font;
@@ -190,7 +198,8 @@ public class ModifyExperienceDF extends BaseDialogFragment implements OnDateSele
         myHandler = new MyHandler(this);
         Bundle bundle = getArguments();
         if (bundle != null) {
-            eid = bundle.getInt("eid", 0);
+            mEid = bundle.getInt("eid", 0);
+            mType = bundle.getInt("type", 0);
         }
         
         mDialog.setContentView(R.layout.develop_experience);
@@ -239,9 +248,19 @@ public class ModifyExperienceDF extends BaseDialogFragment implements OnDateSele
         addressET = mDialog.findViewById(R.id.address_edit);
         widget = mDialog.findViewById(R.id.calendarView);
         widget.setOnDateChangedListener(this);
+        mPackageSettingBtn = mDialog.findViewById(R.id.package_setting_btn);
         
         prevBtn = mDialog.findViewById(R.id.prevBtn);
         nextBtn = mDialog.findViewById(R.id.nextBtn);
+        
+        mPackageSettingBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mEid > 0){
+                    startPackageSettingDF();
+                }
+            }
+        });
 
         selectCity();
         initPictureSelectWidget();
@@ -259,11 +278,52 @@ public class ModifyExperienceDF extends BaseDialogFragment implements OnDateSele
         getGroupNumberLimit();
         getAvailableDate();
         getSelfIntroduction();
+        getActivityPackageAmount();
     }
+    
+    private void startPackageSettingDF(){
+        PackageSettingDF packageSettingDF = PackageSettingDF.newInstance(mEid, mType, true);
+        packageSettingDF.setTargetFragment(this, PACKAGE_REQUEST_CODE);
+        packageSettingDF.show(getFragmentManager(), "PackageSettingDF");
+    }
+    
+    private void getActivityPackageAmount(){
+        showProgressDialog("");
+
+        RequestBody requestBody = new FormBody.Builder()
+                .add("eid", String.valueOf(mEid)).build();
+
+        String uri = GET_PACKAGE_AMOUNT_URL;
+
+        HttpUtil.sendOkHttpRequest(getContext(), uri, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                dismissProgressDialog();
+                String responseText = response.body().string();
+                Slog.d(TAG, "getActivityPackages response : " + responseText);
+                if (!TextUtils.isEmpty(responseText)) {
+                    try {
+                        int amount = new JSONObject(responseText).optInt("amount");
+                        if (amount > 0){
+                            myHandler.sendEmptyMessage(GET_PACKAGE_DONE);
+                        }
+                    } catch (JSONException e) {
+           e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+        });
+    }
+    
     
     private void getBaseInformation(){
         RequestBody requestBody = new FormBody.Builder()
-                .add("eid", String.valueOf(eid))
+                .add("eid", String.valueOf(mEid))
                 .build();
 
         HttpUtil.sendOkHttpRequest(getContext(), GET_BASE_INFO, requestBody, new Callback() {
@@ -347,7 +407,7 @@ public class ModifyExperienceDF extends BaseDialogFragment implements OnDateSele
     
     private void getExperiencePictures(){
         RequestBody requestBody = new FormBody.Builder()
-                .add("eid", String.valueOf(eid))
+                .add("eid", String.valueOf(mEid))
                 .build();
                 
         HttpUtil.sendOkHttpRequest(getContext(), GET_BANNER_PICTURES, requestBody, new Callback() {
@@ -392,7 +452,7 @@ public class ModifyExperienceDF extends BaseDialogFragment implements OnDateSele
     
     private void getExperienceItems(){
         RequestBody requestBody = new FormBody.Builder()
-                .add("eid", String.valueOf(eid))
+                .add("eid", String.valueOf(mEid))
                 .build();
 
         HttpUtil.sendOkHttpRequest(getContext(), GET_ITEM_INFO, requestBody, new Callback() {
@@ -449,7 +509,7 @@ public class ModifyExperienceDF extends BaseDialogFragment implements OnDateSele
     
     private void getChargeInfo(){
         RequestBody requestBody = new FormBody.Builder()
-                .add("eid", String.valueOf(eid))
+                .add("eid", String.valueOf(mEid))
                 .build();
 
         HttpUtil.sendOkHttpRequest(getContext(), GET_CHARGE_INFO, requestBody, new Callback() {
@@ -495,7 +555,7 @@ public class ModifyExperienceDF extends BaseDialogFragment implements OnDateSele
     
     private void getDurationInfo(){
         RequestBody requestBody = new FormBody.Builder()
-                .add("eid", String.valueOf(eid))
+                .add("eid", String.valueOf(mEid))
                 .build();
 
         HttpUtil.sendOkHttpRequest(getContext(), GET_DURATION_INFO, requestBody, new Callback() {
@@ -539,7 +599,7 @@ public class ModifyExperienceDF extends BaseDialogFragment implements OnDateSele
     
     private void getGroupNumberLimit(){
         RequestBody requestBody = new FormBody.Builder()
-                .add("eid", String.valueOf(eid))
+                .add("eid", String.valueOf(mEid))
                 .build();
                 
         HttpUtil.sendOkHttpRequest(getContext(), GET_LIMIT_INFO, requestBody, new Callback() {
@@ -588,7 +648,7 @@ public class ModifyExperienceDF extends BaseDialogFragment implements OnDateSele
         cancelledDateList.clear();
         
         FormBody.Builder builder = new FormBody.Builder();
-        builder.add("eid", String.valueOf(eid))
+        builder.add("eid", String.valueOf(mEid))
                 .add("type", String.valueOf(Utility.TalentType.EXPERIENCE.ordinal()));
         uri = GET_EXPERIENCE_AVAILABLE_APPOINTMENT_DATE;
         HttpUtil.sendOkHttpRequest(getContext(), uri, builder.build(), new Callback() {
@@ -663,7 +723,7 @@ public class ModifyExperienceDF extends BaseDialogFragment implements OnDateSele
     
     private void getSelfIntroduction(){
         RequestBody requestBody = new FormBody.Builder()
-                .add("eid", String.valueOf(eid))
+                .add("eid", String.valueOf(mEid))
                 .build();
 
         HttpUtil.sendOkHttpRequest(getContext(), GET_SELF_INTRODUCTION_URL, requestBody, new Callback() {
@@ -737,7 +797,7 @@ public class ModifyExperienceDF extends BaseDialogFragment implements OnDateSele
 private void saveExperiencePictures(){
         Map<String, String> authenMap = new HashMap<>();
 
-        authenMap.put("eid", String.valueOf(eid));
+        authenMap.put("eid", String.valueOf(mEid));
 
         if (!TextUtils.isEmpty(mDeletedPictureUrl)){
             Slog.d(TAG, "----------------->saveExperiencePictures delete url: " + mDeletedPictureUrl);
@@ -909,7 +969,7 @@ private void saveExperiencePictures(){
         
         if (modified) {
             builder = new FormBody.Builder()
-                    .add("eid", String.valueOf(eid))
+                    .add("eid", String.valueOf(mEid))
                     .add("base_info", mBaseInfoString);
             uri = MODIFY_BASE_INFO_URL;
         } else {
@@ -927,7 +987,7 @@ private void saveExperiencePictures(){
                 Slog.d(TAG, "submitBaseInfo response : " + responseText);
                 if (!TextUtils.isEmpty(responseText)) {
                     try {
-                        eid = new JSONObject(responseText).optInt("eid");
+                        mEid = new JSONObject(responseText).optInt("eid");
                         dismissProgressDialog();
                         isBaseInfoModify = false;
                         myHandler.sendEmptyMessage(WRITE_DONE_SUCCESS);
@@ -949,7 +1009,7 @@ private void saveExperiencePictures(){
         FormBody.Builder builder;
         String uri = "";
         builder = new FormBody.Builder()
-                .add("eid", String.valueOf(eid))
+                .add("eid", String.valueOf(mEid))
                 .add("item_string", itemString);
         uri = MODIFY_ITEM_INFO;
         
@@ -983,9 +1043,19 @@ private void saveExperiencePictures(){
 
     private void submitPrice() {
         showProgressDialog(getContext().getString(R.string.saving_progress));
+        int price = 0;
+        if (hasPackage && mPrice != 0){
+            price = mPrice;
+        }else {
+            if (!TextUtils.isEmpty(mChargeAmount.getText().toString())){
+                price = Integer.parseInt(mChargeAmount.getText().toString());
+                mPrice = price;
+            }
+        }
+        
         FormBody.Builder builder = new FormBody.Builder()
-                .add("eid", String.valueOf(eid))
-                .add("price", mChargeAmount.getText().toString());
+                .add("eid", String.valueOf(mEid))
+                .add("price", String.valueOf(price));
                 
                 RequestBody requestBody = builder.build();
         HttpUtil.sendOkHttpRequest(mContext, MODIFY_CHARGE_URL, requestBody, new Callback() {
@@ -1019,7 +1089,7 @@ private void saveExperiencePictures(){
     private void submitTime() {
         showProgressDialog(getContext().getString(R.string.saving_progress));
         FormBody.Builder builder = new FormBody.Builder()
-                .add("eid", String.valueOf(eid))
+                .add("eid", String.valueOf(mEid))
                 .add("duration", durationET.getText().toString());
                 
                 RequestBody requestBody = builder.build();
@@ -1053,7 +1123,7 @@ private void saveExperiencePictures(){
      private void submitLimitation() {
         showProgressDialog(getContext().getString(R.string.saving_progress));
         FormBody.Builder builder = new FormBody.Builder()
-                .add("eid", String.valueOf(eid))
+                .add("eid", String.valueOf(mEid))
                 .add("amount", groupCountET.getText().toString());
 
         RequestBody requestBody = builder.build();
@@ -1088,7 +1158,7 @@ private void saveExperiencePictures(){
     private void submitAddress() {
         showProgressDialog(getContext().getString(R.string.saving_progress));
         FormBody.Builder builder = new FormBody.Builder()
-                .add("eid", String.valueOf(eid))
+                .add("eid", String.valueOf(mEid))
                 .add("address", addressET.getText().toString());
                 
                 RequestBody requestBody = builder.build();
@@ -1126,7 +1196,7 @@ private void submitAppointDate() {
         String cancelledDateString = "";
 
         FormBody.Builder builder = new FormBody.Builder()
-                .add("eid", String.valueOf(eid))
+                .add("eid", String.valueOf(mEid))
                 .add("type", String.valueOf(Utility.TalentType.EXPERIENCE.ordinal()));
                 
                 if (selectedDateList.size() > 0){
@@ -1185,7 +1255,7 @@ private void submitAppointDate() {
 private void submitSelfIntroduction() {
         showProgressDialog(getContext().getString(R.string.saving_progress));
         FormBody.Builder builder = new FormBody.Builder()
-                .add("eid", String.valueOf(eid))
+                .add("eid", String.valueOf(mEid))
                 .add("introduction", selfIntroductionET.getText().toString());
                 
                 RequestBody requestBody = builder.build();
@@ -1460,7 +1530,7 @@ private void submitSelfIntroduction() {
     
     public void startExperienceDetailActivity() {
         Intent intent = new Intent(getContext(), ExperienceDetailActivity.class);
-        intent.putExtra("eid", eid);
+        intent.putExtra("eid", mEid);
         startActivity(intent);
         mDialog.dismiss();
     }
@@ -1483,6 +1553,12 @@ private void submitSelfIntroduction() {
                     adapter.notifyDataSetChanged();
                     isExperiencePictureModified = true;
                     break;
+              case PACKAGE_REQUEST_CODE:
+                hasPackage = true;
+                isPriceModify = true;
+                mPrice = data.getIntExtra("price", 0);
+                mPackageSettingBtn.setText(getContext().getResources().getString(R.string.examine_package_setting));
+                break;
             }
         }
     }
@@ -1542,6 +1618,10 @@ private void submitSelfIntroduction() {
                 break;
             case WRITE_DONE_SUCCESS:
                 processNextBtn();
+                break;
+            case GET_PACKAGE_DONE:
+                hasPackage = true;
+                mPackageSettingBtn.setText(getContext().getResources().getString(R.string.examine_package_setting));
                 break;
             default:
                 break;
