@@ -762,7 +762,7 @@ private void initCityJsondata(String jsonFile) {
     private void submitPrice(boolean isModify) {
         int price = 0;
         showProgressDialog(getContext().getString(R.string.saving_progress));
-        if (hasPackage){
+        if (hasPackage && mPrice != 0){
             price = mPrice;
         }else {
             if (!TextUtils.isEmpty(mChargeAmount.getText().toString())){
