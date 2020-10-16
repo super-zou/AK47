@@ -288,6 +288,8 @@ public class OrderPaymentDF extends BaseDialogFragment {
     private void updateOrderStatus(){
         RequestBody requestBody = new FormBody.Builder()
                 .add("oid", String.valueOf(mOrder.oid))
+                .add("id", String.valueOf(mOrder.id))
+                .add("type", String.valueOf(mOrder.type))
                 .add("actual_payment", String.valueOf(mOrder.totalPrice))
                 .build();
                 
