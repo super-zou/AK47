@@ -79,9 +79,11 @@ public class OrderFragment extends Fragment implements View.OnClickListener{
     private MyHandler handler;
     private TextView mMyAllOrdersTV;
     private TextView mMyAllOrdersNavTV;
+    private TextView mMyAllSoldOrdersNavTV;
     private TextView mTodayOrdersAmountTV;
     private TextView mQueuedOrdersAmountTV;
     private TextView mFinishedOrdersAmountTV;
+    private TextView mMyAllSoldOrdersTV;
     private ConstraintLayout mSoldOrdersWrapper;
     private TextView mUnPaidOrdersAmountTV;
     private TextView mBookedOrdersAmountTV;
@@ -104,10 +106,13 @@ public class OrderFragment extends Fragment implements View.OnClickListener{
     public void initConentView() {
         Typeface font = Typeface.createFromAsset(getContext().getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
         FontManager.markAsIconContainer(view.findViewById(R.id.all_orders_nav), font);
+        FontManager.markAsIconContainer(view.findViewById(R.id.my_all_sold_orders_nav), font);
         mSoldOrdersWrapper = view.findViewById(R.id.sold_orders_wrapper);
         mTodayOrdersAmountTV = view.findViewById(R.id.today_orders_amount);
         mQueuedOrdersAmountTV = view.findViewById(R.id.queued_orders_amount);
         mFinishedOrdersAmountTV = view.findViewById(R.id.finished_orders_amount);
+        mMyAllSoldOrdersTV = view.findViewById(R.id.my_all_sold_orders);
+        mMyAllSoldOrdersNavTV = view.findViewById(R.id.my_all_sold_orders_nav);
         mUnPaidOrdersAmountTV = view.findViewById(R.id.waiting_to_pay_amount);
         mBookedOrdersAmountTV = view.findViewById(R.id.booked_amount);
         mMyAllOrdersTV = view.findViewById(R.id.all_orders);
@@ -115,6 +120,8 @@ public class OrderFragment extends Fragment implements View.OnClickListener{
         mWaitingForMyEvaluationOrdersAmountTV = view.findViewById(R.id.waiting_for_evaluation_amount);
         mGetAllOrdersBtn = view.findViewById(R.id.get_all_orders_btn);
 
+        mMyAllSoldOrdersTV.setOnClickListener(this);
+        mMyAllSoldOrdersNavTV.setOnClickListener(this);
         mMyAllOrdersTV.setOnClickListener(this);
         mMyAllOrdersNavTV.setOnClickListener(this);
         mGetAllOrdersBtn.setOnClickListener(this);
@@ -577,40 +584,46 @@ if (responseText != null && !TextUtils.isEmpty(responseText)) {
     @Override
     public void onClick(View view){
         Bundle bundle = new Bundle();
-        OrdersListDF queuedFragmentDF = new OrdersListDF();
+        OrdersListDF soldFragmentDF = new OrdersListDF();
         MyOrdersFragmentDF myOrdersFragmentDF = new MyOrdersFragmentDF();
         switch (view.getId()){
             case R.id.today_orders_amount:
-                bundle.putShort("type", (short)Utility.OrderType.TODAY.ordinal());
-                queuedFragmentDF.setArguments(bundle);
-                queuedFragmentDF.show(getFragmentManager(), "OrdersListDF");
+                bundle.putShort("type", (short)Utility.OrderType.TODAY.getType());
+                soldFragmentDF.setArguments(bundle);
+                soldFragmentDF.show(getFragmentManager(), "OrdersListDF");
                 break;
             case R.id.queued_orders_amount:
-                bundle.putShort("type", (short)Utility.OrderType.QUEUED.ordinal());
-                queuedFragmentDF.setArguments(bundle);
-                queuedFragmentDF.show(getFragmentManager(), "OrdersListDF");
+                bundle.putShort("type", (short)Utility.OrderType.QUEUED.getType());
+                soldFragmentDF.setArguments(bundle);
+                soldFragmentDF.show(getFragmentManager(), "OrdersListDF");
                 break;
             case R.id.finished_orders_amount:
-                bundle.putShort("type", (short)Utility.OrderType.FINISHED.ordinal());
-                queuedFragmentDF.setArguments(bundle);
-                queuedFragmentDF.show(getFragmentManager(), "OrdersListDF");
+                bundle.putShort("type", (short)Utility.OrderType.FINISHED.getType());
+                soldFragmentDF.setArguments(bundle);
+                soldFragmentDF.show(getFragmentManager(), "OrdersListDF");
+                break;
+                case R.id.my_all_sold_orders:
+            case R.id.my_all_sold_orders_nav:
+                bundle.putShort("type", (short)Utility.OrderType.MY_ALL_SOLD.getType());
+                soldFragmentDF.setArguments(bundle);
+                soldFragmentDF.show(getFragmentManager(), "MyOrdersFragmentDF");
                 break;
                 case R.id.waiting_to_pay_amount:
-                bundle.putShort("type", (short)Utility.OrderType.UNPAYMENT.ordinal());
+                bundle.putShort("type", (short)Utility.OrderType.UNPAYMENT.getType());
                 myOrdersFragmentDF.setArguments(bundle);
                 myOrdersFragmentDF.show(getFragmentManager(), "MyOrdersFragmentDF");
                 break;
             case R.id.booked_amount:
-                bundle.putShort("type", (short)Utility.OrderType.BOOKED.ordinal());
+                bundle.putShort("type", (short)Utility.OrderType.BOOKED.getType());
                 myOrdersFragmentDF.setArguments(bundle);
                 myOrdersFragmentDF.show(getFragmentManager(), "MyOrdersFragmentDF");
                 break;
             case R.id.waiting_for_evaluation_amount:
-                bundle.putShort("type", (short)Utility.OrderType.WAITING_EVALUATION.ordinal());
+                bundle.putShort("type", (short)Utility.OrderType.WAITING_EVALUATION.getType());
                 myOrdersFragmentDF.setArguments(bundle);
                 myOrdersFragmentDF.show(getFragmentManager(), "MyOrdersFragmentDF");
                 break;
-                case R.id.all_orders:
+            case R.id.all_orders:
             case R.id.all_orders_nav:
                 bundle.putShort("type", (short)Utility.OrderType.MY_ALL.getType());
                 myOrdersFragmentDF.setArguments(bundle);
@@ -618,8 +631,8 @@ if (responseText != null && !TextUtils.isEmpty(responseText)) {
                 break;
             case R.id.get_all_orders_btn:
                 bundle.putShort("type", (short)Utility.OrderType.ALL_SOLD.getType());
-                queuedFragmentDF.setArguments(bundle);
-                queuedFragmentDF.show(getFragmentManager(), "OrdersListDF");
+                soldFragmentDF.setArguments(bundle);
+                soldFragmentDF.show(getFragmentManager(), "OrdersListDF");
                 break;
         }
 
