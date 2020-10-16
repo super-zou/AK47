@@ -58,6 +58,7 @@ public class OrdersListDF extends BaseDialogFragment {
     private static final String GET_QUEUED_ORDERS = HttpUtil.DOMAIN + "?q=order_manager/get_queued_orders";
     public static final String GET_FINISHED_ORDERS = HttpUtil.DOMAIN + "?q=order_manager/get_finished_orders";
     private static final String GET_ALL_ORDERS = HttpUtil.DOMAIN + "?q=order_manager/get_all_orders";
+    private static final String GET_MY_ALL_SOLD_ORDERS = HttpUtil.DOMAIN + "?q=order_manager/get_my_all_sold_orders";
     private static final int GET_ALL_DONE = 1;
     private static final int GET_ALL_END = 2;
     private static final int NO_MORE = 3;
@@ -112,6 +113,7 @@ public class OrdersListDF extends BaseDialogFragment {
                 case TODAY:
                     titleTV.setText(getContext().getResources().getString(R.string.today_development));
                     break;
+                case MY_ALL_SOLD:
                 case ALL_SOLD:
                     titleTV.setText(getContext().getResources().getString(R.string.all_orders));
                     break;
@@ -220,6 +222,9 @@ private void requestData(short type) {
                 break;
             case ALL_SOLD:
                 url = GET_ALL_ORDERS;
+                break;
+            case MY_ALL_SOLD:
+                url = GET_MY_ALL_SOLD_ORDERS;
                 break;
         }
         
