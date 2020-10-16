@@ -119,11 +119,15 @@ public class MeetDiscoveryListAdapter extends RecyclerView.Adapter<MeetDiscovery
 
         if (!TextUtils.isEmpty(meet.getUniversity())) {
             holder.university.setText(meet.getUniversity() + mContext.getResources().getString(R.string.dot));
+        }else {
+            holder.university.setText("");
         }
 
         String degree = meet.getDegreeName(meet.getDegree());
         if (!TextUtils.isEmpty(degree)) {
             holder.degree.setText(degree);
+        }else {
+            holder.degree.setText("");
         }
 
         if (meet.getSituation() == MeetRecommendFragment.student) {
