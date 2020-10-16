@@ -123,6 +123,7 @@ public class ParseUtils {
     public static final int TALENT_REJECTED_NF = 69;
     public static final int ACTIVITY_VERIFIED_NF = 70;
     public static final int ACTIVITY_REJECTED_NF = 71;
+    public static final int ORDER_PLACED_NF = 72;
 
     public static final int MALE = 0;
     public static final int FEMALE = 1;
