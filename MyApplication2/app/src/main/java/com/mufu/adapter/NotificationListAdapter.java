@@ -22,6 +22,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.mufu.R;
+import com.mufu.order.OrderDetailsDF;
 import com.mufu.verify.SubmitAuthenticationDialogFragment;
 import com.mufu.common.MyApplication;
 import com.mufu.group.SingleGroupDetailsActivity;
@@ -54,6 +55,7 @@ import okhttp3.Response;
 
 import static com.mufu.adapter.ContactsListAdapter.acceptContactsApply;
 import static com.mufu.common.MyApplication.getContext;
+import static com.mufu.util.DateUtil.calendarToDate;
 import static com.mufu.util.ParseUtils.ADD_CHEERING_GROUP_MEMBER_ACTION;
 import static com.mufu.util.ParseUtils.APPLY_JOIN_SINGLE_GROUP_NF;
 import static com.mufu.util.ParseUtils.APPROVE_IMPRESSION_ACTION;
@@ -67,6 +69,7 @@ import static com.mufu.util.ParseUtils.INVITE_SINGLE_GROUP_MEMBER_ACTION;
 import static com.mufu.util.ParseUtils.JOIN_CHEERING_GROUP_ACTION;
 import static com.mufu.util.ParseUtils.JOIN_SINGLE_GROUP_ACTION;
 import static com.mufu.util.ParseUtils.MODIFY_GROUP_ACTION;
+import static com.mufu.util.ParseUtils.ORDER_PLACED_NF;
 import static com.mufu.util.ParseUtils.REFEREE_ACTION;
 import static com.mufu.util.ParseUtils.REFEREE_INVITE_NF;
 import static com.mufu.util.ParseUtils.TALENT_REJECTED_NF;
@@ -146,6 +149,7 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
                 case AUTHENTICATION_REJECTED_NF:
                 case TALENT_VERIFIED_NF:
                 case TALENT_REJECTED_NF:
+                case ORDER_PLACED_NF:
                     if (notification.showed == NOT_SHOWED) {
                         showNotification(notification);
                     }
@@ -294,6 +298,11 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
                     case APPLY_JOIN_SINGLE_GROUP_NF:
                     case JOIN_SINGLE_GROUP_ACTION:
                         startSingleGroupDetails(getContext(), notification.id);
+                        markNotificationProcessed(holder.isNew, notification);
+                        break;
+                    case ORDER_PLACED_NF:
+                        OrderDetailsDF orderDetailsDF = OrderDetailsDF.newInstance(notification.id);
+                        orderDetailsDF.show(fragmentManager, "OrderDetailsDF");
                         markNotificationProcessed(holder.isNew, notification);
                         break;
                     default:
