@@ -35,7 +35,24 @@
             android:textAppearance="@style/TextSourceHanSansAppearance"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-            
+                    <TextView
+            android:id="@+id/my_all_sold_orders"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="3dp"
+            android:text="@string/all_orders"
+            app:layout_constraintBottom_toBottomOf="@+id/sold_orders"
+            app:layout_constraintEnd_toStartOf="@+id/my_all_sold_orders_nav"
+            app:layout_constraintTop_toTopOf="@+id/sold_orders" />
+
+        <TextView
+            android:id="@+id/my_all_sold_orders_nav"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/chevron_right"
+            app:layout_constraintBottom_toBottomOf="@+id/sold_orders"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/sold_orders" />
             <TextView
             android:id="@+id/today_orders_amount"
             android:layout_width="wrap_content"
