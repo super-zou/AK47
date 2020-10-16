@@ -44,7 +44,7 @@ public class Utility {
     public enum OrderType {
         TODAY("today", 0), QUEUED("queued", 1), FINISHED("finished", 2),
         UNPAYMENT("unpayment", 3), BOOKED("booked", 4), WAITING_EVALUATION("waiting_evaluation", 5),
-        MY_ALL("my_all", 9), ALL_SOLD("all", 10);
+        MY_ALL_SOLD("my_all_sold", 8), MY_ALL("my_all", 9), ALL_SOLD("all", 10);
 
         private String _name;
         private int _type;
@@ -71,6 +71,8 @@ public class Utility {
                     return BOOKED;
                 case 5:
                     return WAITING_EVALUATION;
+                case 8:
+                    return MY_ALL_SOLD;
                 case 9:
                     return MY_ALL;
                 case 10:
