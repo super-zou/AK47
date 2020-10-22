@@ -325,6 +325,7 @@ private void requestData(short type) {
             orderManager.appointmentDate = timeStampToDay(orderObject.optInt("date"));
             orderManager.paymentTime = orderObject.optInt("payment_time");
             orderManager.type = orderObject.optInt("type");
+            orderManager.orderClass = orderObject.optInt("class");
             orderManager.nickname = orderObject.optString("nickname");
             orderManager.uid = orderObject.optInt("uid");
             orderManager.avatar = orderObject.optString("avatar");
