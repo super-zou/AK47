@@ -47,6 +47,9 @@
     <string name="route_name_empty_notice">请输入线路名称</string>
         <string name="package_name_empty_notice">请输入套餐名称</string>
     <string name="package_price_empty_notice">请输入套餐价格</string>
+        <string name="starting_price_empty_notice">请输入起步价</string>
+    <string name="limited_number_empty_notice">请输入限定的人数</string>
+    <string name="additional_price_empty_notice">请输入超员加价</string>
     <string name="route_introduction_empty_notice">请描述一下线路</string>
     <string name="route_picture_empty_notice">请选择一些线路照片</string>
     <string name="qr_code_notice">请设置收款二维码</string>
@@ -356,12 +359,22 @@
     <string name="cm">CM</string>
     <string name="location">地点</string>
     <string name="price_setting">为您开展的体验设置合理的价格；如果有多个套餐，请设置套餐</string>
-    <string name="activity_package_setting">+设置套餐</string>
+        <string name="block_booking_desc">如您开展的体验支持包场或团建，请设置包场价格及套餐</string>
+    <string name="block_booking_setting">+包场设置</string>
+    <string name="block_booking_price_desc">包场费 = 起步价+加价：在限定人数内只收取起步价，超员部分收取加价。</string>
+    <string name="starting_price">包场起步价</string>
+    <string name="additional_price_setting">设置加价</string>
+    <string name="additional_price_desc">超员部分收取</string>
+    <string name="block_booking_setting_title">设置包场信息</string>
+    <string name="block_booking_package_setting_title">设置包场套餐及价格</string>
+    <string name="activity_package_setting">+设置个人套餐</string>
     <string name="activity_package_title">设置套餐</string>
     <string name="examine_package_setting">查看套餐</string>
+        <string name="examine_block_booking_package_setting">查看包场套餐</string>
         <string name="modify_package_setting">修改套餐</string>
     <string name="activity_package_selector">+请选择套餐</string>
     <string name="get_all_orders">查看全部订单</string>
+        <string name="block_booking_selector">选择包场</string>
     <string name="location_guide_desc">选择您提供旅行向导服务的城市？</string>
     <string name="location_experience_desc">您将在哪个城市开展体验？</string>
     <string name="charge_introduction_desc">您可以选择按天或小时收费</string>
@@ -442,7 +455,7 @@
     <string name="avatar_set_request_content">需要先设置头像，才能进一步操作</string>
     <string name="condition_set_request_title">交友条件未设置</string>
         <string name="withdrawal_title">提款</string>
-    <string name="withdrawal_message">如需提款，请您联系客服（微信：18009270034）并注明“牧夫提款”，每笔提款平台会扣取10%的服务费。</string>
+    <string name="withdrawal_message">如需提款，请您联系客服（微信：18009270034）并注明“牧夫提款”。</string>
     <string name="condition_set_request_content">需要先设置真实头像和交友条件，才能查看其他用户的交友信息</string>
     <string name="contacts_apply">希望和你建立联系</string>
     <string name="waiting_accept">已申请，待对方通过</string>
