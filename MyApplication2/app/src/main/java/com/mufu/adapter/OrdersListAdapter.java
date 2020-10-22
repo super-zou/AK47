@@ -88,9 +88,18 @@ public class OrdersListAdapter extends RecyclerView.Adapter<OrdersListAdapter.Vi
         }else {
             holder.packageNameTV.setVisibility(View.GONE);
         }
+        
+        if (order.orderClass == Utility.OrderClass.BLOCK_BOOKING.ordinal()){
+            holder.blockBookingTagTV.setVisibility(View.VISIBLE);
+        }else {
+            holder.blockBookingTagTV.setVisibility(View.GONE);
+        }
+        holder.totalPriceTV.setText("支付金额："+String.format("%.2f", order.totalPrice)+"元");
+        holder.totalAmountTV.setText("参加人数： "+order.amount+"人");
+        
         holder.dateTV.setText("预订日期："+order.appointmentDate);
         holder.nameTV.setText(String.valueOf(order.nickname));
-        holder.amountTV.setText("x"+order.amount+"人");
+
         holder.orderNumberTV.setText("订单编号："+order.number);
         holder.orderCreatedTV.setText("下单时间："+timeStampToMinute(order.created));
         holder.phoneTV.setText(order.phone);
@@ -160,12 +169,15 @@ public class OrdersListAdapter extends RecyclerView.Adapter<OrdersListAdapter.Vi
         TextView packageNameTV;
         TextView dateTV;
         TextView nameTV;
-        TextView amountTV;
         TextView orderNumberTV;
         TextView orderCreatedTV;
         RoundImageView avatarImg;
         TextView phoneTV;
         TextView universityTV;
+        TextView totalPriceTV;
+        TextView totalAmountTV;
+        TextView blockBookingTagTV;
+        ConstraintLayout blockBookingInfoCL;
         TextView majorTV;
         ConstraintLayout customerWrapper;
         ConstraintLayout itemLayout;
@@ -178,13 +190,16 @@ public class OrdersListAdapter extends RecyclerView.Adapter<OrdersListAdapter.Vi
             packageNameTV = view.findViewById(R.id.package_title);
             dateTV = view.findViewById(R.id.date);
             nameTV = view.findViewById(R.id.name);
-            amountTV = view.findViewById(R.id.amount);
             orderNumberTV = view.findViewById(R.id.order_number);
             orderCreatedTV = view.findViewById(R.id.order_created);
             avatarImg = view.findViewById(R.id.avatar_image);
             phoneTV = view.findViewById(R.id.phone_number);
             universityTV = view.findViewById(R.id.university);
             majorTV = view.findViewById(R.id.major);
+            totalPriceTV = view.findViewById(R.id.total_price);
+            totalAmountTV = view.findViewById(R.id.total_amount);
+            blockBookingTagTV = view.findViewById(R.id.block_booking_tag);
+            blockBookingInfoCL = view.findViewById(R.id.block_booking_info);
             customerWrapper = view.findViewById(R.id.customer_wrapper);
 
             //将全局的监听赋值给接口
