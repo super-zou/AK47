@@ -121,7 +121,7 @@ app:layout_constraintTop_toBottomOf="@+id/starting_limited_number" />
         android:textColor="@color/black"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="@+id/cny"
-        app:layout_constraintStart_toEndOf="@+id/cny"
+        app:layout_constraintStart_toEndOf="@+id/cny"/>
         
     <TextView
         android:id="@+id/additional_price_desc"
