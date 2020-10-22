@@ -41,6 +41,10 @@ public class Utility {
         ANSWERED, QUESTIONED, ALL
     }
     
+    public enum OrderClass {
+        NORMAL, BLOCK_BOOKING
+    }
+    
     public enum OrderType {
         TODAY("today", 0), QUEUED("queued", 1), FINISHED("finished", 2),
         UNPAYMENT("unpayment", 3), BOOKED("booked", 4), WAITING_EVALUATION("waiting_evaluation", 5),
