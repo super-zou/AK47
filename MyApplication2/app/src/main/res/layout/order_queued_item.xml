@@ -83,11 +83,61 @@
         app:layout_constraintTop_toBottomOf="@+id/order_number" />
     
         <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/block_booking_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/order_created">
+            <TextView
+            android:id="@+id/block_booking_tag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/btn_big_radius_stress"
+            android:padding="5dp"
+            android:text="已包场"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+            
+            <TextView
+            android:id="@+id/total_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="总价"
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toBottomOf="@+id/block_booking_tag"
+            app:layout_constraintStart_toEndOf="@+id/block_booking_tag"
+            app:layout_constraintTop_toTopOf="@+id/block_booking_tag" />
+            
+             <TextView
+            android:id="@+id/total_amount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="参加人数"
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toBottomOf="@+id/block_booking_tag"
+            app:layout_constraintStart_toEndOf="@+id/total_price"
+            app:layout_constraintTop_toTopOf="@+id/block_booking_tag" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/customer_wrapper"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:background="@color/color_disabled"
@@ -95,7 +145,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/order_created">
+        app:layout_constraintTop_toBottomOf="@+id/block_booking_info">
         
         <com.mufu.util.RoundImageView
             android:id="@+id/avatar_image"
@@ -116,19 +166,7 @@
         android:textSize="16sp"
         app:layout_constraintStart_toEndOf="@+id/avatar_image"
         app:layout_constraintTop_toTopOf="@+id/avatar_image" />
-        
-   <TextView
-        android:id="@+id/amount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:text="amount"
-        android:textSize="16sp"
-             android:textAppearance="@style/TextSourceHanSansAppearance"
-        app:layout_constraintBottom_toBottomOf="@+id/name"
-        app:layout_constraintStart_toEndOf="@+id/name"
-        app:layout_constraintTop_toTopOf="@+id/name" />
-        
+                
         <TextView
             android:id="@+id/phone_number"
             android:layout_width="wrap_content"
