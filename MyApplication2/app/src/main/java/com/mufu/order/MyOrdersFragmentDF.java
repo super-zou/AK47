@@ -80,7 +80,7 @@ public class MyOrdersFragmentDF extends BaseDialogFragment {
     private Handler handler;
     private OrderSummaryAdapter orderSummaryAdapter;
     private XRecyclerView recyclerView;
-    private List<Order> mOrderList = new ArrayList<>();
+    private List<OrdersListDF.OrderManager> mOrderList = new ArrayList<>();
     private View mView;
     private OrderStatusBroadcastReceiver mReceiver;
         private Dialog mDialog;
@@ -196,7 +196,7 @@ public class MyOrdersFragmentDF extends BaseDialogFragment {
         orderSummaryAdapter.setItemClickListener(new OrderSummaryAdapter.MyItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Order order = mOrderList.get(position);
+                OrdersListDF.OrderManager order = mOrderList.get(position);
                 OrderDetailsDF orderDetailsDF;
                 orderDetailsDF = newInstance(order);
                 //orderDetailsDF.setTargetFragment(this, ROUTE_REQUEST_CODE);
@@ -319,7 +319,7 @@ public class MyOrdersFragmentDF extends BaseDialogFragment {
                 for (int i = 0; i < orderArray.length(); i++) {
                     JSONObject orderObject = orderArray.optJSONObject(i);
                     if (orderObject != null) {
-                        Order order = getOrder(orderObject);
+                        OrdersListDF.OrderManager order = getOrder(orderObject);
                         mOrderList.add(order);
                     }
                 }
@@ -329,8 +329,8 @@ public class MyOrdersFragmentDF extends BaseDialogFragment {
         return orderSize;
     }
     
-     public static Order getOrder(JSONObject orderObject) {
-        Order order = new Order();
+     public static OrdersListDF.OrderManager getOrder(JSONObject orderObject) {
+        OrdersListDF.OrderManager order = new OrdersListDF.OrderManager();
         if (orderObject != null) {
             order.oid = orderObject.optInt("oid");
             order.id = orderObject.optInt("id");
@@ -349,6 +349,7 @@ public class MyOrdersFragmentDF extends BaseDialogFragment {
             order.appointmentDate = timeStampToDay(orderObject.optInt("date"));
             order.paymentTime = orderObject.optInt("payment_time");
             order.type = orderObject.optInt("type");
+            order.orderClass = orderObject.optInt("class");
         }
 
         return order;
@@ -372,6 +373,7 @@ public class MyOrdersFragmentDF extends BaseDialogFragment {
         public float totalPrice = 0;
         public String appointmentDate;
         public int type;
+        public int orderClass = Utility.OrderClass.NORMAL.ordinal();
     }
     
     public void handleMessage(Message message) {
