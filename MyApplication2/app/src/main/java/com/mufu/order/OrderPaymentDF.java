@@ -114,44 +114,67 @@ public class OrderPaymentDF extends BaseDialogFragment {
 
         ConstraintLayout orderPaymentCL = mDialog.findViewById(R.id.order_summary);
         ConstraintLayout consultOrderPaymentCL = mDialog.findViewById(R.id.consult_order_summary);
+        ConstraintLayout blockBookingPriceInfoCL = mDialog.findViewById(R.id.block_booking_order_price_info);
+        ConstraintLayout normalPriceInfoCL = mDialog.findViewById(R.id.normal_order_price_info);
 
         TextView titleTV = mDialog.findViewById(R.id.experience_title);
         TextView packageNameTV = mDialog.findViewById(R.id.experience_package_title);
         TextView priceTV = mDialog.findViewById(R.id.price);
         Button confirmBtn = mDialog.findViewById(R.id.confirm);
         
-        if (mOrder.type == Utility.TalentType.EXPERIENCE.ordinal() || mOrder.type == Utility.TalentType.GUIDE.ordinal()){
-            TextView totalPriceTV = mDialog.findViewById(R.id.total);
-            TextView amountTV = mDialog.findViewById(R.id.amount);
-
-            titleTV.setText(mOrder.title);
-            if (!TextUtils.isEmpty(mOrder.packageName)){
-                packageNameTV.setVisibility(View.VISIBLE);
-                packageNameTV.setText(mOrder.packageName);
-            }
-            priceTV.setText(String.format("%.2f", mOrder.price));
-            amountTV.setText(String.valueOf(mOrder.amount));
-            totalPriceTV.setText(String.format("%.2f", mOrder.totalPrice));
-            confirmBtn.setText("确认支付 "+getContext().getResources().getString(R.string.fa_cny)+String.format("%.2f", mOrder.totalPrice));
-
-            titleTV.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    startActivity();
-                }
-            });
-        }else {
-            orderPaymentCL.setVisibility(View.INVISIBLE);
-            consultOrderPaymentCL.setVisibility(View.VISIBLE);
-            TextView paymentTitleTV = mDialog.findViewById(R.id.payment_title);
-            paymentTitleTV.setText("打赏");
-            TextView consultTitleTV = mDialog.findViewById(R.id.consult_title);
-            TextView consultPriceTV = mDialog.findViewById(R.id.consult_price);
-            consultTitleTV.setText(mOrder.title);
-            consultPriceTV.setText(String.format("%.2f", mOrder.price));
-            confirmBtn.setText("确认打赏 "+getContext().getResources().getString(R.string.fa_cny)+String.format("%.2f", mOrder.price));
+        titleTV.setText(mOrder.title);
+        if (!TextUtils.isEmpty(mOrder.packageName)){
+            packageNameTV.setVisibility(View.VISIBLE);
+            packageNameTV.setText(mOrder.packageName);
         }
         
+        if (mOrder.orderClass == Utility.OrderClass.NORMAL.ordinal()){
+            if (normalPriceInfoCL.getVisibility() == View.GONE){
+                normalPriceInfoCL.setVisibility(View.VISIBLE);
+            }
+            if (blockBookingPriceInfoCL.getVisibility() == View.VISIBLE){
+                blockBookingPriceInfoCL.setVisibility(View.GONE);
+            }
+            if (mOrder.type == Utility.TalentType.EXPERIENCE.ordinal() || mOrder.type == Utility.TalentType.GUIDE.ordinal()){
+                TextView totalPriceTV = mDialog.findViewById(R.id.total);
+                TextView amountTV = mDialog.findViewById(R.id.amount);
+                priceTV.setText(String.format("%.2f", mOrder.price));
+                amountTV.setText(String.valueOf(mOrder.amount));
+                totalPriceTV.setText(String.format("%.2f", mOrder.totalPrice));
+
+                titleTV.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        startActivity();
+                    }
+                });
+            }else {
+                orderPaymentCL.setVisibility(View.INVISIBLE);
+                consultOrderPaymentCL.setVisibility(View.VISIBLE);
+                TextView paymentTitleTV = mDialog.findViewById(R.id.payment_title);
+                paymentTitleTV.setText("打赏");
+                TextView consultTitleTV = mDialog.findViewById(R.id.consult_title);
+                TextView consultPriceTV = mDialog.findViewById(R.id.consult_price);
+                consultTitleTV.setText(mOrder.title);
+                consultPriceTV.setText(String.format("%.2f", mOrder.price));
+                confirmBtn.setText("确认打赏 "+getContext().getResources().getString(R.string.fa_cny)+String.format("%.2f", mOrder.price));
+            }
+        }else {
+            if (normalPriceInfoCL.getVisibility() == View.VISIBLE){
+                normalPriceInfoCL.setVisibility(View.GONE);
+            }
+            if (blockBookingPriceInfoCL.getVisibility() == View.GONE){
+                blockBookingPriceInfoCL.setVisibility(View.VISIBLE);
+            }
+
+            TextView totalPriceTV = mDialog.findViewById(R.id.total_price);
+            TextView totalUserNumberTV = mDialog.findViewById(R.id.total_user_amount);
+            totalPriceTV.setText("总价"+String.format("%.2f", mOrder.totalPrice)+"元");
+            totalUserNumberTV.setText("参加人数："+String.valueOf(mOrder.amount)+"人");
+        }
+
+        confirmBtn.setText("确认支付 "+getContext().getResources().getString(R.string.fa_cny)+String.format("%.2f", mOrder.totalPrice));
+                
         confirmBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
