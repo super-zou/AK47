@@ -109,17 +109,39 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/guide_title" />
         
-        <TextView
-        android:id="@+id/cny"
+            <TextView
+        android:id="@+id/block_booking_tag"
+        android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="3dp"
-        android:gravity="center"
-        android:text="@string/fa_cny"
-        android:textColor="@color/black"
-        app:layout_constraintEnd_toStartOf="@+id/money"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/btn_big_radius_stress"
+        android:padding="5dp"
+        android:text="已包场"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        app:layout_constraintStart_toEndOf="@+id/head_picture"
         app:layout_constraintTop_toBottomOf="@+id/package_title" />
+        
+        
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/normal_order_price_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf = "parent"
+        app:layout_constraintTop_toBottomOf="@+id/package_title">
+        <TextView
+            android:id="@+id/cny"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="3dp"
+            android:gravity="center"
+            android:text="@string/fa_cny"
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toStartOf="@+id/money"
+            app:layout_constraintTop_toTopOf="parent" />
         
         <TextView
         android:id="@+id/money"
@@ -168,6 +190,36 @@
         android:textColor="@color/black"
         app:layout_constraintStart_toStartOf="@+id/cny"
         app:layout_constraintTop_toBottomOf="@+id/cny" />
+   </androidx.constraintlayout.widget.ConstraintLayout>
+        
+        <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/block_booking_order_price_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/normal_order_price_info">
+
+        <TextView
+            android:id="@+id/starting_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="起步价"
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+                
+        <TextView
+            android:id="@+id/total_amount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="参加人数"
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/starting_price" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
         
          <TextView
         android:id="@+id/actual_payment_title"
