@@ -28,6 +28,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.mufu.R;
 import com.mufu.common.MyApplication;
 import com.mufu.home.CommonContactsActivity;
+import com.mufu.order.BlockBookingPlaceOrderDF;
 import com.mufu.order.PlaceOrderDF;
 import com.mufu.util.BaseDialogFragment;
 import com.mufu.util.FontManager;
@@ -89,6 +90,7 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
     private String title;
     private String dataStr;
     private Button selectBtn;
+        private Button mBlockBookingBtn;
         private String mPackageName;
     private boolean isPackageSelected = false;
     private boolean hasPackages = false;
@@ -185,6 +187,7 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
 
         selectWrapper = mDialog.findViewById(R.id.select_wrapper);
         selectBtn = mDialog.findViewById(R.id.select);
+        mBlockBookingBtn = mDialog.findViewById(R.id.block_booking_selector_btn);
         companionsTV = mDialog.findViewById(R.id.companions);
         companionsAmountTV = mDialog.findViewById(R.id.numberOfcompanions);
         mPackageNameTV = mDialog.findViewById(R.id.package_content);
@@ -193,6 +196,13 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
             @Override
             public void onClick(View view) {
                 submitOrder();
+            }
+        });
+        
+        mBlockBookingBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startBlockBookingPlaceOrderDF();
             }
         });
 
@@ -210,6 +220,12 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
         PackageSelectorDF packageSelectorDF = PackageSelectorDF.newInstance(eid, mType);
         packageSelectorDF.setTargetFragment(this, PACKAGE_REQUEST_CODE);
         packageSelectorDF.show(getFragmentManager(), "PackageSelectorDF");
+    }
+    
+    private void startBlockBookingPlaceOrderDF(){
+        BlockBookingPlaceOrderDF blockBookingPlaceOrderDF = BlockBookingPlaceOrderDF.newInstance(title, "", did, dataStr, eid, mSoldCount, mMaximum, mType);
+        blockBookingPlaceOrderDF.setTargetFragment(this, PACKAGE_REQUEST_CODE);
+        blockBookingPlaceOrderDF.show(getFragmentManager(), "BlockBookingPlaceOrderDF");
     }
     
     private void getCompanions() {
@@ -322,6 +338,10 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
                     if (bookabledDateList.get(index).getCount() == mMaximum){
                         Slog.d(TAG, "---------->bookable count is maximum: ");
                         return true;
+                    }else {
+                        if (bookabledDateList.get(index).getAppointClass() == Utility.OrderClass.BLOCK_BOOKING.ordinal()){
+                            return true;
+                        }
                     }
                 }
             }
@@ -342,6 +362,8 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
         int eid;
         LocalDate localDate;
         int count = 0;
+        int appointClass = Utility.OrderClass.NORMAL.ordinal();
+        boolean hasBlockBookingFeature = false;//default can not be block booked
 
         public int getDid() {
             return did;
@@ -382,6 +404,14 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
         public void setCount(int count) {
             this.count = count;
         }
+        
+        public int getAppointClass() { return appointClass; }
+
+        public void setAppointClass(int appointClass) { this.appointClass = appointClass; }
+
+        public boolean getHasBookingFeature() { return hasBlockBookingFeature; }
+
+        public void setHasBlockBookingFeature(boolean hasBlockBookingFeature){ this.hasBlockBookingFeature = hasBlockBookingFeature; }
     }
 
 
@@ -445,6 +475,10 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
                     }
 
                     appointDate.setCount(dateObject.optInt("count"));
+                    appointDate.setAppointClass(dateObject.optInt("class"));
+                    if (dateObject.optInt("block_booking") > 0){
+                        appointDate.setHasBlockBookingFeature(true);
+                    }
                     appointDate.setLocalDate(LocalDate.parse(timeStampToDay(dateObject.optInt("date")), FORMATTER));
                     appointDateList.add(appointDate);
                 } catch (JSONException e) {
@@ -486,6 +520,10 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
 
                         } else {
                             companionsAmountTV.setText("0");
+                        }
+                        
+                        if (appointDateList.get(i).getHasBookingFeature() && mSoldCount == 0){
+                            mBlockBookingBtn.setVisibility(View.VISIBLE);
                         }
                     }
                 }
