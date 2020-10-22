@@ -16,6 +16,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import com.bumptech.glide.Glide;
 import com.mufu.R;
 import com.mufu.common.MyApplication;
@@ -52,10 +54,10 @@ public class OrderDetailsDF extends BaseDialogFragment {
     private Window window;
     private int mOid;
     private MyHandler myHandler;
-    private MyOrdersFragmentDF.Order mOrder;
+    private OrdersListDF.OrderManager mOrder;
     public static final String GET_ORDER_BY_OID = HttpUtil.DOMAIN + "?q=order_manager/get_order_by_oid";
     
-    public static OrderDetailsDF newInstance(MyOrdersFragmentDF.Order order) {
+    public static OrderDetailsDF newInstance(OrdersListDF.OrderManager order) {
         OrderDetailsDF orderDetailsDF = new OrderDetailsDF();
         Bundle bundle = new Bundle();
         bundle.putSerializable("order", order);
@@ -100,7 +102,7 @@ public class OrderDetailsDF extends BaseDialogFragment {
         
         Bundle bundle = getArguments();
         if (bundle != null) {
-            mOrder = (MyOrdersFragmentDF.Order) bundle.getSerializable("order");
+            mOrder = (OrdersListDF.OrderManager) bundle.getSerializable("order");
 
             if (mOrder == null){
                 mOid = bundle.getInt("oid", 0);
@@ -135,6 +137,30 @@ public class OrderDetailsDF extends BaseDialogFragment {
         Button unsubscribeBtn = mDialog.findViewById(R.id.unsubscribe);
         Button payBtn = mDialog.findViewById(R.id.pay);
         Button evaluateBtn = mDialog.findViewById(R.id.evaluate);
+                TextView blockBookingTagTV = mDialog.findViewById(R.id.block_booking_tag);
+
+        ConstraintLayout normalPriceInfoCL = mDialog.findViewById(R.id.normal_order_price_info);
+        ConstraintLayout blockBookingPriceInfoCL = mDialog.findViewById(R.id.block_booking_order_price_info);
+        
+        if (mOrder.orderClass == Utility.OrderClass.NORMAL.ordinal()){
+            normalPriceInfoCL.setVisibility(View.VISIBLE);
+            blockBookingPriceInfoCL.setVisibility(View.GONE);
+            moneyTV.setText(String.format("%.2f", mOrder.price));
+            if (!TextUtils.isEmpty(mOrder.unit)){
+                unitTV.setText(mOrder.unit);
+            }else {
+                unitDividerTV.setVisibility(View.GONE);
+            }
+            amountTV.setText("x"+mOrder.amount);
+        }else {
+            blockBookingTagTV.setVisibility(View.VISIBLE);
+            normalPriceInfoCL.setVisibility(View.GONE);
+            blockBookingPriceInfoCL.setVisibility(View.VISIBLE);
+            TextView startingPriceTV = mDialog.findViewById(R.id.starting_price);
+            TextView totalAmountTV = mDialog.findViewById(R.id.total_amount);
+            startingPriceTV.setText("起步价："+mOrder.price+"元");
+            totalAmountTV.setText("参加人数："+mOrder.amount+"人");
+        }
 
         if (mOrder.headPictureUrl != null && !"".equals(mOrder.headPictureUrl)) {
             Glide.with(getContext()).load(HttpUtil.DOMAIN + mOrder.headPictureUrl).into(headUri);
@@ -146,14 +172,7 @@ public class OrderDetailsDF extends BaseDialogFragment {
             packageNameTV.setVisibility(View.VISIBLE);
             packageNameTV.setText(mOrder.packageName);
         }
-        moneyTV.setText(String.format("%.2f", mOrder.price));
-        if (!TextUtils.isEmpty(mOrder.unit)){
-            unitTV.setText(mOrder.unit);
-        }else {
-            unitDividerTV.setVisibility(View.GONE);
-        }
-
-        amountTV.setText("x"+mOrder.amount);
+        
         totalPriceTV.setText(String.format("%.2f", mOrder.totalPrice));
         actualPaymentTV.setText(String.format("%.2f", mOrder.actualPayment));
         appointedDateTV.setText(mOrder.appointmentDate);
