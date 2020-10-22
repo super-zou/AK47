@@ -83,18 +83,24 @@ public class PackageSettingDF extends BaseDialogFragment {
     private JSONArray mPackageResponse;
     private boolean isModified = false;
     private boolean isPackageSaved = false;
+        private boolean isBlockBooking = false;
     private MyHandler myHandler;
     private ConstraintLayout mPackageSettingWrapper;
     public static final String SAVE_PACKAGE_URL = HttpUtil.DOMAIN + "?q=package/save_package";
+    public static final String SAVE_BLOCK_BOOKING_PACKAGE_URL = HttpUtil.DOMAIN + "?q=package/save_block_booking_package";
     public static final String GET_PACKAGE_URL = HttpUtil.DOMAIN + "?q=package/get_package";
+    public static final String GET_BLOCK_BOOKING_PACKAGE_URL = HttpUtil.DOMAIN + "?q=package/get_block_booking_package";
     public static final String GET_PACKAGE_AMOUNT_URL = HttpUtil.DOMAIN + "?q=package/get_package_amount";
+    public static final String GET_BLOCK_BOOKING_PACKAGE_AMOUNT_URL = HttpUtil.DOMAIN + "?q=package/get_block_booking_package_amount";
     public static final String MODIFY_PACKAGE_URL = HttpUtil.DOMAIN + "?q=package/modify_package";
+    public static final String MODIFY_BLOCK_BOOKING_PACKAGE_URL = HttpUtil.DOMAIN + "?q=package/modify_block_booking_package";
     
-    public static PackageSettingDF newInstance(int id, int type, boolean isPackageSaved) {
+    public static PackageSettingDF newInstance(int id, int type, boolean isBlockBooking, boolean isPackageSaved) {
         PackageSettingDF routeItemEditDF = new PackageSettingDF();
         Bundle bundle = new Bundle();
         bundle.putInt("id", id);
         bundle.putInt("type", type);
+        bundle.putBoolean("isBlockBooking", isBlockBooking);
         bundle.putBoolean("isPackageSaved", isPackageSaved);
         routeItemEditDF.setArguments(bundle);
 
@@ -111,6 +117,7 @@ public class PackageSettingDF extends BaseDialogFragment {
         if (bundle != null) {
             mId = bundle.getInt("id");
             mType = bundle.getInt("type");
+            isBlockBooking = bundle.getBoolean("isBlockBooking");
             isPackageSaved = bundle.getBoolean("isPackageSaved");
         }
         
@@ -153,6 +160,10 @@ public class PackageSettingDF extends BaseDialogFragment {
     }
     
     private void initView() {
+        TextView activityPackageTitleTV = mDialog.findViewById(R.id.activity_package_title);
+        if (isBlockBooking){
+            activityPackageTitleTV.setText(getContext().getResources().getString(R.string.block_booking_package_setting_title));
+        }
         mFirstPackageNameET = mDialog.findViewById(R.id.activity_package_first_name);
         mSecondPackageNameET = mDialog.findViewById(R.id.activity_package_second_name);
         mThirdPackageNameET = mDialog.findViewById(R.id.activity_package_third_name);
@@ -200,10 +211,15 @@ public class PackageSettingDF extends BaseDialogFragment {
     private void getActivityPackages(){
         showProgressDialog("");
 
-        RequestBody requestBody = new FormBody.Builder()
-                .add("eid", String.valueOf(mId)).build();
-
-        String uri = GET_PACKAGE_URL;
+        RequestBody requestBody;
+        FormBody.Builder builder = new FormBody.Builder();
+        String uri = "";
+        requestBody = builder.add("eid", String.valueOf(mId)).build();
+        if (!isBlockBooking){
+            uri = GET_PACKAGE_URL;
+        }else {
+            uri = GET_BLOCK_BOOKING_PACKAGE_URL;
+        }
 
         HttpUtil.sendOkHttpRequest(getContext(), uri, requestBody, new Callback() {
             @Override
@@ -321,8 +337,15 @@ public class PackageSettingDF extends BaseDialogFragment {
         RequestBody requestBody = mMultipartBodyBuilder.build();
 
         String url = SAVE_PACKAGE_URL;
-        if (isModified){
-            url = MODIFY_PACKAGE_URL;
+        if (!isBlockBooking){
+            if (isModified){
+                url = MODIFY_PACKAGE_URL;
+            }
+        }else {
+            url = SAVE_BLOCK_BOOKING_PACKAGE_URL;
+            if (isModified){
+                url = MODIFY_BLOCK_BOOKING_PACKAGE_URL;
+            }
         }
 
         HttpUtil.sendOkHttpRequest(getContext(), url, requestBody, new Callback() {
