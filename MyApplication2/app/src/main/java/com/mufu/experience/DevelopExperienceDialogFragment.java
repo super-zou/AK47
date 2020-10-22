@@ -114,6 +114,7 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
     private static final String SUBMIT_SELF_INTRODUCTION_URL = HttpUtil.DOMAIN + "?q=experience/write_self_introduction_info";
     private static final String MODIFY_SELF_INTRODUCTION_URL = HttpUtil.DOMAIN + "?q=experience/modify_self_introduction_info";
         public final static int PACKAGE_REQUEST_CODE = 1;
+        public final static int BLOCK_BOOKING_REQUEST_CODE = 2;
     private static final int WRITE_BASE_INFO_SUCCESS = 1;
     public static final int SAVE_PICTURES_SUCCESS = 2;
     public static final int SAVE_ITEMS_SUCCESS = 3;
@@ -146,6 +147,7 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
     private boolean isSelfIntroductionSaved = false;
     private boolean isPackageModified = false;
     private boolean hasPackage = false;
+        private boolean hasBlockBooking = false;
     private EditText introductionET;
     private EditText selfIntroductionET;
     private EditText headLineET;
@@ -173,6 +175,7 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
     private EditText consultationChargeDesc;
     private EditText mChargeAmount;
         private Button mPackageSettingBtn;
+        private Button mBlockBookingBtn;
     private EditText addressET;
     private EditText durationET;
     private EditText limitationET;
@@ -268,6 +271,7 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
         addExperienceItem = mDialog.findViewById(R.id.add_new_item);
         mChargeAmount = mDialog.findViewById(R.id.price_setting_edit);
                 mPackageSettingBtn = mDialog.findViewById(R.id.package_setting_btn);
+                mBlockBookingBtn = mDialog.findViewById(R.id.block_booking_setting_btn);
         durationET = mDialog.findViewById(R.id.duration_edit);
         groupCountET = mDialog.findViewById(R.id.group_count_limit_edit);
         limitationET = mDialog.findViewById(R.id.condition_edit);
@@ -285,6 +289,13 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
             }
         });
         
+        mBlockBookingBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startBlockBookingSettingDF();
+            }
+        });
+        
         selectCity();
         initPictureSelectWidget();
         initExperienceItem();
@@ -293,9 +304,15 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
     }
     
     private void startPackageSettingDF(){
-        PackageSettingDF packageSettingDF = PackageSettingDF.newInstance(mEid, type, mPrice==0 ? false:true);
+        PackageSettingDF packageSettingDF = PackageSettingDF.newInstance(mEid, type, false, mPrice==0 ? false:true);
         packageSettingDF.setTargetFragment(this, PACKAGE_REQUEST_CODE);
         packageSettingDF.show(getFragmentManager(), "PackageSettingDF");
+    }
+
+    private void startBlockBookingSettingDF(){
+        BlockBookingSettingDF blockBookingSettingDF = BlockBookingSettingDF.newInstance(mEid, type, hasBlockBooking);
+        blockBookingSettingDF.setTargetFragment(this, BLOCK_BOOKING_REQUEST_CODE);
+        blockBookingSettingDF.show(getFragmentManager(), "BlockBookingSettingDF");
     }
     
      private void navigationProcess() {
@@ -1146,6 +1163,10 @@ private boolean validCheck(int index) {
                     mPrice = data.getIntExtra("price", 0);
                     isPackageModified = data.getBooleanExtra("isPackageModified", false);
                     mPackageSettingBtn.setText(getContext().getResources().getString(R.string.examine_package_setting));
+                    break;
+               case BLOCK_BOOKING_REQUEST_CODE:
+                    hasBlockBooking = true;
+                    mBlockBookingBtn.setText("查看包场设置");
                     break;
             }
         }
