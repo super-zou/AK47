@@ -331,6 +331,32 @@
                     app:layout_constraintTop_toBottomOf="@+id/price_setting_edit" />
             </androidx.constraintlayout.widget.ConstraintLayout>
             
+            <TextView
+                    android:id="@+id/block_booking_desc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="64dp"
+                    android:lineSpacingMultiplier="1.2"
+                    android:text="@string/block_booking_desc"
+                    android:textAppearance="@style/TextSourceHanSansAppearance"
+                    android:textColor="@color/black"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/package_setting_btn" />
+            
+            <Button
+                    android:id="@+id/block_booking_setting_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:background="@drawable/btn_stress"
+                    android:padding="8dp"
+                    android:text="@string/block_booking_setting"
+                    android:textAppearance="@style/TextSourceHanSansAppearance"
+                    android:textColor="@color/white"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/block_booking_desc" />
+            
             <!--time-->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/time_wrapper"
