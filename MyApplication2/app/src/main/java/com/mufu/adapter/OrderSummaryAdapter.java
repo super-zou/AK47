@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -20,6 +21,7 @@ import com.mufu.R;
 import com.mufu.experience.ExperienceDetailActivity;
 import com.mufu.experience.GuideDetailActivity;
 import com.mufu.order.MyOrdersFragmentDF;
+import com.mufu.order.OrdersListDF;
 import com.mufu.util.FontManager;
 import com.mufu.util.HttpUtil;
 import com.mufu.util.Utility;
@@ -37,7 +39,7 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
     private static final String TAG = "OrderSummaryAdapter";
     private static Context mContext;
     private int width;
-    private List<MyOrdersFragmentDF.Order> mOrderList;
+    private List<OrdersListDF.OrderManager> mOrderList;
     private boolean isScrolling = false;
     private MyItemClickListener mItemClickListener;
     private EvaluateClickListener mEvaluateClickListener;
@@ -50,7 +52,7 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
         mContext = context;
     }
     
-    public void setData(List<MyOrdersFragmentDF.Order> orderList) {
+    public void setData(List<OrdersListDF.OrderManager> orderList) {
         mOrderList = orderList;
     }
 
@@ -107,16 +109,28 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
             holder.packageNameTV.setVisibility(View.GONE);
         }
         holder.cityTV.setText(order.city);
-        holder.moneyTV.setText(String.format("%.2f", order.price));
-        holder.totalPriceTV.setText(String.format("%.2f", order.totalPrice));
-        if (TextUtils.isEmpty(order.unit)){
-            holder.unitDividerTV.setVisibility(View.GONE);
+        if (order.orderClass == Utility.OrderClass.NORMAL.ordinal()){
+            holder.blockBookingTagTV.setVisibility(View.GONE);
+            holder.blockBookingPriceInfoCL.setVisibility(View.GONE);
+            holder.normalPriceInfoCL.setVisibility(View.VISIBLE);
+            holder.moneyTV.setText(String.format("%.2f", order.price));
+            if (TextUtils.isEmpty(order.unit)){
+                holder.unitDividerTV.setVisibility(View.GONE);
+            }else {
+                holder.unitDividerTV.setVisibility(View.VISIBLE);
+                holder.unitTV.setText(order.unit);
+            }
+            holder.amountTV.setText("x"+order.amount+"人");
         }else {
-            holder.unitDividerTV.setVisibility(View.VISIBLE);
-            holder.unitTV.setText(order.unit);
+            holder.blockBookingTagTV.setVisibility(View.VISIBLE);
+            holder.blockBookingPriceInfoCL.setVisibility(View.VISIBLE);
+            holder.normalPriceInfoCL.setVisibility(View.GONE);
+            holder.startingPriceTV.setText("起步价："+order.price+"元");
+            holder.totalAmountTV.setText("参加人数："+order.amount+"人");
         }
 
-        holder.amountTV.setText("x"+order.amount+"人");
+        holder.totalPriceTV.setText(String.format("%.2f", order.totalPrice));
+        
         holder.actualPaymentTV.setText(String.format("%.2f",order.actualPayment));
         holder.appointedDateTV.setText(order.appointmentDate);
         
@@ -209,6 +223,11 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
         Button payBtn;
         Button evaluateBtn;
         CardView itemLayout;
+        TextView blockBookingTagTV;
+        TextView startingPriceTV;
+        TextView totalAmountTV;
+        ConstraintLayout normalPriceInfoCL;
+        ConstraintLayout blockBookingPriceInfoCL;
         
         public ViewHolder(View view, MyItemClickListener myItemClickListener, EvaluateClickListener evaluateClickListener, PayClickListener payClickListener) {
             super(view);
@@ -227,6 +246,11 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
             unsubscribeBtn = view.findViewById(R.id.unsubscribe);
             payBtn = view.findViewById(R.id.pay);
             evaluateBtn = view.findViewById(R.id.evaluate);
+                        startingPriceTV = view.findViewById(R.id.starting_price);
+            totalAmountTV = view.findViewById(R.id.total_amount);
+            blockBookingTagTV = view.findViewById(R.id.block_booking_tag);
+            normalPriceInfoCL = view.findViewById(R.id.normal_order_price_info);
+            blockBookingPriceInfoCL = view.findViewById(R.id.block_booking_order_price_info);
             
             //将全局的监听赋值给接口
             this.mListener = myItemClickListener;
