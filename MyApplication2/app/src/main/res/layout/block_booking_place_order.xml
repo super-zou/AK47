@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/white"
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/dismiss"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:padding="8dp"
+        android:text="@string/fa_remove"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+        
+    <TextView
+        android:id="@+id/experience_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:text="title"
+        android:textColor="@color/black"
+        android:textSize="22sp"
+        android:textAppearance="@style/TextSourceHanSansAppearance"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dismiss" />
+        
+    <TextView
+        android:id="@+id/experience_package"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:text=""
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/experience_title" />
+        
+    <TextView
+        android:id="@+id/appointment_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/appointed_date"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/experience_package" />
+        
+   <TextView
+        android:id="@+id/block_booking_price_desc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:textSize="16sp"
+        android:textColor="@color/disabled"
+        android:text="@string/block_booking_price_desc"
+        android:textAppearance="@style/TextSourceHanSansAppearance"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appointment_date" />
+        
+    <TextView
+        android:id="@+id/starting_limited_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="限定人数：50"
+        android:textAppearance="@style/TextSourceHanSansAppearance"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/block_booking_price_desc" />
+
+    <TextView
+        android:id="@+id/starting_price_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:text="起步价："
+        android:textSize="16sp"
+        android:textAppearance="@style/TextSourceHanSansAppearance"
+        app:layout_constraintStart_toStartOf="parent"
+app:layout_constraintTop_toBottomOf="@+id/starting_limited_number" />
+
+    <TextView
+        android:id="@+id/cny"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:gravity="center"
+        android:text="@string/fa_cny"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/starting_price_title"
+        app:layout_constraintStart_toEndOf="@+id/starting_price_title"
+        app:layout_constraintTop_toTopOf="@+id/starting_price_title" />
+
+    <TextView
+        android:id="@+id/starting_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="2dp"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/cny"
+        app:layout_constraintStart_toEndOf="@+id/cny"
+        
+    <TextView
+        android:id="@+id/additional_price_desc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="超员加价：40元/人"
+        android:textAppearance="@style/TextSourceHanSansAppearance"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/cny"
+        app:layout_constraintStart_toEndOf="@+id/starting_price"
+        app:layout_constraintTop_toTopOf="@+id/starting_price" />
+
+    <LinearLayout
+        android:id="@+id/package_wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cny">
+        <TextView
+            android:id="@+id/block_booking_package_selector_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="32dp"
+            android:text="选择套餐"
+            android:textAppearance="@style/TextSourceHanSansAppearance" />
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/package_selector_scrollview"
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp">
+            
+        <RadioGroup
+                android:id="@+id/package_radio_group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/activity_package_title">
+
+                <RadioButton
+                    android:id="@+id/first_package_selector_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/button_selector"
+                    android:button="@null"
+                    android:padding="8dp"
+                    android:text=""
+                    android:textAppearance="@style/TextSourceHanSansAppearance"
+                    android:textColor="@color/black"
+                    android:textSize="13sp"
+                    android:visibility="gone"/>
+
+                <RadioButton
+                    android:id="@+id/second_package_selector_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/button_selector"
+                    android:button="@null"
+                    android:padding="8dp"
+                    android:text=""
+                    android:textAppearance="@style/TextSourceHanSansAppearance"
+                    android:textColor="@color/black"
+                    android:textSize="13sp"
+                    android:visibility="gone" />
+                <RadioButton
+                    android:id="@+id/third_package_selector_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/button_selector"
+                    android:button="@null"
+                    android:padding="8dp"
+                    android:text=""
+                    android:textAppearance="@style/TextSourceHanSansAppearance"
+                    android:textColor="@color/black"
+                    android:textSize="13sp"
+                    android:visibility="gone" />
+            </RadioGroup>
+        </androidx.core.widget.NestedScrollView>
+    </LinearLayout>
+    
+    <TextView
+        android:id="@+id/participants"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="16dp"
+        android:gravity="center"
+        android:text="参与者人数"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/remaining_amount"
+        app:layout_constraintStart_toStartOf="parent" />
+        
+        
+    <Button
+        android:id="@+id/minus"
+        android:layout_width="35dp"
+        android:layout_height="38dp"
+        android:gravity="center"
+        android:text="-"
+        android:textColor="@color/blue_dark"
+        android:background="@drawable/btn_default"
+        app:layout_constraintBottom_toBottomOf="@+id/participants"
+        app:layout_constraintEnd_toStartOf="@+id/amount"
+        app:layout_constraintTop_toTopOf="@+id/participants" />
+
+    <TextView
+        android:id="@+id/amount"
+        android:layout_width="35dp"
+        android:layout_height="38dp"
+        android:gravity="center"
+        android:text="1"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="@+id/participants"
+        app:layout_constraintEnd_toStartOf="@+id/plus"
+        app:layout_constraintTop_toTopOf="@+id/participants" />
+        
+    <Button
+        android:id="@+id/plus"
+        android:layout_width="35dp"
+        android:layout_height="38dp"
+        android:layout_marginEnd="16dp"
+        android:text="+"
+        android:gravity="center"
+        android:textColor="@color/blue_dark"
+        android:background="@drawable/btn_default"
+        app:layout_constraintBottom_toBottomOf="@+id/participants"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/participants" />
+
+    <TextView
+        android:id="@+id/remaining_amount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="3dp"
+        android:layout_marginBottom="16dp"
+        android:text="余位"
+        android:textColor="@color/blue_dark"
+        app:layout_constraintBottom_toTopOf="@+id/select_wrapper"
+        app:layout_constraintEnd_toStartOf="@+id/divider" />
+        
+    <TextView
+        android:id="@+id/divider"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="3dp"
+        android:textColor="@color/blue_dark"
+        android:text="/"
+        app:layout_constraintBottom_toBottomOf="@+id/remaining_amount"
+        app:layout_constraintEnd_toStartOf="@+id/maximum_amount"
+        app:layout_constraintTop_toTopOf="@+id/remaining_amount" />
+    
+   <TextView
+        android:id="@+id/maximum_amount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:textColor="@color/blue_dark"
+        android:text="最大数"
+        app:layout_constraintBottom_toBottomOf="@+id/divider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/divider" />
+        
+  <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/select_wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/light_gray"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <TextView
+            android:id="@+id/total_price_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="合计："
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+            
+       <TextView
+           android:id="@+id/total_cny"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:gravity="center"
+           android:text="@string/fa_cny"
+           android:textColor="@color/black"
+           android:textSize="18sp"
+           app:layout_constraintBottom_toBottomOf="parent"
+           app:layout_constraintStart_toEndOf="@+id/total_price_title"
+           app:layout_constraintTop_toTopOf="parent" />
+            
+       <TextView
+            android:id="@+id/total_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2dp"
+            android:textSize="18sp"
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/total_cny"
+            app:layout_constraintTop_toTopOf="parent" />
+            
+      <TextView
+           android:id="@+id/price_detail"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:textColor="@color/black"
+           app:layout_constraintBottom_toBottomOf="parent"
+           app:layout_constraintStart_toEndOf="@+id/total_price"
+           app:layout_constraintTop_toTopOf="parent"/>
+           
+     <Button
+           android:id="@+id/submit_order"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_marginTop="8dp"
+           android:layout_marginEnd="8dp"
+           android:layout_marginBottom="8dp"
+           android:background="@drawable/btn_primary"
+           android:text="@string/submit_order"
+           android:textColor="@color/white"
+           android:textSize="18sp"
+           android:textStyle="bold"
+           app:layout_constraintBottom_toBottomOf="parent"
+           app:layout_constraintEnd_toEndOf="parent"
+           app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
