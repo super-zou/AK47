@@ -56,6 +56,7 @@ public class OrderDetailsDF extends BaseDialogFragment {
     private MyHandler myHandler;
     private OrdersListDF.OrderManager mOrder;
     public static final String GET_ORDER_BY_OID = HttpUtil.DOMAIN + "?q=order_manager/get_order_by_oid";
+    public static final String GET_UNSUBSCRIBE_CONDITION = HttpUtil.DOMAIN + "?q=order_manager/check_unsubscribe_condition";
     
     public static OrderDetailsDF newInstance(OrdersListDF.OrderManager order) {
         OrderDetailsDF orderDetailsDF = new OrderDetailsDF();
@@ -200,7 +201,7 @@ public class OrderDetailsDF extends BaseDialogFragment {
         unsubscribeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                checkUnsubscribeCondition();
             }
         });
         
@@ -234,6 +235,35 @@ public class OrderDetailsDF extends BaseDialogFragment {
             public void onClick(View view) {
                 headUri.callOnClick();
             }
+        });
+    }
+    
+    private void checkUnsubscribeCondition(){
+        showProgressDialog("正在申请...");
+        RequestBody requestBody = new FormBody.Builder()
+                .add("oid", String.valueOf(mOid))
+                .build();
+
+        HttpUtil.sendOkHttpRequest(getContext(), GET_UNSUBSCRIBE_CONDITION, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String responseText = response.body().string();
+                if (isDebug)
+                    Slog.d(TAG, "==========checkUnsubscribeCondition response body : " + responseText);
+                if (responseText != null) {
+                    try {
+                        dismissProgressDialog();
+                        JSONObject jsonObject = new JSONObject(responseText);
+                        mOrder = getOrderManager(jsonObject.optJSONObject("order"));
+                        myHandler.sendEmptyMessage(GET_ORDER_INFO_DONE)
+                            }catch (JSONException e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {}
         });
     }
     
