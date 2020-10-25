@@ -57,6 +57,10 @@ public class OrderDetailsDF extends BaseDialogFragment {
     private OrdersListDF.OrderManager mOrder;
     public static final String GET_ORDER_BY_OID = HttpUtil.DOMAIN + "?q=order_manager/get_order_by_oid";
     public static final String GET_UNSUBSCRIBE_CONDITION = HttpUtil.DOMAIN + "?q=order_manager/check_unsubscribe_condition";
+    private static final int GET_UNSUBSCRIBE_CONDITION_DONE = 1;
+    private final int REFUND_FULL = 0;
+    private final int REFUND_PARTIAL = 1;
+    private int mCondition = 0;
     
     public static OrderDetailsDF newInstance(OrdersListDF.OrderManager order) {
         OrderDetailsDF orderDetailsDF = new OrderDetailsDF();
@@ -254,9 +258,9 @@ public class OrderDetailsDF extends BaseDialogFragment {
                     try {
                         dismissProgressDialog();
                         JSONObject jsonObject = new JSONObject(responseText);
-                        mOrder = getOrderManager(jsonObject.optJSONObject("order"));
-                        myHandler.sendEmptyMessage(GET_ORDER_INFO_DONE)
-                            }catch (JSONException e){
+                        mCondition = jsonObject.optInt("result");
+                        myHandler.sendEmptyMessage(GET_UNSUBSCRIBE_CONDITION_DONE);
+                    }catch (JSONException e){
                         e.printStackTrace();
                     }
                 }
@@ -321,6 +325,9 @@ public class OrderDetailsDF extends BaseDialogFragment {
         switch (msg.what) {
            case GET_ORDER_INFO_DONE:
                 initView();
+                break;
+            case GET_UNSUBSCRIBE_CONDITION_DONE:
+                
                 break;
 
         }
