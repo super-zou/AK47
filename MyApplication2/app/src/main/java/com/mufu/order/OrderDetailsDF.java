@@ -13,9 +13,11 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.bumptech.glide.Glide;
@@ -327,10 +329,24 @@ public class OrderDetailsDF extends BaseDialogFragment {
                 initView();
                 break;
             case GET_UNSUBSCRIBE_CONDITION_DONE:
-                
+                unsubscribeNotice();
                 break;
 
         }
+    }
+
+    public void unsubscribeNotice(){
+        final EditText et = new EditText(getContext());
+        new AlertDialog.Builder(getContext()).setTitle("请输入收款支付宝账号")
+                .setIcon(R.mipmap.mufu_icon)
+                .setView(et)
+                .setMessage("")
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        //按下确定键后的事件
+                    }
+                }).setNegativeButton("取消",null).show();
     }
 
 @Override
