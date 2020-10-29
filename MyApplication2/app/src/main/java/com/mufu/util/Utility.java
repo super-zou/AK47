@@ -45,9 +45,14 @@ public class Utility {
         NORMAL, BLOCK_BOOKING
     }
     
+    public enum OrderStatus {
+        TO_BE_PAID, PAID, FINISHED, EVALUATED, APPLYING_REFUND, REFUNDED
+    }
+    
     public enum OrderType {
         TODAY("today", 0), QUEUED("queued", 1), FINISHED("finished", 2),
         UNPAYMENT("unpayment", 3), BOOKED("booked", 4), WAITING_EVALUATION("waiting_evaluation", 5),
+        APPLYING_REFUND("applying_refund", 6), REFUNDED("refunded", 7),
         MY_ALL_SOLD("my_all_sold", 8), MY_ALL("my_all", 9), ALL_SOLD("all", 10);
 
         private String _name;
@@ -75,6 +80,10 @@ public class Utility {
                     return BOOKED;
                 case 5:
                     return WAITING_EVALUATION;
+                case 6:
+                    return APPLYING_REFUND;
+                case 7:
+                    return REFUNDED;
                 case 8:
                     return MY_ALL_SOLD;
                 case 9:
