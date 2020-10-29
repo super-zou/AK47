@@ -348,13 +348,13 @@
         app:layout_constraintTop_toBottomOf="@+id/payment_time" />
         
     <Button
-        android:id="@+id/unsubscribe"
+        android:id="@+id/refund"
         android:layout_width="wrap_content"
         android:layout_height="36dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:background="@drawable/label_btn_shape_white"
-        android:text="@string/unsubscribe"
+        android:text="@string/apply_refund"
         android:textColor="@android:color/secondary_text_light_nodisable"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/pay" />
