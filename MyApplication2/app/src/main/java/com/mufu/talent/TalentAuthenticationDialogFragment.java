@@ -173,6 +173,14 @@ public class TalentAuthenticationDialogFragment extends BaseDialogFragment {
         leftBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (commonDialogFragmentInterface != null) {//callback from ArchivesActivity class
+                    if (type.ordinal() == eden_group) {
+                        commonDialogFragmentInterface.onBackFromDialog(TALENT_AUTHENTICATION_RESULT_OK, gid, isSubmit);
+                    } else {
+                        //commonDialogFragmentInterface.onBackFromDialog(COMMON_TALENT_AUTHENTICATION_RESULT_OK, aid, isSubmit);
+                        sendTalentAddedBroadcast();
+                    }
+                }
                 dismiss();
             }
         });
