@@ -476,21 +476,14 @@ public class TalentAuthenticationDialogFragment extends BaseDialogFragment {
     @Override
     public void onDismiss(DialogInterface dialogInterface) {
         super.onDismiss(dialogInterface);
-
-        if (commonDialogFragmentInterface != null) {//callback from ArchivesActivity class
-            if (type.ordinal() == eden_group) {
-                commonDialogFragmentInterface.onBackFromDialog(TALENT_AUTHENTICATION_RESULT_OK, gid, isSubmit);
-            } else {
-                //commonDialogFragmentInterface.onBackFromDialog(COMMON_TALENT_AUTHENTICATION_RESULT_OK, aid, isSubmit);
-                sendTalentAddedBroadcast();
-            }
-        }
     }
     
     private void sendTalentAddedBroadcast() {
-        Intent intent = new Intent(TALENT_ADD_BROADCAST);
-        intent.putExtra("tid", talent.tid);
-        LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
+        if (talent != null){
+            Intent intent = new Intent(TALENT_ADD_BROADCAST);
+            intent.putExtra("tid", talent.tid);
+            LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
+        }
     }
 
     @Override
