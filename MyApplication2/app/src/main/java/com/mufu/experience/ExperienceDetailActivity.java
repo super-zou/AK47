@@ -179,9 +179,13 @@ public class ExperienceDetailActivity extends BaseAppCompatActivity implements C
     }
 
     private void checkAppointDate(){
-        CheckAppointDate checkAppointDate = CheckAppointDate.newInstance(eid, chargeObject.optInt("price"),
-                experienceObject.optString("title"), experienceObject.optInt("amount"));
-        checkAppointDate.show(getSupportFragmentManager(), "CheckAppointDate");
+        try {
+            CheckAppointDate checkAppointDate = CheckAppointDate.newInstance(eid, chargeObject.optInt("price"),
+                    experienceObject.optString("title"), experienceObject.optInt("amount"));
+            checkAppointDate.show(getSupportFragmentManager(), "CheckAppointDate");
+        }catch (NullPointerException n){
+            n.printStackTrace();
+        }
     }
     
     private void getBannerPictures(){
