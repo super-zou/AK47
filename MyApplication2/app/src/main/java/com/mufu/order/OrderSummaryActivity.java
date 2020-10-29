@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.mufu.R;
-import com.mufu.adapter.OrderSummaryAdapter;
+import com.mufu.adapter.MyOrderSummaryAdapter;
 import com.mufu.common.BaseAppCompatActivity;
 import com.mufu.common.MyApplication;
 import com.mufu.experience.ExperienceEvaluateDialogFragment;
@@ -59,7 +59,7 @@ public class OrderSummaryActivity extends BaseAppCompatActivity {
     AnimationDrawable animationDrawable;
     private int mLoadSize = 0;
     private Handler handler;
-    private OrderSummaryAdapter orderSummaryAdapter;
+    private MyOrderSummaryAdapter myOrderSummaryAdapter;
     private XRecyclerView recyclerView;
     private List<MyOrdersFragmentDF.Order> mOrderList = new ArrayList<>();
     
@@ -79,7 +79,7 @@ public class OrderSummaryActivity extends BaseAppCompatActivity {
 
         handler = new OrderSummaryActivity.MyHandler(this);
         recyclerView = findViewById(R.id.order_summary_list);
-        orderSummaryAdapter = new OrderSummaryAdapter(getContext());
+        myOrderSummaryAdapter = new MyOrderSummaryAdapter(getContext());
         MyLinearLayoutManager linearLayoutManager = new MyLinearLayoutManager(getContext());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(linearLayoutManager);
@@ -100,10 +100,10 @@ public class OrderSummaryActivity extends BaseAppCompatActivity {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 if (newState == SCROLL_STATE_IDLE) {
-                    orderSummaryAdapter.setScrolling(false);
-                    orderSummaryAdapter.notifyDataSetChanged();
+                    myOrderSummaryAdapter.setScrolling(false);
+                    myOrderSummaryAdapter.notifyDataSetChanged();
                 } else {
-                    orderSummaryAdapter.setScrolling(true);
+                    myOrderSummaryAdapter.setScrolling(true);
                 }
                 super.onScrollStateChanged(recyclerView, newState);
             }
@@ -121,7 +121,7 @@ public class OrderSummaryActivity extends BaseAppCompatActivity {
             }
         });
         
-        orderSummaryAdapter.setItemClickListener(new OrderSummaryAdapter.MyItemClickListener() {
+        myOrderSummaryAdapter.setItemClickListener(new MyOrderSummaryAdapter.MyItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
                 MyOrdersFragmentDF.Order order = mOrderList.get(position);
@@ -130,7 +130,7 @@ public class OrderSummaryActivity extends BaseAppCompatActivity {
                 //orderDetailsDF.setTargetFragment(this, ROUTE_REQUEST_CODE);
                 //orderDetailsDF.show(getSupportFragmentManager(), "RouteItemEditDF");
               }
-            }, new OrderSummaryAdapter.EvaluateClickListener() {
+            }, new MyOrderSummaryAdapter.EvaluateClickListener() {
             @Override
             public void onEvaluateClick(View view, int position) {
                 MyOrdersFragmentDF.Order order = mOrderList.get(position);
@@ -139,7 +139,7 @@ public class OrderSummaryActivity extends BaseAppCompatActivity {
                 //orderDetailsDF.setTargetFragment(this, ROUTE_REQUEST_CODE);
                 //experienceEvaluateDialogFragment.show(getSupportFragmentManager(), "ExperienceEvaluateDialogFragment");
             }
-        }, new OrderSummaryAdapter.PayClickListener() {
+        }, new MyOrderSummaryAdapter.PayClickListener() {
             @Override
             public void onPayClick(View view, int position) {
                 MyOrdersFragmentDF.Order order = mOrderList.get(position);
@@ -148,7 +148,7 @@ public class OrderSummaryActivity extends BaseAppCompatActivity {
             }
         });
 
-        recyclerView.setAdapter(orderSummaryAdapter);
+        recyclerView.setAdapter(myOrderSummaryAdapter);
         
         TextView back = findViewById(R.id.back);
         back.setOnClickListener(new View.OnClickListener() {
@@ -249,14 +249,14 @@ public class OrderSummaryActivity extends BaseAppCompatActivity {
             case GET_ALL_DONE:
                 Slog.d(TAG, "-------------->GET_ALL_DONE");
                 //orderSummaryAdapter.setData(mOrderList);
-                orderSummaryAdapter.notifyDataSetChanged();
+                myOrderSummaryAdapter.notifyDataSetChanged();
                 recyclerView.loadMoreComplete();
                 stopLoadProgress();
                 break;
             case GET_ALL_END:
                 Slog.d(TAG, "-------------->GET_ALL_END");
                 //orderSummaryAdapter.setData(mOrderList);
-                orderSummaryAdapter.notifyDataSetChanged();
+                myOrderSummaryAdapter.notifyDataSetChanged();
                 recyclerView.loadMoreComplete();
                 recyclerView.setNoMore(true);
                 stopLoadProgress();
