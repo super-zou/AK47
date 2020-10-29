@@ -48,6 +48,7 @@ import static com.mufu.main.MeetArchiveFragment.GET_EXPERIENCE_STATISTICS_URL;
 import static com.mufu.main.MeetArchiveFragment.GET_GUIDE_STATISTICS_URL;
 import static com.mufu.main.MeetArchiveFragment.LOAD_MY_EXPERIENCES_DONE;
 import static com.mufu.main.MeetArchiveFragment.LOAD_MY_GUIDE_COUNT_DONE;
+import static com.mufu.order.OrdersListDF.ORDER_REFUND_SUCCESS_BROADCAST;
 import static com.mufu.order.PlaceOrderDF.ORDER_EVALUATE_SUCCESS_BROADCAST;
 import static com.mufu.order.PlaceOrderDF.ORDER_PAYMENT_SUCCESS_BROADCAST;
 import static com.mufu.order.PlaceOrderDF.ORDER_SUBMIT_BROADCAST;
@@ -67,6 +68,8 @@ public class OrderFragment extends Fragment implements View.OnClickListener{
     private static final int GET_MY_BOOKED_ORDERS_AMOUNT_DONE = 4;
     private static final int GET_WAITING_FOR_MY_EVALUATION_ORDERS_AMOUNT_DONE = 5;
     private static final int GET_MY_REVENUE_DONE = 6;
+        private static final int GET_CURRENT_REFUND_AMOUNT_DONE = 8;
+    private static final int GET_MY_REFUND_ORDERS_AMOUNT_DONE = 9;
     public static final String GET_TODAY_ORDERS_AMOUNT = HttpUtil.DOMAIN + "?q=order_manager/get_today_orders_amount";
     public static final String GET_QUEUED_ORDERS_AMOUNT = HttpUtil.DOMAIN + "?q=order_manager/get_queued_orders_amount";
     public static final String GET_FINISHED_ORDERS_AMOUNT = HttpUtil.DOMAIN + "?q=order_manager/get_finished_orders_amount";
@@ -74,6 +77,8 @@ public class OrderFragment extends Fragment implements View.OnClickListener{
     private static final String GET_MY_BOOKED_ORDERS_AMOUNT = HttpUtil.DOMAIN + "?q=order_manager/get_my_booked_orders_amount";
     private static final String GET_WAITING_FOR_MY_EVALUATION_ORDERS_AMOUNT = HttpUtil.DOMAIN + "?q=order_manager/get_waiting_for_my_evaluation_orders_amount";
     public static final String GET_MY_REVENUE = HttpUtil.DOMAIN + "?q=order_manager/get_my_revenue";
+    private static final String GET_MY_REFUND_ORDERS_AMOUNT = HttpUtil.DOMAIN + "?q=order_manager/get_my_refund_orders_amount";
+    public static final String GET_CURRENT_REFUND_AMOUNT = HttpUtil.DOMAIN + "?q=order_manager/get_current_refund_amount";
     
     private View view;
     private MyHandler handler;
@@ -91,6 +96,8 @@ public class OrderFragment extends Fragment implements View.OnClickListener{
     private OrderStatusBroadcastReceiver mReceiver;
     private ConstraintLayout revenueWrapper;
     private Button mGetAllOrdersBtn;
+    private TextView mMyRefundAmountTV;
+    private TextView mCurrentAllRefundAmountTV;
     
     @Nullable
     @Override
@@ -119,12 +126,16 @@ public class OrderFragment extends Fragment implements View.OnClickListener{
         mMyAllOrdersNavTV = view.findViewById(R.id.all_orders_nav);
         mWaitingForMyEvaluationOrdersAmountTV = view.findViewById(R.id.waiting_for_evaluation_amount);
         mGetAllOrdersBtn = view.findViewById(R.id.get_all_orders_btn);
+        mMyRefundAmountTV = view.findViewById(R.id.refund_amount);
+        mCurrentAllRefundAmountTV = view.findViewById(R.id.current_refund_amount);
 
         mMyAllSoldOrdersTV.setOnClickListener(this);
         mMyAllSoldOrdersNavTV.setOnClickListener(this);
         mMyAllOrdersTV.setOnClickListener(this);
         mMyAllOrdersNavTV.setOnClickListener(this);
         mGetAllOrdersBtn.setOnClickListener(this);
+        mMyRefundAmountTV.setOnClickListener(this::onClick);
+        mCurrentAllRefundAmountTV.setOnClickListener(this);
 
 
         getMyOrdersAmount();
@@ -140,6 +151,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener{
         getMyUnpaidOrdersAmount();
         getMyBookedOrdersAmount();
         getWaitingForMyEvaluationOrdersAmount();
+        getMyRefundOrdersAmount();
     }
 
     private void processMyRevenue(){
@@ -210,6 +222,40 @@ public class OrderFragment extends Fragment implements View.OnClickListener{
                             e.printStackTrace();
                         }
                     }
+                }
+            }
+            @Override
+            public void onFailure(Call call, IOException e) {
+            }
+        });
+    }
+    
+        private void getMyRefundOrdersAmount(){
+        HttpUtil.sendOkHttpRequest(MyApplication.getContext(), GET_MY_REFUND_ORDERS_AMOUNT, new FormBody.Builder().build(), new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.body() != null) {
+                    String responseText = response.body().string();
+                    if (isDebug) Slog.d(TAG, "==========getMyRefundOrdersAmount response text : " + responseText);
+                    if (responseText != null && !TextUtils.isEmpty(responseText)) {
+                        JSONObject responseObject = null;
+                        try {
+                            responseObject = new JSONObject(responseText);
+                            if (responseObject != null) {
+                                int amount = responseObject.optInt("amount");
+                                if (amount > 0){
+                                    Message message = new Message();
+                                    Bundle bundle = new Bundle();
+                                    bundle.putInt("amount", amount);
+                                    message.what = GET_MY_REFUND_ORDERS_AMOUNT_DONE;
+                                    message.setData(bundle);
+                                    handler.sendMessage(message);
+                                }
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        }
                 }
             }
             @Override
@@ -531,6 +577,41 @@ if (responseText != null && !TextUtils.isEmpty(responseText)) {
             }
         });
     }
+    
+    private void getCurrentRefundAmount(){
+        HttpUtil.sendOkHttpRequest(MyApplication.getContext(), GET_CURRENT_REFUND_AMOUNT, new FormBody.Builder().build(), new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.body() != null) {
+                    String responseText = response.body().string();
+                    if (isDebug) Slog.d(TAG, "==========getCurrentRefundAmount response text : " + responseText);
+                    if (responseText != null && !TextUtils.isEmpty(responseText)) {
+                        JSONObject responseObject = null;
+                        try {
+                            responseObject = new JSONObject(responseText);
+                            if (responseObject != null) {
+                                int amount = responseObject.optInt("amount");
+                                if (amount > 0){
+                                    Message message = new Message();
+                                    Bundle bundle = new Bundle();
+                                    bundle.putInt("amount", amount);
+                                    message.what = GET_CURRENT_REFUND_AMOUNT_DONE;
+                                    message.setData(bundle);
+                                    handler.sendMessage(message);
+                                }
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+            }
+        });
+    }
 
     public void handleMessage(Message message) {
         Bundle bundle = message.getData();
@@ -575,6 +656,17 @@ if (responseText != null && !TextUtils.isEmpty(responseText)) {
                 break;
             case GET_ADMIN_ROLE_DOWN:
                 mGetAllOrdersBtn.setVisibility(View.VISIBLE);
+                               if (mRole == 1){
+                    getCurrentRefundAmount();
+                }
+                break;
+                        case GET_CURRENT_REFUND_AMOUNT_DONE:
+                int amount = bundle.getInt("amount");
+                mCurrentAllRefundAmountTV.setText(String.valueOf(amount));
+                break;
+            case GET_MY_REFUND_ORDERS_AMOUNT_DONE:
+                int refundAmount = bundle.getInt("amount");
+                mMyRefundAmountTV.setText(String.valueOf(refundAmount));
                 break;
             default:
                 break;
@@ -623,6 +715,11 @@ if (responseText != null && !TextUtils.isEmpty(responseText)) {
                 myOrdersFragmentDF.setArguments(bundle);
                 myOrdersFragmentDF.show(getFragmentManager(), "MyOrdersFragmentDF");
                 break;
+            case R.id.refund_amount:
+                bundle.putShort("type", (short)Utility.OrderType.REFUNDED.getType());
+                myOrdersFragmentDF.setArguments(bundle);
+                myOrdersFragmentDF.show(getFragmentManager(), "MyOrdersFragmentDF");
+                break;
             case R.id.all_orders:
             case R.id.all_orders_nav:
                 bundle.putShort("type", (short)Utility.OrderType.MY_ALL.getType());
@@ -631,6 +728,11 @@ if (responseText != null && !TextUtils.isEmpty(responseText)) {
                 break;
             case R.id.get_all_orders_btn:
                 bundle.putShort("type", (short)Utility.OrderType.ALL_SOLD.getType());
+                soldFragmentDF.setArguments(bundle);
+                soldFragmentDF.show(getFragmentManager(), "OrdersListDF");
+                break;
+                        case R.id.current_refund_amount:
+                bundle.putShort("type", (short)Utility.OrderType.REFUNDED.getType());
                 soldFragmentDF.setArguments(bundle);
                 soldFragmentDF.show(getFragmentManager(), "OrdersListDF");
                 break;
@@ -647,6 +749,10 @@ if (responseText != null && !TextUtils.isEmpty(responseText)) {
                 case ORDER_EVALUATE_SUCCESS_BROADCAST:
                     getMyOrdersAmount();
                     break;
+                                case ORDER_REFUND_SUCCESS_BROADCAST:
+                    int amount = Integer.parseInt(mCurrentAllRefundAmountTV.getText().toString());
+                    mCurrentAllRefundAmountTV.setText(String.valueOf(amount - 1));
+                    break;
             }
         }
     }
@@ -657,6 +763,7 @@ if (responseText != null && !TextUtils.isEmpty(responseText)) {
         intentFilter.addAction(ORDER_PAYMENT_SUCCESS_BROADCAST);
         intentFilter.addAction(ORDER_SUBMIT_BROADCAST);
         intentFilter.addAction(ORDER_EVALUATE_SUCCESS_BROADCAST);
+        intentFilter.addAction(ORDER_REFUND_SUCCESS_BROADCAST);
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, intentFilter);
     }
 
