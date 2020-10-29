@@ -46,6 +46,19 @@
             app:layout_constraintBottom_toBottomOf="@+id/location_icon"
             app:layout_constraintStart_toEndOf="@+id/location_icon"
             app:layout_constraintTop_toTopOf="@+id/location_icon" />
+        
+        <TextView
+            android:id="@+id/refund_tag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:padding="8dp"
+            android:visibility="gone"
+            android:background="@drawable/btn_default"
+            android:text="@string/apply_refund"
+            android:textColor="@color/blue_dark"
+            app:layout_constraintStart_toStartOf="@+id/location_icon"
+            app:layout_constraintTop_toBottomOf="@+id/location_icon" />
             
          <TextView
             android:id="@+id/guide_title"
@@ -285,20 +298,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/total_price" />
             
-        <Button
-            android:id="@+id/unsubscribe"
-            android:layout_width="wrap_content"
-            android:layout_height="36dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
-            android:background="@drawable/label_btn_shape_white"
-            android:text="@string/unsubscribe"
-            android:textColor="@android:color/secondary_text_light_nodisable"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/pay"
-            app:layout_constraintTop_toBottomOf="@+id/appointed_date" />
-
         <Button
             android:id="@+id/pay"
             android:layout_width="wrap_content"
