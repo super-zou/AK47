@@ -10,12 +10,14 @@ import android.os.Message;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
+import android.view.LayoutInflater;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -37,6 +39,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 
 import java.lang.ref.WeakReference;
 import okhttp3.Call;
@@ -47,7 +50,6 @@ import okhttp3.Response;
 
 import static android.app.Activity.RESULT_OK;
 import static com.mufu.order.OrderPaymentDF.GET_ORDER_INFO_DONE;
-import static com.mufu.order.OrdersListDF.getOrderManager;
 
 public class OrderDetailsDF extends BaseDialogFragment {
     private static final boolean isDebug = true;
@@ -57,18 +59,23 @@ public class OrderDetailsDF extends BaseDialogFragment {
     private int mOid;
     private MyHandler myHandler;
     private OrdersListDF.OrderManager mOrder;
+        private Button mRefundBtn;
     public static final String GET_ORDER_BY_OID = HttpUtil.DOMAIN + "?q=order_manager/get_order_by_oid";
     public static final String GET_UNSUBSCRIBE_CONDITION = HttpUtil.DOMAIN + "?q=order_manager/check_unsubscribe_condition";
     private static final int GET_UNSUBSCRIBE_CONDITION_DONE = 1;
+        public static final String APPLY_REFUND = HttpUtil.DOMAIN + "?q=order_manager/apply_refund";
     private final int REFUND_FULL = 0;
+        private static final int SUBMIT_REFUND_DONE = 2;
     private final int REFUND_PARTIAL = 1;
     private int mCondition = 0;
+        private int mType;
     
-    public static OrderDetailsDF newInstance(OrdersListDF.OrderManager order) {
+    public static OrderDetailsDF newInstance(OrdersListDF.OrderManager order, int orderType) {
         OrderDetailsDF orderDetailsDF = new OrderDetailsDF();
         Bundle bundle = new Bundle();
         bundle.putSerializable("order", order);
         orderDetailsDF.setArguments(bundle);
+                bundle.putInt("type", orderType);
 
         return orderDetailsDF;
     }
@@ -110,6 +117,7 @@ public class OrderDetailsDF extends BaseDialogFragment {
         Bundle bundle = getArguments();
         if (bundle != null) {
             mOrder = (OrdersListDF.OrderManager) bundle.getSerializable("order");
+            mType = bundle.getInt("type");
 
             if (mOrder == null){
                 mOid = bundle.getInt("oid", 0);
@@ -142,6 +150,7 @@ public class OrderDetailsDF extends BaseDialogFragment {
         TextView paymentTime = mDialog.findViewById(R.id.payment_time);
         TextView numberTV = mDialog.findViewById(R.id.order_number);
         Button unsubscribeBtn = mDialog.findViewById(R.id.unsubscribe);
+        mRefundBtn = mDialog.findViewById(R.id.refund);
         Button payBtn = mDialog.findViewById(R.id.pay);
         Button evaluateBtn = mDialog.findViewById(R.id.evaluate);
                 TextView blockBookingTagTV = mDialog.findViewById(R.id.block_booking_tag);
@@ -190,21 +199,32 @@ public class OrderDetailsDF extends BaseDialogFragment {
 
         numberTV.setText("订单编号："+mOrder.number);
         
-                switch (mOrder.status){
+        switch (mOrder.status){
             case 0:
-                unsubscribeBtn.setVisibility(View.GONE);
+                mRefundBtn.setVisibility(View.GONE);
                 evaluateBtn.setVisibility(View.GONE);
                 break;
             case 1:
                 payBtn.setVisibility(View.GONE);
                 break;
             case 3:
+                mRefundBtn.setVisibility(View.GONE);
                 payBtn.setVisibility(View.GONE);
                 evaluateBtn.setText(getContext().getResources().getString(R.string.append_evaluation));
                 break;
+            case 4:
+            case 5:
+                mRefundBtn.setVisibility(View.GONE);
+                payBtn.setVisibility(View.GONE);
+                evaluateBtn.setVisibility(View.GONE);
+                break;
+        }
+        
+        if (mType == Utility.OrderType.WAITING_EVALUATION.ordinal()){
+            mRefundBtn.setVisibility(View.GONE);
         }
 
-        unsubscribeBtn.setOnClickListener(new View.OnClickListener() {
+        mRefundBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 checkUnsubscribeCondition();
@@ -246,6 +266,9 @@ public class OrderDetailsDF extends BaseDialogFragment {
     
     private void checkUnsubscribeCondition(){
         showProgressDialog("正在申请...");
+        if (mOid == 0 && mOrder != null){
+            mOid = mOrder.oid;
+        }
         RequestBody requestBody = new FormBody.Builder()
                 .add("oid", String.valueOf(mOid))
                 .build();
@@ -300,7 +323,8 @@ public class OrderDetailsDF extends BaseDialogFragment {
                     try {
                         dismissProgressDialog();
                         JSONObject jsonObject = new JSONObject(responseText);
-                        mOrder = getOrderManager(jsonObject.optJSONObject("order"));
+                        OrdersListDF ordersListDF = new OrdersListDF();
+                        mOrder = ordersListDF.getOrderManager(jsonObject.optJSONObject("order"));
                         myHandler.sendEmptyMessage(GET_ORDER_INFO_DONE);
                     }catch (JSONException e){
                         e.printStackTrace();
@@ -331,25 +355,102 @@ public class OrderDetailsDF extends BaseDialogFragment {
             case GET_UNSUBSCRIBE_CONDITION_DONE:
                 unsubscribeNotice();
                 break;
+            case SUBMIT_REFUND_DONE:
+                mRefundBtn.setClickable(false);
+                mRefundBtn.setText("已申请退款");
+                mRefundBtn.setBackground(getContext().getResources().getDrawable(R.drawable.btn_big_radius_default));
+                break;
 
         }
     }
 
     public void unsubscribeNotice(){
-        final EditText et = new EditText(getContext());
-        new AlertDialog.Builder(getContext()).setTitle("请输入收款支付宝账号")
-                .setIcon(R.mipmap.mufu_icon)
-                .setView(et)
-                .setMessage("")
-                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+        String message = "";
+        if (mCondition == REFUND_FULL){
+            message = "请预留您的支付宝账号，申请后会在1~2日内收到退款";
+        }else {
+            message = "由于您申请退款时间已超过24小时且未提前5天申请，根据平台规定，只能退款80%，申请后会在2天内退款到您支付宝账户";
+        }
+        final AlertDialog.Builder normalDialog =
+                new AlertDialog.Builder(getContext(), R.style.Theme_MaterialComponents_Light_Dialog_Alert);
+
+        View editView = LayoutInflater.from(getContext()).inflate(R.layout.refund_apply_edit, null);
+        EditText alipayNameET = editView.findViewById(R.id.alipay_name);
+        EditText alipayAccountET = editView.findViewById(R.id.alipay_account);
+        EditText reasonET = editView.findViewById(R.id.reason);
+        normalDialog.setTitle("申请退款")
+            .setIcon(R.mipmap.mufu_icon)
+                .setView(editView)
+                .setMessage(message)
+                .setPositiveButton("提交申请", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        //按下确定键后的事件
+                        String name = alipayNameET.getText().toString();
+                        String account = alipayAccountET.getText().toString();
+                        String reason = reasonET.getText().toString();
+                        if (TextUtils.isEmpty(name)){
+                            Toast.makeText(getContext(), "请输入支付宝用户名", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        if (TextUtils.isEmpty(account)){
+                            Toast.makeText(getContext(), "请输入支付宝账户", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                       if (TextUtils.isEmpty(reason)){
+                            Toast.makeText(getContext(), "请说明退款原因", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        submitRefundApply(name, account, reason);
                     }
                 }).setNegativeButton("取消",null).show();
     }
+    
+    private void submitRefundApply(String name, String account, String reason){
+        showProgressDialog("正在提交");
+        String amount;
+        if (mCondition == REFUND_FULL){
+            amount = String.valueOf(mOrder.actualPayment);
+        }else {
+            DecimalFormat decimalFormat=new DecimalFormat(".00");
+            amount = decimalFormat.format(mOrder.actualPayment * 0.8);
+        }
+        RequestBody requestBody = new FormBody.Builder()
+                .add("oid", String.valueOf(mOid))
+                .add("name", name)
+                .add("account", account)
+                .add("amount", amount)
+                .add("reason", reason)
+                .build();
+        
+        HttpUtil.sendOkHttpRequest(getContext(), APPLY_REFUND, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String responseText = response.body().string();
+                if (isDebug)
+                    Slog.d(TAG, "==========submitRefundApply response body : " + responseText);
+                if (responseText != null) {
+                    try {
+                        dismissProgressDialog();
+                        JSONObject jsonObject = new JSONObject(responseText);
+                        int result = jsonObject.optInt("result");
+                        if (result > 0){
+                            myHandler.sendEmptyMessage(SUBMIT_REFUND_DONE);
+                        }
+                    }catch (JSONException e){
+                        e.printStackTrace();
+                    }
+                }
+            }
 
-@Override
+            @Override
+            public void onFailure(Call call, IOException e) {}
+        });
+    }
+
+    @Override
     public void onDismiss(DialogInterface dialogInterface) {
         super.onDismiss(dialogInterface);
     }
