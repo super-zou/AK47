@@ -3,6 +3,8 @@ package com.mufu.order;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.graphics.Typeface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,7 +16,9 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -46,6 +50,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE;
+import static com.mufu.common.MyApplication.getContext;
 import static com.mufu.order.OrderDetailsDF.newInstance;
 import static com.mufu.util.DateUtil.timeStampToDay;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
@@ -59,10 +64,13 @@ public class OrdersListDF extends BaseDialogFragment {
     public static final String GET_FINISHED_ORDERS = HttpUtil.DOMAIN + "?q=order_manager/get_finished_orders";
     private static final String GET_ALL_ORDERS = HttpUtil.DOMAIN + "?q=order_manager/get_all_orders";
     private static final String GET_MY_ALL_SOLD_ORDERS = HttpUtil.DOMAIN + "?q=order_manager/get_my_all_sold_orders";
+    private static final String GET_CURRENT_REFUND_ORDERS = HttpUtil.DOMAIN + "?q=order_manager/get_current_refund_orders";
+    private static final String UPDATE_REFUND_STATUS_URL = HttpUtil.DOMAIN + "?q=order_manager/update_refund_status";
     private static final int GET_ALL_DONE = 1;
     private static final int GET_ALL_END = 2;
     private static final int NO_MORE = 3;
     final int itemLimit = 1;
+    private static final int UPDATE_REFUND_STATUS_DONE = 4;
     ImageView progressImageView;
     AnimationDrawable animationDrawable;
     private int mLoadSize = 0;
@@ -73,6 +81,8 @@ public class OrdersListDF extends BaseDialogFragment {
     private View mView;
     private Dialog mDialog;
     private Window window;
+    private short mType;
+    public static final String ORDER_REFUND_SUCCESS_BROADCAST = "com.mufu.action.ORDER_REFUND_SUCCESS";
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -101,8 +111,8 @@ public class OrdersListDF extends BaseDialogFragment {
 
         Bundle bundle = getArguments();
         if (bundle != null){
-            short type = bundle.getShort("type");
-            Utility.OrderType orderType = Utility.OrderType.getOrderType(type);
+            mType = bundle.getShort("type");
+            Utility.OrderType orderType = Utility.OrderType.getOrderType(mType);
             switch (orderType){
                 case QUEUED:
                     titleTV.setText(getContext().getResources().getString(R.string.waiting_for_development));
@@ -117,6 +127,9 @@ public class OrdersListDF extends BaseDialogFragment {
                 case ALL_SOLD:
                     titleTV.setText(getContext().getResources().getString(R.string.all_orders));
                     break;
+                case REFUNDED:
+                    titleTV.setText(getContext().getResources().getString(R.string.refund_orders));
+                    break;
             }
             initContentView(type);
             requestData(type);
@@ -125,14 +138,18 @@ public class OrdersListDF extends BaseDialogFragment {
         return mDialog;
     }
     
-    private void initContentView(short type) {
+    private void initContentView() {
         Typeface font = Typeface.createFromAsset(MyApplication.getContext().getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
         FontManager.markAsIconContainer(mDialog.findViewById(R.id.custom_actionbar), font);
         FontManager.markAsIconContainer(mDialog.findViewById(R.id.left_back), font);
 
         handler = new MyHandler(this);
         recyclerView = mDialog.findViewById(R.id.order_summary_list);
-        ordersListAdapter = new OrdersListAdapter(getContext());
+        if (mType != Utility.OrderType.REFUNDED.ordinal()){
+            ordersListAdapter = new OrdersListAdapter(getContext(), false);
+        }else {
+            ordersListAdapter = new OrdersListAdapter(getContext(), true);
+        }
         MyLinearLayoutManager linearLayoutManager = new MyLinearLayoutManager(getContext());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(linearLayoutManager);
@@ -171,7 +188,7 @@ public class OrdersListDF extends BaseDialogFragment {
 
             @Override
             public void onLoadMore() {
-                requestData(type);
+                requestData();
             }
         });
         
@@ -180,9 +197,14 @@ public class OrdersListDF extends BaseDialogFragment {
             public void onItemClick(View view, int position) {
                 OrderManager orderManager = mOrderManagerList.get(position);
                 OrderDetailsDF orderDetailsDF;
-                orderDetailsDF = newInstance(orderManager);
+                orderDetailsDF = newInstance(orderManager, mType);
                 //orderDetailsDF.setTargetFragment(this, ROUTE_REQUEST_CODE);
                 orderDetailsDF.show(getFragmentManager(), "OrderDetailsDF");
+            }
+        }, new OrdersListAdapter.RefundConfirmBtnClickListener() {
+            @Override
+            public void onRefundConfirmBtnClick(View view, int position) {
+                updateRefundStatus(position);
             }
         });
         
@@ -198,8 +220,51 @@ public class OrdersListDF extends BaseDialogFragment {
             }
         }, 50);
     }
+    
+        private void updateRefundStatus(final int position){
+        showProgressDialog("");
+        RequestBody requestBody = new FormBody.Builder()
+                .add("oid", String.valueOf(mOrderManagerList.get(position).oid))
+                .build();
+            
+            HttpUtil.sendOkHttpRequest(getContext(), UPDATE_REFUND_STATUS_URL, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.body() != null) {
+                    String responseText = response.body().string();
+                    Slog.d(TAG, "==========updateRefundStatus response text : " + responseText);
+                    if (responseText != null && !TextUtils.isEmpty(responseText)) {
+                        JSONObject ordersResponse = null;
+                        try {
+                            ordersResponse = new JSONObject(responseText);
+                            if (ordersResponse != null) {
+                                int result = ordersResponse.optInt("result");
+                                dismissProgressDialog();
+                                if (result > 0){
+                                    Bundle bundle = new Bundle();
+                                    bundle.putInt("position", position);
+                                    Message message = new Message();
+                                    message.setData(bundle);
+                                    message.what = UPDATE_REFUND_STATUS_DONE;
+                                    handler.sendMessage(message);
+                                }
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        
+                        }
+                }
+            }
 
-private void requestData(short type) {
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+        });
+    }
+
+private void requestData() {
 
         final int page = mOrderManagerList.size() / PAGE_SIZE;
         RequestBody requestBody = new FormBody.Builder()
@@ -209,7 +274,7 @@ private void requestData(short type) {
 
         String url = GET_QUEUED_ORDERS;
 
-        Utility.OrderType orderType = Utility.OrderType.getOrderType(type);
+        Utility.OrderType orderType = Utility.OrderType.getOrderType(mType);
         switch (orderType){
             case TODAY:
                 url = GET_TODAY_ORDERS;
@@ -226,6 +291,9 @@ private void requestData(short type) {
             case MY_ALL_SOLD:
                 url = GET_MY_ALL_SOLD_ORDERS;
                 break;
+            case REFUNDED:
+                url = GET_CURRENT_REFUND_ORDERS;
+                break;
         }
         
         HttpUtil.sendOkHttpRequest(getContext(), url, requestBody, new Callback() {
@@ -235,11 +303,11 @@ private void requestData(short type) {
                     String responseText = response.body().string();
                     if (isDebug) Slog.d(TAG, "==========loadData response text : " + responseText);
                     if (responseText != null && !TextUtils.isEmpty(responseText)) {
-                        JSONObject guidesResponse = null;
+                        JSONObject ordersResponse = null;
                         try {
-                            guidesResponse = new JSONObject(responseText);
-                            if (guidesResponse != null) {
-                                mLoadSize = processOrdersResponse(guidesResponse);
+                            ordersResponse = new JSONObject(responseText);
+                            if (ordersResponse != null) {
+                                mLoadSize = processOrdersResponse(ordersResponse);
                                 if (mLoadSize == PAGE_SIZE) {
                                     handler.sendEmptyMessage(GET_ALL_DONE);
                                 } else {
@@ -303,9 +371,15 @@ private void requestData(short type) {
         public String appointMentDate;
         public String university;
         public String major;
+        //for refund info
+        public String payName;
+        public String payAccount;
+        public Float refundAmount;
+        public String reason;
+        public int refundCreated;
     }
 
-    public static OrderManager getOrderManager(JSONObject orderObject) {
+    public OrderManager getOrderManager(JSONObject orderObject) {
         OrderManager orderManager = new OrderManager();
         if (orderObject != null) {
             orderManager.oid = orderObject.optInt("oid");
@@ -333,6 +407,13 @@ private void requestData(short type) {
             orderManager.appointMentDate = timeStampToDay(orderObject.optInt("date"));
             orderManager.university = orderObject.optString("university");
             orderManager.major = orderObject.optString("major");
+            if (mType == Utility.OrderType.REFUNDED.ordinal()){
+                orderManager.payName = orderObject.optString("pay_name");
+                orderManager.payAccount = orderObject.optString("pay_account");
+                orderManager.refundAmount = (float)orderObject.optDouble("refund_amount");
+                orderManager.reason = orderObject.optString("reason");
+                orderManager.refundCreated = orderObject.optInt("refund_created");
+            }
         }
 
        return orderManager;
@@ -357,10 +438,22 @@ public void handleMessage(Message message) {
                 break;
             case NO_MORE:
                 Slog.d(TAG, "-------------->NO_MORE");
-                recyclerView.setNoMore(true);
-                recyclerView.loadMoreComplete();
+                if (recyclerView != null){
+                    recyclerView.setNoMore(true);
+                    recyclerView.loadMoreComplete();
+                }
                 stopLoadProgress();
-    break;
+                break;
+            case UPDATE_REFUND_STATUS_DONE:
+                Bundle bundle = message.getData();
+                int position = bundle.getInt("position");
+                Toast.makeText(getContext(), "退款成功", Toast.LENGTH_SHORT).show();
+                mOrderManagerList.remove(position);
+                ordersListAdapter.setData(mOrderManagerList);
+                ordersListAdapter.notifyItemRangeRemoved(position, 1);
+                ordersListAdapter.notifyDataSetChanged();
+                LocalBroadcastManager.getInstance(getContext()).sendBroadcast(new Intent(ORDER_REFUND_SUCCESS_BROADCAST));
+                break;
             default:
                 break;
         }
