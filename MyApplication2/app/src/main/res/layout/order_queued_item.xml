@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/white"
     android:layout_marginBottom="5dp"
-    android:id="@+id/order_queued_item"
+    android:id="@+id/order_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
     
@@ -139,10 +139,8 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
         android:background="@color/color_disabled"
         android:padding="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/block_booking_info">
@@ -201,6 +199,100 @@
             app:layout_constraintBottom_toBottomOf="@+id/university"
             app:layout_constraintStart_toEndOf="@+id/university"
             app:layout_constraintTop_toTopOf="@+id/university" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/refund_wrapper"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/customer_wrapper">
+            
+             <TextView
+            android:id="@+id/pay_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="alipay_name"
+            android:textColor="@color/black"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/pay_account_title"
+            android:text="账号："
+            android:textColor="@color/black"
+            android:layout_marginStart="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@+id/pay_name"
+            app:layout_constraintStart_toEndOf="@+id/pay_name"
+            app:layout_constraintTop_toTopOf="@+id/pay_name"/>
+            
+        <EditText
+            android:id="@+id/pay_account"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="3dp"
+            android:text="alipay_account"
+            android:theme="@style/MyEditText"
+            android:textColorHint="@color/disabled"
+            app:layout_constraintBottom_toBottomOf="@+id/pay_name"
+            app:layout_constraintStart_toEndOf="@+id/pay_account_title"
+            app:layout_constraintTop_toTopOf="@+id/pay_name" />
+            
+        <TextView
+            android:id="@+id/refund_amount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
+            android:text="refund_amount"
+            android:textColor="@color/black"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/pay_name" />
+            
+            
+         <TextView
+            android:id="@+id/refund_created"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="refund_created"
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toBottomOf="@+id/refund_amount"
+            app:layout_constraintStart_toEndOf="@+id/refund_amount"
+            app:layout_constraintTop_toTopOf="@+id/refund_amount" />
+            
+        <TextView
+            android:id="@+id/refund_reason"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:text="reason"
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/refund_amount" />
+            
+        <Button
+            android:id="@+id/refund_confirm"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/btn_big_radius_primary"
+            android:text="确认退款"
+            android:textColor="@color/colorWhite"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/refund_reason" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
