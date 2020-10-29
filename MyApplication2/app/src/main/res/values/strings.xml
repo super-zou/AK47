@@ -492,6 +492,7 @@
     <string name="sold_orders">已售订单</string>
     <string name="waiting_for_evaluation">待评价</string>
     <string name="appoint_notice">长按可查看预订详情</string>
+        <string name="apply_refund">退款</string>
     <string name="share_title">分享牧夫体验中的美妙时刻</string>
     <string name="select_experience">选择要分享的体验</string>
     <string name="evaluate_content_desc">请您从体验内容、达人服务等方面评价一下此次体验，方便其他用户参考。</string>
@@ -514,6 +515,7 @@
     <string name="setting">设置</string>
         <string name="multiple">×</string>
         <string name="unsubscribe">退订</string>
+        <string name="refund">退款</string>
     <string name="pay">支付</string>
     <string name="submit">提交</string>
         <string name="submit_order">提交订单</string>
@@ -603,4 +605,5 @@
     <string name="unpaid">待支付订单</string>
     <string name="booked_orders">已预订订单</string>
     <string name="waiting_for_evaluation_orders">待评价订单</string>
+        <string name="refund_orders">退款订单</string>
 </resources>
