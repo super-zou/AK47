@@ -34,9 +34,9 @@ import static com.mufu.common.MyApplication.getContext;
  * Created by super-zou on 18-9-21.
  */
 
-public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapter.ViewHolder> {
+public class MyOrderSummaryAdapter extends RecyclerView.Adapter<MyOrderSummaryAdapter.ViewHolder> {
 
-    private static final String TAG = "OrderSummaryAdapter";
+    private static final String TAG = "MyOrderSummaryAdapter";
     private static Context mContext;
     private int width;
     private List<OrdersListDF.OrderManager> mOrderList;
@@ -47,8 +47,10 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
     private static final int UNPAID = 0;
     private static final int PAID = 1;
     private static final int EVALUATION = 3;
+    private static final int APPLYING_REFUND = 4;
+    private static final int REFUNDED = 5;
 
-    public OrderSummaryAdapter(Context context) {
+    public MyOrderSummaryAdapter(Context context) {
         mContext = context;
     }
     
@@ -65,7 +67,7 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
     }
     
     @Override
-    public void onBindViewHolder(@NonNull OrderSummaryAdapter.ViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull MyOrderSummaryAdapter.ViewHolder holder, final int position) {
         final MyOrdersFragmentDF.Order order = mOrderList.get(position);
         setContentView(holder, order);
 
@@ -95,7 +97,7 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
         });
     }
     
-    public void setContentView(OrderSummaryAdapter.ViewHolder holder, final MyOrdersFragmentDF.Order order){
+    public void setContentView(MyOrderSummaryAdapter.ViewHolder holder, final MyOrdersFragmentDF.Order order){
 
         if (order.headPictureUrl != null && !"".equals(order.headPictureUrl)) {
             Glide.with(getContext()).load(HttpUtil.DOMAIN + order.headPictureUrl).into(holder.headUri);
@@ -133,34 +135,37 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
         
         holder.actualPaymentTV.setText(String.format("%.2f",order.actualPayment));
         holder.appointedDateTV.setText(order.appointmentDate);
+        holder.refundTagTV.setVisibility(View.GONE);
         
         switch (order.status){
             case UNPAID:
-                holder.unsubscribeBtn.setVisibility(View.GONE);
                 holder.evaluateBtn.setVisibility(View.GONE);
                 holder.payBtn.setVisibility(View.VISIBLE);
                 break;
             case PAID:
                 holder.payBtn.setVisibility(View.GONE);
-                holder.unsubscribeBtn.setVisibility(View.VISIBLE);
                 holder.evaluateBtn.setVisibility(View.VISIBLE);
                 holder.evaluateBtn.setText(getContext().getResources().getString(R.string.evaluation));
                 break;
             case EVALUATION:
-                holder.unsubscribeBtn.setVisibility(View.GONE);
                 holder.payBtn.setVisibility(View.GONE);
                 holder.evaluateBtn.setVisibility(View.VISIBLE);
                 holder.evaluateBtn.setText(getContext().getResources().getString(R.string.append_evaluation));
                 break;
+           case APPLYING_REFUND:
+                holder.refundTagTV.setVisibility(View.VISIBLE);
+                holder.refundTagTV.setText("已申请退款");
+                holder.payBtn.setVisibility(View.GONE);
+                holder.evaluateBtn.setVisibility(View.GONE);
+                break;
+            case REFUNDED:
+                holder.refundTagTV.setVisibility(View.VISIBLE);
+                holder.refundTagTV.setText("已退款");
+                holder.payBtn.setVisibility(View.GONE);
+                holder.evaluateBtn.setVisibility(View.GONE);
+                break;
         }
-        
-        holder.unsubscribeBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
-        
+               
         holder.payBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -219,13 +224,13 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
         TextView unitDividerTV;
         TextView unitTV;
         TextView amountTV;
-        Button unsubscribeBtn;
         Button payBtn;
         Button evaluateBtn;
         CardView itemLayout;
         TextView blockBookingTagTV;
         TextView startingPriceTV;
         TextView totalAmountTV;
+        TextView refundTagTV;
         ConstraintLayout normalPriceInfoCL;
         ConstraintLayout blockBookingPriceInfoCL;
         
@@ -243,12 +248,12 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
             unitDividerTV = view.findViewById(R.id.unit_divider);
             amountTV = view.findViewById(R.id.amount);
             unitTV = view.findViewById(R.id.unit);
-            unsubscribeBtn = view.findViewById(R.id.unsubscribe);
             payBtn = view.findViewById(R.id.pay);
             evaluateBtn = view.findViewById(R.id.evaluate);
                         startingPriceTV = view.findViewById(R.id.starting_price);
             totalAmountTV = view.findViewById(R.id.total_amount);
             blockBookingTagTV = view.findViewById(R.id.block_booking_tag);
+            refundTagTV = view.findViewById(R.id.refund_tag);
             normalPriceInfoCL = view.findViewById(R.id.normal_order_price_info);
             blockBookingPriceInfoCL = view.findViewById(R.id.block_booking_order_price_info);
             
@@ -291,7 +296,7 @@ public class OrderSummaryAdapter extends RecyclerView.Adapter<OrderSummaryAdapte
      *
      * @param myItemClickListener
      */
-    public void setItemClickListener(OrderSummaryAdapter.MyItemClickListener myItemClickListener, EvaluateClickListener evaluateClickListener, PayClickListener payClickListener) {
+    public void setItemClickListener(MyOrderSummaryAdapter.MyItemClickListener myItemClickListener, EvaluateClickListener evaluateClickListener, PayClickListener payClickListener) {
         this.mItemClickListener = myItemClickListener;
         this.mEvaluateClickListener = evaluateClickListener;
         this.mPayClickListener = payClickListener;
