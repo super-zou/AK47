@@ -1,6 +1,5 @@
 package com.mufu.order;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -19,12 +18,12 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.mufu.R;
+import com.mufu.adapter.MyOrderSummaryAdapter;
 import com.mufu.adapter.OrderSummaryAdapter;
 import com.mufu.common.MyApplication;
 import com.mufu.experience.ExperienceEvaluateDialogFragment;
@@ -44,7 +43,6 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,6 +67,7 @@ public class MyOrdersFragmentDF extends BaseDialogFragment {
     private static final String GET_MY_ALL_ORDERS = HttpUtil.DOMAIN + "?q=order_manager/get_my_all_orders";
     private static final String GET_MY_UNPAID_ORDERS = HttpUtil.DOMAIN + "?q=order_manager/get_my_unpaid_orders";
     private static final String GET_MY_BOOKED_ORDERS = HttpUtil.DOMAIN + "?q=order_manager/get_my_booked_orders";
+    private static final String GET_MY_REFUND_ORDERS = HttpUtil.DOMAIN + "?q=order_manager/get_my_refund_orders";
     private static final String GET_WAITING_FOR_MY_EVALUATION_ORDERS = HttpUtil.DOMAIN + "?q=order_manager/get_waiting_for_my_evaluation_orders";
     private static final int GET_ALL_DONE = 1;
     private static final int GET_ALL_END = 2;
@@ -78,7 +77,7 @@ public class MyOrdersFragmentDF extends BaseDialogFragment {
     AnimationDrawable animationDrawable;
     private int mLoadSize = 0;
     private Handler handler;
-    private OrderSummaryAdapter orderSummaryAdapter;
+    private MyOrderSummaryAdapter myOrderSummaryAdapter;
     private XRecyclerView recyclerView;
     private List<OrdersListDF.OrderManager> mOrderList = new ArrayList<>();
     private View mView;
@@ -130,6 +129,10 @@ public class MyOrdersFragmentDF extends BaseDialogFragment {
                 case WAITING_EVALUATION:
                     titleTV.setText(getContext().getResources().getString(R.string.waiting_for_evaluation_orders));
                     break;
+                case APPLYING_REFUND:
+                case REFUNDED:
+                    titleTV.setText(getContext().getResources().getString(R.string.refund_orders));
+                    break;
                 case MY_ALL:
                     titleTV.setText(getContext().getResources().getString(R.string.all_orders));
                     break;
@@ -150,7 +153,7 @@ public class MyOrdersFragmentDF extends BaseDialogFragment {
         FontManager.markAsIconContainer(mDialog.findViewById(R.id.custom_actionbar), font);
         handler = new MyHandler(this);
         recyclerView = mDialog.findViewById(R.id.order_summary_list);
-        orderSummaryAdapter = new OrderSummaryAdapter(getContext());
+        myOrderSummaryAdapter = new MyOrderSummaryAdapter(getContext());
         MyLinearLayoutManager linearLayoutManager = new MyLinearLayoutManager(getContext());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(linearLayoutManager);
@@ -172,10 +175,10 @@ public class MyOrdersFragmentDF extends BaseDialogFragment {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 if (newState == SCROLL_STATE_IDLE) {
-                    orderSummaryAdapter.setScrolling(false);
-                    orderSummaryAdapter.notifyDataSetChanged();
+                    myOrderSummaryAdapter.setScrolling(false);
+                    myOrderSummaryAdapter.notifyDataSetChanged();
                 } else {
-                    orderSummaryAdapter.setScrolling(true);
+                    myOrderSummaryAdapter.setScrolling(true);
                 }
                 super.onScrollStateChanged(recyclerView, newState);
             }
@@ -193,16 +196,16 @@ public class MyOrdersFragmentDF extends BaseDialogFragment {
             }
         });
         
-        orderSummaryAdapter.setItemClickListener(new OrderSummaryAdapter.MyItemClickListener() {
+        myOrderSummaryAdapter.setItemClickListener(new MyOrderSummaryAdapter.MyItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
                 OrdersListDF.OrderManager order = mOrderList.get(position);
                 OrderDetailsDF orderDetailsDF;
-                orderDetailsDF = newInstance(order);
+                orderDetailsDF = newInstance(order, mOrderType);
                 //orderDetailsDF.setTargetFragment(this, ROUTE_REQUEST_CODE);
                 orderDetailsDF.show(getFragmentManager(), "RouteItemEditDF");
             }
-        }, new OrderSummaryAdapter.EvaluateClickListener() {
+        }, new MyOrderSummaryAdapter.EvaluateClickListener() {
             @Override
             public void onEvaluateClick(View view, int position) {
                 mItemPosition = position;
@@ -212,7 +215,7 @@ public class MyOrdersFragmentDF extends BaseDialogFragment {
                 //orderDetailsDF.setTargetFragment(this, ROUTE_REQUEST_CODE);
              experienceEvaluateDialogFragment.show(getFragmentManager(), "ExperienceEvaluateDialogFragment");
             }
-        }, new OrderSummaryAdapter.PayClickListener() {
+        }, new MyOrderSummaryAdapter.PayClickListener() {
             @Override
             public void onPayClick(View view, int position) {
                 mItemPosition = position;
@@ -222,7 +225,7 @@ public class MyOrdersFragmentDF extends BaseDialogFragment {
             }
         });
 
-        recyclerView.setAdapter(orderSummaryAdapter);
+        recyclerView.setAdapter(myOrderSummaryAdapter);
 
 
         //show progressImage before loading done
@@ -255,6 +258,10 @@ public class MyOrdersFragmentDF extends BaseDialogFragment {
                 break;
             case WAITING_EVALUATION:
                 url = GET_WAITING_FOR_MY_EVALUATION_ORDERS;
+                break;
+            case APPLYING_REFUND:
+            case REFUNDED:
+                url = GET_MY_REFUND_ORDERS;
                 break;
             case MY_ALL:
                 url = GET_MY_ALL_ORDERS;
@@ -380,15 +387,15 @@ public class MyOrdersFragmentDF extends BaseDialogFragment {
         switch (message.what) {
             case GET_ALL_DONE:
                 Slog.d(TAG, "-------------->GET_ALL_DONE");
-                orderSummaryAdapter.setData(mOrderList);
-                orderSummaryAdapter.notifyDataSetChanged();
+                myOrderSummaryAdapter.setData(mOrderList);
+                myOrderSummaryAdapter.notifyDataSetChanged();
                 recyclerView.loadMoreComplete();
                 stopLoadProgress();
                 break;
             case GET_ALL_END:
                 Slog.d(TAG, "-------------->GET_ALL_END");
-                orderSummaryAdapter.setData(mOrderList);
-                orderSummaryAdapter.notifyDataSetChanged();
+                myOrderSummaryAdapter.setData(mOrderList);
+                myOrderSummaryAdapter.notifyDataSetChanged();
                 recyclerView.loadMoreComplete();
                 recyclerView.setNoMore(true);
                 stopLoadProgress();
@@ -410,7 +417,7 @@ public class MyOrdersFragmentDF extends BaseDialogFragment {
             switch (intent.getAction()) {
                 case ORDER_PAYMENT_SUCCESS_BROADCAST:
                     mOrderList.get(mItemPosition).status = 1;
-                    orderSummaryAdapter.notifyDataSetChanged();
+                    myOrderSummaryAdapter.notifyDataSetChanged();
                     break;
                 case ORDER_SUBMIT_BROADCAST:
                     //mOrderList.clear();
@@ -419,7 +426,7 @@ public class MyOrdersFragmentDF extends BaseDialogFragment {
                     break;
                 case ORDER_EVALUATE_SUCCESS_BROADCAST:
                     mOrderList.get(mItemPosition).status = 3;
-                    orderSummaryAdapter.notifyDataSetChanged();
+                    myOrderSummaryAdapter.notifyDataSetChanged();
                     break;
             }
         }
