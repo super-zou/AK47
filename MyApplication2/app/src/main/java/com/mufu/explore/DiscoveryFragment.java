@@ -335,7 +335,9 @@ public class DiscoveryFragment extends BaseFragment {
                 meetDiscoveryListAdapter.setData(meetMemberList);
                 meetDiscoveryListAdapter.notifyDataSetChanged();
                 //recyclerView.refreshComplete();
-                recyclerView.loadMoreComplete();
+                if (recyclerView != null){
+                    recyclerView.loadMoreComplete();
+                }
                 stopLoadProgress();
                 break;
             case NO_MORE:
