@@ -85,7 +85,7 @@ public class OrdersListAdapter extends RecyclerView.Adapter<OrdersListAdapter.Or
         setContentView(holder, order, position);
     }
     
-    public void setContentView(OrdersListAdapter.ViewHolder holder, final OrdersListDF.OrderManager order, int position){
+    public void setContentView(OrdersListAdapter.OrderViewHolder holder, final OrdersListDF.OrderManager order, int position){
 
         holder.titleTV.setText(order.title);
         if (!TextUtils.isEmpty(order.packageName)){

@@ -149,7 +149,6 @@ public class OrderDetailsDF extends BaseDialogFragment {
         TextView createdTV = mDialog.findViewById(R.id.order_created);
         TextView paymentTime = mDialog.findViewById(R.id.payment_time);
         TextView numberTV = mDialog.findViewById(R.id.order_number);
-        Button unsubscribeBtn = mDialog.findViewById(R.id.unsubscribe);
         mRefundBtn = mDialog.findViewById(R.id.refund);
         Button payBtn = mDialog.findViewById(R.id.pay);
         Button evaluateBtn = mDialog.findViewById(R.id.evaluate);

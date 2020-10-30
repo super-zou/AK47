@@ -53,14 +53,14 @@ import static com.mufu.order.PlaceOrderDF.ORDER_EVALUATE_SUCCESS_BROADCAST;
 import static com.mufu.order.PlaceOrderDF.ORDER_PAYMENT_SUCCESS_BROADCAST;
 import static com.mufu.order.PlaceOrderDF.ORDER_SUBMIT_BROADCAST;
 
-public class OrderFragment extends Fragment implements View.OnClickListener{
+public class OrderFragment extends Fragment implements View.OnClickListener {
+    public static final String GET_TODAY_ORDERS_AMOUNT = HttpUtil.DOMAIN + "?q=order_manager/get_today_orders_amount";
+    public static final String GET_QUEUED_ORDERS_AMOUNT = HttpUtil.DOMAIN + "?q=order_manager/get_queued_orders_amount";
+    public static final String GET_FINISHED_ORDERS_AMOUNT = HttpUtil.DOMAIN + "?q=order_manager/get_finished_orders_amount";
+    public static final String GET_MY_REVENUE = HttpUtil.DOMAIN + "?q=order_manager/get_my_revenue";
+    public static final String GET_CURRENT_REFUND_AMOUNT = HttpUtil.DOMAIN + "?q=order_manager/get_current_refund_amount";
     private static final String TAG = "OrderFragment";
     private static final boolean isDebug = true;
-    
-    private int myExperienceSize = 0;
-    private int myGuideCount = 0;
-    private int mUid = 0;
-    private int mRole = 0;
     private static final int GET_TODAY_ORDERS_AMOUNT_DONE = 0;
     private static final int GET_QUEUED_ORDERS_AMOUNT_DONE = 1;
     private static final int GET_FINISHED_ORDERS_AMOUNT_DONE = 2;
@@ -68,18 +68,16 @@ public class OrderFragment extends Fragment implements View.OnClickListener{
     private static final int GET_MY_BOOKED_ORDERS_AMOUNT_DONE = 4;
     private static final int GET_WAITING_FOR_MY_EVALUATION_ORDERS_AMOUNT_DONE = 5;
     private static final int GET_MY_REVENUE_DONE = 6;
-        private static final int GET_CURRENT_REFUND_AMOUNT_DONE = 8;
+    private static final int GET_CURRENT_REFUND_AMOUNT_DONE = 8;
     private static final int GET_MY_REFUND_ORDERS_AMOUNT_DONE = 9;
-    public static final String GET_TODAY_ORDERS_AMOUNT = HttpUtil.DOMAIN + "?q=order_manager/get_today_orders_amount";
-    public static final String GET_QUEUED_ORDERS_AMOUNT = HttpUtil.DOMAIN + "?q=order_manager/get_queued_orders_amount";
-    public static final String GET_FINISHED_ORDERS_AMOUNT = HttpUtil.DOMAIN + "?q=order_manager/get_finished_orders_amount";
     private static final String GET_MY_UNPAID_ORDERS_AMOUNT = HttpUtil.DOMAIN + "?q=order_manager/get_my_unpaid_orders_amount";
     private static final String GET_MY_BOOKED_ORDERS_AMOUNT = HttpUtil.DOMAIN + "?q=order_manager/get_my_booked_orders_amount";
     private static final String GET_WAITING_FOR_MY_EVALUATION_ORDERS_AMOUNT = HttpUtil.DOMAIN + "?q=order_manager/get_waiting_for_my_evaluation_orders_amount";
-    public static final String GET_MY_REVENUE = HttpUtil.DOMAIN + "?q=order_manager/get_my_revenue";
     private static final String GET_MY_REFUND_ORDERS_AMOUNT = HttpUtil.DOMAIN + "?q=order_manager/get_my_refund_orders_amount";
-    public static final String GET_CURRENT_REFUND_AMOUNT = HttpUtil.DOMAIN + "?q=order_manager/get_current_refund_amount";
-    
+    private int myExperienceSize = 0;
+    private int myGuideCount = 0;
+    private int mUid = 0;
+    private int mRole = 0;
     private View view;
     private MyHandler handler;
     private TextView mMyAllOrdersTV;
@@ -98,7 +96,8 @@ public class OrderFragment extends Fragment implements View.OnClickListener{
     private Button mGetAllOrdersBtn;
     private TextView mMyRefundAmountTV;
     private TextView mCurrentAllRefundAmountTV;
-    
+    private ConstraintLayout mRefundWrapper;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -109,7 +108,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener{
         initConentView();
         return view;
     }
-    
+
     public void initConentView() {
         Typeface font = Typeface.createFromAsset(getContext().getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
         FontManager.markAsIconContainer(view.findViewById(R.id.all_orders_nav), font);
@@ -128,6 +127,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener{
         mGetAllOrdersBtn = view.findViewById(R.id.get_all_orders_btn);
         mMyRefundAmountTV = view.findViewById(R.id.refund_amount);
         mCurrentAllRefundAmountTV = view.findViewById(R.id.current_refund_amount);
+        mRefundWrapper = view.findViewById(R.id.refund_orders_wrapper);
 
         mMyAllSoldOrdersTV.setOnClickListener(this);
         mMyAllSoldOrdersNavTV.setOnClickListener(this);
@@ -146,15 +146,15 @@ public class OrderFragment extends Fragment implements View.OnClickListener{
 
         registerBroadcast();
     }
-    
-    private void getMyOrdersAmount(){
+
+    private void getMyOrdersAmount() {
         getMyUnpaidOrdersAmount();
         getMyBookedOrdersAmount();
         getWaitingForMyEvaluationOrdersAmount();
         getMyRefundOrdersAmount();
     }
 
-    private void processMyRevenue(){
+    private void processMyRevenue() {
         revenueWrapper = view.findViewById(R.id.revenue_wrapper);
         Typeface font = Typeface.createFromAsset(getContext().getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
         FontManager.markAsIconContainer(revenueWrapper, font);
@@ -162,14 +162,15 @@ public class OrderFragment extends Fragment implements View.OnClickListener{
 
         getMyRevenue();
     }
-    
-    private void getMyUnpaidOrdersAmount(){
+
+    private void getMyUnpaidOrdersAmount() {
         HttpUtil.sendOkHttpRequest(MyApplication.getContext(), GET_MY_UNPAID_ORDERS_AMOUNT, new FormBody.Builder().build(), new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
                     String responseText = response.body().string();
-                    if (isDebug) Slog.d(TAG, "==========loadTodayOrdersAmount response text : " + responseText);
+                    if (isDebug)
+                        Slog.d(TAG, "==========loadTodayOrdersAmount response text : " + responseText);
                     if (responseText != null && !TextUtils.isEmpty(responseText)) {
                         JSONObject responseObject = null;
                         try {
@@ -195,21 +196,22 @@ public class OrderFragment extends Fragment implements View.OnClickListener{
             }
         });
     }
-    
-     private void getMyBookedOrdersAmount(){
+
+    private void getMyBookedOrdersAmount() {
         HttpUtil.sendOkHttpRequest(MyApplication.getContext(), GET_MY_BOOKED_ORDERS_AMOUNT, new FormBody.Builder().build(), new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
                     String responseText = response.body().string();
-                    if (isDebug) Slog.d(TAG, "==========loadTodayOrdersAmount response text : " + responseText);
+                    if (isDebug)
+                        Slog.d(TAG, "==========loadTodayOrdersAmount response text : " + responseText);
                     if (responseText != null && !TextUtils.isEmpty(responseText)) {
                         JSONObject responseObject = null;
                         try {
                             responseObject = new JSONObject(responseText);
                             if (responseObject != null) {
-                                 int amount = responseObject.optInt("amount");
-                                if (amount > 0){
+                                int amount = responseObject.optInt("amount");
+                                if (amount > 0) {
                                     Message message = new Message();
                                     Bundle bundle = new Bundle();
                                     bundle.putInt("amount", amount);
@@ -224,26 +226,28 @@ public class OrderFragment extends Fragment implements View.OnClickListener{
                     }
                 }
             }
+
             @Override
             public void onFailure(Call call, IOException e) {
             }
         });
     }
-    
-        private void getMyRefundOrdersAmount(){
+
+    private void getMyRefundOrdersAmount() {
         HttpUtil.sendOkHttpRequest(MyApplication.getContext(), GET_MY_REFUND_ORDERS_AMOUNT, new FormBody.Builder().build(), new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
                     String responseText = response.body().string();
-                    if (isDebug) Slog.d(TAG, "==========getMyRefundOrdersAmount response text : " + responseText);
+                    if (isDebug)
+                        Slog.d(TAG, "==========getMyRefundOrdersAmount response text : " + responseText);
                     if (responseText != null && !TextUtils.isEmpty(responseText)) {
                         JSONObject responseObject = null;
                         try {
                             responseObject = new JSONObject(responseText);
                             if (responseObject != null) {
                                 int amount = responseObject.optInt("amount");
-                                if (amount > 0){
+                                if (amount > 0) {
                                     Message message = new Message();
                                     Bundle bundle = new Bundle();
                                     bundle.putInt("amount", amount);
@@ -255,31 +259,33 @@ public class OrderFragment extends Fragment implements View.OnClickListener{
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        }
+                    }
                 }
             }
+
             @Override
             public void onFailure(Call call, IOException e) {
             }
         });
     }
 
-    private void getWaitingForMyEvaluationOrdersAmount(){
+    private void getWaitingForMyEvaluationOrdersAmount() {
         HttpUtil.sendOkHttpRequest(MyApplication.getContext(), GET_WAITING_FOR_MY_EVALUATION_ORDERS_AMOUNT, new FormBody.Builder().build(), new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
                     String responseText = response.body().string();
-                    if (isDebug) Slog.d(TAG, "==========getWaitingForMyEvaluationOrdersAmount response text : " + responseText);
-if (responseText != null && !TextUtils.isEmpty(responseText)) {
+                    if (isDebug)
+                        Slog.d(TAG, "==========getWaitingForMyEvaluationOrdersAmount response text : " + responseText);
+                    if (responseText != null && !TextUtils.isEmpty(responseText)) {
                         JSONObject responseObject = null;
                         try {
                             responseObject = new JSONObject(responseText);
                             if (responseObject != null) {
                                 int amount = responseObject.optInt("amount");
-                                if (amount > 0){
+                                if (amount > 0) {
                                     Message message = new Message();
-                                    
+
                                     Bundle bundle = new Bundle();
                                     bundle.putInt("amount", amount);
                                     message.what = GET_WAITING_FOR_MY_EVALUATION_ORDERS_AMOUNT_DONE;
@@ -293,14 +299,14 @@ if (responseText != null && !TextUtils.isEmpty(responseText)) {
                     }
                 }
             }
-            
+
             @Override
             public void onFailure(Call call, IOException e) {
             }
         });
     }
-    
-    private void loadMyExperiencesCount(){
+
+    private void loadMyExperiencesCount() {
         RequestBody requestBody = new FormBody.Builder()
                 .add("uid", String.valueOf(mUid))
                 .build();
@@ -309,14 +315,15 @@ if (responseText != null && !TextUtils.isEmpty(responseText)) {
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
                     String responseText = response.body().string();
-                    if (isDebug) Slog.d(TAG, "==========loadMyExperiencesCount response text : " + responseText);
+                    if (isDebug)
+                        Slog.d(TAG, "==========loadMyExperiencesCount response text : " + responseText);
                     if (responseText != null && !TextUtils.isEmpty(responseText)) {
                         JSONObject experienceResponse = null;
                         try {
                             experienceResponse = new JSONObject(responseText);
                             if (experienceResponse != null) {
                                 myExperienceSize = experienceResponse.optInt("count");
-                                if (myExperienceSize > 0){
+                                if (myExperienceSize > 0) {
                                     handler.sendEmptyMessage(LOAD_MY_EXPERIENCES_DONE);
                                 }
                             }
@@ -332,8 +339,8 @@ if (responseText != null && !TextUtils.isEmpty(responseText)) {
             }
         });
     }
-    
-    private void loadMyGuidesCount(){
+
+    private void loadMyGuidesCount() {
         RequestBody requestBody = new FormBody.Builder()
                 .add("uid", String.valueOf(mUid))
                 .build();
@@ -342,14 +349,15 @@ if (responseText != null && !TextUtils.isEmpty(responseText)) {
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
                     String responseText = response.body().string();
-                    if (isDebug) Slog.d(TAG, "==========loadMyGuidesCount response text : " + responseText);
+                    if (isDebug)
+                        Slog.d(TAG, "==========loadMyGuidesCount response text : " + responseText);
                     if (responseText != null && !TextUtils.isEmpty(responseText)) {
                         JSONObject experienceResponse = null;
-                         try {
+                        try {
                             experienceResponse = new JSONObject(responseText);
                             if (experienceResponse != null) {
                                 myGuideCount = experienceResponse.optInt("count");
-                                if (myGuideCount > 0){
+                                if (myGuideCount > 0) {
                                     handler.sendEmptyMessage(LOAD_MY_GUIDE_COUNT_DONE);
                                 }
                             }
@@ -365,8 +373,8 @@ if (responseText != null && !TextUtils.isEmpty(responseText)) {
             }
         });
     }
-    
-    private void loadTodayOrdersAmount(){
+
+    private void loadTodayOrdersAmount() {
         RequestBody requestBody = new FormBody.Builder()
                 .add("uid", String.valueOf(mUid))
                 .build();
@@ -375,14 +383,15 @@ if (responseText != null && !TextUtils.isEmpty(responseText)) {
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
                     String responseText = response.body().string();
-                    if (isDebug) Slog.d(TAG, "==========loadTodayOrdersAmount response text : " + responseText);
+                    if (isDebug)
+                        Slog.d(TAG, "==========loadTodayOrdersAmount response text : " + responseText);
                     if (responseText != null && !TextUtils.isEmpty(responseText)) {
-                         JSONObject responseObject = null;
+                        JSONObject responseObject = null;
                         try {
                             responseObject = new JSONObject(responseText);
                             if (responseObject != null) {
                                 int amount = responseObject.optInt("amount");
-                                if (amount > 0){
+                                if (amount > 0) {
                                     Message message = new Message();
                                     Bundle bundle = new Bundle();
                                     bundle.putInt("amount", amount);
@@ -397,14 +406,14 @@ if (responseText != null && !TextUtils.isEmpty(responseText)) {
                     }
                 }
             }
-            
+
             @Override
             public void onFailure(Call call, IOException e) {
             }
         });
     }
 
-    private void loadQueuedOrdersAmount(){
+    private void loadQueuedOrdersAmount() {
         RequestBody requestBody = new FormBody.Builder()
                 .add("uid", String.valueOf(mUid))
                 .build();
@@ -413,14 +422,15 @@ if (responseText != null && !TextUtils.isEmpty(responseText)) {
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
                     String responseText = response.body().string();
-                    if (isDebug) Slog.d(TAG, "==========loadQueuedOrdersAmount response text : " + responseText);
+                    if (isDebug)
+                        Slog.d(TAG, "==========loadQueuedOrdersAmount response text : " + responseText);
                     if (responseText != null && !TextUtils.isEmpty(responseText)) {
                         JSONObject responseObject = null;
                         try {
                             responseObject = new JSONObject(responseText);
                             if (responseObject != null) {
                                 int amount = responseObject.optInt("amount");
-                                if (amount > 0){
+                                if (amount > 0) {
                                     Message message = new Message();
                                     Bundle bundle = new Bundle();
                                     bundle.putInt("amount", amount);
@@ -441,8 +451,8 @@ if (responseText != null && !TextUtils.isEmpty(responseText)) {
             }
         });
     }
-    
-    private void loadfinishedOrdersAmount(){
+
+    private void loadfinishedOrdersAmount() {
         RequestBody requestBody = new FormBody.Builder()
                 .add("uid", String.valueOf(mUid))
                 .build();
@@ -451,14 +461,15 @@ if (responseText != null && !TextUtils.isEmpty(responseText)) {
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
                     String responseText = response.body().string();
-                    if (isDebug) Slog.d(TAG, "==========loadfinishedOrdersAmount response text : " + responseText);
+                    if (isDebug)
+                        Slog.d(TAG, "==========loadfinishedOrdersAmount response text : " + responseText);
                     if (responseText != null && !TextUtils.isEmpty(responseText)) {
                         JSONObject responseObject = null;
                         try {
                             responseObject = new JSONObject(responseText);
                             if (responseObject != null) {
                                 int amount = responseObject.optInt("amount");
-                                if (amount > 0){
+                                if (amount > 0) {
                                     Message message = new Message();
                                     Bundle bundle = new Bundle();
                                     bundle.putInt("amount", amount);
@@ -474,13 +485,13 @@ if (responseText != null && !TextUtils.isEmpty(responseText)) {
                 }
             }
 
-@Override
+            @Override
             public void onFailure(Call call, IOException e) {
             }
         });
     }
 
-    private void getMyRevenue(){
+    private void getMyRevenue() {
         HttpUtil.sendOkHttpRequest(getContext(), GET_MY_REVENUE, new FormBody.Builder().build(), new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
@@ -508,16 +519,16 @@ if (responseText != null && !TextUtils.isEmpty(responseText)) {
                     }
                 }
             }
-            
+
             @Override
             public void onFailure(Call call, IOException e) {
             }
         });
     }
 
-    private void setMyRevenueView(int revenue){
+    private void setMyRevenueView(int revenue) {
         TextView revenueValueTV = view.findViewById(R.id.revenue_amount);
-        revenueValueTV.setText(revenue+"元");
+        revenueValueTV.setText(revenue + "元");
 
         TextView revenueNavTV = view.findViewById(R.id.revenue_nav);
         revenueNavTV.setOnClickListener(new View.OnClickListener() {
@@ -527,7 +538,7 @@ if (responseText != null && !TextUtils.isEmpty(responseText)) {
             }
         });
     }
-    
+
     private void showRevenueDialog() {
         final AlertDialog.Builder normalDialogBuilder = new AlertDialog.Builder(getActivity());
         normalDialogBuilder.setTitle(getResources().getString(R.string.withdrawal_title));
@@ -535,7 +546,7 @@ if (responseText != null && !TextUtils.isEmpty(responseText)) {
 
         AlertDialog normalDialog = normalDialogBuilder.create();
         normalDialog.show();
-        
+
         try {
             Field mAlert = AlertDialog.class.getDeclaredField("mAlert");
             mAlert.setAccessible(true);
@@ -550,12 +561,12 @@ if (responseText != null && !TextUtils.isEmpty(responseText)) {
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }
-        
+
         normalDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.color_disabled));
         normalDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.color_blue));
         normalDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextSize(18);
     }
-    
+
     private void getAdminRole() {
         RequestBody requestBody = new FormBody.Builder().build();
         HttpUtil.sendOkHttpRequest(getContext(), GET_ADMIN_ROLE_URL, requestBody, new Callback() {
@@ -564,7 +575,7 @@ if (responseText != null && !TextUtils.isEmpty(responseText)) {
                 String responseText = response.body().string();
                 try {
                     mRole = new JSONObject(responseText).optInt("role");
-                    if (mRole >= 0){
+                    if (mRole >= 0) {
                         handler.sendEmptyMessage(GET_ADMIN_ROLE_DOWN);
                     }
                 } catch (JSONException e) {
@@ -577,21 +588,22 @@ if (responseText != null && !TextUtils.isEmpty(responseText)) {
             }
         });
     }
-    
-    private void getCurrentRefundAmount(){
+
+    private void getCurrentRefundAmount() {
         HttpUtil.sendOkHttpRequest(MyApplication.getContext(), GET_CURRENT_REFUND_AMOUNT, new FormBody.Builder().build(), new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
                     String responseText = response.body().string();
-                    if (isDebug) Slog.d(TAG, "==========getCurrentRefundAmount response text : " + responseText);
+                    if (isDebug)
+                        Slog.d(TAG, "==========getCurrentRefundAmount response text : " + responseText);
                     if (responseText != null && !TextUtils.isEmpty(responseText)) {
                         JSONObject responseObject = null;
                         try {
                             responseObject = new JSONObject(responseText);
                             if (responseObject != null) {
                                 int amount = responseObject.optInt("amount");
-                                if (amount > 0){
+                                if (amount > 0) {
                                     Message message = new Message();
                                     Bundle bundle = new Bundle();
                                     bundle.putInt("amount", amount);
@@ -603,7 +615,7 @@ if (responseText != null && !TextUtils.isEmpty(responseText)) {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        }
+                    }
                 }
             }
 
@@ -618,7 +630,7 @@ if (responseText != null && !TextUtils.isEmpty(responseText)) {
         switch (message.what) {
             case LOAD_MY_GUIDE_COUNT_DONE:
             case LOAD_MY_EXPERIENCES_DONE:
-                if (mSoldOrdersWrapper.getVisibility() == View.GONE){
+                if (mSoldOrdersWrapper.getVisibility() == View.GONE) {
                     mSoldOrdersWrapper.setVisibility(View.VISIBLE);
                 }
                 loadTodayOrdersAmount();
@@ -633,7 +645,7 @@ if (responseText != null && !TextUtils.isEmpty(responseText)) {
                 mQueuedOrdersAmountTV.setText(String.valueOf(bundle.getInt("amount")));
                 mQueuedOrdersAmountTV.setOnClickListener(this);
                 break;
-                case GET_FINISHED_ORDERS_AMOUNT_DONE:
+            case GET_FINISHED_ORDERS_AMOUNT_DONE:
                 mFinishedOrdersAmountTV.setText(String.valueOf(bundle.getInt("amount")));
                 mFinishedOrdersAmountTV.setOnClickListener(this);
                 break;
@@ -649,18 +661,19 @@ if (responseText != null && !TextUtils.isEmpty(responseText)) {
                 mWaitingForMyEvaluationOrdersAmountTV.setText(String.valueOf(bundle.getInt("amount")));
                 mWaitingForMyEvaluationOrdersAmountTV.setOnClickListener(this);
                 break;
-                case GET_MY_REVENUE_DONE:
+            case GET_MY_REVENUE_DONE:
                 revenueWrapper.setVisibility(View.VISIBLE);
                 int revenue = bundle.getInt("revenue");
                 setMyRevenueView(revenue);
                 break;
             case GET_ADMIN_ROLE_DOWN:
                 mGetAllOrdersBtn.setVisibility(View.VISIBLE);
-                               if (mRole == 1){
+                if (mRole == 1) {
+                    mRefundWrapper.setVisibility(View.VISIBLE);
                     getCurrentRefundAmount();
                 }
                 break;
-                        case GET_CURRENT_REFUND_AMOUNT_DONE:
+            case GET_CURRENT_REFUND_AMOUNT_DONE:
                 int amount = bundle.getInt("amount");
                 mCurrentAllRefundAmountTV.setText(String.valueOf(amount));
                 break;
@@ -674,65 +687,65 @@ if (responseText != null && !TextUtils.isEmpty(responseText)) {
     }
 
     @Override
-    public void onClick(View view){
+    public void onClick(View view) {
         Bundle bundle = new Bundle();
         OrdersListDF soldFragmentDF = new OrdersListDF();
         MyOrdersFragmentDF myOrdersFragmentDF = new MyOrdersFragmentDF();
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.today_orders_amount:
-                bundle.putShort("type", (short)Utility.OrderType.TODAY.getType());
+                bundle.putShort("type", (short) Utility.OrderType.TODAY.getType());
                 soldFragmentDF.setArguments(bundle);
                 soldFragmentDF.show(getFragmentManager(), "OrdersListDF");
                 break;
             case R.id.queued_orders_amount:
-                bundle.putShort("type", (short)Utility.OrderType.QUEUED.getType());
+                bundle.putShort("type", (short) Utility.OrderType.QUEUED.getType());
                 soldFragmentDF.setArguments(bundle);
                 soldFragmentDF.show(getFragmentManager(), "OrdersListDF");
                 break;
             case R.id.finished_orders_amount:
-                bundle.putShort("type", (short)Utility.OrderType.FINISHED.getType());
+                bundle.putShort("type", (short) Utility.OrderType.FINISHED.getType());
                 soldFragmentDF.setArguments(bundle);
                 soldFragmentDF.show(getFragmentManager(), "OrdersListDF");
                 break;
-                case R.id.my_all_sold_orders:
+            case R.id.my_all_sold_orders:
             case R.id.my_all_sold_orders_nav:
-                bundle.putShort("type", (short)Utility.OrderType.MY_ALL_SOLD.getType());
+                bundle.putShort("type", (short) Utility.OrderType.MY_ALL_SOLD.getType());
                 soldFragmentDF.setArguments(bundle);
                 soldFragmentDF.show(getFragmentManager(), "MyOrdersFragmentDF");
                 break;
-                case R.id.waiting_to_pay_amount:
-                bundle.putShort("type", (short)Utility.OrderType.UNPAYMENT.getType());
+            case R.id.waiting_to_pay_amount:
+                bundle.putShort("type", (short) Utility.OrderType.UNPAYMENT.getType());
                 myOrdersFragmentDF.setArguments(bundle);
                 myOrdersFragmentDF.show(getFragmentManager(), "MyOrdersFragmentDF");
                 break;
             case R.id.booked_amount:
-                bundle.putShort("type", (short)Utility.OrderType.BOOKED.getType());
+                bundle.putShort("type", (short) Utility.OrderType.BOOKED.getType());
                 myOrdersFragmentDF.setArguments(bundle);
                 myOrdersFragmentDF.show(getFragmentManager(), "MyOrdersFragmentDF");
                 break;
             case R.id.waiting_for_evaluation_amount:
-                bundle.putShort("type", (short)Utility.OrderType.WAITING_EVALUATION.getType());
+                bundle.putShort("type", (short) Utility.OrderType.WAITING_EVALUATION.getType());
                 myOrdersFragmentDF.setArguments(bundle);
                 myOrdersFragmentDF.show(getFragmentManager(), "MyOrdersFragmentDF");
                 break;
             case R.id.refund_amount:
-                bundle.putShort("type", (short)Utility.OrderType.REFUNDED.getType());
+                bundle.putShort("type", (short) Utility.OrderType.REFUNDED.getType());
                 myOrdersFragmentDF.setArguments(bundle);
                 myOrdersFragmentDF.show(getFragmentManager(), "MyOrdersFragmentDF");
                 break;
             case R.id.all_orders:
             case R.id.all_orders_nav:
-                bundle.putShort("type", (short)Utility.OrderType.MY_ALL.getType());
+                bundle.putShort("type", (short) Utility.OrderType.MY_ALL.getType());
                 myOrdersFragmentDF.setArguments(bundle);
                 myOrdersFragmentDF.show(getFragmentManager(), "MyOrdersFragmentDF");
                 break;
             case R.id.get_all_orders_btn:
-                bundle.putShort("type", (short)Utility.OrderType.ALL_SOLD.getType());
+                bundle.putShort("type", (short) Utility.OrderType.ALL_SOLD.getType());
                 soldFragmentDF.setArguments(bundle);
                 soldFragmentDF.show(getFragmentManager(), "OrdersListDF");
                 break;
-                        case R.id.current_refund_amount:
-                bundle.putShort("type", (short)Utility.OrderType.REFUNDED.getType());
+            case R.id.current_refund_amount:
+                bundle.putShort("type", (short) Utility.OrderType.REFUNDED.getType());
                 soldFragmentDF.setArguments(bundle);
                 soldFragmentDF.show(getFragmentManager(), "OrdersListDF");
                 break;
@@ -740,23 +753,6 @@ if (responseText != null && !TextUtils.isEmpty(responseText)) {
 
     }
 
-    private class OrderStatusBroadcastReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            switch (intent.getAction()) {
-                case ORDER_PAYMENT_SUCCESS_BROADCAST:
-                case ORDER_SUBMIT_BROADCAST:
-                case ORDER_EVALUATE_SUCCESS_BROADCAST:
-                    getMyOrdersAmount();
-                    break;
-                                case ORDER_REFUND_SUCCESS_BROADCAST:
-                    int amount = Integer.parseInt(mCurrentAllRefundAmountTV.getText().toString());
-                    mCurrentAllRefundAmountTV.setText(String.valueOf(amount - 1));
-                    break;
-            }
-        }
-    }
-    
     private void registerBroadcast() {
         mReceiver = new OrderStatusBroadcastReceiver();
         IntentFilter intentFilter = new IntentFilter();
@@ -771,7 +767,7 @@ if (responseText != null && !TextUtils.isEmpty(responseText)) {
     private void unRegisterBroadcast() {
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
     }
-    
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -790,6 +786,23 @@ if (responseText != null && !TextUtils.isEmpty(responseText)) {
             OrderFragment orderFragment = orderFragmentWeakReference.get();
             if (orderFragment != null) {
                 orderFragment.handleMessage(message);
+            }
+        }
+    }
+
+    private class OrderStatusBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()) {
+                case ORDER_PAYMENT_SUCCESS_BROADCAST:
+                case ORDER_SUBMIT_BROADCAST:
+                case ORDER_EVALUATE_SUCCESS_BROADCAST:
+                    getMyOrdersAmount();
+                    break;
+                case ORDER_REFUND_SUCCESS_BROADCAST:
+                    int amount = Integer.parseInt(mCurrentAllRefundAmountTV.getText().toString());
+                    mCurrentAllRefundAmountTV.setText(String.valueOf(amount - 1));
+                    break;
             }
         }
     }

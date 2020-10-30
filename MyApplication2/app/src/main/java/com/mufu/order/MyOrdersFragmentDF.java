@@ -24,7 +24,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.mufu.R;
 import com.mufu.adapter.MyOrderSummaryAdapter;
-import com.mufu.adapter.OrderSummaryAdapter;
 import com.mufu.common.MyApplication;
 import com.mufu.experience.ExperienceEvaluateDialogFragment;
 import com.mufu.util.BaseDialogFragment;

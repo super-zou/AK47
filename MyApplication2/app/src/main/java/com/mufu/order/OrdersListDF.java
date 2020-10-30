@@ -131,8 +131,8 @@ public class OrdersListDF extends BaseDialogFragment {
                     titleTV.setText(getContext().getResources().getString(R.string.refund_orders));
                     break;
             }
-            initContentView(type);
-            requestData(type);
+            initContentView();
+            requestData();
         }
 
         return mDialog;
