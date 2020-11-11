@@ -47,12 +47,12 @@ public class VerifyFragment extends Fragment {
     private TextView userVerifyNav;
     private TextView talentVerifyCountView;
     private TextView talentVerifyNav;
-    private TextView activityVerifyCountView;
+    private TextView experienceVerifyCountView;
     private TextView activityVerifyNav;
 
     private int userRequestCount = 0;
     private int talentRequestCount = 0;
-    private int activityRequestCount = 0;
+    private int experienceRequestCount = 0;
 
     private static MyHandler handler;
 
@@ -74,7 +74,7 @@ public class VerifyFragment extends Fragment {
         userVerifyNav = view.findViewById(R.id.user_verify_nav);
         talentVerifyCountView = view.findViewById(R.id.talent_verify_count);
         talentVerifyNav = view.findViewById(R.id.talent_verify_nav);
-        activityVerifyCountView = view.findViewById(R.id.activity_verify_count);
+        experienceVerifyCountView = view.findViewById(R.id.activity_verify_count);
         activityVerifyNav = view.findViewById(R.id.activity_verify_nav);
 
         userVerifyNav.setOnClickListener(new View.OnClickListener() {
@@ -117,15 +117,19 @@ public class VerifyFragment extends Fragment {
                             JSONObject responseObject = new JSONObject(responseText);
                             userRequestCount = responseObject.optInt("user_request_count");
                             talentRequestCount = responseObject.optInt("talent_request_count");
-                            activityRequestCount = responseObject.optInt("activity_request_count");
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    userVerifyCountView.setText(String.valueOf(userRequestCount));
-                                    talentVerifyCountView.setText(String.valueOf(talentRequestCount));
-                                    activityVerifyCountView.setText(String.valueOf(activityRequestCount));
-                                }
-                            });
+                            experienceRequestCount = responseObject.optInt("experience_request_count");
+                            try {
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        userVerifyCountView.setText(String.valueOf(userRequestCount));
+                                        talentVerifyCountView.setText(String.valueOf(talentRequestCount));
+                                        experienceVerifyCountView.setText(String.valueOf(experienceRequestCount));
+                                    }
+                                });
+                            }catch (NullPointerException e){
+                                e.printStackTrace();
+                            }
 
                         } catch (JSONException e) {
                             e.printStackTrace();
