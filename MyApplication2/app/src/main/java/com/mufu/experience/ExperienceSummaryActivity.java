@@ -26,6 +26,7 @@ import com.mufu.util.Slog;
 
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
+import com.mufu.verify.VerifyOperationInterface;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,6 +47,7 @@ import okhttp3.Response;
 import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static com.mufu.common.MyApplication.getContext;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
+import static com.mufu.verify.activity.ActivityVerifyActivity.PASS_ACTION;
 
 public class ExperienceSummaryActivity extends BaseAppCompatActivity {
     private static final boolean isDebug = true;
@@ -95,7 +97,7 @@ public class ExperienceSummaryActivity extends BaseAppCompatActivity {
 
         handler = new ExperienceSummaryActivity.MyHandler(this);
         recyclerView = findViewById(R.id.guide_summary_list);
-        experienceSummaryAdapter = new ExperienceSummaryAdapter(this, isSelf);
+        experienceSummaryAdapter = new ExperienceSummaryAdapter(this, isSelf, false);
         MyLinearLayoutManager linearLayoutManager = new MyLinearLayoutManager(getContext());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(linearLayoutManager);
@@ -148,6 +150,11 @@ public class ExperienceSummaryActivity extends BaseAppCompatActivity {
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
                 startActivityForResult(intent, RESULT_FIRST_USER);
             }
+             @Override
+             public void onPassClick(View view, int position) {}
+
+             @Override
+             public void onRejectClick(View view, int position) {}
         });
 
         recyclerView.setAdapter(experienceSummaryAdapter);
