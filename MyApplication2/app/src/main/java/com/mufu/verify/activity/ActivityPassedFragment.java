@@ -19,7 +19,7 @@ import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.mufu.R;
 import com.mufu.adapter.ExperienceSummaryAdapter;
-import com.mufu.adapter.verify.ExperiencePassedListAdapter;
+import com.mufu.adapter.verify.ExperienceRejectedListAdapter;
 import com.mufu.experience.ExperienceDetailActivity;
 import com.mufu.experience.ExperienceSummaryActivity;
 import com.mufu.util.BaseFragment;
@@ -48,12 +48,12 @@ import static android.app.Activity.RESULT_FIRST_USER;
 import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
-public class ActivityPassedFragment extends BaseFragment {
+public class ActivityRejectedFragment extends BaseFragment {
     private static final boolean isDebug = true;
-    private static final String TAG = "ActivityPassedFragment";
+    private static final String TAG = "ActivityRejectedFragment";
     private static final int PAGE_SIZE = 8;
-    public static final String GET_PASSED_EXPERIENCES = HttpUtil.DOMAIN + "?q=experience/get_passed_experiences";
-    
+    public static final String GET_REJECTED_EXPERIENCES = HttpUtil.DOMAIN + "?q=experience/get_rejected_experiences";
+
     private static final int GET_ALL_DONE = 1;
     private static final int GET_ALL_END = 2;
     private static final int NO_MORE = 3;
@@ -64,16 +64,16 @@ public class ActivityPassedFragment extends BaseFragment {
     AnimationDrawable animationDrawable;
     private int mLoadSize = 0;
     private Handler handler;
-
-    private ExperienceSummaryAdapter experiencePassedListAdapter;
+    
+    private ExperienceSummaryAdapter experienceRejectedListAdapter;
     private XRecyclerView recyclerView;
     private List<ExperienceSummaryActivity.Experience> mExperienceList = new ArrayList<>();
-    
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
-
+    
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -86,21 +86,20 @@ public class ActivityPassedFragment extends BaseFragment {
     protected int getLayoutId() {
         return 0;
     }
-    
+
     @Override
     protected void loadData() {
     }
-
-
+    
     protected void initView(View view) {
 
         handler = new MyHandler(this);
         recyclerView = view.findViewById(R.id.experience_verify_list);
-        experiencePassedListAdapter = new ExperienceSummaryAdapter(getContext(), isSelf, true);
+        experienceRejectedListAdapter = new ExperienceSummaryAdapter(getContext(), isSelf, true);
         MyLinearLayoutManager linearLayoutManager = new MyLinearLayoutManager(getContext());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(linearLayoutManager);
-        
+
         recyclerView.setRefreshProgressStyle(BallSpinFadeLoader);
         recyclerView.setLoadingMoreProgressStyle(ProgressStyle.BallRotate);
 
@@ -108,6 +107,7 @@ public class ActivityPassedFragment extends BaseFragment {
         recyclerView.getDefaultRefreshHeaderView().setRefreshTimeVisible(true);
         recyclerView.getDefaultFootView().setLoadingHint(getString(R.string.loading_pull_up_tip));
         recyclerView.getDefaultFootView().setNoMoreHint(getString(R.string.no_more));
+        
         // When the item number of the screen number is list.size-2,we call the onLoadMore
         recyclerView.setLimitNumberToCallLoadMore(itemLimit);
         recyclerView.setRefreshProgressStyle(ProgressStyle.BallBeat);
@@ -117,10 +117,10 @@ public class ActivityPassedFragment extends BaseFragment {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 if (newState == SCROLL_STATE_IDLE) {
-                    experiencePassedListAdapter.setScrolling(false);
-                    experiencePassedListAdapter.notifyDataSetChanged();
+                    experienceRejectedListAdapter.setScrolling(false);
+                    experienceRejectedListAdapter.notifyDataSetChanged();
                 } else {
-                    experiencePassedListAdapter.setScrolling(true);
+                    experienceRejectedListAdapter.setScrolling(true);
                 }
                 super.onScrollStateChanged(recyclerView, newState);
             }
@@ -138,7 +138,7 @@ public class ActivityPassedFragment extends BaseFragment {
             }
         });
         
-        experiencePassedListAdapter.setItemClickListener(new ExperienceSummaryAdapter.MyItemClickListener() {
+        experienceRejectedListAdapter.setItemClickListener(new ExperienceSummaryAdapter.MyItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
                 Slog.d(TAG, "==========click : " + position);
@@ -148,6 +148,7 @@ public class ActivityPassedFragment extends BaseFragment {
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
                 startActivityForResult(intent, RESULT_FIRST_USER);
             }
+
             @Override
             public void onPassClick(View view, int position) {}
 
@@ -155,8 +156,7 @@ public class ActivityPassedFragment extends BaseFragment {
             public void onRejectClick(View view, int position) {}
         });
         
-        recyclerView.setAdapter(experiencePassedListAdapter);
-
+        recyclerView.setAdapter(experienceRejectedListAdapter);
 
         //show progressImage before loading done
         progressImageView = view.findViewById(R.id.animal_progress);
@@ -170,8 +170,7 @@ public class ActivityPassedFragment extends BaseFragment {
 
         requestData();
     }
-    
-    private void requestData() {
+private void requestData() {
 
         final int page = mExperienceList.size() / PAGE_SIZE;
         FormBody.Builder builder = new FormBody.Builder();
@@ -179,8 +178,8 @@ public class ActivityPassedFragment extends BaseFragment {
                 .add("page", String.valueOf(page));
 
         RequestBody requestBody = builder.build();
-        
-        HttpUtil.sendOkHttpRequest(getContext(), GET_PASSED_EXPERIENCES, requestBody, new Callback() {
+
+        HttpUtil.sendOkHttpRequest(getContext(), GET_REJECTED_EXPERIENCES, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
@@ -192,12 +191,12 @@ public class ActivityPassedFragment extends BaseFragment {
                             experiencesResponse = new JSONObject(responseText);
                             if (experiencesResponse != null) {
                                 mLoadSize = processExperiencesResponse(experiencesResponse);
-                                
+
                                 if (mLoadSize == PAGE_SIZE) {
                                     handler.sendEmptyMessage(GET_ALL_DONE);
                                 } else {
                                     if (mLoadSize != 0) {
-                                        handler.sendEmptyMessage(GET_ALL_END);
+                       handler.sendEmptyMessage(GET_ALL_END);
                                     } else {
                                         handler.sendEmptyMessage(NO_MORE);
                                     }
@@ -212,10 +211,9 @@ public class ActivityPassedFragment extends BaseFragment {
                     } else {
                         handler.sendEmptyMessage(NO_MORE);
                     }
-                    
-                     }
+                }
             }
-
+            
             @Override
             public void onFailure(Call call, IOException e) {
 
@@ -226,7 +224,8 @@ public class ActivityPassedFragment extends BaseFragment {
     public int processExperiencesResponse(JSONObject experiencesObject) {
         int experienceSize = 0;
         JSONArray experienceArray = null;
-         if (experiencesObject != null) {
+        
+        if (experiencesObject != null) {
             experienceArray = experiencesObject.optJSONArray("experiences");
             Slog.d(TAG, "------------------->processExperiencesResponse: "+experienceArray);
         }
@@ -244,7 +243,7 @@ public class ActivityPassedFragment extends BaseFragment {
             }
         }
         
-         return experienceSize;
+        return experienceSize;
     }
 
     public static ExperienceSummaryActivity.Experience getExperience(JSONObject experienceObject) {
@@ -253,7 +252,6 @@ public class ActivityPassedFragment extends BaseFragment {
             experience.eid = experienceObject.optInt("eid");
             experience.city = experienceObject.optString("city");
             experience.headPictureUrl = experienceObject.optString("picture_url");
-            
             experience.evaluateScore = experienceObject.optInt("score");
             experience.evaluateCount = experienceObject.optInt("count");
             experience.price = experienceObject.optInt("price");
@@ -261,23 +259,23 @@ public class ActivityPassedFragment extends BaseFragment {
             experience.unit = experienceObject.optString("unit");
             experience.duration = experienceObject.optInt("duration");
         }
-
-        return experience;
+        
+         return experience;
     }
-    
+
     public void handleMessage(Message message) {
         switch (message.what) {
             case GET_ALL_DONE:
                 Slog.d(TAG, "-------------->GET_ALL_DONE");
-                experiencePassedListAdapter.setData(mExperienceList);
-                experiencePassedListAdapter.notifyDataSetChanged();
+                experienceRejectedListAdapter.setData(mExperienceList);
+                experienceRejectedListAdapter.notifyDataSetChanged();
                 recyclerView.loadMoreComplete();
                 stopLoadProgress();
                 break;
-            case GET_ALL_END:
+                 case GET_ALL_END:
                 Slog.d(TAG, "-------------->GET_ALL_END");
-                experiencePassedListAdapter.setData(mExperienceList);
-                experiencePassedListAdapter.notifyDataSetChanged();
+                experienceRejectedListAdapter.setData(mExperienceList);
+                experienceRejectedListAdapter.notifyDataSetChanged();
                 recyclerView.loadMoreComplete();
                 recyclerView.setNoMore(true);
                 stopLoadProgress();
@@ -326,15 +324,15 @@ public class ActivityPassedFragment extends BaseFragment {
     }
     
     static class MyHandler extends Handler {
-        WeakReference<ActivityPassedFragment> activityRequestFragmentWeakReference;
+        WeakReference<ActivityRejectedFragment> activityRequestFragmentWeakReference;
 
-        MyHandler(ActivityPassedFragment activityRequestFragment) {
+        MyHandler(ActivityRejectedFragment activityRequestFragment) {
             activityRequestFragmentWeakReference = new WeakReference<>(activityRequestFragment);
         }
 
         @Override
         public void handleMessage(Message message) {
-            ActivityPassedFragment experienceSummaryActivity = activityRequestFragmentWeakReference.get();
+            ActivityRejectedFragment experienceSummaryActivity = activityRequestFragmentWeakReference.get();
             if (experienceSummaryActivity != null) {
                 experienceSummaryActivity.handleMessage(message);
             }
