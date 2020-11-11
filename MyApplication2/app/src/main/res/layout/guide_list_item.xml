@@ -10,6 +10,7 @@
     android:background="@color/white"
     app:cardUseCompatPadding="true">
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/experience_wrapper"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <ImageView
@@ -125,6 +126,7 @@
             android:textStyle="bold"
             android:textColor="@color/black"
             android:textSize="16sp"
+                  android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/evaluate_wrapper" />
@@ -178,5 +180,34 @@
             app:layout_constraintBottom_toBottomOf="@+id/cny"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/cny" />
+        
+        <LinearLayout
+            android:id="@+id/verify_wrapper"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:gravity="end"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/head_picture">
+            <Button
+                android:id="@+id/reject_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/btn_default"
+                android:text="@string/reject"
+                android:textColor="@color/blue_dark" />
+
+            <Button
+                android:id="@+id/pass_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/btn_stress"
+                android:text="@string/pass"
+                android:layout_marginTop="8dp"
+                android:textColor="@color/colorWhite" />
+        </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>
