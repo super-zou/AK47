@@ -62,6 +62,7 @@ public class MessageFragment extends Fragment implements ReminderManager.UnreadN
     private TextView unReadVerifyRequest;
     private View view;
     private MyHandler handler;
+    private int mRequestExperienceAmount = 0;
     private ArrayList<String> mMessageTitleList = new ArrayList<String>() {
         {
             add("通知");
@@ -130,7 +131,8 @@ public class MessageFragment extends Fragment implements ReminderManager.UnreadN
                             if (talentRequestCount > 0){
                                 requestVerifyCount += talentRequestCount;
                             }
-                            int activityRequestCount = responseObject.optInt("activity_request_count");
+                            int activityRequestCount = responseObject.optInt("experience_request_count");
+                            mRequestExperienceAmount = activityRequestCount;
                             if (activityRequestCount > 0){
                                 requestVerifyCount += activityRequestCount;
                             }
