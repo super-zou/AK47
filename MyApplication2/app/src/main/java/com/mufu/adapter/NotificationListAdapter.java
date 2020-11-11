@@ -22,6 +22,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.mufu.R;
+import com.mufu.experience.ExperienceDetailActivity;
+import com.mufu.experience.ExperienceSummaryActivity;
 import com.mufu.order.OrderDetailsDF;
 import com.mufu.verify.SubmitAuthenticationDialogFragment;
 import com.mufu.common.MyApplication;
@@ -37,6 +39,7 @@ import com.mufu.util.RoundImageView;
 import com.mufu.util.Slog;
 import com.mufu.util.UserProfile;
 import com.mufu.util.Utility;
+import com.mufu.verify.activity.ActivityPassedFragment;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -63,6 +66,7 @@ import static com.mufu.util.ParseUtils.APPROVE_PERSONALITY_ACTION;
 import static com.mufu.util.ParseUtils.AUTHENTICATION_REJECTED_NF;
 import static com.mufu.util.ParseUtils.AUTHENTICATION_VERIFIED_NF;
 import static com.mufu.util.ParseUtils.EVALUATE_ACTION;
+import static com.mufu.util.ParseUtils.EXPERIENCE_REQUEST_RESULT_NF;
 import static com.mufu.util.ParseUtils.FOLLOW_GROUP_ACTION;
 import static com.mufu.util.ParseUtils.INVITE_GROUP_MEMBER_ACTION;
 import static com.mufu.util.ParseUtils.INVITE_SINGLE_GROUP_MEMBER_ACTION;
@@ -150,6 +154,7 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
                 case TALENT_VERIFIED_NF:
                 case TALENT_REJECTED_NF:
                 case ORDER_PLACED_NF:
+                case EXPERIENCE_REQUEST_RESULT_NF:
                     if (notification.showed == NOT_SHOWED) {
                         showNotification(notification);
                     }
@@ -161,16 +166,22 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
 
         holder.action.setText(notification.action);
         final UserProfile trigger = notification.trigger;//the trigger who produce this notice
-        if (trigger.getAvatar() != null && !"".equals(trigger.getAvatar())) {
-            Glide.with(mContext).load(HttpUtil.DOMAIN + trigger.getAvatar()).into(holder.avatar);
-        } else {
-            if (trigger.getSex() == Utility.MALE) {
-                holder.avatar.setImageDrawable(mContext.getDrawable(R.drawable.male_default_avator));
+        
+        if (notification.type != EXPERIENCE_REQUEST_RESULT_NF){
+            if (trigger.getAvatar() != null && !"".equals(trigger.getAvatar())) {
+                Glide.with(mContext).load(HttpUtil.DOMAIN + trigger.getAvatar()).into(holder.avatar);
             } else {
-                holder.avatar.setImageDrawable(mContext.getDrawable(R.drawable.female_default_avator));
+                if (trigger.getSex() == Utility.MALE) {
+                    holder.avatar.setImageDrawable(mContext.getDrawable(R.drawable.male_default_avator));
+                } else {
+                    holder.avatar.setImageDrawable(mContext.getDrawable(R.drawable.female_default_avator));
+                }
             }
+            holder.name.setText(trigger.getNickName());
+        }else {
+            holder.avatar.setImageDrawable(mContext.getDrawable(R.drawable.icon));
+            holder.name.setText("");
         }
-        holder.name.setText(trigger.getNickName());
         /*
         String profile = "";
         if (trigger.getSituation() != -1){
@@ -305,6 +316,9 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
                         orderDetailsDF.show(fragmentManager, "OrderDetailsDF");
                         markNotificationProcessed(holder.isNew, notification);
                         break;
+                    case EXPERIENCE_REQUEST_RESULT_NF:
+                        startExperienceDetailsActivity(notification.uid);
+                        break;
                     default:
                         startMeetArchiveActivity(getContext(), notification.tid);
                         markNotificationProcessed(holder.isNew, notification);
@@ -319,6 +333,13 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
     private void startTalentDetailsActivity(int aid){
         Intent intent = new Intent(getContext(), TalentDetailsActivity.class);
         intent.putExtra("aid", aid);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+        mContext.startActivity(intent);
+    }
+
+    private void startExperienceDetailsActivity(int uid){
+        Intent intent = new Intent(getContext(), ExperienceSummaryActivity.class);
+        intent.putExtra("uid", uid);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
         mContext.startActivity(intent);
     }
@@ -354,6 +375,10 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
                 clickIntent = new Intent(mContext, TalentDetailsActivity.class);
                 clickIntent.putExtra("aid", NF.id);
                 break;
+            case EXPERIENCE_REQUEST_RESULT_NF:
+                clickIntent = new Intent(mContext, ExperienceSummaryActivity.class);
+                clickIntent.putExtra("uid", NF.uid);
+                break;
                 default:
                     break;
         }
@@ -375,10 +400,16 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
             final NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext, id);
             builder.setCategory(android.app.Notification.CATEGORY_MESSAGE)
                     .setSmallIcon(R.drawable.icon)
-                    .setContentTitle(NF.trigger.getNickName() + " " + NF.action)
                     .setContentText(NF.content)
                     .setContentIntent(clickPI)
                     .setAutoCancel(true);
+            
+           if (NF.type != EXPERIENCE_REQUEST_RESULT_NF){
+                builder.setContentTitle(NF.trigger.getNickName() + " " + NF.action);
+
+            }else {
+                builder.setContentTitle(NF.action);
+            }
 
             SimpleTarget<Drawable> simpleTarget = new SimpleTarget<Drawable>() {
                 @Override
@@ -389,7 +420,13 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
                 }
             };
 
-            Glide.with(mContext).load(HttpUtil.DOMAIN + NF.trigger.getAvatar()).into(simpleTarget);
+            if (NF.type != EXPERIENCE_REQUEST_RESULT_NF){
+                Glide.with(mContext).load(HttpUtil.DOMAIN + NF.trigger.getAvatar()).into(simpleTarget);
+            }else {
+                builder.setLargeIcon(drawableToBitmap(mContext.getDrawable(R.drawable.icon)));
+                android.app.Notification notification = builder.build();
+                notificationManager.notify(1, notification);
+            }
         } else {
 
             android.app.Notification notification = new NotificationCompat.Builder(mContext)
