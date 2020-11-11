@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -24,7 +25,9 @@ import com.mufu.experience.ExperienceSummaryActivity;
 import com.mufu.experience.modify.ModifyExperienceDF;
 import com.mufu.util.FontManager;
 import com.mufu.util.HttpUtil;
+import com.mufu.util.Slog;
 import com.mufu.util.Utility;
+import com.mufu.verify.VerifyOperationInterface;
 
 import java.util.List;
 
@@ -44,10 +47,12 @@ public class ExperienceSummaryAdapter extends RecyclerView.Adapter<ExperienceSum
     private boolean isScrolling = false;
     private MyItemClickListener mItemClickListener;
     private boolean isSelf;
+    private boolean isVerify = false;
     
-    public ExperienceSummaryAdapter(Context context, boolean isSelf) {
+    public ExperienceSummaryAdapter(Context context, boolean isSelf, boolean isVerify) {
         mContext = context;
         this.isSelf = isSelf;
+        this.isVerify = isVerify;
     }
 
     public void setData(List<ExperienceSummaryActivity.Experience> experienceList) {
@@ -92,6 +97,29 @@ public class ExperienceSummaryAdapter extends RecyclerView.Adapter<ExperienceSum
         }else {
             holder.modifyTV.setVisibility(View.GONE);
         }
+        
+        if (!isVerify){
+             holder.verifyLL.setVisibility(View.GONE);
+         }else {
+             holder.verifyLL.setVisibility(View.VISIBLE);
+         }
+
+        holder.rejectBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Slog.d(TAG, "----------------reject click");
+                //verifyOperationInterface.onRejectClick(view, position);
+                mItemClickListener.onRejectClick(view, position);
+            }
+        });
+        holder.passBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Slog.d(TAG, "----------------pass click");
+                //verifyOperationInterface.onPassClick(view, position);
+                mItemClickListener.onPassClick(view, position);
+            }
+        });
     }
     
     public void setContentView(ExperienceSummaryAdapter.ViewHolder holder, final ExperienceSummaryActivity.Experience experience){
@@ -144,6 +172,9 @@ public class ExperienceSummaryAdapter extends RecyclerView.Adapter<ExperienceSum
         TextView modifyTV;
         CardView itemLayout;
         LinearLayout evaluateLL;
+        LinearLayout verifyLL;
+        Button rejectBtn;
+        Button passBtn;
         
         public ViewHolder(View view, MyItemClickListener myItemClickListener) {
             super(view);
@@ -158,6 +189,9 @@ public class ExperienceSummaryAdapter extends RecyclerView.Adapter<ExperienceSum
             modifyTV = view.findViewById(R.id.modify);
             durationTV = view.findViewById(R.id.duration);
             evaluateLL = view.findViewById(R.id.evaluate_wrapper);
+            verifyLL = view.findViewById(R.id.verify_wrapper);
+            rejectBtn = view.findViewById(R.id.reject_btn);
+            passBtn = view.findViewById(R.id.pass_btn);
 
             //将全局的监听赋值给接口
             this.mListener = myItemClickListener;
@@ -181,6 +215,8 @@ public class ExperienceSummaryAdapter extends RecyclerView.Adapter<ExperienceSum
      */
     public interface MyItemClickListener {
         void onItemClick(View view, int position);
+        void onPassClick(View view, int position);
+        void onRejectClick(View view, int position);
     }
     
     /**
