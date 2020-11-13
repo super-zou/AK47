@@ -16,7 +16,6 @@ import android.widget.Toast;
 
 import com.mufu.R;
 import com.mufu.adapter.ExperienceSummaryAdapter;
-import com.mufu.adapter.verify.ExperienceRequestListAdapter;
 import com.mufu.experience.ExperienceDetailActivity;
 import com.mufu.experience.ExperienceSummaryActivity;
 import com.mufu.group.SubGroupActivity;

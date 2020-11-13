@@ -19,7 +19,6 @@ import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.mufu.R;
 import com.mufu.adapter.ExperienceSummaryAdapter;
-import com.mufu.adapter.verify.ExperienceRejectedListAdapter;
 import com.mufu.experience.ExperienceDetailActivity;
 import com.mufu.experience.ExperienceSummaryActivity;
 import com.mufu.util.BaseFragment;
@@ -48,7 +47,7 @@ import static android.app.Activity.RESULT_FIRST_USER;
 import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
-public class ActivityRejectedFragment extends BaseFragment {
+public class ActivityPassedFragment extends BaseFragment {
     private static final boolean isDebug = true;
     private static final String TAG = "ActivityRejectedFragment";
     private static final int PAGE_SIZE = 8;
@@ -324,15 +323,15 @@ private void requestData() {
     }
     
     static class MyHandler extends Handler {
-        WeakReference<ActivityRejectedFragment> activityRequestFragmentWeakReference;
+        WeakReference<ActivityPassedFragment> activityPassedFragmentWeakReference;
 
-        MyHandler(ActivityRejectedFragment activityRequestFragment) {
-            activityRequestFragmentWeakReference = new WeakReference<>(activityRequestFragment);
+        MyHandler(ActivityPassedFragment activityRequestFragment) {
+            activityPassedFragmentWeakReference = new WeakReference<>(activityRequestFragment);
         }
 
         @Override
         public void handleMessage(Message message) {
-            ActivityRejectedFragment experienceSummaryActivity = activityRequestFragmentWeakReference.get();
+            ActivityPassedFragment experienceSummaryActivity = activityPassedFragmentWeakReference.get();
             if (experienceSummaryActivity != null) {
                 experienceSummaryActivity.handleMessage(message);
             }
