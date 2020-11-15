@@ -19,7 +19,6 @@ import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.mufu.R;
 import com.mufu.adapter.ExperienceSummaryAdapter;
-import com.mufu.adapter.verify.ExperienceRejectedListAdapter;
 import com.mufu.experience.ExperienceDetailActivity;
 import com.mufu.experience.ExperienceSummaryActivity;
 import com.mufu.util.BaseFragment;
