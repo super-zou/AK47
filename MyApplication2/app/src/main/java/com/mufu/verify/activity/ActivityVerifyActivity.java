@@ -93,9 +93,9 @@ public class ActivityVerifyActivity extends BaseAppCompatActivity {
         
         Fragment unVerifiedFragment = new ActivityRequestFragment();
         mFragmentList.add(unVerifiedFragment);
-        BaseFragment passedFragment = new ActivityRequestFragment();
+        BaseFragment passedFragment = new ActivityPassedFragment();
         mFragmentList.add(passedFragment);
-        Fragment rejectedFragment = new ActivityRequestFragment();
+        Fragment rejectedFragment = new ActivityRejectedFragment();
         mFragmentList.add(rejectedFragment);
 
         //创建一个viewpager的adapter
