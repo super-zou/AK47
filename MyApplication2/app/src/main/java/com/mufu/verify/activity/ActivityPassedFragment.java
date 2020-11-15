@@ -19,6 +19,7 @@ import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.mufu.R;
 import com.mufu.adapter.ExperienceSummaryAdapter;
+import com.mufu.adapter.verify.ExperiencePassedListAdapter;
 import com.mufu.experience.ExperienceDetailActivity;
 import com.mufu.experience.ExperienceSummaryActivity;
 import com.mufu.util.BaseFragment;
@@ -49,9 +50,9 @@ import static com.jcodecraeer.xrecyclerview.ProgressStyle.BallSpinFadeLoader;
 
 public class ActivityPassedFragment extends BaseFragment {
     private static final boolean isDebug = true;
-    private static final String TAG = "ActivityRejectedFragment";
+    private static final String TAG = "ActivityPassedFragment";
     private static final int PAGE_SIZE = 8;
-    public static final String GET_REJECTED_EXPERIENCES = HttpUtil.DOMAIN + "?q=experience/get_rejected_experiences";
+    public static final String GET_PASSED_EXPERIENCES = HttpUtil.DOMAIN + "?q=experience/get_passed_experiences";
 
     private static final int GET_ALL_DONE = 1;
     private static final int GET_ALL_END = 2;
@@ -64,7 +65,7 @@ public class ActivityPassedFragment extends BaseFragment {
     private int mLoadSize = 0;
     private Handler handler;
     
-    private ExperienceSummaryAdapter experienceRejectedListAdapter;
+    private ExperienceSummaryAdapter experiencePassedListAdapter;
     private XRecyclerView recyclerView;
     private List<ExperienceSummaryActivity.Experience> mExperienceList = new ArrayList<>();
 
@@ -94,7 +95,7 @@ public class ActivityPassedFragment extends BaseFragment {
 
         handler = new MyHandler(this);
         recyclerView = view.findViewById(R.id.experience_verify_list);
-        experienceRejectedListAdapter = new ExperienceSummaryAdapter(getContext(), isSelf, true);
+        experiencePassedListAdapter = new ExperienceSummaryAdapter(getContext(), isSelf, true);
         MyLinearLayoutManager linearLayoutManager = new MyLinearLayoutManager(getContext());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(linearLayoutManager);
@@ -116,10 +117,10 @@ public class ActivityPassedFragment extends BaseFragment {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 if (newState == SCROLL_STATE_IDLE) {
-                    experienceRejectedListAdapter.setScrolling(false);
-                    experienceRejectedListAdapter.notifyDataSetChanged();
+                    experiencePassedListAdapter.setScrolling(false);
+                    experiencePassedListAdapter.notifyDataSetChanged();
                 } else {
-                    experienceRejectedListAdapter.setScrolling(true);
+                    experiencePassedListAdapter.setScrolling(true);
                 }
                 super.onScrollStateChanged(recyclerView, newState);
             }
@@ -137,7 +138,7 @@ public class ActivityPassedFragment extends BaseFragment {
             }
         });
         
-        experienceRejectedListAdapter.setItemClickListener(new ExperienceSummaryAdapter.MyItemClickListener() {
+        experiencePassedListAdapter.setItemClickListener(new ExperienceSummaryAdapter.MyItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
                 Slog.d(TAG, "==========click : " + position);
@@ -155,7 +156,7 @@ public class ActivityPassedFragment extends BaseFragment {
             public void onRejectClick(View view, int position) {}
         });
         
-        recyclerView.setAdapter(experienceRejectedListAdapter);
+        recyclerView.setAdapter(experiencePassedListAdapter);
 
         //show progressImage before loading done
         progressImageView = view.findViewById(R.id.animal_progress);
@@ -178,7 +179,7 @@ private void requestData() {
 
         RequestBody requestBody = builder.build();
 
-        HttpUtil.sendOkHttpRequest(getContext(), GET_REJECTED_EXPERIENCES, requestBody, new Callback() {
+        HttpUtil.sendOkHttpRequest(getContext(), GET_PASSED_EXPERIENCES, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
@@ -266,15 +267,15 @@ private void requestData() {
         switch (message.what) {
             case GET_ALL_DONE:
                 Slog.d(TAG, "-------------->GET_ALL_DONE");
-                experienceRejectedListAdapter.setData(mExperienceList);
-                experienceRejectedListAdapter.notifyDataSetChanged();
+                experiencePassedListAdapter.setData(mExperienceList);
+                experiencePassedListAdapter.notifyDataSetChanged();
                 recyclerView.loadMoreComplete();
                 stopLoadProgress();
                 break;
                  case GET_ALL_END:
                 Slog.d(TAG, "-------------->GET_ALL_END");
-                experienceRejectedListAdapter.setData(mExperienceList);
-                experienceRejectedListAdapter.notifyDataSetChanged();
+                experiencePassedListAdapter.setData(mExperienceList);
+                experiencePassedListAdapter.notifyDataSetChanged();
                 recyclerView.loadMoreComplete();
                 recyclerView.setNoMore(true);
                 stopLoadProgress();
