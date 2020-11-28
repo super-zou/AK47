@@ -10,6 +10,8 @@ import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -38,6 +40,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,6 +54,7 @@ import okhttp3.MediaType;
 import okhttp3.Response;
 
 import static com.mufu.common.MyApplication.getContext;
+import static com.mufu.experience.WriteShareActivity.UPDATEPROGRESS;
 
 public class SetAvatarActivity extends BaseAppCompatActivity {
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
@@ -80,6 +84,7 @@ public class SetAvatarActivity extends BaseAppCompatActivity {
     private int gid;
     private int type = 0;
     private AddDynamicsActivity addDynamicsActivity;
+        private MyHandler myHandler = new MyHandler(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,7 +128,7 @@ public class SetAvatarActivity extends BaseAppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (avatarSelectFileList.size() > 0) {
-                    showProgressDialog("正在保存");
+                    //showProgressDialog("正在保存");
                     if (type == MODIFY_LOGO) {
                         params.put("type", "group_logo");
                         params.put("gid", String.valueOf(gid));
@@ -258,7 +263,7 @@ public class SetAvatarActivity extends BaseAppCompatActivity {
         } else {
             uri = UPLOAD_PICTURE_URL;
         }
-        HttpUtil.uploadPictureHttpRequest(this, params, picKey, files, uri, new Callback() {
+        HttpUtil.uploadPictureProgressHttpRequest(this, params, picKey, files, uri, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
@@ -315,6 +320,15 @@ public class SetAvatarActivity extends BaseAppCompatActivity {
                     }
                 });
             }
+        }, (contentLength, currentLength) -> {
+            //Slog.d(TAG, "------------->onProgress contentLength: "+contentLength+" currentLength: "+currentLength);
+            Message msg = new Message();
+            Bundle bundle = new Bundle();
+            bundle.putLong("maxLength", contentLength);
+            bundle.putInt("currentLength", currentLength);
+            msg.setData(bundle);
+            msg.what = UPDATEPROGRESS;
+            myHandler.sendMessage(msg);
         });
 
     }
@@ -349,6 +363,30 @@ public class SetAvatarActivity extends BaseAppCompatActivity {
                     }
                 }
                 break;
+        }
+    }
+    
+    public void handleMessage(Message msg){
+        switch (msg.what){
+            case UPDATEPROGRESS:
+                Bundle bundle = msg.getData();
+                showProgressDialogProgress((int)bundle.getLong("maxLength"), bundle.getInt("currentLength"));
+                break;
+        }
+    }
+
+    static class MyHandler extends Handler {
+        WeakReference<SetAvatarActivity> setAvatarActivityWeakReference;
+
+        MyHandler(SetAvatarActivity setAvatarActivity) {
+            setAvatarActivityWeakReference = new WeakReference<SetAvatarActivity>(setAvatarActivity);
+        }
+        @Override
+        public void handleMessage(Message message) {
+            SetAvatarActivity setAvatarActivity = setAvatarActivityWeakReference.get();
+            if (setAvatarActivity != null) {
+                setAvatarActivity.handleMessage(message);
+            }
         }
     }
 }
