@@ -8,6 +8,7 @@ import com.mufu.common.MyApplication;
 
 public class BaseDialogFragment extends DialogFragment {
     private ProgressDialog mProgressDialog;
+        private ProgressDialog mProgressHorizontalDialog;
     private Toast mToast;
 
     @Override
@@ -25,10 +26,41 @@ public class BaseDialogFragment extends DialogFragment {
         }
         mProgressDialog.show();
     }
+    
+    public void showProgressDialogProgress(int contentLength, int currentLength) {
+        Slog.d("BaseDialogFragment", "--------------------->contentLength: "+contentLength);
+        if (null == mProgressHorizontalDialog) {
+            mProgressHorizontalDialog = new ProgressDialog(getContext());
+            mProgressHorizontalDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            mProgressHorizontalDialog.setMessage("正在上传...");
+            mProgressHorizontalDialog.setCanceledOnTouchOutside(false);
+            if (contentLength > 1024){
+                mProgressHorizontalDialog.setProgressNumberFormat("%1d KB/%2d KB");
+                int maxKB = contentLength / 1024;
+                mProgressHorizontalDialog.setMax(maxKB);
+            }else {
+                mProgressHorizontalDialog.setMax(contentLength);
+            }
+        }
+        
+        if (currentLength > 1024){
+            int currentKB = currentLength / 1024;
+            mProgressHorizontalDialog.setProgress(currentKB);
+        }else {
+            mProgressHorizontalDialog.setProgress(currentLength);
+        }
+
+        mProgressHorizontalDialog.show();
+    }
+            
 
     public void dismissProgressDialog() {
         if (null != mProgressDialog) {
             mProgressDialog.dismiss();
+        }
+
+        if (null != mProgressHorizontalDialog){
+            mProgressHorizontalDialog.dismiss();
         }
     }
     
