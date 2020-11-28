@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import android.widget.Toast;
 
+import com.mufu.util.Slog;
 import com.umeng.analytics.MobclickAgent;
 
 /**
@@ -46,6 +47,32 @@ import com.umeng.analytics.MobclickAgent;
             mProgressDialog.setMessage(msg);
             mProgressDialog.setCanceledOnTouchOutside(false);
         }
+        mProgressDialog.show();
+    }
+  
+      public void showProgressDialogProgress(int contentLength, int currentLength) {
+        Slog.d("BaseAppCompatActivity", "--------------------->contentLength: "+contentLength);
+        if (null == mProgressDialog) {
+            mProgressDialog = new ProgressDialog(this);
+            mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            mProgressDialog.setMessage("正在上传...");
+            mProgressDialog.setCanceledOnTouchOutside(false);
+            if (contentLength > 1024){
+                mProgressDialog.setProgressNumberFormat("%1d KB/%2d KB");
+                int maxKB = contentLength / 1024;
+                mProgressDialog.setMax(maxKB);
+            }else {
+                mProgressDialog.setMax(contentLength);
+            }
+        }
+       
+       if (currentLength > 1024){
+            int currentKB = currentLength / 1024;
+            mProgressDialog.setProgress(currentKB);
+        }else {
+            mProgressDialog.setProgress(currentLength);
+        }
+
         mProgressDialog.show();
     }
     
