@@ -99,6 +99,8 @@ import static com.mufu.experience.ExperienceDetailActivity.GET_ITEM_INFO_DONE;
 import static com.mufu.experience.ExperienceDetailActivity.GET_LIMIT_INFO;
 import static com.mufu.experience.ExperienceDetailActivity.GET_LIMIT_INFO_DONE;
 import static com.mufu.experience.ExperienceDetailActivity.GET_SELF_INTRODUCTION_DONE;
+import static com.mufu.experience.WriteShareActivity.UPDATEPROGRESS;
+import static com.mufu.experience.WriteShareActivity.UPDATEPROGRESSCOMPLETE;
 import static com.mufu.util.DateUtil.timeStampToDay;
 import static com.mufu.experience.PackageSettingDF.GET_PACKAGE_AMOUNT_URL;
 import static com.mufu.experience.PackageSettingDF.GET_PACKAGE_DONE;
@@ -820,7 +822,7 @@ private void saveExperiencePictures(){
         showProgressDialog("正在保存");
         uri = MODIFY_EXPERIENCE_PICTURES_URL;
 
-        HttpUtil.uploadPictureHttpRequest(getContext(), params, picKey, files, uri, new Callback() {
+        HttpUtil.uploadPictureProgressHttpRequest(getContext(), params, picKey, files, uri, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
             if (response.body() != null) {
@@ -832,6 +834,8 @@ private void saveExperiencePictures(){
                         if (result == 1) {
                             dismissProgressDialog();
                            // isPictureSaved = true;
+                            newAddList.clear();
+                            mDeletedPictureUrl = "";
                             isExperiencePictureModified = false;
                             myHandler.sendEmptyMessage(WRITE_DONE_SUCCESS);
                         }
@@ -852,6 +856,20 @@ private void saveExperiencePictures(){
                 e.printStackTrace();
 
             }
+        }, (contentLength, currentLength) -> {
+            //Slog.d(TAG, "------------->onProgress contentLength: "+contentLength+" currentLength: "+currentLength);
+            Message msg = new Message();
+            Bundle bundle = new Bundle();
+            bundle.putLong("maxLength", contentLength);
+            bundle.putInt("currentLength", currentLength);
+            msg.setData(bundle);
+            if (contentLength == currentLength){
+                msg.what = UPDATEPROGRESSCOMPLETE;
+            }else {
+                msg.what = UPDATEPROGRESS;
+            }
+
+            myHandler.sendMessage(msg);
         });
 
     }
@@ -929,9 +947,15 @@ private void saveExperiencePictures(){
         adapter.setItemDeleteListener(new GridImageAdapter.OnPicDeleteListener() {
             @Override
             public void onPicDelete(int position) {
-                Slog.d(TAG, "pic delete");
+                Slog.d(TAG, "pic delete position: "+position);
                 isExperiencePictureModified = true;
-                mDeletedPictureUrl += bannerUrlArray.opt(position)+";";
+                LocalMedia media = selectList.get(position);
+                if(media.getPath().contains("http")){
+                    Slog.d(TAG, "-------------------->delete path: "+media.getPath());
+                    Slog.d(TAG, "-------------------->bannerUrlArray path: "+bannerUrlArray.opt(position));
+                    mDeletedPictureUrl += bannerUrlArray.opt(position)+";";
+                    bannerUrlArray.remove(position);
+                }
             }
         });
     }
@@ -1624,6 +1648,13 @@ private void submitSelfIntroduction() {
                 hasPackage = true;
                 mPackageSettingBtn.setText(getContext().getResources().getString(R.string.examine_package_setting));
                 break;
+           case UPDATEPROGRESS:
+                Bundle bundle = msg.getData();
+                showProgressDialogProgress((int)bundle.getLong("maxLength"), bundle.getInt("currentLength"));
+                break;
+            case UPDATEPROGRESSCOMPLETE:
+                dismissProgressDialog();
+                break;
             default:
                 break;
         }
@@ -1634,6 +1665,7 @@ private void submitSelfIntroduction() {
         public void onAddPicClick() {
             //boolean mode = cb_mode.isChecked();
             boolean mode = true;
+            int maxNum = 9 - selectList.size();
             if (mode) {
                 PictureSelector.create(ModifyExperienceDF.this)
                         .openGallery(PictureMimeType.ofImage())
@@ -1644,7 +1676,7 @@ private void submitSelfIntroduction() {
                         .setPictureCropStyle(addDynamicsActivity.getCropParameterStyle())
                         .setPictureWindowAnimationStyle(new PictureWindowAnimationStyle())
                         .isWithVideoImage(true)
-                        .maxSelectNum(8)
+                        .maxSelectNum(maxNum)
                         .minSelectNum(1)
                         .maxVideoSelectNum(1)
                         .imageSpanCount(4)
