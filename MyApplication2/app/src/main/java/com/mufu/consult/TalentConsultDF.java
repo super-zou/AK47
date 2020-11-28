@@ -69,6 +69,7 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 
 import static android.app.Activity.RESULT_OK;
+import static com.mufu.experience.WriteShareActivity.UPDATEPROGRESS;
 import static com.mufu.order.PlaceOrderDF.CONSULT_PAYMENT_SUCCESS_BROADCAST;
 import static com.mufu.order.PlaceOrderDF.SUBMIT_ORDER_DONE;
 import static com.mufu.order.PlaceOrderDF.getOrderNumber;
@@ -77,7 +78,7 @@ public class TalentConsultDF extends BaseDialogFragment {
     private static final String TAG = "TalentConsultDF";
     private static final String WRITE_CONSULT_URL = HttpUtil.DOMAIN + "?q=consult/write_consult";
     private static final String CREATE_CONSULT_REWARD_ORDER_URL = HttpUtil.DOMAIN + "?q=consult/create_reward_order";
-    private static final int PUBLISH_CONSULT_DONE = 0;
+    private static final int PUBLISH_CONSULT_DONE = 10;
     final List<String> selectedFeatures = new ArrayList<>();
     private Context mContext;
     private Dialog mDialog;
@@ -299,11 +300,11 @@ public class TalentConsultDF extends BaseDialogFragment {
                     return;
                 }
 
-                showProgressDialog(getContext().getString(R.string.saving_progress));
 
                 if (rewardIndex == 0){
                     submitConsult();
                 }else {
+                    showProgressDialog(getContext().getString(R.string.saving_progress));
                     createRewardOrder();
                 }
 
@@ -383,7 +384,7 @@ public class TalentConsultDF extends BaseDialogFragment {
         Slog.d(TAG, "--------------------->uploadPictures file size: " + files.size());
         String uri = WRITE_CONSULT_URL;
 
-        HttpUtil.uploadPictureHttpRequest(getContext(), params, picKey, files, uri, new Callback() {
+        HttpUtil.uploadPictureProgressHttpRequest(getContext(), params, picKey, files, uri, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
@@ -416,6 +417,15 @@ public class TalentConsultDF extends BaseDialogFragment {
                 e.printStackTrace();
 
             }
+        }, (contentLength, currentLength) -> {
+            //Slog.d(TAG, "------------->onProgress contentLength: "+contentLength+" currentLength: "+currentLength);
+            Message msg = new Message();
+            Bundle bundle = new Bundle();
+            bundle.putLong("maxLength", contentLength);
+            bundle.putInt("currentLength", currentLength);
+            msg.setData(bundle);
+            msg.what = UPDATEPROGRESS;
+            handler.sendMessage(msg);
         });
 
     }
@@ -432,6 +442,10 @@ public class TalentConsultDF extends BaseDialogFragment {
                 break;
             case SUBMIT_ORDER_DONE:
                 startOrderPaymentDF();
+                break;
+            case UPDATEPROGRESS:
+                Bundle bundle = message.getData();
+                showProgressDialogProgress((int)bundle.getLong("maxLength"), bundle.getInt("currentLength"));
                 break;
             default:
                 break;
