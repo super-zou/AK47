@@ -12,12 +12,16 @@ import android.os.Bundle;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
+import android.os.Handler;
+import android.os.Message;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mufu.adapter.GridImageAdapter;
 import com.mufu.dynamics.AddDynamicsActivity;
 import com.mufu.picture.GlideEngine;
+import com.mufu.experience.WriteShareActivity;
+import com.mufu.main.DynamicFragment;
 import com.mufu.util.FontManager;
 import com.mufu.util.HttpUtil;
 import com.mufu.util.ParseUtils;
@@ -38,6 +42,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.lang.ref.WeakReference;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -45,6 +50,7 @@ import okhttp3.Response;
 
 import static com.mufu.common.MyApplication.getContext;
 import static com.mufu.util.ParseUtils.startMeetArchiveActivity;
+import static com.mufu.experience.WriteShareActivity.UPDATEPROGRESS;
 
 public class AddPictureActivity extends BaseAppCompatActivity {
 
@@ -64,6 +70,7 @@ public class AddPictureActivity extends BaseAppCompatActivity {
     private AddDynamicsActivity addDynamicsActivity;
 
     public static final String ADD_PICTURE_BROADCAST = "com.hetang.action.PICTURE_ADD";
+        private MyHandler myHandler;
     //private ProgressDialog progressDialog;
 
     @Override
@@ -74,6 +81,7 @@ public class AddPictureActivity extends BaseAppCompatActivity {
         if (actionBar != null) {
             actionBar.hide();
         }
+                myHandler = new MyHandler(this);
 
         title = findViewById(R.id.title);
         uid = getIntent().getIntExtra("uid", 0);
@@ -246,7 +254,7 @@ public class AddPictureActivity extends BaseAppCompatActivity {
     
     private void uploadPictures(String picKey, List<File> files) {
 
-        HttpUtil.uploadPictureHttpRequest(this, null, picKey, files, UPLOAD_PICTURE_URL, new Callback() {
+        HttpUtil.uploadPictureProgressHttpRequest(this, null, picKey, files, UPLOAD_PICTURE_URL, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
@@ -280,6 +288,15 @@ public class AddPictureActivity extends BaseAppCompatActivity {
                     }
                 });
             }
+        }, (contentLength, currentLength) -> {
+            //Slog.d(TAG, "------------->onProgress contentLength: "+contentLength+" currentLength: "+currentLength);
+            Message msg = new Message();
+            Bundle bundle = new Bundle();
+            bundle.putLong("maxLength", contentLength);
+            bundle.putInt("currentLength", currentLength);
+            msg.setData(bundle);
+            msg.what = UPDATEPROGRESS;
+            myHandler.sendMessage(msg);
         });
     }
     
@@ -325,6 +342,15 @@ public class AddPictureActivity extends BaseAppCompatActivity {
         }
     }
     
+        public void handleMessage(Message msg){
+        switch (msg.what){
+            case UPDATEPROGRESS:
+                Bundle bundle = msg.getData();
+                showProgressDialogProgress((int)bundle.getLong("maxLength"), bundle.getInt("currentLength"));
+                break;
+        }
+    }
+    
     private void sendBroadcast() {
         LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(ADD_PICTURE_BROADCAST));
     }
@@ -335,6 +361,21 @@ public class AddPictureActivity extends BaseAppCompatActivity {
         sendBroadcast();
         if (selectFileList.size() > 0){
             ParseUtils.startMeetArchiveActivity(AddPictureActivity.this, uid);
+        }
+    }
+    
+    static class MyHandler extends Handler {
+        WeakReference<AddPictureActivity> addPictureActivityWeakReference;
+
+        MyHandler(AddPictureActivity addPictureActivity) {
+            addPictureActivityWeakReference = new WeakReference<AddPictureActivity>(addPictureActivity);
+        }
+        @Override
+        public void handleMessage(Message message) {
+            AddPictureActivity addPictureActivity = addPictureActivityWeakReference.get();
+            if (addPictureActivity != null) {
+                addPictureActivity.handleMessage(message);
+            }
         }
     }
 
