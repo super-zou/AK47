@@ -484,7 +484,7 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
 
     }
     
-    private void uploadPictures(Map<String, String> params, String picKey, List<File> files, boolean isModified) {
+    private void uploadPictures(Map<String, String> params, String picKey, List<File> files) {
         Slog.d(TAG, "--------------------->uploadPictures file size: " + files.size());
         String uri = SAVE_EXPERIENCE_PICTURES_URL;
 
