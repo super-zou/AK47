@@ -58,6 +58,7 @@ import okhttp3.Callback;
 import okhttp3.Response;
 import static com.mufu.common.MyApplication.getContext;
 
+import static com.mufu.experience.WriteShareActivity.UPDATEPROGRESS;
 import static com.mufu.util.ParseUtils.ADD_SUBGROUP_ACTIVITY_ACTION;
 
 public class AddDynamicsActivity extends BaseAppCompatActivity {
@@ -154,7 +155,7 @@ public class AddDynamicsActivity extends BaseAppCompatActivity {
         publishBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showProgressDialog("正在保存...");
+                //showProgressDialog("正在保存...");
                 String dynamics_input = editText.getText().toString();
                 Slog.d(TAG, "---->dynamics_input: "+dynamics_input+" type: "+type+" gid: "+gid);
                 // Toast.makeText(AddDynamicsActivity.this, editText.getText().toString(), Toast.LENGTH_SHORT).show();
@@ -357,7 +358,7 @@ public class AddDynamicsActivity extends BaseAppCompatActivity {
 
     private void uploadPictures(Map<String, String> params, String picKey, List<File> files) {
 
-        HttpUtil.uploadPictureHttpRequest(this, params, picKey, files, ParseUtils.DYNAMIC_ADD, new Callback() {
+        HttpUtil.uploadPictureProgressHttpRequest(this, params, picKey, files, ParseUtils.DYNAMIC_ADD, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
@@ -394,6 +395,15 @@ public class AddDynamicsActivity extends BaseAppCompatActivity {
                     }
                 });
             }
+        }, (contentLength, currentLength) -> {
+            //Slog.d(TAG, "------------->onProgress contentLength: "+contentLength+" currentLength: "+currentLength);
+            Message msg = new Message();
+            Bundle bundle = new Bundle();
+            bundle.putLong("maxLength", contentLength);
+            bundle.putInt("currentLength", currentLength);
+            msg.setData(bundle);
+            msg.what = UPDATEPROGRESS;
+            myHandler.sendMessage(msg);
         });
 
     }
@@ -478,8 +488,12 @@ public class AddDynamicsActivity extends BaseAppCompatActivity {
         switch (msg.what){
             case DynamicFragment.DYNAMICS_UPDATE_RESULT:
                 setResultWrapper();
-                dismissProgressDialog();
+                //dismissProgressDialog();
                 finish();
+                break;
+            case UPDATEPROGRESS:
+                Bundle bundle = msg.getData();
+                showProgressDialogProgress((int)bundle.getLong("maxLength"), bundle.getInt("currentLength"));
                 break;
         }
     }
