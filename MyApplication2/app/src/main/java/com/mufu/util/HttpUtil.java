@@ -166,5 +166,42 @@ public class HttpUtil {
 
         client.newCall(request).enqueue(callback);
     }
+    
+    public static void uploadPictureProgressHttpRequest(Context context, Map<String, String> params, String picKey, List<File> files,
+                                                        String address, okhttp3.Callback callback, ExMultipartBody.UploadProgressListener uploadProgressListener) {
+        //OkHttpClient client = new OkHttpClient();
+        mCookie = getCookie(context);
+
+        MultipartBody.Builder multipartBodyBuilder = new MultipartBody.Builder();
+        multipartBodyBuilder.setType(MultipartBody.FORM);
+        //遍历map中所有参数到builder
+        if (params != null) {
+            for (String key : params.keySet()) {
+                multipartBodyBuilder.addFormDataPart(key, params.get(key));
+            }
+        }
+        
+        if (files != null && files.size() > 0) {
+            //遍历paths中所有图片绝对路径到builder，并约定key如“upload”作为后台接受多张图片的key
+            int i = 0;
+            for (File file : files) {
+                Slog.d(TAG, "file name: " + file.getName());
+                multipartBodyBuilder.addFormDataPart(picKey + i, file.getName(), RequestBody.create(MEDIA_TYPE_PNG, file));
+                i++;
+            }
+        }
+
+        ExMultipartBody exMultipartBody = new ExMultipartBody(multipartBodyBuilder.build(), uploadProgressListener);
+        
+        //RequestBody requestBody = multipartBodyBuilder.build();
+
+        if (mCookie != null && !TextUtils.isEmpty(mCookie)) {
+            request = new Request.Builder().url(address).addHeader("cookie", mCookie).post(exMultipartBody).build();
+        } else {
+            request = new Request.Builder().url(address).post(exMultipartBody).build();
+        }
+
+        client.newCall(request).enqueue(callback);
+    }
 
 } 
