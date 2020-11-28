@@ -90,6 +90,8 @@ import okhttp3.Response;
 import static android.app.Activity.RESULT_OK;
 import static com.mufu.experience.GuideApplyDialogFragment.ROUTE_REQUEST_CODE;
 import static com.mufu.experience.RouteItemEditDF.newInstance;
+import static com.mufu.experience.WriteShareActivity.UPDATEPROGRESS;
+import static com.mufu.experience.WriteShareActivity.UPDATEPROGRESSCOMPLETE;
 
 public class DevelopExperienceDialogFragment extends BaseDialogFragment implements OnDateSelectedListener {
     private static final boolean isDebug = true;
@@ -100,6 +102,7 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
     private static final String MODIFY_BASE_INFO_URL = HttpUtil.DOMAIN + "?q=experience/modify_base_info";
     public static final String SAVE_EXPERIENCE_PICTURES_URL = HttpUtil.DOMAIN + "?q=experience/save_experience_pictures";
     public static final String MODIFY_EXPERIENCE_PICTURES_URL = HttpUtil.DOMAIN + "?q=experience/modify_experience_pictures";
+        public static final String EDIT_SAVED_EXPERIENCE_PICTURES_URL = HttpUtil.DOMAIN + "?q=experience/edit_saved_experience_pictures";
     public static final String SAVE_ITEMS_URL = HttpUtil.DOMAIN + "?q=experience/save_experience_items";
     private static final String SUBMIT_CHARGE_URL = HttpUtil.DOMAIN + "?q=experience/write_charge_info";
     private static final String SUBMIT_TIME_URL = HttpUtil.DOMAIN + "?q=experience/write_time_info";
@@ -138,7 +141,8 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
     private int tid;
     private int mPrice = 0;
     private int mEid = 0;
-    private boolean isSaved = false;
+    private boolean isPictureSaved = false;
+    private boolean isPictureEdited = false;
     private boolean isItemsSaved = false;
     private boolean isPriceSaved = false;
     private boolean isTimeSaved = false;
@@ -349,7 +353,7 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
                             }
                             break;
                         case 4:
-                            if (!isSaved && selectList.size() > 0){
+                            if (!isPictureSaved && selectList.size() > 0 || isPictureEdited){
                                 saveExperiencePictures();
                             }else {
                                 processNextBtn();
@@ -463,35 +467,32 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
         }
     }
     
-        private void saveExperiencePictures(){
+    private void saveExperiencePictures(){
         Map<String, String> authenMap = new HashMap<>();
-
-        if (isModified) {
-            //authenMap.put("rid", String.valueOf(route.getRid()));
-        } else {
-            authenMap.put("eid", String.valueOf(mEid));
-        }
-
+        authenMap.put("eid", String.valueOf(mEid));
+        Slog.d(TAG, "--------------------->eid: "+mEid);
         if (selectList.size() > 0) {
             Slog.d(TAG, "----------------->saveExperiencePictures selectList: " + selectList);
+            if (selectFileList.size() > 0){
+                selectFileList.clear();
+            }
             for (LocalMedia media : selectList) {
                 selectFileList.add(new File(media.getCompressPath()));
             }
-            uploadPictures(authenMap, "authen", selectFileList, isModified);
+            uploadPictures(authenMap, "authen", selectFileList);
         }
 
     }
     
     private void uploadPictures(Map<String, String> params, String picKey, List<File> files, boolean isModified) {
         Slog.d(TAG, "--------------------->uploadPictures file size: " + files.size());
-        showProgressDialog("正在保存");
         String uri = SAVE_EXPERIENCE_PICTURES_URL;
 
-        if (isModified) {
-            uri = MODIFY_EXPERIENCE_PICTURES_URL;
+        if (isPictureEdited) {
+            uri = EDIT_SAVED_EXPERIENCE_PICTURES_URL;
         }
         
-        HttpUtil.uploadPictureHttpRequest(getContext(), params, picKey, files, uri, new Callback() {
+        HttpUtil.uploadPictureProgressHttpRequest(getContext(), params, picKey, files, uri, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
@@ -502,10 +503,10 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
                         
                         if (result == 1) {
                             dismissProgressDialog();
-                            isSaved = true;
-                            //selectList.clear();
-                           // selectFileList.clear();
-                            //PictureFileUtils.deleteAllCacheDirFile(MyApplication.getContext());
+                            isPictureSaved = true;
+                            if (isPictureEdited){
+                                isPictureEdited = false;
+                            }
                             myHandler.sendEmptyMessage(SAVE_PICTURES_SUCCESS);
                         }
                     } catch (JSONException e) {
@@ -525,6 +526,20 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
                 e.printStackTrace();
 
             }
+        }, (contentLength, currentLength) -> {
+            //Slog.d(TAG, "------------->onProgress contentLength: "+contentLength+" currentLength: "+currentLength);
+            Message msg = new Message();
+            Bundle bundle = new Bundle();
+            bundle.putLong("maxLength", contentLength);
+            bundle.putInt("currentLength", currentLength);
+            msg.setData(bundle);
+            if (contentLength == currentLength){
+                msg.what = UPDATEPROGRESSCOMPLETE;
+            }else {
+                msg.what = UPDATEPROGRESS;
+            }
+
+            myHandler.sendMessage(msg);
         });
 
     }
@@ -605,6 +620,9 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
             @Override
             public void onPicDelete(int position) {
                 Slog.d(TAG, "pic delete");
+                if (isPictureSaved){
+                    isPictureEdited = true;
+                }
             }
         });
     }
@@ -1157,6 +1175,9 @@ private boolean validCheck(int index) {
                     Slog.d(TAG, "Selected pictures: " + selectList.size());
                     adapter.setList(selectList);
                     adapter.notifyDataSetChanged();
+                    if (isPictureSaved){
+                        isPictureEdited = true;
+                    }
                     break;
                 case PACKAGE_REQUEST_CODE:
                     hasPackage = true;
@@ -1234,6 +1255,13 @@ private boolean validCheck(int index) {
             case WRITE_SELF_INTRODUCTION_SUCCESS:
                 processNextBtn();
                 break;
+           case UPDATEPROGRESS:
+                Bundle bundle = msg.getData();
+                showProgressDialogProgress((int)bundle.getLong("maxLength"), bundle.getInt("currentLength"));
+                break;
+            case UPDATEPROGRESSCOMPLETE:
+                dismissProgressDialog();
+                break;
             default:
                 break;
         }
@@ -1256,6 +1284,7 @@ private boolean validCheck(int index) {
         public void onAddPicClick() {
             //boolean mode = cb_mode.isChecked();
             boolean mode = true;
+            int maxNum = 9 - selectList.size();
             if (mode) {
                 PictureSelector.create(DevelopExperienceDialogFragment.this)
                         .openGallery(PictureMimeType.ofImage())
@@ -1266,7 +1295,7 @@ private boolean validCheck(int index) {
                         .setPictureCropStyle(addDynamicsActivity.getCropParameterStyle())
                         .setPictureWindowAnimationStyle(new PictureWindowAnimationStyle())
                         .isWithVideoImage(true)
-                        .maxSelectNum(8)
+                        .maxSelectNum(maxNum)
                         .minSelectNum(1)
                         .maxVideoSelectNum(1)
                         .imageSpanCount(4)
