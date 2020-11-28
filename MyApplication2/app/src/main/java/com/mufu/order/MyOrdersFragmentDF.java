@@ -340,6 +340,7 @@ public class MyOrdersFragmentDF extends BaseDialogFragment {
         if (orderObject != null) {
             order.oid = orderObject.optInt("oid");
             order.id = orderObject.optInt("id");
+            order.sex = orderObject.optInt("sex");
             order.number = orderObject.optString("number");
             order.city = orderObject.optString("city");
             order.headPictureUrl = orderObject.optString("picture_url");
