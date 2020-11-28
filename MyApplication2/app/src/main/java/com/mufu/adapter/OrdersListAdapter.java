@@ -132,6 +132,12 @@ public class OrdersListAdapter extends RecyclerView.Adapter<OrdersListAdapter.Or
 
         if (order.avatar != null && !"".equals(order.avatar)) {
             Glide.with(getContext()).load(HttpUtil.DOMAIN + order.avatar).into(holder.avatarImg);
+        }else {
+            if(order.sex == 0){
+                holder.avatarImg.setImageDrawable(getContext().getDrawable(R.drawable.male_default_avator));
+            }else {
+                holder.avatarImg.setImageDrawable(getContext().getDrawable(R.drawable.female_default_avator));
+            }
         }
         
          holder.titleTV.setOnClickListener(new View.OnClickListener() {
