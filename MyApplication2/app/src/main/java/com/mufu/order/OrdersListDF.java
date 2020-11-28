@@ -366,6 +366,7 @@ private void requestData() {
     public static class OrderManager extends MyOrdersFragmentDF.Order {
         public String nickname;
         public String avatar;
+        public int sex;
         public int uid;
         public String phone;
         public String appointMentDate;
