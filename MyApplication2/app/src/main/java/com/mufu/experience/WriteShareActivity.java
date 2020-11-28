@@ -30,6 +30,7 @@ import com.mufu.common.OnItemClickListener;
 import com.mufu.main.DynamicFragment;
 import com.mufu.main.FullyGridLayoutManager;
 import com.mufu.picture.GlideEngine;
+import com.mufu.util.ExMultipartBody;
 import com.mufu.util.FontManager;
 import com.mufu.util.HttpUtil;
 import com.mufu.util.ParseUtils;
@@ -78,6 +79,8 @@ public static final String DYNAMICS_ADD_BROADCAST = "com.hetang.action.DYNAMICS_
     private RecyclerView recyclerView;
     private GridImageAdapter adapter;
     private List<LocalMedia> selectList = new ArrayList<>();
+        public static final int UPDATEPROGRESS = 0;
+    public static final int UPDATEPROGRESSCOMPLETE = 30;
     
     private PictureWindowAnimationStyle mWindowAnimationStyle;
     private List<File> selectFileList = new ArrayList<>();
@@ -157,7 +160,7 @@ public static final String DYNAMICS_ADD_BROADCAST = "com.hetang.action.DYNAMICS_
                     Toast.makeText(getContext(), "请选择要分享的体验",Toast.LENGTH_LONG).show();
                     return;
                 }
-                showProgressDialog("正在保存...");
+                //showProgressDialog("正在保存...");
                 String shareDesc = editText.getText().toString();
                 dynamicsText = new HashMap<>();
                 if (!TextUtils.isEmpty(shareDesc)) {
@@ -204,7 +207,7 @@ public static final String DYNAMICS_ADD_BROADCAST = "com.hetang.action.DYNAMICS_
 
     private void uploadPictures(Map<String, String> params, String picKey, List<File> files) {
 
-        HttpUtil.uploadPictureHttpRequest(this, params, picKey, files, ParseUtils.DYNAMIC_ADD, new Callback() {
+        HttpUtil.uploadPictureProgressHttpRequest(this, params, picKey, files, ParseUtils.DYNAMIC_ADD, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
             if (response.body() != null) {
@@ -241,7 +244,16 @@ public static final String DYNAMICS_ADD_BROADCAST = "com.hetang.action.DYNAMICS_
                     }
                 });
             }
-            });
+            }, (contentLength, currentLength) -> {
+           //Slog.d(TAG, "------------->onProgress contentLength: "+contentLength+" currentLength: "+currentLength);
+           Message msg = new Message();
+           Bundle bundle = new Bundle();
+           bundle.putLong("maxLength", contentLength);
+           bundle.putInt("currentLength", currentLength);
+           msg.setData(bundle);
+           msg.what = UPDATEPROGRESS;
+           myHandler.sendMessage(msg);
+       });
 
     }
 
@@ -460,6 +472,10 @@ public static final String DYNAMICS_ADD_BROADCAST = "com.hetang.action.DYNAMICS_
                 setResultWrapper();
                 dismissProgressDialog();
                 finish();
+                break;
+            case UPDATEPROGRESS:
+                Bundle bundle = msg.getData();
+                showProgressDialogProgress((int)bundle.getLong("maxLength"), bundle.getInt("currentLength"));
                 break;
         }
     }
