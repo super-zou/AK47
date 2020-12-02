@@ -95,6 +95,7 @@ public class GroupFragment extends BaseFragment implements View.OnClickListener 
     private static final String SUBGROUP_GET_ROOT_SUMMARY = HttpUtil.DOMAIN + "?q=subgroup/get_root_summary";
     public static final String SUBGROUP_GET_MY_GROUP = HttpUtil.DOMAIN + "?q=subgroup/get_my";
     public static final String GET_MY_TALENTS = HttpUtil.DOMAIN + "?q=talent/get_my";
+    public static final String GET_MY_TALENTS_AMOUNT = HttpUtil.DOMAIN + "?q=talent/get_my_talents_amount";
 
     private Handler handler;
     private Context mContext;
