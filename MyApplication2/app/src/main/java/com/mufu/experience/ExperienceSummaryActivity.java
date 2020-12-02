@@ -190,7 +190,11 @@ public class ExperienceSummaryActivity extends BaseAppCompatActivity {
             builder.add("uid", String.valueOf(uid));
         }
         RequestBody requestBody = builder.build();
-
+        
+         if (isSelf){
+             builder.add("isSelf", String.valueOf(isSelf));
+         }
+        
         HttpUtil.sendOkHttpRequest(getContext(), GET_ALL_EXPERIENCES, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
