@@ -151,6 +151,8 @@
                     android:gravity="top"
                     android:hint="@string/experience_introduction_title"
                     android:minLines="6"
+                    android:maxLines="10"
+                    android:lineSpacingMultiplier="1.2"
                     android:textColor="@color/blue_dark"
                     android:textCursorDrawable="@drawable/cursor_color"
                     android:theme="@style/MyEditText" />
@@ -546,7 +548,7 @@
                     android:id="@+id/calendarView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="32dp"
+                    android:layout_marginTop="20dp"
                     app:mcv_dateTextAppearance="@style/CustomDateAppearance"
                     app:mcv_firstDayOfWeek="monday"
                     app:mcv_headerTextAppearance="@style/CustomTextAppearance"
@@ -574,6 +576,7 @@
                     android:textSize="22sp"
                     android:textStyle="bold" />
                 <TextView
+                    android:id="@+id/self_introduction_notice"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
@@ -592,9 +595,28 @@
                     android:gravity="top"
                     android:hint="@string/self_introduction"
                     android:minLines="6"
+                    android:scrollbars="vertical"
+                    android:lineSpacingMultiplier="1.2"
                     android:textColor="@color/blue_dark"
                     android:textCursorDrawable="@drawable/cursor_color"
                     android:theme="@style/MyEditText" />
+                
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="32dp"
+                    android:background="@color/divider"
+                    android:id="@+id/talent_selector_wrapper"
+                    android:padding="1dp"
+                    android:visibility="gone">
+                    <org.angmarch.views.NiceSpinner
+                        android:id="@+id/nice_spinner_talent"
+                        android:background="@color/divider"
+                        app:textTint="@color/black"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
             </LinearLayout>
             
              <!--Cancellation policy-->
