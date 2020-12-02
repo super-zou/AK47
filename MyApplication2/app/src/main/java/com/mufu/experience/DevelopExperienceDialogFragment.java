@@ -15,13 +15,17 @@ import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import com.mufu.util.Utility;
+import com.mufu.util.SharedPreferencesUtils;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.MotionEvent;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -68,11 +72,15 @@ import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 import com.prolificinteractive.materialcalendarview.format.ArrayWeekDayFormatter;
 import com.prolificinteractive.materialcalendarview.format.MonthArrayTitleFormatter;
 
+import org.angmarch.views.NiceSpinner;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.format.DateTimeFormatter;
-
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.PrimitiveIterator;
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -80,6 +88,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+
+
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -92,6 +103,10 @@ import static com.mufu.experience.GuideApplyDialogFragment.ROUTE_REQUEST_CODE;
 import static com.mufu.experience.RouteItemEditDF.newInstance;
 import static com.mufu.experience.WriteShareActivity.UPDATEPROGRESS;
 import static com.mufu.experience.WriteShareActivity.UPDATEPROGRESSCOMPLETE;
+import static com.mufu.group.GroupFragment.GET_MY_TALENTS;
+import static com.mufu.group.GroupFragment.GET_MY_TALENTS_AMOUNT;
+import static com.mufu.group.GroupFragment.LOAD_MY_TALENTS_DONE;
+import static com.mufu.group.SubGroupActivity.getTalent;
 
 public class DevelopExperienceDialogFragment extends BaseDialogFragment implements OnDateSelectedListener {
     private static final boolean isDebug = true;
@@ -118,13 +133,16 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
     private static final String MODIFY_SELF_INTRODUCTION_URL = HttpUtil.DOMAIN + "?q=experience/modify_self_introduction_info";
         public final static int PACKAGE_REQUEST_CODE = 1;
         public final static int BLOCK_BOOKING_REQUEST_CODE = 2;
+        public final static int TALENT_REQUEST_CODE = 3;
     private static final int WRITE_BASE_INFO_SUCCESS = 1;
     public static final int SAVE_PICTURES_SUCCESS = 2;
     public static final int SAVE_ITEMS_SUCCESS = 3;
     private static final int WRITE_CHARGE_SUCCESS = 4;
     private static final int WRITE_TIME_SUCCESS = 5;
+        private static final int WRITE_ADDRESS_SUCCESS = 6;
     private static final int WRITE_APPOINT_DATE_SUCCESS = 7;
     private static final int WRITE_SELF_INTRODUCTION_SUCCESS = 8;
+        public static final int GET_TALENT_DONE = 9;
     public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     MaterialCalendarView widget;
@@ -139,6 +157,7 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
     private Context mContext;
     private String uri;
     private int tid;
+        private int mUid = 0;
     private int mPrice = 0;
     private int mEid = 0;
     private boolean isPictureSaved = false;
@@ -206,7 +225,11 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
     private String mBaseInfoString = "";
     private String mChargeAndLimitString = "";
     private List<String> mSelectedDateList = new ArrayList<>();
-    private List<String> mItemList = new ArrayList<>();
+    private int mMyTalentAmount = 0;
+    private boolean bSelectExistTalent = false;
+    private int mTid = 0;
+    private String mTalentIntroduction = "";
+    List<SubGroupActivity.Talent> mTalentList = new ArrayList<>();
     
     @Override
     public void onAttach(Context context) {
@@ -231,6 +254,7 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
         }
 
         authenObject = new JSONObject();
+        mUid = SharedPreferencesUtils.getSessionUid(MyApplication.getContext());
 
         mDialog.setContentView(R.layout.develop_experience);
 
@@ -305,6 +329,78 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
         initExperienceItem();
         initCalendarView();
         navigationProcess();
+        getMyTalentsAmount();
+    }
+    
+    private void getMyTalentsAmount(){
+        RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(mUid)).build();
+        HttpUtil.sendOkHttpRequest(MyApplication.getContext(), GET_MY_TALENTS_AMOUNT, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.body() != null) {
+                    String responseText = response.body().string();
+                    if (isDebug) Slog.d(TAG, "==========getMyTalentsAmount response text : " + responseText);
+                    if (responseText != null && !TextUtils.isEmpty(responseText)) {
+                        try {
+                            mMyTalentAmount = new JSONObject(responseText).optInt("talents_amount");
+                            if (mMyTalentAmount > 0){
+                                getTalentInfo();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+            }
+        });
+    }
+    
+    private void getTalentInfo(){
+        mTalentList.clear();
+        Slog.d(TAG, "---------------------->uid: "+mUid);
+        HttpUtil.sendOkHttpRequest(MyApplication.getContext(), GET_MY_TALENTS, new FormBody.Builder().add("uid", String.valueOf(mUid)).build(),
+                new Callback() {
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        if (response.body() != null) {
+                            String responseText = response.body().string();
+                            if (isDebug) Slog.d(TAG, "==========loadMyTalents response text : " + responseText);
+                            if (responseText != null && !TextUtils.isEmpty(responseText)) {
+                                JSONObject talentResponse = null;
+                                 try {
+                                    talentResponse = new JSONObject(responseText);
+                                    processTalentResponse(talentResponse);
+                                    myHandler.sendEmptyMessage(GET_TALENT_DONE);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                    }
+                });
+    }
+    
+    public int processTalentResponse(JSONObject talentResponse) {
+        int talentSize = 0;
+        if (talentResponse != null) {
+            JSONArray talentArray = talentResponse.optJSONArray("talents");
+            for (int i=0; i<talentArray.length(); i++){
+                JSONObject talentObject = talentArray.optJSONObject(i);
+                SubGroupActivity.Talent talent = getTalent(talentObject);
+                mTalentList.add(talent);
+            }
+
+            talentSize = mTalentList.size();
+        }
+        return talentSize;
     }
     
     private void startPackageSettingDF(){
@@ -433,7 +529,8 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
                             }
                             break;
                             case 11:
-                            if(!isSelfIntroductionSaved && !TextUtils.isEmpty(selfIntroductionET.getText())){
+                            if(!isSelfIntroductionSaved && !TextUtils.isEmpty(selfIntroductionET.getText())
+                                                         || (!isSelfIntroductionSaved && bSelectExistTalent && !TextUtils.isEmpty(mTalentIntroduction))){
                                 submitSelfIntroduction(false);
                             }else {
                                 processNextBtn();
@@ -940,7 +1037,7 @@ private void initCityJsondata(String jsonFile) {
                         if (result == 1) {
                             isGroupCountSaved = true;
                             dismissProgressDialog();
-                            myHandler.sendEmptyMessage(WRITE_TIME_SUCCESS);
+                            myHandler.sendEmptyMessage(WRITE_ADDRESS_SUCCESS);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -1010,8 +1107,12 @@ private void initCityJsondata(String jsonFile) {
     private void submitSelfIntroduction(boolean isModify) {
         showProgressDialog(getContext().getString(R.string.saving_progress));
         FormBody.Builder builder = new FormBody.Builder()
-                .add("eid", String.valueOf(mEid))
-                .add("introduction", selfIntroductionET.getText().toString());
+                .add("eid", String.valueOf(mEid));
+        if (bSelectExistTalent){
+            builder.add("tid", String.valueOf(mTid));
+        }else {
+            builder.add("introduction", selfIntroductionET.getText().toString());
+        }
         String uri = SUBMIT_SELF_INTRODUCTION_URL;
         if (isModify) {
             uri = MODIFY_SELF_INTRODUCTION_URL;
@@ -1127,8 +1228,12 @@ private boolean validCheck(int index) {
                 if (!TextUtils.isEmpty(selfIntroductionET.getText().toString())) {
                     valid = true;
                 } else {
-                    valid = false;
-                    Toast.makeText(getContext(), getResources().getString(R.string.self_introduction_empty_notice), Toast.LENGTH_LONG).show();
+                    if (bSelectExistTalent && !mTalentIntroduction.equals("选择已有的达人身份")){
+                        valid = true;
+                    }else {
+                        valid = false;
+                        Toast.makeText(getContext(), getResources().getString(R.string.self_introduction_empty_notice), Toast.LENGTH_LONG).show();
+                    }
                 }
                 break;
             case 12:
@@ -1220,12 +1325,6 @@ private boolean validCheck(int index) {
         intent.putExtra("eid", mEid);
         startActivity(intent);
     }
-
-    private void sendTalentAddedBroadcast() {
-        Intent intent = new Intent(GUIDE_ADD_BROADCAST);
-        intent.putExtra("tid", tid);
-        LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
-    }
     
      @Override
     public void onCancel(DialogInterface dialogInterface) {
@@ -1252,6 +1351,11 @@ private boolean validCheck(int index) {
             case WRITE_APPOINT_DATE_SUCCESS:
                 processNextBtn();
                 break;
+            case WRITE_ADDRESS_SUCCESS:
+                InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(mDialog.getCurrentFocus().getWindowToken(), 0);
+                processNextBtn();
+                break;
             case WRITE_SELF_INTRODUCTION_SUCCESS:
                 processNextBtn();
                 break;
@@ -1262,6 +1366,33 @@ private boolean validCheck(int index) {
             case UPDATEPROGRESSCOMPLETE:
                 dismissProgressDialog();
                 break;
+            case GET_TALENT_DONE:
+                if (mTalentList.size() > 0){
+                    final List<String> talentDataSource = new ArrayList<>();
+                    talentDataSource.add("选择已有的达人身份");
+                    for (int i= 0; i<mTalentList.size(); i++){
+                        talentDataSource.add(mTalentList.get(i).introduction);
+                    }
+                    LinearLayout talentSelectorWrapper = mDialog.findViewById(R.id.talent_selector_wrapper);
+                    talentSelectorWrapper.setVisibility(View.VISIBLE);
+                    TextView selfIntroductionNoticeTV = mDialog.findViewById(R.id.self_introduction_notice);
+                    selfIntroductionNoticeTV.setText(getContext().getString(R.string.self_introduction_select_notice));
+                    NiceSpinner talentNiceSpinner = mDialog.findViewById(R.id.nice_spinner_talent);
+                    talentNiceSpinner.attachDataSource(talentDataSource);
+                    talentNiceSpinner.addOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                            if (i > 0){
+                                bSelectExistTalent = true;
+                                mTid = mTalentList.get(i-1).tid;
+                                mTalentIntroduction = mTalentList.get(i-1).introduction;
+                            }else {
+                                bSelectExistTalent = false;
+                            }
+                        }
+
+                    });
+                }
             default:
                 break;
         }
