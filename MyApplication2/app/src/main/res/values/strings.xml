@@ -291,9 +291,10 @@
     <string name="ferry">接送站</string>
     <string name="self_introduction_title">向大家介绍自己</string>
     <string name="self_introduction_notice">这是一个很好的展示自己的机会，详实、生动的自我介绍也会吸引浏览者的预订</string>
+    <string name="self_introduction_select_notice">您可以重新介绍自己或者选择已有的达人身份</string>
     <string name="self_introduction">自我介绍</string>
     <string name="create_headline_title">给向导服务想个标题</string>
-        <string name="create_experience_headline_title">给体验想个标题</string>
+        <string name="create_experience_headline_title">给体验设置一个标题</string>
     <string name="create_headline_notice">标题尽量简短、生动描述且引人入胜</string>
     <string name="headline">输入标题</string>
     <string name="select_picture_title">选择一些很棒的照片</string>
@@ -373,6 +374,8 @@
         <string name="examine_block_booking_package_setting">查看包场套餐</string>
         <string name="modify_package_setting">修改套餐</string>
     <string name="activity_package_selector">+请选择套餐</string>
+        <string name="select_my_talents">可以选择一个已申请的达人身份</string>
+    <string name="create_new_talent">以新的达人身份开展体验</string>
     <string name="get_all_orders">查看全部订单</string>
         <string name="block_booking_selector">选择包场</string>
     <string name="location_guide_desc">选择您提供旅行向导服务的城市？</string>
