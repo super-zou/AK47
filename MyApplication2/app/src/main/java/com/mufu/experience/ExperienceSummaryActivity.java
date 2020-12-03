@@ -189,13 +189,10 @@ public class ExperienceSummaryActivity extends BaseAppCompatActivity {
          if (uid > 0){
             builder.add("uid", String.valueOf(uid));
         }
-        RequestBody requestBody = builder.build();
         
-         if (isSelf){
-             builder.add("isSelf", String.valueOf(isSelf));
-         }
-        
-        HttpUtil.sendOkHttpRequest(getContext(), GET_ALL_EXPERIENCES, requestBody, new Callback() {
+        builder.add("isSelf", String.valueOf(isSelf));
+         
+        HttpUtil.sendOkHttpRequest(getContext(), GET_ALL_EXPERIENCES, builder.build(), new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
