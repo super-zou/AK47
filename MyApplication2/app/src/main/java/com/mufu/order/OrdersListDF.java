@@ -385,6 +385,7 @@ private void requestData() {
         if (orderObject != null) {
             orderManager.oid = orderObject.optInt("oid");
             orderManager.id = orderObject.optInt("id");
+            orderManager.sex = orderObject.optInt("sex");
             orderManager.number = orderObject.optString("number");
             orderManager.city = orderObject.optString("city");
             orderManager.headPictureUrl = orderObject.optString("picture_url");
