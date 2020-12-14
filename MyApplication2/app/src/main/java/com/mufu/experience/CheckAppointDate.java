@@ -264,7 +264,7 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
         for (int i = 0; i < appointDateList.size(); i++) {
             //JSONObject dateObject = dateJSONArray.getJSONObject(i);
             LocalDate localDate = appointDateList.get(i).getLocalDate();
-            if (localDate.getDayOfMonth() >= today.getDay() || localDate.getMonthValue() > today.getMonth()) {
+            if (localDate.getDayOfMonth() >= today.getDay() || localDate.getMonthValue() > today.getMonth() || localDate.getYear() > today.getYear()) {
                 availableLocalDateList.add(localDate);
                 bookabledDateList.add(appointDateList.get(i));
             }
