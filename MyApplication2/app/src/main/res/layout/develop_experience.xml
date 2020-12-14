@@ -151,7 +151,6 @@
                     android:gravity="top"
                     android:hint="@string/experience_introduction_title"
                     android:minLines="6"
-                    android:maxLines="10"
                     android:lineSpacingMultiplier="1.2"
                     android:textColor="@color/blue_dark"
                     android:textCursorDrawable="@drawable/cursor_color"
