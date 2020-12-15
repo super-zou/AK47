@@ -257,7 +257,6 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
                     case ParseUtils.PRAISE_MEET_COMMENT_NF:
                     case ParseUtils.MEET_COMMENT_NF:
                         ParseUtils.startMeetConditionDetails(getContext(), notification.uid, notification.id, null);
-                        markNotificationProcessed(holder.isNew, notification);
                         break;
 
                     case ParseUtils.LOVED_NF:
@@ -268,19 +267,16 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
                     case ParseUtils.APPROVE_PERSONALITY_ACTION:
                     case ParseUtils.JOIN_CHEERING_GROUP_ACTION:
                         ParseUtils.startMeetArchiveActivity(getContext(), notification.uid);
-                        markNotificationProcessed(holder.isNew, notification);
                         break;
                     case ParseUtils.REFEREE_INVITE_NF:
                     case ParseUtils.ADD_CHEERING_GROUP_MEMBER_ACTION:
                         ParseUtils.startMeetArchiveActivity(getContext(), notification.tid);
-                        markNotificationProcessed(holder.isNew, notification);
                         break;
                     case ParseUtils.COMMENT_REPLY_NF:
                     case ParseUtils.COMMENT_PRAISED_NF:
                     case ParseUtils.DYNAMIC_COMMENT_NF:
                     case ParseUtils.PRAISE_DYNAMIC_ACTION:
                         ParseUtils.startDynamicDetails(getContext(), notification.id, null);
-                        markNotificationProcessed(holder.isNew, notification);
                         break;
 
                     case ParseUtils.JOIN_GROUP_ACTION:
@@ -290,7 +286,6 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
                     case MODIFY_GROUP_ACTION:
                     case AUTHENTICATION_VERIFIED_NF:
                         startSubGroupDetails(getContext(), notification.id);
-                        markNotificationProcessed(holder.isNew, notification);
                         break;
                     case AUTHENTICATION_REJECTED_NF:
                         Bundle bundle = new Bundle();
@@ -298,23 +293,19 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
                         SubmitAuthenticationDialogFragment submitAuthenticationDialogFragment = new SubmitAuthenticationDialogFragment();
                         submitAuthenticationDialogFragment.setArguments(bundle);
                         submitAuthenticationDialogFragment.show(fragmentManager, "SubmitAuthenticationDialogFragment");
-                        markNotificationProcessed(holder.isNew, notification);
                         break;
                     case TALENT_VERIFIED_NF:
                     case TALENT_REJECTED_NF:
                         startTalentDetailsActivity(notification.id);
-                        markNotificationProcessed(holder.isNew, notification);
                         break;
                     case INVITE_SINGLE_GROUP_MEMBER_ACTION:
                     case APPLY_JOIN_SINGLE_GROUP_NF:
                     case JOIN_SINGLE_GROUP_ACTION:
                         startSingleGroupDetails(getContext(), notification.id);
-                        markNotificationProcessed(holder.isNew, notification);
                         break;
                     case ORDER_PLACED_NF:
                         OrderDetailsDF orderDetailsDF = OrderDetailsDF.newInstance(notification.id);
                         orderDetailsDF.show(fragmentManager, "OrderDetailsDF");
-                        markNotificationProcessed(holder.isNew, notification);
                         break;
                     case EXPERIENCE_REQUEST_RESULT_NF:
                         startExperienceDetailsActivity(notification.uid);
@@ -324,10 +315,9 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
                         markNotificationProcessed(holder.isNew, notification);
                         break;
                 }
+                markNotificationProcessed(holder.isNew, notification);
             }
         });
-
-
     }
 
     private void startTalentDetailsActivity(int aid){
