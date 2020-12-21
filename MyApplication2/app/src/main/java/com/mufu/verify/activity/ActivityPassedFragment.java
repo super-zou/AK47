@@ -153,6 +153,9 @@ public class ActivityPassedFragment extends BaseFragment {
 
             @Override
             public void onRejectClick(View view, int position) {}
+            
+            @Override
+            public void onItemDeleteClick(View view, int position){}
         });
         
         recyclerView.setAdapter(experiencePassedListAdapter);
