@@ -82,6 +82,7 @@ public class ExperienceSummaryAdapter extends RecyclerView.Adapter<ExperienceSum
         });
         
          if (isSelf){
+            holder.deleteTV.setVisibility(View.VISIBLE);
             holder.modifyTV.setVisibility(View.VISIBLE);
             holder.modifyTV.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -94,8 +95,16 @@ public class ExperienceSummaryAdapter extends RecyclerView.Adapter<ExperienceSum
                     modifyExperienceDialogFragment.show(((BaseAppCompatActivity)mContext).getSupportFragmentManager(), "ModifyExperienceDF");
                 }
             });
+             
+            holder.deleteTV.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mItemClickListener.onItemDeleteClick(view, position);
+                }
+            });
         }else {
             holder.modifyTV.setVisibility(View.GONE);
+            holder.deleteTV.setVisibility(View.GONE);
         }
         
         if (!isVerify){
@@ -170,6 +179,7 @@ public class ExperienceSummaryAdapter extends RecyclerView.Adapter<ExperienceSum
         TextView unitTV;
         TextView durationTV;
         TextView modifyTV;
+        TextView deleteTV;
         CardView itemLayout;
         LinearLayout evaluateLL;
         LinearLayout verifyLL;
@@ -187,6 +197,7 @@ public class ExperienceSummaryAdapter extends RecyclerView.Adapter<ExperienceSum
             moneyTV = view.findViewById(R.id.money);
             unitTV = view.findViewById(R.id.unit);
             modifyTV = view.findViewById(R.id.modify);
+            deleteTV = view.findViewById(R.id.delete);
             durationTV = view.findViewById(R.id.duration);
             evaluateLL = view.findViewById(R.id.evaluate_wrapper);
             verifyLL = view.findViewById(R.id.verify_wrapper);
@@ -217,6 +228,7 @@ public class ExperienceSummaryAdapter extends RecyclerView.Adapter<ExperienceSum
         void onItemClick(View view, int position);
         void onPassClick(View view, int position);
         void onRejectClick(View view, int position);
+        void onItemDeleteClick(View view, int position);
     }
     
     /**
