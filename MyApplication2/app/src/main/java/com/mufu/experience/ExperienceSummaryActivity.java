@@ -1,5 +1,7 @@
 package com.mufu.experience;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
@@ -54,10 +56,12 @@ public class ExperienceSummaryActivity extends BaseAppCompatActivity {
     private static final String TAG = "ExperienceSummaryActivity";
     private static final int PAGE_SIZE = 8;
     public static final String GET_ALL_EXPERIENCES = HttpUtil.DOMAIN + "?q=experience/get_all_experiences";
+    public static final String DELETE_EXPERIENCE_BY_ID = HttpUtil.DOMAIN + "?q=experience/delete_experience_by_id";
     
     private static final int GET_ALL_DONE = 1;
     private static final int GET_ALL_END = 2;
     private static final int NO_MORE = 3;
+    private static final int ITEM_DELETED_MESSAGE = 4;
     final int itemLimit = 1;
     private int uid = 0;
     private boolean isSelf = false;
@@ -155,6 +159,11 @@ public class ExperienceSummaryActivity extends BaseAppCompatActivity {
 
              @Override
              public void onRejectClick(View view, int position) {}
+             
+             @Override
+             public void onItemDeleteClick(View view, int position){
+                 showDeleteNotice(position);
+             }
         });
 
         recyclerView.setAdapter(experienceSummaryAdapter);
@@ -177,6 +186,56 @@ public class ExperienceSummaryActivity extends BaseAppCompatActivity {
             }
         }, 50);
 
+    }
+    
+   private void showDeleteNotice(int position){
+        final AlertDialog.Builder normalDialogBuilder =
+                new AlertDialog.Builder(this);
+        normalDialogBuilder.setTitle("确认删除这个体验吗？");
+        normalDialogBuilder.setMessage("您将要删除体验： "+mExperienceList.get(position).title);
+        normalDialogBuilder.setPositiveButton(getContext().getResources().getString(R.string.confirm),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        deleteExperience(position);
+                    }
+                });
+
+        AlertDialog normalDialog = normalDialogBuilder.create();
+        normalDialog.show();
+    }
+    
+    private void deleteExperience(int position){
+        FormBody.Builder builder = new FormBody.Builder();
+        builder.add("eid", String.valueOf(mExperienceList.get(position).eid));
+
+        HttpUtil.sendOkHttpRequest(getContext(), DELETE_EXPERIENCE_BY_ID, builder.build(), new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.body() != null) {
+                    String responseText = response.body().string();
+                    if (isDebug) Slog.d(TAG, "==========deleteExperience response text : " + responseText);
+                    if (responseText != null && !TextUtils.isEmpty(responseText)) {
+                        try {
+                            JSONObject responseObj = new JSONObject(responseText);
+                            if (responseObj.optInt("result") > 0){
+                                Message message = new Message();
+                             Bundle bundle = new Bundle();
+                                bundle.putInt("position", position);
+                                message.setData(bundle);
+                                message.what = ITEM_DELETED_MESSAGE;
+                                handler.sendMessage(message);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {}
+        });
     }
     
     private void loadData() {
@@ -296,6 +355,14 @@ public class ExperienceSummaryActivity extends BaseAppCompatActivity {
                 recyclerView.setNoMore(true);
                 recyclerView.loadMoreComplete();
                 stopLoadProgress();
+                break;
+           case ITEM_DELETED_MESSAGE:
+                Bundle bundle = message.getData();
+                int position = bundle.getInt("position");
+                mExperienceList.remove(position);
+                experienceSummaryAdapter.setData(mExperienceList);
+                experienceSummaryAdapter.notifyItemRangeRemoved(position, 1);
+                experienceSummaryAdapter.notifyDataSetChanged();
                 break;
             default:
                 break;
