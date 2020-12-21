@@ -176,6 +176,9 @@ public class ActivityRequestFragment extends BaseFragment {
                 int eid = mExperienceList.get(position).eid;
                 rejectNotice(eid);
             }
+            
+            @Override
+            public void onItemDeleteClick(View view, int position){}
         });
 
         recyclerView.setAdapter(experienceRequestListAdapter);
