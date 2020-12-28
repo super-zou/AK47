@@ -237,7 +237,8 @@ public class PlaceOrderDF extends BaseDialogFragment {
     private void submitOrder(){
         showProgressDialog(getContext().getString(R.string.submitting_progress));
         RequestBody requestBody = new FormBody.Builder()
-         .add("did", String.valueOf(did))
+                .add("did", String.valueOf(did))
+                .add("title", title)
                 .add("number", getOrderNumber(Utility.TalentType.EXPERIENCE.ordinal()))
                 .add("price", String.valueOf(price))
                 .add("amount", String.valueOf(mAmountPeople))
