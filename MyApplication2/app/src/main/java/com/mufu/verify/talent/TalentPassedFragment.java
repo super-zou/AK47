@@ -380,9 +380,9 @@ public class TalentPassedFragment extends BaseFragment {
         }
     }
 
-    private void sendPassBroadcast(int aid) {
+    private void sendPassBroadcast(int tid) {
         Intent intent = new Intent(TALENT_VERIFY_PASS_BROADCAST);
-        intent.putExtra("aid", aid);
+        intent.putExtra("tid", tid);
         LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
     }
 
@@ -397,8 +397,8 @@ public class TalentPassedFragment extends BaseFragment {
         public void onReceive(Context context, Intent intent) {
             switch (intent.getAction()) {
                 case TALENT_VERIFY_PASS_BROADCAST:
-                    int aid = intent.getIntExtra("aid", -1);
-                    getTalentById(aid, handler);
+                    int tid = intent.getIntExtra("tid", -1);
+                    getTalentById(tid, handler);
                     break;
                 default:
                     break;
