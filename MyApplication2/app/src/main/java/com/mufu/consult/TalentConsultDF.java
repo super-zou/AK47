@@ -328,6 +328,7 @@ public class TalentConsultDF extends BaseDialogFragment {
 
         Map<String, String> consultMap = new HashMap<>();
 
+        consultMap.put("oid", String.valueOf(mOid));
         consultMap.put("tid", String.valueOf(tid));
         consultMap.put("question", String.valueOf(mQuestion));
         consultMap.put("amount", String.valueOf(rewardAmount));
