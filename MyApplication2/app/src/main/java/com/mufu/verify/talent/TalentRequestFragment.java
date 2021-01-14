@@ -205,10 +205,10 @@ public class TalentRequestFragment extends BaseFragment {
 
     }
 
-    private void authenticationOperation(int aid, int status, String reason) {
+    private void authenticationOperation(int tid, int status, String reason) {
         showProgressDialog(getActivity(), "...");
         FormBody.Builder builder = new FormBody.Builder();
-        builder.add("aid", String.valueOf(aid))
+        builder.add("tid", String.valueOf(tid))
                 .add("status", String.valueOf(status));
         if (status == REJECTED) {
             builder.add("reason", reason);
@@ -372,9 +372,9 @@ public class TalentRequestFragment extends BaseFragment {
         }
     }
 
-    private void sendPassBroadcast(int aid) {
+    private void sendPassBroadcast(int tid) {
         Intent intent = new Intent(TALENT_VERIFY_PASS_BROADCAST);
-        intent.putExtra("aid", aid);
+        intent.putExtra("tid", tid);
         LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
     }
 
