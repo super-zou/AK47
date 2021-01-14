@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -502,16 +503,19 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
                     if (responseText != null) {
                         if (!TextUtils.isEmpty(responseText)) {
                             try {
-
+                                Message message = new Message();
+                                Bundle bundle = new Bundle();
                                 int revenue = new JSONObject(responseText).optInt("revenue");
                                 if (revenue > 0) {
-                                    Message message = new Message();
-                                    Bundle bundle = new Bundle();
                                     bundle.putInt("revenue", revenue);
-                                    message.setData(bundle);
-                                    message.what = GET_MY_REVENUE_DONE;
-                                    handler.sendMessage(message);
                                 }
+                                int rewards = new JSONObject(responseText).optInt("rewards");
+                                if (rewards > 0) {
+                                    bundle.putInt("rewards", rewards);
+                                }
+                                message.setData(bundle);
+                                message.what = GET_MY_REVENUE_DONE;
+                                handler.sendMessage(message);
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -526,17 +530,32 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
         });
     }
 
-    private void setMyRevenueView(int revenue) {
-        TextView revenueValueTV = view.findViewById(R.id.revenue_amount);
-        revenueValueTV.setText(revenue + "元");
+    private void setMyRevenueView(int revenue, int rewards) {
+        ConstraintLayout revenueWrapper = view.findViewById(R.id.experience_revenue);
+        ConstraintLayout rewardsWrapper = view.findViewById(R.id.talent_rewards);
+        if(revenue > 0){
+            revenueWrapper.setVisibility(View.VISIBLE);
+            TextView revenueValueTV = view.findViewById(R.id.revenue_amount);
+            revenueValueTV.setText(revenue + "元");
+            revenueWrapper.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    showRevenueDialog();
+                }
+            });
+        }
 
-        TextView revenueNavTV = view.findViewById(R.id.revenue_nav);
-        revenueNavTV.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showRevenueDialog();
-            }
-        });
+        if(rewards > 0){
+            rewardsWrapper.setVisibility(View.VISIBLE);
+            TextView rewardsValueTV = view.findViewById(R.id.rewards_amount);
+            rewardsValueTV.setText(rewards + "元");
+            rewardsWrapper.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    showRevenueDialog();
+                }
+            });
+        }
     }
 
     private void showRevenueDialog() {
@@ -664,7 +683,8 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
             case GET_MY_REVENUE_DONE:
                 revenueWrapper.setVisibility(View.VISIBLE);
                 int revenue = bundle.getInt("revenue");
-                setMyRevenueView(revenue);
+                int rewards = bundle.getInt("rewards", 0);
+                setMyRevenueView(revenue, rewards);
                 break;
             case GET_ADMIN_ROLE_DOWN:
                 mGetAllOrdersBtn.setVisibility(View.VISIBLE);
