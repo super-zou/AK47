@@ -37,7 +37,7 @@ import static com.mufu.verify.VerifyActivity.GET_ALL_REQUEST_COUNT_URL;
 
 public class VerifyFragment extends Fragment {
     private View view;
-    private static final String TAG = "VerifyActivity";
+    private static final String TAG = "VerifyFragment";
     private final static boolean isDebug = false;
     public static final int unVERIFIED = 0;
     public static final int PASSED = 1;
