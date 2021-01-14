@@ -26,7 +26,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:gravity="center"
-        android:textColor="@color/blue_dark"
         android:textSize="15sp"
         android:textStyle="normal|bold"
         app:layout_constraintStart_toEndOf="@+id/leader_avatar"
@@ -97,42 +96,31 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:textColor="@color/disabled"
-        android:textSize="10sp"
+        android:textColor="@color/blue_dark"
+        android:textSize="12sp"
         app:layout_constraintStart_toStartOf="@+id/leader_name"
         app:layout_constraintTop_toBottomOf="@+id/introduction" />
     
-        <TextView
-        android:id="@+id/star"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="@string/fa_star"
-        android:textColor="@color/blue_dark"
-        android:textSize="12sp"
-        android:visibility="gone"
-        app:layout_constraintStart_toStartOf="@+id/leader_name"
-        app:layout_constraintTop_toBottomOf="@+id/subject" />
-    
-    <TextView
-        android:id="@+id/evaluate_count"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="2dp"
-        android:text=""
-        android:textColor="@color/blue_dark"
-        android:textSize="12sp"
-        app:layout_constraintStart_toEndOf="@+id/star"
-        app:layout_constraintTop_toTopOf="@+id/star"
-        app:layout_constraintBottom_toBottomOf="@+id/star" />
-
-    <TextView
-        android:id="@+id/answer_count"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="@+id/evaluate_count"
-        app:layout_constraintStart_toEndOf="@+id/evaluate_count"
-        app:layout_constraintTop_toTopOf="@+id/evaluate_count" />
-
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toStartOf="@+id/leader_name"
+            app:layout_constraintTop_toBottomOf="@+id/subject">
+            <TextView
+                android:id="@+id/evaluate_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/fa_star"
+                android:textColor="@color/blue_dark"
+                android:textSize="12sp"
+                android:visibility="gone" />
+            
+            <TextView
+                android:id="@+id/answer_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp" />
+        </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
