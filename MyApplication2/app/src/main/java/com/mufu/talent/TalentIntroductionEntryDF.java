@@ -16,6 +16,7 @@ import com.mufu.R;
 import com.mufu.common.MyApplication;
 import com.mufu.util.BaseDialogFragment;
 import com.mufu.util.FontManager;
+import com.mufu.util.Utility;
 
 public class TalentIntroductionEntryDF extends BaseDialogFragment {
 private static final boolean isDebug = true;
@@ -67,11 +68,19 @@ private static final boolean isDebug = true;
         beginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                TalentApplyEntryDF talentApplyEntryDF = new TalentApplyEntryDF();
-                talentApplyEntryDF.show(getFragmentManager(), "TalentApplyEntryDF");
+                becomeTalent(Utility.TalentType.GROWTH);
                 mDialog.dismiss();
             }
         });
+    }
+    
+    private void becomeTalent(Utility.TalentType type) {
+        TalentAuthenticationDialogFragment talentAuthenticationDialogFragment = new TalentAuthenticationDialogFragment();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("type", type);
+        talentAuthenticationDialogFragment.setArguments(bundle);
+        //createSingleGroupDialogFragment.setTargetFragment(SingleGroupActivity.this, REQUEST_CODE);
+        talentAuthenticationDialogFragment.show(getFragmentManager(), "TalentAuthenticationDialogFragment");
     }
     
     @Override
