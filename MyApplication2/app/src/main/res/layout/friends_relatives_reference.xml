@@ -247,10 +247,10 @@
         </LinearLayout>
         
         </androidx.constraintlayout.widget.ConstraintLayout>
-
+<!--talent apply-->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:visibility="gone"
-        android:id="@+id/talents_wrapper"
+        android:id="@+id/talents_apply_wrapper"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorWhite"
@@ -258,20 +258,20 @@
         android:padding="16dp">
         
         <TextView
-            android:id="@+id/talents_icon"
+            android:id="@+id/talents_apply_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:text="@string/fa_certificate"
-            android:textColor="@color/blue_dark"
+            android:textColor="@color/green"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
         
         <TextView
-            android:id="@+id/talents_text"
+            android:id="@+id/talents_apply_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="9dp"
@@ -279,9 +279,9 @@
             android:textSize="16sp"
             android:textColor="@color/black"
             android:textAppearance="@style/TextSourceHanSansBoldAppearance"
-            app:layout_constraintBottom_toBottomOf="@+id/talents_icon"
-            app:layout_constraintStart_toEndOf="@+id/talents_icon"
-            app:layout_constraintTop_toTopOf="@+id/talents_icon" />
+            app:layout_constraintBottom_toBottomOf="@+id/talents_apply_icon"
+            app:layout_constraintStart_toEndOf="@+id/talents_apply_icon"
+            app:layout_constraintTop_toTopOf="@+id/talents_apply_icon" />
         
         <TextView
             android:id="@+id/talents_nav"
@@ -290,9 +290,56 @@
             android:padding="8dp"
             android:text="@string/chevron_right"
             android:textSize="16sp"
-            app:layout_constraintBottom_toBottomOf="@+id/talents_icon"
+            app:layout_constraintBottom_toBottomOf="@+id/talents_apply_icon"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/talents_icon" />
+            app:layout_constraintTop_toTopOf="@+id/talents_apply_icon" />
+    
+    <!--develop experience-->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:visibility="gone"
+        android:id="@+id/experience_apply_wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorWhite"
+        android:layout_marginTop="8dp"
+        android:padding="16dp">
+        
+        <TextView
+            android:id="@+id/experience_apply_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="@string/fa_shopping"
+            android:textColor="@color/blue_dark"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+        
+        <TextView
+            android:id="@+id/experience_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="9dp"
+            android:text="开展体验"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:textAppearance="@style/TextSourceHanSansBoldAppearance"
+            app:layout_constraintBottom_toBottomOf="@+id/experience_apply_icon"
+            app:layout_constraintStart_toEndOf="@+id/experience_apply_icon"
+            app:layout_constraintTop_toTopOf="@+id/experience_apply_icon" />
+        
+        <TextView
+            android:id="@+id/experience_nav"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="@string/chevron_right"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/experience_apply_icon"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/experience_apply_icon" />
     </androidx.constraintlayout.widget.ConstraintLayout>
             
     <androidx.constraintlayout.widget.ConstraintLayout
