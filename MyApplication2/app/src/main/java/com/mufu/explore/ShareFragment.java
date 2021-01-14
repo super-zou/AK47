@@ -481,10 +481,13 @@ public class ShareFragment extends BaseFragment implements CommonDialogFragmentI
                 meetDynamicsListAdapter.setData(meetList);
                 meetDynamicsListAdapter.notifyDataSetChanged();
                 recyclerView.refreshComplete();
-                if (mTempSize < PAGE_SIZE) {
-                    //loading finished
-                    recyclerView.loadMoreComplete();
-                    recyclerView.setNoMore(true);
+                if (recyclerView != null){
+                    recyclerView.refreshComplete();
+                    if (mTempSize < PAGE_SIZE) {
+                        //loading finished
+                        recyclerView.loadMoreComplete();
+                        recyclerView.setNoMore(true);
+                    }
                 }
                 stopLoadProgress();
                 break;
