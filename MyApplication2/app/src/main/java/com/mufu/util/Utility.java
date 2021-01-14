@@ -36,6 +36,10 @@ public class Utility {
     public enum TalentType {
         GUIDE, EXPERIENCE, TRAVEL, GROWTH, INTEREST, FOOD, MATCHMAKER
     }
+    
+    public enum ExperienceType {
+        NATURAL_OUTDOOR, HUMANITY_ART, NGO_PUBLIC_GOOD, THEATRE_PERFORMANCE, PARTY
+    }
 
     public enum ConsultType {
         ANSWERED, QUESTIONED, ALL
@@ -95,21 +99,7 @@ public class Utility {
             }
         }
     }
-            
-    public static boolean handleLoginResponse(String response) {
-        if (!TextUtils.isEmpty(response)) {
-            /*
-            try {
-
-            }catch (JSONException e){
-                e.printStackTrace();
-            }
-            */
-        }
-        return false;
-
-    }
-    
+                
     public static float dpToPx(Context context, float dp) {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics());
     }
