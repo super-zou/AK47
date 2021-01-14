@@ -113,11 +113,18 @@ public class RecommendFragment extends BaseFragment {
     private static final int NO_UPDATE_RECOMMEND = 10;
     private static final int MY_CONDITION_LOVE_UPDATE = 11;
     private static final int MY_CONDITION_PRAISE_UPDATE = 12;
+        private static final int GET_RECOMMEND_NATURAL_EXPERIENCES_DONE = 13;
+    private static final int GET_RECOMMEND_HUMANITY_EXPERIENCES_DONE = 14;
+    private static final int GET_RECOMMEND_NGO_EXPERIENCES_DONE = 15;
+    private static final int GET_RECOMMEND_THEATRE_EXPERIENCES_DONE = 16;
+    private static final int GET_RECOMMEND_PARTY_EXPERIENCES_DONE = 17;
     private static final String GET_RECOMMEND_EXPERIENCES = HttpUtil.DOMAIN + "?q=experience/get_recommend_experiences";
+    private static final String GET_RECOMMEND_EXPERIENCES_BY_TYPE = HttpUtil.DOMAIN + "?q=experience/get_recommend_experiences_by_type";
     private static final String GET_RECOMMEND_GUIDES = HttpUtil.DOMAIN + "?q=travel_guide/get_recommend_guides";
     private static final String GET_RECOMMEND_URL = HttpUtil.DOMAIN + "?q=meet/get_recommend";
     public static final String GET_MY_CONDITION_URL = HttpUtil.DOMAIN + "?q=meet/get_my_condition";
     public static final String GET_RECOMMEND_PERSON_URL = HttpUtil.DOMAIN + "?q=contacts/recommend_person";
+    public static final String GET_RECOMMEND_TALENTS = HttpUtil.DOMAIN + "?q=talent/get_recommend";
     private List<UserMeetInfo> meetList = new ArrayList<>();
     private boolean isRecommend = true;
     private View lookFriend;
@@ -147,6 +154,7 @@ public class RecommendFragment extends BaseFragment {
     public static int student = 0;
     ImageView progressImageView;
     AnimationDrawable animationDrawable;
+    private ConstraintLayout mRecommendExperienceWrapper;
     private List<ExperienceSummaryActivity.Experience> mExperienceList = new ArrayList<>();
     private List<GuideSummaryActivity.Guide> mGuideList = new ArrayList<>();
 
@@ -158,8 +166,9 @@ public class RecommendFragment extends BaseFragment {
     @Override
     protected void initView(View view) {
         mView = view;
+        mRecommendExperienceWrapper = mView.findViewById(R.id.experience_recommend);
         useBanner();
-        getRecommendExperiences();
+        getRecommendTalent();
     }
     
     public void useBanner() {
@@ -186,9 +195,9 @@ public class RecommendFragment extends BaseFragment {
     @Override
     protected void loadData() {}
 
-    private void getRecommendExperiences(){
-        RequestBody requestBody = new FormBody.Builder().add("recommend", String.valueOf(isRecommend)).build();
-        HttpUtil.sendOkHttpRequest(getContext(), GET_RECOMMEND_EXPERIENCES, requestBody, new Callback() {
+    private void getRecommendExperiences(int type){
+        RequestBody requestBody = new FormBody.Builder().add("recommendation", String.valueOf(isRecommend)).add("type", String.valueOf(type)).build();
+        HttpUtil.sendOkHttpRequest(getContext(), GET_RECOMMEND_EXPERIENCES_BY_TYPE, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
@@ -200,7 +209,23 @@ public class RecommendFragment extends BaseFragment {
                             experiencesResponse = new JSONObject(responseText);
                             if (experiencesResponse != null) {
                                 mLoadSize = processExperiencesResponse(experiencesResponse);
-                                handler.sendEmptyMessage(GET_ALL_EXPERIENCES_DONE);
+                                switch (type){
+                                    case 0:
+                                        handler.sendEmptyMessage(GET_RECOMMEND_NATURAL_EXPERIENCES_DONE);
+                                        break;
+                                    case 1:
+                                        handler.sendEmptyMessage(GET_RECOMMEND_HUMANITY_EXPERIENCES_DONE);
+                                        break;
+                                    case 2:
+                                        handler.sendEmptyMessage(GET_RECOMMEND_NGO_EXPERIENCES_DONE);
+                                        break;
+                                    case 3:
+                                        handler.sendEmptyMessage(GET_RECOMMEND_THEATRE_EXPERIENCES_DONE);
+                                        break;
+                                    case 4:
+                                        handler.sendEmptyMessage(GET_RECOMMEND_PARTY_EXPERIENCES_DONE);
+                                        break;
+                                }
                             }
 
                         } catch (JSONException e) {
@@ -225,6 +250,8 @@ public class RecommendFragment extends BaseFragment {
             experienceArray = experiencesObject.optJSONArray("experiences");
             Slog.d(TAG, "------------------->processExperiencesResponse: "+experienceArray);
         }
+        
+        mExperienceList.clear();
 
         if (experienceArray != null) {
             experienceSize = experienceArray.length();
@@ -242,16 +269,52 @@ public class RecommendFragment extends BaseFragment {
         return experienceSize;
     }
     
-    private void setRecommendExperiencesView(){
+    private void setRecommendExperiencesView(int type){
+        if (mRecommendExperienceWrapper.getVisibility() == View.GONE){
+            mRecommendExperienceWrapper.setVisibility(View.VISIBLE);
+        }
         Typeface font = Typeface.createFromAsset(MyApplication.getContext().getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
-        ConstraintLayout recommendExperienceWrapper = mView.findViewById(R.id.experience_recommend);
-        recommendExperienceWrapper.setVisibility(View.VISIBLE);
-        LinearLayout recommendExperienceLL = mView.findViewById(R.id.experience_recommend_wrapper);
+        ConstraintLayout recommendNaturalWrapper;
+        LinearLayout recommendExperienceLL;
+        switch (type){
+            case 0:
+                recommendNaturalWrapper = mView.findViewById(R.id.recommend_natural_outdoor_wrapper);
+                recommendExperienceLL = mView.findViewById(R.id.natural_outdoor_cardview_wrapper);
+                break;
+            case 1:
+                recommendNaturalWrapper = mView.findViewById(R.id.recommend_humanity_art_wrapper);
+                recommendExperienceLL = mView.findViewById(R.id.humanity_art_cardview_wrapper);
+                break;
+                case 2:
+                recommendNaturalWrapper = mView.findViewById(R.id.recommend_ngo_public_good_wrapper);
+                recommendExperienceLL = mView.findViewById(R.id.ngo_public_good_cardview_wrapper);
+                break;
+            case 3:
+                recommendNaturalWrapper = mView.findViewById(R.id.recommend_theatre_performance_wrapper);
+                recommendExperienceLL = mView.findViewById(R.id.theatre_performance_cardview_wrapper);
+                break;
+            case 4:
+                recommendNaturalWrapper = mView.findViewById(R.id.recommend_party_wrapper);
+                recommendExperienceLL = mView.findViewById(R.id.party_cardview_wrapper);
+                break;
+                default:
+                recommendNaturalWrapper = mView.findViewById(R.id.recommend_natural_outdoor_wrapper);
+                recommendExperienceLL = mView.findViewById(R.id.natural_outdoor_cardview_wrapper);
+                break;
+        }
+        recommendNaturalWrapper.setVisibility(View.VISIBLE);
         ExperienceSummaryActivity.Experience experience;
+        DisplayMetrics dm = getContext().getResources().getDisplayMetrics();
+        int innerWidth = dm.widthPixels - (int) Utility.dpToPx(getContext(), 32f);
+        int childrenWidth = (int)(innerWidth * 0.618);
+        int innerHeight = (int)(childrenWidth * 0.618);
+        ConstraintLayout.LayoutParams layoutParamsPicture = new ConstraintLayout.LayoutParams(childrenWidth, innerHeight);
+        LinearLayout.LayoutParams layoutParamsWrapper = new LinearLayout.LayoutParams(childrenWidth, WRAP_CONTENT);
         for (int i=0; i<mLoadSize; i++){
-            View recommendExperienceView = LayoutInflater.from(getContext()).inflate(R.layout.guide_list_item, (ViewGroup) mView.findViewById(android.R.id.content), false);
+            View recommendExperienceView = LayoutInflater.from(getContext()).inflate(R.layout.experience_recommend_item, (ViewGroup) mView.findViewById(android.R.id.content), false);
             recommendExperienceLL.addView(recommendExperienceView);
-            CardView itemLayout = recommendExperienceView.findViewById(R.id.guide_list_item);
+                        recommendExperienceView.setLayoutParams(layoutParamsWrapper);
+            CardView itemLayout = recommendExperienceView.findViewById(R.id.experience_recommend_item);
             ImageView headUri = recommendExperienceView.findViewById(R.id.head_picture);
             TextView titleTV = recommendExperienceView.findViewById(R.id.guide_title);
             TextView cityTV = recommendExperienceView.findViewById(R.id.city);
@@ -267,6 +330,9 @@ public class RecommendFragment extends BaseFragment {
             if (experience.headPictureUrl != null && !"".equals(experience.headPictureUrl)) {
                 Glide.with(getContext()).load(HttpUtil.DOMAIN + experience.headPictureUrl).into(headUri);
             }
+            
+            headUri.setLayoutParams(layoutParamsPicture);
+            headUri.setAdjustViewBounds(true);
 
             titleTV.setText(experience.title);
             cityTV.setText(experience.city);
@@ -285,7 +351,7 @@ public class RecommendFragment extends BaseFragment {
             durationTV.setVisibility(View.VISIBLE);
             durationTV.setText(String.valueOf(experience.duration)+"小时");
 
-            FontManager.markAsIconContainer(recommendExperienceView.findViewById(R.id.guide_list_item), font);
+            FontManager.markAsIconContainer(recommendExperienceView.findViewById(R.id.experience_recommend_item), font);
 
             itemLayout.setTag(experience.eid);
             itemLayout.setOnClickListener(new View.OnClickListener() {
@@ -298,11 +364,34 @@ public class RecommendFragment extends BaseFragment {
             });
         }
         
-        Button moreExperienceBtn = mView.findViewById(R.id.more_experience);
+        TextView moreExperienceBtn = mView.findViewById(R.id.more_natural_outdoor);
+        switch (type){
+            case 0:
+                moreExperienceBtn = mView.findViewById(R.id.more_natural_outdoor);
+                break;
+            case 1:
+                moreExperienceBtn = mView.findViewById(R.id.more_humanity_art);
+                break;
+            case 2:
+                moreExperienceBtn = mView.findViewById(R.id.more_ngo_public_good);
+                break;
+            case 3:
+                moreExperienceBtn = mView.findViewById(R.id.more_theatre_performance);
+                break;
+            case 4:
+                moreExperienceBtn = mView.findViewById(R.id.more_party);
+                break;
+        }
+        
+        if(mLoadSize > 2){
+            moreExperienceBtn.setVisibility(View.VISIBLE);
+        }
+        
         moreExperienceBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), ExperienceSummaryActivity.class);
+                intent.putExtra("type", type);
                 startActivity(intent);
             }
         });
@@ -619,12 +708,12 @@ public void setMeetRecommendContent(UserMeetInfo meet, View view){
 
     private void getRecommendTalent() {
         RequestBody requestBody = new FormBody.Builder()
-                .add("step", String.valueOf(8))
+                .add("step", String.valueOf(6))
                 .add("page", String.valueOf(0))
                 .add("recommend", String.valueOf(isRecommend))
                 .build();
                 
-                HttpUtil.sendOkHttpRequest(getContext(), GET_ALL_TALENTS, requestBody, new Callback() {
+                HttpUtil.sendOkHttpRequest(getContext(), GET_RECOMMEND_TALENTS, requestBody, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
@@ -637,17 +726,13 @@ public void setMeetRecommendContent(UserMeetInfo meet, View view){
                             talentsResponse = new JSONObject(responseText);
                             if (talentsResponse != null) {
                                 mLoadTalentSize = processTalentsResponse(talentsResponse);
-                                if (mLoadGuideSize > 0){
-                                    handler.sendEmptyMessage(GET_RECOMMEND_TALENTS_DONE);
-                                }
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
+                    handler.sendEmptyMessage(GET_RECOMMEND_TALENTS_DONE);
                 }
-
-                //requestData(true);
             }
 
             @Override
@@ -915,6 +1000,9 @@ public void setMeetRecommendContent(UserMeetInfo meet, View view){
         }
         
         int size = mTalentList.size();
+        if (size > 4){
+            size = 4;
+        }
         for (int i = 0; i < size; i++) {
             View view = LayoutInflater.from(getContext()).inflate(R.layout.recommend_talent_item, null);
             talentWrapper.addView(view, params);
@@ -949,8 +1037,8 @@ public void setMeetRecommendContent(UserMeetInfo meet, View view){
             titleTV.setText(talent.title);
 
             TextView subject = view.findViewById(R.id.subject);
-            subject.setText(talent.subject);
-
+            subject.setText("擅长："+talent.subject);
+            
             if (talent.evaluateCount > 0) {
                 TextView evaluateCountTV = view.findViewById(R.id.evaluate_count);
                 float scoreFloat = talent.evaluateScores / talent.evaluateCount;
@@ -960,7 +1048,7 @@ public void setMeetRecommendContent(UserMeetInfo meet, View view){
             
             if (talent.answerCount > 0){
                 TextView answerCountTV = view.findViewById(R.id.answer_count);
-                if(talent.answerCount > 0){
+                if(talent.evaluateCount > 0){
                     answerCountTV.setText(getResources().getString(R.string.dot) + "解答"+talent.answerCount);
                 }else {
                     answerCountTV.setText("解答"+talent.answerCount);
@@ -983,6 +1071,9 @@ public void setMeetRecommendContent(UserMeetInfo meet, View view){
         }
 
         Button moreTalentsBtn = mView.findViewById(R.id.more_talent);
+        if (mLoadTalentSize > 4){
+            moreTalentsBtn.setVisibility(View.VISIBLE);
+        }
         moreTalentsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -1081,28 +1172,51 @@ public void setMeetRecommendContent(UserMeetInfo meet, View view){
     
     public void handleMessage(Message message) {
         switch (message.what) {
-            case GET_ALL_EXPERIENCES_DONE:
+             case GET_RECOMMEND_NATURAL_EXPERIENCES_DONE:
                 if (mLoadSize > 0){
-                    setRecommendExperiencesView();
+                    setRecommendExperiencesView(Utility.ExperienceType.NATURAL_OUTDOOR.ordinal());
                 }
-                getRecommendGuides();
+                getRecommendExperiences(Utility.ExperienceType.HUMANITY_ART.ordinal());
+                break;
+            case GET_RECOMMEND_HUMANITY_EXPERIENCES_DONE:
+                if (mLoadSize > 0){
+                    setRecommendExperiencesView(Utility.ExperienceType.HUMANITY_ART.ordinal());
+                }
+                getRecommendExperiences(Utility.ExperienceType.NGO_PUBLIC_GOOD.ordinal());
+                break;
+            case GET_RECOMMEND_NGO_EXPERIENCES_DONE:
+                if (mLoadSize > 0){
+                    setRecommendExperiencesView(Utility.ExperienceType.NGO_PUBLIC_GOOD.ordinal());
+                }
+                getRecommendExperiences(Utility.ExperienceType.THEATRE_PERFORMANCE.ordinal());
+                break;
+            case GET_RECOMMEND_THEATRE_EXPERIENCES_DONE:
+                if (mLoadSize > 0){
+                    setRecommendExperiencesView(Utility.ExperienceType.THEATRE_PERFORMANCE.ordinal());
+                }
+                getRecommendExperiences(Utility.ExperienceType.PARTY.ordinal());
+                break;
+            case GET_RECOMMEND_PARTY_EXPERIENCES_DONE:
+                if (mLoadSize > 0){
+                    setRecommendExperiencesView(Utility.ExperienceType.PARTY.ordinal());
+                }
                 break;
             case GET_ALL_GUIDS_DONE:
                 if (mLoadGuideSize > 0){
                     setRecommendGuidesView();
                 }
-                getRecommendMeet();
                 break;
             case GET_RECOMMEND_MEETS_DONE:
                 if (mLoadMeetSize > 0){
                     setRecommendMeetsView();
                 }
-                getRecommendTalent();
+                getRecommendExperiences(Utility.ExperienceType.NATURAL_OUTDOOR.ordinal());
                 break;
                 case GET_RECOMMEND_TALENTS_DONE:
                 if (mLoadTalentSize > 0){
                     setRecommendTalentsHeader();
                 }
+                getRecommendMeet();
                 getRecommendContacts();
                 break;
             case GET_RECOMMEND_MEMBER_DONE:
