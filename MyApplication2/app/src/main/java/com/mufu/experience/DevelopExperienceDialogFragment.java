@@ -204,6 +204,7 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
     private EditText limitationET;
     private String consultationUnit;
     private String escortUnit = "天";
+    private int mExperienceType = 0;
     
      private String limitations;
     private RadioGroup sexSelect;
@@ -324,12 +325,27 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
             }
         });
         
+        selectType();
         selectCity();
         initPictureSelectWidget();
         initExperienceItem();
         initCalendarView();
         navigationProcess();
         getMyTalentsAmount();
+    }
+    
+    private void selectType(){
+        String[] experienceTypes = getResources().getStringArray(R.array.experience_type);
+        final List<String> entranceYearList = new LinkedList<>(Arrays.asList(experienceTypes));
+        NiceSpinner typeNiceSpinner = mDialog.findViewById(R.id.nice_spinner_type);
+        typeNiceSpinner.attachDataSource(entranceYearList);
+        typeNiceSpinner.setBackgroundResource(R.drawable.nice_spinner_bg);
+        typeNiceSpinner.addOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                mExperienceType = i;
+            }
+        });
     }
     
     private void getMyTalentsAmount(){
@@ -437,7 +453,7 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
             public void onClick(View view) {
                 if (validCheck(index)) {
                     switch (index) {
-                        case 3:
+                        case 4:
                             if (TextUtils.isEmpty(mBaseInfoString)) {
                                 submitBaseInfo(false);
                             } else {
@@ -448,14 +464,14 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
                                 }
                             }
                             break;
-                        case 4:
+                        case 5:
                             if (!isPictureSaved && selectList.size() > 0 || isPictureEdited){
                                 saveExperiencePictures();
                             }else {
                                 processNextBtn();
                             }
                             break;
-                       case 5:
+                       case 6:
                             String itemString = "";
                             if(mExperienceItemGL.getRowCount() > 0){
                                 for (int i=0; i<mExperienceItemGL.getRowCount(); i++){
@@ -476,7 +492,7 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
                             }
 
                             break;
-                        case 6:
+                        case 7:
                             if (!isPriceSaved) {
                                 submitPrice(false);
                             } else {
@@ -496,28 +512,28 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
                                 }
                             }
                             break;
-                       case 7:
+                       case 8:
                             if (!isTimeSaved && !TextUtils.isEmpty(durationET.getText().toString())) {
                                 submitTime(false);
                             } else {
                                 processNextBtn();
                             }
                             break;
-                        case 8://number of people
+                        case 9://number of people
                             if (!isGroupCountSaved && !TextUtils.isEmpty(groupCountET.getText())) {
                                 submitLimitation(false);
                             } else {
                                 processNextBtn();
                             }
                             break;
-                       case 9://number of people
+                       case 10://number of people
                             if (!isAddressSaved && !TextUtils.isEmpty(addressET.getText())) {
                                 submitAddress(false);
                             } else {
                                 processNextBtn();
                             }
                             break;
-                            case 10:
+                       case 11:
                             if (mSelectedDateList.size() == 0) {
                                 submitAppointDate(false);
                             } else {
@@ -528,7 +544,7 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
                                 }
                             }
                             break;
-                            case 11:
+                        case 12:
                             if(!isSelfIntroductionSaved && !TextUtils.isEmpty(selfIntroductionET.getText())
                                                          || (!isSelfIntroductionSaved && bSelectExistTalent && !TextUtils.isEmpty(mTalentIntroduction))){
                                 submitSelfIntroduction(false);
@@ -1151,13 +1167,21 @@ private boolean validCheck(int index) {
         Slog.d(TAG, "------------------------>validCheck: " + index);
         boolean valid = false;
         switch (index) {
-            case 1:
+           case 1:
+                if (mExperienceType == 0) {
+                    valid = false;
+                    Toast.makeText(getContext(), getResources().getString(R.string.type_select_notice), Toast.LENGTH_LONG).show();
+                }else {
+                    valid = true;
+                }
+                break;
+            case 2:
                 valid = isCityPicked;
                 if (!isCityPicked) {
                     Toast.makeText(getContext(), getResources().getString(R.string.city_select_notice), Toast.LENGTH_LONG).show();
                 }
                 break;
-                case 2:
+            case 3:
                 if (!TextUtils.isEmpty(headLineET.getText().toString())) {
                     valid = true;
                 } else {
@@ -1165,7 +1189,7 @@ private boolean validCheck(int index) {
                     Toast.makeText(getContext(), getResources().getString(R.string.headline_empty_notice), Toast.LENGTH_LONG).show();
                 }
                 break;
-            case 3:
+            case 4:
                 if (!TextUtils.isEmpty(introductionET.getText().toString())) {
                     valid = true;
                 } else {
@@ -1173,7 +1197,7 @@ private boolean validCheck(int index) {
                     Toast.makeText(getContext(), getResources().getString(R.string.service_introduction_notice), Toast.LENGTH_LONG).show();
                 }
                 break;
-            case 4://experience pictures
+            case 5://experience pictures
                 if (selectList.size() == 0){
                     valid = false;
                     Toast.makeText(getContext(), getResources().getString(R.string.experience_picture_notice), Toast.LENGTH_LONG).show();
@@ -1181,7 +1205,7 @@ private boolean validCheck(int index) {
                     valid = true;
                 }
                 break;
-            case 6:
+            case 7:
                 if (!TextUtils.isEmpty(mChargeAmount.getText()) || mPrice != 0) {
                     valid = true;
                 } else {
@@ -1190,7 +1214,7 @@ private boolean validCheck(int index) {
                     break;
                 }
                 break;
-                case 7:
+                case 8:
                 if (!TextUtils.isEmpty(durationET.getText())){
                     valid = true;
                 }else {
@@ -1198,7 +1222,7 @@ private boolean validCheck(int index) {
                     Toast.makeText(getContext(), getResources().getString(R.string.duration_empty_notice), Toast.LENGTH_LONG).show();
                 }
                 break;
-                case 8:
+                case 9:
                 if (!TextUtils.isEmpty(groupCountET.getText())) {
                     valid = true;
                 } else {
@@ -1207,7 +1231,7 @@ private boolean validCheck(int index) {
                 }
 
                 break;
-            case 9:
+            case 10:
                 if (!TextUtils.isEmpty(addressET.getText())) {
                     valid = true;
                 } else {
@@ -1216,7 +1240,7 @@ private boolean validCheck(int index) {
                 }
 
                 break;
-            case 10:
+            case 11:
                 if (selectedDateList.size() > 0) {
                     valid = true;
                 } else {
@@ -1224,7 +1248,7 @@ private boolean validCheck(int index) {
                     Toast.makeText(getContext(), getResources().getString(R.string.select_date_empty_notice), Toast.LENGTH_LONG).show();
                 }
                 break;
-            case 11://self introduction
+            case 12://self introduction
                 if (!TextUtils.isEmpty(selfIntroductionET.getText().toString())) {
                     valid = true;
                 } else {
@@ -1236,7 +1260,7 @@ private boolean validCheck(int index) {
                     }
                 }
                 break;
-            case 12:
+            case 13:
                 if (understandCancellation.isChecked()) {
                     valid = true;
                 } else {
@@ -1259,6 +1283,7 @@ private boolean validCheck(int index) {
             jsonObject.put("city", selectCityBtn.getText().toString());
             jsonObject.put("title", headLineET.getText().toString());
             jsonObject.put("introduction", introductionET.getText().toString());
+            jsonObject.put("type", String.valueOf(mExperienceType - 1));
         } catch (JSONException e) {
             e.printStackTrace();
         }
