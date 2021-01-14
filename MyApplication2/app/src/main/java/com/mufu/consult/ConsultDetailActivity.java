@@ -22,6 +22,7 @@ import com.bumptech.glide.Glide;
 import com.mufu.R;
 import com.mufu.common.BaseAppCompatActivity;
 import com.mufu.common.MyApplication;
+import com.mufu.main.MeetArchiveActivity;
 import com.mufu.picture.GlideEngine;
 
 import com.mufu.util.CommonDialogFragmentInterface;
@@ -263,7 +264,7 @@ public class ConsultDetailActivity extends BaseAppCompatActivity implements Comm
         FormBody.Builder builder = new FormBody.Builder();
         builder.add("aid", String.valueOf(aid));
         if (isTalent){
-            builder.add("tid", String.valueOf(aid));
+            builder.add("tid", String.valueOf(tid));
         }
         RequestBody requestBody = builder.build();
         
@@ -363,6 +364,15 @@ public class ConsultDetailActivity extends BaseAppCompatActivity implements Comm
                     }
                     setConsultPictures(pictureWrapper, pictureList, innerAnswerWidth);
                 }
+            
+                imageView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(getContext(), MeetArchiveActivity.class);
+                        intent.putExtra("uid", answerObject.optInt("uid"));
+                        startActivity(intent);
+                    }
+                });
 
             }
         }
