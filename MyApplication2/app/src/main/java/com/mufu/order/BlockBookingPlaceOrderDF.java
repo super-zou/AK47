@@ -208,8 +208,9 @@ public class BlockBookingPlaceOrderDF extends BaseDialogFragment implements Radi
                     }else {
                         Toast.makeText(getContext(), "请选择套餐！", Toast.LENGTH_LONG).show();
                     }
+                }else {
+                    submitOrder();
                 }
-
             }
         });
 
