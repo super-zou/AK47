@@ -29,6 +29,7 @@ import com.mufu.contacts.ChatActivity;
 import com.mufu.group.SingleGroupActivity;
 import com.mufu.group.SubGroupActivity;
 import com.mufu.group.SubGroupDetailsActivity;
+import com.mufu.main.MeetArchiveActivity;
 import com.mufu.picture.GlideEngine;
 import com.mufu.util.CommonDialogFragmentInterface;
 import com.mufu.util.FontManager;
@@ -255,8 +256,24 @@ public class TalentDetailsActivity extends BaseAppCompatActivity implements Comm
 
         RoundImageView leaderHead = talentView.findViewById(R.id.avatar);
         Glide.with(MyApplication.getContext()).load(HttpUtil.DOMAIN + talent.profile.getAvatar()).into(leaderHead);
+        leaderHead.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), MeetArchiveActivity.class);
+                intent.putExtra("uid", talent.profile.getUid());
+                startActivity(intent);
+            }
+        });
         TextView name = talentView.findViewById(R.id.name);
         name.setText(talent.profile.getNickName());
+        name.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), MeetArchiveActivity.class);
+                intent.putExtra("uid", talent.profile.getUid());
+                startActivity(intent);
+            }
+        });
         TextView university = talentView.findViewById(R.id.university);
         TextView major = talentView.findViewById(R.id.major);
         TextView degree = talentView.findViewById(R.id.degree);
