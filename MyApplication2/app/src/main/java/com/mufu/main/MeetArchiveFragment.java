@@ -54,6 +54,7 @@ import com.mufu.common.HandlerTemp;
 import com.mufu.common.MyApplication;
 import com.mufu.common.SetAvatarActivity;
 import com.mufu.experience.ExperienceSummaryActivity;
+import com.mufu.experience.ExperienceTalentApplyDF;
 import com.mufu.experience.GuideSummaryActivity;
 import com.mufu.meet.ApprovedUsersActivity;
 import com.mufu.group.MyParticipationDialogFragment;
@@ -62,6 +63,7 @@ import com.mufu.meet.EvaluatorDetailsActivity;
 import com.mufu.explore.ShareFragment;
 import com.mufu.meet.FillMeetInfoActivity;
 import com.mufu.meet.MeetConditionDialogFragment;
+import com.mufu.talent.TalentApplyEntryDF;
 import com.mufu.talent.TalentIntroductionEntryDF;
 import com.mufu.meet.MeetReferenceInfo;
 import com.mufu.dynamics.SpecificUserDynamicsActivity;
@@ -903,7 +905,7 @@ public static final int LOAD_MY_EXPERIENCES_DONE = 24;
             }
         });
         
-        ConstraintLayout talentsWrapper = mHeaderEvaluation.findViewById(R.id.talents_wrapper);
+        ConstraintLayout talentsWrapper = mHeaderEvaluation.findViewById(R.id.talents_apply_wrapper);
         if (isSelf){
             talentsWrapper.setVisibility(View.VISIBLE);
         }
@@ -912,6 +914,18 @@ public static final int LOAD_MY_EXPERIENCES_DONE = 24;
             public void onClick(View view) {
                 TalentIntroductionEntryDF talentIntroductionEntryDF = new TalentIntroductionEntryDF();
                 talentIntroductionEntryDF.show(getFragmentManager(), "TalentIntroductionEntryDF");
+            }
+        });
+        
+        ConstraintLayout experiencesWrapper = mHeaderEvaluation.findViewById(R.id.experience_apply_wrapper);
+        if (isSelf){
+            experiencesWrapper.setVisibility(View.VISIBLE);
+        }
+        experiencesWrapper.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ExperienceTalentApplyDF experienceTalentApplyDF = new ExperienceTalentApplyDF();
+                experienceTalentApplyDF.show(getFragmentManager(), "ExperienceTalentApplyDF");
             }
         });
     }
