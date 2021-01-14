@@ -321,9 +321,9 @@ public class TalentRejectedFragment extends BaseFragment {
         return talentSize;
     }
 
-    public static void getTalentById(int aid, Handler handler){
+    public static void getTalentById(int tid, Handler handler){
         RequestBody requestBody = new FormBody.Builder()
-                .add("aid", String.valueOf(aid))
+                .add("tid", String.valueOf(tid))
                 .build();
 
         HttpUtil.sendOkHttpRequest(MyApplication.getContext(), GET_TALENT_byID, requestBody, new Callback() {
