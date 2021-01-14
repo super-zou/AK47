@@ -96,22 +96,27 @@ public class TalentSummaryListAdapter extends RecyclerView.Adapter<TalentSummary
         }
 
         holder.title.setText(talent.title);
-        holder.subject.setText(talent.subject);
+        holder.subject.setText("擅长："+talent.subject);
         holder.introduction.setText(talent.introduction);
         //holder.maleCount.setText(mContext.getResources().getString(R.string.male)+" "+singleGroup.maleCount);
         //holder.femaleCount.setText(mContext.getResources().getString(R.string.female)+" "+singleGroup.femaleCount);
         if (talent.evaluateCount > 0){
             float scoreFloat = talent.evaluateScores/talent.evaluateCount;
             float score = (float)(Math.round(scoreFloat*10))/10;
-            holder.star.setVisibility(View.VISIBLE);
-            holder.evaluateCount.setText("("+talent.evaluateCount+")");
+            holder.evaluateCount.setVisibility(View.VISIBLE);
+            //holder.evaluateCount.setText("("+talent.evaluateCount+")");
+            holder.evaluateCount.setText(getContext().getResources().getString(R.string.fa_star) +" "+ score +"("+ talent.evaluateCount+")");
         }else {
-            holder.star.setVisibility(View.GONE);
+            holder.evaluateCount.setVisibility(View.GONE);
             holder.evaluateCount.setText("");
         }
         
         if (talent.answerCount > 0){
-            holder.answerCount.setText(mContext.getResources().getString(R.string.dot)+"解答"+talent.answerCount);
+            if (talent.evaluateCount > 0){
+                holder.answerCount.setText(mContext.getResources().getString(R.string.dot)+"解答"+talent.answerCount);
+            }else {
+                holder.answerCount.setText("解答"+talent.answerCount);
+            }
         }else {
             holder.answerCount.setText("");
         }
@@ -136,7 +141,7 @@ public class TalentSummaryListAdapter extends RecyclerView.Adapter<TalentSummary
         TextView degree;
         TextView major;
         TextView subject;
-        TextView star;
+        //TextView star;
         TextView evaluateCount;
         TextView answerCount;
         ConstraintLayout itemLayout;
@@ -153,7 +158,7 @@ public class TalentSummaryListAdapter extends RecyclerView.Adapter<TalentSummary
             degree = view.findViewById(R.id.degree);
             major = view.findViewById(R.id.major);
             subject = view.findViewById(R.id.subject);
-            star = view.findViewById(R.id.star);
+            //star = view.findViewById(R.id.star);
             evaluateCount = view.findViewById(R.id.evaluate_count);
             answerCount = view.findViewById(R.id.answer_count);
 
@@ -161,7 +166,7 @@ public class TalentSummaryListAdapter extends RecyclerView.Adapter<TalentSummary
             this.mListener = myItemClickListener;
             Typeface font = Typeface.createFromAsset(getContext().getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
             FontManager.markAsIconContainer(view.findViewById(R.id.cny), font);
-            FontManager.markAsIconContainer(view.findViewById(R.id.star), font);
+            FontManager.markAsIconContainer(view.findViewById(R.id.evaluate_count), font);
         }
        /**
          * 实现OnClickListener接口重写的方法
