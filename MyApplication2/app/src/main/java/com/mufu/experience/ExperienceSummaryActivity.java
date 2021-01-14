@@ -56,6 +56,7 @@ public class ExperienceSummaryActivity extends BaseAppCompatActivity {
     private static final String TAG = "ExperienceSummaryActivity";
     private static final int PAGE_SIZE = 8;
     public static final String GET_ALL_EXPERIENCES = HttpUtil.DOMAIN + "?q=experience/get_all_experiences";
+    public static final String GET_ALL_EXPERIENCES_BY_TYPE = HttpUtil.DOMAIN + "?q=experience/get_all_experiences_by_type";
     public static final String DELETE_EXPERIENCE_BY_ID = HttpUtil.DOMAIN + "?q=experience/delete_experience_by_id";
     
     private static final int GET_ALL_DONE = 1;
@@ -69,6 +70,7 @@ public class ExperienceSummaryActivity extends BaseAppCompatActivity {
     AnimationDrawable animationDrawable;
     private int mLoadSize = 0;
     private Handler handler;
+    private int mType = -1;
     
     private ExperienceSummaryAdapter experienceSummaryAdapter;
     private XRecyclerView recyclerView;
@@ -80,6 +82,7 @@ public class ExperienceSummaryActivity extends BaseAppCompatActivity {
         setContentView(R.layout.guide_summary);
 
         if (getIntent() != null){
+            mType = getIntent().getIntExtra("type", -1);
             uid = getIntent().getIntExtra("uid", 0);
             int autherUid = SharedPreferencesUtils.getSessionUid(MyApplication.getContext());
             if (uid > 0 && uid == autherUid){
@@ -242,14 +245,20 @@ public class ExperienceSummaryActivity extends BaseAppCompatActivity {
 
         final int page = mExperienceList.size() / PAGE_SIZE;
         FormBody.Builder builder = new FormBody.Builder();
-        builder.add("step", String.valueOf(PAGE_SIZE))
+        builder.add("type", String.valueOf(mType))
+                .add("step", String.valueOf(PAGE_SIZE))
                 .add("page", String.valueOf(page));
+        String url = GET_ALL_EXPERIENCES;
+        if (mType > -1){
+            builder.add("type", String.valueOf(mType));
+            url = GET_ALL_EXPERIENCES_BY_TYPE;
+        }
         
          if (uid > 0){
             builder.add("uid", String.valueOf(uid));
         }
                 
-        HttpUtil.sendOkHttpRequest(getContext(), GET_ALL_EXPERIENCES, builder.build(), new Callback() {
+        HttpUtil.sendOkHttpRequest(getContext(), url, builder.build(), new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() != null) {
