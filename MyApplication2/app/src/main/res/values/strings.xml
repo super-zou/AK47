@@ -14,7 +14,7 @@
     <string name="title_activity_login">Login</string>
     <string name="app_name">牧夫</string>
     <string name="logo_name">牧夫</string>
-    <string name="slogan">独特的体验，精彩的青春</string>
+    <string name="slogan">独特体验 · 快乐成长</string>
     <string name="meet_text">遇见</string>
     <string name="activity_text">活动</string>
     <string name="archive_text">我</string>
@@ -43,6 +43,7 @@
     <string name="reject_reason">拒绝原因</string>
     <string name="charge_setting_notice">请设置金额</string>
     <string name="subject_select_notice">请选择一个主题</string>
+        <string name="type_select_notice">请选择体验类型</string>
         <string name="city_select_notice">请选择一个城市</string>
     <string name="route_name_empty_notice">请输入线路名称</string>
         <string name="package_name_empty_notice">请输入套餐名称</string>
@@ -89,9 +90,8 @@
         \n·能够让游客体验纯粹的民俗文化，有机会品味地道的美食
     </string>
     <string name="develop_explanation_label">什么是体验及如何开展体验？</string>
-    <string name="develop_explanation_details">体验是由当地达人策划和组织开展的活动，通过这些活动，
-        可以让参与者对当地风土民俗、饮食文化等有比较深刻的体验和认识。
-        \n体验类别丰富，如非遗展示、特色的烹饪、手工艺；分享城市历史；自然与户外；美食之旅；街头艺术；公益活动等。
+    <string name="develop_explanation_details">体验是由达人策划和组织开展的活动，活动可以是独特或有意义的，能够让参与者开阔眼界、留下美好记忆或者获得成长。
+        \n体验类别丰富，可以是非遗文化、手工艺、人文历史、自然与户外、公益活动、派对等。
         \n您可以毫无束缚地尽情发挥，创造有吸引力的体验活动。</string>
 
     <string name="matchmaker_talent_explanation_label">什么是牵线达人？</string>
@@ -216,6 +216,11 @@
     <string name="experience_content">体验内容</string>
     <string name="experience_recommend_title">独特体验</string>
     <string name="guide_recommend_title">旅行向导</string>
+        <string name="natural_outdoor">自然户外</string>
+    <string name="humanity_art">人文艺术</string>
+    <string name="NGO_public_good">NGO · 公益</string>
+    <string name="theatre_performance">剧场表演</string>
+    <string name="party">派对</string>
         <string name="your_guide_talent">您的向导达人</string>
     <string name="your_experience_talent">您的体验达人</string>
     <string name="guide_talent">旅行向导</string>
@@ -359,6 +364,7 @@
     <string name="years_old">岁</string>
     <string name="cm">CM</string>
     <string name="location">地点</string>
+        <string name="experience_type">体验类型</string>
     <string name="price_setting">为您开展的体验设置合理的价格；如果有多个套餐，请设置套餐</string>
         <string name="block_booking_desc">如您开展的体验支持包场或团建，请设置包场价格及套餐</string>
     <string name="block_booking_setting">+包场设置</string>
@@ -378,6 +384,7 @@
     <string name="create_new_talent">以新的达人身份开展体验</string>
     <string name="get_all_orders">查看全部订单</string>
         <string name="block_booking_selector">选择包场</string>
+        <string name="experience_type_desc">您将开展的体验属于那种类型？</string>
     <string name="location_guide_desc">选择您提供旅行向导服务的城市？</string>
     <string name="location_experience_desc">您将在哪个城市开展体验？</string>
     <string name="charge_introduction_desc">您可以选择按天或小时收费</string>
@@ -592,10 +599,11 @@
                                                      \n· 让您的旅行更安心、更充实</string>
     <string name="meet_recommend_introduction">在玩乐中，认识和自己志趣相投的伙伴</string>
     <string name="find_more_experiences">更多体验</string>
+        <string name="talent_recommend_introduction">你的困惑，牧夫达人帮你解决</string>
     <string name="find_more_guides">更多旅行向导</string>
     <string name="find_more_meets">遇见更多</string>
     <string name="find_more_talents">更多达人</string>
-    <string name="talent_consults">达人问答</string>
+    <string name="talent_consults">问答</string>
     <string name="find_more_schoolmate">更多人脉</string>
     <string name="experiences">体验</string>
     <string name="guides">旅行向导</string>
