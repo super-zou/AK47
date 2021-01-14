@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+     <string-array name="experience_type">
+        <item>体验类型</item>
+        <item>自然户外</item>
+        <item>人文艺术</item>
+        <item>NGO·公益</item>
+        <item>剧场表演</item>
+        <item>派对</item>
+    </string-array>
+    
     <string-array name="duration">
         <item>天</item>
         <item>小时</item>
