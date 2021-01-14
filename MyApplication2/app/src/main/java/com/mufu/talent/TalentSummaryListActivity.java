@@ -89,7 +89,9 @@ public class TalentSummaryListActivity extends BaseAppCompatActivity implements 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.talent_summary_list);
         handler = new TalentSummaryListActivity.MyHandler(this);
-        type = getIntent().getIntExtra("type", -1);
+        if (getIntent() != null){
+            type = getIntent().getIntExtra("type", -1);
+        }
 
         initView();
 
@@ -343,7 +345,7 @@ public class TalentSummaryListActivity extends BaseAppCompatActivity implements 
                 talentSummaryListAdapter.setData(mTalentList, recyclerView.getWidth());
                 talentSummaryListAdapter.notifyDataSetChanged();
                 //recyclerView.refreshComplete();
-                // recyclerView.loadMoreComplete();
+                recyclerView.loadMoreComplete();
                 stopLoadProgress();
                 break;
             case GET_ALL_END:
