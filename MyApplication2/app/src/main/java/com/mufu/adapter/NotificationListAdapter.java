@@ -22,6 +22,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.mufu.R;
+import com.mufu.consult.ConsultDetailActivity;
 import com.mufu.experience.ExperienceDetailActivity;
 import com.mufu.experience.ExperienceSummaryActivity;
 import com.mufu.order.OrderDetailsDF;
@@ -65,6 +66,8 @@ import static com.mufu.util.ParseUtils.APPROVE_IMPRESSION_ACTION;
 import static com.mufu.util.ParseUtils.APPROVE_PERSONALITY_ACTION;
 import static com.mufu.util.ParseUtils.AUTHENTICATION_REJECTED_NF;
 import static com.mufu.util.ParseUtils.AUTHENTICATION_VERIFIED_NF;
+import static com.mufu.util.ParseUtils.CONSULT_ANSWER_NF;
+import static com.mufu.util.ParseUtils.CONSULT_QUESTION_NF;
 import static com.mufu.util.ParseUtils.EVALUATE_ACTION;
 import static com.mufu.util.ParseUtils.EXPERIENCE_REQUEST_RESULT_NF;
 import static com.mufu.util.ParseUtils.FOLLOW_GROUP_ACTION;
@@ -155,6 +158,8 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
                 case TALENT_REJECTED_NF:
                 case ORDER_PLACED_NF:
                 case EXPERIENCE_REQUEST_RESULT_NF:
+                case CONSULT_QUESTION_NF:
+                case CONSULT_ANSWER_NF:
                     if (notification.showed == NOT_SHOWED) {
                         showNotification(notification);
                     }
@@ -310,6 +315,12 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
                     case EXPERIENCE_REQUEST_RESULT_NF:
                         startExperienceDetailsActivity(notification.uid);
                         break;
+                    case CONSULT_QUESTION_NF:
+                    case CONSULT_ANSWER_NF:
+                        Intent intent = new Intent(MyApplication.getContext(), ConsultDetailActivity.class);
+                        intent.putExtra("cid", notification.id);
+                        getContext().startActivity(intent);
+                        break;
                     default:
                         startMeetArchiveActivity(getContext(), notification.tid);
                         markNotificationProcessed(holder.isNew, notification);
@@ -369,6 +380,11 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
                 clickIntent = new Intent(mContext, ExperienceSummaryActivity.class);
                 clickIntent.putExtra("uid", NF.uid);
                 break;
+            case CONSULT_ANSWER_NF:
+            case CONSULT_QUESTION_NF:
+                clickIntent = new Intent(mContext, ConsultDetailActivity.class);
+                clickIntent.putExtra("cid", NF.id);
+                break;
                 default:
                     break;
         }
@@ -376,7 +392,7 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
         PendingIntent clickPI = PendingIntent.getActivity(mContext, 1, clickIntent, PendingIntent.FLAG_CANCEL_CURRENT);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             String id = "channel_1";
-            String description = "荷塘重要消息";
+            String description = "牧夫重要消息";
             int importance = NotificationManager.IMPORTANCE_HIGH;
             NotificationChannel channel = new NotificationChannel(id, description, importance);
             channel.enableLights(true);
