@@ -26,20 +26,10 @@
         android:id="@+id/slogan"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="32dp"
         android:gravity="center"
         android:text="@string/slogan"
         android:textColor="@color/black"
         android:textSize="18sp"
         app:layout_constraintTop_toBottomOf="@+id/logo" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
-        android:gravity="center"
-        android:text="@string/beta"
-        android:textColor="@color/black"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
