@@ -1194,7 +1194,7 @@ private boolean validCheck(int index) {
                     valid = true;
                 } else {
                     valid = false;
-                    Toast.makeText(getContext(), getResources().getString(R.string.service_introduction_notice), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), getResources().getString(R.string.experience_introduction_notice), Toast.LENGTH_LONG).show();
                 }
                 break;
             case 5://experience pictures
