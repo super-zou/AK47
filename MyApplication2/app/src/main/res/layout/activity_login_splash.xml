@@ -14,7 +14,7 @@
         android:layout_marginBottom="32dp"
         android:gravity="center"
         android:text="@string/logo_name"
-        android:textColor="@color/background"
+        android:textColor="@color/blue_dark"
         android:textSize="64sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
