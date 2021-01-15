@@ -480,7 +480,7 @@ public class ShareFragment extends BaseFragment implements CommonDialogFragmentI
             case LOAD_DYNAMICS_DONE:
                 meetDynamicsListAdapter.setData(meetList);
                 meetDynamicsListAdapter.notifyDataSetChanged();
-                recyclerView.refreshComplete();
+                //recyclerView.refreshComplete();
                 if (recyclerView != null){
                     recyclerView.refreshComplete();
                     if (mTempSize < PAGE_SIZE) {
