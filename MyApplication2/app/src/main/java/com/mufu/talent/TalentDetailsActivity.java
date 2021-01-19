@@ -102,6 +102,8 @@ public class TalentDetailsActivity extends BaseAppCompatActivity implements Comm
     private SingleGroupReceiver mReceiver = new SingleGroupReceiver();
     private int mLoadSize = 0;
     ImageView progressImageView;
+    View talentView = null;
+    boolean isModified = false;
     AnimationDrawable animationDrawable;
     private XRecyclerView recyclerView;
     private ConsultSummaryAdapter consultSummaryAdapter;
@@ -251,11 +253,22 @@ public class TalentDetailsActivity extends BaseAppCompatActivity implements Comm
             });
         }
 
-        View talentView = LayoutInflater.from(getContext()).inflate(R.layout.talent_details_header, (ViewGroup) findViewById(android.R.id.content), false);
-        recyclerView.addHeaderView(talentView);
+        if (talentView == null){
+            talentView = LayoutInflater.from(getContext()).inflate(R.layout.talent_details_header, (ViewGroup) findViewById(android.R.id.content), false);
+            recyclerView.addHeaderView(talentView);
+        }
 
         RoundImageView leaderHead = talentView.findViewById(R.id.avatar);
-        Glide.with(MyApplication.getContext()).load(HttpUtil.DOMAIN + talent.profile.getAvatar()).into(leaderHead);
+        String avatarUrl = talent.profile.getAvatar();
+        if (avatarUrl != null && !"".equals(avatarUrl)){
+            Glide.with(MyApplication.getContext()).load(HttpUtil.DOMAIN + avatarUrl).into(leaderHead);
+        }else {
+            if (talent.profile.getSex() == 0) {
+                leaderHead.setImageDrawable(MyApplication.getContext().getDrawable(R.drawable.male_default_avator));
+            } else {
+                leaderHead.setImageDrawable(MyApplication.getContext().getDrawable(R.drawable.female_default_avator));
+            }
+        }
         leaderHead.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -323,9 +336,10 @@ public class TalentDetailsActivity extends BaseAppCompatActivity implements Comm
             }
         });
 
-        getEvaluationStatistics();
-
-        loadTalentConsult();
+        if(!isModified){
+            getEvaluationStatistics();
+            loadTalentConsult();
+        }
 
         Typeface font = Typeface.createFromAsset(getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
         FontManager.markAsIconContainer(findViewById(R.id.talent_details_layout), font);
@@ -505,6 +519,7 @@ private void loadTalentConsult() {
         switch (type) {
             case TALENT_MODIFY_RESULT_OK:
                 if (status == true){
+                    isModified = true;
                     getTalentDetails();
                 }
                 break;
