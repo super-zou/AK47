@@ -1014,6 +1014,12 @@ public void setMeetRecommendContent(UserMeetInfo meet, View view){
             String avatar = talent.profile.getAvatar();
             if (avatar != null && !"".equals(avatar)) {
                 Glide.with(getContext()).load(HttpUtil.DOMAIN + avatar).into(avatarRV);
+            }else {
+                if (talent.profile.getSex() == 0) {
+                    avatarRV.setImageDrawable(MyApplication.getContext().getDrawable(R.drawable.male_default_avator));
+                } else {
+                    avatarRV.setImageDrawable(MyApplication.getContext().getDrawable(R.drawable.female_default_avator));
+                }
             }
             
             TextView nickname = view.findViewById(R.id.name);
