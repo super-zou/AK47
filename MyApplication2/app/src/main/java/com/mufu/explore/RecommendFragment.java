@@ -140,7 +140,7 @@ public class RecommendFragment extends BaseFragment {
     private List<SubGroupActivity.SubGroup> subGroupList = new ArrayList<>();
     private List<SubGroupActivity.Talent> mTalentList = new ArrayList<>();
 
-    private int mLoadSize;
+    private int mLoadExperienceSize;
     private int mLoadGuideSize;
     private int mLoadMeetSize;
     private int mLoadTalentSize;
@@ -168,7 +168,8 @@ public class RecommendFragment extends BaseFragment {
         mView = view;
         mRecommendExperienceWrapper = mView.findViewById(R.id.experience_recommend);
         useBanner();
-        getRecommendTalent();
+        //getRecommendTalent();
+        getRecommendExperiences(Utility.ExperienceType.NATURAL_OUTDOOR.ordinal());
     }
     
     public void useBanner() {
@@ -208,7 +209,7 @@ public class RecommendFragment extends BaseFragment {
                         try {
                             experiencesResponse = new JSONObject(responseText);
                             if (experiencesResponse != null) {
-                                mLoadSize = processExperiencesResponse(experiencesResponse);
+                                mLoadExperienceSize = processExperiencesResponse(experiencesResponse);
                                 switch (type){
                                     case 0:
                                         handler.sendEmptyMessage(GET_RECOMMEND_NATURAL_EXPERIENCES_DONE);
@@ -310,7 +311,7 @@ public class RecommendFragment extends BaseFragment {
         int innerHeight = (int)(childrenWidth * 0.618);
         ConstraintLayout.LayoutParams layoutParamsPicture = new ConstraintLayout.LayoutParams(childrenWidth, innerHeight);
         LinearLayout.LayoutParams layoutParamsWrapper = new LinearLayout.LayoutParams(childrenWidth, WRAP_CONTENT);
-        for (int i=0; i<mLoadSize; i++){
+        for (int i=0; i<mLoadExperienceSize; i++){
             View recommendExperienceView = LayoutInflater.from(getContext()).inflate(R.layout.experience_recommend_item, (ViewGroup) mView.findViewById(android.R.id.content), false);
             recommendExperienceLL.addView(recommendExperienceView);
                         recommendExperienceView.setLayoutParams(layoutParamsWrapper);
@@ -383,7 +384,7 @@ public class RecommendFragment extends BaseFragment {
                 break;
         }
         
-        if(mLoadSize > 2){
+        if(mLoadExperienceSize > 2){
             moreExperienceBtn.setVisibility(View.VISIBLE);
         }
         
@@ -1179,33 +1180,34 @@ public void setMeetRecommendContent(UserMeetInfo meet, View view){
     public void handleMessage(Message message) {
         switch (message.what) {
              case GET_RECOMMEND_NATURAL_EXPERIENCES_DONE:
-                if (mLoadSize > 0){
+                if (mLoadExperienceSize > 0){
                     setRecommendExperiencesView(Utility.ExperienceType.NATURAL_OUTDOOR.ordinal());
                 }
                 getRecommendExperiences(Utility.ExperienceType.HUMANITY_ART.ordinal());
                 break;
             case GET_RECOMMEND_HUMANITY_EXPERIENCES_DONE:
-                if (mLoadSize > 0){
+                if (mLoadExperienceSize > 0){
                     setRecommendExperiencesView(Utility.ExperienceType.HUMANITY_ART.ordinal());
                 }
                 getRecommendExperiences(Utility.ExperienceType.NGO_PUBLIC_GOOD.ordinal());
                 break;
             case GET_RECOMMEND_NGO_EXPERIENCES_DONE:
-                if (mLoadSize > 0){
+                if (mLoadExperienceSize > 0){
                     setRecommendExperiencesView(Utility.ExperienceType.NGO_PUBLIC_GOOD.ordinal());
                 }
                 getRecommendExperiences(Utility.ExperienceType.THEATRE_PERFORMANCE.ordinal());
                 break;
             case GET_RECOMMEND_THEATRE_EXPERIENCES_DONE:
-                if (mLoadSize > 0){
+                if (mLoadExperienceSize > 0){
                     setRecommendExperiencesView(Utility.ExperienceType.THEATRE_PERFORMANCE.ordinal());
                 }
                 getRecommendExperiences(Utility.ExperienceType.PARTY.ordinal());
                 break;
             case GET_RECOMMEND_PARTY_EXPERIENCES_DONE:
-                if (mLoadSize > 0){
+                if (mLoadExperienceSize > 0){
                     setRecommendExperiencesView(Utility.ExperienceType.PARTY.ordinal());
                 }
+                getRecommendMeet();
                 break;
             case GET_ALL_GUIDS_DONE:
                 if (mLoadGuideSize > 0){
@@ -1216,13 +1218,13 @@ public void setMeetRecommendContent(UserMeetInfo meet, View view){
                 if (mLoadMeetSize > 0){
                     setRecommendMeetsView();
                 }
-                getRecommendExperiences(Utility.ExperienceType.NATURAL_OUTDOOR.ordinal());
+                getRecommendTalent();
                 break;
                 case GET_RECOMMEND_TALENTS_DONE:
                 if (mLoadTalentSize > 0){
                     setRecommendTalentsHeader();
                 }
-                getRecommendMeet();
+                //getRecommendMeet();
                 getRecommendContacts();
                 break;
             case GET_RECOMMEND_MEMBER_DONE:
