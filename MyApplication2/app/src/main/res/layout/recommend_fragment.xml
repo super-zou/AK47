@@ -45,13 +45,412 @@
                     app:layout_constraintEnd_toEndOf="@+id/banner"
                     app:layout_constraintStart_toStartOf="@+id/banner" />
             </androidx.constraintlayout.widget.ConstraintLayout>
-                        <!--talents-->
+            <!--experience-->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/experience_recommend"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:background="@color/colorWhite"
+                android:paddingBottom="16dp">
+                
+                <TextView
+                    android:id="@+id/experience_recommend_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:includeFontPadding="false"
+                    android:text="@string/experience_recommend_title"
+                    android:textAppearance="@style/TextSourceHanSansAppearance"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+                
+                <TextView
+                    android:id="@+id/experience_recommend_introduction"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:includeFontPadding="false"
+                    android:lineSpacingMultiplier="1.5"
+                    android:text="@string/experience_recommend_introduction"
+                    android:textAppearance="@style/TextSourceHanSansAppearance"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/experience_recommend_title" />
+                
+                <!--natural outdoor-->
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/recommend_natural_outdoor_wrapper"
+                    android:visibility="gone"                                                                   
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:orientation="vertical"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/experience_recommend_introduction">
+                    
+                    <TextView
+                        android:id="@+id/recommend_natural_outdoor_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="16dp"
+                        android:includeFontPadding="false"
+                        android:text="@string/natural_outdoor"
+                        android:textAppearance="@style/TextSourceHanSansAppearance"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                    
+                    <HorizontalScrollView
+                        android:id="@+id/experience_horizontalScrollView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:scrollbars="none"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/recommend_natural_outdoor_title">
+
+                        <LinearLayout
+                            android:id="@+id/natural_outdoor_cardview_wrapper"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginRight="16dp"
+                            android:orientation="horizontal" />
+                    </HorizontalScrollView>
+
+                    <TextView
+                        android:id="@+id/more_natural_outdoor"
+                        android:visibility="gone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:layout_marginEnd="16dp"
+                        android:text="更多 >"
+                        android:textColor="@color/blue_dark"
+                        android:textSize="13sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/recommend_natural_outdoor_title"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/recommend_natural_outdoor_title" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+                
+                 <!--humanity art-->
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/recommend_humanity_art_wrapper"
+                    android:visibility="gone"                                                                   
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:orientation="vertical"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/recommend_natural_outdoor_wrapper">
+                    
+                    <TextView
+                        android:id="@+id/recommend_humanity_art_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="16dp"
+                        android:includeFontPadding="false"
+                        android:text="@string/humanity_art"
+                        android:textAppearance="@style/TextSourceHanSansAppearance"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"/>
+                    
+                    <HorizontalScrollView
+                        android:id="@+id/humanity_art_horizontalScrollView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:scrollbars="none"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/recommend_humanity_art_title">
+                        
+                        <LinearLayout
+                            android:id="@+id/humanity_art_cardview_wrapper"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginRight="16dp"
+                            android:orientation="horizontal" />
+                    </HorizontalScrollView>
+                    
+                    <TextView
+                        android:id="@+id/more_humanity_art"
+                        android:visibility="gone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:layout_marginEnd="16dp"
+                        android:text="更多 >"
+                        android:textColor="@color/blue_dark"
+                        android:textSize="13sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/recommend_humanity_art_title"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/recommend_humanity_art_title"/>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+                
+                <!--ngo&public good-->
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/recommend_ngo_public_good_wrapper"
+                    android:visibility="gone"                                                                   
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:orientation="vertical"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/recommend_humanity_art_wrapper">
+                    
+                     <TextView
+                        android:id="@+id/recommend_ngo_public_good_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="16dp"
+                        android:includeFontPadding="false"
+                        android:text="@string/NGO_public_good"
+                        android:textAppearance="@style/TextSourceHanSansAppearance"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"/>
+                    
+                     <HorizontalScrollView
+                        android:id="@+id/ngo_public_good_horizontalScrollView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:scrollbars="none"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/recommend_ngo_public_good_title">
+                         
+                         <LinearLayout
+                            android:id="@+id/ngo_public_good_cardview_wrapper"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginRight="16dp"
+                            android:orientation="horizontal" />
+                    </HorizontalScrollView>
+                    
+                    <TextView
+                        android:id="@+id/more_ngo_public_good"
+                        android:visibility="gone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:layout_marginEnd="16dp"
+                        android:text="更多 >"
+                        android:textColor="@color/blue_dark"
+                        android:textSize="13sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/recommend_ngo_public_good_title"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/recommend_ngo_public_good_title"/>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+                
+                <!--theatre performance-->
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/recommend_theatre_performance_wrapper"
+                    android:visibility="gone"                                                                   
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:orientation="vertical"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/recommend_ngo_public_good_wrapper">
+                    
+                     <TextView
+                        android:id="@+id/recommend_theatre_performance_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="16dp"
+                        android:includeFontPadding="false"
+                        android:text="@string/theatre_performance"
+                        android:textAppearance="@style/TextSourceHanSansAppearance"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"/>
+                    
+                    <HorizontalScrollView
+                        android:id="@+id/theatre_performance_horizontalScrollView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:scrollbars="none"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/recommend_theatre_performance_title">
+                        
+                        <LinearLayout
+                            android:id="@+id/theatre_performance_cardview_wrapper"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginRight="16dp"
+                            android:orientation="horizontal" />
+                    </HorizontalScrollView>
+                    
+                    <TextView
+                        android:id="@+id/more_theatre_performance"
+                        android:visibility="gone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:layout_marginEnd="16dp"
+                        android:text="更多 >"
+                        android:textColor="@color/blue_dark"
+                        android:textSize="13sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/recommend_theatre_performance_title"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/recommend_theatre_performance_title"/>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+                
+                <!--party-->
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/recommend_party_wrapper"
+                    android:visibility="gone"                                                                   
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:orientation="vertical"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/recommend_theatre_performance_wrapper">
+                    
+                    <TextView
+                        android:id="@+id/recommend_party_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="16dp"
+                        android:includeFontPadding="false"
+                        android:text="@string/party"
+                        android:textAppearance="@style/TextSourceHanSansAppearance"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"/>
+                    
+                    <HorizontalScrollView
+                        android:id="@+id/party_horizontalScrollView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:scrollbars="none"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/recommend_party_title">
+                        
+                        <LinearLayout
+                            android:id="@+id/party_cardview_wrapper"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginRight="16dp"
+                            android:orientation="horizontal" />
+                    </HorizontalScrollView>
+                    
+                    <TextView
+                        android:id="@+id/more_party"
+                        android:visibility="gone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:layout_marginEnd="16dp"
+                        android:text="更多 >"
+                        android:textColor="@color/blue_dark"
+                        android:textSize="13sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/recommend_party_title"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/recommend_party_title"/>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            <!--meet-->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/meet_wrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorWhite"
+                android:visibility="gone"
+                android:layout_marginTop="8dp"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/meet_recommend_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:includeFontPadding="false"
+                    android:text="@string/meet"
+                    android:textAppearance="@style/TextSourceHanSansAppearance"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/meet_recommend_introduction"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:lineSpacingMultiplier="1.5"
+                    android:includeFontPadding="false"
+                    android:text="@string/meet_recommend_introduction"
+                    android:textAppearance="@style/TextSourceHanSansAppearance"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/meet_recommend_title" />
+                
+                <LinearLayout
+                    android:id="@+id/meet_recommend_wrapper"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:divider="@color/line_border"
+                    android:orientation="vertical"
+                    android:showDividers="middle"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/meet_recommend_introduction" />
+                
+                <Button
+                    android:id="@+id/more_meet"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/btn_default"
+                    android:text="@string/find_more_meets"
+                    android:textColor="@color/blue_dark"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/meet_recommend_wrapper" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            <!--talents-->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/talent_wrapper"
                 android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/colorWhite"
+                android:layout_marginTop="8dp"
                 android:paddingTop="16dp">
 
                 <TextView
@@ -126,401 +525,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/talent_recommend_wrapper" />
             </androidx.constraintlayout.widget.ConstraintLayout>
-            <!--meet-->
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/meet_wrapper"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/colorWhite"
-                android:visibility="gone"
-                android:layout_marginTop="8dp"
-                android:padding="16dp">
-
-                <TextView
-                    android:id="@+id/meet_recommend_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:includeFontPadding="false"
-                    android:text="@string/meet"
-                    android:textAppearance="@style/TextSourceHanSansAppearance"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/meet_recommend_introduction"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:lineSpacingMultiplier="1.5"
-                    android:includeFontPadding="false"
-                    android:text="@string/meet_recommend_introduction"
-                    android:textAppearance="@style/TextSourceHanSansAppearance"
-                    android:textSize="16sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/meet_recommend_title" />
-                
-                <LinearLayout
-                    android:id="@+id/meet_recommend_wrapper"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:divider="@color/line_border"
-                    android:orientation="vertical"
-                    android:showDividers="middle"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/meet_recommend_introduction" />
-                
-                <Button
-                    android:id="@+id/more_meet"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="16dp"
-                    android:background="@drawable/btn_default"
-                    android:text="@string/find_more_meets"
-                    android:textColor="@color/blue_dark"
-                    android:textSize="16sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/meet_recommend_wrapper" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-            
-            <!--experience-->
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/experience_recommend"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                android:background="@color/colorWhite"
-                android:layout_marginTop="8dp"
-                android:paddingBottom="16dp">
-                
-                <TextView
-                    android:id="@+id/experience_recommend_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:includeFontPadding="false"
-                    android:text="@string/experience_recommend_title"
-                    android:textAppearance="@style/TextSourceHanSansAppearance"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-                
-                <TextView
-                    android:id="@+id/experience_recommend_introduction"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:includeFontPadding="false"
-                    android:lineSpacingMultiplier="1.5"
-                    android:text="@string/experience_recommend_introduction"
-                    android:textAppearance="@style/TextSourceHanSansAppearance"
-                    android:textSize="16sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/experience_recommend_title" />
-                
-                <!--natural outdoor-->
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/recommend_natural_outdoor_wrapper"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:orientation="vertical"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/experience_recommend_introduction">
-                    
-                    <TextView
-                        android:id="@+id/recommend_natural_outdoor_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="16dp"
-                        android:includeFontPadding="false"
-                        android:text="@string/natural_outdoor"
-                        android:textAppearance="@style/TextSourceHanSansAppearance"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-                    
-                    <HorizontalScrollView
-                        android:id="@+id/experience_horizontalScrollView"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:scrollbars="none"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/recommend_natural_outdoor_title">
-
-                        <LinearLayout
-                            android:id="@+id/natural_outdoor_cardview_wrapper"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="16dp"
-                            android:layout_marginRight="16dp"
-                            android:orientation="horizontal" />
-                    </HorizontalScrollView>
-
-                    <TextView
-                        android:id="@+id/more_natural_outdoor"
-                        android:visibility="gone"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:layout_marginEnd="16dp"
-                        android:text="更多 >"
-                        android:textColor="@color/blue_dark"
-                        android:textSize="13sp"
-                        app:layout_constraintBottom_toBottomOf="@+id/recommend_natural_outdoor_title"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="@+id/recommend_natural_outdoor_title" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-                
-                 <!--humanity art-->
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/recommend_humanity_art_wrapper"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:orientation="vertical"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/recommend_natural_outdoor_wrapper">
-                    
-                    <TextView
-                        android:id="@+id/recommend_humanity_art_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="16dp"
-                        android:includeFontPadding="false"
-                        android:text="@string/humanity_art"
-                        android:textAppearance="@style/TextSourceHanSansAppearance"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"/>
-                    
-                    <HorizontalScrollView
-                        android:id="@+id/humanity_art_horizontalScrollView"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:scrollbars="none"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/recommend_humanity_art_title">
-                        
-                        <LinearLayout
-                            android:id="@+id/humanity_art_cardview_wrapper"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="16dp"
-                            android:layout_marginRight="16dp"
-                            android:orientation="horizontal" />
-                    </HorizontalScrollView>
-                    
-                    <TextView
-                        android:id="@+id/more_humanity_art"
-                        android:visibility="gone"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:layout_marginEnd="16dp"
-                        android:text="更多 >"
-                        android:textColor="@color/blue_dark"
-                        android:textSize="13sp"
-                        app:layout_constraintBottom_toBottomOf="@+id/recommend_humanity_art_title"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="@+id/recommend_humanity_art_title"/>
-                </androidx.constraintlayout.widget.ConstraintLayout>
-                
-                <!--ngo&public good-->
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/recommend_ngo_public_good_wrapper"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:orientation="vertical"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/recommend_humanity_art_wrapper">
-                    
-                     <TextView
-                        android:id="@+id/recommend_ngo_public_good_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="16dp"
-                        android:includeFontPadding="false"
-                        android:text="@string/NGO_public_good"
-                        android:textAppearance="@style/TextSourceHanSansAppearance"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"/>
-                    
-                     <HorizontalScrollView
-                        android:id="@+id/ngo_public_good_horizontalScrollView"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:scrollbars="none"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/recommend_ngo_public_good_title">
-                         
-                         <LinearLayout
-                            android:id="@+id/ngo_public_good_cardview_wrapper"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="16dp"
-                            android:layout_marginRight="16dp"
-                            android:orientation="horizontal" />
-                    </HorizontalScrollView>
-                    
-                    <TextView
-                        android:id="@+id/more_ngo_public_good"
-                        android:visibility="gone"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:layout_marginEnd="16dp"
-                        android:text="更多 >"
-                        android:textColor="@color/blue_dark"
-                        android:textSize="13sp"
-                        app:layout_constraintBottom_toBottomOf="@+id/recommend_ngo_public_good_title"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="@+id/recommend_ngo_public_good_title"/>
-                </androidx.constraintlayout.widget.ConstraintLayout>
-                
-                <!--theatre performance-->
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/recommend_theatre_performance_wrapper"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:orientation="vertical"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/recommend_ngo_public_good_wrapper">
-                    
-                     <TextView
-                        android:id="@+id/recommend_theatre_performance_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="16dp"
-                        android:includeFontPadding="false"
-                        android:text="@string/theatre_performance"
-                        android:textAppearance="@style/TextSourceHanSansAppearance"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"/>
-                    
-                    <HorizontalScrollView
-                        android:id="@+id/theatre_performance_horizontalScrollView"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:scrollbars="none"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/recommend_theatre_performance_title">
-                        
-                        <LinearLayout
-                            android:id="@+id/theatre_performance_cardview_wrapper"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="16dp"
-                            android:layout_marginRight="16dp"
-                            android:orientation="horizontal" />
-                    </HorizontalScrollView>
-                    
-                    <TextView
-                        android:id="@+id/more_theatre_performance"
-                        android:visibility="gone"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:layout_marginEnd="16dp"
-                        android:text="更多 >"
-                        android:textColor="@color/blue_dark"
-                        android:textSize="13sp"
-                        app:layout_constraintBottom_toBottomOf="@+id/recommend_theatre_performance_title"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="@+id/recommend_theatre_performance_title"/>
-                </androidx.constraintlayout.widget.ConstraintLayout>
-                
-                <!--party-->
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/recommend_party_wrapper"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:orientation="vertical"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/recommend_theatre_performance_wrapper">
-                    
-                    <TextView
-                        android:id="@+id/recommend_party_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="16dp"
-                        android:includeFontPadding="false"
-                        android:text="@string/party"
-                        android:textAppearance="@style/TextSourceHanSansAppearance"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"/>
-                    
-                    <HorizontalScrollView
-                        android:id="@+id/party_horizontalScrollView"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:scrollbars="none"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/recommend_party_title">
-                        
-                        <LinearLayout
-                            android:id="@+id/party_cardview_wrapper"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="16dp"
-                            android:layout_marginRight="16dp"
-                            android:orientation="horizontal" />
-                    </HorizontalScrollView>
-                    
-                    <TextView
-                        android:id="@+id/more_party"
-                        android:visibility="gone"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:layout_marginEnd="16dp"
-                        android:text="更多 >"
-                        android:textColor="@color/blue_dark"
-                        android:textSize="13sp"
-                        app:layout_constraintBottom_toBottomOf="@+id/recommend_party_title"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="@+id/recommend_party_title"/>
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                       
              <!--travel guide-->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/guide_recommend"
