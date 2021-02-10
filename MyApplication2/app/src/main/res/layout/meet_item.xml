@@ -145,6 +145,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:paddingTop="2dp"
+        android:visibility="gone"
         android:text="@string/fa_location"
         app:layout_constraintStart_toEndOf="@+id/avatar"
         app:layout_constraintTop_toBottomOf="@+id/work_info" />
@@ -154,16 +155,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="2dp"
-        android:text="living"
+        android:text=""
+        android:visibility="gone"
         app:layout_constraintStart_toEndOf="@+id/living_icon"
         app:layout_constraintTop_toTopOf="@+id/living_icon" />
     
     <TextView
         android:id="@+id/hometown"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toEndOf="@+id/living"
-        app:layout_constraintTop_toTopOf="@+id/living_icon" />
+        app:layout_constraintTop_toBottomOf="@+id/work_info" />
 
     <TextView
         android:id="@+id/illustration"
