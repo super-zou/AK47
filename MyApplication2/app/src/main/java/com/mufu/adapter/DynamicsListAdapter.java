@@ -283,9 +283,27 @@ public class DynamicsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         String profile = "";
         if (dynamic.getSituation() != -1) {
             if (dynamic.getSituation() == 0) {
-                profile = dynamic.getMajor() + "·" + dynamic.getDegreeName(dynamic.getDegree()) + "·" + dynamic.getUniversity();
+                if (!TextUtils.isEmpty(dynamic.getDegreeName(dynamic.getDegree()))){
+                    profile = dynamic.getDegreeName(dynamic.getDegree());
+                    if (!TextUtils.isEmpty(dynamic.getUniversity())){
+                        profile += "·" + dynamic.getUniversity();
+                    }
+                }else {
+                    if (!TextUtils.isEmpty(dynamic.getUniversity())){
+                        profile = dynamic.getUniversity();
+                    }
+                }
             } else {
-                profile = dynamic.getPosition() + "·" + dynamic.getIndustry();
+                if (!TextUtils.isEmpty(dynamic.getPosition())){
+                    profile = dynamic.getPosition();
+                    if(!TextUtils.isEmpty(dynamic.getIndustry())){
+                        profile += "·" + dynamic.getIndustry();
+                    }
+                }else {
+                    if(!TextUtils.isEmpty(dynamic.getIndustry())){
+                        profile = dynamic.getIndustry();
+                    }
+                }
             }
             authorProfileVH.authorProfile.setText(profile);
         }
