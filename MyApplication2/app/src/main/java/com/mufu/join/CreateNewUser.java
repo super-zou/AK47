@@ -106,6 +106,7 @@ public class CreateNewUser extends BaseAppCompatActivity {
     private TextInputEditText passwordEditText;
     private TextInputLayout repeatPasswordInputLayout;
     private TextInputEditText repeatPasswordEditText;
+    private TextView mSkipTV;
     private Button prevBtn;
     private Button actionBtn;
     private Button manualSelectBtn;
@@ -155,6 +156,7 @@ public class CreateNewUser extends BaseAppCompatActivity {
         repeatPasswordEditText = findViewById(R.id.repeat_password_edittext);
         prevBtn = findViewById(R.id.prev);
         actionBtn = findViewById(R.id.action_btn);
+        mSkipTV = findViewById(R.id.skip);
         manualSelectBtn = findViewById(R.id.manual_select);
         sexSelect = findViewById(R.id.sexRG);
         livingTextView = findViewById(R.id.living);
@@ -189,12 +191,12 @@ public class CreateNewUser extends BaseAppCompatActivity {
         actionBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (actionDone == false) {//not complete
+                if (false) {//not complete
                     if (firstPageInitAndCheck() == true) {
                         if (prevBtn.getVisibility() == View.INVISIBLE) {
                             prevBtn.setVisibility(View.VISIBLE);
                         }
-
+                        mSkipTV.setVisibility(View.VISIBLE);
                         createInitLayout.setVisibility(View.GONE);
                         createNextLayout.setVisibility(View.VISIBLE);
                         actionBtn.setText(getResources().getText(R.string.done));
@@ -267,8 +269,8 @@ public class CreateNewUser extends BaseAppCompatActivity {
                     }
 
                 } else {
-                    if (checkNextInput() == true) {
-                        saveUserInfo();
+                    if (firstPageInitAndCheck) {
+                        saveUserInfo(false);
                     }
                 }
 
@@ -292,6 +294,13 @@ public class CreateNewUser extends BaseAppCompatActivity {
 
             }
         });
+        
+                mSkipTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                saveUserInfo(true);
+            }
+        });
 
     }
 
@@ -302,7 +311,7 @@ public class CreateNewUser extends BaseAppCompatActivity {
         password = passwordEditText.getText().toString();
         repeatPassword = repeatPasswordEditText.getText().toString();
 
-        getLocation();
+        //getLocation();
 
         if (TextUtils.isEmpty(nickName)) {
             nickNameInputLayout.setError(getResources().getString(R.string.nickname_is_empty));
@@ -316,6 +325,11 @@ public class CreateNewUser extends BaseAppCompatActivity {
 
         if (!password.equals(repeatPassword)) {
             repeatPasswordInputLayout.setError(getResources().getString(R.string.password_repeat_error));
+            return false;
+        }
+        
+        if (TextUtils.isEmpty(universityEditText.getText().toString())) {
+            universityInputLayout.setError(getResources().getString(R.string.university_empty));
             return false;
         }
 
@@ -427,9 +441,9 @@ public class CreateNewUser extends BaseAppCompatActivity {
         return true;
     }
 
-    private void saveUserInfo() {
+    private void saveUserInfo(boolean skipped) {
         RequestBody requestBody = new FormBody.Builder()
-                .add("user_info", getUserInfoJsonObject().toString())
+                .add("user_info", getUserInfoJsonObject(skipped).toString())
                 .build();
 
         HttpUtil.sendOkHttpRequest(mContext, CREATE_USER_URL, requestBody, new Callback() {
@@ -461,23 +475,25 @@ public class CreateNewUser extends BaseAppCompatActivity {
         });
     }
 
-    private JSONObject getUserInfoJsonObject() {
+    private JSONObject getUserInfoJsonObject(boolean skipped) {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("account", account);
             jsonObject.put("name", nickName);
             jsonObject.put("situation", mSituation);
-            if (mSituation == 0) {
-                jsonObject.put("university", universityEditText.getText().toString());
-                jsonObject.put("major", majorEditText.getText().toString());
-                jsonObject.put("degree", getDegreeIndex(degree));
-            } else {
-                jsonObject.put("position", positionEditText.getText().toString());
-                jsonObject.put("industry", industryEditText.getText().toString());
+            if (!skipped){
+                if (mSituation == 0) {
+                    jsonObject.put("university", universityEditText.getText().toString());
+                    jsonObject.put("major", majorEditText.getText().toString());
+                    jsonObject.put("degree", getDegreeIndex(degree));
+                } else {
+                    jsonObject.put("position", positionEditText.getText().toString());
+                    jsonObject.put("industry", industryEditText.getText().toString());
+                }
+                jsonObject.put("living", living);
             }
             jsonObject.put("password", password);
             jsonObject.put("sex", sex);
-            jsonObject.put("living", living);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -604,7 +620,6 @@ public class CreateNewUser extends BaseAppCompatActivity {
                 for (int i = 0; i < permissions.length; i++) {
                     if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
                         //boolean b = shouldShowRequestPermissionRationale(permissions[0]);
-                        Toast.makeText(this, "权限" + permissions[i] + "获取失败", Toast.LENGTH_SHORT).show();
                         permissionsAcquired = false;
                     }
                 }
