@@ -30,7 +30,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="name"
+            android:text=""
             android:textColor="@android:color/holo_blue_dark"
             android:textSize="15sp"
             android:textStyle="normal|bold"
@@ -39,6 +39,7 @@
         
         <TextView
             android:id="@+id/living_icon"
+            android:visibility="invisible"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
