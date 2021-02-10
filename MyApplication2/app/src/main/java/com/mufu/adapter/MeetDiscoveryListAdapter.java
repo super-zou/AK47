@@ -103,9 +103,13 @@ public class MeetDiscoveryListAdapter extends RecyclerView.Adapter<MeetDiscovery
 
          */
 
+        /*
         if (meet.getLiving() != null && !TextUtils.isEmpty(meet.getLiving())) {
             holder.living.setText(meet.getLiving());
+        }else {
+            holder.living.setText("");
         }
+        */
 
         if (meet.getAvatar() != null && !"".equals(meet.getAvatar())) {
             Glide.with(mContext).load(HttpUtil.DOMAIN + meet.getAvatar()).into(holder.avatar);
@@ -118,35 +122,23 @@ public class MeetDiscoveryListAdapter extends RecyclerView.Adapter<MeetDiscovery
         }
 
         if (!TextUtils.isEmpty(meet.getUniversity())) {
-            holder.university.setText(meet.getUniversity() + mContext.getResources().getString(R.string.dot));
+            holder.university.setText(meet.getUniversity());
         }else {
             holder.university.setText("");
         }
 
-        String degree = meet.getDegreeName(meet.getDegree());
-        if (!TextUtils.isEmpty(degree)) {
-            holder.degree.setText(degree);
-        }else {
-            holder.degree.setText("");
-        }
-
-        if (meet.getSituation() == MeetRecommendFragment.student) {
-            /*
-            if (holder.status.getVisibility() == View.GONE) {
-                holder.status.setVisibility(View.VISIBLE);
-            }
-
-             */
+        if (meet.getSituation() <= MeetRecommendFragment.student) {
             if (holder.workInfo.getVisibility() == View.VISIBLE) {
                 holder.workInfo.setVisibility(View.GONE);
             }
+            if (holder.educationBackground.getVisibility() == View.GONE) {
+                holder.educationBackground.setVisibility(View.VISIBLE);
+            }
 
         } else {
-            /*
-            if (holder.status.getVisibility() != View.GONE) {
-                holder.status.setVisibility(View.GONE);
+            if (holder.educationBackground.getVisibility() != View.GONE) {
+                holder.educationBackground.setVisibility(View.GONE);
             }
-             */
 
             if (holder.workInfo.getVisibility() == View.GONE) {
                 holder.workInfo.setVisibility(View.VISIBLE);
@@ -163,13 +155,21 @@ public class MeetDiscoveryListAdapter extends RecyclerView.Adapter<MeetDiscovery
         }
 
         if (meet.getCid() != 0){
-            if (meet.getNation() != null && !TextUtils.isEmpty(meet.getNation())) {
-                holder.hometown.setText(mContext.getResources().getString(R.string.dot) + meet.getHometown() + "人");
+            /*
+            if (meet.getHometown() != null && !TextUtils.isEmpty(meet.getHometown())) {
+                if (meet.getLiving() != null && !TextUtils.isEmpty(meet.getLiving())){
+                    holder.hometown.setText(mContext.getResources().getString(R.string.dot) + meet.getHometown() + "人");
+                }else {
+                    holder.hometown.setText(meet.getHometown() + "人");
+                }
             }
-            holder.selfcondition.setText(meet.getSelfCondition(meet.getSituation()));
+            */
+            holder.selfcondition.setVisibility(View.VISIBLE);
+            holder.selfcondition.setText(meet.getSelfCondition());
         }else {
-            holder.selfcondition.setText(meet.getMajor());
-            holder.hometown.setText("");
+            holder.selfcondition.setVisibility(View.GONE);
+           // holder.selfcondition.setText(meet.getMajor());
+           // holder.hometown.setText("");
         }
         //holder.requirement.setText(meet.getRequirement());
 
@@ -369,10 +369,7 @@ public class MeetDiscoveryListAdapter extends RecyclerView.Adapter<MeetDiscovery
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView name;
-        public TextView living;
-        public TextView hometown;
         public TextView university;
-        public TextView degree;
         public LinearLayout educationBackground;
         public LinearLayout workInfo;
         public TextView position;
@@ -402,11 +399,8 @@ public class MeetDiscoveryListAdapter extends RecyclerView.Adapter<MeetDiscovery
             //addMeetInfo = (TextView)view.findViewById(R.id.meet_info_add);
             recommendLayout = view.findViewById(R.id.meet_item_id);
             name = (TextView) view.findViewById(R.id.name);
-            living = (TextView) view.findViewById(R.id.living);
-            hometown = view.findViewById(R.id.hometown);
             avatar = view.findViewById(R.id.avatar);
             university = view.findViewById(R.id.university);
-            degree = view.findViewById(R.id.degree);
             //status = view.findViewById(R.id.status);
             educationBackground = view.findViewById(R.id.education_background);
             workInfo = view.findViewById(R.id.work_info);
