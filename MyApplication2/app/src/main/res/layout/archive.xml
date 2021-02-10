@@ -33,7 +33,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="32dp"
             android:layout_marginBottom="8dp"
-            android:text="@string/fa_setting"
+            android:text="@string/setting"
             android:textColor="@color/white"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -104,6 +104,89 @@
 
                 app:layout_constraintStart_toEndOf="@+id/name"
                 app:layout_constraintTop_toTopOf="@+id/name" />
+            
+                        <LinearLayout
+                android:id="@+id/education_info"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toBottomOf="@+id/name"
+                app:layout_constraintStart_toStartOf="@+id/name"
+                app:layout_constraintEnd_toEndOf="@+id/name">
+                            <TextView
+                    android:id="@+id/university"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif"
+                    android:text="university"
+                    android:typeface="sans" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif"
+                    android:text="@string/dot"
+                    android:typeface="sans" />
+                            <TextView
+                    android:id="@+id/major"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif"
+                    android:text="major"
+                    android:typeface="sans" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif"
+                    android:text="@string/dot"
+                    android:typeface="sans" />
+                            <TextView
+                    android:id="@+id/degree"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif"
+                    android:text="degree"
+                    android:typeface="sans" />
+            </LinearLayout>
+            
+            <LinearLayout
+                android:id="@+id/work_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@+id/education_info"
+                app:layout_constraintStart_toStartOf="@+id/name"
+                app:layout_constraintEnd_toEndOf="@+id/name">
+
+                <TextView
+                    android:id="@+id/position"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif"
+                    android:text="职位"
+                    android:typeface="sans" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif"
+                    android:text="@string/dot"
+                    android:typeface="sans" />
+
+                <TextView
+                    android:id="@+id/industry"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif"
+                    android:text="行业"
+                    android:typeface="sans" />
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/summary"
@@ -111,10 +194,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="18dp"
                 android:gravity="center_horizontal"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/name" />
-
+                app:layout_constraintTop_toBottomOf="@+id/work_info" />
 
             <LinearLayout
                 android:id="@+id/introduction_title"
@@ -163,6 +243,7 @@
                 android:background="@color/white"
                 android:padding="18dp"
                 android:visibility="gone"
+                android:lineSpacingMultiplier="1.5"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/introduction_title" />
@@ -183,7 +264,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:focusedByDefault="false"
-                    android:hint="简单介绍一下自己"
+                    android:hint="一句话介绍自己"
                     android:minLines="2"
                     android:textSize="15sp"
                     android:theme="@style/MyEditText" />
