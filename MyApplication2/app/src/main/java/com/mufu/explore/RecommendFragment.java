@@ -81,7 +81,6 @@ import static com.mufu.common.AddPictureActivity.ADD_PICTURE_BROADCAST;
 import static com.mufu.common.SetAvatarActivity.AVATAR_SET_ACTION_BROADCAST;
 import static com.mufu.experience.ExperienceSummaryActivity.getExperience;
 import static com.mufu.experience.GuideSummaryActivity.getGuide;
-import static com.mufu.group.SubGroupActivity.GET_ALL_TALENTS;
 import static com.mufu.group.SubGroupActivity.GET_MY_UNIVERSITY_SUBGROUP;
 import static com.mufu.group.SubGroupActivity.getTalent;
 import static com.mufu.main.DynamicFragment.COMMENT_UPDATE_RESULT;
@@ -113,11 +112,16 @@ public class RecommendFragment extends BaseFragment {
     private static final int NO_UPDATE_RECOMMEND = 10;
     private static final int MY_CONDITION_LOVE_UPDATE = 11;
     private static final int MY_CONDITION_PRAISE_UPDATE = 12;
-        private static final int GET_RECOMMEND_NATURAL_EXPERIENCES_DONE = 13;
-    private static final int GET_RECOMMEND_HUMANITY_EXPERIENCES_DONE = 14;
-    private static final int GET_RECOMMEND_NGO_EXPERIENCES_DONE = 15;
-    private static final int GET_RECOMMEND_THEATRE_EXPERIENCES_DONE = 16;
-    private static final int GET_RECOMMEND_PARTY_EXPERIENCES_DONE = 17;
+        //for experiences type
+    private static final int GET_RECOMMEND_LANGUAGE_CULTURE_DONE = 13;
+    private static final int GET_RECOMMEND_PARTY_SALON_DONE = 14;
+    private static final int GET_RECOMMEND_FRIENDSHIP_DONE = 15;
+    private static final int GET_RECOMMEND_NATURAL_EXPERIENCES_DONE = 16;
+    private static final int GET_RECOMMEND_HUMANITY_EXPERIENCES_DONE = 17;
+    private static final int GET_RECOMMEND_NGO_EXPERIENCES_DONE = 18;
+    private static final int GET_RECOMMEND_THEATRE_EXPERIENCES_DONE = 19;
+    private static final int GET_RECOMMEND_LEARNING_GROWTH_DONE = 20;
+    private static final int GET_RECOMMEND_HOBBY_DONE = 21;
     private static final String GET_RECOMMEND_EXPERIENCES = HttpUtil.DOMAIN + "?q=experience/get_recommend_experiences";
     private static final String GET_RECOMMEND_EXPERIENCES_BY_TYPE = HttpUtil.DOMAIN + "?q=experience/get_recommend_experiences_by_type";
     private static final String GET_RECOMMEND_GUIDES = HttpUtil.DOMAIN + "?q=travel_guide/get_recommend_guides";
@@ -169,7 +173,7 @@ public class RecommendFragment extends BaseFragment {
         mRecommendExperienceWrapper = mView.findViewById(R.id.experience_recommend);
         useBanner();
         //getRecommendTalent();
-        getRecommendExperiences(Utility.ExperienceType.NATURAL_OUTDOOR.ordinal());
+        getRecommendExperiences(Utility.ExperienceType.LANGUAGE_CULTURE.getType());
     }
     
     public void useBanner() {
@@ -210,21 +214,34 @@ public class RecommendFragment extends BaseFragment {
                             experiencesResponse = new JSONObject(responseText);
                             if (experiencesResponse != null) {
                                 mLoadExperienceSize = processExperiencesResponse(experiencesResponse);
-                                switch (type){
-                                    case 0:
+                                Utility.ExperienceType experienceType = Utility.ExperienceType.getExperienceType(type);
+                                switch (experienceType){
+                                    case LANGUAGE_CULTURE:
+                                        handler.sendEmptyMessage(GET_RECOMMEND_LANGUAGE_CULTURE_DONE);
+                                        break;
+                                    case PARTY_SALON:
+                                        handler.sendEmptyMessage(GET_RECOMMEND_PARTY_SALON_DONE);
+                                        break;
+                                    case FRIENDSHIP:
+                                        handler.sendEmptyMessage(GET_RECOMMEND_FRIENDSHIP_DONE);
+                                        break;
+                                    case NATURAL_OUTDOOR:
                                         handler.sendEmptyMessage(GET_RECOMMEND_NATURAL_EXPERIENCES_DONE);
                                         break;
-                                    case 1:
+                                        case HUMANITY_ART:
                                         handler.sendEmptyMessage(GET_RECOMMEND_HUMANITY_EXPERIENCES_DONE);
                                         break;
-                                    case 2:
+                                    case NGO_PUBLIC_GOOD:
                                         handler.sendEmptyMessage(GET_RECOMMEND_NGO_EXPERIENCES_DONE);
                                         break;
-                                    case 3:
+                                    case THEATRE_PERFORMANCE:
                                         handler.sendEmptyMessage(GET_RECOMMEND_THEATRE_EXPERIENCES_DONE);
                                         break;
-                                    case 4:
-                                        handler.sendEmptyMessage(GET_RECOMMEND_PARTY_EXPERIENCES_DONE);
+                                    case LEARNING_GROWTH:
+                                        handler.sendEmptyMessage(GET_RECOMMEND_LEARNING_GROWTH_DONE);
+                                        break;
+                                    case HOBBY:
+                                        handler.sendEmptyMessage(GET_RECOMMEND_HOBBY_DONE);
                                         break;
                                 }
                             }
@@ -275,40 +292,68 @@ public class RecommendFragment extends BaseFragment {
             mRecommendExperienceWrapper.setVisibility(View.VISIBLE);
         }
         Typeface font = Typeface.createFromAsset(MyApplication.getContext().getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
-        ConstraintLayout recommendNaturalWrapper;
+        ConstraintLayout recommendExperienceWrapper;
         LinearLayout recommendExperienceLL;
-        switch (type){
-            case 0:
-                recommendNaturalWrapper = mView.findViewById(R.id.recommend_natural_outdoor_wrapper);
+                TextView moreExperienceBtn;
+        Utility.ExperienceType experienceType = Utility.ExperienceType.getExperienceType(type);
+        switch (experienceType){
+            case LANGUAGE_CULTURE:
+                recommendExperienceWrapper = mView.findViewById(R.id.recommend_language_culture_wrapper);
+                recommendExperienceLL = mView.findViewById(R.id.language_culture_cardview_wrapper);
+                moreExperienceBtn = mView.findViewById(R.id.more_language_culture);
+                break;
+            case PARTY_SALON:
+                recommendExperienceWrapper = mView.findViewById(R.id.recommend_party_salon_wrapper);
+                recommendExperienceLL = mView.findViewById(R.id.party_salon_cardview_wrapper);
+                moreExperienceBtn = mView.findViewById(R.id.more_party_salon);
+                break;
+            case FRIENDSHIP:
+                recommendExperienceWrapper = mView.findViewById(R.id.recommend_friendship_wrapper);
+                recommendExperienceLL = mView.findViewById(R.id.friendship_cardview_wrapper);
+                moreExperienceBtn = mView.findViewById(R.id.more_friendship);
+                break;
+            case NATURAL_OUTDOOR:
+                recommendExperienceWrapper = mView.findViewById(R.id.recommend_natural_outdoor_wrapper);
                 recommendExperienceLL = mView.findViewById(R.id.natural_outdoor_cardview_wrapper);
+                moreExperienceBtn = mView.findViewById(R.id.more_natural_outdoor);
                 break;
-            case 1:
-                recommendNaturalWrapper = mView.findViewById(R.id.recommend_humanity_art_wrapper);
+            case HUMANITY_ART:
+                recommendExperienceWrapper = mView.findViewById(R.id.recommend_humanity_art_wrapper);
                 recommendExperienceLL = mView.findViewById(R.id.humanity_art_cardview_wrapper);
+                moreExperienceBtn = mView.findViewById(R.id.more_humanity_art);
                 break;
-                case 2:
-                recommendNaturalWrapper = mView.findViewById(R.id.recommend_ngo_public_good_wrapper);
+                case NGO_PUBLIC_GOOD:
+                recommendExperienceWrapper = mView.findViewById(R.id.recommend_ngo_public_good_wrapper);
                 recommendExperienceLL = mView.findViewById(R.id.ngo_public_good_cardview_wrapper);
+                moreExperienceBtn = mView.findViewById(R.id.more_ngo_public_good);
                 break;
-            case 3:
-                recommendNaturalWrapper = mView.findViewById(R.id.recommend_theatre_performance_wrapper);
+            case THEATRE_PERFORMANCE:
+                recommendExperienceWrapper = mView.findViewById(R.id.recommend_theatre_performance_wrapper);
                 recommendExperienceLL = mView.findViewById(R.id.theatre_performance_cardview_wrapper);
+                moreExperienceBtn = mView.findViewById(R.id.more_theatre_performance);
                 break;
-            case 4:
-                recommendNaturalWrapper = mView.findViewById(R.id.recommend_party_wrapper);
-                recommendExperienceLL = mView.findViewById(R.id.party_cardview_wrapper);
+                case LEARNING_GROWTH:
+                recommendExperienceWrapper = mView.findViewById(R.id.recommend_learning_growth_wrapper);
+                recommendExperienceLL = mView.findViewById(R.id.learning_growth_cardview_wrapper);
+                moreExperienceBtn = mView.findViewById(R.id.more_learning_growth);
+                break;
+            case HOBBY:
+                recommendExperienceWrapper = mView.findViewById(R.id.recommend_hobbies_wrapper);
+                recommendExperienceLL = mView.findViewById(R.id.hobbies_cardview_wrapper);
+                moreExperienceBtn = mView.findViewById(R.id.more_hobbies);
                 break;
                 default:
-                recommendNaturalWrapper = mView.findViewById(R.id.recommend_natural_outdoor_wrapper);
-                recommendExperienceLL = mView.findViewById(R.id.natural_outdoor_cardview_wrapper);
+                recommendExperienceWrapper = mView.findViewById(R.id.recommend_language_culture_wrapper);
+                recommendExperienceLL = mView.findViewById(R.id.language_culture_cardview_wrapper);
+                moreExperienceBtn = mView.findViewById(R.id.more_language_culture);
                 break;
         }
-        recommendNaturalWrapper.setVisibility(View.VISIBLE);
+        recommendExperienceWrapper.setVisibility(View.VISIBLE);
         ExperienceSummaryActivity.Experience experience;
         DisplayMetrics dm = getContext().getResources().getDisplayMetrics();
-        int innerWidth = dm.widthPixels - (int) Utility.dpToPx(getContext(), 32f);
+        int innerWidth = dm.widthPixels;
         int childrenWidth = (int)(innerWidth * 0.618);
-        int innerHeight = (int)(childrenWidth * 0.618);
+        int innerHeight = (int)(childrenWidth);
         ConstraintLayout.LayoutParams layoutParamsPicture = new ConstraintLayout.LayoutParams(childrenWidth, innerHeight);
         LinearLayout.LayoutParams layoutParamsWrapper = new LinearLayout.LayoutParams(childrenWidth, WRAP_CONTENT);
         for (int i=0; i<mLoadExperienceSize; i++){
@@ -324,7 +369,11 @@ public class RecommendFragment extends BaseFragment {
             TextView moneyTV = recommendExperienceView.findViewById(R.id.money);
             TextView unitTV = recommendExperienceView.findViewById(R.id.unit);
             TextView durationTV = recommendExperienceView.findViewById(R.id.duration);
-            LinearLayout evaluateLL = recommendExperienceView.findViewById(R.id.evaluate_wrapper);
+            LinearLayout evaluateLL = recommendExperienceView.findViewById(R.id.evaluate_inner_wrapper);
+            TextView joinedDivider = recommendExperienceView.findViewById(R.id.joined_divider);
+            TextView freeTV = recommendExperienceView.findViewById(R.id.free);
+            LinearLayout priceWrapper = recommendExperienceView.findViewById(R.id.price_wrapper);
+            TextView joinedAmountTV = recommendExperienceView.findViewById(R.id.joined_amount);
             
             experience = mExperienceList.get(i);
 
@@ -339,16 +388,29 @@ public class RecommendFragment extends BaseFragment {
             cityTV.setText(experience.city);
             if (experience.evaluateCount > 0){
                 evaluateLL.setVisibility(View.VISIBLE);
+                joinedDivider.setVisibility(View.VISIBLE);
                 float average = experience.evaluateScore / experience.evaluateCount;
                 float averageScore = (float) (Math.round(average * 10)) / 10;
                 scoreTV.setText(String.valueOf(averageScore));
-                countTV.setText("("+experience.evaluateCount+"条评价)");
+                countTV.setText("("+experience.evaluateCount+")");
             }else {
                 evaluateLL.setVisibility(View.GONE);
             }
             
-            moneyTV.setText(String.valueOf(experience.price));
-            unitTV.setText("人起");
+            if (experience.price != 0){
+                moneyTV.setText(String.valueOf(experience.price));
+                unitTV.setText("人起");
+            }else {
+                priceWrapper.setVisibility(View.GONE);
+                freeTV.setVisibility(View.VISIBLE);
+            }
+
+            if (experience.joinedAmount == 0){
+                joinedAmountTV.setText("新上线活动");
+            }else {
+                joinedAmountTV.setText(String.valueOf(experience.joinedAmount)+"人参加过");
+            }
+            
             durationTV.setVisibility(View.VISIBLE);
             durationTV.setText(String.valueOf(experience.duration)+"小时");
 
@@ -364,26 +426,7 @@ public class RecommendFragment extends BaseFragment {
                 }
             });
         }
-        
-        TextView moreExperienceBtn = mView.findViewById(R.id.more_natural_outdoor);
-        switch (type){
-            case 0:
-                moreExperienceBtn = mView.findViewById(R.id.more_natural_outdoor);
-                break;
-            case 1:
-                moreExperienceBtn = mView.findViewById(R.id.more_humanity_art);
-                break;
-            case 2:
-                moreExperienceBtn = mView.findViewById(R.id.more_ngo_public_good);
-                break;
-            case 3:
-                moreExperienceBtn = mView.findViewById(R.id.more_theatre_performance);
-                break;
-            case 4:
-                moreExperienceBtn = mView.findViewById(R.id.more_party);
-                break;
-        }
-        
+                
         if(mLoadExperienceSize > 2){
             moreExperienceBtn.setVisibility(View.VISIBLE);
         }
@@ -564,7 +607,7 @@ public class RecommendFragment extends BaseFragment {
         meetRecommendWrapper.setVisibility(View.VISIBLE);
         LinearLayout meetWrapper = mView.findViewById(R.id.meet_recommend_wrapper);
         for (int i=0; i<meetList.size(); i++){
-            View recommendMeetView = LayoutInflater.from(getContext()).inflate(R.layout.meet_item, (ViewGroup) mView.findViewById(android.R.id.content), false);
+            View recommendMeetView = LayoutInflater.from(getContext()).inflate(R.layout.meet_discovery_item, (ViewGroup) mView.findViewById(android.R.id.content), false);
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT);
             layoutParams.setMargins(0,0,0, 8);
             recommendMeetView.setLayoutParams(layoutParams);
@@ -600,6 +643,7 @@ public void setMeetRecommendContent(UserMeetInfo meet, View view){
         RoundImageView avatar =  view.findViewById(R.id.avatar);
         TextView university = view.findViewById(R.id.university);
         TextView degree = view.findViewById(R.id.degree);
+        TextView selfConditionTV = view.findViewById(R.id.self_condition);
         LinearLayout educationBackground = view.findViewById(R.id.education_background);
         LinearLayout workInfo = view.findViewById(R.id.work_info);
         TextView position = view.findViewById(R.id.position);
@@ -616,13 +660,22 @@ public void setMeetRecommendContent(UserMeetInfo meet, View view){
 
         name.setText(meet.getNickName());
         
-         if(meet.getLiving() != null && !TextUtils.isEmpty(meet.getLiving())){
+        if (!TextUtils.isEmpty(meet.getSelfCondition())){
+            selfConditionTV.setText(meet.getSelfCondition());
+        }else {
+            selfConditionTV.setVisibility(View.GONE);
+        }
+
+        /*
+        if(meet.getLiving() != null && !TextUtils.isEmpty(meet.getLiving())){
             living.setText(meet.getLiving());
         }
 
-        if(meet.getNation() != null && !TextUtils.isEmpty(meet.getNation())){
-            hometown.setText(getContext().getResources().getString(R.string.dot)+meet.getHometown()+"人");
+        if(meet.getHometown() != null && !TextUtils.isEmpty(meet.getHometown())){
+            hometown.setText(meet.getHometown()+"人");
         }
+
+         */
 
         if (meet.getAvatar() != null && !"".equals(meet.getAvatar())) {
             Glide.with(getContext()).load(HttpUtil.DOMAIN + meet.getAvatar()).into(avatar);
@@ -635,14 +688,9 @@ public void setMeetRecommendContent(UserMeetInfo meet, View view){
         }
 
         if (!TextUtils.isEmpty(meet.getUniversity())){
-            university.setText(meet.getUniversity()+getContext().getResources().getString(R.string.dot));
+            university.setText(meet.getUniversity());
         }
         
-        String degreeStr = meet.getDegreeName(meet.getDegree());
-        if (!TextUtils.isEmpty(degreeStr)){
-            degree.setText(degreeStr);
-        }
-
         if (meet.getSituation() == student){
             if (workInfo.getVisibility() == View.VISIBLE){
                 workInfo.setVisibility(View.GONE);
@@ -1158,54 +1206,60 @@ public void setMeetRecommendContent(UserMeetInfo meet, View view){
         }
          */
     }
-    
-    private void stopLoadProgress() {
-        if (progressImageView.getVisibility() == View.VISIBLE) {
-            animationDrawable.stop();
-            progressImageView.setVisibility(View.GONE);
-        }
-    }
-
-    private void sendMessage(int what, Object obj) {
-        Message msg = handler.obtainMessage();
-        msg.what = what;
-        msg.obj = obj;
-        msg.sendToTarget();
-    }
-
-    private void sendMessage(int what) {
-        sendMessage(what, null);
-    }
-    
+        
     public void handleMessage(Message message) {
         switch (message.what) {
+             case GET_RECOMMEND_LANGUAGE_CULTURE_DONE:
+                if (mLoadExperienceSize > 0){
+                    setRecommendExperiencesView(Utility.ExperienceType.LANGUAGE_CULTURE.getType());
+                }
+                getRecommendExperiences(Utility.ExperienceType.PARTY_SALON.getType());
+                break;
+            case GET_RECOMMEND_PARTY_SALON_DONE:
+                if (mLoadExperienceSize > 0){
+                    setRecommendExperiencesView(Utility.ExperienceType.PARTY_SALON.getType());
+                }
+                getRecommendExperiences(Utility.ExperienceType.FRIENDSHIP.getType());
+                break;
+            case GET_RECOMMEND_FRIENDSHIP_DONE:
+                if (mLoadExperienceSize > 0){
+                    setRecommendExperiencesView(Utility.ExperienceType.FRIENDSHIP.getType());
+                }
+                getRecommendExperiences(Utility.ExperienceType.NATURAL_OUTDOOR.getType());
+                break;
              case GET_RECOMMEND_NATURAL_EXPERIENCES_DONE:
                 if (mLoadExperienceSize > 0){
-                    setRecommendExperiencesView(Utility.ExperienceType.NATURAL_OUTDOOR.ordinal());
+                    setRecommendExperiencesView(Utility.ExperienceType.NATURAL_OUTDOOR.getType());
                 }
-                getRecommendExperiences(Utility.ExperienceType.HUMANITY_ART.ordinal());
+                getRecommendExperiences(Utility.ExperienceType.HUMANITY_ART.getType());
                 break;
             case GET_RECOMMEND_HUMANITY_EXPERIENCES_DONE:
                 if (mLoadExperienceSize > 0){
-                    setRecommendExperiencesView(Utility.ExperienceType.HUMANITY_ART.ordinal());
+                    setRecommendExperiencesView(Utility.ExperienceType.HUMANITY_ART.getType());
                 }
-                getRecommendExperiences(Utility.ExperienceType.NGO_PUBLIC_GOOD.ordinal());
+                getRecommendExperiences(Utility.ExperienceType.NGO_PUBLIC_GOOD.getType());
                 break;
             case GET_RECOMMEND_NGO_EXPERIENCES_DONE:
                 if (mLoadExperienceSize > 0){
-                    setRecommendExperiencesView(Utility.ExperienceType.NGO_PUBLIC_GOOD.ordinal());
+                    setRecommendExperiencesView(Utility.ExperienceType.NGO_PUBLIC_GOOD.getType());
                 }
-                getRecommendExperiences(Utility.ExperienceType.THEATRE_PERFORMANCE.ordinal());
+                getRecommendExperiences(Utility.ExperienceType.THEATRE_PERFORMANCE.getType());
                 break;
             case GET_RECOMMEND_THEATRE_EXPERIENCES_DONE:
                 if (mLoadExperienceSize > 0){
-                    setRecommendExperiencesView(Utility.ExperienceType.THEATRE_PERFORMANCE.ordinal());
+                    setRecommendExperiencesView(Utility.ExperienceType.THEATRE_PERFORMANCE.getType());
                 }
-                getRecommendExperiences(Utility.ExperienceType.PARTY.ordinal());
+                getRecommendExperiences(Utility.ExperienceType.LEARNING_GROWTH.getType());
                 break;
-            case GET_RECOMMEND_PARTY_EXPERIENCES_DONE:
+            case GET_RECOMMEND_LEARNING_GROWTH_DONE:
                 if (mLoadExperienceSize > 0){
-                    setRecommendExperiencesView(Utility.ExperienceType.PARTY.ordinal());
+                    setRecommendExperiencesView(Utility.ExperienceType.LEARNING_GROWTH.getType());
+                }
+                getRecommendExperiences(Utility.ExperienceType.HOBBY.getType());
+                break;
+            case GET_RECOMMEND_HOBBY_DONE:
+                if (mLoadExperienceSize > 0){
+                    setRecommendExperiencesView(Utility.ExperienceType.HOBBY.getType());
                 }
                 getRecommendMeet();
                 break;
