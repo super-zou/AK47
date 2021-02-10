@@ -154,7 +154,7 @@ public class UserProfile implements Serializable {
         if (degree != null && !TextUtils.isEmpty(degree) && !degree.equals("null")) {
             switch (Integer.parseInt(degree)) {
                 case -1:
-                    Degree = "不限";
+                    Degree = "";
                     break;
                 case 0:
                     Degree = "大专";
