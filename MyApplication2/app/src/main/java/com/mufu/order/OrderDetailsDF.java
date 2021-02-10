@@ -204,6 +204,9 @@ public class OrderDetailsDF extends BaseDialogFragment {
                 evaluateBtn.setVisibility(View.GONE);
                 break;
             case 1:
+                if (mOrder.price == 0){
+                    mRefundBtn.setVisibility(View.GONE);
+                }
                 payBtn.setVisibility(View.GONE);
                 break;
             case 3:
