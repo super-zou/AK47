@@ -337,6 +337,7 @@ public class ExperienceSummaryActivity extends BaseAppCompatActivity {
             experience.title = experienceObject.optString("title");
             experience.unit = experienceObject.optString("unit");
             experience.duration = experienceObject.optInt("duration");
+            experience.joinedAmount = experienceObject.optInt("joined_amount");
         }
         
         return experience;
@@ -408,6 +409,7 @@ public class ExperienceSummaryActivity extends BaseAppCompatActivity {
         public int evaluateScore;
         public int evaluateCount;
         public int price;
+        public int joinedAmount;
     }
     
     static class MyHandler extends Handler {
