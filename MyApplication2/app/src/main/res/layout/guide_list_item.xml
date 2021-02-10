@@ -126,7 +126,7 @@
                 android:id="@+id/evaluate_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="(evaluate_count)"
+                android:text=""
                 android:layout_marginLeft="3dp" />
         </LinearLayout>
         
