@@ -660,11 +660,6 @@ public class FillMeetInfoActivity extends BaseAppCompatActivity {
             return false;
         }
         
-        if (TextUtils.isEmpty(illustrationET.getText().toString())){
-            Toast.makeText(FillMeetInfoActivity.this, "请概要介绍一下自己和交友要求", Toast.LENGTH_LONG).show();
-            return false;
-        }
-
         return true;
     }
 
@@ -692,6 +687,11 @@ public class FillMeetInfoActivity extends BaseAppCompatActivity {
 
         if (REQUIRELIVESELECTED == false) {
             Toast.makeText(FillMeetInfoActivity.this, "请选择居住地", Toast.LENGTH_LONG).show();
+            return false;
+        }
+        
+        if (TextUtils.isEmpty(illustrationET.getText().toString())){
+            Toast.makeText(FillMeetInfoActivity.this, "请概要介绍一下自己和交友要求", Toast.LENGTH_LONG).show();
             return false;
         }
 
