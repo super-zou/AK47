@@ -86,7 +86,7 @@ public class MeetRecommendListAdapter extends RecyclerView.Adapter<MeetRecommend
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         //Slog.d(TAG, "===========onCreateViewHolder==============");
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.meet_item, parent, false);
+                .inflate(R.layout.meet_discovery_item, parent, false);
         ViewHolder holder = new ViewHolder(view, mItemClickListener);
 
         return holder;
@@ -158,13 +158,15 @@ public class MeetRecommendListAdapter extends RecyclerView.Adapter<MeetRecommend
         }
         */
 
-        if(meet.getLiving() != null && !TextUtils.isEmpty(meet.getLiving())){
-            holder.living.setText(meet.getLiving());
-        }
+        //if(meet.getLiving() != null && !TextUtils.isEmpty(meet.getLiving())){
+            //holder.living.setText(meet.getLiving());
+        //}
          
-         if(meet.getNation() != null && !TextUtils.isEmpty(meet.getNation())){
-            holder.hometown.setText(getContext().getResources().getString(R.string.dot)+meet.getHometown()+"人");
+        /*
+         if(meet.getHometown() != null && !TextUtils.isEmpty(meet.getHometown())){
+            holder.hometown.setText(meet.getHometown()+"人");
         }
+         */
 
         if (meet.getAvatar() != null && !"".equals(meet.getAvatar())) {
             Glide.with(getContext()).load(HttpUtil.DOMAIN + meet.getAvatar()).into(holder.avatar);
@@ -177,14 +179,9 @@ public class MeetRecommendListAdapter extends RecyclerView.Adapter<MeetRecommend
         }
 
         if (!TextUtils.isEmpty(meet.getUniversity())){
-            holder.university.setText(meet.getUniversity()+mContext.getResources().getString(R.string.dot));
+            holder.university.setText(meet.getUniversity());
         }
          
-         String degree = meet.getDegreeName(meet.getDegree());
-        if (!TextUtils.isEmpty(degree)){
-            holder.degree.setText(degree);
-        }
-
         if (meet.getSituation() == student){
             /*
             if (holder.status.getVisibility() == View.GONE){
@@ -217,8 +214,13 @@ public class MeetRecommendListAdapter extends RecyclerView.Adapter<MeetRecommend
             }
         }
          
-         holder.selfcondition.setText(meet.getSelfCondition(meet.getSituation()));
-        //holder.requirement.setText(meet.getRequirement());
+        if (!TextUtils.isEmpty(meet.getSelfCondition())){
+            holder.selfcondition.setVisibility(View.VISIBLE);
+            holder.selfcondition.setText(meet.getSelfCondition());
+        }else {
+            holder.selfcondition.setVisibility(View.GONE);
+            holder.selfcondition.setText(meet.getSelfCondition());
+        }
 
         if(meet.getLovedCount() > 0 && !isScrolling){
             if(meet.getLoved() == 1 ){
@@ -275,15 +277,6 @@ public class MeetRecommendListAdapter extends RecyclerView.Adapter<MeetRecommend
             holder.illustration.setVisibility(View.GONE);
         }
         */
-         
-          if (!TextUtils.isEmpty(meet.getRefereeName()) && !TextUtils.isEmpty(meet.getRefereeAvatar()) && !isScrolling){
-            holder.reference.setVisibility(View.VISIBLE);
-            Glide.with(getContext()).load(HttpUtil.DOMAIN + meet.getRefereeAvatar()).into(holder.refereeAvatar);
-            holder.refereeName.setText(meet.getRefereeName()+mContext.getResources().getString(R.string.dot)+mContext.getResources().getString(R.string.recommend));
-            holder.refereeContent.setText("“"+meet.getReferenceContent()+"”");
-        }else {
-            holder.reference.setVisibility(View.GONE);
-        }
     }
 
     @Override
@@ -378,9 +371,9 @@ public class MeetRecommendListAdapter extends RecyclerView.Adapter<MeetRecommend
         //TextView addMeetInfo;
         public TextView name;
         public TextView living;
-        public TextView hometown;
+        //public TextView hometown;
         public TextView university;
-        public TextView degree;
+        //public TextView degree;
         public TextView status;
         public LinearLayout educationBackground;
         public LinearLayout workInfo;
@@ -402,11 +395,6 @@ public class MeetRecommendListAdapter extends RecyclerView.Adapter<MeetRecommend
         public TextView activityIndicator;
         public TextView comment;
         public TextView commentCount;
-        //for reference
-        public RelativeLayout reference;
-        public TextView refereeName;
-        public RoundImageView refereeAvatar;
-        public TextView refereeContent;
         public ConstraintLayout recommendLayout;
         public  MyItemClickListener mListener;
         
@@ -417,10 +405,9 @@ public class MeetRecommendListAdapter extends RecyclerView.Adapter<MeetRecommend
             recommendLayout = view.findViewById(R.id.meet_item_id);
             name = (TextView) view.findViewById(R.id.name);
             living = (TextView) view.findViewById(R.id.living);
-            hometown = view.findViewById(R.id.hometown);
+            //hometown = view.findViewById(R.id.hometown);
             avatar =  view.findViewById(R.id.avatar);
             university = view.findViewById(R.id.university);
-            degree = view.findViewById(R.id.degree);
             //status = view.findViewById(R.id.status);
             educationBackground = view.findViewById(R.id.education_background);
             workInfo = view.findViewById(R.id.work_info);
@@ -441,11 +428,6 @@ public class MeetRecommendListAdapter extends RecyclerView.Adapter<MeetRecommend
             comment = view.findViewById(R.id.comment);
             commentCount = view.findViewById(R.id.comment_count);
             
-            reference = view.findViewById(R.id.friend_reference);
-            refereeName = view.findViewById(R.id.referee_name);
-            refereeAvatar = view.findViewById(R.id.referee_avatar);
-            refereeContent = view.findViewById(R.id.reference_content);
-
             this.mListener = myItemClickListener;
             Typeface font = Typeface.createFromAsset(getContext().getAssets(), "fonts/fontawesome-webfont_4.7.ttf");
             FontManager.markAsIconContainer(view.findViewById(R.id.behavior_statistics), font);
