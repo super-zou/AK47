@@ -252,7 +252,7 @@ public class UserMeetInfo extends UserProfile {
         this.requirementSet = requirementSet;
     }
     
-    public String getSelfCondition(int situation) {
+    public String getSelfCondition() {
         selfCondition = "";
         if (getAge() != 0) {
             selfCondition = getAge() + "岁 | ";
@@ -261,8 +261,12 @@ public class UserMeetInfo extends UserProfile {
             selfCondition += height + "cm | ";
         }
 
-        if (!TextUtils.isEmpty(getConstellation())) {
-            selfCondition += getConstellation();
+                if (!TextUtils.isEmpty(getDegreeName(getDegree()))) {
+            selfCondition += getDegreeName(getDegree()) + " | ";
+        }
+        
+        if (!TextUtils.isEmpty(getHometown())) {
+            selfCondition += getHometown();
         }
 
         /*
