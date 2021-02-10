@@ -16,8 +16,10 @@
         android:layout_height="120dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:elevation="2dp"
         android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"></com.mufu.util.RoundImageView>
 
@@ -68,7 +70,7 @@
         android:lineSpacingMultiplier="1.2"
         android:paddingLeft="128dp"
         android:paddingRight="8dp"
-        android:textStyle="normal|bold"
+        android:textStyle="normal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintLeft_toRightOf="@+id/avatar"
         app:layout_constraintTop_toBottomOf="@+id/name" />
@@ -86,25 +88,7 @@
             android:id="@+id/university"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/black"
             android:textStyle="normal|bold" />
-
-        <TextView
-            android:id="@+id/degree"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:textStyle="normal|bold" />
-
-        <!--
-        <TextView
-            android:id="@+id/status"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/dot_student"
-            android:textColor="@color/black"
-            android:textStyle="normal|bold" />
-            -->
 
     </LinearLayout>
 
@@ -138,33 +122,6 @@
             android:textColor="@color/black"
             android:textStyle="normal|bold" />
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/living_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:paddingTop="2dp"
-        android:text="@string/fa_location"
-        app:layout_constraintStart_toEndOf="@+id/avatar"
-        app:layout_constraintTop_toBottomOf="@+id/work_info" />
-
-    <TextView
-        android:id="@+id/living"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="2dp"
-        android:text="living"
-        app:layout_constraintStart_toEndOf="@+id/living_icon"
-        app:layout_constraintTop_toTopOf="@+id/living_icon" />
-
-    <TextView
-        android:id="@+id/hometown"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toEndOf="@+id/living"
-        app:layout_constraintTop_toTopOf="@+id/living_icon" />
 
     <TextView
         android:visibility="gone"
@@ -203,8 +160,7 @@
         android:gravity="center"
         android:padding="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/illustration">
+        app:layout_constraintEnd_toEndOf="parent">
 
         <TextView
             android:id="@+id/eye_icon"
@@ -265,7 +221,8 @@
             android:paddingRight="5dp"
             android:text="@string/fa_comment_o"
             android:textColor="@android:color/holo_blue_dark"
-            android:textSize="20sp" />
+            android:textSize="20sp" 
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/comment_count"
