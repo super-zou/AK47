@@ -384,7 +384,7 @@
                     android:layout_height="30dp"
                     android:layout_marginTop="8dp"
                     android:gravity="center"
-                    android:text="@string/hobby"
+                    android:text="@string/fa_hobby"
                     android:textColor="@color/blue_dark"
                     android:textSize="28sp"
                     android:textStyle="bold"
