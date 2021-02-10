@@ -1,8 +1,10 @@
 package com.mufu.join;
 
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import com.google.android.material.textfield.TextInputLayout;
@@ -13,6 +15,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.view.WindowManager;
+
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.mufu.R;
 import com.mufu.common.BaseAppCompatActivity;
@@ -30,6 +34,10 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static com.mufu.common.MyApplication.getContext;
+import static com.mufu.join.VerificationCodeJoin.CODE_VERIFIED_SUCCESS_BROADCAST;
+import static com.mufu.main.MainActivity.FINISH_LOGIN_SPLASH_ACTIVITY;
+
 
 public class LaunchActivity extends BaseAppCompatActivity {
     private static final String TAG = "LaunchActivity";
@@ -43,17 +51,26 @@ public class LaunchActivity extends BaseAppCompatActivity {
     private String account;
     private String password;
     private String token;
+    private boolean loginException = false;
 
     private Button loginBtn;
     //private TextInputLayout phoneInputLayout;
    // private TextInputLayout passwordInputLayout;
     private TextView retrievePassword;
+        private CodeVerifyBroadcastReceiver mCodeVerifyBroadcastReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN , WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_login);
+        
+        if (getIntent() != null){
+            loginException = getIntent().getBooleanExtra("login_exception", false);
+            if (loginException){
+                setLoginExceptionNotice();
+            }
+        }
         
         final TextView smsVerificationCode = findViewById(R.id.sms_verification_code);
         
@@ -160,8 +177,15 @@ public class LaunchActivity extends BaseAppCompatActivity {
                 }
             }
         });
+        
+        registerLocalBroadcast();
 
     }
+    
+        private void setLoginExceptionNotice(){
+        Toast.makeText(LaunchActivity.this, "账号或密码错误！", Toast.LENGTH_LONG).show();
+    }
+    
     private boolean showAccountInfo() {
         SharedPreferences preferences = getSharedPreferences("account_info", MODE_PRIVATE);
         if (preferences != null) {
@@ -199,28 +223,43 @@ public class LaunchActivity extends BaseAppCompatActivity {
                         check_login_user = Integer.parseInt(check_response.getString("check_login_user"));
                         //userName = check_response.getString("user_name");
 
-                        if (check_login_user == 1) {//account not exist
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    closeProgressDialog();
-                                    phoneInputLayout.setError(context.getResources().getString(R.string.phone_is_not_exist));
-                                }
-                            });
+                        switch (check_login_user){
+                            /*
+                            case -1:
 
-                        }else if(check_login_user == 2){//password error
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    //closeProgressDialog();
-                                    passwordInputLayout.setError(context.getResources().getString(R.string.password_error));
-                                }
-                            });
-                        }else {
-                                //userName = check_response.optString("user_name");
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(context, "账号或密码错误.", Toast.LENGTH_SHORT).show();
+                                        //finish();
+                                    }
+                                });
+
+                                break;
+                                */
+                              case 1:
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        closeProgressDialog();
+                                        phoneInputLayout.setError(context.getResources().getString(R.string.phone_is_not_exist));
+                                    }
+                                });
+                                break;
+                            case 2:
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        //closeProgressDialog();
+                                        passwordInputLayout.setError(context.getResources().getString(R.string.password_error));
+                                    }
+                                });
+                                break;
+                            default:
                                 yunxinToken = check_response.optString("pass");
                                 uid = check_response.optInt("uid");
                                 gotoLogin(context, uid, account, password, yunxinToken);
+                                break;
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -278,6 +317,37 @@ public class LaunchActivity extends BaseAppCompatActivity {
         if (progressDialog != null) {
             progressDialog.dismiss();
         }
+    }
+    
+        private class CodeVerifyBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()) {
+                case CODE_VERIFIED_SUCCESS_BROADCAST:
+                    finish();
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+    
+    private void registerLocalBroadcast() {
+        mCodeVerifyBroadcastReceiver = new CodeVerifyBroadcastReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(CODE_VERIFIED_SUCCESS_BROADCAST);
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mCodeVerifyBroadcastReceiver, intentFilter);
+    }
+
+    //unregister local broadcast
+    private void unRegisterLocalBroadcast() {
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mCodeVerifyBroadcastReceiver);
+    }
+    
+        @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unRegisterLocalBroadcast();
     }
 
 }
