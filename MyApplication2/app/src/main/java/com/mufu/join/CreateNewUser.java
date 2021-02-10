@@ -269,7 +269,7 @@ public class CreateNewUser extends BaseAppCompatActivity {
                     }
 
                 } else {
-                    if (firstPageInitAndCheck) {
+                    if (firstPageInitAndCheck()) {
                         saveUserInfo(false);
                     }
                 }
