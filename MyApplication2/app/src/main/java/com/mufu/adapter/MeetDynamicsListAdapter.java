@@ -103,7 +103,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
             return;
         }
         holder.name.setText(dynamic.getNickName());
-        holder.living.setText(dynamic.getLiving());
+        //holder.living.setText(dynamic.getLiving());
 
         if (dynamic.getAvatar() != null && !"".equals(dynamic.getAvatar())) {
             String picture_url = HttpUtil.DOMAIN + dynamic.getAvatar();
@@ -119,9 +119,13 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
         String profile = "";
         if (dynamic.getSituation() != -1) {
             if (dynamic.getSituation() == 0) {
-                profile = dynamic.getMajor() + "·" + dynamic.getDegreeName(dynamic.getDegree()) + "·" + dynamic.getUniversity();
+                if (!TextUtils.isEmpty(dynamic.getUniversity())){
+                    profile = dynamic.getUniversity();
+                }
             } else {
-                profile = dynamic.getPosition() + "·" + dynamic.getIndustry();
+                if (!TextUtils.isEmpty(dynamic.getPosition())){
+                    profile = dynamic.getPosition();
+                }
             }
             holder.profile.setText(profile);
         }
@@ -425,7 +429,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
     public static class MeetDynamicsViewHolder extends RecyclerView.ViewHolder {
 
         TextView name;
-        TextView living;
+        //TextView living;
         TextView profile;
         RoundImageView avatar;
         ConstraintLayout baseProfile;
@@ -445,7 +449,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
             super(view);
             baseProfile = view.findViewById(R.id.base_profile);
             name = (TextView) view.findViewById(R.id.name);
-            living = (TextView) view.findViewById(R.id.living);
+            //living = (TextView) view.findViewById(R.id.living);
             avatar = view.findViewById(R.id.avatar);
             profile = (TextView) view.findViewById(R.id.profile);
             contentView = (TextView) view.findViewById(R.id.dynamics_content);
