@@ -64,6 +64,7 @@ public class FillMeetInfoActivity extends BaseAppCompatActivity {
     String[] ages;
     SelfCondition selfCondition;
     PartnerRequirement partnerRequirement;
+    boolean DEGREESELECTED = false;
     boolean BIRTHYEARSELECTED = false;
     boolean CONSTELLATIONSELECTED = false;
     boolean HOMETOWNSELECTED = false;
@@ -100,6 +101,9 @@ public class FillMeetInfoActivity extends BaseAppCompatActivity {
     private ArrayList<ArrayList<String>> cityItems = new ArrayList<>();
     private UserProfile userProfile;
     private Thread threadCity;
+        private EditText myUniversityET;
+    private EditText myMajorET;
+    private EditText illustrationET;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -190,6 +194,55 @@ public class FillMeetInfoActivity extends BaseAppCompatActivity {
 
         selfCondition = new SelfCondition();
         partnerRequirement = new PartnerRequirement();
+        
+                RadioGroup mySex = findViewById(R.id.my_sex);
+        RadioButton sexRadioButton;
+        if (mSex != -1) {
+            if (mSex == 0) {
+                sexRadioButton = (RadioButton) mySex.getChildAt(0);
+                selfCondition.setSelfSex(0);
+            } else {
+                sexRadioButton = (RadioButton) mySex.getChildAt(1);
+                selfCondition.setSelfSex(1);
+            }
+
+            sexRadioButton.setChecked(true);
+        }
+        
+                mySex.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (checkedId == R.id.sex_male) {
+                    selfCondition.setSelfSex(0);
+                } else {
+                    selfCondition.setSelfSex(1);
+                }
+            }
+        });
+        
+                NiceSpinner niceSpinnerDegree = findViewById(R.id.nice_spinner_degree);
+        final List<String> degreeList = new LinkedList<>(Arrays.asList(degrees));
+        niceSpinnerDegree.attachDataSource(degreeList);
+        niceSpinnerDegree.addOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                selfCondition.setDegree(String.valueOf(degreeList.get(i)));
+                if (i != 0){
+                    DEGREESELECTED = true;
+                }
+            }
+
+        });
+        
+                myUniversityET = findViewById(R.id.my_university);
+        if (!TextUtils.isEmpty(userProfile.getUniversity())){
+            myUniversityET.setText(userProfile.getUniversity());
+        }
+
+        myMajorET = findViewById(R.id.my_major);
+        if (!TextUtils.isEmpty(userProfile.getMajor())){
+            myMajorET.setText(userProfile.getMajor());
+        }
 
         NiceSpinner niceSpinnerYears = (NiceSpinner) findViewById(R.id.nice_spinner_years);
         final List<String> yearList = new LinkedList<>(Arrays.asList(years));
@@ -359,6 +412,7 @@ public class FillMeetInfoActivity extends BaseAppCompatActivity {
 
     private void setRequirement() {
 
+                illustrationET = findViewById(R.id.illustration);
         RadioGroup require_sex = findViewById(R.id.require_sex);
         RadioButton sexRadioButton;
         if (mSex != -1) {
@@ -491,9 +545,8 @@ public class FillMeetInfoActivity extends BaseAppCompatActivity {
 
     private void saveMeetInfo() {
 
-        EditText editText = findViewById(R.id.illustration);
-        if (!TextUtils.isEmpty(editText.getText().toString())) {
-            partnerRequirement.setIllustration(editText.getText().toString());
+        if (!TextUtils.isEmpty(illustrationET.getText().toString())) {
+            partnerRequirement.setIllustration(illustrationET.getText().toString());
         }
 
         selfConditionJson = getSelfConditionJsonObject().toString();
@@ -528,7 +581,16 @@ public class FillMeetInfoActivity extends BaseAppCompatActivity {
     private JSONObject getSelfConditionJsonObject() {
         JSONObject jsonObject = new JSONObject();
         try {
-            //jsonObject.put("sex", selfCondition.getSelfSex());
+            if (userProfile.getSex() != selfCondition.getSelfSex()){
+                jsonObject.put("sex", selfCondition.getSelfSex());
+            }
+            jsonObject.put("degree", selfCondition.getDegreeIndex(selfCondition.getDegree()));
+            if (!userProfile.getUniversity().equals(selfCondition.getUniversity())){
+                jsonObject.put("university", selfCondition.getUniversity());
+            }
+
+            jsonObject.put("major", myMajorET.getText().toString());
+            
             jsonObject.put("birth_year", selfCondition.getBirthYear());
             jsonObject.put("constellation", selfCondition.getConstellation());
             jsonObject.put("height", selfCondition.getHeight());
@@ -562,6 +624,21 @@ public class FillMeetInfoActivity extends BaseAppCompatActivity {
     }
 
     private boolean checkSelfInfo() {
+        
+        if (DEGREESELECTED == false){
+            Toast.makeText(FillMeetInfoActivity.this, "请选择学历", Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+        if (TextUtils.isEmpty(myUniversityET.getText().toString())){
+            Toast.makeText(FillMeetInfoActivity.this, "请输入您的学校", Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+        if (TextUtils.isEmpty(myMajorET.getText().toString())){
+            Toast.makeText(FillMeetInfoActivity.this, "请输入您的专业", Toast.LENGTH_LONG).show();
+            return false;
+        }
 
         if (BIRTHYEARSELECTED == false) {
             Toast.makeText(FillMeetInfoActivity.this, "请选择出生年份", Toast.LENGTH_LONG).show();
@@ -580,6 +657,11 @@ public class FillMeetInfoActivity extends BaseAppCompatActivity {
 
         if (HEIGHTSELECTED == false) {
             Toast.makeText(FillMeetInfoActivity.this, "请选择身高", Toast.LENGTH_LONG).show();
+            return false;
+        }
+        
+        if (TextUtils.isEmpty(illustrationET.getText().toString())){
+            Toast.makeText(FillMeetInfoActivity.this, "请概要介绍一下自己和交友要求", Toast.LENGTH_LONG).show();
             return false;
         }
 
