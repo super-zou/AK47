@@ -8,6 +8,8 @@
     android:layout_gravity="top"
     android:layout_marginTop="8dp"
     android:background="@color/white"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="8dp"
     app:cardUseCompatPadding="true">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/experience_wrapper"
@@ -58,23 +60,26 @@
             android:textStyle="bold"
             android:lines="2"
             android:ellipsize="end"
-            android:includeFontPadding="false"
-            android:textSize="13sp"
+            android:textSize="15sp"
+              android:textColor="@color/black"
             android:lineSpacingMultiplier="1.5"
-            android:textAppearance="@style/TextSourceHanSansBoldAppearance"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/head_picture" />
             
         <LinearLayout
             android:id="@+id/evaluate_wrapper"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginStart="0dp"
+            android:paddingTop="8dp"
             android:orientation="horizontal"
             app:layout_constraintStart_toStartOf="@+id/guide_title"
             app:layout_constraintTop_toBottomOf="@+id/guide_title">
-
+            <LinearLayout
+                android:id="@+id/evaluate_inner_wrapper"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
             <TextView
                 android:id="@+id/star"
                 android:layout_width="wrap_content"
@@ -100,60 +105,92 @@
                 android:layout_marginLeft="3dp"
                 android:textSize="13sp" />
         </LinearLayout>
-
+            
         <TextView
-            android:id="@+id/cny"
+                android:id="@+id/joined_divider"
+                android:text="|"
+                android:visibility="gone"
+                android:layout_marginStart="3dp"
+                android:layout_marginEnd="3dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="13sp" />
+        <TextView
+                android:id="@+id/joined_amount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="13sp"
+                android:textColor="#999"/>
+        </LinearLayout>
+        
+       <LinearLayout
+            android:id="@+id/price_wrapper"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
-            android:gravity="center"
-            android:text="@string/fa_cny"
-            android:textColor="@color/black"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/evaluate_wrapper">
+
+            <TextView
+                android:id="@+id/cny"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/fa_cny"
+                android:textColor="@color/black"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+            
+            <TextView
+                android:id="@+id/money"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="3dp"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+            
+            <TextView
+                android:id="@+id/unit_divider"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="3dp"
+                android:text="@string/unit_divider"
+                android:gravity="center"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/unit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="3dp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:textSize="13sp" />
+        </LinearLayout>
+        
+                <TextView
+            android:id="@+id/free"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="免费"
+            android:visibility="gone"
             android:textSize="13sp"
             android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/evaluate_wrapper" />
-            
-        <TextView
-            android:id="@+id/money"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="3dp"
-            android:gravity="center"
-            android:textColor="@color/black"
-            android:textStyle="bold"
-            android:textSize="13sp"
-            app:layout_constraintBottom_toBottomOf="@+id/cny"
-            app:layout_constraintStart_toEndOf="@+id/cny"
-            app:layout_constraintTop_toTopOf="@+id/cny" />
-            
-        <TextView
-            android:id="@+id/unit_divider"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="3dp"
-            android:text="@string/unit_divider"
-            android:gravity="center"
-            android:textSize="12sp"
-            app:layout_constraintBottom_toBottomOf="@+id/money"
-            app:layout_constraintStart_toEndOf="@+id/money"
-            app:layout_constraintTop_toTopOf="@+id/money" />
-            
-       <TextView
-            android:id="@+id/unit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="3dp"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:textColor="@color/black"
-            android:textSize="13sp"
-            app:layout_constraintBottom_toBottomOf="@+id/unit_divider"
-            app:layout_constraintStart_toEndOf="@+id/unit_divider"
-            app:layout_constraintTop_toTopOf="@+id/unit_divider" />
             
       <TextView
             android:id="@+id/duration"
@@ -164,8 +201,8 @@
             android:text="duration"
             android:visibility="gone"
            android:textSize="13sp"
-           app:layout_constraintBottom_toBottomOf="@+id/cny"
+           app:layout_constraintBottom_toBottomOf="@+id/price_wrapper"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/cny" />
+            app:layout_constraintTop_toTopOf="@+id/price_wrapper" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>
