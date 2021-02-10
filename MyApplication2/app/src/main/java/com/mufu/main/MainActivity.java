@@ -47,6 +47,7 @@ import java.util.List;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.viewpager.widget.ViewPager;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -88,6 +89,7 @@ public class MainActivity extends BaseAppCompatActivity implements CommonDialogF
     private boolean hasUnreadMessage = false;
     private boolean hasUnreadSessions = false;
     private String[] mTitles = MyApplication.getContext().getResources().getStringArray(R.array.main_tabs);
+        public static final String FINISH_LOGIN_SPLASH_ACTIVITY = "com.mufu.action.FINISH_LOGIN_SPLASH_ACTIVITY";
 
     private int[] mIcons = {R.string.fa_compass, R.string.fa_bolt, R.string.message, R.string.fa_shopping, R.string.me};
 
@@ -112,7 +114,13 @@ public class MainActivity extends BaseAppCompatActivity implements CommonDialogF
         timManager = TIMManager.getInstance();
 
         onPreView();
+        
+        finishLoginSplashActivity();
 
+    }
+    
+    private void finishLoginSplashActivity(){
+        LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(FINISH_LOGIN_SPLASH_ACTIVITY));
     }
 
 
