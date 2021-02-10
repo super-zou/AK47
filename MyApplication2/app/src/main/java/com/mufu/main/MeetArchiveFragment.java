@@ -39,6 +39,8 @@ import android.widget.ViewSwitcher;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.luck.picture.lib.PictureSelector;
+import com.luck.picture.lib.entity.LocalMedia;
 import com.mufu.R;
 import com.mufu.adapter.CheeringGroupAdapter;
 import com.mufu.adapter.MeetImpressionStatisticsAdapter;
@@ -63,6 +65,7 @@ import com.mufu.meet.EvaluatorDetailsActivity;
 import com.mufu.explore.ShareFragment;
 import com.mufu.meet.FillMeetInfoActivity;
 import com.mufu.meet.MeetConditionDialogFragment;
+import com.mufu.picture.GlideEngine;
 import com.mufu.talent.TalentApplyEntryDF;
 import com.mufu.talent.TalentIntroductionEntryDF;
 import com.mufu.meet.MeetReferenceInfo;
@@ -78,6 +81,7 @@ import com.mufu.common.InvitationDialogFragment;
 import com.mufu.util.ParseUtils;
 import com.mufu.util.PersonalityEditDialogFragment;
 import com.mufu.util.ReferenceWriteDialogFragment;
+import com.mufu.util.RoundImageView;
 import com.mufu.util.SharedPreferencesUtils;
 import com.mufu.util.Slog;
 import com.mufu.util.UserProfile;
@@ -122,7 +126,7 @@ import static com.xuexiang.xupdate.utils.DrawableUtils.getDrawable;
 
 public class MeetArchiveFragment extends BaseFragment implements CommonDialogFragmentInterface, ReminderManager.UnreadNumChangedCallback {
     private static final String TAG = "MeetArchiveFragment";
-    private static final boolean isDebug = true;
+    private static final boolean isDebug = false;
     private static final String GET_ACTIVITIES_COUNT_BY_UID = HttpUtil.DOMAIN + "?q=dynamic/get_count_by_uid";
     private static final String COMMENT_URL = HttpUtil.DOMAIN + "?q=dynamic/interact/get";
     private static final String LOAD_REFERENCE_URL = HttpUtil.DOMAIN + "?q=meet/reference/load";
@@ -175,7 +179,7 @@ public class MeetArchiveFragment extends BaseFragment implements CommonDialogFra
     private static final int GET_LOGGEDIN_UID_DONE = 19;
     private static final int JOIN_CHEERING_GROUP_DONE = 20;
     private static final int GET_ACTIVITIES_COUNT_DONE = 21;
-    private static final int GET_MEET_ARCHIVE_DONE = 22;
+    public static final int GET_MEET_ARCHIVE_DONE = 22;
         private static final int LOAD_MY_TALENTS_DONE = 23;
 public static final int LOAD_MY_EXPERIENCES_DONE = 24;
     public static final int LOAD_MY_GUIDE_COUNT_DONE = 25;
@@ -222,6 +226,7 @@ public static final int LOAD_MY_EXPERIENCES_DONE = 24;
     private RelativeLayout ratingBarWrapper;
     private ScaleRatingBar scaleRatingBar;
     private TextView dynamicsCount;
+    private TextView setAvatarBtnTV;
 
     private final static int REQUESTCODE = 1;//for impression approve detail
     public final static int RESULT_OK = 2;
@@ -253,6 +258,7 @@ public static final int LOAD_MY_EXPERIENCES_DONE = 24;
     private int newApplyCount = 0;
     private TextView newApplyCountView;
     private ConstraintLayout serviceWrapper;
+    private String mFirstAvatarUrl;
 
 
     @Nullable
@@ -704,6 +710,7 @@ public static final int LOAD_MY_EXPERIENCES_DONE = 24;
         ConstraintLayout statusBar = mArchiveProfile.findViewById(R.id.statusbar);
         TextView settingNav = mArchiveProfile.findViewById(R.id.setting);
         TextView setAvatarTV = mArchiveProfile.findViewById(R.id.set_avatar);
+        setAvatarBtnTV = mArchiveProfile.findViewById(R.id.set_avatar_btn);
         if (isSelf){
             statusBar.setVisibility(View.VISIBLE);
         }else {
@@ -725,6 +732,14 @@ public static final int LOAD_MY_EXPERIENCES_DONE = 24;
                 startActivity(intent);
             }
         });
+        
+        setAvatarBtnTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), SetAvatarActivity.class);
+                startActivity(intent);
+            }
+        });
 
         mImageSwitcher = mArchiveProfile.findViewById(R.id.image_switcher);
         mImageSwitcher.requestFocus();
@@ -734,17 +749,21 @@ public static final int LOAD_MY_EXPERIENCES_DONE = 24;
                 return makeViewImpl();
             }
         });
+        /*
         mImageSwitcher.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
+                //startPicturePreview(pictureArray);
                 return onTouchImpl(view, motionEvent);
+                //return true;
             }
         });
+        */
 
         navLayout = mArchiveProfile.findViewById(R.id.page_indicator);
         LinearLayout eduInfo = mArchiveProfile.findViewById(R.id.education_info);
         LinearLayout workInfo = mArchiveProfile.findViewById(R.id.work_info);
-        FlowLayout additionalInfo = mArchiveProfile.findViewById(R.id.additional_info);
+        //FlowLayout additionalInfo = mArchiveProfile.findViewById(R.id.additional_info);
         LinearLayout interactWrapper = mArchiveProfile.findViewById(R.id.interaction_wrap);
         LinearLayout myInteractStatistics = mArchiveProfile.findViewById(R.id.my_interact_statistics);
         if (isSelf) {
@@ -759,14 +778,19 @@ public static final int LOAD_MY_EXPERIENCES_DONE = 24;
 
         TextView living = livingWrap.findViewById(R.id.living);
 
-        TextView degree = eduInfo.findViewById(R.id.degree);
-        TextView major = eduInfo.findViewById(R.id.major);
+        TextView degreeTV = eduInfo.findViewById(R.id.degree);
+        TextView majorTV = eduInfo.findViewById(R.id.major);
         TextView university = eduInfo.findViewById(R.id.university);
         TextView position = workInfo.findViewById(R.id.position);
-        TextView industry = workInfo.findViewById(R.id.industry);
-        TextView hometown = additionalInfo.findViewById(R.id.hometown);
-        TextView nation = additionalInfo.findViewById(R.id.nation);
-        TextView religion = additionalInfo.findViewById(R.id.religion);
+        //TextView industry = workInfo.findViewById(R.id.industry);
+        //TextView hometown = additionalInfo.findViewById(R.id.hometown);
+        //TextView nation = additionalInfo.findViewById(R.id.nation);
+        //TextView religion = additionalInfo.findViewById(R.id.religion);
+        TextView profile = mArchiveProfile.findViewById(R.id.profile);
+        if (!TextUtils.isEmpty(mMeetMember.getIntroduction())){
+            profile.setVisibility(View.VISIBLE);
+            profile.setText(mMeetMember.getIntroduction());
+        }
 
         TextView eyeView = mArchiveProfile.findViewById(R.id.visit_record);
 
@@ -780,6 +804,7 @@ public static final int LOAD_MY_EXPERIENCES_DONE = 24;
         if (!"".equals(mMeetMember.getAvatar())) {
             // Glide.with(mContext).load(HttpUtil.DOMAIN + mMeetMember.userProfile.getAvatar()).into(headUri);
             String url = HttpUtil.DOMAIN + mMeetMember.getAvatar();
+            mFirstAvatarUrl = url;
             SimpleTarget<Drawable> simpleTarget = new SimpleTarget<Drawable>() {
                 @Override
                 public void onResourceReady(Drawable resource, Transition<? super Drawable> transition) {
@@ -790,11 +815,22 @@ public static final int LOAD_MY_EXPERIENCES_DONE = 24;
             };
 
             Glide.with(getContext()).load(url).into(simpleTarget);
+                        mImageSwitcher.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    startPicturePreview();
+                }
+            });
+            
         } else {
             if (mMeetMember.getSex() == 0) {
                 mImageSwitcher.setImageDrawable(MyApplication.getContext().getDrawable(R.drawable.male_default_avator));
             } else {
                 mImageSwitcher.setImageDrawable(MyApplication.getContext().getDrawable(R.drawable.female_default_avator));
+            }
+            
+            if (isSelf){
+                setAvatarBtnTV.setVisibility(View.VISIBLE);
             }
         }
 
@@ -804,30 +840,28 @@ public static final int LOAD_MY_EXPERIENCES_DONE = 24;
             sex.setText(R.string.venus);
         }
         //sex.setText(String.valueOf(mMeetMember.userProfile.getSex()));
-        living.setText("现居" + mMeetMember.getLiving());
+        if (!TextUtils.isEmpty(mMeetMember.getLiving())){
+            livingWrap.setVisibility(View.VISIBLE);
+            living.setText("现居" + mMeetMember.getLiving());
+        }
 
-        degree.setText(mMeetMember.getDegreeName(mMeetMember.getDegree()));
+        //degree.setText(mMeetMember.getDegreeName(mMeetMember.getDegree()));
         university.setText(mMeetMember.getUniversity());
-        if (mMeetMember.getSituation() == 0) {
-            major.setVisibility(View.VISIBLE);
-            major.setText(mMeetMember.getMajor());
-        } else {
+        if (mMeetMember.getSituation() > 0) {
             position.setVisibility(View.VISIBLE);
-            industry.setVisibility(View.VISIBLE);
+            //industry.setVisibility(View.VISIBLE);
             position.setText(mMeetMember.getPosition());
-            industry.setText(mMeetMember.getIndustry());
-        }
+            //industry.setText(mMeetMember.getIndustry());
+        } else if (mMeetMember.getSituation() == 0){
+            if (!TextUtils.isEmpty(mMeetMember.getMajor())){
+                majorTV.setVisibility(View.VISIBLE);
+                majorTV.setText(mMeetMember.getMajor());
+            }
 
-        hometown.setText(getResources().getString(R.string.hometown) + ":" + mMeetMember.getHometown());
-        nation.setText(mMeetMember.getNation());
-
-        if (mMeetMember.getCid() > 0){
-            additionalInfo.setVisibility(View.VISIBLE);
-        if (!"无".equals(mMeetMember.getReligion())) {
-            religion.setText(mMeetMember.getReligion());
-        } else {
-            religion.setVisibility(View.GONE);
-        }
+            if (!TextUtils.isEmpty(mMeetMember.getDegreeName(mMeetMember.getDegree()))){
+                degreeTV.setVisibility(View.VISIBLE);
+                degreeTV.setText(mMeetMember.getDegreeName(mMeetMember.getDegree()));
+            }
         }
 
         if (mMeetMember.getVisitCount() > 0) {
@@ -928,6 +962,27 @@ public static final int LOAD_MY_EXPERIENCES_DONE = 24;
                 experienceTalentApplyDF.show(getFragmentManager(), "ExperienceTalentApplyDF");
             }
         });
+    }
+    
+    public void startPicturePreview(){
+        Slog.d(TAG, "-------------------->pictureArray: "+pictureArray);
+        List<LocalMedia> localMediaList = new ArrayList<>();
+        LocalMedia localMedia = new LocalMedia();
+        localMedia.setPath(mFirstAvatarUrl);
+        localMediaList.add(localMedia);
+
+        for (int i=0; i<pictureArray.length(); i++){
+            localMedia = new LocalMedia();
+            localMedia.setPath(HttpUtil.getDomain()+pictureArray.optJSONObject(i).optString("uri")+pictureArray.optJSONObject(i).optString("filename"));
+            localMediaList.add(localMedia);
+        }
+
+        PictureSelector.create(this)
+                .themeStyle(R.style.picture_default_style) // xml设置主题
+                .loadImageEngine(GlideEngine.createGlideEngine())// 外部传入图片加载引擎，必传项
+                .isNotPreviewDownload(true)
+                .openExternalPreview(0, localMediaList);
+
     }
 
     private void checkMyCondition() {
@@ -1912,7 +1967,7 @@ public static final int LOAD_MY_EXPERIENCES_DONE = 24;
                         userMeetInfo.setSituation(member.optInt("situation"));
                         if (member.optInt("situation") == 0) {//student
                             userMeetInfo.setDegree(member.optString("degree"));
-                            userMeetInfo.setMajor(member.optString("major"));
+                            //userMeetInfo.setMajor(member.optString("major"));
                             userMeetInfo.setUniversity(member.optString("university"));
                         } else {
                             userMeetInfo.setPosition(member.optString("position"));
@@ -2024,7 +2079,7 @@ public static final int LOAD_MY_EXPERIENCES_DONE = 24;
                 if (responseText != null && !TextUtils.isEmpty(responseText)) {
                     try {
                         personalityResponseArray = new JSONObject(responseText).optJSONArray("personality_detail");
-                        if (personalityResponseArray.length() > 0) {
+                        if (personalityResponseArray != null && personalityResponseArray.length() > 0) {
                             sortPersonalityWithCount(personalityResponseArray);
                             if (isDebug)
                                 Slog.d(TAG, "====================after sort: " + personalityResponseArray);
@@ -2642,6 +2697,7 @@ if(getActivity() != null){
                                         }
                                         textView.setTextColor(getResources().getColor(R.color.white));
                                         textView.setLayoutParams(layoutParams);
+                                        textView.setTextSize(12);
 
                                         navLayout.addView(textView);
                                     }
@@ -2793,10 +2849,11 @@ if(getActivity() != null){
         int width = dm.widthPixels;
         mWidth = width;
         int screenHeight = width;
-        final ImageView i = new ImageView(getContext());
+        final RoundImageView i = new RoundImageView(getContext());
         //i.setBackgroundColor(0xff000000);
         i.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        i.setLayoutParams(new ImageSwitcher.LayoutParams(width, screenHeight));
+        //i.setLayoutParams(new ImageSwitcher.LayoutParams(width, screenHeight));
+        i.setLayoutParams(new ImageSwitcher.LayoutParams(Utility.dpToPx(getContext(), 180), Utility.dpToPx(getContext(), 180)));
         return i;
     }
 
@@ -2925,6 +2982,7 @@ if(getActivity() != null){
 
                     //update tuikit chat avatar
                     setTuiKitProfile();
+                    setAvatarBtnTV.setVisibility(View.GONE);
                     break;
                 case EVALUATE_MODIFY_ACTION_BROADCAST:
                     float score = intent.getFloatExtra("score", 0);
