@@ -34,7 +34,7 @@
             android:layout_margin="1dp"
             android:background="@drawable/label_btn_shape"
             android:padding="6dp"
-            android:text="height"
+            android:text=""
             android:textColor="@android:color/holo_blue_dark" />
 
         <TextView
