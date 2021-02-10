@@ -18,6 +18,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.mufu.R;
@@ -155,6 +156,11 @@ public class PlaceOrderDF extends BaseDialogFragment {
         maximumTV.setText(String.valueOf(mMaximumAmount));
         remainingTV.setText("余位"+ (mMaximumAmount - mSoldAmount));
 
+        if (price == 0){
+            ConstraintLayout participantsSetting = mDialog.findViewById(R.id.participants_setting);
+            participantsSetting.setVisibility(View.INVISIBLE);
+            submitOrderBtn.setText("参加");
+        }
         submitOrderBtn = mDialog.findViewById(R.id.submit_order);
         submitOrderBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -294,10 +300,20 @@ public class PlaceOrderDF extends BaseDialogFragment {
     public void handleMessage(Message msg) {
         switch (msg.what) {
             case SUBMIT_ORDER_DONE:
-                startOrderPaymentDF();
-                LocalBroadcastManager.getInstance(getContext()).sendBroadcast(new Intent(ORDER_SUBMIT_BROADCAST));
+                if (price != 0){
+                    startOrderPaymentDF();
+                    LocalBroadcastManager.getInstance(getContext()).sendBroadcast(new Intent(ORDER_SUBMIT_BROADCAST));
+                }else {
+                    startOrderDetailsDF();
+                    LocalBroadcastManager.getInstance(getContext()).sendBroadcast(new Intent(ORDER_PAYMENT_SUCCESS_BROADCAST));
+                }
                 break;
         }
+    }
+    
+    public void startOrderDetailsDF(){
+        OrderDetailsDF orderDetailsDF = OrderDetailsDF.newInstance(mOid);
+        orderDetailsDF.show(getFragmentManager(), "OrderDetailsDF");
     }
     
         private class OrderStatusBroadcastReceiver extends BroadcastReceiver {
