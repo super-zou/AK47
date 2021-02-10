@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/white"
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
     <TextView
         android:id="@+id/dismiss"
@@ -33,7 +34,6 @@
     
     <TextView
         android:id="@+id/experience_package"
-        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -42,6 +42,7 @@
         android:text=""
         android:textColor="@color/black"
         android:textSize="16sp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/experience_title" />
@@ -72,41 +73,48 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/appointment_date" />
         
-  <TextView
+    <TextView
         android:id="@+id/price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="2dp"
+        android:textColor="@color/black"
         android:textSize="18sp"
-        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="@+id/cny"
         app:layout_constraintStart_toEndOf="@+id/cny"
-        app:layout_constraintTop_toTopOf="@+id/cny"
-        app:layout_constraintBottom_toBottomOf="@+id/cny"/>
-        
-  <TextView
-        android:id="@+id/participants"
-        android:layout_width="wrap_content"
+        app:layout_constraintTop_toTopOf="@+id/cny" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/participants_setting"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="32dp"
-        android:gravity="center"
-        android:text="参与者人数"
-        android:textColor="@color/black"
-        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cny" />
+        app:layout_constraintTop_toBottomOf="@+id/cny">
         
-  <Button
-        android:id="@+id/minus"
-        android:layout_width="35dp"
-        android:layout_height="38dp"
-        android:gravity="center"
-        android:text="-"
-        android:textColor="@color/blue_dark"
-        android:background="@drawable/btn_default"
-        app:layout_constraintBottom_toBottomOf="@+id/participants"
-        app:layout_constraintEnd_toStartOf="@+id/amount"
-        app:layout_constraintTop_toTopOf="@+id/participants" />
+        <TextView
+            android:id="@+id/participants"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="32dp"
+            android:gravity="center"
+            android:text="参与者人数"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+        
+        <Button
+            android:id="@+id/minus"
+            android:layout_width="35dp"
+            android:layout_height="38dp"
+            android:background="@drawable/btn_default"
+            android:gravity="center"
+            android:text="-"
+            android:textColor="@color/blue_dark"
+            app:layout_constraintBottom_toBottomOf="@+id/participants"
+            app:layout_constraintEnd_toStartOf="@+id/amount"
+            app:layout_constraintTop_toTopOf="@+id/participants" />
 
     <TextView
         android:id="@+id/amount"
@@ -119,51 +127,52 @@
         app:layout_constraintEnd_toStartOf="@+id/plus"
         app:layout_constraintTop_toTopOf="@+id/participants" />
         
-  <Button
-        android:id="@+id/plus"
-        android:layout_width="35dp"
-        android:layout_height="38dp"
-        android:layout_marginEnd="16dp"
-        android:text="+"
-        android:gravity="center"
-        android:textColor="@color/blue_dark"
-        android:background="@drawable/btn_default"
-        app:layout_constraintBottom_toBottomOf="@+id/participants"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/participants" />
+        <Button
+            android:id="@+id/plus"
+            android:layout_width="35dp"
+            android:layout_height="38dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/btn_default"
+            android:gravity="center"
+            android:text="+"
+            android:textColor="@color/blue_dark"
+            app:layout_constraintBottom_toBottomOf="@+id/participants"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/participants" />
    
-  <TextView
-        android:id="@+id/remaining_amount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="3dp"
-        android:textColor="@color/blue_dark"
-        android:text="余位"
-        app:layout_constraintEnd_toStartOf="@+id/divider"
-        app:layout_constraintTop_toBottomOf="@+id/amount" />
+        <TextView
+            android:id="@+id/remaining_amount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="3dp"
+            android:text="余位"
+            android:textColor="@color/blue_dark"
+            app:layout_constraintEnd_toStartOf="@+id/divider"
+            app:layout_constraintTop_toBottomOf="@+id/amount" />
     
-   <TextView
-        android:id="@+id/divider"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="3dp"
-        android:textColor="@color/blue_dark"
-        android:text="/"
-        app:layout_constraintBottom_toBottomOf="@+id/remaining_amount"
-        app:layout_constraintEnd_toStartOf="@+id/maximum_amount"
-        app:layout_constraintTop_toTopOf="@+id/remaining_amount" />
+        <TextView
+            android:id="@+id/divider"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="3dp"
+            android:text="/"
+            android:textColor="@color/blue_dark"
+            app:layout_constraintBottom_toBottomOf="@+id/remaining_amount"
+            app:layout_constraintEnd_toStartOf="@+id/maximum_amount"
+            app:layout_constraintTop_toTopOf="@+id/remaining_amount" />
     
-   <TextView
-        android:id="@+id/maximum_amount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:textColor="@color/blue_dark"
-        android:text="最大数"
-        app:layout_constraintBottom_toBottomOf="@+id/divider"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/divider" />
+        <TextView
+            android:id="@+id/maximum_amount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:text="最大数"
+            android:textColor="@color/blue_dark"
+            app:layout_constraintBottom_toBottomOf="@+id/divider"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/divider" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
         
    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/select_wrapper"
@@ -196,13 +205,13 @@
             app:layout_constraintStart_toEndOf="@+id/total_price_title"
             app:layout_constraintTop_toTopOf="parent" />
             
-       <TextView
+        <TextView
             android:id="@+id/total_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="2dp"
-            android:textSize="18sp"
             android:textColor="@color/black"
+            android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/total_cny"
             app:layout_constraintTop_toTopOf="parent" />
@@ -218,18 +227,18 @@
             app:layout_constraintStart_toEndOf="@+id/total_price"
             app:layout_constraintTop_toTopOf="parent" />
             
-      <Button
+        <Button
             android:id="@+id/submit_order"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="8dp"
-            android:textStyle="bold"
-            android:textSize="18sp"
+            android:background="@drawable/btn_primary"
             android:text="@string/submit_order"
             android:textColor="@color/white"
-            android:background="@drawable/btn_primary"
+            android:textSize="18sp"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
