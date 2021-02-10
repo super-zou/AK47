@@ -13,6 +13,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import com.mufu.R;
+
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import com.mufu.common.BaseAppCompatActivity;
 import com.mufu.util.FontManager;
 import com.mufu.util.HttpUtil;
@@ -37,6 +40,7 @@ public class VerificationCodeJoin extends BaseAppCompatActivity {
     private static final String GET_VERIFICATION_CODE_URL = HttpUtil.DOMAIN + "?q=chat/get_verification_code";
     private static final String ACCOUNT_CHECK_URL = HttpUtil.DOMAIN + "?q=account_manager/check_account_info";
     private static final String REGISTER_URL = HttpUtil.DOMAIN + "?q=register_guide/register";
+    public static final String CODE_VERIFIED_SUCCESS_BROADCAST = "com.mufu.action.CODE_VERIFIED_SUCCESS_BROADCAST";
 
     private EditText mAccount;
     private EditText mVerifyCode;
@@ -94,6 +98,7 @@ public class VerificationCodeJoin extends BaseAppCompatActivity {
                 }else {
                     if(verifyResult()){
                         checkRigister(account);
+                        LocalBroadcastManager.getInstance(VerificationCodeJoin.this).sendBroadcast(new Intent(CODE_VERIFIED_SUCCESS_BROADCAST));
                     }else{
                         mVerifyCodeInputLayout.setError(getResources().getString(R.string.verify_verification_code_failed));
                     }
