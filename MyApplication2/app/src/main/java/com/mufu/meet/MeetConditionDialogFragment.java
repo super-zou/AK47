@@ -7,6 +7,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Gravity;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
@@ -64,6 +65,9 @@ public class MeetConditionDialogFragment extends BaseDialogFragment {
         TextView age = coreInfo.findViewById(R.id.age);
         TextView height = coreInfo.findViewById(R.id.height);
         TextView constellation = coreInfo.findViewById(R.id.constellation);
+                TextView hometown = coreInfo.findViewById(R.id.hometown);
+        TextView nation = coreInfo.findViewById(R.id.nation);
+        TextView religion = coreInfo.findViewById(R.id.religion);
         TextView partnerRequirement = mDialog.findViewById(R.id.partner_requirement);
 
         /*
@@ -79,7 +83,13 @@ public class MeetConditionDialogFragment extends BaseDialogFragment {
         age.setText(mMeetCondition.getAge() + "岁");
         height.setText(mMeetCondition.getHeight() + "cm");
         constellation.setText(mMeetCondition.getConstellation());
-
+        hometown.setText(mMeetCondition.getHometown()+"人");
+        nation.setText(mMeetCondition.getNation());
+        if (!mMeetCondition.getReligion().equals("无")){
+            religion.setText(mMeetCondition.getReligion());
+        }else {
+            religion.setVisibility(View.GONE);
+        }
         partnerRequirement.setText(mMeetCondition.getAgeLower() + "~" + mMeetCondition.getAgeUpper() + "岁,"
                 +String.valueOf(mMeetCondition.getRequirementHeight()) + "cm以上,"
         +mMeetCondition.getDegreeName(mMeetCondition.getRequirementDegree()) + "以上学历,"
