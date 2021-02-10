@@ -97,7 +97,7 @@ public class MeetFragment extends BaseFragment {
     private Handler handler = new MyHandler(this);
     
     private boolean avatarSet = false;
-    private RelativeLayout addMeetInfo;
+    private TextView mAddMeetInfoTV;
     private PictureAddBroadcastReceiver mReceiver;
     private MeetRecommendListAdapter meetRecommendListAdapter;
     private List<ContactsApplyListActivity.Contacts> contactsList = new ArrayList<>();
@@ -370,8 +370,8 @@ public class MeetFragment extends BaseFragment {
                 case ADD_PICTURE_BROADCAST:
                     if (isDebug) Slog.d(TAG, "==========ADD_PICTURE_BROADCAST");
                     meetList.clear();
-                    recyclerView.removeAllHeaderView();
                     recyclerView.reset();
+                    meetRecommendListAdapter.notifyDataSetChanged();
                     getMyCondition();
                     requestData(true);
                     break;
@@ -399,11 +399,9 @@ public class MeetFragment extends BaseFragment {
     }
     
     private void setMeetHeaderView() {
-        lookFriend = LayoutInflater.from(getContext()).inflate(R.layout.look_friend, (ViewGroup) mView.findViewById(android.R.id.content), false);
-        recyclerView.addHeaderView(lookFriend);
-
-        addMeetInfo = lookFriend.findViewById(R.id.meet_info_add);
-        addMeetInfo.setOnClickListener(new View.OnClickListener() {
+        mAddMeetInfoTV = mView.findViewById(R.id.add_make_friends_info);
+        mAddMeetInfoTV.setVisibility(View.VISIBLE);
+        mAddMeetInfoTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent;
@@ -455,7 +453,11 @@ public class MeetFragment extends BaseFragment {
                 meetRecommendListAdapter.notifyDataSetChanged();
                 recyclerView.refreshComplete();
                 break;
-
+            case MY_CONDITION_SET_DONE:
+                if (mAddMeetInfoTV.getVisibility() == View.VISIBLE){
+                    mAddMeetInfoTV.setVisibility(View.GONE);
+                }
+                break;
             case MY_CONDITION_NOT_SET:
                 setMeetHeaderView();
                 if (!TextUtils.isEmpty(userProfile.getAvatar())) {
