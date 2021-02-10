@@ -55,6 +55,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:text=""
+                      android:lineSpacingMultiplier="1.5"
                     android:includeFontPadding="false"
                     android:textAppearance="@style/TextSourceHanSansBoldAppearance"
                     android:textSize="26sp"
