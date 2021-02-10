@@ -2,11 +2,15 @@
 <resources>
      <string-array name="experience_type">
         <item>体验类型</item>
+        <item>语言文化</item>
+        <item>派对沙龙</item>
+        <item>交友联谊</item>
         <item>自然户外</item>
         <item>人文艺术</item>
         <item>NGO·公益</item>
         <item>剧场表演</item>
-        <item>派对</item>
+        <item>学习成长</item>
+        <item>兴趣爱好</item>
     </string-array>
     
     <string-array name="duration">
