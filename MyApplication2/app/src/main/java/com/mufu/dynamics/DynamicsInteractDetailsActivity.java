@@ -648,7 +648,7 @@ private void setDynamicContentView(View view, String pictures){
         name.setText(userMeetInfo.getNickName());
 
         TextView selfcondition = view.findViewById(R.id.self_condition);
-        selfcondition.setText(userMeetInfo.getSelfCondition(userMeetInfo.getSituation()));
+        selfcondition.setText(userMeetInfo.getSelfCondition());
         
         RoundImageView avatar = view.findViewById(R.id.avatar);
         String avatarUrl = userMeetInfo.getAvatar();
