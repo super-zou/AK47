@@ -1,5 +1,6 @@
 package com.mufu.archive;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -20,6 +21,7 @@ import com.bumptech.glide.Glide;
 import com.mufu.R;
 import com.mufu.common.BaseAppCompatActivity;
 import com.mufu.common.SettingsActivity;
+import com.mufu.meet.UserMeetInfo;
 import com.mufu.util.CommonDialogFragmentInterface;
 import com.mufu.util.FontManager;
 import com.mufu.util.HttpUtil;
@@ -29,6 +31,8 @@ import com.mufu.common.SetAvatarActivity;
 import com.mufu.util.SharedPreferencesUtils;
 import com.mufu.util.Slog;
 import com.mufu.util.UserProfile;
+import com.nex3z.flowlayout.FlowLayout;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,6 +45,8 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import static com.mufu.common.MyApplication.getContext;
 import static com.mufu.main.MeetArchiveFragment.GET_LOGGEDIN_ACCOUNT;
+import static com.mufu.main.MeetArchiveFragment.GET_MEET_ARCHIVE_DONE;
+import static com.mufu.util.ParseUtils.startMeetArchiveActivity;
 
 public class ArchiveActivity extends BaseAppCompatActivity implements CommonDialogFragmentInterface {
     private static final String TAG = "ArchiveActivity";
@@ -63,6 +69,9 @@ public class ArchiveActivity extends BaseAppCompatActivity implements CommonDial
     private LinearLayout mPaperListView;
     private LinearLayout mBlogListView = null;
     private LinearLayout mVolunteerListView = null;
+    private FlowLayout mAdditionnalInfoFL;
+    private LinearLayout mEducationBaseInfo;
+    private LinearLayout mWorkBaseInfo;
     RoundImageView headUri;
     int uid = 0;
     long authorUid = 0;
@@ -88,6 +97,7 @@ public class ArchiveActivity extends BaseAppCompatActivity implements CommonDial
     public final static int SET_PAPER_RESULT_OK = 6;
     public final static int SET_BLOG_RESULT_OK = 7;
     public final static int SET_VOLUNTEER_RESULT_OK = 8;
+    private UserMeetInfo mMeetMember;
 
     public static final String GET_USER_PROFILE_URL = HttpUtil.DOMAIN + "?q=account_manager/get_user_profile";
     public static final String SET_USER_PROFILE_URL = HttpUtil.DOMAIN + "?q=account_manager/set_user_profile";
@@ -116,10 +126,13 @@ public class ArchiveActivity extends BaseAppCompatActivity implements CommonDial
         mPaperListView = findViewById(R.id.paper_list);
         mBlogListView = findViewById(R.id.blog_list);
         mVolunteerListView = findViewById(R.id.volunteer_list);
+        mEducationBaseInfo = findViewById(R.id.education_info);
+        mWorkBaseInfo = findViewById(R.id.work_info);
 
         if (getIntent() != null) {
             uid = getIntent().getIntExtra("uid", -1);
             loadArchiveData();
+            getMeetArchive();
         } else {
             getCurrentUid();
         }
@@ -157,10 +170,45 @@ public class ArchiveActivity extends BaseAppCompatActivity implements CommonDial
                             //String responseText = response.body().string();
                             uid = new JSONObject(responseText).optInt("uid");
                             loadArchiveData();
+                            getMeetArchive();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+            }
+        });
+    }
+    
+        public void getMeetArchive() {
+        RequestBody requestBody = new FormBody.Builder().add("uid", String.valueOf(uid)).build();
+        HttpUtil.sendOkHttpRequest(ArchiveActivity.this, ParseUtils.GET_MEET_ARCHIVE_URL, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.body() != null) {
+                    String responseText = response.body().string();
+                    if (isDebug)
+                        Slog.d(TAG, "==========get archive response text : " + responseText);
+                    if (responseText != null) {
+                        if (!TextUtils.isEmpty(responseText)) {
+                            try {
+
+                                JSONObject jsonObject = new JSONObject(responseText).optJSONObject("archive");
+                                if (jsonObject != null) {
+                                    mMeetMember = ParseUtils.setMeetMemberInfo(jsonObject);
+                                    handler.sendEmptyMessage(GET_MEET_ARCHIVE_DONE);
+                                } else {
+                                    startMeetArchiveActivity(getContext(), uid);
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        }
                 }
             }
 
@@ -209,6 +257,31 @@ public class ArchiveActivity extends BaseAppCompatActivity implements CommonDial
             public void onFailure(Call call, IOException e) {
             }
         });
+    }
+    
+    private void setAdditionalView(){
+        TextView degree = findViewById(R.id.degree);
+        TextView major = findViewById(R.id.major);
+        TextView university = findViewById(R.id.university);
+        TextView position = findViewById(R.id.position);
+        TextView industry = findViewById(R.id.industry);
+        
+        if (mMeetMember.getSituation() != -1){
+            if (mMeetMember.getSituation() == 1) {
+                mWorkBaseInfo.setVisibility(View.VISIBLE);
+                mEducationBaseInfo.setVisibility(View.GONE);
+                position.setVisibility(View.VISIBLE);
+                industry.setVisibility(View.VISIBLE);
+                position.setText(mMeetMember.getPosition());
+                industry.setText(mMeetMember.getIndustry());
+            }else {
+                major.setText(mMeetMember.getMajor());
+                degree.setText(mMeetMember.getDegreeName(mMeetMember.getDegree()));
+                university.setText(mMeetMember.getUniversity());
+            }
+        }else {
+            mEducationBaseInfo.setVisibility(View.GONE);
+        }
     }
 
     private void setProfileView() {
@@ -956,6 +1029,9 @@ public class ArchiveActivity extends BaseAppCompatActivity implements CommonDial
                 break;
             case GET_VOLUNTEER_DONE:
                 setVolunteerView();
+                break;
+            case GET_MEET_ARCHIVE_DONE:
+                setAdditionalView();
                 break;
             default:
                 break;
