@@ -125,7 +125,7 @@ public void setData(List<UserMeetInfo> meetList) {
             }
         }
         
-        holder.selfcondition.setText(meet.getSelfCondition(meet.getSituation()));
+        holder.selfcondition.setText(meet.getSelfCondition());
         holder.requirement.setText(meet.getRequirement());
 
         if(meet.getLovedCount() > 0 && !isScrolling){
