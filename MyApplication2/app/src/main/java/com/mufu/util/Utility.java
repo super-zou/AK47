@@ -38,7 +38,45 @@ public class Utility {
     }
     
     public enum ExperienceType {
-        NATURAL_OUTDOOR, HUMANITY_ART, NGO_PUBLIC_GOOD, THEATRE_PERFORMANCE, PARTY
+        LANGUAGE_CULTURE("language_culture", 0), PARTY_SALON("party_salon", 1), FRIENDSHIP("friendship", 2),
+        NATURAL_OUTDOOR("natural_outdoor", 3), HUMANITY_ART("humanity_art", 4), NGO_PUBLIC_GOOD("ngo_public_good", 5),
+        THEATRE_PERFORMANCE("theatre_performance", 6), LEARNING_GROWTH("learning_growth", 7), HOBBY("hobby", 8);
+        
+        private String _name;
+        private int _type;
+
+        ExperienceType(String name, int type) {
+            _name = name;
+            _type = type;
+        }
+
+        public String getName(){ return _name; };
+        public int getType(){ return _type; };
+        
+        public static ExperienceType getExperienceType(int type){
+            switch (type){
+                case 0:
+                    return LANGUAGE_CULTURE;
+                case 1:
+                    return PARTY_SALON;
+                case 2:
+                    return FRIENDSHIP;
+                case 3:
+                    return NATURAL_OUTDOOR;
+                case 4:
+                    return HUMANITY_ART;
+                case 5:
+                    return NGO_PUBLIC_GOOD;
+                case 6:
+                    return THEATRE_PERFORMANCE;
+                case 7:
+                    return LEARNING_GROWTH;
+                case 8:
+                    return HOBBY;
+                default:
+                    return LANGUAGE_CULTURE;
+            }
+        }
     }
 
     public enum ConsultType {
