@@ -98,7 +98,7 @@
         
         <LinearLayout
             android:id="@+id/evaluate_wrapper"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_marginTop="16dp"
@@ -107,11 +107,11 @@
             
             <TextView
                 android:id="@+id/star"
-                android:layout_marginStart="8dp"
-                android:textColor="@color/blue_dark"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/fa_star" />
+                android:layout_marginStart="8dp"
+                android:text="@string/fa_star"
+                android:textColor="@color/blue_dark" />
 
             <TextView
                 android:id="@+id/score"
@@ -129,6 +129,28 @@
                 android:text="(evaluate_count)"
                 android:layout_marginLeft="3dp" />
         </LinearLayout>
+        
+                <TextView
+            android:id="@+id/joined_divider"
+            android:text="|"
+            android:visibility="gone"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="3dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="13sp"
+            app:layout_constraintStart_toEndOf="@+id/evaluate_wrapper"
+            app:layout_constraintTop_toBottomOf="@+id/guide_title"/>
+        
+                <TextView
+            android:id="@+id/joined_amount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="3dp"
+            android:text=""
+            app:layout_constraintStart_toEndOf="@+id/joined_divider"
+            app:layout_constraintTop_toBottomOf="@+id/guide_title"/>
 
         <TextView
             android:id="@+id/cny"
@@ -144,7 +166,7 @@
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/evaluate_wrapper" />
+            app:layout_constraintTop_toBottomOf="@+id/joined_amount" />
         
         <TextView
             android:id="@+id/money"
