@@ -140,20 +140,40 @@ public class ExperienceSummaryAdapter extends RecyclerView.Adapter<ExperienceSum
         holder.cityTV.setText(experience.city);
         if (experience.evaluateCount > 0){
             holder.evaluateLL.setVisibility(View.VISIBLE);
+            holder.joinedDividerTV.setVisibility(View.VISIBLE);
             float average = experience.evaluateScore / experience.evaluateCount;
             float averageScore = (float) (Math.round(average * 10)) / 10;
             holder.scoreTV.setText(String.valueOf(averageScore));
             holder.countTV.setText(experience.evaluateCount+"条评价");
         }else {
             holder.evaluateLL.setVisibility(View.GONE);
+            holder.joinedDividerTV.setVisibility(View.GONE);
         }
         
-        holder.moneyTV.setText(String.valueOf(experience.price));
-        if (!TextUtils.isEmpty(experience.unit)){
-            holder.unitTV.setText(experience.unit);
+        if (experience.joinedAmount == 0){
+            holder.joinedAmountTV.setText("新上线活动");
         }else {
-            holder.unitTV.setText("人起");
+            holder.joinedAmountTV.setText(String.valueOf(experience.joinedAmount)+"人参加过");
         }
+        
+        if (experience.price != 0){
+            holder.moneyTV.setText(String.valueOf(experience.price));
+            holder.cnyTV.setVisibility(View.VISIBLE);
+            holder.dividerTV.setVisibility(View.VISIBLE);
+        }else {
+            holder.moneyTV.setText("免费");
+            holder.cnyTV.setVisibility(View.INVISIBLE);
+            holder.dividerTV.setVisibility(View.GONE);
+        }
+        
+        if (experience.price != 0){
+            if (!TextUtils.isEmpty(experience.unit)){
+                holder.unitTV.setText(experience.unit);
+            }else {
+                holder.unitTV.setText("人起");
+            }
+        }
+        
         holder.durationTV.setVisibility(View.VISIBLE);
         holder.durationTV.setText(String.valueOf(experience.duration)+"小时");
 
@@ -175,6 +195,8 @@ public class ExperienceSummaryAdapter extends RecyclerView.Adapter<ExperienceSum
         TextView cityTV;
         TextView scoreTV;
         TextView countTV;
+        TextView cnyTV;
+        TextView dividerTV;
         TextView moneyTV;
         TextView unitTV;
         TextView durationTV;
@@ -185,6 +207,8 @@ public class ExperienceSummaryAdapter extends RecyclerView.Adapter<ExperienceSum
         LinearLayout verifyLL;
         Button rejectBtn;
         Button passBtn;
+        TextView joinedDividerTV;
+        TextView joinedAmountTV;
         
         public ViewHolder(View view, MyItemClickListener myItemClickListener) {
             super(view);
@@ -194,6 +218,8 @@ public class ExperienceSummaryAdapter extends RecyclerView.Adapter<ExperienceSum
             cityTV = view.findViewById(R.id.city);
             scoreTV = view.findViewById(R.id.score);
             countTV = view.findViewById(R.id.evaluate_count);
+            cnyTV = view.findViewById(R.id.cny);
+            dividerTV = view.findViewById(R.id.unit_divider);
             moneyTV = view.findViewById(R.id.money);
             unitTV = view.findViewById(R.id.unit);
             modifyTV = view.findViewById(R.id.modify);
@@ -203,6 +229,8 @@ public class ExperienceSummaryAdapter extends RecyclerView.Adapter<ExperienceSum
             verifyLL = view.findViewById(R.id.verify_wrapper);
             rejectBtn = view.findViewById(R.id.reject_btn);
             passBtn = view.findViewById(R.id.pass_btn);
+            joinedDividerTV = view.findViewById(R.id.joined_divider);
+            joinedAmountTV = view.findViewById(R.id.joined_amount);
 
             //将全局的监听赋值给接口
             this.mListener = myItemClickListener;
