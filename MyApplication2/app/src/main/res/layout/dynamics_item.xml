@@ -36,7 +36,7 @@
             android:textStyle="normal|bold"
             app:layout_constraintStart_toEndOf="@+id/avatar"
             app:layout_constraintTop_toTopOf="@+id/avatar" />
-
+        <!--
         <TextView
             android:id="@+id/living_icon"
             android:layout_width="wrap_content"
@@ -55,6 +55,7 @@
             android:textSize="12sp"
             app:layout_constraintStart_toEndOf="@+id/living_icon"
             app:layout_constraintTop_toTopOf="@+id/living_icon" />
+        -->
 
         <TextView
             android:id="@+id/profile"
