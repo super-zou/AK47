@@ -1,13 +1,25 @@
 package com.mufu.join;
 
+import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.widget.Toast;
 
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
+
 import com.mufu.common.BaseAppCompatActivity;
+import com.mufu.main.MeetArchiveFragment;
 import com.mufu.main.MainActivity;
 import com.mufu.util.HttpUtil;
 import com.mufu.util.Slog;
@@ -24,6 +36,13 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import com.mufu.R;
 
+import static com.mufu.common.MyApplication.getContext;
+import static com.mufu.common.SetAvatarActivity.AVATAR_SET_ACTION_BROADCAST;
+import static com.mufu.explore.ShareFragment.REQUEST_CODE;
+import static com.mufu.main.MainActivity.FINISH_LOGIN_SPLASH_ACTIVITY;
+import static com.mufu.main.MainActivity.setTuiKitProfile;
+import static com.mufu.meet.EvaluateModifyDialogFragment.EVALUATE_MODIFY_ACTION_BROADCAST;
+import static com.mufu.util.SharedPreferencesUtils.setLoginStatus;
 import static com.mufu.util.SharedPreferencesUtils.setUid;
 
 public class LoginSplash extends BaseAppCompatActivity {
@@ -38,13 +57,17 @@ public class LoginSplash extends BaseAppCompatActivity {
     private String name = "";
     private String password = "";
     private String token;
+    private Context mContext;
 
     private boolean autoLogin = true;
+    private FinishBroadcastReceiver finishBroadcastReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_splash);
+                registerLocalBroadcast();
+        mContext = this;
         
         SharedPreferences preferences = getSharedPreferences("account_info", MODE_PRIVATE);
         if(autoLogin == true && preferences != null){
@@ -53,7 +76,7 @@ public class LoginSplash extends BaseAppCompatActivity {
             password = preferences.getString("password","");
 
             if(!TextUtils.isEmpty(account) && !TextUtils.isEmpty(password)){
-                getLoginStatus(getApplicationContext());
+                getLoginStatus();
             }else {
                 Intent intent = new Intent(LoginSplash.this, LaunchActivity.class);
                 startActivity(intent);
@@ -67,7 +90,7 @@ public class LoginSplash extends BaseAppCompatActivity {
         }
     }
     
-    public void getLoginStatus(final  Context context){
+    public void getLoginStatus(){
         RequestBody requestBody = new FormBody.Builder().build();
 
         HttpUtil.sendOkHttpRequest(this, GET_LOGIN_STATUS, requestBody, new Callback() {
@@ -80,8 +103,9 @@ public class LoginSplash extends BaseAppCompatActivity {
                         boolean isLoggedin = responseObj.optBoolean("status");
                         if(isLoggedin){
                             Slog.d(TAG, "------------>had loggedin, start main activity");
-                            Intent intent = new Intent(context, MainActivity.class);
-                            context.startActivity(intent);
+                            Intent intent = new Intent(mContext, MainActivity.class);
+                            mContext.startActivity(intent);
+                            setLoginStatus(getContext(), true);
                             finish();
                         }else {
                             Slog.d(TAG, "------------>start login");
@@ -101,7 +125,7 @@ public class LoginSplash extends BaseAppCompatActivity {
                     @Override
                     public void run() {
                         Toast.makeText(LoginSplash.this, "网络未连接！", Toast.LENGTH_LONG).show();
-                        getLoginStatus(getApplicationContext());
+                        getLoginStatus();
                     }
                 });
             }
@@ -156,6 +180,12 @@ public class LoginSplash extends BaseAppCompatActivity {
             
             String responseText = response.body().string();
                 Slog.d(TAG, "---------------->login response : " + responseText);
+                if (responseText.equals("[\"Wrong username or password.\"]")){
+                    Intent intent = new Intent(LoginSplash.this, LaunchActivity.class);
+                    intent.putExtra("login_exception", true);
+                    startActivity(intent);
+                    finish();
+                }else {
                 if (!TextUtils.isEmpty(responseText)) {
                     try {
                         JSONObject loginResponse = new JSONObject(responseText);
@@ -181,6 +211,7 @@ public class LoginSplash extends BaseAppCompatActivity {
                     }
                 }
             }
+            }
 
             @Override
             public void onFailure(Call call, IOException e) {
@@ -192,6 +223,37 @@ public class LoginSplash extends BaseAppCompatActivity {
                 });
             }
         });
+    }
+    
+        private class FinishBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()) {
+                case FINISH_LOGIN_SPLASH_ACTIVITY:
+                    finish();
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+    
+    private void registerLocalBroadcast() {
+        finishBroadcastReceiver = new FinishBroadcastReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(FINISH_LOGIN_SPLASH_ACTIVITY);
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(finishBroadcastReceiver, intentFilter);
+    }
+
+    //unregister local broadcast
+    private void unRegisterLocalBroadcast() {
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(finishBroadcastReceiver);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        unRegisterLocalBroadcast();
     }
 }
                         
