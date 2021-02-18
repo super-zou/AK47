@@ -732,6 +732,8 @@ public void setMeetRecommendContent(UserMeetInfo meet, View view){
 
         if(meet.getPraisedCount() > 0){
             thumbsView.setText(String.valueOf(meet.getPraisedCount()));
+        }else {
+            thumbsView.setText("");
         }
         
         if (meet.getVisitCount() > 0){

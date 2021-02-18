@@ -157,8 +157,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:gravity="center"
-        android:padding="8dp"
+        android:gravity="right"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -166,7 +165,6 @@
             android:id="@+id/eye_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="25dp"
             android:paddingRight="5dp"
             android:text="@string/fa_eye"
             android:textColor="@android:color/holo_blue_dark"
@@ -183,7 +181,7 @@
             android:id="@+id/loved_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="25dp"
+            android:paddingLeft="16dp"
             android:paddingRight="5dp"
             android:text="@string/fa_heart_o"
             android:textColor="@android:color/holo_red_dark"
@@ -200,7 +198,7 @@
             android:id="@+id/thumbs_up_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="25dp"
+            android:paddingLeft="16dp"
             android:paddingRight="5dp"
             android:text="@string/fa_thumbs_O_up"
             android:textColor="@android:color/holo_blue_dark"
@@ -217,7 +215,7 @@
             android:id="@+id/comment"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="25dp"
+            android:paddingLeft="16dp"
             android:paddingRight="5dp"
             android:text="@string/fa_comment_o"
             android:textColor="@android:color/holo_blue_dark"
@@ -226,6 +224,7 @@
 
         <TextView
             android:id="@+id/comment_count"
+            android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
