@@ -1286,9 +1286,6 @@ public void setMeetRecommendContent(UserMeetInfo meet, View view){
             case GET_RECOMMEND_MEMBER_DONE:
                 setRecommendContactsView();
                 break;
-            case MY_CONDITION_SET_DONE:
-                getRecommendContacts();
-                break;
                 case COMMENT_COUNT_UPDATE:
                 Bundle bundle = message.getData();
                 int commentCount = bundle.getInt("commentCount");
