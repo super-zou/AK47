@@ -259,6 +259,7 @@ public static final int LOAD_MY_EXPERIENCES_DONE = 24;
     private TextView newApplyCountView;
     private ConstraintLayout serviceWrapper;
     private String mFirstAvatarUrl;
+    private boolean bAvatarSet = false;
 
 
     @Nullable
@@ -821,8 +822,10 @@ public static final int LOAD_MY_EXPERIENCES_DONE = 24;
                     startPicturePreview();
                 }
             });
+            bAvatarSet = true;
             
         } else {
+            bAvatarSet = false;
             if (mMeetMember.getSex() == 0) {
                 mImageSwitcher.setImageDrawable(MyApplication.getContext().getDrawable(R.drawable.male_default_avator));
             } else {
@@ -958,10 +961,61 @@ public static final int LOAD_MY_EXPERIENCES_DONE = 24;
         experiencesWrapper.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ExperienceTalentApplyDF experienceTalentApplyDF = new ExperienceTalentApplyDF();
-                experienceTalentApplyDF.show(getFragmentManager(), "ExperienceTalentApplyDF");
+                if (bAvatarSet) {
+                    ExperienceTalentApplyDF experienceTalentApplyDF = new ExperienceTalentApplyDF();
+                    experienceTalentApplyDF.show(getFragmentManager(), "ExperienceTalentApplyDF");
+                } else {
+                    needSetAvatar();
+                }
             }
         });
+    }
+    
+    private void needSetAvatar() {
+        final AlertDialog.Builder normalDialogBuilder = new AlertDialog.Builder(getActivity());
+        normalDialogBuilder.setTitle(getResources().getString(R.string.avatar_set_request_title));
+        normalDialogBuilder.setMessage(getResources().getString(R.string.avatar_set_request_content));
+        
+        normalDialogBuilder.setPositiveButton("去设置->",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(getContext(), SetAvatarActivity.class);
+                        //startActivityForResult(intent, Activity.RESULT_FIRST_USER);
+                        intent.putExtra("userProfile", myProfile);
+                        intent.putExtra("look_friend", false);
+                        startActivity(intent);
+                    }
+                });
+        
+        normalDialogBuilder.setNegativeButton("关闭",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //...To-do
+                    }
+                });
+        AlertDialog normalDialog = normalDialogBuilder.create();
+        normalDialog.show();
+        
+        try {
+            Field mAlert = AlertDialog.class.getDeclaredField("mAlert");
+            mAlert.setAccessible(true);
+            Object mAlertController = mAlert.get(normalDialog);
+            Field mMessage = mAlertController.getClass().getDeclaredField("mMessageView");
+            mMessage.setAccessible(true);
+            TextView mMessageView = (TextView) mMessage.get(mAlertController);
+            mMessageView.setTextColor(getResources().getColor(R.color.background));
+            mMessageView.setTextSize(16);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+        
+        normalDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.color_disabled));
+        normalDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.color_blue));
+        normalDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextSize(18);
     }
     
     public void startPicturePreview(){
@@ -2954,6 +3008,7 @@ if(getActivity() != null){
             Slog.d(TAG, "------------------------>AvatarAddBroadcastReceiver");
             switch (intent.getAction()) {
                 case AVATAR_SET_ACTION_BROADCAST:
+                    bAvatarSet = true;
                     String avatar = intent.getStringExtra("avatar");
                     String url = HttpUtil.DOMAIN + avatar;
                     SimpleTarget<Drawable> simpleTarget = new SimpleTarget<Drawable>() {
