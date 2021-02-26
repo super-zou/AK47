@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.mufu.R;
 import com.mufu.adapter.MyOrderSummaryAdapter;
+import com.mufu.adapter.OrdersListAdapter;
 import com.mufu.common.MyApplication;
 import com.mufu.experience.ExperienceEvaluateDialogFragment;
 import com.mufu.util.BaseDialogFragment;
@@ -222,6 +223,13 @@ public class MyOrdersFragmentDF extends BaseDialogFragment {
                 OrderPaymentDF orderPaymentDF = OrderPaymentDF.newInstance(order);
                 orderPaymentDF.show(getFragmentManager(), "OrderPaymentDF");
             }
+        }, new OrdersListAdapter.OnIdentityInfoClickListener() {
+            @Override
+            public void onIdentityInfo(View view, int position) {
+                OrdersListDF.OrderManager orderManager = mOrderList.get(position);
+                ParticipantIdentityInformationDF participantIdentityInformationDF = ParticipantIdentityInformationDF.newInstance(orderManager.oid);
+                participantIdentityInformationDF.show(getFragmentManager(), "ParticipantIdentityInformationDF");
+            }
         });
 
         recyclerView.setAdapter(myOrderSummaryAdapter);
@@ -357,6 +365,7 @@ public class MyOrdersFragmentDF extends BaseDialogFragment {
             order.paymentTime = orderObject.optInt("payment_time");
             order.type = orderObject.optInt("type");
             order.orderClass = orderObject.optInt("class");
+            order.identityRequired = orderObject.optInt("identity_required");
         }
 
         return order;
@@ -380,6 +389,7 @@ public class MyOrdersFragmentDF extends BaseDialogFragment {
         public float totalPrice = 0;
         public String appointmentDate;
         public int type;
+        public int identityRequired = 0;
         public int orderClass = Utility.OrderClass.NORMAL.ordinal();
     }
     
