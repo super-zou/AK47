@@ -2,6 +2,7 @@ package com.mufu.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Message;
@@ -22,9 +23,11 @@ import com.mufu.R;
 import com.mufu.common.HandlerTemp;
 import com.mufu.experience.ExperienceDetailActivity;
 import com.mufu.experience.GuideDetailActivity;
+import com.mufu.experience.PackageSettingDF;
 import com.mufu.main.MeetArchiveActivity;
 import com.mufu.order.MyOrdersFragmentDF;
 import com.mufu.order.OrdersListDF;
+import com.mufu.order.ParticipantIdentityInformationDF;
 import com.mufu.util.FontManager;
 import com.mufu.util.HttpUtil;
 import com.mufu.util.RoundImageView;
@@ -38,6 +41,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static com.mufu.common.MyApplication.getContext;
+import static com.mufu.experience.DevelopExperienceDialogFragment.PACKAGE_REQUEST_CODE;
 import static com.mufu.util.DateUtil.timeStampToMinute;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -58,6 +62,7 @@ public class OrdersListAdapter extends RecyclerView.Adapter<OrdersListAdapter.Or
     private boolean isScrolling = false;
     private MyItemClickListener mItemClickListener;
     private RefundConfirmBtnClickListener mRefundConfirmBtnClickListener;
+    private OnIdentityInfoClickListener mOnIdentityInfoClickListener;
     private boolean isRefund = false;
 
     public OrdersListAdapter(Context context, boolean isRefund) {
@@ -182,6 +187,20 @@ public class OrdersListAdapter extends RecyclerView.Adapter<OrdersListAdapter.Or
                 startActivity(order);
             }
         });
+        
+       if (order.identityRequired > 0){
+           holder.participantIdentityTV.setVisibility(View.VISIBLE);
+           holder.participantIdentityTV.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG );
+       }else {
+           holder.participantIdentityTV.setVisibility(View.GONE);
+       }
+
+       holder.participantIdentityTV.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View view) {
+                mOnIdentityInfoClickListener.onIdentityInfo(view, position);
+           }
+       });
     }
     
     private void startActivity(MyOrdersFragmentDF.Order order){
@@ -224,6 +243,7 @@ public class OrdersListAdapter extends RecyclerView.Adapter<OrdersListAdapter.Or
         TextView majorTV;
         ConstraintLayout customerWrapper;
         ConstraintLayout itemLayout;
+       TextView participantIdentityTV;
        //for refund
        ConstraintLayout refundWrapper;
         TextView payNameTV;
@@ -254,6 +274,7 @@ public class OrdersListAdapter extends RecyclerView.Adapter<OrdersListAdapter.Or
             customerWrapper = view.findViewById(R.id.customer_wrapper);
             payNameTV = view.findViewById(R.id.pay_name);
             payAccountTV = view.findViewById(R.id.pay_account);
+            participantIdentityTV = view.findViewById(R.id.participant_identity_information);
             refundAmount = view.findViewById(R.id.refund_amount);
             refundCreated = view.findViewById(R.id.refund_created);
             refundReasonTV = view.findViewById(R.id.refund_reason);
@@ -289,14 +310,19 @@ public class OrdersListAdapter extends RecyclerView.Adapter<OrdersListAdapter.Or
         void onRefundConfirmBtnClick(View view, int position);
     }
     
+    public interface OnIdentityInfoClickListener {
+        void onIdentityInfo(View view, int position);
+    }
+    
     /**
      * 在activity里面adapter就是调用的这个方法,将点击事件监听传递过来,并赋值给全局的监听
      *
      * @param myItemClickListener
      */
-    public void setItemClickListener(OrdersListAdapter.MyItemClickListener myItemClickListener, RefundConfirmBtnClickListener refundConfirmBtnClickListener) {
+    public void setItemClickListener(OrdersListAdapter.MyItemClickListener myItemClickListener, RefundConfirmBtnClickListener refundConfirmBtnClickListener,
+                                     OnIdentityInfoClickListener onIdentityInfoClickListener) {
         this.mItemClickListener = myItemClickListener;
         this.mRefundConfirmBtnClickListener = refundConfirmBtnClickListener;
-    }
-    
+        this.mOnIdentityInfoClickListener = onIdentityInfoClickListener;
+    }  
 }
