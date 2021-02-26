@@ -181,11 +181,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
             android:textAppearance="@style/TextSourceHanSansAppearance"
             android:textColor="@color/black"
             android:textSize="12sp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@+id/name"
             app:layout_constraintTop_toBottomOf="@+id/phone_number" />
                     <TextView
@@ -199,6 +197,20 @@
             app:layout_constraintBottom_toBottomOf="@+id/university"
             app:layout_constraintStart_toEndOf="@+id/university"
             app:layout_constraintTop_toTopOf="@+id/university" />
+                <TextView
+            android:id="@+id/participant_identity_information"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:textColor="@color/blue_dark"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:text="@string/participant_identity_information"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/university" />
     </androidx.constraintlayout.widget.ConstraintLayout>
         <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/refund_wrapper"
