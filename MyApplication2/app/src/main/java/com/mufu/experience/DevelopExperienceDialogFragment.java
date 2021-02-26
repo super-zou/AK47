@@ -131,18 +131,12 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
     private static final String MODIFY_APPOINTMENT_DATE_URL = HttpUtil.DOMAIN + "?q=experience/modify_experience_appointment_date";
     private static final String SUBMIT_SELF_INTRODUCTION_URL = HttpUtil.DOMAIN + "?q=experience/write_self_introduction_info";
     private static final String MODIFY_SELF_INTRODUCTION_URL = HttpUtil.DOMAIN + "?q=experience/modify_self_introduction_info";
-        public final static int PACKAGE_REQUEST_CODE = 1;
-        public final static int BLOCK_BOOKING_REQUEST_CODE = 2;
-        public final static int TALENT_REQUEST_CODE = 3;
-    private static final int WRITE_BASE_INFO_SUCCESS = 1;
-    public static final int SAVE_PICTURES_SUCCESS = 2;
-    public static final int SAVE_ITEMS_SUCCESS = 3;
-    private static final int WRITE_CHARGE_SUCCESS = 4;
-    private static final int WRITE_TIME_SUCCESS = 5;
-        private static final int WRITE_ADDRESS_SUCCESS = 6;
-    private static final int WRITE_APPOINT_DATE_SUCCESS = 7;
-    private static final int WRITE_SELF_INTRODUCTION_SUCCESS = 8;
-        public static final int GET_TALENT_DONE = 9;
+    private static final String SUBMIT_IDENTITY_REQUIREMENT_URL = HttpUtil.DOMAIN + "?q=experience/write_identity_requirement";
+    public final static int PACKAGE_REQUEST_CODE = 1;
+    public final static int BLOCK_BOOKING_REQUEST_CODE = 2;
+    private static final int SAVED_SUCCESS = 1;
+    private static final int WRITE_ADDRESS_SUCCESS = 2;
+    public static final int GET_TALENT_DONE = 3;
     public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     MaterialCalendarView widget;
@@ -164,6 +158,7 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
     private boolean isPictureEdited = false;
     private boolean isItemsSaved = false;
     private boolean isPriceSaved = false;
+    private boolean isIDRequirementSaved = false;
     private boolean isTimeSaved = false;
     private boolean isGroupCountSaved = false;
     private boolean isAddressSaved = false;
@@ -205,7 +200,7 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
     private String consultationUnit;
     private String escortUnit = "天";
     private int mExperienceType = 0;
-    
+    private RadioGroup mIDRequirementRG;
      private String limitations;
     private RadioGroup sexSelect;
     private boolean isModified = false;
@@ -216,6 +211,7 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
     private boolean isCityPicked = false;
     private Thread threadIndustry = null;
     private boolean isLocated = false;
+    private boolean bIDRequirement = false;
     private Typeface font;
     
     private ArrayList<CommonBean> provinceItems = new ArrayList<>();
@@ -302,6 +298,7 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
                 mPackageSettingBtn = mDialog.findViewById(R.id.package_setting_btn);
                 mBlockBookingBtn = mDialog.findViewById(R.id.block_booking_setting_btn);
         durationET = mDialog.findViewById(R.id.duration_edit);
+        mIDRequirementRG = mDialog.findViewById(R.id.ID_RG);
         groupCountET = mDialog.findViewById(R.id.group_count_limit_edit);
         limitationET = mDialog.findViewById(R.id.condition_edit);
         addressET = mDialog.findViewById(R.id.address_edit);
@@ -332,6 +329,7 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
         initCalendarView();
         navigationProcess();
         getMyTalentsAmount();
+                processIDRequirement();
     }
     
     private void selectType(){
@@ -417,6 +415,19 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
             talentSize = mTalentList.size();
         }
         return talentSize;
+    }
+    
+        private void processIDRequirement() {
+        mIDRequirementRG.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (checkedId == R.id.no_need) {
+                    bIDRequirement = false;
+                } else {
+                    bIDRequirement = true;
+                }
+            }
+        });
     }
     
     private void startPackageSettingDF(){
@@ -552,6 +563,13 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
                                 processNextBtn();
                             }
                             break;
+                        case 13:
+                            if (!isIDRequirementSaved && bIDRequirement) {
+                                submitIDRequirement();
+                            } else {
+                                processNextBtn();
+                            }
+                            break;
                         default:
                             processNextBtn();
                             break;
@@ -620,7 +638,7 @@ public class DevelopExperienceDialogFragment extends BaseDialogFragment implemen
                             if (isPictureEdited){
                                 isPictureEdited = false;
                             }
-                            myHandler.sendEmptyMessage(SAVE_PICTURES_SUCCESS);
+                            myHandler.sendEmptyMessage(SAVED_SUCCESS);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -848,7 +866,7 @@ private void initCityJsondata(String jsonFile) {
                            mEid = new JSONObject(responseText).optInt("eid");
                         }
                         dismissProgressDialog();
-                        myHandler.sendEmptyMessage(WRITE_BASE_INFO_SUCCESS);
+                        myHandler.sendEmptyMessage(SAVED_SUCCESS);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -892,7 +910,7 @@ private void initCityJsondata(String jsonFile) {
                         if (result == 1){
                             isItemsSaved = true;
                             dismissProgressDialog();
-                            myHandler.sendEmptyMessage(SAVE_ITEMS_SUCCESS);
+                            myHandler.sendEmptyMessage(SAVED_SUCCESS);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -939,7 +957,7 @@ private void initCityJsondata(String jsonFile) {
                         if (result == 1) {
                             dismissProgressDialog();
                             isPriceSaved = true;
-                            myHandler.sendEmptyMessage(WRITE_CHARGE_SUCCESS);
+                            myHandler.sendEmptyMessage(SAVED_SUCCESS);
                         }
                         
                         } catch (JSONException e) {
@@ -978,7 +996,7 @@ private void initCityJsondata(String jsonFile) {
                         if (result == 1) {
                             isTimeSaved = true;
                             dismissProgressDialog();
-                            myHandler.sendEmptyMessage(WRITE_TIME_SUCCESS);
+                            myHandler.sendEmptyMessage(SAVED_SUCCESS);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -1015,7 +1033,7 @@ private void initCityJsondata(String jsonFile) {
                         if (result == 1) {
                             isGroupCountSaved = true;
                             dismissProgressDialog();
-                            myHandler.sendEmptyMessage(WRITE_TIME_SUCCESS);
+                            myHandler.sendEmptyMessage(SAVED_SUCCESS);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -1105,7 +1123,7 @@ private void initCityJsondata(String jsonFile) {
                         int result = new JSONObject(responseText).optInt("result");
                         if (result == 1) {
                             dismissProgressDialog();
-                            myHandler.sendEmptyMessage(WRITE_APPOINT_DATE_SUCCESS);
+                            myHandler.sendEmptyMessage(SAVED_SUCCESS);
                         }
                         } catch (JSONException e) {
                         e.printStackTrace();
@@ -1147,7 +1165,7 @@ private void initCityJsondata(String jsonFile) {
                         if (result == 1) {
                             isSelfIntroductionSaved = true;
                             dismissProgressDialog();
-                            myHandler.sendEmptyMessage(WRITE_SELF_INTRODUCTION_SUCCESS);
+                            myHandler.sendEmptyMessage(SAVED_SUCCESS);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -1155,6 +1173,45 @@ private void initCityJsondata(String jsonFile) {
                 }
             }
 
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+        });
+    }
+    
+    private void submitIDRequirement() {
+        showProgressDialog(getContext().getString(R.string.saving_progress));
+
+        FormBody.Builder builder = new FormBody.Builder()
+                .add("eid", String.valueOf(mEid));
+
+        if (bIDRequirement) {
+            builder.add("identity_requirement", String.valueOf(bIDRequirement));
+        }
+
+        String uri = SUBMIT_IDENTITY_REQUIREMENT_URL;
+
+        RequestBody requestBody = builder.build();
+        HttpUtil.sendOkHttpRequest(mContext, uri, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String responseText = response.body().string();
+                Slog.d(TAG, "submitIDRequirement response : " + responseText);
+                if (!TextUtils.isEmpty(responseText)) {
+                    try {
+                        int result = new JSONObject(responseText).optInt("result");
+                        if (result == 1) {
+                            isIDRequirementSaved = true;
+                            dismissProgressDialog();
+                            myHandler.sendEmptyMessage(SAVED_SUCCESS);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            
             @Override
             public void onFailure(Call call, IOException e) {
 
@@ -1260,7 +1317,7 @@ private boolean validCheck(int index) {
                     }
                 }
                 break;
-            case 13:
+            case 14:
                 if (understandCancellation.isChecked()) {
                     valid = true;
                 } else {
@@ -1358,30 +1415,12 @@ private boolean validCheck(int index) {
 
     public void handleMessage(Message msg) {
         switch (msg.what) {
-            case WRITE_BASE_INFO_SUCCESS:
-                processNextBtn();
-                break;
-            case SAVE_PICTURES_SUCCESS:
-                processNextBtn();
-                break;
-            case SAVE_ITEMS_SUCCESS:
-                processNextBtn();
-                break;
-            case WRITE_CHARGE_SUCCESS:
-                processNextBtn();
-                break;
-            case WRITE_TIME_SUCCESS:
-                processNextBtn();
-                break;
-            case WRITE_APPOINT_DATE_SUCCESS:
+            case SAVED_SUCCESS:
                 processNextBtn();
                 break;
             case WRITE_ADDRESS_SUCCESS:
                 InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(mDialog.getCurrentFocus().getWindowToken(), 0);
-                processNextBtn();
-                break;
-            case WRITE_SELF_INTRODUCTION_SUCCESS:
                 processNextBtn();
                 break;
            case UPDATEPROGRESS:
