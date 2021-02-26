@@ -206,6 +206,13 @@ public class OrdersListDF extends BaseDialogFragment {
             public void onRefundConfirmBtnClick(View view, int position) {
                 updateRefundStatus(position);
             }
+        }, new OrdersListAdapter.OnIdentityInfoClickListener() {
+            @Override
+            public void onIdentityInfo(View view, int position) {
+                OrderManager orderManager = mOrderManagerList.get(position);
+                ParticipantIdentityInformationDF participantIdentityInformationDF = ParticipantIdentityInformationDF.newInstance(orderManager.oid);
+                participantIdentityInformationDF.show(getFragmentManager(), "ParticipantIdentityInformationDF");
+            }
         });
         
         recyclerView.setAdapter(ordersListAdapter);
@@ -409,6 +416,7 @@ private void requestData() {
             orderManager.appointMentDate = timeStampToDay(orderObject.optInt("date"));
             orderManager.university = orderObject.optString("university");
             orderManager.major = orderObject.optString("major");
+            orderManager.identityRequired = orderObject.optInt("identity_required");
             if (mType == Utility.OrderType.REFUNDED.ordinal()){
                 orderManager.payName = orderObject.optString("pay_name");
                 orderManager.payAccount = orderObject.optString("pay_account");
