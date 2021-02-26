@@ -92,6 +92,7 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
     private Button selectBtn;
         private Button mBlockBookingBtn;
         private String mPackageName;
+    private int mIdentityRequirement = 0;
     private boolean isPackageSelected = false;
     private boolean hasPackages = false;
     private TextView mPackageNameTV;
@@ -123,7 +124,7 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
         return checkAppointDate;
     }
 
-    public static CheckAppointDate newInstance(int eid, int price, String title, int maximum) {
+    public static CheckAppointDate newInstance(int eid, int price, String title, int maximum, int identityRequirement) {
         mType = Utility.TalentType.EXPERIENCE.ordinal();
         CheckAppointDate checkAppointDate = new CheckAppointDate();
         Bundle bundle = new Bundle();
@@ -131,6 +132,7 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
         bundle.putInt("price", price);
         bundle.putString("title", title);
         bundle.putInt("maximum", maximum);
+        bundle.putInt("identityRequirement", identityRequirement);
         checkAppointDate.setArguments(bundle);
 
         return checkAppointDate;
@@ -155,6 +157,7 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
             }
             
             mMaximum = bundle.getInt("maximum");
+            mIdentityRequirement = bundle.getInt("identityRequirement", 0);
         }
 
         mDialog.setCanceledOnTouchOutside(true);
@@ -240,9 +243,9 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
         if (hasPackages){
             if (isPackageSelected){
                 if (mType == Utility.TalentType.EXPERIENCE.ordinal()) {
-                    placeOrderDF = PlaceOrderDF.newInstance(title, mPackageName, price, did, dataStr, eid, mSoldCount, mMaximum, mType);
+                    placeOrderDF = PlaceOrderDF.newInstance(title, mPackageName, price, did, dataStr, eid, mSoldCount, mMaximum, mType, mIdentityRequirement);
                 } else {
-                    placeOrderDF = PlaceOrderDF.newInstance(title, mPackageName, price, did, dataStr, sid, mSoldCount, mMaximum, mType);
+                    placeOrderDF = PlaceOrderDF.newInstance(title, mPackageName, price, did, dataStr, sid, mSoldCount, mMaximum, mType, mIdentityRequirement);
                 }
             }else {
                 Toast.makeText(getContext(), "请选择套餐", Toast.LENGTH_LONG).show();
@@ -250,9 +253,9 @@ public class CheckAppointDate extends BaseDialogFragment implements OnDateSelect
             }
         }else {
              if (mType == Utility.TalentType.EXPERIENCE.ordinal()) {
-                placeOrderDF = PlaceOrderDF.newInstance(title, "", price, did, dataStr, eid, mSoldCount, mMaximum, mType);
+                placeOrderDF = PlaceOrderDF.newInstance(title, "", price, did, dataStr, eid, mSoldCount, mMaximum, mType, mIdentityRequirement);
             } else {
-                placeOrderDF = PlaceOrderDF.newInstance(title, "", price, did, dataStr, sid, mSoldCount, mMaximum, mType);
+                placeOrderDF = PlaceOrderDF.newInstance(title, "", price, did, dataStr, sid, mSoldCount, mMaximum, mType, mIdentityRequirement);
             }
         }
         placeOrderDF.show(getFragmentManager(), "PlaceOrderDF");
