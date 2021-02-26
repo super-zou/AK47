@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.mufu.R;
 import com.mufu.adapter.MyOrderSummaryAdapter;
+import com.mufu.adapter.OrdersListAdapter;
 import com.mufu.common.BaseAppCompatActivity;
 import com.mufu.common.MyApplication;
 import com.mufu.experience.ExperienceEvaluateDialogFragment;
@@ -145,6 +146,13 @@ public class OrderSummaryActivity extends BaseAppCompatActivity {
                 MyOrdersFragmentDF.Order order = mOrderList.get(position);
                 OrderPaymentDF orderPaymentDF = OrderPaymentDF.newInstance(order);
                 orderPaymentDF.show(getSupportFragmentManager(), "OrderPaymentDF");
+            }
+        }, new OrdersListAdapter.OnIdentityInfoClickListener() {
+            @Override
+            public void onIdentityInfo(View view, int position) {
+                MyOrdersFragmentDF.Order order = mOrderList.get(position);
+                ParticipantIdentityInformationDF participantIdentityInformationDF = ParticipantIdentityInformationDF.newInstance(order.oid);
+                participantIdentityInformationDF.show(getSupportFragmentManager(), "ParticipantIdentityInformationDF");
             }
         });
 
