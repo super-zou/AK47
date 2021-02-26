@@ -2,6 +2,7 @@ package com.mufu.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -44,6 +45,7 @@ public class MyOrderSummaryAdapter extends RecyclerView.Adapter<MyOrderSummaryAd
     private MyItemClickListener mItemClickListener;
     private EvaluateClickListener mEvaluateClickListener;
     private PayClickListener mPayClickListener;
+    private OrdersListAdapter.OnIdentityInfoClickListener mOnIdentityInfoClickListener;
     private static final int UNPAID = 0;
     private static final int PAID = 1;
     private static final int EVALUATION = 3;
@@ -93,6 +95,13 @@ public class MyOrderSummaryAdapter extends RecyclerView.Adapter<MyOrderSummaryAd
                 if (mPayClickListener != null){
                     mPayClickListener.onPayClick(view, position);
                 }
+            }
+        });
+        
+        holder.participantIdentityTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mOnIdentityInfoClickListener.onIdentityInfo(view, position);
             }
         });
     }
@@ -185,7 +194,13 @@ public class MyOrderSummaryAdapter extends RecyclerView.Adapter<MyOrderSummaryAd
                 holder.headUri.callOnClick();
             }
         });
-          
+        
+        if (order.identityRequired > 0){
+            holder.participantIdentityTV.setVisibility(View.VISIBLE);
+            holder.participantIdentityTV.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG );
+        }else {
+            holder.participantIdentityTV.setVisibility(View.GONE);
+        }    
     }
     
    private void startActivity(MyOrdersFragmentDF.Order order){
@@ -224,6 +239,7 @@ public class MyOrderSummaryAdapter extends RecyclerView.Adapter<MyOrderSummaryAd
         TextView unitDividerTV;
         TextView unitTV;
         TextView amountTV;
+        TextView participantIdentityTV;
         Button payBtn;
         Button evaluateBtn;
         CardView itemLayout;
@@ -247,6 +263,7 @@ public class MyOrderSummaryAdapter extends RecyclerView.Adapter<MyOrderSummaryAd
             moneyTV = view.findViewById(R.id.money);
             unitDividerTV = view.findViewById(R.id.unit_divider);
             amountTV = view.findViewById(R.id.amount);
+            participantIdentityTV = view.findViewById(R.id.participant_identity_information);
             unitTV = view.findViewById(R.id.unit);
             payBtn = view.findViewById(R.id.pay);
             evaluateBtn = view.findViewById(R.id.evaluate);
@@ -290,16 +307,21 @@ public class MyOrderSummaryAdapter extends RecyclerView.Adapter<MyOrderSummaryAd
     public interface PayClickListener{
         void onPayClick(View view, int position);
     }
+    
+    public interface OnIdentityInfoClickListener {
+        void onIdentityInfo(View view, int position);
+    }
 
     /**
      * 在activity里面adapter就是调用的这个方法,将点击事件监听传递过来,并赋值给全局的监听
      *
      * @param myItemClickListener
      */
-    public void setItemClickListener(MyOrderSummaryAdapter.MyItemClickListener myItemClickListener, EvaluateClickListener evaluateClickListener, PayClickListener payClickListener) {
+    public void setItemClickListener(MyOrderSummaryAdapter.MyItemClickListener myItemClickListener, EvaluateClickListener evaluateClickListener, PayClickListener payClickListener,
+                                     OrdersListAdapter.OnIdentityInfoClickListener onIdentityInfoClickListener) {
         this.mItemClickListener = myItemClickListener;
         this.mEvaluateClickListener = evaluateClickListener;
         this.mPayClickListener = payClickListener;
-    }
-    
+        this.mOnIdentityInfoClickListener = onIdentityInfoClickListener;
+    }  
 }
