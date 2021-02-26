@@ -654,6 +654,57 @@
                         android:layout_height="wrap_content" />
                 </LinearLayout>
             </LinearLayout>
+                        <!--Identity information-->
+            <LinearLayout
+                android:id="@+id/identity_information_wrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/identity_information_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/identity_information_title"
+                    android:textColor="@color/black"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+                 <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textSize="16sp"
+                    android:text="@string/identity_information_desc"
+                    android:includeFontPadding="false"
+                    android:textAppearance="@style/TextSourceHanSansAppearance"
+                    android:textColor="@color/black" />
+
+                <RadioGroup
+                    android:id="@+id/ID_RG"
+                    android:layout_marginTop="32dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <RadioButton
+                        android:id="@+id/no_need"
+                        android:checked="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black"
+                        android:text="@string/no_need"
+                        android:theme="@style/MyRadioButton"/>
+                    <RadioButton
+                        android:id="@+id/essential"
+                        android:layout_marginLeft="28dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black"
+                        android:text="@string/ensential"
+                        android:theme="@style/MyRadioButton"/>
+                </RadioGroup>
+
+            </LinearLayout>      
             
              <!--Cancellation policy-->
             <LinearLayout
