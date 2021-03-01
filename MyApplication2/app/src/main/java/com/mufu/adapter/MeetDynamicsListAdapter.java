@@ -152,7 +152,7 @@ public class MeetDynamicsListAdapter extends RecyclerView.Adapter<MeetDynamicsLi
         if (dynamic.getType() == ADD_SUBGROUP_ACTIVITY_ACTION || dynamic.getType() == WRITE_SHARE_EXPERIENCE) {
             holder.from.setVisibility(View.VISIBLE);
             if (!TextUtils.isEmpty(dynamic.getAction())){
-                holder.from.setText("#"+dynamic.getAction()+"#");
+                holder.from.setText("#"+dynamic.getAction());
             }
             holder.from.setOnClickListener(new View.OnClickListener() {
                 @Override
