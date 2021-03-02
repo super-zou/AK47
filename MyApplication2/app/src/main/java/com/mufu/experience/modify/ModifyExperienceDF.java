@@ -19,9 +19,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -62,16 +64,18 @@ import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 
+import org.angmarch.views.NiceSpinner;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.threeten.bp.LocalDate;
-import org.threeten.bp.format.DateTimeFormatter;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -120,6 +124,7 @@ public class ModifyExperienceDF extends BaseDialogFragment implements OnDateSele
     private static final String MODIFY_APPOINTMENT_DATE_URL = HttpUtil.DOMAIN + "?q=experience/modify_experience_available_date";
     private static final String GET_SELF_INTRODUCTION_URL = HttpUtil.DOMAIN + "?q=experience/get_self_introduction_info";
     private static final String MODIFY_SELF_INTRODUCTION_URL = HttpUtil.DOMAIN + "?q=experience/modify_self_introduction_info";
+    private static final String MODIFY_IDENTITY_REQUIREMENT_URL = HttpUtil.DOMAIN + "?q=experience/modify_identity_requirement";
     private static final int WRITE_DONE_SUCCESS = 18;
     private boolean isBaseInfoModify = false;
     private boolean isPriceModify = false;
@@ -186,6 +191,10 @@ public class ModifyExperienceDF extends BaseDialogFragment implements OnDateSele
     private JSONObject chargeObject;
     private int duration;
     private int groupNumberLimit;
+    private int mExperienceType = 0;
+    private RadioGroup mIDRequirementRG;
+    private int mIDRequirementStatus = 0;
+    private boolean bIDRequirementModified = false;
     
     @Override
     public void onAttach(Context context) {
@@ -251,6 +260,7 @@ public class ModifyExperienceDF extends BaseDialogFragment implements OnDateSele
         widget = mDialog.findViewById(R.id.calendarView);
         widget.setOnDateChangedListener(this);
         mPackageSettingBtn = mDialog.findViewById(R.id.package_setting_btn);
+        mIDRequirementRG = mDialog.findViewById(R.id.ID_RG);
         
         prevBtn = mDialog.findViewById(R.id.prevBtn);
         nextBtn = mDialog.findViewById(R.id.nextBtn);
@@ -282,6 +292,74 @@ public class ModifyExperienceDF extends BaseDialogFragment implements OnDateSele
         getSelfIntroduction();
         getActivityPackageAmount();
     }
+    
+    private void processIDRequirement() {
+        int originalStatus = experienceObject.optInt("identity_requirement");
+        Slog.d(TAG, "-------------------->processIDRequirement originalStatus: "+originalStatus);
+        if (originalStatus == 1){
+            mIDRequirementRG.check(R.id.essential);
+        }
+        
+        mIDRequirementRG.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (checkedId == R.id.no_need) {
+                    mIDRequirementStatus = 0;
+                    if (originalStatus == 1){
+                        bIDRequirementModified = true;
+                    }else {
+                        bIDRequirementModified = false;
+                    }
+                } else {
+                    mIDRequirementStatus = 1;
+                    if (originalStatus == 0){
+                        bIDRequirementModified = true;
+                    }else {
+                        bIDRequirementModified = false;
+                    }
+                }
+            }
+        });
+    }
+    
+    private void submitIDRequirementModified() {
+
+        showProgressDialog(getContext().getString(R.string.saving_progress));
+        Slog.d(TAG, "------------------>submitIDRequirementModified identity_requirement: "+String.valueOf(mIDRequirementStatus));
+        FormBody.Builder builder = new FormBody.Builder()
+                .add("eid", String.valueOf(mEid))
+                .add("identity_requirement", String.valueOf(mIDRequirementStatus));
+
+
+        String uri = MODIFY_IDENTITY_REQUIREMENT_URL;
+
+        RequestBody requestBody = builder.build();
+        
+        HttpUtil.sendOkHttpRequest(mContext, uri, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String responseText = response.body().string();
+                Slog.d(TAG, "submitIDRequirementModified response : " + responseText);
+                if (!TextUtils.isEmpty(responseText)) {
+                    try {
+                        int result = new JSONObject(responseText).optInt("result");
+                        if (result == 1) {
+                            dismissProgressDialog();
+                            myHandler.sendEmptyMessage(WRITE_DONE_SUCCESS);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+        });
+    }
+            
     
     private void startPackageSettingDF(){
         boolean isPackageSaved = hasPackage ? true:false;
@@ -358,6 +436,7 @@ public class ModifyExperienceDF extends BaseDialogFragment implements OnDateSele
     }
 
     private void setBaseInfo(){
+        selectType(experienceObject.optInt("type"));
         selectCityBtn.setText(experienceObject.optString("city"));
         headLineET.setText(experienceObject.optString("title"));
         headLineET.addTextChangedListener(new TextWatcher() {
@@ -403,6 +482,29 @@ public class ModifyExperienceDF extends BaseDialogFragment implements OnDateSele
             public void afterTextChanged(Editable editable) {
                 if (editable.length() > 0){
                     isAddressModify = true;
+                }
+            }
+        });
+        
+        processIDRequirement();
+    }
+    
+    private void selectType(int typeIndex){
+        mExperienceType = typeIndex;
+        String[] experienceTypes = getResources().getStringArray(R.array.experience_type);
+        final List<String> entranceYearList = new LinkedList<>(Arrays.asList(experienceTypes));
+        NiceSpinner typeNiceSpinner = mDialog.findViewById(R.id.nice_spinner_type);
+        typeNiceSpinner.attachDataSource(entranceYearList);
+        typeNiceSpinner.setBackgroundResource(R.drawable.nice_spinner_bg);
+        typeNiceSpinner.setText(experienceTypes[typeIndex+1]);
+        typeNiceSpinner.addOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                mExperienceType = i;
+                if (mExperienceType != experienceObject.optInt("type") + 1){
+                    isBaseInfoModify = true;
+                }else {
+                    isBaseInfoModify = false;
                 }
             }
         });
@@ -1333,7 +1435,7 @@ private void submitSelfIntroduction() {
             public void onClick(View view) {
                 if (validCheck(index)) {
                     switch (index) {
-                        case 3:
+                        case 4:
                             if (isBaseInfoModify) {
                                 submitBaseInfo(true);
                             } else {
@@ -1345,14 +1447,14 @@ private void submitSelfIntroduction() {
                             }
                             break;
                             
-                            case 4:
+                            case 5:
                             if (isExperiencePictureModified){
                                 saveExperiencePictures();
                             }else {
                                 processNextBtn();
                             }
                             break;
-                        case 5:
+                        case 6:
                             String itemString = "";
                             if(mExperienceItemGL.getRowCount() > 0){
                                 for (int i=0; i<mExperienceItemGL.getRowCount(); i++){
@@ -1374,14 +1476,14 @@ private void submitSelfIntroduction() {
 
                             break;
                             
-                            case 6:
+                            case 7:
                             if (isPriceModify) {
                                 submitPrice();
                             } else {
                                 processNextBtn();
                             }
                             break;
-                        case 7:
+                        case 8:
                             if (isDurationModify) {
                                 submitTime();
                             } else {
@@ -1389,30 +1491,37 @@ private void submitSelfIntroduction() {
                             }
                             break;
                             
-                            case 8://number of people
+                            case 9://number of people
                             if (isGroupNumberLimitModify) {
                                 submitLimitation();
                             } else {
                                 processNextBtn();
                             }
                             break;
-                        case 9://number of people
+                        case 10://number of people
                             if (isAddressModify) {
                                 submitAddress();
                             } else {
                                 processNextBtn();
                             }
                             break;
-                            case 10:
+                            case 11:
                             if (selectedDateList.size() > 0 || cancelledDateList.size() >0) {
                                 submitAppointDate();
                             } else {
                                 processNextBtn();
                             }
                             break;
-                        case 11:
+                        case 12:
                             if(isSelfIntroductionModify){
                                 submitSelfIntroduction();
+                            }else {
+                                processNextBtn();
+                            }
+                            break;
+                        case 13:
+                            if (bIDRequirementModified){
+                                submitIDRequirementModified();
                             }else {
                                 processNextBtn();
                             }
@@ -1546,6 +1655,9 @@ private void submitSelfIntroduction() {
             jsonObject.put("city", selectCityBtn.getText().toString());
             jsonObject.put("title", headLineET.getText().toString());
             jsonObject.put("introduction", introductionET.getText().toString());
+            if (mExperienceType != experienceObject.optInt("type")){
+                jsonObject.put("type", String.valueOf(mExperienceType - 1));
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
