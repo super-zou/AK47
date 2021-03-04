@@ -398,7 +398,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="16dp"
                         android:includeFontPadding="false"
-                        android:text="@string/NGO_public_good"
+                        android:text="@string/public_good"
                         android:textAppearance="@style/TextSourceHanSansAppearance"
                         android:textSize="18sp"
                         android:textStyle="bold"
