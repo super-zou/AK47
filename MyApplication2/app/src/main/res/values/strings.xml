@@ -395,7 +395,7 @@
     <string name="create_new_talent">以新的达人身份开展体验</string>
     <string name="get_all_orders">查看全部订单</string>
         <string name="block_booking_selector">选择包场</string>
-        <string name="experience_type_desc">您将开展的体验属于那种类型？</string>
+        <string name="experience_type_desc">您将开展的体验属于哪种类型？</string>
     <string name="location_guide_desc">选择您提供旅行向导服务的城市？</string>
     <string name="location_experience_desc">您将在哪个城市开展体验？</string>
     <string name="charge_introduction_desc">您可以选择按天或小时收费</string>
