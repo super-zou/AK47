@@ -22,6 +22,7 @@
     <item name="tag_first" type="id" />
     <item name="tag_second" type="id" />
     <string name="title_activity_fill_meet_info">填写征友信息</string>
+    <string name="privacy_protection_guide">隐私安全保护指引</string>
     <string name="dynamics_input_hint">记录和分享...</string>
         <string name="share_experience_hint">分享您在牧夫体验中的美妙时刻</string>
     <string name="share_experience">分享体验+</string>
@@ -627,4 +628,8 @@
     <string name="booked_orders">已预订订单</string>
     <string name="waiting_for_evaluation_orders">待评价订单</string>
         <string name="refund_orders">退款订单</string>
+        <string name="privacy_protection_content">欢迎使用牧夫！我们将通过《牧夫用户协议》和《牧夫隐私政策》帮助您了解我们收集、使用、存储和共享个人信息的情况，了解您的相关权限。\n
+    \n如您已知晓并同意，请点击下方按钮以接受我们的服务。</string>
+    <string name="confirm_privacy">我知道了</string>
+    <string name="disagree_privacy">不同意</string>
 </resources>
