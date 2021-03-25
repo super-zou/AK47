@@ -21,6 +21,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.mufu.R;
 import com.mufu.common.BaseAppCompatActivity;
 import com.mufu.util.HttpUtil;
+import com.mufu.util.SharedPreferencesUtils;
 import com.mufu.util.Slog;
 
 import org.json.JSONException;
@@ -64,6 +65,8 @@ public class LaunchActivity extends BaseAppCompatActivity {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN , WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_login);
+        
+        showPrivacyProtectionDF();
         
         if (getIntent() != null){
             loginException = getIntent().getBooleanExtra("login_exception", false);
@@ -180,6 +183,14 @@ public class LaunchActivity extends BaseAppCompatActivity {
         
         registerLocalBroadcast();
 
+    }
+    
+   private void showPrivacyProtectionDF(){
+        boolean privacyStatus = SharedPreferencesUtils.getPrivacyStatus(this);
+        if (privacyStatus == false){
+            PrivacyProtectionDF privacyProtectionDF = new PrivacyProtectionDF();
+            privacyProtectionDF.show(getSupportFragmentManager(), "PrivacyProtectionDF");
+        }
     }
     
         private void setLoginExceptionNotice(){
