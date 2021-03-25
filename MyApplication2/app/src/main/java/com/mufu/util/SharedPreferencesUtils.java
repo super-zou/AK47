@@ -32,6 +32,7 @@ public class SharedPreferencesUtils {
     private static final String LAST_NOTIFICATION = "last_notification";
     private static final String TUIKIT_AUTO_LOGIN = "auto_login";
     private static final String LOGIN_STATUS = "login_status";
+    private static final String PRIVACY_STATUS = "privacy_status";
 
     private static SharedPreferences getSharePreferences(Context context, String type) {
         return context.getSharedPreferences(type, Context.MODE_PRIVATE);
@@ -163,5 +164,13 @@ public class SharedPreferencesUtils {
 
     public static boolean getLoginStatus(Context context){
         return getSharePreferences(context, LOGIN_STATUS).getBoolean(LOGIN_STATUS, false);
+    }
+    
+    public static void setPrivacyStatus(Context context, boolean accept){
+        getSharePreferences(context, PRIVACY_STATUS).edit().putBoolean(PRIVACY_STATUS, accept).apply();
+    }
+
+    public static boolean getPrivacyStatus(Context context){
+        return getSharePreferences(context, PRIVACY_STATUS).getBoolean(PRIVACY_STATUS, false);
     }
 }
