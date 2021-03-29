@@ -511,10 +511,11 @@
     <string name="append_evaluation">追加评价</string>
     <string name="waiting_to_pay">待支付</string>
         <string name="booked">已预订</string>
-    <string name="sold_orders">已售订单</string>
+    <string name="sold_orders">活动订单</string>
     <string name="waiting_for_evaluation">待评价</string>
     <string name="appoint_notice">长按可查看预订详情</string>
         <string name="apply_refund">退款</string>
+        <string name="modify_price">改价</string>
     <string name="share_title">分享牧夫体验中的美妙时刻</string>
     <string name="select_experience">选择要分享的体验</string>
     <string name="evaluate_content_desc">请您从体验内容、达人服务等方面评价一下此次体验，方便其他用户参考。</string>
@@ -622,14 +623,19 @@
     <string name="sliping_to_check">左右滑动查看日期</string>
         <string name="all_orders">全部订单</string>
     <string name="today_development">今日开展</string>
-    <string name="waiting_for_development">等待开展</string>
-    <string name="finished_orders">已完成的</string>
+    <string name="waiting_for_development">待开展</string>
+    <string name="finished_orders">已完成</string>
     <string name="unpaid">待支付订单</string>
     <string name="booked_orders">已预订订单</string>
     <string name="waiting_for_evaluation_orders">待评价订单</string>
         <string name="refund_orders">退款订单</string>
         <string name="privacy_protection_content">欢迎使用牧夫！我们将通过《牧夫用户协议》和《牧夫隐私政策》帮助您了解我们收集、使用、存储和共享个人信息的情况，了解您的相关权限。\n
-    \n如您已知晓并同意，请点击下方按钮以接受我们的服务。</string>
-    <string name="confirm_privacy">我知道了</string>
+    \n如您已知晓并同意，请点击同意按钮以接受我们的服务。</string>
+    <string name="confirm_privacy">同意</string>
     <string name="disagree_privacy">不同意</string>
+        <string name="privacy_private">隐私协议与政策</string>
+    <string name="about">关于牧夫</string>
+    <string name="about_mufu">牧夫是一个专门服务于大学生的体验、活动及聚会平台，平台聚合各种有趣、有意义的体验及活动。让生活更加丰富多彩，让青春留下更多美好。</string>
+    <string name="service_agreement">《服务协议》</string>
+    <string name="privacy_policy">《隐私政策》</string>
 </resources>
