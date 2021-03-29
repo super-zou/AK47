@@ -102,6 +102,15 @@ public class SettingsActivity extends BaseAppCompatActivity {
                 checkUpdate();
             }
         });
+        
+        LinearLayout aboutWrapperLL = findViewById(R.id.about_wrapper);
+        aboutWrapperLL.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AboutDF aboutDF = new AboutDF();
+                aboutDF.show(getSupportFragmentManager(), "AboutDF");
+            }
+        });
 
         registerLoginBroadcast();
 
