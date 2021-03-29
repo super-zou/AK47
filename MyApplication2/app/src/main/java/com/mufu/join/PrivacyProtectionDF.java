@@ -84,6 +84,14 @@ public class PrivacyProtectionDF extends BaseDialogFragment {
         layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
         layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
         window.setAttributes(layoutParams);
+        
+        Button disagreeBtn = mDialog.findViewById(R.id.disagree);
+        disagreeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity().finish();
+            }
+        });
       
       Button acceptBtn = mDialog.findViewById(R.id.accept);
         acceptBtn.setOnClickListener(new View.OnClickListener() {
