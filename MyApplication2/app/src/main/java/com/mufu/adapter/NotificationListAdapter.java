@@ -76,6 +76,7 @@ import static com.mufu.util.ParseUtils.INVITE_SINGLE_GROUP_MEMBER_ACTION;
 import static com.mufu.util.ParseUtils.JOIN_CHEERING_GROUP_ACTION;
 import static com.mufu.util.ParseUtils.JOIN_SINGLE_GROUP_ACTION;
 import static com.mufu.util.ParseUtils.MODIFY_GROUP_ACTION;
+import static com.mufu.util.ParseUtils.ORDER_CHANGED_NF;
 import static com.mufu.util.ParseUtils.ORDER_PLACED_NF;
 import static com.mufu.util.ParseUtils.REFEREE_ACTION;
 import static com.mufu.util.ParseUtils.REFEREE_INVITE_NF;
@@ -160,6 +161,7 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
                 case EXPERIENCE_REQUEST_RESULT_NF:
                 case CONSULT_QUESTION_NF:
                 case CONSULT_ANSWER_NF:
+                case ORDER_CHANGED_NF:
                     if (notification.showed == NOT_SHOWED) {
                         showNotification(notification);
                     }
@@ -309,6 +311,7 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
                         startSingleGroupDetails(getContext(), notification.id);
                         break;
                     case ORDER_PLACED_NF:
+                    case ORDER_CHANGED_NF:
                         OrderDetailsDF orderDetailsDF = OrderDetailsDF.newInstance(notification.id);
                         orderDetailsDF.show(fragmentManager, "OrderDetailsDF");
                         break;
