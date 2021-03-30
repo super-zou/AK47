@@ -1,8 +1,11 @@
 package com.mufu.order;
 
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -21,6 +24,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.bumptech.glide.Glide;
 import com.mufu.R;
@@ -42,6 +46,7 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 
 import java.lang.ref.WeakReference;
+import java.util.PrimitiveIterator;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -50,6 +55,7 @@ import okhttp3.Response;
 
 import static android.app.Activity.RESULT_OK;
 import static com.mufu.order.OrderPaymentDF.GET_ORDER_INFO_DONE;
+import static com.mufu.order.ModifyOrderDF.ORDER_MODIFIED_BROADCAST;
 
 public class OrderDetailsDF extends BaseDialogFragment {
     private static final boolean isDebug = true;
@@ -69,13 +75,16 @@ public class OrderDetailsDF extends BaseDialogFragment {
     private final int REFUND_PARTIAL = 1;
     private int mCondition = 0;
         private int mType;
+            private boolean isOwned = true;
+        private OrderDetailsBroadcastReceiver mReceiver;
     
-    public static OrderDetailsDF newInstance(OrdersListDF.OrderManager order, int orderType) {
+    public static OrderDetailsDF newInstance(OrdersListDF.OrderManager order, int orderType, boolean owned) {
         OrderDetailsDF orderDetailsDF = new OrderDetailsDF();
         Bundle bundle = new Bundle();
         bundle.putSerializable("order", order);
         orderDetailsDF.setArguments(bundle);
                 bundle.putInt("type", orderType);
+                bundle.putBoolean("owned", owned);
 
         return orderDetailsDF;
     }
@@ -118,14 +127,34 @@ public class OrderDetailsDF extends BaseDialogFragment {
         if (bundle != null) {
             mOrder = (OrdersListDF.OrderManager) bundle.getSerializable("order");
             mType = bundle.getInt("type");
+            isOwned = bundle.getBoolean("owned", true);
 
             if (mOrder == null){
                 mOid = bundle.getInt("oid", 0);
-                getOrderByOid();
+                getOrderByOid(mOid);
             }else {
                 initView();
             }
         }
+        
+                TextView modifyTV = mDialog.findViewById(R.id.modify);
+        modifyTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int oid = 0;
+                if (mOrder != null){
+                    oid = mOrder.oid;
+                }else {
+                    if (mOid > 0){
+                        oid = mOid;
+                    }
+                }
+                ModifyOrderDF modifyOrderDF = ModifyOrderDF.newInstance(oid, mOrder.price, mOrder.amount);
+                modifyOrderDF.show(getFragmentManager(), "ModifyOrderDF");
+            }
+        });
+
+        registerBroadcast();
 
         return mDialog;
     }
@@ -135,6 +164,10 @@ public class OrderDetailsDF extends BaseDialogFragment {
         FontManager.markAsIconContainer(mDialog.findViewById(R.id.custom_actionbar), font);
         FontManager.markAsIconContainer(mDialog.findViewById(R.id.order_details), font);
         
+                ConstraintLayout orderProcessWrapper = mDialog.findViewById(R.id.order_process_wrapper);
+        if (!isOwned){
+            orderProcessWrapper.setVisibility(View.GONE);
+        }
         ImageView headUri = mDialog.findViewById(R.id.head_picture);
         TextView titleTV = mDialog.findViewById(R.id.guide_title);
         TextView packageNameTV = mDialog.findViewById(R.id.package_title);
@@ -310,9 +343,9 @@ public class OrderDetailsDF extends BaseDialogFragment {
         }
     }
     
-    private void getOrderByOid(){
+    private void getOrderByOid(int oid){
         RequestBody requestBody = new FormBody.Builder()
-                .add("oid", String.valueOf(mOid))
+                .add("oid", String.valueOf(oid))
                 .build();
 
         HttpUtil.sendOkHttpRequest(getContext(), GET_ORDER_BY_OID, requestBody, new Callback() {
@@ -451,16 +484,41 @@ public class OrderDetailsDF extends BaseDialogFragment {
             public void onFailure(Call call, IOException e) {}
         });
     }
+    
+        private class OrderDetailsBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()) {
+                case ORDER_MODIFIED_BROADCAST:
+                    getOrderByOid(mOrder.oid);
+                    break;
+            }
+        }
+    }
+
+    private void registerBroadcast() {
+        mReceiver = new OrderDetailsBroadcastReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ORDER_MODIFIED_BROADCAST);
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, intentFilter);
+    }
+
+    //unregister local broadcast
+    private void unRegisterBroadcast() {
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
+    }
 
     @Override
     public void onDismiss(DialogInterface dialogInterface) {
         super.onDismiss(dialogInterface);
+        unRegisterBroadcast();
     }
 
 
     @Override
     public void onCancel(DialogInterface dialogInterface) {
         super.onCancel(dialogInterface);
+        unRegisterBroadcast();
     }
     
     static class MyHandler extends Handler {
