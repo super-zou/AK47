@@ -184,7 +184,8 @@ public class OrdersListAdapter extends RecyclerView.Adapter<OrdersListAdapter.Or
                 }
 
                  */
-                startActivity(order);
+                //startActivity(order);
+                mItemClickListener.onItemClick(view, position);
             }
         });
         
