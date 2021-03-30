@@ -8,31 +8,31 @@
     android:orientation="vertical">
     
     <TextView
-        android:text="@string/order"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:gravity="center"
         android:padding="8dp"
-        android:layout_marginTop="16dp"
+        android:text="@string/order"
+        android:textAppearance="@style/TextSourceHanSansBoldAppearance"
         android:textSize="20sp"
-        android:textStyle="bold"
-        android:textAppearance="@style/TextSourceHanSansBoldAppearance" />
+        android:textStyle="bold" />
         
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/sold_orders_wrapper"
-        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
         android:layout_marginTop="8dp"
-        android:background="@color/white">
+        android:background="@color/white"
+        android:padding="16dp"
+        android:visibility="gone">
         <TextView
             android:id="@+id/sold_orders"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/sold_orders"
-            android:textColor="@color/black"
             android:textAppearance="@style/TextSourceHanSansAppearance"
+            android:textColor="@color/black"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
                     <TextView
@@ -53,6 +53,32 @@
             app:layout_constraintBottom_toBottomOf="@+id/sold_orders"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/sold_orders" />
+        
+                <TextView
+            android:id="@+id/waiting_payment_orders_amount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:padding="8dp"
+            android:text="0"
+            android:textColor="@color/blue_dark"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="@+id/waiting_payment_orders"
+            app:layout_constraintStart_toStartOf="@+id/waiting_payment_orders"
+            app:layout_constraintTop_toBottomOf="@+id/sold_orders" />
+        
+                <TextView
+            android:id="@+id/waiting_payment_orders"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/waiting_to_pay"
+            android:textAppearance="@style/TextSourceHanSansAppearance"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/today_orders"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/waiting_payment_orders_amount" />
+        
             <TextView
             android:id="@+id/today_orders_amount"
             android:layout_width="wrap_content"
@@ -66,7 +92,7 @@
             app:layout_constraintStart_toStartOf="@+id/today_orders"
             app:layout_constraintTop_toBottomOf="@+id/sold_orders" />
             
-            <TextView
+        <TextView
             android:id="@+id/today_orders"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -74,8 +100,8 @@
             android:text="@string/today_development"
             android:textAppearance="@style/TextSourceHanSansAppearance"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/queued_orders_amount"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/queued_orders"
+            app:layout_constraintStart_toEndOf="@id/waiting_payment_orders"
             app:layout_constraintTop_toBottomOf="@+id/today_orders_amount" />
             
             <TextView
@@ -103,14 +129,14 @@
             app:layout_constraintStart_toEndOf="@id/today_orders"
             app:layout_constraintTop_toBottomOf="@+id/queued_orders_amount" />
             
-             <TextView
+        <TextView
             android:id="@+id/finished_orders_amount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="0"
             android:padding="8dp"
-            android:textSize="18sp"
+            android:text="0"
             android:textColor="@color/blue_dark"
+            android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="@+id/finished_orders"
             app:layout_constraintStart_toStartOf="@+id/finished_orders"
             app:layout_constraintTop_toTopOf="@+id/queued_orders_amount" />
@@ -129,20 +155,20 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
     
-     <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
         android:layout_marginTop="8dp"
-        android:background="@color/white">
+        android:background="@color/white"
+        android:padding="16dp">
 
         <TextView
             android:id="@+id/my_orders"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/my_orders"
-            android:textColor="@color/black"
             android:textAppearance="@style/TextSourceHanSansAppearance"
+            android:textColor="@color/black"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
             
