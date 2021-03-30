@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_package_setting"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp"
+    android:background="@color/colorWhite">
+
+    <include
+        android:id="@+id/custom_actionbar"
+        layout="@layout/custom_actionbar_common"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent" />
+  
+  <TextView
+        android:id="@+id/original_price_desc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="原价："
+        android:textAppearance="@style/TextSourceHanSansAppearance"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/custom_actionbar" />
+
+    <TextView
+        android:id="@+id/original_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/blue_dark"
+        android:textCursorDrawable="@drawable/cursor_color"
+        app:layout_constraintBottom_toBottomOf="@+id/original_price_desc"
+        app:layout_constraintStart_toEndOf="@+id/original_price_desc"
+        app:layout_constraintTop_toTopOf="@+id/original_price_desc"/>
+  
+  <TextView
+        android:id="@+id/starting_price_unit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="元/人"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="@+id/original_price"
+        app:layout_constraintStart_toEndOf="@+id/original_price"
+        app:layout_constraintTop_toTopOf="@+id/original_price" />
+
+    <TextView
+        android:id="@+id/modify_price_desc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:text="改为："
+        android:textAppearance="@style/TextSourceHanSansAppearance"
+        app:layout_constraintBottom_toBottomOf="@+id/starting_price_unit"
+        app:layout_constraintStart_toEndOf="@+id/starting_price_unit"
+        app:layout_constraintTop_toTopOf="@+id/starting_price_unit" />
+  
+  <EditText
+        android:id="@+id/modify_price_edit"
+        style="@style/EditTextCustom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:hint="输入价格"
+        android:inputType="numberDecimal"
+        android:textColor="@color/blue_dark"
+        android:textCursorDrawable="@drawable/cursor_color"
+        android:theme="@style/MyEditText"
+        app:layout_constraintBottom_toBottomOf="@+id/modify_price_desc"
+        app:layout_constraintStart_toEndOf="@+id/modify_price_desc"
+        app:layout_constraintTop_toTopOf="@+id/modify_price_desc" />
+  
+  <TextView
+        android:id="@+id/modify_price_unit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="元/人"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="@+id/modify_price_edit"
+        app:layout_constraintStart_toEndOf="@+id/modify_price_edit"
+        app:layout_constraintTop_toTopOf="@+id/modify_price_edit" />
+  
+  <Button
+        android:id="@+id/save_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/btn_primary"
+        android:text="@string/confirm"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/modify_price_desc" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
