@@ -59,6 +59,7 @@ public class OrdersListDF extends BaseDialogFragment {
     private static final boolean isDebug = true;
     private static final String TAG = "OrdersListDF";
     private static final int PAGE_SIZE = 8;
+    private static final String GET_WAITING_PAYMENT_ORDERS = HttpUtil.DOMAIN + "?q=order_manager/get_waiting_payment_orders";
     private static final String GET_TODAY_ORDERS = HttpUtil.DOMAIN + "?q=order_manager/get_today_orders";
     private static final String GET_QUEUED_ORDERS = HttpUtil.DOMAIN + "?q=order_manager/get_queued_orders";
     public static final String GET_FINISHED_ORDERS = HttpUtil.DOMAIN + "?q=order_manager/get_finished_orders";
@@ -114,6 +115,9 @@ public class OrdersListDF extends BaseDialogFragment {
             mType = bundle.getShort("type");
             Utility.OrderType orderType = Utility.OrderType.getOrderType(mType);
             switch (orderType){
+                case WAIT_PAYMENT:
+                    titleTV.setText(getContext().getResources().getString(R.string.waiting_to_pay));
+                    break;
                 case QUEUED:
                     titleTV.setText(getContext().getResources().getString(R.string.waiting_for_development));
                     break;
@@ -197,7 +201,7 @@ public class OrdersListDF extends BaseDialogFragment {
             public void onItemClick(View view, int position) {
                 OrderManager orderManager = mOrderManagerList.get(position);
                 OrderDetailsDF orderDetailsDF;
-                orderDetailsDF = newInstance(orderManager, mType);
+                orderDetailsDF = newInstance(orderManager, mType, false);
                 //orderDetailsDF.setTargetFragment(this, ROUTE_REQUEST_CODE);
                 orderDetailsDF.show(getFragmentManager(), "OrderDetailsDF");
             }
@@ -283,6 +287,9 @@ private void requestData() {
 
         Utility.OrderType orderType = Utility.OrderType.getOrderType(mType);
         switch (orderType){
+            case WAIT_PAYMENT:
+                url = GET_WAITING_PAYMENT_ORDERS;
+                break;
             case TODAY:
                 url = GET_TODAY_ORDERS;
                 break;
