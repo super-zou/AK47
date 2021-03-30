@@ -55,6 +55,7 @@ import static com.mufu.order.PlaceOrderDF.ORDER_PAYMENT_SUCCESS_BROADCAST;
 import static com.mufu.order.PlaceOrderDF.ORDER_SUBMIT_BROADCAST;
 
 public class OrderFragment extends Fragment implements View.OnClickListener {
+    public static final String GET_WAITING_PAYMENT_ORDERS_AMOUNT = HttpUtil.DOMAIN + "?q=order_manager/get_waiting_payment_orders_amount";
     public static final String GET_TODAY_ORDERS_AMOUNT = HttpUtil.DOMAIN + "?q=order_manager/get_today_orders_amount";
     public static final String GET_QUEUED_ORDERS_AMOUNT = HttpUtil.DOMAIN + "?q=order_manager/get_queued_orders_amount";
     public static final String GET_FINISHED_ORDERS_AMOUNT = HttpUtil.DOMAIN + "?q=order_manager/get_finished_orders_amount";
@@ -67,6 +68,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
     private static final int GET_FINISHED_ORDERS_AMOUNT_DONE = 2;
     private static final int GET_MY_UNPAID_ORDERS_AMOUNT_DONE = 3;
     private static final int GET_MY_BOOKED_ORDERS_AMOUNT_DONE = 4;
+        private static final int GET_WAITING_PAYMENT_ORDERS_AMOUNT_DONE = 10;
     private static final int GET_WAITING_FOR_MY_EVALUATION_ORDERS_AMOUNT_DONE = 5;
     private static final int GET_MY_REVENUE_DONE = 6;
     private static final int GET_CURRENT_REFUND_AMOUNT_DONE = 8;
@@ -84,6 +86,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
     private TextView mMyAllOrdersTV;
     private TextView mMyAllOrdersNavTV;
     private TextView mMyAllSoldOrdersNavTV;
+        private TextView mWaitPaymentOrdersAmountTV;
     private TextView mTodayOrdersAmountTV;
     private TextView mQueuedOrdersAmountTV;
     private TextView mFinishedOrdersAmountTV;
@@ -115,6 +118,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
         FontManager.markAsIconContainer(view.findViewById(R.id.all_orders_nav), font);
         FontManager.markAsIconContainer(view.findViewById(R.id.my_all_sold_orders_nav), font);
         mSoldOrdersWrapper = view.findViewById(R.id.sold_orders_wrapper);
+                mWaitPaymentOrdersAmountTV = view.findViewById(R.id.waiting_payment_orders_amount);
         mTodayOrdersAmountTV = view.findViewById(R.id.today_orders_amount);
         mQueuedOrdersAmountTV = view.findViewById(R.id.queued_orders_amount);
         mFinishedOrdersAmountTV = view.findViewById(R.id.finished_orders_amount);
@@ -361,6 +365,45 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
                                 if (myGuideCount > 0) {
                                     handler.sendEmptyMessage(LOAD_MY_GUIDE_COUNT_DONE);
                                 }
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+            }
+        });
+    }
+    
+        private void loadWaitPaymentOrdersAmount() {
+        RequestBody requestBody = new FormBody.Builder()
+                .add("uid", String.valueOf(mUid))
+                .build();
+        HttpUtil.sendOkHttpRequest(MyApplication.getContext(), GET_WAITING_PAYMENT_ORDERS_AMOUNT, requestBody, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.body() != null) {
+                    String responseText = response.body().string();
+                     if (isDebug)
+                        Slog.d(TAG, "==========loadTodayOrdersAmount response text : " + responseText);
+                    if (responseText != null && !TextUtils.isEmpty(responseText)) {
+                        JSONObject responseObject = null;
+                        try {
+                            responseObject = new JSONObject(responseText);
+                            if (responseObject != null) {
+                                int amount = responseObject.optInt("amount");
+                                if (amount > 0) {
+                                    Message message = new Message();
+                                    Bundle bundle = new Bundle();
+                                    bundle.putInt("amount", amount);
+                                    message.what = GET_WAITING_PAYMENT_ORDERS_AMOUNT_DONE;
+                                    message.setData(bundle);
+                                    handler.sendMessage(message);
+            }
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -652,9 +695,14 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
                 if (mSoldOrdersWrapper.getVisibility() == View.GONE) {
                     mSoldOrdersWrapper.setVisibility(View.VISIBLE);
                 }
+                loadWaitPaymentOrdersAmount();
                 loadTodayOrdersAmount();
                 loadQueuedOrdersAmount();
                 loadfinishedOrdersAmount();
+                break;
+            case GET_WAITING_PAYMENT_ORDERS_AMOUNT_DONE:
+                mWaitPaymentOrdersAmountTV.setText(String.valueOf(bundle.getInt("amount")));
+                mWaitPaymentOrdersAmountTV.setOnClickListener(this);
                 break;
             case GET_TODAY_ORDERS_AMOUNT_DONE:
                 mTodayOrdersAmountTV.setText(String.valueOf(bundle.getInt("amount")));
@@ -712,6 +760,11 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
         OrdersListDF soldFragmentDF = new OrdersListDF();
         MyOrdersFragmentDF myOrdersFragmentDF = new MyOrdersFragmentDF();
         switch (view.getId()) {
+            case R.id.waiting_payment_orders_amount:
+                bundle.putShort("type", (short) Utility.OrderType.WAIT_PAYMENT.getType());
+                soldFragmentDF.setArguments(bundle);
+                soldFragmentDF.show(getFragmentManager(), "OrdersListDF");
+                break;
             case R.id.today_orders_amount:
                 bundle.putShort("type", (short) Utility.OrderType.TODAY.getType());
                 soldFragmentDF.setArguments(bundle);
@@ -734,7 +787,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
                 soldFragmentDF.show(getFragmentManager(), "MyOrdersFragmentDF");
                 break;
             case R.id.waiting_to_pay_amount:
-                bundle.putShort("type", (short) Utility.OrderType.UNPAYMENT.getType());
+                bundle.putShort("type", (short) Utility.OrderType.MY_UNPAYMENT.getType());
                 myOrdersFragmentDF.setArguments(bundle);
                 myOrdersFragmentDF.show(getFragmentManager(), "MyOrdersFragmentDF");
                 break;
