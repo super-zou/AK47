@@ -1559,11 +1559,11 @@ private void submitSelfIntroduction() {
         Slog.d(TAG, "------------------------>validCheck: " + index);
         boolean valid = false;
         switch (index) {
-            case 1://select city
+            case 2://select city
                 valid = true;
                 Slog.d(TAG, "---------------->city picked: "+isCityPicked);
                 break;
-            case 2://add headline
+            case 3://add headline
                 if (!TextUtils.isEmpty(headLineET.getText().toString())) {
                     valid = true;
                 } else {
@@ -1571,7 +1571,7 @@ private void submitSelfIntroduction() {
                     Toast.makeText(getContext(), getResources().getString(R.string.headline_empty_notice), Toast.LENGTH_LONG).show();
                 }
                 break;
-                case 3://experience introduction
+                case 4://experience introduction
                 if (!TextUtils.isEmpty(introductionET.getText().toString())) {
                     valid = true;
                 } else {
@@ -1579,7 +1579,7 @@ private void submitSelfIntroduction() {
                     Toast.makeText(getContext(), getResources().getString(R.string.experience_introduction_notice), Toast.LENGTH_LONG).show();
                 }
                 break;
-            case 4://experience pictures
+            case 5://experience pictures
                 if (selectList.size() == 0){
                     valid = false;
                     Toast.makeText(getContext(), getResources().getString(R.string.experience_picture_notice), Toast.LENGTH_LONG).show();
@@ -1587,7 +1587,7 @@ private void submitSelfIntroduction() {
                     valid = true;
                 }
                 break;
-                case 6:
+                case 7:
                 if (!TextUtils.isEmpty(mChargeAmount.getText())) {
                     valid = true;
                 } else {
@@ -1597,7 +1597,7 @@ private void submitSelfIntroduction() {
                 }
 
                 break;
-            case 7:
+            case 8:
                 if (!TextUtils.isEmpty(durationET.getText())){
                     valid = true;
                 }else {
@@ -1606,7 +1606,7 @@ private void submitSelfIntroduction() {
                 }
 
                 break;
-                case 8:
+                case 9:
                 if (!TextUtils.isEmpty(groupCountET.getText())) {
                     valid = true;
                 } else {
@@ -1615,7 +1615,7 @@ private void submitSelfIntroduction() {
                 }
 
                 break;
-            case 9:
+            case 10:
                 if (!TextUtils.isEmpty(addressET.getText())) {
                     valid = true;
                 } else {
@@ -1624,7 +1624,7 @@ private void submitSelfIntroduction() {
                 }
 
                 break;
-                case 10:
+                case 11:
                 if (cancelledDateList.size() == availableDateList.size() && selectedDateList.size() == 0) {
                     valid = false;
                     Toast.makeText(getContext(), getResources().getString(R.string.select_date_empty_notice), Toast.LENGTH_LONG).show();
@@ -1632,7 +1632,7 @@ private void submitSelfIntroduction() {
                     valid = true;
                 }
                 break;
-            case 11://self introduction
+            case 12://self introduction
                 if (!TextUtils.isEmpty(selfIntroductionET.getText().toString())) {
                     valid = true;
                 } else {
