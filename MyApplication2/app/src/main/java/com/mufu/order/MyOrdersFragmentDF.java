@@ -120,7 +120,7 @@ public class MyOrdersFragmentDF extends BaseDialogFragment {
             mOrderType = type;
             Utility.OrderType orderType = Utility.OrderType.getOrderType(type);
             switch (orderType){
-                case UNPAYMENT:
+                case MY_UNPAYMENT:
                     titleTV.setText(getContext().getResources().getString(R.string.unpaid));
                     break;
                     case BOOKED:
@@ -201,7 +201,7 @@ public class MyOrdersFragmentDF extends BaseDialogFragment {
             public void onItemClick(View view, int position) {
                 OrdersListDF.OrderManager order = mOrderList.get(position);
                 OrderDetailsDF orderDetailsDF;
-                orderDetailsDF = newInstance(order, mOrderType);
+                orderDetailsDF = newInstance(order, mOrderType, true);
                 //orderDetailsDF.setTargetFragment(this, ROUTE_REQUEST_CODE);
                 orderDetailsDF.show(getFragmentManager(), "RouteItemEditDF");
             }
@@ -260,7 +260,7 @@ public class MyOrdersFragmentDF extends BaseDialogFragment {
             case BOOKED:
                 url = GET_MY_BOOKED_ORDERS;
                 break;
-            case UNPAYMENT:
+            case MY_UNPAYMENT:
                 url = GET_MY_UNPAID_ORDERS;
                 break;
             case WAITING_EVALUATION:
