@@ -2,10 +2,13 @@
 
 buildscript {
     repositories {
-        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
-        google()
         //umeng
+        mavenCentral()
+        jcenter()
+        google()
         maven { url 'https://dl.bintray.com/umsdk/release' }
+        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.4.2'
@@ -21,11 +24,14 @@ allprojects {
         flatDir {
             dirs 'libs'
         }
-        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
-        maven { url "https://jitpack.io" }
+        mavenCentral()
+        jcenter()
         google()
+        maven { url "https://jitpack.io" }
         //umeng
         maven { url 'https://dl.bintray.com/umsdk/release' }
+        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+
     }
 }
 
