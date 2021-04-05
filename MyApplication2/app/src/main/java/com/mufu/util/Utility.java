@@ -22,7 +22,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.text.TextUtils;
 import android.util.TypedValue;
 
 
@@ -92,10 +91,10 @@ public class Utility {
     }
     
     public enum OrderType {
-        TODAY("today", 0), QUEUED("queued", 1), FINISHED("finished", 2),
-        UNPAYMENT("unpayment", 3), BOOKED("booked", 4), WAITING_EVALUATION("waiting_evaluation", 5),
-        APPLYING_REFUND("applying_refund", 6), REFUNDED("refunded", 7),
-        MY_ALL_SOLD("my_all_sold", 8), MY_ALL("my_all", 9), ALL_SOLD("all", 10);
+        WAIT_PAYMENT("wait_payment", 0), TODAY("today", 1), QUEUED("queued", 2), FINISHED("finished", 3),
+        MY_UNPAYMENT("unpayment", 4), BOOKED("booked", 5), WAITING_EVALUATION("waiting_evaluation", 6),
+        APPLYING_REFUND("applying_refund", 7), REFUNDED("refunded", 8),
+        MY_ALL_SOLD("my_all_sold", 9), MY_ALL("my_all", 10), ALL_SOLD("all", 11);
 
         private String _name;
         private int _type;
@@ -111,26 +110,28 @@ public class Utility {
         public static OrderType getOrderType(int type){
             switch (type){
                 case 0:
-                    return TODAY;
+                    return WAIT_PAYMENT;
                 case 1:
-                    return QUEUED;
+                    return TODAY;
                 case 2:
-                    return FINISHED;
+                    return QUEUED;
                 case 3:
-                    return UNPAYMENT;
+                    return FINISHED;
                 case 4:
-                    return BOOKED;
+                    return MY_UNPAYMENT;
                 case 5:
-                    return WAITING_EVALUATION;
+                    return BOOKED;
                 case 6:
-                    return APPLYING_REFUND;
+                    return WAITING_EVALUATION;
                 case 7:
-                    return REFUNDED;
+                    return APPLYING_REFUND;
                 case 8:
-                    return MY_ALL_SOLD;
+                    return REFUNDED;
                 case 9:
-                    return MY_ALL;
+                    return MY_ALL_SOLD;
                 case 10:
+                    return MY_ALL;
+                case 11:
                     return ALL_SOLD;
                     default:
                         return TODAY;

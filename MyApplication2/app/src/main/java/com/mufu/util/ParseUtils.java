@@ -127,6 +127,7 @@ public class ParseUtils {
     public static final int EXPERIENCE_REQUEST_RESULT_NF = 73;
     public static final int CONSULT_QUESTION_NF = 74;
     public static final int CONSULT_ANSWER_NF = 75;
+    public static final int ORDER_CHANGED_NF = 76;
 
     public static final int MALE = 0;
     public static final int FEMALE = 1;
